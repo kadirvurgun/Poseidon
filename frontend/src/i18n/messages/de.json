@@ -3388,6 +3388,10 @@
     "m_965193f060525feb": "Befunde zu kritischen Kontrollen sind von diesem Server nicht verfügbar; das ist keine Entwarnung.",
     "m_bd7660f8ea8e0811": "Kritikalität unbekannt",
     "m_69c8580208acc8c2": "Anforderungsverknüpfung fehlt",
-    "m_fe74d79deff90fe1": "Verantwortlicher fehlt"
+    "m_fe74d79deff90fe1": "Verantwortlicher fehlt",
+    "m_61901b95440b2e61": "Wirksame veröffentlichte Revision",
+    "m_5bfa5323a04a472d": "Ausstehende Nachfolgerevision (erst nach Veröffentlichung wirksam)",
+    "m_ae1a44f3c88cf989": "Keine veröffentlichte Revision ist wirksam",
+    "m_12e4b7ce9141120d": "Ersetzt Revision"
   }
 }

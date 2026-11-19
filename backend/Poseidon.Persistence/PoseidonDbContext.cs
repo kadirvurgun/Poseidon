@@ -645,13 +645,23 @@ public sealed class PoseidonDbContext(
         if (changes.Any(e => e.Entity is ControlEvidenceRevision or ControlEvidenceRequirement or ControlEvidenceEdge or ControlEvidenceReceipt or ControlStateEvent or TugCapabilityBinding or OperationEquipmentBinding or EvaluationOwningReference or EvaluationUpstreamReference or MsmdRoleBinding && e.State != EntityState.Added))
             throw new InvalidOperationException("Control/evidence lineage is immutable.");
         if (changes.Any(e => e.Entity is ControlEvidenceHead head && (e.State == EntityState.Deleted || e.State == EntityState.Modified && e.Properties.Any(p => p.IsModified &&
-            !(p.Metadata.Name == "Revision" || p.Metadata.Name == "ControlState" && head.Kind == "Control")))))
+            !(p.Metadata.Name == "Revision" || p.Metadata.Name is "ControlState" or "PublishedRevision" && head.Kind == "Control")))))
             throw new InvalidOperationException("Control/evidence ownership is immutable.");
-        // DEV-028: a control lifecycle change is never silent; it carries its exact append-only event.
+        // DEV-028: a control lifecycle change is never silent; it carries its exact append-only event
+        // (a stored NULL state is the derived DRAFT of a control with no lifecycle event yet).
         if (changes.Any(e => e.Entity is ControlEvidenceHead head && e.State == EntityState.Modified && e.Property(nameof(ControlEvidenceHead.ControlState)).IsModified &&
             !changes.Any(x => x.State == EntityState.Added && x.Entity is ControlStateEvent ev && ev.TenantId == head.TenantId && ev.VesselId == head.VesselId && ev.ControlId == head.Id &&
-                ev.ToState == head.ControlState && ev.FromState == (string?)e.Property(nameof(ControlEvidenceHead.ControlState)).OriginalValue)))
+                ev.ToState == head.ControlState && ev.FromState == ((string?)e.Property(nameof(ControlEvidenceHead.ControlState)).OriginalValue ?? "DRAFT"))))
             throw new InvalidOperationException("Control lifecycle change requires its event.");
+        // 62.01 §6 current pointer: it moves only with the exact PUBLISH (recording what it
+        // supersedes) or RETIRE event; a successor draft/review/approval never moves it.
+        if (changes.Any(e => e.Entity is ControlEvidenceHead head && e.State == EntityState.Modified && e.Property(nameof(ControlEvidenceHead.PublishedRevision)).IsModified &&
+            !changes.Any(x => x.State == EntityState.Added && x.Entity is ControlStateEvent ev && ev.TenantId == head.TenantId && ev.VesselId == head.VesselId && ev.ControlId == head.Id &&
+                (ev.ReasonCode == "PUBLISH" && head.PublishedRevision == ev.ControlRevision && ev.SupersedesRevision == (long?)e.Property(nameof(ControlEvidenceHead.PublishedRevision)).OriginalValue ||
+                 ev.ReasonCode == "RETIRE" && head.PublishedRevision == null && ev.ControlRevision == (long?)e.Property(nameof(ControlEvidenceHead.PublishedRevision)).OriginalValue))))
+            throw new InvalidOperationException("Control publication pointer change requires its event.");
+        if (changes.Any(e => e.Entity is ControlEvidenceHead head && e.State == EntityState.Added && (head.ControlState != null || head.PublishedRevision != null)))
+            throw new InvalidOperationException("A new control starts without a lifecycle state.");
         if (changes.Any(e => e.Entity is RuleRevision or ApplicabilityEvaluation or EvaluationRule or ApplicabilityReceipt && e.State != EntityState.Added))
             throw new InvalidOperationException("Applicability lineage is immutable.");
         if (changes.Any(e => e.Entity is RuleDraft && e.State == EntityState.Deleted))

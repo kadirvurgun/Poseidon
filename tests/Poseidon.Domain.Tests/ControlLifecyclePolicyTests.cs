@@ -65,6 +65,48 @@ public sealed class ControlLifecyclePolicyTests
     public void A_new_revision_makes_prior_review_and_approval_not_current(string prior, bool resets) =>
         Assert.Equal(resets, ControlLifecyclePolicy.RevisionResets(prior));
 
+    // 62.01 section 6 paragraph:188-198: RETIRE acts on the effective published revision, also while a
+    // successor candidate is pending; without a published revision there is nothing to retire.
+    [Theory]
+    [InlineData("DRAFT")]
+    [InlineData("IN_REVIEW")]
+    [InlineData("APPROVED")]
+    public void Retire_needs_an_effective_published_revision(string candidate)
+    {
+        Assert.Null(ControlLifecyclePolicy.Transition(candidate, "RETIRE", true, true, true, true, published: true));
+        Assert.Equal("invalid_transition", ControlLifecyclePolicy.Transition(candidate, "RETIRE", true, true, true, true, published: false));
+        Assert.Equal("control_reviewer_required", ControlLifecyclePolicy.Transition(candidate, "RETIRE", true, false, true, true, published: true));
+    }
+
+    [Fact]
+    public void A_pending_successor_never_moves_the_effective_published_revision()
+    {
+        // Published revision 3, successor candidate 5 drafted, reviewed, approved: 3 stays effective.
+        foreach (var reason in new[] { "SUBMIT_FOR_REVIEW", "RETURN_FOR_CORRECTION", "APPROVE" })
+        {
+            Assert.Equal(3L, ControlLifecyclePolicy.EffectiveAfter(reason, 3, 5));
+            Assert.Null(ControlLifecyclePolicy.Supersedes(reason, 3, 5));
+        }
+        Assert.Equal(3L, ControlLifecyclePolicy.EffectiveRevision(3, 5));
+        // Publishing the successor supersedes the previous published revision; retire clears the pointer.
+        Assert.Equal(5L, ControlLifecyclePolicy.EffectiveAfter("PUBLISH", 3, 5));
+        Assert.Equal(3L, ControlLifecyclePolicy.Supersedes("PUBLISH", 3, 5));
+        Assert.Null(ControlLifecyclePolicy.EffectiveAfter("RETIRE", 3, 5));
+        // A first publication supersedes nothing; a never-published control uses its latest revision.
+        Assert.Null(ControlLifecyclePolicy.Supersedes("PUBLISH", null, 2));
+        Assert.Equal(2L, ControlLifecyclePolicy.EffectiveAfter("PUBLISH", null, 2));
+        Assert.Equal(4L, ControlLifecyclePolicy.EffectiveRevision(null, 4));
+    }
+
+    // Schema-only lifecycle column: a stored NULL (no lifecycle event yet) derives DRAFT, never another state.
+    [Fact]
+    public void Missing_stored_state_derives_draft_only()
+    {
+        Assert.Equal("DRAFT", ControlLifecyclePolicy.State(null));
+        Assert.Equal("PUBLISHED", ControlLifecyclePolicy.State("PUBLISHED"));
+        Assert.Equal("invalid_transition", ControlLifecyclePolicy.Transition(ControlLifecyclePolicy.State(null), "PUBLISH", true, true, true, true));
+    }
+
     // DEV-029: declared stale/expired/superseded stay distinct; no freshness policy registry
     // (54.01) exists, so absent declarations stay UNKNOWN rather than fresh/current.
     [Fact]

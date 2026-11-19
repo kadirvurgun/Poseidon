@@ -95,6 +95,51 @@ public sealed class ControlLifecycleAuditBeforeAfterTests
         Assert.True(CriticalWriteCoverageCapture.BeforeAfter(row, NoCommittedVersion, fields));
     }
 
+    // 62.01 section 6: a successor PUBLISH records the superseded revision on the event and the pointer move on the head.
+    [Fact]
+    public void Successor_publication_audits_supersession_and_pointer_before_after()
+    {
+        using var db = Db();
+        var control = Guid.NewGuid();
+        var ev = Event(control, "PUBLISH", "APPROVED", "PUBLISHED"); ev.SupersedesRevision = 2;
+        var added = db.Entry(ev); added.State = EntityState.Added;
+        var (eventRow, eventFields) = Row(added);
+        Assert.Equal("2", eventFields["SupersedesRevision"].GetProperty("after").GetString());
+        Assert.True(CriticalWriteCoverageCapture.BeforeAfter(eventRow, NoCommittedVersion, eventFields));
+        var head = new ControlEvidenceHead { TenantId = Tenant, VesselId = Vessel, Kind = "Control", Id = control, Revision = 4, Version = 17, ControlState = "APPROVED", PublishedRevision = 2 };
+        var entry = db.Attach(head);
+        head.ControlState = "PUBLISHED"; head.PublishedRevision = 4;
+        entry.DetectChanges();
+        var (row, fields) = Row(entry);
+        Assert.Equal(("2", "4"), (fields["PublishedRevision"].GetProperty("before").GetString(), fields["PublishedRevision"].GetProperty("after").GetString()));
+        Assert.True(CriticalWriteCoverageCapture.BeforeAfter(row, NoCommittedVersion, fields));
+    }
+
+    // A never-transitioned control stores NULL; its first lifecycle change audits the derived DRAFT before-value.
+    [Fact]
+    public void First_transition_audits_the_derived_draft_before_value()
+    {
+        using var db = Db();
+        var head = new ControlEvidenceHead { TenantId = Tenant, VesselId = Vessel, Kind = "Control", Id = Guid.NewGuid(), Revision = 2, Version = 9 };
+        var entry = db.Attach(head);
+        head.ControlState = "IN_REVIEW";
+        entry.DetectChanges();
+        var (row, fields) = Row(entry);
+        Assert.Equal(("DRAFT", "IN_REVIEW"), (fields["ControlState"].GetProperty("before").GetString(), fields["ControlState"].GetProperty("after").GetString()));
+        Assert.False(fields.ContainsKey("PublishedRevision"));
+        Assert.True(CriticalWriteCoverageCapture.BeforeAfter(row, NoCommittedVersion, fields));
+    }
+
+    [Fact]
+    public void A_supersession_on_a_non_publish_event_is_rejected()
+    {
+        using var db = Db();
+        var ev = Event(Guid.NewGuid(), "APPROVE", "IN_REVIEW", "APPROVED"); ev.SupersedesRevision = 2;
+        var entry = db.Entry(ev); entry.State = EntityState.Added;
+        var error = Assert.Throws<TargetInvocationException>(() => Row(entry));
+        Assert.IsType<InvalidOperationException>(error.InnerException);
+    }
+
     [Fact]
     public void Unknown_lifecycle_values_are_rejected_instead_of_audited()
     {

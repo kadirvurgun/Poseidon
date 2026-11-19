@@ -3388,6 +3388,10 @@
     "m_965193f060525feb": "Kritik kontrol bulguları bu sunucudan alınamıyor; bu bir sorun yok sonucu değildir.",
     "m_bd7660f8ea8e0811": "Kritiklik bilinmiyor",
     "m_69c8580208acc8c2": "Gereksinim bağlantısı eksik",
-    "m_fe74d79deff90fe1": "Sorumlu eksik"
+    "m_fe74d79deff90fe1": "Sorumlu eksik",
+    "m_61901b95440b2e61": "Yürürlükteki yayımlı revizyon",
+    "m_5bfa5323a04a472d": "Bekleyen halef revizyon (yayımlanana kadar yürürlükte değil)",
+    "m_ae1a44f3c88cf989": "Yürürlükte yayımlı revizyon yok",
+    "m_12e4b7ce9141120d": "Yerini aldığı revizyon"
   }
 }

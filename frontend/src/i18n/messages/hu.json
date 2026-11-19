@@ -3388,6 +3388,10 @@
     "m_965193f060525feb": "A kritikus kontrollok megállapításai ezen a kiszolgálón nem érhetők el; ez nem hibamentes eredmény.",
     "m_bd7660f8ea8e0811": "Kritikusság ismeretlen",
     "m_69c8580208acc8c2": "Hiányzó követelménykapcsolat",
-    "m_fe74d79deff90fe1": "Hiányzó felelős"
+    "m_fe74d79deff90fe1": "Hiányzó felelős",
+    "m_61901b95440b2e61": "Hatályos közzétett változat",
+    "m_5bfa5323a04a472d": "Függőben lévő utódváltozat (közzétételig nem hatályos)",
+    "m_ae1a44f3c88cf989": "Nincs hatályos közzétett változat",
+    "m_12e4b7ce9141120d": "Felváltja a változatot"
   }
 }

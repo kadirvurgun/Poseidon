@@ -10,9 +10,15 @@ public sealed class ControlEvidenceHead : ITenantEntity
     public Guid Id { get; set; }
     public long Revision { get; set; }
     public uint Version { get; set; }
-    // DEV-028 definition lifecycle (Control only; null for Evidence). Mutable head state,
-    // guarded by xmin; every change appends a ControlStateEvent in the same transaction.
+    // DEV-028 definition lifecycle of the candidate (latest) revision; Control only, always null
+    // for Evidence. NULL on a Control means "no lifecycle event yet" and derives to DRAFT
+    // (ControlLifecyclePolicy.State); no stored row is rewritten to manufacture a state.
+    // Mutable head state, guarded by xmin; every change appends a ControlStateEvent.
     public string? ControlState { get; set; }
+    // 62.01 §6 current pointer: the effective PUBLISHED revision. It stays effective while a
+    // successor candidate is drafted/reviewed/approved and only moves on the successor's PUBLISH
+    // (audited, SupersedesRevision on the event). RETIRE clears it. Always null for Evidence.
+    public long? PublishedRevision { get; set; }
 }
 // Append-only DEV-028 lifecycle history. Revision is the per-control event sequence; the
 // exact control revision it binds is ControlRevision. Rationale is private (never audited).
@@ -27,6 +33,8 @@ public sealed class ControlStateEvent : ITenantEntity
     public required string FromState { get; set; }
     public required string ToState { get; set; }
     public required string ReasonCode { get; set; }
+    // PUBLISH of a successor: the previously effective published revision it supersedes.
+    public long? SupersedesRevision { get; set; }
     public string? Rationale { get; set; }
     public Guid ActorId { get; set; }
     public string? RoleContext { get; set; }
@@ -95,15 +103,19 @@ public sealed class ControlEvidenceReceipt : ITenantEntity
 }
 public static class ControlEvidenceStorage
 {
-    internal const string StateConstraint = "(\"Kind\" = 'Control' AND \"ControlState\" IN ('DRAFT','IN_REVIEW','APPROVED','PUBLISHED','RETIRED')) OR (\"Kind\" = 'Evidence' AND \"ControlState\" IS NULL)";
+    internal const string StateConstraint = "(\"Kind\" = 'Control' AND (\"ControlState\" IS NULL OR \"ControlState\" IN ('DRAFT','IN_REVIEW','APPROVED','PUBLISHED','RETIRED')) AND " +
+        "(\"PublishedRevision\" IS NULL OR (\"PublishedRevision\" > 0 AND \"PublishedRevision\" <= \"Revision\" AND \"ControlState\" IS NOT NULL AND \"ControlState\" <> 'RETIRED')) AND " +
+        "(\"ControlState\" IS DISTINCT FROM 'PUBLISHED' OR \"PublishedRevision\" IS NOT DISTINCT FROM \"Revision\")) OR " +
+        "(\"Kind\" = 'Evidence' AND \"ControlState\" IS NULL AND \"PublishedRevision\" IS NULL)";
     internal const string EventConstraint = "\"ControlKind\" = 'Control' AND \"Revision\" > 0 AND \"ControlRevision\" > 0 AND " +
         "\"FromState\" IN ('DRAFT','IN_REVIEW','APPROVED','PUBLISHED') AND \"ToState\" IN ('DRAFT','IN_REVIEW','APPROVED','PUBLISHED','RETIRED') AND " +
         "((\"ReasonCode\" = 'SUBMIT_FOR_REVIEW' AND \"FromState\" = 'DRAFT' AND \"ToState\" = 'IN_REVIEW') OR " +
         "(\"ReasonCode\" = 'RETURN_FOR_CORRECTION' AND \"FromState\" = 'IN_REVIEW' AND \"ToState\" = 'DRAFT') OR " +
         "(\"ReasonCode\" = 'APPROVE' AND \"FromState\" = 'IN_REVIEW' AND \"ToState\" = 'APPROVED') OR " +
         "(\"ReasonCode\" = 'PUBLISH' AND \"FromState\" = 'APPROVED' AND \"ToState\" = 'PUBLISHED') OR " +
-        "(\"ReasonCode\" = 'RETIRE' AND \"FromState\" = 'PUBLISHED' AND \"ToState\" = 'RETIRED') OR " +
-        "(\"ReasonCode\" = 'CONTENT_REVISED' AND \"FromState\" IN ('IN_REVIEW','APPROVED','PUBLISHED') AND \"ToState\" = 'DRAFT'))";
+        "(\"ReasonCode\" = 'RETIRE' AND \"FromState\" IN ('DRAFT','IN_REVIEW','APPROVED','PUBLISHED') AND \"ToState\" = 'RETIRED') OR " +
+        "(\"ReasonCode\" = 'CONTENT_REVISED' AND \"FromState\" IN ('IN_REVIEW','APPROVED','PUBLISHED') AND \"ToState\" = 'DRAFT')) AND " +
+        "(\"SupersedesRevision\" IS NULL OR (\"ReasonCode\" = 'PUBLISH' AND \"SupersedesRevision\" > 0 AND \"SupersedesRevision\" < \"ControlRevision\"))";
     internal static void Configure(ModelBuilder model)
     {
         model.Entity<StoredFile>().HasAlternateKey(x => new { x.TenantId, x.VesselId, x.Id, x.Revision, x.Checksum }).HasName("AK_StoredFiles_Evidence");

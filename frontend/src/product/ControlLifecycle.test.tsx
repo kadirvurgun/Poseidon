@@ -9,7 +9,7 @@ const vessel = '10000000-0000-4000-8000-000000000001', control = '10000000-0000-
 const actor = '10000000-0000-4000-8000-000000000004'
 const controlRow = (): Row => decodeRow({ id: control, vesselId: vessel, kind: 'Control', revision: 2, version: 7, content: blank(), hash: 'A'.repeat(64), lifecycle: 'DRAFT', completion: 'UNKNOWN', verification: 'UNVERIFIED', effectiveness: 'UNKNOWN', timeState: 'UNKNOWN', evidenceExists: false, file: null, requirements: [], links: [], blockers: ['TITLE_MISSING', 'OWNER_MISSING', 'REQUIREMENT_LINK_MISSING', 'FREQUENCY_UNSPECIFIED', 'EVIDENCE_POLICY_MISSING', 'VERIFICATION_POLICY_MISSING', 'CRITICALITY_UNKNOWN'], savedAt: '2026-11-19T00:00:00Z', asOf: '2026-11-19T00:00:00Z' }, vessel, 'Control')
 const evidenceRow = (timeState: string, pinned: number) => ({ id: evidence, vesselId: vessel, kind: 'Evidence', revision: 1, version: 3, content: { ...blank(), title: 'FICTIONAL evidence', provenance: 'Synthetic' }, hash: 'B'.repeat(64), lifecycle: 'DRAFT', completion: 'UNKNOWN', verification: 'UNVERIFIED', effectiveness: 'UNKNOWN', timeState, evidenceExists: true, file: { id: evidence, revision: 1, checksum: 'C'.repeat(64) }, requirements: [], links: [{ kind: 'Control', id: control, revision: pinned, expectedVersion: 7 }], blockers: ['OWNER_MISSING', 'REQUIREMENT_LINK_MISSING', 'OBSERVATION_TIME_MISSING'], savedAt: '2026-11-19T00:00:00Z', asOf: '2026-11-19T00:00:00Z' })
-const state = (value: string, overrides: Record<string, unknown> = {}) => ({ id: control, vesselId: vessel, revision: 2, version: 7, state: value, effectiveness: 'UNKNOWN', events: [], offset: 0, hasMore: false, canWrite: true, canReview: false, ...overrides })
+const state = (value: string, overrides: Record<string, unknown> = {}) => ({ id: control, vesselId: vessel, revision: 2, version: 7, state: value, publishedRevision: null, successorPending: false, effectiveness: 'UNKNOWN', events: [], offset: 0, hasMore: false, canWrite: true, canReview: false, ...overrides })
 const ok = (value: unknown) => ({ ok: true, status: 200, json: async () => value }) as Response
 const fail = (status: number, code: string) => ({ ok: false, status, json: async () => ({ code }) }) as Response
 const labels = (s: string) => s
@@ -17,7 +17,7 @@ afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })
 
 describe('DEV-028/029 lifecycle consumer', () => {
   it('loads only on demand, shows the declared stale state and pins to an earlier revision', async () => {
-    const fetch = vi.fn(async (url: string) => url.includes('/lifecycle') ? ok(state('DRAFT')) : ok({ controlId: control, vesselId: vessel, controlRevision: 2, items: [{ evidence: evidenceRow('DECLARED_STALE', 1), pinnedControlRevision: 1, pinCurrent: false }], offset: 0, hasMore: false }))
+    const fetch = vi.fn(async (url: string) => url.includes('/lifecycle') ? ok(state('DRAFT')) : ok({ controlId: control, vesselId: vessel, controlRevision: 2, latestRevision: 2, successorPending: false, items: [{ evidence: evidenceRow('DECLARED_STALE', 1), pinnedControlRevision: 1, pinCurrent: false }], offset: 0, hasMore: false }))
     vi.stubGlobal('fetch', fetch)
     render(<ControlLifecycle vessel={vessel} control={controlRow()} language="en" csrf="synthetic-csrf" offline={false} locked={false} onChanged={vi.fn()} timeLabel={labels}/>)
     expect(fetch).not.toHaveBeenCalled()
@@ -35,9 +35,9 @@ describe('DEV-028/029 lifecycle consumer', () => {
       if (init?.method === 'POST') {
         posts.push(init)
         if (++attempt === 1) throw new TypeError('network')
-        return ok({ id: control, vesselId: vessel, revision: 2, version: 8, state: 'IN_REVIEW', effectiveness: 'UNKNOWN', event: { sequence: 1, controlRevision: 2, fromState: 'DRAFT', toState: 'IN_REVIEW', reasonCode: 'SUBMIT_FOR_REVIEW', actorId: actor, rationale: 'FICTIONAL reason', savedAt: '2026-11-19T00:00:01Z' } })
+        return ok({ id: control, vesselId: vessel, revision: 2, version: 8, state: 'IN_REVIEW', publishedRevision: null, successorPending: false, effectiveness: 'UNKNOWN', event: { sequence: 1, controlRevision: 2, fromState: 'DRAFT', toState: 'IN_REVIEW', reasonCode: 'SUBMIT_FOR_REVIEW', supersedesRevision: null, actorId: actor, rationale: 'FICTIONAL reason', savedAt: '2026-11-19T00:00:01Z' } })
       }
-      return url.includes('/lifecycle') ? ok(state(attempt > 1 ? 'IN_REVIEW' : 'DRAFT')) : ok({ controlId: control, vesselId: vessel, controlRevision: 2, items: [], offset: 0, hasMore: false })
+      return url.includes('/lifecycle') ? ok(state(attempt > 1 ? 'IN_REVIEW' : 'DRAFT')) : ok({ controlId: control, vesselId: vessel, controlRevision: 2, latestRevision: 2, successorPending: false, items: [], offset: 0, hasMore: false })
     }))
     const user = userEvent.setup()
     render(<ControlLifecycle vessel={vessel} control={controlRow()} language="en" csrf="synthetic-csrf" offline={false} locked={false} onChanged={changed} timeLabel={labels}/>)
@@ -58,14 +58,14 @@ describe('DEV-028/029 lifecycle consumer', () => {
   })
 
   it('offers review actions only to a reviewer and never offers anything for a retired control', async () => {
-    vi.stubGlobal('fetch', vi.fn(async (url: string) => url.includes('/lifecycle') ? ok(state('IN_REVIEW', { canReview: true })) : ok({ controlId: control, vesselId: vessel, controlRevision: 2, items: [], offset: 0, hasMore: false })))
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => url.includes('/lifecycle') ? ok(state('IN_REVIEW', { canReview: true })) : ok({ controlId: control, vesselId: vessel, controlRevision: 2, latestRevision: 2, successorPending: false, items: [], offset: 0, hasMore: false })))
     const user = userEvent.setup()
     const { unmount } = render(<ControlLifecycle vessel={vessel} control={controlRow()} language="en" csrf="synthetic-csrf" offline={false} locked={false} onChanged={vi.fn()} timeLabel={labels}/>)
     await user.click(screen.getByRole('button', { name: 'Open control lifecycle' }))
     expect(await screen.findByRole('button', { name: 'Approve for implementation' })).toBeTruthy()
     expect(screen.getByRole('button', { name: 'Return for correction' })).toBeTruthy()
     unmount()
-    vi.stubGlobal('fetch', vi.fn(async (url: string) => url.includes('/lifecycle') ? ok(state('RETIRED', { canReview: true })) : ok({ controlId: control, vesselId: vessel, controlRevision: 2, items: [], offset: 0, hasMore: false })))
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => url.includes('/lifecycle') ? ok(state('RETIRED', { canReview: true })) : ok({ controlId: control, vesselId: vessel, controlRevision: 2, latestRevision: 2, successorPending: false, items: [], offset: 0, hasMore: false })))
     render(<ControlLifecycle vessel={vessel} control={controlRow()} language="tr" csrf="synthetic-csrf" offline={false} locked={false} onChanged={vi.fn()} timeLabel={labels}/>)
     await user.click(screen.getByRole('button', { name: 'Kontrol yaşam döngüsünü aç' }))
     expect(await screen.findByText('Kullanımdan kaldırıldı')).toBeTruthy()
@@ -74,7 +74,7 @@ describe('DEV-028/029 lifecycle consumer', () => {
 
   it('shows a server refusal without claiming the change', async () => {
     vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => init?.method === 'POST' ? fail(409, 'separation_of_duties')
-      : url.includes('/lifecycle') ? ok(state('IN_REVIEW', { canReview: true })) : ok({ controlId: control, vesselId: vessel, controlRevision: 2, items: [], offset: 0, hasMore: false })))
+      : url.includes('/lifecycle') ? ok(state('IN_REVIEW', { canReview: true })) : ok({ controlId: control, vesselId: vessel, controlRevision: 2, latestRevision: 2, successorPending: false, items: [], offset: 0, hasMore: false })))
     const user = userEvent.setup()
     render(<ControlLifecycle vessel={vessel} control={controlRow()} language="en" csrf="synthetic-csrf" offline={false} locked={false} onChanged={vi.fn()} timeLabel={labels}/>)
     await user.click(screen.getByRole('button', { name: 'Open control lifecycle' }))
@@ -85,21 +85,76 @@ describe('DEV-028/029 lifecycle consumer', () => {
   })
 })
 
+// 62.01 section 6 dual pointer: the published revision stays effective while a successor is pending.
+describe('DEV-028 effective published revision vs pending successor', () => {
+  const pending = (value: string) => state(value, { revision: 5, publishedRevision: 3, successorPending: true, canReview: true,
+    events: [{ sequence: 4, controlRevision: 3, fromState: 'APPROVED', toState: 'PUBLISHED', reasonCode: 'PUBLISH', supersedesRevision: 1, actorId: actor, rationale: null, savedAt: '2026-11-19T00:00:01Z' }] })
+  const support = { controlId: control, vesselId: vessel, controlRevision: 3, latestRevision: 5, successorPending: true, items: [], offset: 0, hasMore: false }
+
+  it('shows the effective published revision separately from an approved successor and retires the published revision', async () => {
+    const posts: RequestInit[] = []
+    vi.stubGlobal('fetch', vi.fn(async (url: string, init?: RequestInit) => {
+      if (init?.method === 'POST') {
+        posts.push(init)
+        return ok({ id: control, vesselId: vessel, revision: 5, version: 8, state: 'RETIRED', publishedRevision: null, successorPending: false, effectiveness: 'UNKNOWN',
+          event: { sequence: 5, controlRevision: 3, fromState: 'APPROVED', toState: 'RETIRED', reasonCode: 'RETIRE', supersedesRevision: null, actorId: actor, rationale: 'FICTIONAL', savedAt: '2026-11-19T00:00:02Z' } })
+      }
+      return url.includes('/lifecycle') ? ok(pending('APPROVED')) : ok(support)
+    }))
+    const user = userEvent.setup()
+    render(<ControlLifecycle vessel={vessel} control={controlRow()} language="en" csrf="synthetic-csrf" offline={false} locked={false} onChanged={vi.fn()} timeLabel={labels}/>)
+    await user.click(screen.getByRole('button', { name: 'Open control lifecycle' }))
+    expect(await screen.findByText(/Effective published revision/)).toBeTruthy()
+    expect(document.querySelector('[data-effective-revision="3"]')).toBeTruthy()
+    expect(document.querySelector('[data-pending-revision="5"]')?.textContent).toContain('Pending successor revision (not effective until it is published)')
+    // The approved successor is not presented as the effective control.
+    expect(document.querySelector('[data-state]')?.getAttribute('data-state')).toBe('APPROVED')
+    expect(screen.getByText(/Supersedes revision r1/)).toBeTruthy()
+    expect(screen.getByRole('button', { name: 'Publish' })).toBeTruthy()
+    await user.type(screen.getByLabelText('Reason for this change'), 'FICTIONAL')
+    await user.click(screen.getByRole('button', { name: 'Retire' }))
+    await screen.findByText('Lifecycle change recorded')
+    expect(JSON.parse(posts[0].body as string)).toMatchObject({ revision: 3, reasonCode: 'RETIRE' })
+  })
+
+  it('says honestly when no published revision is effective', async () => {
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => url.includes('/lifecycle') ? ok(state('IN_REVIEW', { canReview: true }))
+      : ok({ controlId: control, vesselId: vessel, controlRevision: 2, latestRevision: 2, successorPending: false, items: [], offset: 0, hasMore: false })))
+    const user = userEvent.setup()
+    render(<ControlLifecycle vessel={vessel} control={controlRow()} language="tr" csrf="synthetic-csrf" offline={false} locked={false} onChanged={vi.fn()} timeLabel={labels}/>)
+    await user.click(screen.getByRole('button', { name: 'Kontrol yaşam döngüsünü aç' }))
+    expect(await screen.findByText('Yürürlükte yayımlı revizyon yok')).toBeTruthy()
+    expect(document.querySelector('[data-pending-revision]')).toBeNull()
+  })
+
+  it('rejects pointer responses that disagree with the candidate state', async () => {
+    for (const patch of [{ state: 'PUBLISHED', publishedRevision: 1 }, { state: 'PUBLISHED', publishedRevision: null }, { state: 'RETIRED', publishedRevision: 2 },
+      { publishedRevision: 1, successorPending: false }, { publishedRevision: 3 }, { publishedRevision: 2, successorPending: true }]) {
+      vi.stubGlobal('fetch', vi.fn(async () => ok(state('DRAFT', patch))))
+      await expect(lifecycle(vessel, control, 0, new AbortController().signal)).rejects.toThrow()
+    }
+    vi.stubGlobal('fetch', vi.fn(async () => ok(state('DRAFT', { events: [{ sequence: 1, controlRevision: 2, fromState: 'IN_REVIEW', toState: 'APPROVED', reasonCode: 'APPROVE', supersedesRevision: 1, actorId: actor, rationale: null, savedAt: '2026-11-19T00:00:01Z' }] }))))
+    await expect(lifecycle(vessel, control, 0, new AbortController().signal)).rejects.toThrow()
+    vi.stubGlobal('fetch', vi.fn(async () => ok({ ...support, successorPending: false })))
+    await expect(supportingEvidence(vessel, control, 0, new AbortController().signal)).rejects.toThrow()
+  })
+})
+
 describe('DEV-028/029 strict decoders', () => {
   it('rejects lifecycle authority expansion, unknown states and an evidence link that does not pin the control', async () => {
     for (const patch of [{ state: 'ACTIVE' }, { effectiveness: 'EFFECTIVE' }, { verification: 'VERIFIED' }, { id: evidence }]) {
       vi.stubGlobal('fetch', vi.fn(async () => ok(state('DRAFT', patch))))
       await expect(lifecycle(vessel, control, 0, new AbortController().signal)).rejects.toThrow()
     }
-    vi.stubGlobal('fetch', vi.fn(async () => ok({ controlId: control, vesselId: vessel, controlRevision: 2, items: [{ evidence: { ...evidenceRow('UNKNOWN', 2), links: [] }, pinnedControlRevision: 2, pinCurrent: true }], offset: 0, hasMore: false })))
+    vi.stubGlobal('fetch', vi.fn(async () => ok({ controlId: control, vesselId: vessel, controlRevision: 2, latestRevision: 2, successorPending: false, items: [{ evidence: { ...evidenceRow('UNKNOWN', 2), links: [] }, pinnedControlRevision: 2, pinCurrent: true }], offset: 0, hasMore: false })))
     await expect(supportingEvidence(vessel, control, 0, new AbortController().signal)).rejects.toThrow()
-    vi.stubGlobal('fetch', vi.fn(async () => ok({ controlId: control, vesselId: vessel, controlRevision: 2, items: [{ evidence: evidenceRow('UNKNOWN', 1), pinnedControlRevision: 1, pinCurrent: true }], offset: 0, hasMore: false })))
+    vi.stubGlobal('fetch', vi.fn(async () => ok({ controlId: control, vesselId: vessel, controlRevision: 2, latestRevision: 2, successorPending: false, items: [{ evidence: evidenceRow('UNKNOWN', 1), pinnedControlRevision: 1, pinCurrent: true }], offset: 0, hasMore: false })))
     await expect(supportingEvidence(vessel, control, 0, new AbortController().signal)).rejects.toThrow()
   })
 
   it('binds a transition outcome to the sent reason and revision', async () => {
     const body = JSON.stringify({ expectedVersion: 7, revision: 2, reasonCode: 'PUBLISH', rationale: 'FICTIONAL' })
-    vi.stubGlobal('fetch', vi.fn(async () => ok({ id: control, vesselId: vessel, revision: 2, version: 8, state: 'RETIRED', effectiveness: 'UNKNOWN', event: { sequence: 3, controlRevision: 2, fromState: 'PUBLISHED', toState: 'RETIRED', reasonCode: 'RETIRE', actorId: actor, rationale: null, savedAt: '2026-11-19T00:00:01Z' } })))
+    vi.stubGlobal('fetch', vi.fn(async () => ok({ id: control, vesselId: vessel, revision: 2, version: 8, state: 'RETIRED', publishedRevision: null, successorPending: false, effectiveness: 'UNKNOWN', event: { sequence: 3, controlRevision: 2, fromState: 'PUBLISHED', toState: 'RETIRED', reasonCode: 'RETIRE', supersedesRevision: null, actorId: actor, rationale: null, savedAt: '2026-11-19T00:00:01Z' } })))
     await expect(transition(vessel, control, { body, key: 'k'.repeat(16) }, 'csrf', new AbortController().signal)).rejects.toThrow()
   })
 
@@ -107,9 +162,9 @@ describe('DEV-028/029 strict decoders', () => {
     const base = { available: false, reason: 'AUTHORITATIVE_APPLICABILITY_UNAVAILABLE', draftCriticalOrphans: [], uncontrolledObligations: [], offset: 0, hasMore: false }
     vi.stubGlobal('fetch', vi.fn(async () => ok(base)))
     expect((await orphans(vessel, 0, new AbortController().signal)).criticalOrphans).toBeNull()
-    vi.stubGlobal('fetch', vi.fn(async () => ok({ ...base, criticalOrphans: [{ id: control, revision: 2, controlState: 'DRAFT', reasons: ['CRITICALITY_UNKNOWN', 'OWNER_MISSING'] }] })))
-    expect((await orphans(vessel, 0, new AbortController().signal)).criticalOrphans).toEqual([{ id: control, revision: 2, controlState: 'DRAFT', reasons: ['CRITICALITY_UNKNOWN', 'OWNER_MISSING'] }])
-    for (const item of [{ id: control, revision: 2, controlState: 'DRAFT', reasons: [] }, { id: control, revision: 2, controlState: 'RETIRED', reasons: ['OWNER_MISSING'] }, { id: control, revision: 2, controlState: 'DRAFT', reasons: ['ALL_CLEAR'] }]) {
+    vi.stubGlobal('fetch', vi.fn(async () => ok({ ...base, criticalOrphans: [{ id: control, revision: 2, controlState: 'DRAFT', successorPending: false, reasons: ['CRITICALITY_UNKNOWN', 'OWNER_MISSING'] }] })))
+    expect((await orphans(vessel, 0, new AbortController().signal)).criticalOrphans).toEqual([{ id: control, revision: 2, controlState: 'DRAFT', successorPending: false, reasons: ['CRITICALITY_UNKNOWN', 'OWNER_MISSING'] }])
+    for (const item of [{ id: control, revision: 2, controlState: 'DRAFT', successorPending: false, reasons: [] }, { id: control, revision: 2, controlState: 'RETIRED', successorPending: false, reasons: ['OWNER_MISSING'] }, { id: control, revision: 2, controlState: 'DRAFT', successorPending: false, reasons: ['ALL_CLEAR'] }]) {
       vi.stubGlobal('fetch', vi.fn(async () => ok({ ...base, criticalOrphans: [item] })))
       await expect(orphans(vessel, 0, new AbortController().signal)).rejects.toThrow()
     }

@@ -438,15 +438,24 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             if (cs.ReasonCode is not ("SUBMIT_FOR_REVIEW" or "RETURN_FOR_CORRECTION" or "APPROVE" or "PUBLISH" or "RETIRE" or "CONTENT_REVISED") ||
                 cs.FromState is not ("DRAFT" or "IN_REVIEW" or "APPROVED" or "PUBLISHED") || cs.ToState is not ("DRAFT" or "IN_REVIEW" or "APPROVED" or "PUBLISHED" or "RETIRED"))
                 throw new InvalidOperationException("Invalid control lifecycle metadata.");
-            return new(cs.VesselId, cs.ControlId, "ControlState", null, cs.Revision, Fields(Field("ReasonCode", null, cs.ReasonCode),
-                Field("FromState", null, cs.FromState), Field("ToState", null, cs.ToState), Field("ControlRevision", null, Number(cs.ControlRevision)), Field("Binding", null, "OwnerReference")));
+            if (cs.SupersedesRevision != null && (cs.ReasonCode != "PUBLISH" || cs.SupersedesRevision <= 0 || cs.SupersedesRevision >= cs.ControlRevision))
+                throw new InvalidOperationException("Invalid control lifecycle metadata.");
+            var lifecycleFields = new List<object> { Field("ReasonCode", null, cs.ReasonCode), Field("FromState", null, cs.FromState), Field("ToState", null, cs.ToState),
+                Field("ControlRevision", null, Number(cs.ControlRevision)), Field("Binding", null, "OwnerReference") };
+            // 62.01 §6: publishing a successor supersedes the previously effective published revision.
+            if (cs.SupersedesRevision is { } superseded) lifecycleFields.Add(Field("SupersedesRevision", null, Number(superseded)));
+            return new(cs.VesselId, cs.ControlId, "ControlState", null, cs.Revision, Fields([.. lifecycleFields]));
         }
         if (entry.Entity is ControlEvidenceHead stateHead && entry.State == EntityState.Modified && entry.Property(nameof(ControlEvidenceHead.ControlState)).IsModified) {
-            static string LifecycleState(object? value) => value is "DRAFT" or "IN_REVIEW" or "APPROVED" or "PUBLISHED" or "RETIRED" ? (string)value : throw new InvalidOperationException("Invalid control lifecycle metadata.");
+            // A stored NULL is the derived DRAFT of a control that has no lifecycle event yet.
+            static string LifecycleState(object? value) => value is null ? "DRAFT" : value is "DRAFT" or "IN_REVIEW" or "APPROVED" or "PUBLISHED" or "RETIRED" ? (string)value : throw new InvalidOperationException("Invalid control lifecycle metadata.");
+            static string? Pointer(object? value) => value is long revision ? Number(revision) : null;
             var priorRevision = (long)entry.Property(nameof(ControlEvidenceHead.Revision)).OriginalValue!;
-            return new(stateHead.VesselId, stateHead.Id, "Control", priorRevision, stateHead.Revision, Fields(
-                Field("Revision", Number(priorRevision), Number(stateHead.Revision)),
-                Field("ControlState", LifecycleState(entry.Property(nameof(ControlEvidenceHead.ControlState)).OriginalValue), LifecycleState(stateHead.ControlState))));
+            var headFields = new List<object> { Field("Revision", Number(priorRevision), Number(stateHead.Revision)),
+                Field("ControlState", LifecycleState(entry.Property(nameof(ControlEvidenceHead.ControlState)).OriginalValue), LifecycleState(stateHead.ControlState)) };
+            if (entry.Property(nameof(ControlEvidenceHead.PublishedRevision)).IsModified)
+                headFields.Add(Field("PublishedRevision", Pointer(entry.Property(nameof(ControlEvidenceHead.PublishedRevision)).OriginalValue), Pointer(stateHead.PublishedRevision)));
+            return new(stateHead.VesselId, stateHead.Id, "Control", priorRevision, stateHead.Revision, Fields([.. headFields]));
         }
         if (entry.Entity is ControlEvidenceRevision ce) {
             if (ce.Lifecycle is not ("DRAFT" or "SUBMITTED" or "COMPLETED") || ce.ReasonCode is not ("INITIAL_AUTHORING" or "AUTHORING_CORRECTION" or "SYNTHETIC_INCOMPLETE_DRAFT" or "SUBMIT" or "COMPLETE")) throw new InvalidOperationException("Invalid control/evidence change metadata.");

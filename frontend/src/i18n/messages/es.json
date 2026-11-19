@@ -3388,6 +3388,10 @@
     "m_965193f060525feb": "Los hallazgos de controles críticos no están disponibles en este servidor; no es un resultado sin incidencias.",
     "m_bd7660f8ea8e0811": "Criticidad desconocida",
     "m_69c8580208acc8c2": "Falta el vínculo con el requisito",
-    "m_fe74d79deff90fe1": "Falta el responsable"
+    "m_fe74d79deff90fe1": "Falta el responsable",
+    "m_61901b95440b2e61": "Revisión publicada vigente",
+    "m_5bfa5323a04a472d": "Revisión sucesora pendiente (no vigente hasta su publicación)",
+    "m_ae1a44f3c88cf989": "Ninguna revisión publicada está vigente",
+    "m_12e4b7ce9141120d": "Sustituye la revisión"
   }
 }

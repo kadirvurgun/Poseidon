@@ -14,8 +14,9 @@ public static class ControlEvidenceFixtures
             var id = Id(vessel.Id, kind);
             if (await db.ControlEvidenceHeads.FindAsync([vessel.TenantId, vessel.Id, kind, id], ct) != null) continue;
             var content = JsonSerializer.Serialize(new ControlEvidenceContent(Title: "FICTIONAL incomplete " + kind + " draft", Provenance: "SyntheticUnverified"), new JsonSerializerOptions(JsonSerializerDefaults.Web));
-            // DEV-028: the only honest initial lifecycle state; no review/approval/publication event is seeded.
-            db.ControlEvidenceHeads.Add(new() { TenantId = vessel.TenantId, VesselId = vessel.Id, Kind = kind, Id = id, Revision = 1, ControlState = kind == "Control" ? "DRAFT" : null });
+            // DEV-028: no lifecycle state is stored; a control without any lifecycle event derives DRAFT
+            // (ControlLifecyclePolicy.State). No review/approval/publication event is seeded.
+            db.ControlEvidenceHeads.Add(new() { TenantId = vessel.TenantId, VesselId = vessel.Id, Kind = kind, Id = id, Revision = 1 });
             db.ControlEvidenceRevisions.Add(new() { TenantId = vessel.TenantId, VesselId = vessel.Id, Kind = kind, Id = id, Revision = 1,
                 ContentJson = content, Hash = RegisterStorage.Hash(content), ReasonCode = "SYNTHETIC_INCOMPLETE_DRAFT", SavedAt = DateTimeOffset.UtcNow });
         }

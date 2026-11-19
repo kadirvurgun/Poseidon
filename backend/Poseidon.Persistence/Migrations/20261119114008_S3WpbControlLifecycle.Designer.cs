@@ -925,6 +925,9 @@ namespace Poseidon.Persistence.Migrations
                         .HasMaxLength(16)
                         .HasColumnType("character varying(16)");
 
+                    b.Property<long?>("PublishedRevision")
+                        .HasColumnType("bigint");
+
                     b.Property<long>("Revision")
                         .HasColumnType("bigint");
 
@@ -940,7 +943,7 @@ namespace Poseidon.Persistence.Migrations
                         {
                             t.HasCheckConstraint("CK_ControlEvidenceHeads", "\"Kind\" IN ('Control','Evidence') AND \"Revision\" > 0");
 
-                            t.HasCheckConstraint("CK_ControlEvidenceHeads_ControlState", "(\"Kind\" = 'Control' AND \"ControlState\" IN ('DRAFT','IN_REVIEW','APPROVED','PUBLISHED','RETIRED')) OR (\"Kind\" = 'Evidence' AND \"ControlState\" IS NULL)");
+                            t.HasCheckConstraint("CK_ControlEvidenceHeads_ControlState", "(\"Kind\" = 'Control' AND (\"ControlState\" IS NULL OR \"ControlState\" IN ('DRAFT','IN_REVIEW','APPROVED','PUBLISHED','RETIRED')) AND (\"PublishedRevision\" IS NULL OR (\"PublishedRevision\" > 0 AND \"PublishedRevision\" <= \"Revision\" AND \"ControlState\" IS NOT NULL AND \"ControlState\" <> 'RETIRED')) AND (\"ControlState\" IS DISTINCT FROM 'PUBLISHED' OR \"PublishedRevision\" IS NOT DISTINCT FROM \"Revision\")) OR (\"Kind\" = 'Evidence' AND \"ControlState\" IS NULL AND \"PublishedRevision\" IS NULL)");
                         });
                 });
 
@@ -1156,6 +1159,9 @@ namespace Poseidon.Persistence.Migrations
                     b.Property<DateTimeOffset>("SavedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<long?>("SupersedesRevision")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("ToState")
                         .IsRequired()
                         .HasMaxLength(16)
@@ -1167,7 +1173,7 @@ namespace Poseidon.Persistence.Migrations
 
                     b.ToTable("ControlStateEvents", "core", t =>
                         {
-                            t.HasCheckConstraint("CK_ControlStateEvents", "\"ControlKind\" = 'Control' AND \"Revision\" > 0 AND \"ControlRevision\" > 0 AND \"FromState\" IN ('DRAFT','IN_REVIEW','APPROVED','PUBLISHED') AND \"ToState\" IN ('DRAFT','IN_REVIEW','APPROVED','PUBLISHED','RETIRED') AND ((\"ReasonCode\" = 'SUBMIT_FOR_REVIEW' AND \"FromState\" = 'DRAFT' AND \"ToState\" = 'IN_REVIEW') OR (\"ReasonCode\" = 'RETURN_FOR_CORRECTION' AND \"FromState\" = 'IN_REVIEW' AND \"ToState\" = 'DRAFT') OR (\"ReasonCode\" = 'APPROVE' AND \"FromState\" = 'IN_REVIEW' AND \"ToState\" = 'APPROVED') OR (\"ReasonCode\" = 'PUBLISH' AND \"FromState\" = 'APPROVED' AND \"ToState\" = 'PUBLISHED') OR (\"ReasonCode\" = 'RETIRE' AND \"FromState\" = 'PUBLISHED' AND \"ToState\" = 'RETIRED') OR (\"ReasonCode\" = 'CONTENT_REVISED' AND \"FromState\" IN ('IN_REVIEW','APPROVED','PUBLISHED') AND \"ToState\" = 'DRAFT'))");
+                            t.HasCheckConstraint("CK_ControlStateEvents", "\"ControlKind\" = 'Control' AND \"Revision\" > 0 AND \"ControlRevision\" > 0 AND \"FromState\" IN ('DRAFT','IN_REVIEW','APPROVED','PUBLISHED') AND \"ToState\" IN ('DRAFT','IN_REVIEW','APPROVED','PUBLISHED','RETIRED') AND ((\"ReasonCode\" = 'SUBMIT_FOR_REVIEW' AND \"FromState\" = 'DRAFT' AND \"ToState\" = 'IN_REVIEW') OR (\"ReasonCode\" = 'RETURN_FOR_CORRECTION' AND \"FromState\" = 'IN_REVIEW' AND \"ToState\" = 'DRAFT') OR (\"ReasonCode\" = 'APPROVE' AND \"FromState\" = 'IN_REVIEW' AND \"ToState\" = 'APPROVED') OR (\"ReasonCode\" = 'PUBLISH' AND \"FromState\" = 'APPROVED' AND \"ToState\" = 'PUBLISHED') OR (\"ReasonCode\" = 'RETIRE' AND \"FromState\" IN ('DRAFT','IN_REVIEW','APPROVED','PUBLISHED') AND \"ToState\" = 'RETIRED') OR (\"ReasonCode\" = 'CONTENT_REVISED' AND \"FromState\" IN ('IN_REVIEW','APPROVED','PUBLISHED') AND \"ToState\" = 'DRAFT')) AND (\"SupersedesRevision\" IS NULL OR (\"ReasonCode\" = 'PUBLISH' AND \"SupersedesRevision\" > 0 AND \"SupersedesRevision\" < \"ControlRevision\"))");
                         });
                 });
 

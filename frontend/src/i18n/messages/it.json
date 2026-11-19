@@ -3388,6 +3388,10 @@
     "m_965193f060525feb": "I rilievi sui controlli critici non sono disponibili da questo server; non è un esito privo di problemi.",
     "m_bd7660f8ea8e0811": "Criticità sconosciuta",
     "m_69c8580208acc8c2": "Collegamento al requisito mancante",
-    "m_fe74d79deff90fe1": "Responsabile mancante"
+    "m_fe74d79deff90fe1": "Responsabile mancante",
+    "m_61901b95440b2e61": "Revisione pubblicata in vigore",
+    "m_5bfa5323a04a472d": "Revisione successiva in sospeso (non in vigore fino alla pubblicazione)",
+    "m_ae1a44f3c88cf989": "Nessuna revisione pubblicata è in vigore",
+    "m_12e4b7ce9141120d": "Sostituisce la revisione"
   }
 }

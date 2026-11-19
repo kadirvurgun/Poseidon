@@ -3388,6 +3388,10 @@
     "m_965193f060525feb": "As constatações de controles críticos não estão disponíveis neste servidor; isto não é um resultado sem pendências.",
     "m_bd7660f8ea8e0811": "Criticidade desconhecida",
     "m_69c8580208acc8c2": "Vínculo com o requisito ausente",
-    "m_fe74d79deff90fe1": "Responsável ausente"
+    "m_fe74d79deff90fe1": "Responsável ausente",
+    "m_61901b95440b2e61": "Revisão publicada vigente",
+    "m_5bfa5323a04a472d": "Revisão sucessora pendente (não vigente até ser publicada)",
+    "m_ae1a44f3c88cf989": "Nenhuma revisão publicada está vigente",
+    "m_12e4b7ce9141120d": "Substitui a revisão"
   }
 }

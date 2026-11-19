@@ -3388,6 +3388,10 @@
     "m_965193f060525feb": "Critical control findings are unavailable from this server; this is not an all-clear result.",
     "m_bd7660f8ea8e0811": "Criticality unknown",
     "m_69c8580208acc8c2": "Requirement link missing",
-    "m_fe74d79deff90fe1": "Owner missing"
+    "m_fe74d79deff90fe1": "Owner missing",
+    "m_61901b95440b2e61": "Effective published revision",
+    "m_5bfa5323a04a472d": "Pending successor revision (not effective until it is published)",
+    "m_ae1a44f3c88cf989": "No published revision is effective",
+    "m_12e4b7ce9141120d": "Supersedes revision"
   }
 }

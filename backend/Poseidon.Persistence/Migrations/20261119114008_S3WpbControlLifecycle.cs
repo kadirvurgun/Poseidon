@@ -19,10 +19,16 @@ namespace Poseidon.Persistence.Migrations
                 maxLength: 16,
                 nullable: true);
 
-            // DEV-028 controlled schema backfill: an existing control has no recorded review,
-            // approval or publication fact, so its only honest lifecycle state is DRAFT. No
-            // event, approval or receipt is fabricated; evidence heads stay NULL.
-            migrationBuilder.Sql("""UPDATE core."ControlEvidenceHeads" SET "ControlState" = 'DRAFT' WHERE "Kind" = 'Control';""");
+            // DEV-028 schema-only change: no existing row is rewritten. A control head with a NULL
+            // state has no lifecycle event and derives DRAFT (ControlLifecyclePolicy.State), so no
+            // unaudited business-state mutation runs outside the audited SaveChanges path.
+
+            migrationBuilder.AddColumn<long>(
+                name: "PublishedRevision",
+                schema: "core",
+                table: "ControlEvidenceHeads",
+                type: "bigint",
+                nullable: true);
 
             migrationBuilder.CreateTable(
                 name: "ControlStateEvents",
@@ -38,6 +44,7 @@ namespace Poseidon.Persistence.Migrations
                     FromState = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
                     ToState = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
                     ReasonCode = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
+                    SupersedesRevision = table.Column<long>(type: "bigint", nullable: true),
                     Rationale = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
                     ActorId = table.Column<Guid>(type: "uuid", nullable: false),
                     RoleContext = table.Column<string>(type: "text", nullable: true),
@@ -46,7 +53,7 @@ namespace Poseidon.Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ControlStateEvents", x => new { x.TenantId, x.VesselId, x.ControlId, x.Revision });
-                    table.CheckConstraint("CK_ControlStateEvents", "\"ControlKind\" = 'Control' AND \"Revision\" > 0 AND \"ControlRevision\" > 0 AND \"FromState\" IN ('DRAFT','IN_REVIEW','APPROVED','PUBLISHED') AND \"ToState\" IN ('DRAFT','IN_REVIEW','APPROVED','PUBLISHED','RETIRED') AND ((\"ReasonCode\" = 'SUBMIT_FOR_REVIEW' AND \"FromState\" = 'DRAFT' AND \"ToState\" = 'IN_REVIEW') OR (\"ReasonCode\" = 'RETURN_FOR_CORRECTION' AND \"FromState\" = 'IN_REVIEW' AND \"ToState\" = 'DRAFT') OR (\"ReasonCode\" = 'APPROVE' AND \"FromState\" = 'IN_REVIEW' AND \"ToState\" = 'APPROVED') OR (\"ReasonCode\" = 'PUBLISH' AND \"FromState\" = 'APPROVED' AND \"ToState\" = 'PUBLISHED') OR (\"ReasonCode\" = 'RETIRE' AND \"FromState\" = 'PUBLISHED' AND \"ToState\" = 'RETIRED') OR (\"ReasonCode\" = 'CONTENT_REVISED' AND \"FromState\" IN ('IN_REVIEW','APPROVED','PUBLISHED') AND \"ToState\" = 'DRAFT'))");
+                    table.CheckConstraint("CK_ControlStateEvents", "\"ControlKind\" = 'Control' AND \"Revision\" > 0 AND \"ControlRevision\" > 0 AND \"FromState\" IN ('DRAFT','IN_REVIEW','APPROVED','PUBLISHED') AND \"ToState\" IN ('DRAFT','IN_REVIEW','APPROVED','PUBLISHED','RETIRED') AND ((\"ReasonCode\" = 'SUBMIT_FOR_REVIEW' AND \"FromState\" = 'DRAFT' AND \"ToState\" = 'IN_REVIEW') OR (\"ReasonCode\" = 'RETURN_FOR_CORRECTION' AND \"FromState\" = 'IN_REVIEW' AND \"ToState\" = 'DRAFT') OR (\"ReasonCode\" = 'APPROVE' AND \"FromState\" = 'IN_REVIEW' AND \"ToState\" = 'APPROVED') OR (\"ReasonCode\" = 'PUBLISH' AND \"FromState\" = 'APPROVED' AND \"ToState\" = 'PUBLISHED') OR (\"ReasonCode\" = 'RETIRE' AND \"FromState\" IN ('DRAFT','IN_REVIEW','APPROVED','PUBLISHED') AND \"ToState\" = 'RETIRED') OR (\"ReasonCode\" = 'CONTENT_REVISED' AND \"FromState\" IN ('IN_REVIEW','APPROVED','PUBLISHED') AND \"ToState\" = 'DRAFT')) AND (\"SupersedesRevision\" IS NULL OR (\"ReasonCode\" = 'PUBLISH' AND \"SupersedesRevision\" > 0 AND \"SupersedesRevision\" < \"ControlRevision\"))");
                     table.ForeignKey(
                         name: "FK_ControlStateEvents_ControlEvidenceHeads_TenantId_VesselId_C~",
                         columns: x => new { x.TenantId, x.VesselId, x.ControlKind, x.ControlId },
@@ -69,7 +76,7 @@ namespace Poseidon.Persistence.Migrations
                 name: "CK_ControlEvidenceHeads_ControlState",
                 schema: "core",
                 table: "ControlEvidenceHeads",
-                sql: "(\"Kind\" = 'Control' AND \"ControlState\" IN ('DRAFT','IN_REVIEW','APPROVED','PUBLISHED','RETIRED')) OR (\"Kind\" = 'Evidence' AND \"ControlState\" IS NULL)");
+                sql: "(\"Kind\" = 'Control' AND (\"ControlState\" IS NULL OR \"ControlState\" IN ('DRAFT','IN_REVIEW','APPROVED','PUBLISHED','RETIRED')) AND (\"PublishedRevision\" IS NULL OR (\"PublishedRevision\" > 0 AND \"PublishedRevision\" <= \"Revision\" AND \"ControlState\" IS NOT NULL AND \"ControlState\" <> 'RETIRED')) AND (\"ControlState\" IS DISTINCT FROM 'PUBLISHED' OR \"PublishedRevision\" IS NOT DISTINCT FROM \"Revision\")) OR (\"Kind\" = 'Evidence' AND \"ControlState\" IS NULL AND \"PublishedRevision\" IS NULL)");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ControlStateEvents_TenantId_VesselId_ControlKind_ControlId_~",
@@ -92,6 +99,11 @@ namespace Poseidon.Persistence.Migrations
 
             migrationBuilder.DropColumn(
                 name: "ControlState",
+                schema: "core",
+                table: "ControlEvidenceHeads");
+
+            migrationBuilder.DropColumn(
+                name: "PublishedRevision",
                 schema: "core",
                 table: "ControlEvidenceHeads");
         }

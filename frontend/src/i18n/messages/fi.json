@@ -3388,6 +3388,10 @@
     "m_965193f060525feb": "Kriittisten kontrollien havainnot eivät ole saatavilla tältä palvelimelta; tämä ei ole puhdas tulos.",
     "m_bd7660f8ea8e0811": "Kriittisyys tuntematon",
     "m_69c8580208acc8c2": "Vaatimuslinkki puuttuu",
-    "m_fe74d79deff90fe1": "Omistaja puuttuu"
+    "m_fe74d79deff90fe1": "Omistaja puuttuu",
+    "m_61901b95440b2e61": "Voimassa oleva julkaistu revisio",
+    "m_5bfa5323a04a472d": "Odottava seuraajarevisio (ei voimassa ennen julkaisua)",
+    "m_ae1a44f3c88cf989": "Mikään julkaistu revisio ei ole voimassa",
+    "m_12e4b7ce9141120d": "Korvaa revision"
   }
 }

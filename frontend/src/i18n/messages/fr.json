@@ -3388,6 +3388,10 @@
     "m_965193f060525feb": "Les constats sur les contrôles critiques ne sont pas disponibles sur ce serveur ; ce n’est pas un résultat sans anomalie.",
     "m_bd7660f8ea8e0811": "Criticité inconnue",
     "m_69c8580208acc8c2": "Lien d’exigence manquant",
-    "m_fe74d79deff90fe1": "Responsable manquant"
+    "m_fe74d79deff90fe1": "Responsable manquant",
+    "m_61901b95440b2e61": "Révision publiée en vigueur",
+    "m_5bfa5323a04a472d": "Révision successeur en attente (non en vigueur avant publication)",
+    "m_ae1a44f3c88cf989": "Aucune révision publiée n’est en vigueur",
+    "m_12e4b7ce9141120d": "Remplace la révision"
   }
 }

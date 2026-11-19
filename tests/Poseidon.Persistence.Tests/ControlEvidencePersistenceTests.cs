@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Poseidon.Domain;
 using Poseidon.Persistence.Seeding;
 using Testcontainers.PostgreSql;
 using Xunit;
@@ -81,7 +82,8 @@ public sealed class ControlEvidencePersistenceTests : IAsyncLifetime
     [Trait("Requirement", "DEV-028")]
     public async Task Seeded_controls_start_draft_and_state_change_requires_its_exact_event() {
         await using var db = Db();
-        Assert.All(await db.ControlEvidenceHeads.Where(x => x.Kind == "Control").ToArrayAsync(Ct), x => Assert.Equal("DRAFT", x.ControlState));
+        // Schema-only lifecycle: a control with no lifecycle event stores NULL and derives DRAFT.
+        Assert.All(await db.ControlEvidenceHeads.Where(x => x.Kind == "Control").ToArrayAsync(Ct), x => { Assert.Null(x.ControlState); Assert.Equal("DRAFT", ControlLifecyclePolicy.State(x.ControlState)); });
         Assert.All(await db.ControlEvidenceHeads.Where(x => x.Kind == "Evidence").ToArrayAsync(Ct), x => Assert.Null(x.ControlState));
         Assert.Empty(await db.ControlStateEvents.ToArrayAsync(Ct));
         var head = await db.ControlEvidenceHeads.FirstAsync(x => x.Kind == "Control", Ct);
@@ -107,6 +109,15 @@ public sealed class ControlEvidencePersistenceTests : IAsyncLifetime
         await Assert.ThrowsAsync<Npgsql.PostgresException>(() => Sql(db, $"UPDATE core.\"ControlEvidenceHeads\" SET \"ControlState\" = 'DRAFT' WHERE \"Id\" = '{evidence.Id}' AND \"Kind\" = 'Evidence'"));
         var control = await db.ControlEvidenceHeads.FirstAsync(x => x.Kind == "Control", Ct);
         await Assert.ThrowsAsync<Npgsql.PostgresException>(() => Sql(db, $"UPDATE core.\"ControlEvidenceHeads\" SET \"ControlState\" = 'ACTIVE' WHERE \"Id\" = '{control.Id}' AND \"Kind\" = 'Control'"));
+        // 62.01 section 6 current pointer: PUBLISHED needs the pointer on its own revision; no pointer on evidence,
+        // on a retired control, on a control with no lifecycle state, or beyond the latest revision.
+        foreach (var statement in new[] {
+            $"UPDATE core.\"ControlEvidenceHeads\" SET \"ControlState\" = 'PUBLISHED' WHERE \"Id\" = '{control.Id}' AND \"Kind\" = 'Control'",
+            $"UPDATE core.\"ControlEvidenceHeads\" SET \"PublishedRevision\" = 1 WHERE \"Id\" = '{evidence.Id}' AND \"Kind\" = 'Evidence'",
+            $"UPDATE core.\"ControlEvidenceHeads\" SET \"PublishedRevision\" = 1 WHERE \"Id\" = '{control.Id}' AND \"Kind\" = 'Control'",
+            $"UPDATE core.\"ControlEvidenceHeads\" SET \"ControlState\" = 'RETIRED', \"PublishedRevision\" = 1 WHERE \"Id\" = '{control.Id}' AND \"Kind\" = 'Control'",
+            $"UPDATE core.\"ControlEvidenceHeads\" SET \"ControlState\" = 'DRAFT', \"PublishedRevision\" = \"Revision\" + 1 WHERE \"Id\" = '{control.Id}' AND \"Kind\" = 'Control'" })
+            await Assert.ThrowsAsync<Npgsql.PostgresException>(() => Sql(db, statement));
         control.ControlState = "IN_REVIEW"; db.Add(StateEvent(control, "DRAFT", "IN_REVIEW", "SUBMIT_FOR_REVIEW")); await db.SaveChangesAsync(Ct);
         var stored = await db.ControlStateEvents.SingleAsync(Ct); stored.Rationale = "forged";
         await Assert.ThrowsAsync<InvalidOperationException>(() => db.SaveChangesAsync(Ct)); db.ChangeTracker.Clear();

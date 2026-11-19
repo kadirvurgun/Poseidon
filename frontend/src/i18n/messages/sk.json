@@ -3388,6 +3388,10 @@
     "m_965193f060525feb": "Zistenia pri kritických kontrolách nie sú z tohto servera k dispozícii; nejde o výsledok bez nálezov.",
     "m_bd7660f8ea8e0811": "Kritickosť neznáma",
     "m_69c8580208acc8c2": "Chýba väzba na požiadavku",
-    "m_fe74d79deff90fe1": "Chýba vlastník"
+    "m_fe74d79deff90fe1": "Chýba vlastník",
+    "m_61901b95440b2e61": "Platná publikovaná revízia",
+    "m_5bfa5323a04a472d": "Čakajúca nasledujúca revízia (neplatí, kým nebude publikovaná)",
+    "m_ae1a44f3c88cf989": "Žiadna publikovaná revízia neplatí",
+    "m_12e4b7ce9141120d": "Nahrádza revíziu"
   }
 }

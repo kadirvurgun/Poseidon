@@ -18432,6 +18432,7 @@
           "fromState",
           "toState",
           "reasonCode",
+          "supersedesRevision",
           "actorId",
           "rationale",
           "savedAt"
@@ -18454,6 +18455,13 @@
           },
           "reasonCode": {
             "type": "string"
+          },
+          "supersedesRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
           },
           "actorId": {
             "type": "string",
@@ -18478,6 +18486,8 @@
           "revision",
           "version",
           "state",
+          "publishedRevision",
+          "successorPending",
           "effectiveness",
           "event"
         ],
@@ -18501,6 +18511,16 @@
           },
           "state": {
             "type": "string"
+          },
+          "publishedRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "successorPending": {
+            "type": "boolean"
           },
           "effectiveness": {
             "type": "string"

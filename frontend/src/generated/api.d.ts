@@ -6694,6 +6694,8 @@ export interface components {
             fromState: string;
             toState: string;
             reasonCode: string;
+            /** Format: int64 */
+            supersedesRevision: null | number;
             /** Format: uuid */
             actorId: string;
             rationale: null | string;
@@ -6710,6 +6712,9 @@ export interface components {
             /** Format: uint32 */
             version: number;
             state: string;
+            /** Format: int64 */
+            publishedRevision: null | number;
+            successorPending: boolean;
             effectiveness: string;
             event: components["schemas"]["ControlLifecycleEventDto"];
         };

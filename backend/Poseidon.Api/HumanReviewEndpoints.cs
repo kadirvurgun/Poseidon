@@ -167,10 +167,14 @@ public static class HumanReviewEndpoints
     }
     private static bool GuidQuery(HttpContext h, string key, out Guid id) => Guid.TryParseExact(h.Request.Query[key], "D", out id) && id != Guid.Empty;
     private static bool RevisionQuery(HttpContext h, string key, out long revision) => long.TryParse(h.Request.Query[key], NumberStyles.None, CultureInfo.InvariantCulture, out revision) && revision is > 0 and <= 9007199254740991;
-    private static bool Superseded(ControlEvidenceHead evidence, ControlEvidenceHead control, long er, long cr) => evidence.Revision != er || control.Revision != cr;
+    // 62.01 §6: the control side compares with the effective published revision, which a pending
+    // successor draft/review/approval does not replace; a never-published control uses its latest revision.
+    private static bool Superseded(ControlEvidenceHead evidence, ControlEvidenceHead control, long er, long cr) =>
+        evidence.Revision != er || ControlLifecyclePolicy.EffectiveRevision(control.PublishedRevision, control.Revision) != cr;
     private static async Task<HumanReviewDto> Dto(PoseidonDbContext db, HumanReviewEvent e, uint version, DateTimeOffset asOf, CancellationToken ct, FederationSettings settings, bool currentView = true) {
         var superseded = await db.ControlEvidenceRevisions.AnyAsync(x => x.VesselId == e.VesselId && x.SavedAt <= asOf &&
-            (x.Kind == "Evidence" && x.Id == e.EvidenceId && x.Revision > e.EvidenceRevision || x.Kind == "Control" && x.Id == e.ControlId && x.Revision > e.ControlRevision), ct)
+            x.Kind == "Evidence" && x.Id == e.EvidenceId && x.Revision > e.EvidenceRevision, ct)
+            || await ControlEvidenceEndpoints.ControlRevisionSuperseded(db, e.VesselId, e.ControlId, e.ControlRevision, asOf, ct)
             || await LineageChanged(db, e.VesselId, e.ControlId, e.ControlRevision, e.EvaluationId, asOf, ct, settings, currentView);
         if (e.VerificationId != null) superseded |= await db.HumanReviewEvents.AnyAsync(x => x.VesselId == e.VesselId && x.Id == e.VerificationId && x.Revision > e.VerificationRevision && x.SavedAt <= asOf, ct);
         if (e.DecisionJson != null) {
@@ -287,7 +291,7 @@ public static class HumanReviewEndpoints
         var ch = await db.ControlEvidenceHeads.SingleAsync(x => x.VesselId == vessel && x.Kind == "Control" && x.Id == control, ct);
         var content = JsonSerializer.Deserialize<ControlEvidenceContent>(ev.ContentJson, Json)!;
         var historicalSuperseded = await db.ControlEvidenceRevisions.AnyAsync(x => x.VesselId == vessel && x.SavedAt <= asOf &&
-            (x.Kind == "Evidence" && x.Id == evidence && x.Revision > er || x.Kind == "Control" && x.Id == control && x.Revision > cr), ct);
+            x.Kind == "Evidence" && x.Id == evidence && x.Revision > er, ct) || await ControlEvidenceEndpoints.ControlRevisionSuperseded(db, vessel, control, cr, asOf, ct);
         var currentEvents = await authorizedMetadata.Where(e => db.HumanReviewHeads.Any(head => head.VesselId == vessel && head.Id == e.Id && head.Revision == e.Revision))
             .OrderByDescending(e => e.SavedAt).ThenBy(e => e.Id).Take(64).ToArrayAsync(ct);
         var chainBlockers = new List<string>(evaluationCauses);
@@ -406,7 +410,7 @@ public static class HumanReviewEndpoints
             return Results.Content(r.OutcomeJson, "application/json");
         }
         async Task<bool> RecordingChanged() =>
-            await db.ControlEvidenceHeads.AnyAsync(x => x.VesselId == vessel && (x.Kind == "Evidence" && x.Id == ev.Id && x.Revision != ev.Revision || x.Kind == "Control" && x.Id == co.Id && x.Revision != co.Revision), ct) ||
+            await db.ControlEvidenceHeads.AnyAsync(x => x.VesselId == vessel && (x.Kind == "Evidence" && x.Id == ev.Id && x.Revision != ev.Revision || x.Kind == "Control" && x.Id == co.Id && (x.PublishedRevision ?? x.Revision) != co.Revision), ct) ||
             await LineageChanged(db, vessel, co.Id, co.Revision, cmd.EvaluationId, DateTimeOffset.UtcNow, ct, h.RequestServices.GetRequiredService<FederationSettings>()) ||
             await db.HumanReviewHeads.AnyAsync(x => x.VesselId == vessel && x.Id == cmd.VerificationId && x.Revision != cmd.VerificationRevision, ct);
         var replay = await Replay(); if (replay != null) return replay;

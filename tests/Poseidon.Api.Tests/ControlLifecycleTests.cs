@@ -21,7 +21,9 @@ public sealed partial class DirectoryWorkspaceTests
     private async Task<HttpResponseMessage> LifecycleCommand(HttpClient c, Guid control, string reason, string? key = null, ControlLifecycleDto? current = null)
     {
         current ??= await ReadLifecycle(c, control);
-        return await Send(c, LifecycleRoute(control), new ControlLifecycleCommand(current.Version, current.Revision, reason, "FICTIONAL lifecycle reason; no official approval"), key);
+        // RETIRE names the effective published revision (62.01 expectedCurrentRevisionId); others the candidate.
+        var revision = reason == "RETIRE" && current.PublishedRevision is { } published ? published : current.Revision;
+        return await Send(c, LifecycleRoute(control), new ControlLifecycleCommand(current.Version, revision, reason, "FICTIONAL lifecycle reason; no official approval"), key);
     }
     private async Task<ControlLifecycleOutcome> Accepted(HttpResponseMessage response)
     {
@@ -84,11 +86,12 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal("APPROVED", approved.State); Assert.Equal(reviewer, approved.Event.ActorId);
         var published = await Accepted(await LifecycleCommand(c, co.Id, "PUBLISH"));
         Assert.Equal("PUBLISHED", published.State); Assert.Equal("UNKNOWN", published.Effectiveness);
+        Assert.Equal(co.Revision, published.PublishedRevision); Assert.False(published.SuccessorPending); Assert.Null(published.Event.SupersedesRevision);
         // Publication is not completion, verification or effectiveness.
         var listed = (await c.GetFromJsonAsync<JsonElement>("/api/v1/" + GraphRoute("controls"), Ct)).GetProperty("items").EnumerateArray().Single(x => x.GetProperty("id").GetGuid() == co.Id);
         Assert.Equal("UNVERIFIED", listed.GetProperty("verification").GetString()); Assert.Equal("UNKNOWN", listed.GetProperty("effectiveness").GetString());
         var retired = await Accepted(await LifecycleCommand(c, co.Id, "RETIRE"));
-        Assert.Equal("RETIRED", retired.State);
+        Assert.Equal("RETIRED", retired.State); Assert.Null(retired.PublishedRevision); // current pointer cleared (62.01 paragraph:192)
         await AssertCode(await LifecycleCommand(c, co.Id, "PUBLISH"), HttpStatusCode.Conflict, "control_retired");
         SwitchActor(host.Services, author); await Token(c);
         var head = (await c.GetFromJsonAsync<JsonElement>("/api/v1/" + GraphRoute("controls"), Ct)).GetProperty("items").EnumerateArray().Single(x => x.GetProperty("id").GetGuid() == co.Id);
@@ -131,12 +134,118 @@ public sealed partial class DirectoryWorkspaceTests
             Content = command.Content with { Frequency = "FICTIONAL revised frequency" } }, update: true);
         var after = await ReadLifecycle(c, co.Id);
         Assert.Equal("DRAFT", after.State); Assert.Equal(corrected.Revision, after.Revision);
+        // Never published: there is no effective revision to keep, and nothing is pending against one.
+        Assert.Null(after.PublishedRevision); Assert.False(after.SuccessorPending);
         var reset = after.Events.First();
         Assert.Equal(("CONTENT_REVISED", "APPROVED", "DRAFT", corrected.Revision), (reset.ReasonCode, reset.FromState, reset.ToState, reset.ControlRevision));
         // The old approval stays immutable history bound to its own revision.
         Assert.Contains(after.Events, e => e.ReasonCode == "APPROVE" && e.ControlRevision == co.Revision);
         await using var db = Db();
         Assert.Single(await db.AuditEvents.Where(x => x.EntityType == nameof(ControlStateEvent) && x.ResourceId == co.Id && x.ChangeSummary!.Contains("CONTENT_REVISED")).ToArrayAsync(Ct));
+    }
+
+    // DEV-028 / 62.01 section 6 paragraph:188-190, 198, 447: a published revision is never edited; a revision
+    // is a successor candidate (DRAFT) and the published revision stays effective for reads, orphan
+    // findings, supporting evidence and verification gates until the successor itself is published.
+    [Fact]
+    [Trait("Requirement", "DEV-028")]
+    public async Task A_published_control_stays_effective_until_its_successor_revision_is_published()
+    {
+        await using var host = Host(); using var c = Client(host); GraphPermissionsForTest(host.Services); await Token(c);
+        var (rule, _, _) = await AdmittedByCommands(c, host.Services);
+        var pin = new RequirementPin(rule.Current.RequirementId!.Value, rule.Current.RequirementRevision!.Value, rule.Current.SourceId!.Value, rule.Current.SourceRevision!.Value, rule.Current.Id, rule.Current.Revision);
+        var author = host.Services.GetRequiredService<FederationSettings>().Memberships[0].ActorId;
+        var command = GraphCommand(content: new(Title: "FICTIONAL effective control", OwnerId: author, OwnerRole: ReviewRole, Frequency: "FICTIONAL frequency",
+            EvidencePolicy: "FICTIONAL evidence policy", VerificationPolicy: "FICTIONAL independent review", Critical: true)) with { Requirements = [pin] };
+        var co = await GraphSave(c, "controls", command);
+        using (var submitted = await Send(c, GraphRoute($"controls/{co.Id}/submit"), command with { ExpectedVersion = co.Version, ReasonCode = "SUBMIT" }))
+            co = (await submitted.Content.ReadFromJsonAsync<ControlEvidenceDto>(Ct))!;
+        await Accepted(await LifecycleCommand(c, co.Id, "SUBMIT_FOR_REVIEW"));
+        var reviewer = Guid.NewGuid(); SwitchActor(host.Services, reviewer, "control.approve"); await Token(c);
+        await Accepted(await LifecycleCommand(c, co.Id, "APPROVE"));
+        var first = await Accepted(await LifecycleCommand(c, co.Id, "PUBLISH"));
+        Assert.Equal(co.Revision, first.PublishedRevision);
+        SwitchActor(host.Services, author); await Token(c);
+        // Evidence pinned to the published revision.
+        var live = await ReadLifecycle(c, co.Id);
+        var evidence = await GraphSave(c, "evidence", GraphCommand(content: new(Title: "FICTIONAL support", Provenance: "Synthetic declaration", ObservedAt: DateTimeOffset.UtcNow.AddMinutes(-5))) with
+            { Requirements = [pin], Links = [new("Control", co.Id, co.Revision, live.Version)] });
+        // Editing the published control opens a successor DRAFT; the owner is removed in the successor only.
+        var successor = await GraphSave(c, $"controls/{co.Id}", command with { ExpectedVersion = (await ReadLifecycle(c, co.Id)).Version, ReasonCode = "AUTHORING_CORRECTION",
+            Content = command.Content with { Frequency = "FICTIONAL revised frequency", OwnerId = null, OwnerRole = null } }, update: true);
+        var pending = await ReadLifecycle(c, co.Id);
+        Assert.Equal(("DRAFT", successor.Revision, co.Revision, true), (pending.State, pending.Revision, pending.PublishedRevision, pending.SuccessorPending));
+        var opened = pending.Events.First();
+        Assert.Equal(("CONTENT_REVISED", "PUBLISHED", "DRAFT", successor.Revision), (opened.ReasonCode, opened.FromState, opened.ToState, opened.ControlRevision));
+        // Orphan findings judge the effective published revision, not the ownerless successor draft.
+        var orphans = await c.GetFromJsonAsync<JsonElement>("/api/v1/" + GraphRoute("controls/orphans"), Ct);
+        Assert.DoesNotContain(orphans.GetProperty("criticalOrphans").EnumerateArray(), x => x.GetProperty("id").GetGuid() == co.Id);
+        // Supporting evidence pinned to the published revision stays current; the old revision is not superseded.
+        var support = await c.GetFromJsonAsync<JsonElement>("/api/v1/" + GraphRoute($"controls/{co.Id}/supporting-evidence"), Ct);
+        Assert.Equal((co.Revision, successor.Revision, true), (support.GetProperty("controlRevision").GetInt64(), support.GetProperty("latestRevision").GetInt64(), support.GetProperty("successorPending").GetBoolean()));
+        Assert.True(Assert.Single(support.GetProperty("items").EnumerateArray(), x => x.GetProperty("evidence").GetProperty("id").GetGuid() == evidence.Id).GetProperty("pinCurrent").GetBoolean());
+        var publishedVersion = (await c.GetFromJsonAsync<JsonElement>("/api/v1/" + GraphRoute($"controls/{co.Id}/versions"), Ct)).GetProperty("items").EnumerateArray()
+            .Single(x => x.GetProperty("revision").GetInt64() == co.Revision);
+        Assert.NotEqual("SUPERSEDED", publishedVersion.GetProperty("timeState").GetString());
+        // Successor review and approval never move the effective revision.
+        var successorCommand = command with { Content = command.Content with { Frequency = "FICTIONAL revised frequency" } };
+        using (var submitted = await Send(c, GraphRoute($"controls/{co.Id}/submit"), successorCommand with { ExpectedVersion = pending.Version, ReasonCode = "SUBMIT" }))
+            successor = (await submitted.Content.ReadFromJsonAsync<ControlEvidenceDto>(Ct))!;
+        var inReview = await Accepted(await LifecycleCommand(c, co.Id, "SUBMIT_FOR_REVIEW"));
+        Assert.Equal(("IN_REVIEW", co.Revision, true), (inReview.State, inReview.PublishedRevision, inReview.SuccessorPending));
+        SwitchActor(host.Services, Guid.NewGuid(), "control.approve"); await Token(c);
+        // A stale candidate revision never transitions.
+        var beforeApprove = await ReadLifecycle(c, co.Id);
+        await AssertCode(await Send(c, LifecycleRoute(co.Id), new ControlLifecycleCommand(beforeApprove.Version, co.Revision, "APPROVE", "FICTIONAL stale")), HttpStatusCode.Conflict, "control_revision_conflict");
+        var approved = await Accepted(await LifecycleCommand(c, co.Id, "APPROVE"));
+        Assert.Equal(("APPROVED", co.Revision, true), (approved.State, approved.PublishedRevision, approved.SuccessorPending));
+        // Publishing the successor supersedes the previous published revision through an audited event.
+        var replaced = await Accepted(await LifecycleCommand(c, co.Id, "PUBLISH"));
+        Assert.Equal(("PUBLISHED", successor.Revision, false, co.Revision), (replaced.State, replaced.PublishedRevision, replaced.SuccessorPending, replaced.Event.SupersedesRevision));
+        support = await c.GetFromJsonAsync<JsonElement>("/api/v1/" + GraphRoute($"controls/{co.Id}/supporting-evidence"), Ct);
+        Assert.False(Assert.Single(support.GetProperty("items").EnumerateArray(), x => x.GetProperty("evidence").GetProperty("id").GetGuid() == evidence.Id).GetProperty("pinCurrent").GetBoolean());
+        publishedVersion = (await c.GetFromJsonAsync<JsonElement>("/api/v1/" + GraphRoute($"controls/{co.Id}/versions"), Ct)).GetProperty("items").EnumerateArray()
+            .Single(x => x.GetProperty("revision").GetInt64() == co.Revision);
+        Assert.Equal("SUPERSEDED", publishedVersion.GetProperty("timeState").GetString());
+        await using var db = Db();
+        Assert.Contains(await db.AuditEvents.Where(x => x.EntityType == nameof(ControlStateEvent) && x.ResourceId == co.Id).Select(x => x.ChangeSummary).ToArrayAsync(Ct),
+            s => s!.Contains("\"SupersedesRevision\"", StringComparison.Ordinal));
+        Assert.Contains(await db.AuditEvents.Where(x => x.EntityType == nameof(ControlEvidenceHead) && x.ResourceId == co.Id).Select(x => x.ChangeSummary).ToArrayAsync(Ct),
+            s => s!.Contains("\"PublishedRevision\"", StringComparison.Ordinal));
+        // The pointer cannot be moved outside the lifecycle command (no matching event).
+        var head = await db.ControlEvidenceHeads.SingleAsync(x => x.Id == co.Id && x.Kind == "Control", Ct);
+        head.PublishedRevision = co.Revision;
+        await Assert.ThrowsAsync<InvalidOperationException>(() => db.SaveChangesAsync(Ct));
+    }
+
+    // RETIRE acts on the effective published revision, also while a successor is pending; RETIRED is terminal.
+    [Fact]
+    [Trait("Requirement", "DEV-028")]
+    public async Task Retire_with_a_pending_successor_names_the_published_revision_and_ends_the_control()
+    {
+        await using var host = Host(); using var c = Client(host); GraphPermissionsForTest(host.Services); await Token(c);
+        var (rule, _, _) = await AdmittedByCommands(c, host.Services);
+        var pin = new RequirementPin(rule.Current.RequirementId!.Value, rule.Current.RequirementRevision!.Value, rule.Current.SourceId!.Value, rule.Current.SourceRevision!.Value, rule.Current.Id, rule.Current.Revision);
+        var author = host.Services.GetRequiredService<FederationSettings>().Memberships[0].ActorId;
+        var command = GraphCommand(content: new(Title: "FICTIONAL retiring control", OwnerId: author, OwnerRole: ReviewRole, Frequency: "FICTIONAL frequency",
+            EvidencePolicy: "FICTIONAL evidence policy", VerificationPolicy: "FICTIONAL independent review", Critical: true)) with { Requirements = [pin] };
+        var co = await GraphSave(c, "controls", command);
+        using (var submitted = await Send(c, GraphRoute($"controls/{co.Id}/submit"), command with { ExpectedVersion = co.Version, ReasonCode = "SUBMIT" }))
+            co = (await submitted.Content.ReadFromJsonAsync<ControlEvidenceDto>(Ct))!;
+        await Accepted(await LifecycleCommand(c, co.Id, "SUBMIT_FOR_REVIEW"));
+        SwitchActor(host.Services, Guid.NewGuid(), "control.approve"); await Token(c);
+        await Accepted(await LifecycleCommand(c, co.Id, "APPROVE"));
+        await Accepted(await LifecycleCommand(c, co.Id, "PUBLISH"));
+        SwitchActor(host.Services, author); await Token(c);
+        var successor = await GraphSave(c, $"controls/{co.Id}", command with { ExpectedVersion = (await ReadLifecycle(c, co.Id)).Version, ReasonCode = "AUTHORING_CORRECTION",
+            Content = command.Content with { Frequency = "FICTIONAL successor frequency" } }, update: true);
+        SwitchActor(host.Services, Guid.NewGuid(), "control.approve"); await Token(c);
+        var pending = await ReadLifecycle(c, co.Id);
+        // Naming the pending successor instead of the effective revision conflicts.
+        await AssertCode(await Send(c, LifecycleRoute(co.Id), new ControlLifecycleCommand(pending.Version, successor.Revision, "RETIRE", "FICTIONAL wrong revision")), HttpStatusCode.Conflict, "control_revision_conflict");
+        var retired = await Accepted(await LifecycleCommand(c, co.Id, "RETIRE", current: pending));
+        Assert.Equal(("RETIRED", (long?)null, co.Revision, "DRAFT"), (retired.State, retired.PublishedRevision, retired.Event.ControlRevision, retired.Event.FromState));
+        await AssertCode(await LifecycleCommand(c, co.Id, "SUBMIT_FOR_REVIEW"), HttpStatusCode.Conflict, "control_retired");
     }
 
     // DEV-028 AC: "orphan critical control raporlanır" — missing requirement link or owner; UNKNOWN criticality stays visible.
@@ -321,6 +430,7 @@ public sealed partial class DirectoryWorkspaceTests
         await using var db = Db();
         Assert.Empty(await db.ControlStateEvents.ToArrayAsync(Ct));
         Assert.All(await db.ControlEvidenceHeads.Where(x => x.Kind == "Evidence").ToArrayAsync(Ct), x => Assert.Null(x.ControlState));
-        Assert.All(await db.ControlEvidenceHeads.Where(x => x.Kind == "Control").ToArrayAsync(Ct), x => Assert.Equal("DRAFT", x.ControlState));
+        // No lifecycle state is stored for a control without an event; it derives DRAFT.
+        Assert.All(await db.ControlEvidenceHeads.Where(x => x.Kind == "Control").ToArrayAsync(Ct), x => { Assert.Null(x.ControlState); Assert.Null(x.PublishedRevision); });
     }
 }

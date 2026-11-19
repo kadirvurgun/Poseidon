@@ -27,12 +27,16 @@ public sealed record ControlEvidenceDto(Guid Id, Guid VesselId, string Kind, lon
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record ControlLifecycleCommand([property: JsonRequired] uint ExpectedVersion, [property: JsonRequired] long Revision, string ReasonCode, string Rationale);
 public sealed record ControlLifecycleEventDto(long Sequence, long ControlRevision, string FromState, string ToState, string ReasonCode,
-    Guid ActorId, string? Rationale, DateTimeOffset SavedAt);
-public sealed record ControlLifecycleDto(Guid Id, Guid VesselId, long Revision, uint Version, string State, string Effectiveness,
-    ControlLifecycleEventDto[] Events, int Offset, bool HasMore, bool CanWrite, bool CanReview);
-public sealed record ControlLifecycleOutcome(Guid Id, Guid VesselId, long Revision, uint Version, string State, string Effectiveness, ControlLifecycleEventDto Event);
+    long? SupersedesRevision, Guid ActorId, string? Rationale, DateTimeOffset SavedAt);
+// Revision/State: the candidate (latest) revision and its lifecycle state. PublishedRevision: the
+// effective published revision (62.01 section 6 current pointer), which stays effective while a successor
+// candidate is drafted, reviewed or approved. SuccessorPending: the candidate is not the effective one.
+public sealed record ControlLifecycleDto(Guid Id, Guid VesselId, long Revision, uint Version, string State, long? PublishedRevision, bool SuccessorPending,
+    string Effectiveness, ControlLifecycleEventDto[] Events, int Offset, bool HasMore, bool CanWrite, bool CanReview);
+public sealed record ControlLifecycleOutcome(Guid Id, Guid VesselId, long Revision, uint Version, string State, long? PublishedRevision, bool SuccessorPending,
+    string Effectiveness, ControlLifecycleEventDto Event);
 public sealed record SupportingEvidenceItem(ControlEvidenceDto Evidence, long PinnedControlRevision, bool PinCurrent);
-public sealed record ControlOrphanItem(Guid Id, long Revision, string ControlState, string[] Reasons);
+public sealed record ControlOrphanItem(Guid Id, long Revision, string ControlState, bool SuccessorPending, string[] Reasons);
 
 public static class ControlEvidenceEndpoints
 {
@@ -40,6 +44,18 @@ public static class ControlEvidenceEndpoints
     // gate and current verification calculation instead of making a second model.
     internal static IQueryable<ControlEvidenceRevision> CurrentVisible(PoseidonDbContext db, Guid vessel, TrustedActor actor) =>
         Visible(db, vessel, actor).Where(r => db.ControlEvidenceHeads.Any(h => h.VesselId == vessel && h.Kind == r.Kind && h.Id == r.Id && h.Revision == r.Revision));
+    // 62.01 section 6 effective revision: the published revision while a successor candidate is pending,
+    // otherwise the latest revision (evidence, never-published and retired controls).
+    internal static IQueryable<ControlEvidenceRevision> EffectiveVisible(PoseidonDbContext db, Guid vessel, TrustedActor actor) =>
+        Visible(db, vessel, actor).Where(r => db.ControlEvidenceHeads.Any(h => h.VesselId == vessel && h.Kind == r.Kind && h.Id == r.Id && (h.PublishedRevision ?? h.Revision) == r.Revision));
+    // A published control revision is superseded only by a later PUBLISH (never by a pending
+    // successor draft/review/approval); any other control revision by any later revision.
+    internal static async Task<bool> ControlRevisionSuperseded(PoseidonDbContext db, Guid vessel, Guid control, long revision, DateTimeOffset asOf, CancellationToken ct)
+    {
+        var publications = db.ControlStateEvents.AsNoTracking().Where(e => e.VesselId == vessel && e.ControlId == control && e.ReasonCode == "PUBLISH" && e.SavedAt <= asOf);
+        if (await publications.AnyAsync(e => e.ControlRevision == revision, ct)) return await publications.AnyAsync(e => e.ControlRevision > revision, ct);
+        return await db.ControlEvidenceRevisions.AnyAsync(x => x.VesselId == vessel && x.Kind == "Control" && x.Id == control && x.Revision > revision && x.SavedAt <= asOf, ct);
+    }
     internal static Task<ControlEvidenceDto> ProjectCurrent(PoseidonDbContext db, ControlEvidenceRevision row, uint version,
         DateTimeOffset now, CancellationToken ct, TrustedActor actor, FederationSettings settings) => Dto(db, row, version, now, ct, actor, settings);
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { PropertyNameCaseInsensitive = false, MaxDepth = 12 };
@@ -118,7 +134,8 @@ public static class ControlEvidenceEndpoints
         var requirements = await db.ControlEvidenceRequirements.AsNoTracking().Where(x => x.VesselId == r.VesselId && x.Kind == r.Kind && x.Id == r.Id && x.Revision == r.Revision).OrderBy(x => x.RequirementId).ThenBy(x => x.RequirementRevision).ToArrayAsync(ct);
         var edges = await db.ControlEvidenceEdges.AsNoTracking().Where(x => x.VesselId == r.VesselId && x.Kind == r.Kind && x.Id == r.Id && x.Revision == r.Revision).OrderBy(x => x.TargetKind).ThenBy(x => x.TargetId).ThenBy(x => x.TargetRevision).ToArrayAsync(ct);
         var content = JsonSerializer.Deserialize<ControlEvidenceContent>(r.ContentJson, Json)!;
-        var superseded = await db.ControlEvidenceRevisions.AnyAsync(x => x.VesselId == r.VesselId && x.Kind == r.Kind && x.Id == r.Id && x.Revision > r.Revision && x.SavedAt <= asOf, ct) ||
+        var superseded = (r.Kind == "Control" ? await ControlRevisionSuperseded(db, r.VesselId, r.Id, r.Revision, asOf, ct) :
+                await db.ControlEvidenceRevisions.AnyAsync(x => x.VesselId == r.VesselId && x.Kind == r.Kind && x.Id == r.Id && x.Revision > r.Revision && x.SavedAt <= asOf, ct)) ||
             await db.ControlEvidenceEdges.AnyAsync(x => x.VesselId == r.VesselId && x.TargetKind == r.Kind && x.TargetId == r.Id && x.TargetRevision == r.Revision && x.TargetKind == "Evidence" &&
                 db.ControlEvidenceRevisions.Any(s => s.VesselId == x.VesselId && s.Kind == x.Kind && s.Id == x.Id && s.Revision == x.Revision && s.FileId != null && s.SavedAt <= asOf), ct);
         var qualified = await QualifiedControlContext.Resolve(db, r.VesselId, requirements.Select(x => new RequirementPin(x.RequirementId, x.RequirementRevision, x.SourceId, x.SourceRevision, x.RuleId, x.RuleRevision)).ToArray(), r.Kind, content, r.FileId != null, asOf, ct, settings);
@@ -185,15 +202,17 @@ public static class ControlEvidenceEndpoints
                 db.ControlEvidenceHeads.Any(head => head.VesselId == vessel && head.Kind == p.Kind && head.Id == p.Id && head.Revision == p.Revision), h.RequestAborted))
                 missing.Add(new { obligation.RuleId, ruleRevision = obligation.Revision, obligation.RequirementId, obligation.RequirementRevision });
         }
-        // DEV-028: every current, non-retired control declared critical or of UNKNOWN criticality
-        // that lacks a requirement link or a declared owner. Unknown is reported, never dropped.
-        var candidates = await CurrentVisible(db, vessel, a).Where(r => r.Kind == "Control" && r.CriticalDeclaration != false &&
-                db.ControlEvidenceHeads.Any(d => d.VesselId == vessel && d.Kind == "Control" && d.Id == r.Id && d.ControlState != "RETIRED"))
+        // DEV-028: every effective, non-retired control declared critical or of UNKNOWN criticality
+        // that lacks a requirement link or a declared owner. Unknown is reported, never dropped. A
+        // published control is judged on its effective published revision until a successor publishes.
+        var candidates = await EffectiveVisible(db, vessel, a).Where(r => r.Kind == "Control" && r.CriticalDeclaration != false &&
+                db.ControlEvidenceHeads.Any(d => d.VesselId == vessel && d.Kind == "Control" && d.Id == r.Id && (d.ControlState == null || d.ControlState != "RETIRED")))
             .OrderBy(r => r.Id).Select(r => new { r.Id, r.Revision, r.ContentJson, r.CriticalDeclaration,
-                State = db.ControlEvidenceHeads.Where(d => d.VesselId == vessel && d.Kind == "Control" && d.Id == r.Id).Select(d => d.ControlState).First(),
+                Head = db.ControlEvidenceHeads.Where(d => d.VesselId == vessel && d.Kind == "Control" && d.Id == r.Id).Select(d => new { d.ControlState, d.PublishedRevision, d.Revision }).First(),
                 Linked = db.ControlEvidenceRequirements.Any(l => l.VesselId == vessel && l.Kind == "Control" && l.Id == r.Id && l.Revision == r.Revision) })
             .ToArrayAsync(h.RequestAborted);
-        var critical = candidates.Select(r => new ControlOrphanItem(r.Id, r.Revision, r.State!, ControlEvidencePolicy.OrphanReasons(r.CriticalDeclaration, r.Linked,
+        var critical = candidates.Select(r => new ControlOrphanItem(r.Id, r.Revision, r.Head.PublishedRevision == r.Revision ? "PUBLISHED" : ControlLifecyclePolicy.State(r.Head.ControlState),
+                r.Head.PublishedRevision != null && r.Head.PublishedRevision != r.Head.Revision, ControlEvidencePolicy.OrphanReasons(r.CriticalDeclaration, r.Linked,
                 JsonSerializer.Deserialize<ControlEvidenceContent>(r.ContentJson, Json)!.OwnerId != null))).Where(x => x.Reasons.Length > 0).ToArray();
         return Results.Ok(new { available, reason = available ? "QUALIFIED_CATALOG_SCOPE_ONLY" : causes.FirstOrDefault() ?? "CURRENT_OBLIGATION_INPUT_INCOMPLETE",
             draftCriticalOrphans = ids.Take(25), criticalOrphans = critical.Skip(offset).Take(25), uncontrolledObligations = missing.Skip(offset).Take(25), offset,
@@ -289,11 +308,14 @@ public static class ControlEvidenceEndpoints
                 if (action == "complete" && prior.ContentJson != JsonSerializer.Serialize(command.Content, Json)) return await Fail(h, 409, "submitted_content_changed");
                 if (prior.FileId != null && (prior.FileId != command.File?.Id || prior.FileRevision != command.File?.Revision || prior.Checksum != command.File?.Checksum)) return await Fail(h, 409, "immutable_file_reference");
             }
-            // DEV-028: RETIRED accepts no revision; a revision of a reviewed/approved/published
-            // control returns it to DRAFT through an explicit audited CONTENT_REVISED event.
-            var lifecycleReset = head != null && kind == "Control" && ControlLifecyclePolicy.RevisionResets(head.ControlState!) ? head.ControlState : null;
-            if (head != null && kind == "Control" && !ControlLifecyclePolicy.AcceptsRevision(head.ControlState!)) return await Fail(h, 409, "control_retired");
-            if (head == null) { head = new() { TenantId = a.TenantId, VesselId = vessel, Kind = kind, Id = Guid.NewGuid(), ControlState = kind == "Control" ? "DRAFT" : null }; db.ControlEvidenceHeads.Add(head); }
+            // DEV-028 / 62.01 section 6: RETIRED accepts no revision. A revision of a reviewed/approved/
+            // published control is the successor candidate, (re)opened in DRAFT through an audited
+            // CONTENT_REVISED event; PublishedRevision is untouched, so the published revision stays
+            // effective until the successor itself is published.
+            var priorState = head != null && kind == "Control" ? ControlLifecyclePolicy.State(head.ControlState) : null;
+            var lifecycleReset = priorState != null && ControlLifecyclePolicy.RevisionResets(priorState) ? priorState : null;
+            if (priorState != null && !ControlLifecyclePolicy.AcceptsRevision(priorState)) return await Fail(h, 409, "control_retired");
+            if (head == null) { head = new() { TenantId = a.TenantId, VesselId = vessel, Kind = kind, Id = Guid.NewGuid() }; db.ControlEvidenceHeads.Add(head); }
             else { db.Entry(head).Property(x => x.Version).OriginalValue = command.ExpectedVersion; db.Entry(head).Property(x => x.Revision).IsModified = true; }
             head.Revision++;
             var now = DateTimeOffset.UtcNow;
@@ -347,7 +369,8 @@ public static class ControlEvidenceEndpoints
         }
     }
     private static ControlLifecycleEventDto EventDto(ControlStateEvent e, bool rationale) =>
-        new(e.Revision, e.ControlRevision, e.FromState, e.ToState, e.ReasonCode, e.ActorId, rationale ? e.Rationale : null, e.SavedAt);
+        new(e.Revision, e.ControlRevision, e.FromState, e.ToState, e.ReasonCode, e.SupersedesRevision, e.ActorId, rationale ? e.Rationale : null, e.SavedAt);
+    private static bool SuccessorPending(ControlEvidenceHead head) => head.PublishedRevision is { } published && published != head.Revision;
     // DEV-028 lifecycle history. Rationale is returned only to actors who may author or review the control.
     private static async Task<IResult> Lifecycle(HttpContext h, PoseidonDbContext db, Guid id)
     {
@@ -361,7 +384,7 @@ public static class ControlEvidenceEndpoints
         var rows = await db.ControlStateEvents.AsNoTracking().Where(x => x.VesselId == vessel && x.ControlId == id).OrderByDescending(x => x.Revision).Skip(offset).Take(26).ToArrayAsync(ct);
         var privileged = Write(a, "Control", vessel) || Reviewer(a, vessel);
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "ControlLifecycleRead", "Success", resourceId: id);
-        return Results.Ok(new ControlLifecycleDto(head.Id, vessel, head.Revision, head.Version, head.ControlState!, "UNKNOWN",
+        return Results.Ok(new ControlLifecycleDto(head.Id, vessel, head.Revision, head.Version, ControlLifecyclePolicy.State(head.ControlState), head.PublishedRevision, SuccessorPending(head), "UNKNOWN",
             rows.Take(25).Select(x => EventDto(x, privileged)).ToArray(), offset, rows.Length > 25, Write(a, "Control", vessel), Reviewer(a, vessel)));
     }
     // DEV-029 inverse view: every current visible evidence revision that pins this control.
@@ -375,6 +398,7 @@ public static class ControlEvidenceEndpoints
         if (!await Scope(db, a, vessel, ct)) return await Fail(h, 404, "resource_not_found");
         if (!await CurrentVisible(db, vessel, a).AnyAsync(r => r.Kind == "Control" && r.Id == id, ct)) return await Fail(h, 404, "resource_not_found");
         var control = await db.ControlEvidenceHeads.AsNoTracking().SingleAsync(x => x.VesselId == vessel && x.Kind == "Control" && x.Id == id, ct);
+        var effective = ControlLifecyclePolicy.EffectiveRevision(control.PublishedRevision, control.Revision);
         var rows = await CurrentVisible(db, vessel, a).Where(r => r.Kind == "Evidence" && db.ControlEvidenceEdges.Any(e => e.VesselId == vessel && e.Kind == "Evidence" &&
                 e.Id == r.Id && e.Revision == r.Revision && e.TargetKind == "Control" && e.TargetId == id))
             .OrderBy(r => r.Id).Skip(offset).Take(26).ToArrayAsync(ct);
@@ -384,10 +408,12 @@ public static class ControlEvidenceEndpoints
             var version = await db.ControlEvidenceHeads.AsNoTracking().Where(x => x.VesselId == vessel && x.Kind == "Evidence" && x.Id == r.Id).Select(x => x.Version).SingleAsync(ct);
             var pinned = await db.ControlEvidenceEdges.AsNoTracking().Where(e => e.VesselId == vessel && e.Kind == "Evidence" && e.Id == r.Id && e.Revision == r.Revision && e.TargetKind == "Control" && e.TargetId == id)
                 .MaxAsync(e => e.TargetRevision, ct);
-            items.Add(new(await Dto(db, r, version, now, ct, a, settings), pinned, pinned == control.Revision));
+            // A pin is current against the effective (published) control revision, not a pending successor.
+            items.Add(new(await Dto(db, r, version, now, ct, a, settings), pinned, pinned == effective));
         }
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "ControlSupportingEvidenceRead", "Success", resourceId: id);
-        return Results.Ok(new { controlId = id, vesselId = vessel, controlRevision = control.Revision, items, offset, hasMore = rows.Length > 25 });
+        return Results.Ok(new { controlId = id, vesselId = vessel, controlRevision = effective, latestRevision = control.Revision, successorPending = SuccessorPending(control),
+            items, offset, hasMore = rows.Length > 25 });
     }
     private static async Task<IResult> Transition(HttpContext h, Guid id)
     {
@@ -434,7 +460,11 @@ public static class ControlEvidenceEndpoints
             var head = await db.ControlEvidenceHeads.SingleOrDefaultAsync(x => x.VesselId == vessel && x.Kind == "Control" && x.Id == id, ct);
             if (head == null) return await Fail(h, 404, "resource_not_found");
             if (command.ExpectedVersion != head.Version) return await Fail(h, 409, "version_conflict");
-            if (command.Revision != head.Revision) return await Fail(h, 409, "control_revision_conflict");
+            // RETIRE names the effective published revision (62.01 expectedCurrentRevisionId); every
+            // other command names the exact candidate revision.
+            var state = ControlLifecyclePolicy.State(head.ControlState);
+            var target = command.ReasonCode == "RETIRE" && head.PublishedRevision is { } effectiveRevision ? effectiveRevision : head.Revision;
+            if (command.Revision != target) return await Fail(h, 409, "control_revision_conflict");
             var current = await db.ControlEvidenceRevisions.AsNoTracking().SingleAsync(x => x.VesselId == vessel && x.Kind == "Control" && x.Id == id && x.Revision == head.Revision, ct);
             var content = JsonSerializer.Deserialize<ControlEvidenceContent>(current.ContentJson, Json)!;
             var pins = await db.ControlEvidenceRequirements.AsNoTracking().Where(x => x.VesselId == vessel && x.Kind == "Control" && x.Id == id && x.Revision == head.Revision)
@@ -450,7 +480,7 @@ public static class ControlEvidenceEndpoints
             string[] qualifiedBlockers = [];
             if (command.ReasonCode == "APPROVE")
                 qualifiedBlockers = (await QualifiedControlContext.Resolve(db, vessel, pins, "Control", content, false, now, ct, settings)).Blockers;
-            var failure = ControlLifecyclePolicy.Transition(head.ControlState!, command.ReasonCode, recordReady, Reviewer(a, vessel), independent, qualifiedBlockers.Length == 0 && basic.Length == 0);
+            var failure = ControlLifecyclePolicy.Transition(state, command.ReasonCode, recordReady, Reviewer(a, vessel), independent, qualifiedBlockers.Length == 0 && basic.Length == 0, head.PublishedRevision != null);
             if (failure == "qualified_source_required") {
                 await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "ControlEvidence", failure);
                 return Results.Problem(statusCode: 409, title: failure, extensions: new Dictionary<string, object?> { ["code"] = failure, ["blockers"] = basic.Concat(qualifiedBlockers).Distinct().ToArray() });
@@ -458,13 +488,17 @@ public static class ControlEvidenceEndpoints
             if (failure != null) return await Fail(h, 409, failure);
             if (command.ReasonCode == "APPROVE") await QualifiedControlContext.GuardInputs(db, vessel, pins, ct);
             var sequence = (await db.ControlStateEvents.Where(x => x.VesselId == vessel && x.ControlId == id).MaxAsync(x => (long?)x.Revision, ct) ?? 0) + 1;
-            var ev = new ControlStateEvent { TenantId = a.TenantId, VesselId = vessel, ControlId = id, Revision = sequence, ControlRevision = head.Revision,
-                FromState = head.ControlState!, ToState = ControlLifecyclePolicy.Next(command.ReasonCode)!, ReasonCode = command.ReasonCode, Rationale = command.Rationale,
+            // PUBLISH moves the current pointer to the candidate and records the superseded published
+            // revision on the audited event; RETIRE clears it; nothing else touches it.
+            var ev = new ControlStateEvent { TenantId = a.TenantId, VesselId = vessel, ControlId = id, Revision = sequence, ControlRevision = target,
+                FromState = state, ToState = ControlLifecyclePolicy.Next(command.ReasonCode)!, ReasonCode = command.ReasonCode, Rationale = command.Rationale,
+                SupersedesRevision = ControlLifecyclePolicy.Supersedes(command.ReasonCode, head.PublishedRevision, head.Revision),
                 ActorId = a.Id, RoleContext = a.RoleContext, SavedAt = now };
             db.Entry(head).Property(x => x.Version).OriginalValue = command.ExpectedVersion;
-            head.ControlState = ev.ToState; db.ControlStateEvents.Add(ev);
+            head.ControlState = ev.ToState; head.PublishedRevision = ControlLifecyclePolicy.EffectiveAfter(command.ReasonCode, head.PublishedRevision, head.Revision);
+            db.ControlStateEvents.Add(ev);
             await db.SaveChangesAsync(ct);
-            var outcome = JsonSerializer.Serialize(new ControlLifecycleOutcome(id, vessel, head.Revision, head.Version, head.ControlState, "UNKNOWN", EventDto(ev, true)), Json);
+            var outcome = JsonSerializer.Serialize(new ControlLifecycleOutcome(id, vessel, head.Revision, head.Version, head.ControlState, head.PublishedRevision, SuccessorPending(head), "UNKNOWN", EventDto(ev, true)), Json);
             db.ControlEvidenceReceipts.Add(new() { TenantId = a.TenantId, VesselId = vessel, Kind = "Control", ResourceId = id, ActorId = a.Id, Key = key, Fingerprint = fingerprint, OutcomeJson = outcome, SavedAt = now });
             await db.SaveChangesAsync(ct);
             var live = Actor(h); if (live == null || live.Id != a.Id || live.TenantId != a.TenantId || !Allowed(live) || !await Scope(db, live, vessel, ct)) return await Fail(h, 403, "permission_denied");
