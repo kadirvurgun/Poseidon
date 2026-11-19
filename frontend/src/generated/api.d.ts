@@ -2967,6 +2967,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/vessels/{id}/applicability-overrides": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ApplicabilityOverrides"];
+        put?: never;
+        post: operations["ApplicabilityOverridePropose"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{id}/applicability-overrides/{overrideId}/decisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ApplicabilityOverrideDecision"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{id}/compliance-control-plan/candidates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ComplianceControlCandidates"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/verifications": {
         parameters: {
             query?: never;
@@ -5979,6 +6027,109 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        ApplicabilityOverrideCommand: {
+            /** Format: uuid */
+            evaluationId: string;
+            inputHash: string;
+            ruleSetHash: string;
+            /** Format: uuid */
+            ruleId: string;
+            /** Format: int64 */
+            ruleRevision: number;
+            action: string;
+            reasonCode: string;
+            purpose: string;
+            rationale: string;
+            evidenceIds: string[];
+            /** Format: date-time */
+            validFrom: string;
+            /** Format: date-time */
+            expiresAt: string;
+            /** Format: date-time */
+            reviewAt: string;
+        };
+        ApplicabilityOverrideDecisionCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            /** Format: int64 */
+            expectedSequence: number;
+            decision: string;
+            rationale: string;
+        };
+        ApplicabilityOverrideDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: uuid */
+            evaluationId: string;
+            /** Format: uuid */
+            ruleId: string;
+            /** Format: int64 */
+            ruleRevision: number;
+            /** Format: uuid */
+            requirementId: null | string;
+            /** Format: int64 */
+            requirementRevision: null | number;
+            /** Format: uuid */
+            sourceId: null | string;
+            /** Format: int64 */
+            sourceRevision: null | number;
+            baseResult: string;
+            purpose: string;
+            action: string;
+            reasonCode: string;
+            rationale: null | string;
+            evidenceIds: string[];
+            /** Format: date-time */
+            validFrom: string;
+            /** Format: date-time */
+            expiresAt: string;
+            /** Format: date-time */
+            reviewAt: string;
+            /** Format: uuid */
+            authorId: string;
+            /** Format: uuid */
+            approverId: null | string;
+            state: string;
+            currentValidity: string;
+            /** Format: int64 */
+            sequence: number;
+            /** Format: uint32 */
+            version: number;
+            /** Format: date-time */
+            createdAt: string;
+            events: components["schemas"]["ApplicabilityOverrideEventDto"][];
+        };
+        ApplicabilityOverrideEventDto: {
+            /** Format: int64 */
+            sequence: number;
+            fromState: null | string;
+            toState: string;
+            eventCode: string;
+            /** Format: uuid */
+            actorId: string;
+            rationale: null | string;
+            /** Format: date-time */
+            savedAt: string;
+        };
+        ApplicabilityOverrideListDto: {
+            /** Format: uuid */
+            vesselId: string;
+            authority: string;
+            authorityBlockers: string[];
+            canPropose: boolean;
+            canDecide: boolean;
+            canRevoke: boolean;
+            /** Format: uuid */
+            currentEvaluationId: null | string;
+            items: components["schemas"]["ApplicabilityOverrideDto"][];
+            /** Format: int32 */
+            offset: number;
+            hasMore: boolean;
+            /** @default 18.01/Backlog/row:41;60.03/paragraph:154-166,575-580 */
+            source: string;
+        };
         Asset: {
             /** Format: uuid */
             tenantId?: string;
@@ -6567,6 +6718,7 @@ export interface components {
             applicability: components["schemas"]["ComplianceApplicabilityDto"];
             plan: components["schemas"]["ComplianceControlPlanDto"];
             certificates: components["schemas"]["ComplianceCertificatePageDto"];
+            sources: components["schemas"]["PassportSourceDto"][];
         };
         ComplianceRequirementPlanDto: {
             /** Format: uuid */
@@ -6591,6 +6743,46 @@ export interface components {
             /** Format: int64 */
             revision: number;
             checksum: string;
+        };
+        ControlCandidateCommand: {
+            /** Format: uuid */
+            evaluationId: string;
+            inputHash: string;
+            ruleSetHash: string;
+        };
+        ControlCandidateItem: {
+            /** Format: uuid */
+            controlId: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            /** Format: uuid */
+            ruleId: string;
+            /** Format: int64 */
+            ruleRevision: number;
+            /** Format: uuid */
+            requirementId: string;
+            /** Format: int64 */
+            requirementRevision: number;
+            /** Format: uuid */
+            sourceId: string;
+            /** Format: int64 */
+            sourceRevision: number;
+            title: string;
+            lifecycle: string;
+            controlState: string;
+            blockers: string[];
+        };
+        ControlCandidateOutcome: {
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: uuid */
+            evaluationId: string;
+            created: components["schemas"]["ControlCandidateItem"][];
+            /** Format: int32 */
+            alreadyLinked: number;
+            blockers: string[];
         };
         ControlEvidenceCommand: {
             /** Format: uint32 */
@@ -9382,6 +9574,18 @@ export interface components {
             /** Format: int64 */
             maximum: null | number;
             unit: null | string;
+        };
+        PassportSourceDto: {
+            /** Format: uuid */
+            sourceId: string;
+            /** Format: int64 */
+            sourceRevision: number;
+            ruleIds: string[];
+            /** Format: date-time */
+            qualifiedAt: null | string;
+            freshness: string;
+            blockers: string[];
+            href: string;
         };
         PredicateReason: {
             path: string;
@@ -14593,6 +14797,107 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ComplianceControlPlanDto"];
+                };
+            };
+        };
+    };
+    ApplicabilityOverrides: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApplicabilityOverrideListDto"];
+                };
+            };
+        };
+    };
+    ApplicabilityOverridePropose: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ApplicabilityOverrideCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApplicabilityOverrideDto"];
+                };
+            };
+        };
+    };
+    ApplicabilityOverrideDecision: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                overrideId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ApplicabilityOverrideDecisionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApplicabilityOverrideDto"];
+                };
+            };
+        };
+    };
+    ComplianceControlCandidates: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ControlCandidateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ControlCandidateOutcome"];
                 };
             };
         };

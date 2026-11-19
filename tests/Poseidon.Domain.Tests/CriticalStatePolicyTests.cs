@@ -12,7 +12,7 @@ public sealed class CriticalStatePolicyTests
     private static FreshnessSummary Summary(string state = "UNKNOWN", string reason = "FIELDS_UNKNOWN") => new(state, reason, null, Now, 0, 0, 1, 0);
     private static readonly RegulatoryDraftContent Complete = new()
     {
-        Imo = new("Known", "1234567"), Flag = new("Known", "FICTIONAL"), ClassSociety = new("Known", "FICTIONAL"),
+        Imo = new("Known", "1234567"), Flag = new("Known", "FICTIONAL"), ClassSociety = new("Known", "FICTIONAL"), ClassNumber = new("Known", "FICTIONAL-0001"),
         ShipType = new("Known", "FICTIONAL"), Gt = new("Known", "10"), BuildDate = new("Known", "2000-01-01"),
         TradingArea = new("Known", "FICTIONAL"), CargoContext = new("Known", "FICTIONAL")
     };

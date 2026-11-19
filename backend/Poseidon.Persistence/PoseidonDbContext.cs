@@ -148,6 +148,9 @@ public sealed class PoseidonDbContext(
     public DbSet<ControlEvidenceEdge> ControlEvidenceEdges => Set<ControlEvidenceEdge>();
     public DbSet<ControlEvidenceReceipt> ControlEvidenceReceipts => Set<ControlEvidenceReceipt>();
     public DbSet<ControlStateEvent> ControlStateEvents => Set<ControlStateEvent>();
+    public DbSet<ApplicabilityOverride> ApplicabilityOverrides => Set<ApplicabilityOverride>();
+    public DbSet<ApplicabilityOverrideEvent> ApplicabilityOverrideEvents => Set<ApplicabilityOverrideEvent>();
+    public DbSet<ComplianceCommandReceipt> ComplianceCommandReceipts => Set<ComplianceCommandReceipt>();
 
     public DbSet<CrewCatalogHead> CrewCatalogHeads => Set<CrewCatalogHead>();
     public DbSet<CrewCatalogEvent> CrewCatalogEvents => Set<CrewCatalogEvent>();
@@ -225,6 +228,7 @@ public sealed class PoseidonDbContext(
         model.Entity<NotificationDispatchState>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<NotificationEpisode>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         ControlEvidenceStorage.Configure(model);
+        ApplicabilityOverrideStorage.Configure(model);
         HumanReviewStorage.Configure(model);
         RegulatoryQualificationStorage.Configure(model);
         model.Entity<RegulatoryQualificationHead>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -241,6 +245,9 @@ public sealed class PoseidonDbContext(
         model.Entity<ControlEvidenceEdge>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ControlEvidenceReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ControlStateEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ApplicabilityOverride>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ApplicabilityOverrideEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ComplianceCommandReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         ApplicabilityStorage.Configure(model);
         model.Entity<RuleDraft>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<RuleRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -647,6 +654,21 @@ public sealed class PoseidonDbContext(
         if (changes.Any(e => e.Entity is ControlEvidenceHead head && (e.State == EntityState.Deleted || e.State == EntityState.Modified && e.Properties.Any(p => p.IsModified &&
             !(p.Metadata.Name == "Revision" || p.Metadata.Name is "ControlState" or "PublishedRevision" && head.Kind == "Control")))))
             throw new InvalidOperationException("Control/evidence ownership is immutable.");
+        // DEV-040: override events and compliance receipts are append-only; the override head only
+        // changes state/approver/grant/sequence, never its pinned evaluation, scope, reason or validity,
+        // and each state change carries its exact next event.
+        if (changes.Any(e => e.Entity is ApplicabilityOverrideEvent or ComplianceCommandReceipt && e.State != EntityState.Added))
+            throw new InvalidOperationException("Applicability override history is immutable.");
+        if (changes.Any(e => e.Entity is ApplicabilityOverride && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            e.Properties.Any(p => p.IsModified && p.Metadata.Name is not ("State" or "ApproverId" or "AuthorityGrantId" or "Sequence")))))
+            throw new InvalidOperationException("Applicability override scope is immutable.");
+        if (changes.Any(e => e.Entity is ApplicabilityOverride head && e.State is EntityState.Added or EntityState.Modified &&
+            !changes.Any(x => x.State == EntityState.Added && x.Entity is ApplicabilityOverrideEvent ev && ev.TenantId == head.TenantId &&
+                ev.VesselId == head.VesselId && ev.OverrideId == head.Id && ev.Sequence == head.Sequence && ev.ToState == head.State &&
+                (e.State == EntityState.Added ? ev.FromState == null && head.Sequence == 1 :
+                    ev.FromState == (string?)e.Property(nameof(ApplicabilityOverride.State)).OriginalValue &&
+                    head.Sequence == (long)e.Property(nameof(ApplicabilityOverride.Sequence)).OriginalValue! + 1))))
+            throw new InvalidOperationException("Applicability override change requires its event.");
         // DEV-028: a control lifecycle change is never silent; it carries its exact append-only event
         // (a stored NULL state is the derived DRAFT of a control with no lifecycle event yet).
         if (changes.Any(e => e.Entity is ControlEvidenceHead head && e.State == EntityState.Modified && e.Property(nameof(ControlEvidenceHead.ControlState)).IsModified &&

@@ -33,7 +33,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if (requireResolvedScope && scopeKind == "Unresolved")
             throw new InvalidOperationException("Current command audit scope is unavailable.");
         var fields = JsonSerializer.Deserialize<List<JsonElement>>(metadata.Summary) ?? [];
-        if (entry.Entity is CommandReceipt or ApplicabilityReceipt or HumanReviewReceipt or ControlEvidenceReceipt or RegulatoryQualificationReceipt or ControlledDocumentReceipt)
+        if (entry.Entity is CommandReceipt or ApplicabilityReceipt or HumanReviewReceipt or ControlEvidenceReceipt or RegulatoryQualificationReceipt or ControlledDocumentReceipt or ComplianceCommandReceipt)
             fields.Add(JsonSerializer.SerializeToElement(Field("Binding", null, "CommittedResource")));
         fields.Add(JsonSerializer.SerializeToElement(Field("ScopeKind", null, scopeKind)));
         if (command != null)
@@ -309,6 +309,35 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             return new(evidenceLink.VesselId, evidenceLink.DocumentId, "ControlledDocumentLink", null, null, Fields(Field("TargetKind", null, "ControlEvidence"), Field("Binding", null, "OwnerReference")));
         if (entry.Entity is ControlledDocumentCredentialLink credentialLink)
             return new(credentialLink.VesselId, credentialLink.DocumentId, "ControlledDocumentLink", null, null, Fields(Field("TargetKind", null, "Credential"), Field("Binding", null, "OwnerReference")));
+        // DEV-040 override decisions: closed action/reason/state codes and exact pinned revisions only. The
+        // private rationale, evidence ids and validity instants are never copied into the audit summary.
+        if (entry.Entity is ApplicabilityOverride ov) {
+            static string OverrideState(object? value) => value is "DRAFT" or "IN_REVIEW" or "ACTIVE" or "REVOKED" or "EXPIRED" or "SUPERSEDED"
+                ? (string)value : throw new InvalidOperationException("Invalid applicability override metadata.");
+            if (ov.Action is not ("ACCEPT_INTERPRETATION" or "REQUIRE_ADDITIONAL_CONTROL") || !ApplicabilityOverridePolicy.Reasons[ov.Action].Contains(ov.ReasonCode) ||
+                ov.Purpose != "COMPLIANCE_REVIEW" || ov.Sequence <= 0 || ov.RuleRevision <= 0)
+                throw new InvalidOperationException("Invalid applicability override metadata.");
+            long? priorSequence = entry.State == EntityState.Added ? null : (long)entry.Property(nameof(ApplicabilityOverride.Sequence)).OriginalValue!;
+            var overrideFields = new List<object> {
+                Field("Sequence", priorSequence is { } p ? Number(p) : null, Number(ov.Sequence)),
+                Field("OverrideState", entry.State == EntityState.Added ? null : OverrideState(entry.Property(nameof(ApplicabilityOverride.State)).OriginalValue), OverrideState(ov.State)),
+                Field("Action", null, ov.Action), Field("ReasonCode", null, ov.ReasonCode),
+                Field("RuleRevision", null, Number(ov.RuleRevision)), Field("Rationale", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference") };
+            if (ov.ApproverId != null) overrideFields.Add(Field("Approver", null, "Recorded"));
+            return new(ov.VesselId, ov.Id, "ApplicabilityOverride", priorSequence, ov.Sequence, Fields([.. overrideFields]));
+        }
+        if (entry.Entity is ApplicabilityOverrideEvent oe) {
+            if (!ApplicabilityOverridePolicy.EventCodes.Contains(oe.EventCode) || oe.Sequence <= 0 ||
+                oe.ToState is not ("IN_REVIEW" or "ACTIVE" or "REVOKED") || oe.FromState is not (null or "DRAFT" or "IN_REVIEW" or "ACTIVE"))
+                throw new InvalidOperationException("Invalid applicability override metadata.");
+            return new(oe.VesselId, oe.OverrideId, "ApplicabilityOverrideEvent", null, oe.Sequence, Fields(Field("EventCode", null, oe.EventCode),
+                Field("FromState", null, oe.FromState), Field("ToState", null, oe.ToState), Field("Rationale", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference")));
+        }
+        if (entry.Entity is ComplianceCommandReceipt complianceReceipt) {
+            if (complianceReceipt.Operation is not ("ApplicabilityOverridePropose" or "ApplicabilityOverrideDecision" or "ComplianceControlCandidates"))
+                throw new InvalidOperationException("Invalid compliance receipt metadata.");
+            return new(complianceReceipt.VesselId, complianceReceipt.ResourceId, "ComplianceCommandReceipt", null, null, Fields(Field("Operation", null, complianceReceipt.Operation)));
+        }
         Guid? vessel = entry.Entity switch {
             OperationEquipmentBinding e => e.VesselId, EvaluationOwningReference e => e.VesselId,
             EvaluationUpstreamReference e => e.VesselId, MsmdRoleBinding e => e.VesselId,
@@ -458,7 +487,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             return new(stateHead.VesselId, stateHead.Id, "Control", priorRevision, stateHead.Revision, Fields([.. headFields]));
         }
         if (entry.Entity is ControlEvidenceRevision ce) {
-            if (ce.Lifecycle is not ("DRAFT" or "SUBMITTED" or "COMPLETED") || ce.ReasonCode is not ("INITIAL_AUTHORING" or "AUTHORING_CORRECTION" or "SYNTHETIC_INCOMPLETE_DRAFT" or "SUBMIT" or "COMPLETE")) throw new InvalidOperationException("Invalid control/evidence change metadata.");
+            if (ce.Lifecycle is not ("DRAFT" or "SUBMITTED" or "COMPLETED") || ce.ReasonCode is not ("INITIAL_AUTHORING" or "AUTHORING_CORRECTION" or "SYNTHETIC_INCOMPLETE_DRAFT" or "SUBMIT" or "COMPLETE" or "REQUIREMENT_CANDIDATE")) throw new InvalidOperationException("Invalid control/evidence change metadata.");
             return new(vessel, resource, ce.Kind, null, ce.Revision, JsonSerializer.Serialize(new[] {
                 new { field = "ReasonCode", before = (string?)null, after = ce.ReasonCode, evidence = "Allowlisted" },
                 new { field = "Lifecycle", before = (string?)null, after = ce.Lifecycle, evidence = "Allowlisted" }

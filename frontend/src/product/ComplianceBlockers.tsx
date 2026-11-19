@@ -24,6 +24,9 @@ const labels: Record<string, [
     CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED: [sourceText("en", "pairs.m_e537cad89eee930f"), sourceText("tr", "pairs.m_e537cad89eee930f")],
     LEGAL_TRANSITION_SOURCE_UNAVAILABLE: [sourceText("en", "pairs.m_f7b600e3f8f999a5"), sourceText("tr", "pairs.m_f7b600e3f8f999a5")],
     RECORDED_ASSERTION_NOT_CURRENT: [sourceText("en", "pairs.m_0a0c5af9433b0d9a"), sourceText("tr", "pairs.m_0a0c5af9433b0d9a")],
+    SOURCE_FRESHNESS_POLICY_UNAVAILABLE: [sourceText("en", "pairs.m_5a0e3c2f1b7d4e89"), sourceText("tr", "pairs.m_5a0e3c2f1b7d4e89")],
+    SOURCE_FRESHNESS_UNAVAILABLE: [sourceText("en", "pairs.m_5a0e3c2f1b7d4e8a"), sourceText("tr", "pairs.m_5a0e3c2f1b7d4e8a")],
+    OVERRIDE_AUTHORITY_POLICY_UNAVAILABLE: [sourceText("en", "pairs.m_5a0e3c2f1b7d4e8b"), sourceText("tr", "pairs.m_5a0e3c2f1b7d4e8b")],
 };
 // Keep unknown owning-source reasons inspectable without inventing their meaning.
 // A readable summary never changes the server's actual blockers or authority.

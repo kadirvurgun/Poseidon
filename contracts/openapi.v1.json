@@ -5754,6 +5754,171 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/vessels/{id}/applicability-overrides": {
+      "get": {
+        "tags": [
+          "ApplicabilityOverrideEndpoints"
+        ],
+        "operationId": "ApplicabilityOverrides",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicabilityOverrideListDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "ApplicabilityOverrideEndpoints"
+        ],
+        "operationId": "ApplicabilityOverridePropose",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicabilityOverrideCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicabilityOverrideDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/vessels/{id}/applicability-overrides/{overrideId}/decisions": {
+      "post": {
+        "tags": [
+          "ApplicabilityOverrideEndpoints"
+        ],
+        "operationId": "ApplicabilityOverrideDecision",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "overrideId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicabilityOverrideDecisionCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicabilityOverrideDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/vessels/{id}/compliance-control-plan/candidates": {
+      "post": {
+        "tags": [
+          "ApplicabilityOverrideEndpoints"
+        ],
+        "operationId": "ComplianceControlCandidates",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ControlCandidateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ControlCandidateOutcome"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
     "/api/v1/verifications": {
       "post": {
         "tags": [
@@ -15573,6 +15738,362 @@
   },
   "components": {
     "schemas": {
+      "ApplicabilityOverrideCommand": {
+        "required": [
+          "evaluationId",
+          "inputHash",
+          "ruleSetHash",
+          "ruleId",
+          "ruleRevision",
+          "action",
+          "reasonCode",
+          "purpose",
+          "rationale",
+          "evidenceIds",
+          "validFrom",
+          "expiresAt",
+          "reviewAt"
+        ],
+        "type": "object",
+        "properties": {
+          "evaluationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "inputHash": {
+            "type": "string"
+          },
+          "ruleSetHash": {
+            "type": "string"
+          },
+          "ruleId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "ruleRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "action": {
+            "type": "string"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "evidenceIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "validFrom": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reviewAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApplicabilityOverrideDecisionCommand": {
+        "required": [
+          "expectedVersion",
+          "expectedSequence",
+          "decision",
+          "rationale"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "expectedSequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApplicabilityOverrideDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "evaluationId",
+          "ruleId",
+          "ruleRevision",
+          "requirementId",
+          "requirementRevision",
+          "sourceId",
+          "sourceRevision",
+          "baseResult",
+          "purpose",
+          "action",
+          "reasonCode",
+          "rationale",
+          "evidenceIds",
+          "validFrom",
+          "expiresAt",
+          "reviewAt",
+          "authorId",
+          "approverId",
+          "state",
+          "currentValidity",
+          "sequence",
+          "version",
+          "createdAt",
+          "events"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "evaluationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "ruleId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "ruleRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "requirementId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "requirementRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "sourceId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "sourceRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "baseResult": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "evidenceIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "validFrom": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reviewAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "authorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "approverId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "currentValidity": {
+            "type": "string"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicabilityOverrideEventDto"
+            }
+          }
+        }
+      },
+      "ApplicabilityOverrideEventDto": {
+        "required": [
+          "sequence",
+          "fromState",
+          "toState",
+          "eventCode",
+          "actorId",
+          "rationale",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "fromState": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "toState": {
+            "type": "string"
+          },
+          "eventCode": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "rationale": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ApplicabilityOverrideListDto": {
+        "required": [
+          "vesselId",
+          "authority",
+          "authorityBlockers",
+          "canPropose",
+          "canDecide",
+          "canRevoke",
+          "currentEvaluationId",
+          "items",
+          "offset",
+          "hasMore"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "authority": {
+            "type": "string"
+          },
+          "authorityBlockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "canPropose": {
+            "type": "boolean"
+          },
+          "canDecide": {
+            "type": "boolean"
+          },
+          "canRevoke": {
+            "type": "boolean"
+          },
+          "currentEvaluationId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicabilityOverrideDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "source": {
+            "type": "string",
+            "default": "18.01/Backlog/row:41;60.03/paragraph:154-166,575-580"
+          }
+        }
+      },
       "Asset": {
         "type": "object",
         "properties": {
@@ -17774,7 +18295,8 @@
           "onboarding",
           "applicability",
           "plan",
-          "certificates"
+          "certificates",
+          "sources"
         ],
         "type": "object",
         "properties": {
@@ -17812,6 +18334,12 @@
           },
           "certificates": {
             "$ref": "#/components/schemas/ComplianceCertificatePageDto"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PassportSourceDto"
+            }
           }
         }
       },
@@ -17904,6 +18432,134 @@
           }
         },
         "additionalProperties": false
+      },
+      "ControlCandidateCommand": {
+        "required": [
+          "evaluationId",
+          "inputHash",
+          "ruleSetHash"
+        ],
+        "type": "object",
+        "properties": {
+          "evaluationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "inputHash": {
+            "type": "string"
+          },
+          "ruleSetHash": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ControlCandidateItem": {
+        "required": [
+          "controlId",
+          "revision",
+          "version",
+          "ruleId",
+          "ruleRevision",
+          "requirementId",
+          "requirementRevision",
+          "sourceId",
+          "sourceRevision",
+          "title",
+          "lifecycle",
+          "controlState",
+          "blockers"
+        ],
+        "type": "object",
+        "properties": {
+          "controlId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "ruleId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "ruleRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "requirementId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "requirementRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "title": {
+            "type": "string"
+          },
+          "lifecycle": {
+            "type": "string"
+          },
+          "controlState": {
+            "type": "string"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ControlCandidateOutcome": {
+        "required": [
+          "vesselId",
+          "evaluationId",
+          "created",
+          "alreadyLinked",
+          "blockers"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "evaluationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "created": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ControlCandidateItem"
+            }
+          },
+          "alreadyLinked": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
       },
       "ControlEvidenceCommand": {
         "required": [
@@ -28297,6 +28953,54 @@
           }
         }
       },
+      "PassportSourceDto": {
+        "required": [
+          "sourceId",
+          "sourceRevision",
+          "ruleIds",
+          "qualifiedAt",
+          "freshness",
+          "blockers",
+          "href"
+        ],
+        "type": "object",
+        "properties": {
+          "sourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "ruleIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "qualifiedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "freshness": {
+            "type": "string"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "href": {
+            "type": "string"
+          }
+        }
+      },
       "PredicateReason": {
         "required": [
           "path",
@@ -33496,6 +34200,9 @@
     },
     {
       "name": "ControlEvidenceEndpoints"
+    },
+    {
+      "name": "ApplicabilityOverrideEndpoints"
     },
     {
       "name": "NotificationEndpoints"
