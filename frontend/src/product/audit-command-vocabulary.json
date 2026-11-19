@@ -1,6 +1,13 @@
 {
   "schemaVersion": "poseidon.s1-audit-vocabulary.v1",
   "operationReasons": {
+    "MembershipImport": "PREPARATION_COMMAND",
+    "MembershipSuspend": "PREPARATION_COMMAND",
+    "MembershipResume": "PREPARATION_COMMAND",
+    "MembershipRevoke": "PREPARATION_COMMAND",
+    "MembershipSecuritySuspend": "PREPARATION_COMMAND",
+    "DelegationCreate": "PREPARATION_COMMAND",
+    "DelegationRevoke": "PREPARATION_COMMAND",
     "DowntimeCreate": "PREPARATION_COMMAND",
     "DowntimeUpdate": "PREPARATION_COMMAND",
     "WorkOrderCreate": "PREPARATION_COMMAND",
@@ -135,7 +142,18 @@
     "HrChangeEmploymentStatus": "PREPARATION_COMMAND",
     "HrCreateAssignment": "PREPARATION_COMMAND",
     "HrChangeAssignmentStatus": "PREPARATION_COMMAND",
-    "HrRecordActualEvent": "PREPARATION_COMMAND"
+    "HrRecordActualEvent": "PREPARATION_COMMAND",
+    "CreateControlledDocument": "PREPARATION_COMMAND",
+    "RegisterControlledDocumentRevision": "PREPARATION_COMMAND",
+    "ReleaseControlledDocumentRevision": "FILE_TRANSPORT",
+    "PublishControlledDocumentRevision": "HUMAN_REVIEW_WORKFLOW",
+    "VerifyControlledDocumentRevision": "HUMAN_REVIEW_WORKFLOW",
+    "PlaceControlledDocumentHold": "HUMAN_REVIEW_WORKFLOW",
+    "ReleaseControlledDocumentHold": "HUMAN_REVIEW_WORKFLOW",
+    "SetControlledDocumentRetention": "PREPARATION_COMMAND",
+    "RequestControlledDocumentDisposal": "HUMAN_REVIEW_WORKFLOW",
+    "ApproveControlledDocumentDisposal": "HUMAN_REVIEW_WORKFLOW",
+    "LinkControlledDocument": "PREPARATION_COMMAND"
   },
   "reasonCodes": [
     "PREPARATION_COMMAND",

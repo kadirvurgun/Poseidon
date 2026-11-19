@@ -22,6 +22,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             CommandReceipt r when r.Action is "HrPersonUpdate" or "HrPersonVerify" or "HrEmploymentCreate" or "HrEmploymentStatus" or "HrAssignmentCreate" or "HrAssignmentStatus" or "HrActualEventRecord" => "TenantPerson",
             CommandReceipt r when r.Action is "HrLegalEntityUpdate" or "HrLegalEntityStatus" or "HrIdentifierAdd" or "HrIdentifierRetire" or "HrRoleAdd" or "HrRoleEnd" or "HrRoleCancel" => "Tenant",
             CommandReceipt r when r.Action is "CrewPersonSave" or "CrewIdentityConvert" or "CrewProfileSave" or "CrewPhotoSave" => "TenantPerson",
+            UserAccount or AccountMembership or AccountMembershipVesselGrant or MembershipDelegation or DelegationVesselScope or TenantAccessRecovery or MembershipCommandReceipt => "Tenant",
             Tenant or Company or RegisterDraft or RegisterRevision or RuleDraft or RuleRevision or FleetCatalogDraft or FleetCatalogDraftRevision or
                 RegulatoryQualificationHead or RegulatoryQualificationEvent or RegulatoryQualificationReceipt or
                 ParameterRoot or ParameterRevision or ParameterDecision or ParameterCommandReceipt => "Tenant",
@@ -32,7 +33,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if (requireResolvedScope && scopeKind == "Unresolved")
             throw new InvalidOperationException("Current command audit scope is unavailable.");
         var fields = JsonSerializer.Deserialize<List<JsonElement>>(metadata.Summary) ?? [];
-        if (entry.Entity is CommandReceipt or ApplicabilityReceipt or HumanReviewReceipt or ControlEvidenceReceipt or RegulatoryQualificationReceipt)
+        if (entry.Entity is CommandReceipt or ApplicabilityReceipt or HumanReviewReceipt or ControlEvidenceReceipt or RegulatoryQualificationReceipt or ControlledDocumentReceipt)
             fields.Add(JsonSerializer.SerializeToElement(Field("Binding", null, "CommittedResource")));
         fields.Add(JsonSerializer.SerializeToElement(Field("ScopeKind", null, scopeKind)));
         if (command != null)
@@ -174,6 +175,50 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             return new(null, parameterReceipt.RootId, "ParameterCommandReceipt", null, parameterReceipt.RootRevision,
                 Fields(Field("Binding", null, "CommittedResource")));
         if (HrProjection(entry) is { } hr) return hr;
+        // PLAN-1511-5202: identity values (issuer/subject), permission lists and actor-supplied
+        // text never enter audit summaries; only closed lifecycle codes and revisions do.
+        // Immutable owner-bound rows (account, grant/scope snapshots) and the zero-revision membership/delegation/recovery
+        // creations carry the closed Binding=OwnerReference marker; a later lifecycle change keeps it as its before value.
+        string? OwnerBinding() => entry.State == EntityState.Added ? null : "OwnerReference";
+        if (entry.Entity is UserAccount account)
+            return new(null, account.Id, "Account", null, null, Fields(Field("IdentityLink", null, null, "ValuesWithheld"),
+                Field("Source", null, Closed(account.Source, "ConfigurationImport", "SyntheticUnverified")), Field("Binding", null, "OwnerReference")));
+        if (entry.Entity is AccountMembership membership)
+        {
+            string? Prior(string name) => entry.State == EntityState.Added ? null : entry.Property(name).OriginalValue?.ToString();
+            return new(null, membership.Id, "Membership", entry.State == EntityState.Added ? null : (long?)entry.Property(nameof(membership.AccessRevision)).OriginalValue,
+                membership.AccessRevision, Fields(
+                    Field("Status", Prior(nameof(membership.Status)) is { } s ? Closed(s, "Active", "Suspended", "Revoked") : null, Closed(membership.Status, "Active", "Suspended", "Revoked")),
+                    Field("StatusReason", null, Closed(membership.StatusReason, "ConfigurationImport", "SyntheticFixture", "AdministrativeSuspension", "AdministrativeResume", "AdministrativeRevocation", "SecuritySuspension", "SecurityResume")),
+                    Field("AccessRevision", Prior(nameof(membership.AccessRevision)), Number(membership.AccessRevision)),
+                    Field("AccountId", null, membership.AccountId.ToString("D")), Field("Binding", OwnerBinding(), "OwnerReference")));
+        }
+        if (entry.Entity is AccountMembershipVesselGrant grant)
+            return new(grant.VesselId, grant.MembershipId, "MembershipVesselGrant", null, null,
+                Fields(Field("CanEdit", null, grant.CanEdit ? "true" : "false"), Field("Binding", null, "OwnerReference")));
+        if (entry.Entity is MembershipDelegation delegation)
+            return new(null, delegation.Id, "Delegation", null, null, Fields(
+                Field("Status", entry.State == EntityState.Added ? null : "Active", Closed(delegation.Status, "Active", "Revoked")),
+                Field("DelegatorMembershipId", null, delegation.DelegatorMembershipId.ToString("D")),
+                Field("DelegateMembershipId", null, delegation.DelegateMembershipId.ToString("D")),
+                Field("Permissions", null, null, "ValuesWithheld"),
+                Field("ReasonCode", null, Closed(delegation.ReasonCode, "PlannedAbsence", "UnplannedAbsence", "WorkloadCover", "Handover", "LegacyUnscoped")),
+                Field("CompanyId", null, delegation.CompanyId?.ToString("D")),
+                Field("RevocationReason", null, delegation.RevocationReason is { } r ? Closed(r, "AdministrativeRevocation", "MembershipSuspended", "MembershipRevoked") : null),
+                Field("Binding", OwnerBinding(), "OwnerReference")));
+        if (entry.Entity is DelegationVesselScope scope)
+            return new(scope.VesselId, scope.DelegationId, "DelegationVesselScope", null, null,
+                Fields(Field("CanEdit", null, scope.CanEdit ? "true" : "false"), Field("Binding", null, "OwnerReference")));
+        if (entry.Entity is TenantAccessRecovery recovery)
+            return new(null, recovery.MembershipId, "AccessRecovery", null, null,
+                Fields(Field("State", entry.State == EntityState.Added ? null : "RECOVERY_REQUIRED", recovery.ResolvedAt == null ? "RECOVERY_REQUIRED" : "RESOLVED"),
+                    Field("Cause", null, Closed(recovery.Cause, "SecuritySuspension")),
+                    Field("Resolution", null, recovery.Resolution is { } resolution ? Closed(resolution, "SecuritySuspensionResumed") : null),
+                    Field("Binding", OwnerBinding(), "OwnerReference")));
+        if (entry.Entity is MembershipCommandReceipt membershipReceipt)
+            return new(null, membershipReceipt.ResourceId, "MembershipCommandReceipt", null, null,
+                Fields(Field("Action", null, Closed(membershipReceipt.Action, "MembershipImport", "MembershipSuspend", "MembershipResume", "MembershipRevoke",
+                    "MembershipSecuritySuspend", "DelegationCreate", "DelegationRevoke")), Field("Binding", null, "CommittedResource")));
         // Never copy the declared reference text, value or observation time into audit.
         if (entry.Entity is VesselProfileFieldSource fieldSource)
             return new(fieldSource.VesselId, fieldSource.VesselId, "VesselProfileFieldSource", null, fieldSource.Sequence,
@@ -222,6 +267,48 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             return new(parentVessel, binding.EvaluationId, "EvaluationQualification", null, binding.QualificationRevision,
                 Fields(Field("RuleId", null, binding.RuleId.ToString("D")), Field("QualificationRevision", null, Number(binding.QualificationRevision)),
                     Field("AttestationId", null, binding.AttestationId?.ToString("D"))));
+        // PLAN-1511-5802: closed state fields only. Titles, codes, authority refs, reasons,
+        // verification basis, hashes and object generations are never copied.
+        if (entry.Entity is ControlledDocument controlled)
+        {
+            long? beforeSequence = entry.State == EntityState.Added ? null : (long?)entry.Property(nameof(controlled.Sequence)).OriginalValue;
+            string? Prior(string name) => entry.State == EntityState.Added ? null : entry.Property(name).OriginalValue?.ToString();
+            return new(controlled.VesselId, controlled.Id, "ControlledDocument", beforeSequence, controlled.Sequence,
+                Fields(Field("Sequence", beforeSequence is long b ? Number(b) : null, Number(controlled.Sequence)),
+                    Field("DisposalState", Prior(nameof(controlled.DisposalState)), Closed(controlled.DisposalState, ControlledDocumentPolicy.DisposalStates)),
+                    Field("HoldActive", Prior(nameof(controlled.HoldActive)) is { } h ? (h == bool.TrueString ? "true" : "false") : null, controlled.HoldActive ? "true" : "false"),
+                    Field("CurrentRevision", entry.State == EntityState.Added ? null : entry.Property(nameof(controlled.CurrentRevision)).OriginalValue is long cr ? Number(cr) : null,
+                        controlled.CurrentRevision is long current ? Number(current) : null),
+                    Field("Retention", null, null, "ValuesWithheld")));
+        }
+        if (entry.Entity is ControlledDocumentRevision controlledRevision)
+            // Intake release and publication modify the revision row in place: its immutable revision number is the honest
+            // before/after reference (the row has no xmin and its receipt carries none), never a content value.
+            return new(controlledRevision.VesselId, controlledRevision.DocumentId, "ControlledDocumentRevision",
+                entry.State == EntityState.Added ? null : (long?)entry.Property(nameof(controlledRevision.Revision)).OriginalValue, controlledRevision.Revision,
+                Fields(Field("Revision", entry.State == EntityState.Added ? null : Number((long)entry.Property(nameof(controlledRevision.Revision)).OriginalValue!), Number(controlledRevision.Revision)),
+                    Field("IntakeState", entry.State == EntityState.Added ? null : (string?)entry.Property(nameof(controlledRevision.IntakeState)).OriginalValue,
+                        Closed(controlledRevision.IntakeState, ControlledDocumentPolicy.IntakeStates)),
+                    Field("PublicationState", entry.State == EntityState.Added ? null : (string?)entry.Property(nameof(controlledRevision.PublicationState)).OriginalValue,
+                        Closed(controlledRevision.PublicationState, ControlledDocumentPolicy.PublicationStates)),
+                    Field("Binding", null, "FileReference")));
+        if (entry.Entity is ControlledDocumentCustodyEvent custody)
+            return new(custody.VesselId, custody.DocumentId, "ControlledDocumentCustody", null, custody.Sequence,
+                Fields(Field("EventType", null, Closed(custody.EventType, ControlledDocumentPolicy.EventTypes)),
+                    Field("Source", null, Closed(custody.Source, "COMMAND", "SECURE_FILE_PIPELINE", "SYNTHETIC_SEED")), Field("Basis", null, null, "ValuesWithheld")));
+        if (entry.Entity is ControlledDocumentVerification controlledVerification)
+            return new(controlledVerification.VesselId, controlledVerification.DocumentId, "ControlledDocumentVerification", null, controlledVerification.Revision,
+                Fields(Field("Method", null, Closed(controlledVerification.Method, ControlledDocumentPolicy.VerificationMethods)),
+                    Field("Result", null, Closed(controlledVerification.Result, ControlledDocumentPolicy.VerificationResults)), Field("Basis", null, null, "ValuesWithheld")));
+        if (entry.Entity is ControlledDocumentReceipt controlledReceipt)
+            return new(controlledReceipt.VesselId, controlledReceipt.DocumentId, "ControlledDocumentReceipt", null, null, "[]");
+        // Append-only link rows carry no revision or xmin: the closed owner binding proves them, like other immutable owner-bound rows.
+        if (entry.Entity is ControlledDocumentCertificateLink certificateLink)
+            return new(certificateLink.VesselId, certificateLink.DocumentId, "ControlledDocumentLink", null, null, Fields(Field("TargetKind", null, "VesselCertificate"), Field("Binding", null, "OwnerReference")));
+        if (entry.Entity is ControlledDocumentEvidenceLink evidenceLink)
+            return new(evidenceLink.VesselId, evidenceLink.DocumentId, "ControlledDocumentLink", null, null, Fields(Field("TargetKind", null, "ControlEvidence"), Field("Binding", null, "OwnerReference")));
+        if (entry.Entity is ControlledDocumentCredentialLink credentialLink)
+            return new(credentialLink.VesselId, credentialLink.DocumentId, "ControlledDocumentLink", null, null, Fields(Field("TargetKind", null, "Credential"), Field("Binding", null, "OwnerReference")));
         Guid? vessel = entry.Entity switch {
             OperationEquipmentBinding e => e.VesselId, EvaluationOwningReference e => e.VesselId,
             EvaluationUpstreamReference e => e.VesselId, MsmdRoleBinding e => e.VesselId,

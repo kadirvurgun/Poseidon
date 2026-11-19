@@ -31,7 +31,9 @@ public static class DocumentEndpoints
     private static DocumentDraftDto Dto(Document d, DocumentVersion v) => new(d.Id, d.VesselId, v.Revision, d.Version, v.Title, v.Status, v.Provenance);
     private static async Task<IResult> Failure(HttpContext h, int status, string code) {
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "FileRequest", code);
-        return Results.Problem(statusCode: status, title: code);
+        // PLAN-1511-5803: NATIVE profile envelope carries the machine code, not only the title.
+        return Results.Problem(statusCode: status, title: code, extensions: new Dictionary<string, object?>
+            { ["code"] = code, ["correlationId"] = h.TraceIdentifier });
     }
     private static async Task<IResult> List(Guid vessel, HttpContext h, PoseidonDbContext db) {
         var a = Actor(h); var ct = h.RequestAborted;

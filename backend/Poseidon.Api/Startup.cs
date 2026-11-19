@@ -9,6 +9,9 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
     {
         // The generic host completes application configuration before invoking Startup.
         // OIDC scheme registration and membership resolution must share that final configuration.
+        // PLAN-1511-5803: first startup filter = outermost; validates the endpoint profile registry
+        // against the mapped endpoints after the whole pipeline is configured (fail closed).
+        services.AddTransient<IStartupFilter, EndpointProfiles.StartupValidation>();
         services.AddRouting();
         // Numeric wire values remain numbers; do not advertise implicit string coercion.
         services.ConfigureHttpJsonOptions(options => options.SerializerOptions.NumberHandling =
@@ -53,11 +56,16 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
                     S1SecurityContract.Command(http)), qualifiedInputs: sp.GetRequiredService<IQualifiedInputRuntime>());
         });
         services.AddProblemDetails();
-        services.AddOpenApi(options => options.AddDocumentTransformer((document, _, _) =>
+        services.AddOpenApi(options =>
         {
-            document.Servers = [];
-            return Task.CompletedTask;
-        }));
+            options.AddDocumentTransformer((document, _, _) =>
+            {
+                document.Servers = [];
+                return Task.CompletedTask;
+            });
+            // PLAN-1511-5803: each operation advertises its single registered transport profile.
+            EndpointProfiles.AddOpenApiProfiles(options);
+        });
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment environment)
@@ -99,6 +107,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         });
         app.UseRouting();
         app.UseAuthentication();
+        // PLAN-1511-5202: persisted suspension/revocation is re-checked on every request.
+        app.UseMiddleware<MembershipSessionGate>();
         app.UseAuthorization();
         app.Use(async (context, next) =>
         {
@@ -164,6 +174,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapAuditHistory();
             endpoints.MapSecureFiles();
             endpoints.MapDocuments();
+            endpoints.MapControlledDocuments();
             endpoints.MapCrew();
             endpoints.MapOfflineApplication();
             endpoints.MapCrewPersonalProfiles();
@@ -182,6 +193,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapTug();
             endpoints.MapParameters();
             endpoints.MapHr();
+            endpoints.MapMemberships();
             endpoints.MapGet("/health/live", () => Results.Text("alive"))
                 .WithName("GetLiveness")
                 .WithSummary("Process liveness only; does not indicate database or operational readiness.");
