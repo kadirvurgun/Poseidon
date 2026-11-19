@@ -45,7 +45,7 @@ public sealed class CertificateLocalExtractionProviderTests
         Assert.Equal(0,clients.Created);Assert.Equal(CertificateTextLayerEngine.EngineVersion,raw.ModelVersion);Assert.Equal(checksum,raw.InputSha256);
         Assert.Equal("SYN-LOCAL-1",raw.Fields["certificate_no"].Value);Assert.Equal("2035-04-03",raw.Fields["expiry_date"].Value);Assert.True(raw.Fields["expiry_date"].Ambiguous);
         Assert.All(raw.Fields.Values,f=>{Assert.Equal(1,f.Page);Assert.True(f.Region!.Valid());});
-        var candidates=CertificateExtractionPolicy.Project(raw,checksum,raw.ModelVersion,raw.PromptVersion,0.8m,Guid.NewGuid().ToString("D"),null);
+        var candidates=CertificateExtractionPolicy.Project(raw,checksum,raw.ModelVersion,raw.PromptVersion,0.8m,new CertificateVesselIdentifiers("Synthetic Other","SYN-OTHER"),(CertificatePersonIdentifiers?)null);
         Assert.All(candidates,c=>Assert.Equal("REVIEW_REQUIRED",c.State));
         // Day/month-ambiguous date is forced to low-confidence review.
         Assert.True(candidates.Single(c=>c.Key=="expiry_date").LowConfidence);Assert.False(candidates.Single(c=>c.Key=="certificate_no").LowConfidence);
