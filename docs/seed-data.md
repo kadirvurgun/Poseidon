@@ -232,3 +232,13 @@ CertificateRenewalFixtures still seeds only one incomplete SyntheticUnverified D
 renewal (State column defaults to DRAFT). No transition, application, issued candidate,
 human verification, completion or CertificateSupersession row is ever seeded: those are
 attributable human workflow decisions and must come from real audited commands.
+
+## S7-WPB-20261120 — TowEquipmentFixtures (AUTHORED / PG DEFERRED)
+
+Each synthetic Tug receives one FICTIONAL tow equipment declaration per kind (Winch, TowHook,
+Towline, EmergencyRelease, FiFi) with its initial immutable revision: condition Unknown,
+criticality not assessed, no SWL/test dates/PMS or certificate links, provenance
+SyntheticUnverified, deterministic IDs, add-missing only. One Tug adds ten attributed seed
+writes. No assignment proposal, Tug Master acknowledgement, Chief Engineer verification,
+GO/NO_GO decision or receipt is ever seeded; every seeded item stays UNKNOWN (REVIEW_REQUIRED).
+Any exact seeded audit-count expectation in deferred PostgreSQL tests must add these ten writes.

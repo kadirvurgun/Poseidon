@@ -36,6 +36,7 @@ public static class SeedImporter
             db.RegulatoryDraftRevisions.Add(draft.Snapshot());
         }
         await TugFixtures.AddMissingAsync(db, data.Vessels, cancellationToken).ConfigureAwait(false);
+        await TowEquipmentFixtures.AddMissingAsync(db, data.Vessels, cancellationToken).ConfigureAwait(false);
         await TechnicalFixtures.AddMissingAsync(db, data.Vessels, cancellationToken).ConfigureAwait(false);
         await CrewFixtures.AddMissingAsync(db, data.Vessels, cancellationToken).ConfigureAwait(false);
         await HrFixtures.AddMissingAsync(db, data.Companies, data.Vessels, cancellationToken).ConfigureAwait(false);

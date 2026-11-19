@@ -14,7 +14,7 @@ const sections = [
     { key: 'operations', tr: sourceText("tr", "pairs.m_d045227afb1d4aaa"), en: sourceText("en", "pairs.m_d045227afb1d4aaa"), keys: ['noon-report', 'deck-daily-log', 'engine-daily-log', 'fuel-bunker-log', 'port-activity-sof', 'operational-downtime'] },
     { key: 'technical', tr: sourceText("tr", "pairs.m_470cefc094dedfe3"), en: sourceText("en", "pairs.m_470cefc094dedfe3"), keys: ['equipment', 'maintenance', 'defects', 'work-order-center'] },
     { key: 'crew', tr: sourceText("tr", "pairs.m_a6f7eeadcb7b0ca5"), en: sourceText("en", "pairs.m_a6f7eeadcb7b0ca5"), keys: ['crew'] },
-    { key: 'tug', tr: sourceText("tr", "pairs.m_8d10fb1a220cd756"), en: sourceText("en", "pairs.m_8d10fb1a220cd756"), keys: ['tug-command', 'tug-job-board', 'tug-job-intake'] },
+    { key: 'tug', tr: sourceText("tr", "pairs.m_8d10fb1a220cd756"), en: sourceText("en", "pairs.m_8d10fb1a220cd756"), keys: ['tug-command', 'tug-job-board', 'tug-job-intake', 'tug-assignment', 'tug-readiness', 'tug-equipment-readiness', 'tug-crew-readiness'] },
     { key: 'assurance', tr: sourceText("tr", "pairs.m_dda1fc9a101a6728"), en: sourceText("en", "pairs.m_dda1fc9a101a6728"), keys: ['certificate-command-center', 'renewal-workflow', 'sources', 'requirements', 'audit', 'audit-ready', 'import'] },
     { key: 'workspace', tr: sourceText("tr", "pairs.m_c3e5a55de61effb3"), en: sourceText("en", "pairs.m_c3e5a55de61effb3"), keys: ['companies', 'system-health', 'notification-escalation', 'offline-conflict-center'] },
 ];

@@ -129,6 +129,13 @@ public sealed class PoseidonDbContext(
     public DbSet<TugJobRevision> TugJobRevisions => Set<TugJobRevision>();
     public DbSet<TugOwner> TugOwners => Set<TugOwner>();
     public DbSet<TugAssignment> TugAssignments => Set<TugAssignment>();
+    public DbSet<TugAssignmentProposal> TugAssignmentProposals => Set<TugAssignmentProposal>();
+    public DbSet<TugAssignmentResponse> TugAssignmentResponses => Set<TugAssignmentResponse>();
+    public DbSet<TowEquipmentItem> TowEquipmentItems => Set<TowEquipmentItem>();
+    public DbSet<TowEquipmentRevision> TowEquipmentRevisions => Set<TowEquipmentRevision>();
+    public DbSet<TowEquipmentVerification> TowEquipmentVerifications => Set<TowEquipmentVerification>();
+    public DbSet<TugReadinessDecision> TugReadinessDecisions => Set<TugReadinessDecision>();
+    public DbSet<TugReadinessReceipt> TugReadinessReceipts => Set<TugReadinessReceipt>();
     public DbSet<TugOfflineEnrollment> TugOfflineEnrollments => Set<TugOfflineEnrollment>();
     public DbSet<TugOfflineOutcome> TugOfflineOutcomes => Set<TugOfflineOutcome>();
     public DbSet<TugOfflineLifecycle> TugOfflineLifecycles => Set<TugOfflineLifecycle>();
@@ -295,6 +302,15 @@ public sealed class PoseidonDbContext(
         model.Entity<TugJobRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TugOwner>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TugAssignment>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        // S7 WP-B (DEV-083..086): tug assignment, tow equipment and readiness decision records.
+        TugReadinessStorage.Configure(model);
+        model.Entity<TugAssignmentProposal>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TugAssignmentResponse>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TowEquipmentItem>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TowEquipmentRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TowEquipmentVerification>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TugReadinessDecision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TugReadinessReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         MaintenanceObservationStorage.Configure(model);
         model.Entity<MaintenanceObservation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<MaintenanceObservationRevocation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -717,6 +733,17 @@ public sealed class PoseidonDbContext(
             throw new InvalidOperationException("Offline capture context is immutable.");
         if (changes.Any(e => e.Entity is TugJobRevision or TugOwner or TugAssignment or TugDraftPlanRevision or TugDraftPlanTug && e.State != EntityState.Added))
             throw new InvalidOperationException("Tug lineage is immutable.");
+        // DEV-083..085: human acknowledgements, verifications, GO/NO_GO decisions, equipment revisions and
+        // receipts are append-only. The proposal head changes only its lifecycle fields; the equipment head
+        // keeps its tug and kind.
+        if (changes.Any(e => e.Entity is TugAssignmentResponse or TowEquipmentRevision or TowEquipmentVerification or TugReadinessDecision or TugReadinessReceipt && e.State != EntityState.Added))
+            throw new InvalidOperationException("Tug readiness human records are immutable.");
+        if (changes.Any(e => e.Entity is TugAssignmentProposal && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            e.Properties.Any(p => p.IsModified && p.Metadata.Name is not ("State" or "MasterAck" or "CancelledAt" or "CancelledBy" or "CancelReason" or "Revision")))))
+            throw new InvalidOperationException("Tug assignment scope is immutable.");
+        if (changes.Any(e => e.Entity is TowEquipmentItem && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            (e.Property("VesselId").IsModified || e.Property("Kind").IsModified))))
+            throw new InvalidOperationException("Tow equipment identity is immutable.");
         if (changes.Any(e => e.Entity is TugDraftPlan && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
             (e.Property("VesselId").IsModified || e.Property("JobId").IsModified))))
             throw new InvalidOperationException("Draft plan ownership is immutable.");

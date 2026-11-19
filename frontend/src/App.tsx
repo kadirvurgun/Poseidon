@@ -6,6 +6,7 @@ import { Button } from './components/ui/button';
 import { ImportWorkspace } from './product/ImportWorkspace';
 import { DailyReportWorkspace } from './product/DailyReportWorkspace';
 import { TugWorkspace } from './product/TugWorkspace';
+import { TugReadinessWorkspace } from './product/TugReadinessWorkspace';
 import { TechnicalWorkspace } from './product/TechnicalWorkspace';
 import { CrewWorkspace } from './product/CrewWorkspace';
 import { useEffect, useState } from 'react';
@@ -42,6 +43,8 @@ export function App() {
     const importer = /^\/app\/excel-migration\/([0-9a-fA-F-]{36})\/?$/.exec(window.location.pathname);
     if (importer)
         return <ImportWorkspace key={importer[1]} vessel={importer[1]}/>;
+    if (/^\/app\/tug-(assignment|readiness|equipment-readiness|crew-readiness)(?:\/|$)/.test(window.location.pathname))
+        return <TugReadinessWorkspace />;
     if (/^\/app\/tug-(command|job-board|job-intake|job-detail)(?:\/|$)/.test(window.location.pathname))
         return <TugWorkspace />;
     if (/^\/app\/(equipment-hierarchy|maintenance-plan)\//.test(window.location.pathname))

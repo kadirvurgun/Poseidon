@@ -47,7 +47,7 @@ public static class WorkspaceLensPolicy
         var rows = catalog.GetSection("Mappings").GetChildren().Take(4097).ToArray();
         if (rows.Length > 4096) return Empty("Unavailable");
         var mappings = new Dictionary<Guid, (string[] Keys, string[] Modes)>();
-        string[] known = ["operational-downtime", "work-order-center", "defects", "today", "fleet", "companies", "crew", "equipment", "maintenance", "import", "audit", "audit-ready", "sources", "requirements", "tug-command", "tug-job-board", "tug-job-intake", "noon-report", "deck-daily-log", "engine-daily-log", "certificate-command-center", "renewal-workflow", "fuel-bunker-log", "port-activity-sof"];
+        string[] known = ["operational-downtime", "work-order-center", "defects", "today", "fleet", "companies", "crew", "equipment", "maintenance", "import", "audit", "audit-ready", "sources", "requirements", "tug-command", "tug-job-board", "tug-job-intake", "tug-assignment", "tug-readiness", "tug-equipment-readiness", "tug-crew-readiness", "noon-report", "deck-daily-log", "engine-daily-log", "certificate-command-center", "renewal-workflow", "fuel-bunker-log", "port-activity-sof"];
         foreach (var row in rows) {
             if (!Guid.TryParse(row["TenantId"], out var tenant) || tenant != actor.TenantId) continue;
             var keys = row.GetSection("Keys").GetChildren().Select(x => x.Value ?? "").ToArray();

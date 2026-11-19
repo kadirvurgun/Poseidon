@@ -48,7 +48,7 @@ export function vesselContextHref(path: string, vessel: string, kind: 'Ship' | '
     const family = /^\/app\/(audit-ready|work-order-center|defects|crew-roster|equipment-hierarchy|maintenance-plan|excel-migration)(?:\/|$)/.exec(path);
     if (family)
         return `/app/${family[1]}/${id}`;
-    const tug = /^\/app\/(tug-command|tug-job-board|tug-job-intake)(?:\/|$)/.exec(path);
+    const tug = /^\/app\/(tug-command|tug-job-board|tug-job-intake|tug-assignment|tug-readiness|tug-equipment-readiness|tug-crew-readiness)(?:\/|$)/.exec(path);
     if (tug && kind === 'Tug')
         return `/app/${tug[1]}?vessel=${id}`;
     return `/app/fleet/${id}`;
