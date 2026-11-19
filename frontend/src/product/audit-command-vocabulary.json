@@ -118,7 +118,18 @@
     "FuelShipOpsCreate": "PREPARATION_COMMAND",
     "FuelShipOpsUpdate": "PREPARATION_COMMAND",
     "PortShipOpsCreate": "PREPARATION_COMMAND",
-    "PortShipOpsUpdate": "PREPARATION_COMMAND"
+    "PortShipOpsUpdate": "PREPARATION_COMMAND",
+    "CreateControlledDocument": "PREPARATION_COMMAND",
+    "RegisterControlledDocumentRevision": "PREPARATION_COMMAND",
+    "ReleaseControlledDocumentRevision": "FILE_TRANSPORT",
+    "PublishControlledDocumentRevision": "HUMAN_REVIEW_WORKFLOW",
+    "VerifyControlledDocumentRevision": "HUMAN_REVIEW_WORKFLOW",
+    "PlaceControlledDocumentHold": "HUMAN_REVIEW_WORKFLOW",
+    "ReleaseControlledDocumentHold": "HUMAN_REVIEW_WORKFLOW",
+    "SetControlledDocumentRetention": "PREPARATION_COMMAND",
+    "RequestControlledDocumentDisposal": "HUMAN_REVIEW_WORKFLOW",
+    "ApproveControlledDocumentDisposal": "HUMAN_REVIEW_WORKFLOW",
+    "LinkControlledDocument": "PREPARATION_COMMAND"
   },
   "reasonCodes": [
     "PREPARATION_COMMAND",
