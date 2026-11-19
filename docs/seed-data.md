@@ -1,3 +1,7 @@
+## S5-WPA DEV-040 — applicability override fixture (optional)
+
+`ApplicabilityOverrideFixtures.AddMissingAsync` is an explicit administrative fixture, not wired into normal startup/seed import. Per vessel it adds one FICTIONAL REQUIRE_ADDITIONAL_CONTROL proposal already withdrawn by its synthetic author (REVOKED, two append-only events) pinned to a synthetic non-existent evaluation, so it can never be approved, become ACTIVE or read as CURRENT. No approval, approver, authority grant, OVERRIDE_AUTHORITY policy, evidence or receipt is seeded; a second run adds nothing. Real-PostgreSQL test `ApplicabilityOverridePersistenceTests` is AUTHORED, execution DEFERRED.
+
 ## S2-DEV020-01 — profile field provenance fixture (optional)
 
 `VesselProfileFieldSourceFixtures.AddMissingAsync` is an explicit administrative fixture, not wired into normal startup/seed import (normal seed and audit totals unchanged). For each vessel whose profile is still the untouched synthetic import revision 1 and has no field sources, it adds one `imo` declaration: `SyntheticUnverified`, source kind `UNKNOWN`, reference and observation `Unknown`, value state copied from the draft (Missing), declarer empty GUID (allowed only for synthetic rows by the DB trigger). Operator-edited profiles and existing provenance are skipped; a second run adds nothing. It never seeds a declared, verified or fresh source, a policy or a credential. Real-PostgreSQL idempotency/preservation test: `VesselProfileFieldSourcePersistenceTests`.

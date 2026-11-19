@@ -32,6 +32,7 @@ public static class SecurityEventCodes
         "ParameterRead", "ParameterCommand", "HrRead", "HrCommand", "MembershipRead", "MembershipCommand", "SessionRevalidation",
         "ControlledDocument", "ControlledDocumentRead", "ControlledDocumentCommand", "ControlledDocumentReplay",
         "SyncOperationRead", "SyncConflictList",
+        "ApplicabilityOverrideRead", "ApplicabilityOverrideCommand", "ApplicabilityOverrideReplay", "ComplianceControlCandidateCommand", "ComplianceControlCandidateReplay",
         "ControlLifecycleRead", "ControlLifecycleCommand", "ControlLifecycleReplay", "ControlSupportingEvidenceRead", "HumanReviewRead",
         "DailyEngineReferenceRead", "DailyEngineReferenceCommand",
     }.ToFrozenSet(StringComparer.Ordinal);
@@ -83,6 +84,9 @@ public static class SecurityEventCodes
         "pending_change_exists", "ambiguous_selection", "synthetic_not_approvable",
         "quiet_hours_incomplete", "quiet_hours_invalid", "quiet_hours_zone_unknown",
         "control_retired", "control_record_incomplete", "control_reviewer_required", "control_revision_conflict",
+        "override_reason_not_allowed", "override_evidence_required", "override_evidence_unavailable", "override_unknown_not_acceptable", "override_validity_invalid",
+        "override_authority_unavailable", "override_overlap", "override_author_required", "override_rule_unavailable", "evaluation_stale", "human_actor_required",
+        "current_applicability_unavailable", "no_control_candidates",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static bool Allows(string action, string result) => Actions.Contains(action) && Results.Contains(result);
 }
