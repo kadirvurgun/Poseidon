@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { RegulatoryRegister } from './RegulatoryRegister'
 import { blankContent, decodeDraft, decodeRevision, saveDraft } from './register-api'
 import type { Draft } from './register-api'
+import { decodeRequirement } from './requirement-api'
 import { changeAppLanguage } from '../i18n'
 
 const id = '10000000-0000-0000-0000-000000000001'
@@ -178,4 +179,32 @@ describe('REG-SOURCE-DRAFT-01 authored component/transport tests; mocked transpo
     await saveDraft('sources', id, '{"expectedVersion":19}', 'synthetic-csrf', 'synthetic-command-key', new AbortController().signal)
     expect(fetch).toHaveBeenCalledWith(`/api/v1/source-drafts/${id}`, expect.objectContaining({ credentials: 'same-origin', method: 'PUT', body: '{"expectedVersion":19}', headers: expect.objectContaining({ 'X-CSRF-TOKEN': 'synthetic-csrf', 'Idempotency-Key': 'synthetic-command-key' }) }))
   })
+  // S3-WPA / DEV-026: server-derived requirement lifecycle; mocked transport only.
+  const rule = '10000000-0000-0000-0000-000000000003'
+  const projection = { id, revision: 2, version: 19, lifecycle: 'DRAFT', lifecycleBasis: 'NO_QUALIFIED_RULE', savedAt: '2026-11-01T00:00:00Z', provenance: 'DeclaredUnverified',
+    hash: 'C'.repeat(64), content: blankContent(), sourceId: source, sourceRevision: 1,
+    qualifications: [{ ruleId: rule, ruleRevision: 1, qualificationRevision: 2, requirementRevision: 1, state: 'IN_FORCE', lifecycle: 'IN_FORCE', current: false, savedAt: '2026-10-01T00:00:00Z' }] }
+  it('shows the new requirement revision as a draft while the prior in-force revision stays visible', async () => {
+    const requirement = { ...draft, current: { ...draft.current, kind: 'Requirement', revision: 2, sourceId: source, sourceRevision: 1 } }
+    const fetch = vi.fn((url: string) => Promise.resolve(response(url.includes('/requirements/') ? projection : url.includes('source-drafts') ? page([]) : url.includes('history') ? page([requirement.current]) : requirement)))
+    vi.stubGlobal('fetch', fetch); render(<RegulatoryRegister {...props()} kind="requirements" />)
+    expect(await screen.findByText('Recorded lifecycle: Draft · Revision 2')).toBeVisible()
+    expect(await screen.findByText(new RegExp(`^In force · Revision 1 · ${rule} / 1 · `))).toBeVisible()
+    expect(fetch.mock.calls.some(([url]) => url === `/api/v1/requirements/${id}`)).toBe(true)
+  })
+  it('shows Unavailable rather than an assumed draft when the lifecycle projection fails', async () => {
+    const requirement = { ...draft, current: { ...draft.current, kind: 'Requirement', sourceId: source, sourceRevision: 1 } }
+    const fetch = vi.fn((url: string) => Promise.resolve(url.includes('/requirements/') ? response({ code: 'service_unavailable' }, 503) : response(url.includes('source-drafts') ? page([]) : url.includes('history') ? page([requirement.current]) : requirement)))
+    vi.stubGlobal('fetch', fetch); render(<RegulatoryRegister {...props()} kind="requirements" />)
+    expect(await screen.findByText('Recorded lifecycle: Unavailable')).toBeVisible()
+    expect(screen.queryByText(/^Recorded lifecycle: Draft/)).not.toBeInTheDocument()
+  })
+  it.each([
+    { ...projection, lifecycle: 'READY' },
+    { ...projection, lifecycle: 'IN_FORCE' },
+    { ...projection, lifecycleBasis: 'RECORDED_QUALIFICATION' },
+    { ...projection, qualifications: [{ ...projection.qualifications[0], current: true }] },
+    { ...projection, qualifications: [{ ...projection.qualifications[0], state: 'UNKNOWN' }] },
+    { ...projection, extra: true },
+  ])('rejects lifecycle projections the server contract cannot produce', value => { expect(() => decodeRequirement(value)).toThrow('Request failed (502)') })
 })
