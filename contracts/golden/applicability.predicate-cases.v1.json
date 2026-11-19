@@ -1,0 +1,1073 @@
+{
+  "schemaVersion": "poseidon.applicability-predicate-golden.v1",
+  "trace": [
+    "DEV-027",
+    "T-S3-002",
+    "18.01 Backlog row 28"
+  ],
+  "meaning": "FICTIONAL software expectations for the six DEV-027 context predicates (flag, type, GT, build date, cargo, trading area) incl. boundaries and REVIEW_REQUIRED. Not real vessel facts, not an approved rule catalog, not legal applicability. Every rule is wrapped in a FICTIONAL-ONLY IN_FORCE envelope by the test so lifecycle does not mask the predicate result.",
+  "asOf": "2026-11-02T00:00:00Z",
+  "cases": [
+    {
+      "id": "PRED-FLAG-A1",
+      "predicate": "flag",
+      "when": {
+        "field": "vessel.flag",
+        "operator": "IN",
+        "value": [
+          "TR",
+          "MT"
+        ]
+      },
+      "facts": {
+        "vessel.flag": {
+          "knowledge": "Known",
+          "value": "TR"
+        }
+      },
+      "expected": "APPLICABLE"
+    },
+    {
+      "id": "PRED-FLAG-N1",
+      "predicate": "flag",
+      "when": {
+        "field": "vessel.flag",
+        "operator": "IN",
+        "value": [
+          "TR",
+          "MT"
+        ]
+      },
+      "facts": {
+        "vessel.flag": {
+          "knowledge": "Known",
+          "value": "PA"
+        }
+      },
+      "expected": "NOT_APPLICABLE"
+    },
+    {
+      "id": "PRED-FLAG-N2",
+      "predicate": "flag",
+      "when": {
+        "field": "vessel.flag",
+        "operator": "IN",
+        "value": [
+          "TR",
+          "MT"
+        ]
+      },
+      "facts": {
+        "vessel.flag": {
+          "knowledge": "Known",
+          "value": "tr"
+        }
+      },
+      "expected": "NOT_APPLICABLE",
+      "note": "Ordinal match: case is not folded."
+    },
+    {
+      "id": "PRED-FLAG-S1",
+      "predicate": "flag",
+      "when": {
+        "field": "context.mode",
+        "operator": "EXISTS"
+      },
+      "facts": {
+        "context.mode": {
+          "knowledge": "Known",
+          "value": "SHIP"
+        },
+        "vessel.flag": {
+          "knowledge": "Known",
+          "value": "TR"
+        }
+      },
+      "expected": "APPLICABLE",
+      "scope": {
+        "flags": [
+          "TR"
+        ]
+      }
+    },
+    {
+      "id": "PRED-FLAG-S2",
+      "predicate": "flag",
+      "when": {
+        "field": "context.mode",
+        "operator": "EXISTS"
+      },
+      "facts": {
+        "context.mode": {
+          "knowledge": "Known",
+          "value": "SHIP"
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "scope": {
+        "flags": [
+          "TR"
+        ]
+      },
+      "reviewReason": "Missing"
+    },
+    {
+      "id": "PRED-FLAG-R1",
+      "predicate": "flag",
+      "when": {
+        "field": "vessel.flag",
+        "operator": "IN",
+        "value": [
+          "TR",
+          "MT"
+        ]
+      },
+      "facts": {
+        "vessel.flag": {
+          "knowledge": "Unknown",
+          "value": null
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "Unknown"
+    },
+    {
+      "id": "PRED-FLAG-R2",
+      "predicate": "flag",
+      "when": {
+        "field": "vessel.flag",
+        "operator": "IN",
+        "value": [
+          "TR",
+          "MT"
+        ]
+      },
+      "facts": {},
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "Missing",
+      "note": "Fact absent from the context: never NOT_APPLICABLE."
+    },
+    {
+      "id": "PRED-FLAG-R3",
+      "predicate": "flag",
+      "when": {
+        "field": "vessel.flag",
+        "operator": "IN",
+        "value": [
+          "TR",
+          "MT"
+        ]
+      },
+      "facts": {
+        "vessel.flag": {
+          "knowledge": "Known",
+          "value": "TR",
+          "observedAt": "2026-10-01T00:00:00Z",
+          "freshUntil": "2026-11-01T00:00:00Z"
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "Stale"
+    },
+    {
+      "id": "PRED-FLAG-R4",
+      "predicate": "flag",
+      "when": {
+        "field": "vessel.flag",
+        "operator": "IN",
+        "value": [
+          "TR",
+          "MT"
+        ]
+      },
+      "facts": {
+        "vessel.flag": {
+          "knowledge": "Unverified",
+          "value": "TR"
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "Unverified",
+      "note": "Declared DEV-020 profile value without qualified basis."
+    },
+    {
+      "id": "PRED-FLAG-R5",
+      "predicate": "flag",
+      "when": {
+        "field": "vessel.flag",
+        "operator": "IN",
+        "value": [
+          "TR",
+          "MT"
+        ]
+      },
+      "facts": {
+        "vessel.flag": {
+          "knowledge": "Known",
+          "value": "TR",
+          "observedAt": "2026-11-03T00:00:00Z"
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "NotYetObserved"
+    },
+    {
+      "id": "PRED-TYPE-A1",
+      "predicate": "type",
+      "when": {
+        "field": "vessel.type",
+        "operator": "IN",
+        "value": [
+          "TUG"
+        ]
+      },
+      "facts": {
+        "vessel.type": {
+          "knowledge": "Known",
+          "value": "TUG"
+        }
+      },
+      "expected": "APPLICABLE"
+    },
+    {
+      "id": "PRED-TYPE-N1",
+      "predicate": "type",
+      "when": {
+        "field": "vessel.type",
+        "operator": "IN",
+        "value": [
+          "TUG"
+        ]
+      },
+      "facts": {
+        "vessel.type": {
+          "knowledge": "Known",
+          "value": "BULK_CARRIER"
+        }
+      },
+      "expected": "NOT_APPLICABLE"
+    },
+    {
+      "id": "PRED-TYPE-N2",
+      "predicate": "type",
+      "when": {
+        "field": "vessel.type",
+        "operator": "NOT_IN",
+        "value": [
+          "TUG"
+        ]
+      },
+      "facts": {
+        "vessel.type": {
+          "knowledge": "Known",
+          "value": "TUG"
+        }
+      },
+      "expected": "NOT_APPLICABLE"
+    },
+    {
+      "id": "PRED-TYPE-S1",
+      "predicate": "type",
+      "when": {
+        "field": "context.mode",
+        "operator": "EXISTS"
+      },
+      "facts": {
+        "context.mode": {
+          "knowledge": "Known",
+          "value": "TUG"
+        },
+        "vessel.type": {
+          "knowledge": "Known",
+          "value": "BULK_CARRIER"
+        }
+      },
+      "expected": "NOT_APPLICABLE",
+      "scope": {
+        "vesselTypes": [
+          "TUG"
+        ]
+      }
+    },
+    {
+      "id": "PRED-TYPE-R1",
+      "predicate": "type",
+      "when": {
+        "field": "vessel.type",
+        "operator": "IN",
+        "value": [
+          "TUG"
+        ]
+      },
+      "facts": {
+        "vessel.type": {
+          "knowledge": "Unknown",
+          "value": null
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "Unknown"
+    },
+    {
+      "id": "PRED-TYPE-R2",
+      "predicate": "type",
+      "when": {
+        "field": "vessel.type",
+        "operator": "IN",
+        "value": [
+          "TUG"
+        ]
+      },
+      "facts": {},
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "Missing",
+      "note": "Fact absent from the context: never NOT_APPLICABLE."
+    },
+    {
+      "id": "PRED-TYPE-R3",
+      "predicate": "type",
+      "when": {
+        "field": "vessel.type",
+        "operator": "IN",
+        "value": [
+          "TUG"
+        ]
+      },
+      "facts": {
+        "vessel.type": {
+          "knowledge": "Known",
+          "value": "TUG",
+          "observedAt": "2026-10-01T00:00:00Z",
+          "freshUntil": "2026-11-01T00:00:00Z"
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "Stale"
+    },
+    {
+      "id": "PRED-TYPE-R4",
+      "predicate": "type",
+      "when": {
+        "field": "vessel.type",
+        "operator": "IN",
+        "value": [
+          "TUG"
+        ]
+      },
+      "facts": {
+        "vessel.type": {
+          "knowledge": "Unverified",
+          "value": "TUG"
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "Unverified",
+      "note": "Declared DEV-020 profile value without qualified basis."
+    },
+    {
+      "id": "PRED-TYPE-R5",
+      "predicate": "type",
+      "when": {
+        "field": "vessel.type",
+        "operator": "IN",
+        "value": [
+          "TUG"
+        ]
+      },
+      "facts": {
+        "vessel.type": {
+          "knowledge": "Known",
+          "value": "TUG",
+          "observedAt": "2026-11-03T00:00:00Z"
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "NotYetObserved"
+    },
+    {
+      "id": "PRED-GT-A1",
+      "predicate": "gt",
+      "when": {
+        "field": "vessel.gt",
+        "operator": "GTE",
+        "value": 500
+      },
+      "facts": {
+        "vessel.gt": {
+          "knowledge": "Known",
+          "value": "500"
+        }
+      },
+      "expected": "APPLICABLE",
+      "note": "Boundary equal is inclusive for GTE."
+    },
+    {
+      "id": "PRED-GT-A2",
+      "predicate": "gt",
+      "when": {
+        "field": "vessel.gt",
+        "operator": "GTE",
+        "value": 500
+      },
+      "facts": {
+        "vessel.gt": {
+          "knowledge": "Known",
+          "value": "500.0000000001"
+        }
+      },
+      "expected": "APPLICABLE"
+    },
+    {
+      "id": "PRED-GT-N1",
+      "predicate": "gt",
+      "when": {
+        "field": "vessel.gt",
+        "operator": "GTE",
+        "value": 500
+      },
+      "facts": {
+        "vessel.gt": {
+          "knowledge": "Known",
+          "value": "499.9999999999"
+        }
+      },
+      "expected": "NOT_APPLICABLE"
+    },
+    {
+      "id": "PRED-GT-N2",
+      "predicate": "gt",
+      "when": {
+        "field": "vessel.gt",
+        "operator": "LT",
+        "value": 500
+      },
+      "facts": {
+        "vessel.gt": {
+          "knowledge": "Known",
+          "value": "500"
+        }
+      },
+      "expected": "NOT_APPLICABLE",
+      "note": "Boundary equal is exclusive for LT."
+    },
+    {
+      "id": "PRED-GT-A3",
+      "predicate": "gt",
+      "when": {
+        "field": "vessel.gt",
+        "operator": "LT",
+        "value": 500
+      },
+      "facts": {
+        "vessel.gt": {
+          "knowledge": "Known",
+          "value": "0"
+        }
+      },
+      "expected": "APPLICABLE",
+      "note": "Zero is a known value, not missing."
+    },
+    {
+      "id": "PRED-GT-R6",
+      "predicate": "gt",
+      "when": {
+        "field": "vessel.gt",
+        "operator": "GTE",
+        "value": 500
+      },
+      "facts": {
+        "vessel.gt": {
+          "knowledge": "Known",
+          "value": "about 500"
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "InvalidValue"
+    },
+    {
+      "id": "PRED-GT-R1",
+      "predicate": "gt",
+      "when": {
+        "field": "vessel.gt",
+        "operator": "GTE",
+        "value": 500
+      },
+      "facts": {
+        "vessel.gt": {
+          "knowledge": "Unknown",
+          "value": null
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "Unknown"
+    },
+    {
+      "id": "PRED-GT-R2",
+      "predicate": "gt",
+      "when": {
+        "field": "vessel.gt",
+        "operator": "GTE",
+        "value": 500
+      },
+      "facts": {},
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "Missing",
+      "note": "Fact absent from the context: never NOT_APPLICABLE."
+    },
+    {
+      "id": "PRED-GT-R3",
+      "predicate": "gt",
+      "when": {
+        "field": "vessel.gt",
+        "operator": "GTE",
+        "value": 500
+      },
+      "facts": {
+        "vessel.gt": {
+          "knowledge": "Known",
+          "value": "500",
+          "observedAt": "2026-10-01T00:00:00Z",
+          "freshUntil": "2026-11-01T00:00:00Z"
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "Stale"
+    },
+    {
+      "id": "PRED-GT-R4",
+      "predicate": "gt",
+      "when": {
+        "field": "vessel.gt",
+        "operator": "GTE",
+        "value": 500
+      },
+      "facts": {
+        "vessel.gt": {
+          "knowledge": "Unverified",
+          "value": "500"
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "Unverified",
+      "note": "Declared DEV-020 profile value without qualified basis."
+    },
+    {
+      "id": "PRED-GT-R5",
+      "predicate": "gt",
+      "when": {
+        "field": "vessel.gt",
+        "operator": "GTE",
+        "value": 500
+      },
+      "facts": {
+        "vessel.gt": {
+          "knowledge": "Known",
+          "value": "500",
+          "observedAt": "2026-11-03T00:00:00Z"
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "NotYetObserved"
+    },
+    {
+      "id": "PRED-BUILD-A1",
+      "predicate": "buildDate",
+      "when": {
+        "field": "vessel.buildDate",
+        "operator": "DATE_GTE",
+        "value": "2009-07-01"
+      },
+      "facts": {
+        "vessel.buildDate": {
+          "knowledge": "Known",
+          "value": "2009-07-01"
+        }
+      },
+      "expected": "APPLICABLE",
+      "note": "Boundary day inclusive."
+    },
+    {
+      "id": "PRED-BUILD-N1",
+      "predicate": "buildDate",
+      "when": {
+        "field": "vessel.buildDate",
+        "operator": "DATE_GTE",
+        "value": "2009-07-01"
+      },
+      "facts": {
+        "vessel.buildDate": {
+          "knowledge": "Known",
+          "value": "2009-06-30"
+        }
+      },
+      "expected": "NOT_APPLICABLE"
+    },
+    {
+      "id": "PRED-BUILD-N2",
+      "predicate": "buildDate",
+      "when": {
+        "field": "vessel.buildDate",
+        "operator": "DATE_LT",
+        "value": "2009-07-01"
+      },
+      "facts": {
+        "vessel.buildDate": {
+          "knowledge": "Known",
+          "value": "2009-07-01"
+        }
+      },
+      "expected": "NOT_APPLICABLE",
+      "note": "DATE_LT boundary exclusive."
+    },
+    {
+      "id": "PRED-BUILD-R6",
+      "predicate": "buildDate",
+      "when": {
+        "field": "vessel.buildDate",
+        "operator": "DATE_GTE",
+        "value": "2009-07-01"
+      },
+      "facts": {
+        "vessel.buildDate": {
+          "knowledge": "Known",
+          "value": "2009-02-30"
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "InvalidValue",
+      "note": "Impossible calendar date."
+    },
+    {
+      "id": "PRED-BUILD-R1",
+      "predicate": "buildDate",
+      "when": {
+        "field": "vessel.buildDate",
+        "operator": "DATE_GTE",
+        "value": "2009-07-01"
+      },
+      "facts": {
+        "vessel.buildDate": {
+          "knowledge": "Unknown",
+          "value": null
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "Unknown"
+    },
+    {
+      "id": "PRED-BUILD-R2",
+      "predicate": "buildDate",
+      "when": {
+        "field": "vessel.buildDate",
+        "operator": "DATE_GTE",
+        "value": "2009-07-01"
+      },
+      "facts": {},
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "Missing",
+      "note": "Fact absent from the context: never NOT_APPLICABLE."
+    },
+    {
+      "id": "PRED-BUILD-R3",
+      "predicate": "buildDate",
+      "when": {
+        "field": "vessel.buildDate",
+        "operator": "DATE_GTE",
+        "value": "2009-07-01"
+      },
+      "facts": {
+        "vessel.buildDate": {
+          "knowledge": "Known",
+          "value": "2010-01-01",
+          "observedAt": "2026-10-01T00:00:00Z",
+          "freshUntil": "2026-11-01T00:00:00Z"
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "Stale"
+    },
+    {
+      "id": "PRED-BUILD-R4",
+      "predicate": "buildDate",
+      "when": {
+        "field": "vessel.buildDate",
+        "operator": "DATE_GTE",
+        "value": "2009-07-01"
+      },
+      "facts": {
+        "vessel.buildDate": {
+          "knowledge": "Unverified",
+          "value": "2010-01-01"
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "Unverified",
+      "note": "Declared DEV-020 profile value without qualified basis."
+    },
+    {
+      "id": "PRED-BUILD-R5",
+      "predicate": "buildDate",
+      "when": {
+        "field": "vessel.buildDate",
+        "operator": "DATE_GTE",
+        "value": "2009-07-01"
+      },
+      "facts": {
+        "vessel.buildDate": {
+          "knowledge": "Known",
+          "value": "2010-01-01",
+          "observedAt": "2026-11-03T00:00:00Z"
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "NotYetObserved"
+    },
+    {
+      "id": "PRED-CARGO-A1",
+      "predicate": "cargo",
+      "when": {
+        "field": "cargo.type",
+        "operator": "IN",
+        "value": [
+          "OIL",
+          "CHEMICAL"
+        ]
+      },
+      "facts": {
+        "cargo.type": {
+          "knowledge": "Known",
+          "value": "CHEMICAL"
+        }
+      },
+      "expected": "APPLICABLE"
+    },
+    {
+      "id": "PRED-CARGO-N1",
+      "predicate": "cargo",
+      "when": {
+        "field": "cargo.type",
+        "operator": "IN",
+        "value": [
+          "OIL",
+          "CHEMICAL"
+        ]
+      },
+      "facts": {
+        "cargo.type": {
+          "knowledge": "Known",
+          "value": "CONTAINER"
+        }
+      },
+      "expected": "NOT_APPLICABLE"
+    },
+    {
+      "id": "PRED-CARGO-A2",
+      "predicate": "cargo",
+      "when": {
+        "field": "cargo.packagedDangerousGoods",
+        "operator": "IS_FALSE"
+      },
+      "facts": {
+        "cargo.packagedDangerousGoods": {
+          "knowledge": "Known",
+          "value": false
+        }
+      },
+      "expected": "APPLICABLE",
+      "note": "Known false is a value, not missing."
+    },
+    {
+      "id": "PRED-CARGO-R6",
+      "predicate": "cargo",
+      "when": {
+        "all": [
+          {
+            "field": "cargo.packagedDangerousGoods",
+            "operator": "IS_TRUE"
+          },
+          {
+            "field": "cargo.type",
+            "operator": "IN",
+            "value": [
+              "OIL",
+              "CHEMICAL"
+            ]
+          }
+        ]
+      },
+      "facts": {
+        "cargo.packagedDangerousGoods": {
+          "knowledge": "Known",
+          "value": false
+        },
+        "cargo.type": {
+          "knowledge": "Unknown",
+          "value": null
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "Unknown",
+      "note": "FALSE AND UNKNOWN keeps the review blocker."
+    },
+    {
+      "id": "PRED-CARGO-R1",
+      "predicate": "cargo",
+      "when": {
+        "field": "cargo.type",
+        "operator": "IN",
+        "value": [
+          "OIL",
+          "CHEMICAL"
+        ]
+      },
+      "facts": {
+        "cargo.type": {
+          "knowledge": "Unknown",
+          "value": null
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "Unknown"
+    },
+    {
+      "id": "PRED-CARGO-R2",
+      "predicate": "cargo",
+      "when": {
+        "field": "cargo.type",
+        "operator": "IN",
+        "value": [
+          "OIL",
+          "CHEMICAL"
+        ]
+      },
+      "facts": {},
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "Missing",
+      "note": "Fact absent from the context: never NOT_APPLICABLE."
+    },
+    {
+      "id": "PRED-CARGO-R3",
+      "predicate": "cargo",
+      "when": {
+        "field": "cargo.type",
+        "operator": "IN",
+        "value": [
+          "OIL",
+          "CHEMICAL"
+        ]
+      },
+      "facts": {
+        "cargo.type": {
+          "knowledge": "Known",
+          "value": "OIL",
+          "observedAt": "2026-10-01T00:00:00Z",
+          "freshUntil": "2026-11-01T00:00:00Z"
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "Stale"
+    },
+    {
+      "id": "PRED-CARGO-R4",
+      "predicate": "cargo",
+      "when": {
+        "field": "cargo.type",
+        "operator": "IN",
+        "value": [
+          "OIL",
+          "CHEMICAL"
+        ]
+      },
+      "facts": {
+        "cargo.type": {
+          "knowledge": "Unverified",
+          "value": "OIL"
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "Unverified",
+      "note": "Declared DEV-020 profile value without qualified basis."
+    },
+    {
+      "id": "PRED-CARGO-R5",
+      "predicate": "cargo",
+      "when": {
+        "field": "cargo.type",
+        "operator": "IN",
+        "value": [
+          "OIL",
+          "CHEMICAL"
+        ]
+      },
+      "facts": {
+        "cargo.type": {
+          "knowledge": "Known",
+          "value": "OIL",
+          "observedAt": "2026-11-03T00:00:00Z"
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "NotYetObserved"
+    },
+    {
+      "id": "PRED-AREA-A1",
+      "predicate": "tradingArea",
+      "when": {
+        "field": "vessel.tradingArea",
+        "operator": "EQ",
+        "value": "UNRESTRICTED"
+      },
+      "facts": {
+        "vessel.tradingArea": {
+          "knowledge": "Known",
+          "value": "UNRESTRICTED"
+        }
+      },
+      "expected": "APPLICABLE"
+    },
+    {
+      "id": "PRED-AREA-N1",
+      "predicate": "tradingArea",
+      "when": {
+        "field": "vessel.tradingArea",
+        "operator": "EQ",
+        "value": "UNRESTRICTED"
+      },
+      "facts": {
+        "vessel.tradingArea": {
+          "knowledge": "Known",
+          "value": "HARBOUR"
+        }
+      },
+      "expected": "NOT_APPLICABLE"
+    },
+    {
+      "id": "PRED-AREA-N2",
+      "predicate": "tradingArea",
+      "when": {
+        "not": {
+          "field": "vessel.tradingArea",
+          "operator": "IN",
+          "value": [
+            "HARBOUR",
+            "COASTAL"
+          ]
+        }
+      },
+      "facts": {
+        "vessel.tradingArea": {
+          "knowledge": "Known",
+          "value": "COASTAL"
+        }
+      },
+      "expected": "NOT_APPLICABLE"
+    },
+    {
+      "id": "PRED-AREA-R6",
+      "predicate": "tradingArea",
+      "when": {
+        "not": {
+          "field": "vessel.tradingArea",
+          "operator": "IN",
+          "value": [
+            "HARBOUR"
+          ]
+        }
+      },
+      "facts": {
+        "vessel.tradingArea": {
+          "knowledge": "Unknown",
+          "value": null
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "Unknown",
+      "note": "NOT UNKNOWN stays UNKNOWN."
+    },
+    {
+      "id": "PRED-AREA-R1",
+      "predicate": "tradingArea",
+      "when": {
+        "field": "vessel.tradingArea",
+        "operator": "EQ",
+        "value": "UNRESTRICTED"
+      },
+      "facts": {
+        "vessel.tradingArea": {
+          "knowledge": "Unknown",
+          "value": null
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "Unknown"
+    },
+    {
+      "id": "PRED-AREA-R2",
+      "predicate": "tradingArea",
+      "when": {
+        "field": "vessel.tradingArea",
+        "operator": "EQ",
+        "value": "UNRESTRICTED"
+      },
+      "facts": {},
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "Missing",
+      "note": "Fact absent from the context: never NOT_APPLICABLE."
+    },
+    {
+      "id": "PRED-AREA-R3",
+      "predicate": "tradingArea",
+      "when": {
+        "field": "vessel.tradingArea",
+        "operator": "EQ",
+        "value": "UNRESTRICTED"
+      },
+      "facts": {
+        "vessel.tradingArea": {
+          "knowledge": "Known",
+          "value": "UNRESTRICTED",
+          "observedAt": "2026-10-01T00:00:00Z",
+          "freshUntil": "2026-11-01T00:00:00Z"
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "Stale"
+    },
+    {
+      "id": "PRED-AREA-R4",
+      "predicate": "tradingArea",
+      "when": {
+        "field": "vessel.tradingArea",
+        "operator": "EQ",
+        "value": "UNRESTRICTED"
+      },
+      "facts": {
+        "vessel.tradingArea": {
+          "knowledge": "Unverified",
+          "value": "UNRESTRICTED"
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "Unverified",
+      "note": "Declared DEV-020 profile value without qualified basis."
+    },
+    {
+      "id": "PRED-AREA-R5",
+      "predicate": "tradingArea",
+      "when": {
+        "field": "vessel.tradingArea",
+        "operator": "EQ",
+        "value": "UNRESTRICTED"
+      },
+      "facts": {
+        "vessel.tradingArea": {
+          "knowledge": "Known",
+          "value": "UNRESTRICTED",
+          "observedAt": "2026-11-03T00:00:00Z"
+        }
+      },
+      "expected": "REVIEW_REQUIRED",
+      "reviewReason": "NotYetObserved"
+    }
+  ]
+}

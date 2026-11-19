@@ -1118,6 +1118,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/requirements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ListRequirements"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/requirements/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetRequirement"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/rules/capabilities": {
         parameters: {
             query?: never;
@@ -8902,6 +8934,14 @@ export interface components {
             limit: number;
             hasMore: boolean;
         };
+        PageDtoOfRequirementDto: {
+            items: components["schemas"]["RequirementDto"][];
+            /** Format: int32 */
+            offset: number;
+            /** Format: int32 */
+            limit: number;
+            hasMore: boolean;
+        };
         PageDtoOfSearchItemDto: {
             items: components["schemas"]["SearchItemDto"][];
             /** Format: int32 */
@@ -9336,6 +9376,26 @@ export interface components {
             limit: number;
             hasMore: boolean;
         };
+        RequirementDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            lifecycle: string;
+            lifecycleBasis: string;
+            /** Format: date-time */
+            savedAt: string;
+            provenance: string;
+            hash: string;
+            content: components["schemas"]["RegisterContent"];
+            /** Format: uuid */
+            sourceId: null | string;
+            /** Format: int64 */
+            sourceRevision: null | number;
+            qualifications: components["schemas"]["RequirementQualificationDto"][];
+        };
         RequirementPin: {
             /** Format: uuid */
             requirementId: string;
@@ -9349,6 +9409,21 @@ export interface components {
             ruleId?: null | string;
             /** Format: int64 */
             ruleRevision?: null | number;
+        };
+        RequirementQualificationDto: {
+            /** Format: uuid */
+            ruleId: string;
+            /** Format: int64 */
+            ruleRevision: number;
+            /** Format: int64 */
+            qualificationRevision: number;
+            /** Format: int64 */
+            requirementRevision: number;
+            state: string;
+            lifecycle: string;
+            current: boolean;
+            /** Format: date-time */
+            savedAt: string;
         };
         RuleAuthorCommand: {
             /** Format: uint32 */
@@ -13794,6 +13869,121 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ListRequirements: {
+        parameters: {
+            query?: {
+                q?: string;
+                offset?: string;
+                limit?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PageDtoOfRequirementDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GetRequirement: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RequirementDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
             };
             /** @description Service Unavailable */
             503: {

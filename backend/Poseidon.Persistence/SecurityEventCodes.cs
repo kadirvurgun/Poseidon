@@ -23,7 +23,7 @@ public static class SecurityEventCodes
         "Logout", "MaintenanceObservation", "MaintenanceObservationCapture", "MaintenanceObservationRead",
         "MaintenanceObservationRevoke", "MaintenanceRead", "MaintenanceSave", "OfflineConflictRead",
         "OfflineHistory", "OfflineInventory", "OfflineRequest", "ProfileHistory",
-        "ProfileRead", "ProfileSave", "RegisterHistory", "RegisterList",
+        "ProfileRead", "ProfileSave", "RegisterHistory", "RegisterList", "RequirementList", "RequirementRead",
         "RegisterRead", "RegisterSave", "RegulatoryQualification", "RegulatoryQualificationRead",
         "RegulatorySourceBytesRead", "RuleCapabilities", "RulesRead", "Session",
         "TodayRead", "TodayWhyRead", "MetricCatalogRead", "MetricScalarRead", "TugRead", "TugSave",

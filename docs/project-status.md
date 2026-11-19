@@ -1,5 +1,9 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
+## S3-WPA — DEV-026/DEV-027 kabul boşlukları (19.11.2026)
+
+`/api/v1/requirements` okuma projeksiyonu (yaşam döngüsü qualification head'den türetilir, saklanmaz), sessiz üzerine yazma/409 testleri, UNKNOWN qualification zarfının reload'da korunması, requirement ekranında lifecycle görünürlüğü, DEV-027 altı predicate golden seti (57 vaka) ve DEV-020 UNKNOWN→REVIEW_REQUIRED testleri. Yerel: build 0 uyarı, domain 1016/1016, persistence unit 83/83, API unit 276/276, endpoint profile 15/15, python 37/37, frontend typecheck/lint/ilgili vitest 87/87. PG integration (16 yeni vaka), CI, QA **DEFERRED**; accepted SP +0. Dal `feature/s3-wpa-requirement-applicability-20261119`. [Rapor](phases/S3-WPA-20261119.md).
+
 ## Paralel S2 planlama, tema ve katalog alt paketleri (17–18.11.2026)
 
 _18.11.2026 entegrasyonu: ayrı oturumda yazılan bu kayıt `foundation/s2-integration-20261118` dalına cherry-pick ile alındı; planlama manifesti `sources/2026-11-15/planning-manifest.json` yoluna taşındı. Entegrasyon testleri DEFERRED / NOT RUN._
