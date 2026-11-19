@@ -413,6 +413,98 @@
       "equipment": "उपकरण संदर्भ",
       "freshness": "ताज़गी",
       "provenance": "उद्गम शृंखला"
+    },
+    "CriticalStatePanel_tsx_copy": {
+      "title": "महत्वपूर्ण स्थितियाँ और उनके स्रोत",
+      "loading": "महत्वपूर्ण स्थितियाँ लोड हो रही हैं…",
+      "reload": "महत्वपूर्ण स्थितियाँ फिर से लोड करें",
+      "offline": "ऑफ़लाइन: महत्वपूर्ण स्थितियाँ कैश से नहीं दिखाई जातीं।",
+      "dirty": "बिना सहेजे फ़ॉर्म परिवर्तन शामिल नहीं हैं। व्याख्याएँ केवल सहेजे गए रिकॉर्ड को दर्शाती हैं।",
+      "empty": "आपकी पहुँच के लिए कोई महत्वपूर्ण स्थिति दिखाई नहीं देती।",
+      "scope": "केवल वे स्थितियाँ सूचीबद्ध हैं जिन्हें देखने की आपको अनुमति है।",
+      "restricted": "आपकी पहुँच के लिए विवरण प्रतिबंधित हैं। यह स्थिति तैयार या सत्यापित परिणाम नहीं है।",
+      "source": "स्रोत",
+      "revision": "संशोधन",
+      "noRevision": "कोई सहेजा गया संशोधन नहीं",
+      "recorded": "दर्ज",
+      "noSource": "अभी कोई स्वामी रिकॉर्ड नहीं",
+      "verification": "सत्यापन",
+      "notVerified": "सत्यापित नहीं",
+      "freshness": "ताज़गी",
+      "observed": "अवलोकित",
+      "checked": "जाँचा गया",
+      "reasonsTitle": "कारण",
+      "blockersTitle": "अवरोध",
+      "noBlockers": "कोई अवरोध सूचीबद्ध नहीं",
+      "resolution": "समाधान",
+      "open": "स्वामी रिकॉर्ड खोलें",
+      "errors": {
+        "e401": "आपका सत्र समाप्त हो गया है। फिर से साइन इन करें।",
+        "e403": "आपको इन महत्वपूर्ण स्थितियों को देखने की अनुमति नहीं है।",
+        "e404": "यह पोत उपलब्ध नहीं है।",
+        "other": "महत्वपूर्ण स्थितियाँ लोड नहीं हो सकीं। फिर से प्रयास करें।"
+      },
+      "keys": {
+        "onboarding": "ऑनबोर्डिंग तत्परता",
+        "profileFreshness": "प्रोफ़ाइल ताज़गी",
+        "applicability": "अनुपालन प्रयोज्यता"
+      },
+      "fields": {
+        "profile": "प्रोफ़ाइल",
+        "applicability": "प्रयोज्यता मूल्यांकन",
+        "vesselCode": "पोत कोड",
+        "vesselName": "पोत नाम"
+      },
+      "states": {
+        "BLOCKED": "अवरुद्ध",
+        "REVIEW_REQUIRED": "समीक्षा आवश्यक",
+        "UNKNOWN": "अज्ञात",
+        "STALE": "पुराना",
+        "UNAVAILABLE": "उपलब्ध नहीं",
+        "DECLARED_UNVERIFIED": "घोषित · सत्यापित नहीं",
+        "QUALIFIED_CURRENT_UNVERIFIED": "योग्य मूल्यांकन वर्तमान · सत्यापित नहीं"
+      },
+      "freshnessStates": {
+        "FRESH": "नीति आयु के भीतर (सत्यापित नहीं)",
+        "STALE": "पुराना",
+        "UNKNOWN": "अज्ञात",
+        "UNAVAILABLE": "उपलब्ध नहीं"
+      },
+      "sourceKinds": {
+        "RegulatoryDraft": "पोत प्रोफ़ाइल",
+        "ApplicabilityEvaluation": "प्रयोज्यता मूल्यांकन"
+      },
+      "resolutions": {
+        "PROFILE_DECLARATION": "प्रोफ़ाइल घोषित करें",
+        "REQUIRED_DECLARATION": "आवश्यक मान घोषित करें",
+        "POLICY_OR_EVIDENCE": "नीति या साक्ष्य आवश्यक",
+        "QUALIFIED_EVIDENCE": "योग्य साक्ष्य आवश्यक",
+        "SOURCE_DECLARATION": "स्रोत घोषित करें",
+        "SOURCE_RENEWAL": "स्रोत नवीनीकृत करें",
+        "FRESHNESS_POLICY_CONFIGURATION": "स्वीकृत ताज़गी नीति कॉन्फ़िगर करें",
+        "SERVICE_RECOVERY": "सेवा पुनर्प्राप्ति आवश्यक",
+        "RE_EVALUATION": "पुनर्मूल्यांकन करें",
+        "QUALIFIED_EVALUATION": "योग्य मूल्यांकन चलाएँ",
+        "CATALOG_QUALIFICATION": "कैटलॉग योग्य करें",
+        "HUMAN_REVIEW": "अधिकृत मानवीय समीक्षा"
+      },
+      "reasons": {
+        "PROFILE_MISSING": "प्रोफ़ाइल सहेजी नहीं गई",
+        "REQUIRED_DATA_MISSING": "आवश्यक डेटा अनुपलब्ध",
+        "REQUIRED_DATA_UNKNOWN": "आवश्यक डेटा अज्ञात",
+        "VERIFICATION_NOT_ESTABLISHED": "सत्यापन स्थापित नहीं",
+        "FIELDS_UNKNOWN": "कुछ फ़ील्ड की ताज़गी अज्ञात",
+        "FIELDS_STALE": "कुछ फ़ील्ड पुराने हैं",
+        "FIELDS_UNAVAILABLE": "कुछ फ़ील्ड उपलब्ध नहीं हैं",
+        "ALL_FIELDS_WITHIN_POLICY": "सभी फ़ील्ड नीति आयु के भीतर (सत्यापित नहीं)",
+        "VALUE_NOT_RECORDED": "मान दर्ज नहीं",
+        "VALUE_UNKNOWN": "मान अज्ञात के रूप में दर्ज",
+        "SOURCE_NOT_DECLARED": "कोई स्रोत घोषित नहीं",
+        "FRESHNESS_POLICY_UNCONFIGURED": "कोई स्वीकृत ताज़गी नीति नहीं",
+        "QUALIFIED_EVALUATION_UNAVAILABLE": "कोई योग्य मूल्यांकन नहीं",
+        "PROFILE_CHANGED": "मूल्यांकन के बाद प्रोफ़ाइल बदली",
+        "APPLICABILITY_REVIEW_REQUIRED": "प्रयोज्यता समीक्षा आवश्यक"
+      }
     }
   },
   "pairs": {

@@ -413,6 +413,98 @@
       "equipment": "Felszerelési kontextus",
       "freshness": "Frissesség",
       "provenance": "Eredet"
+    },
+    "CriticalStatePanel_tsx_copy": {
+      "title": "Kritikus állapotok és forrásaik",
+      "loading": "Kritikus állapotok betöltése…",
+      "reload": "Kritikus állapotok újratöltése",
+      "offline": "Offline: a kritikus állapotok nem jelennek meg a gyorsítótárból.",
+      "dirty": "A nem mentett űrlapmódosítások nem szerepelnek. A magyarázatok csak a mentett rekordot tükrözik.",
+      "empty": "Az Ön hozzáférésével nem látható kritikus állapot.",
+      "scope": "Csak azok az állapotok szerepelnek, amelyeket megtekinthet.",
+      "restricted": "A részletek az Ön hozzáféréséhez korlátozottak. Ez az állapot nem kész vagy ellenőrzött eredmény.",
+      "source": "Forrás",
+      "revision": "revízió",
+      "noRevision": "nincs mentett revízió",
+      "recorded": "rögzítve",
+      "noSource": "Még nincs tulajdonosi rekord",
+      "verification": "Ellenőrzés",
+      "notVerified": "Nem ellenőrzött",
+      "freshness": "Frissesség",
+      "observed": "megfigyelve",
+      "checked": "ellenőrizve",
+      "reasonsTitle": "Okok",
+      "blockersTitle": "Akadályok",
+      "noBlockers": "Nincsenek felsorolt akadályok",
+      "resolution": "Megoldás",
+      "open": "Tulajdonosi rekord megnyitása",
+      "errors": {
+        "e401": "A munkamenet lejárt. Jelentkezzen be újra.",
+        "e403": "Nincs jogosultsága e kritikus állapotok megtekintéséhez.",
+        "e404": "Ez a hajó nem érhető el.",
+        "other": "A kritikus állapotokat nem sikerült betölteni. Próbálja újra."
+      },
+      "keys": {
+        "onboarding": "Bevezetési készenlét",
+        "profileFreshness": "Profil frissessége",
+        "applicability": "Megfelelőségi alkalmazhatóság"
+      },
+      "fields": {
+        "profile": "Profil",
+        "applicability": "Alkalmazhatósági értékelés",
+        "vesselCode": "Hajókód",
+        "vesselName": "Hajónév"
+      },
+      "states": {
+        "BLOCKED": "Blokkolva",
+        "REVIEW_REQUIRED": "Felülvizsgálat szükséges",
+        "UNKNOWN": "Ismeretlen",
+        "STALE": "Elavult",
+        "UNAVAILABLE": "Nem érhető el",
+        "DECLARED_UNVERIFIED": "Bejelentve · nem ellenőrzött",
+        "QUALIFIED_CURRENT_UNVERIFIED": "Minősített értékelés aktuális · nem ellenőrzött"
+      },
+      "freshnessStates": {
+        "FRESH": "A szabályzat szerinti koron belül (nem ellenőrzött)",
+        "STALE": "Elavult",
+        "UNKNOWN": "Ismeretlen",
+        "UNAVAILABLE": "Nem érhető el"
+      },
+      "sourceKinds": {
+        "RegulatoryDraft": "Hajóprofil",
+        "ApplicabilityEvaluation": "Alkalmazhatósági értékelés"
+      },
+      "resolutions": {
+        "PROFILE_DECLARATION": "Profil bejelentése",
+        "REQUIRED_DECLARATION": "Kötelező érték bejelentése",
+        "POLICY_OR_EVIDENCE": "Szabályzat vagy bizonyíték szükséges",
+        "QUALIFIED_EVIDENCE": "Minősített bizonyíték szükséges",
+        "SOURCE_DECLARATION": "Forrás bejelentése",
+        "SOURCE_RENEWAL": "Forrás megújítása",
+        "FRESHNESS_POLICY_CONFIGURATION": "Jóváhagyott frissességi szabályzat beállítása",
+        "SERVICE_RECOVERY": "Szolgáltatás helyreállítása szükséges",
+        "RE_EVALUATION": "Újraértékelés",
+        "QUALIFIED_EVALUATION": "Minősített értékelés futtatása",
+        "CATALOG_QUALIFICATION": "Katalógus minősítése",
+        "HUMAN_REVIEW": "Jogosult személy felülvizsgálata"
+      },
+      "reasons": {
+        "PROFILE_MISSING": "A profil nincs mentve",
+        "REQUIRED_DATA_MISSING": "Hiányzó kötelező adatok",
+        "REQUIRED_DATA_UNKNOWN": "Ismeretlen kötelező adatok",
+        "VERIFICATION_NOT_ESTABLISHED": "Az ellenőrzés nem igazolt",
+        "FIELDS_UNKNOWN": "Egyes mezők frissessége ismeretlen",
+        "FIELDS_STALE": "Egyes mezők elavultak",
+        "FIELDS_UNAVAILABLE": "Egyes mezők nem érhetők el",
+        "ALL_FIELDS_WITHIN_POLICY": "Minden mező a szabályzat szerinti koron belül (nem ellenőrzött)",
+        "VALUE_NOT_RECORDED": "Az érték nincs rögzítve",
+        "VALUE_UNKNOWN": "Az érték ismeretlenként rögzítve",
+        "SOURCE_NOT_DECLARED": "Nincs bejelentett forrás",
+        "FRESHNESS_POLICY_UNCONFIGURED": "Nincs jóváhagyott frissességi szabályzat",
+        "QUALIFIED_EVALUATION_UNAVAILABLE": "Nincs minősített értékelés",
+        "PROFILE_CHANGED": "A profil az értékelés után módosult",
+        "APPLICABILITY_REVIEW_REQUIRED": "Alkalmazhatósági felülvizsgálat szükséges"
+      }
     }
   },
   "pairs": {

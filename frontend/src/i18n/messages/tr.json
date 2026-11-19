@@ -413,6 +413,98 @@
       "equipment": "Ekipman bağlamı",
       "freshness": "Güncellik",
       "provenance": "Kaynak niteliği"
+    },
+    "CriticalStatePanel_tsx_copy": {
+      "title": "Kritik durumlar ve kaynakları",
+      "loading": "Kritik durumlar yükleniyor…",
+      "reload": "Kritik durumları yeniden yükle",
+      "offline": "Çevrimdışı: kritik durumlar önbellekten gösterilmez.",
+      "dirty": "Kaydedilmemiş form değişiklikleri dahil değildir. Açıklamalar yalnız kayıtlı kaydı yansıtır.",
+      "empty": "Erişiminiz için görünür kritik durum yok.",
+      "scope": "Yalnız görüntüleme yetkiniz olan durumlar listelenir.",
+      "restricted": "Ayrıntılar erişiminiz için kısıtlıdır. Bu durum hazır veya doğrulanmış bir sonuç değildir.",
+      "source": "Kaynak",
+      "revision": "revizyon",
+      "noRevision": "kayıtlı revizyon yok",
+      "recorded": "kayıt",
+      "noSource": "Henüz sahip kayıt yok",
+      "verification": "Doğrulama",
+      "notVerified": "Doğrulanmadı",
+      "freshness": "Tazelik",
+      "observed": "gözlem",
+      "checked": "kontrol",
+      "reasonsTitle": "Gerekçeler",
+      "blockersTitle": "Engeller",
+      "noBlockers": "Listelenen engel yok",
+      "resolution": "Çözüm",
+      "open": "Sahip kaydı aç",
+      "errors": {
+        "e401": "Oturumunuzun süresi doldu. Yeniden giriş yapın.",
+        "e403": "Bu kritik durumları görüntüleme yetkiniz yok.",
+        "e404": "Bu gemiye erişilemiyor.",
+        "other": "Kritik durumlar yüklenemedi. Yeniden deneyin."
+      },
+      "keys": {
+        "onboarding": "Onboarding hazırlığı",
+        "profileFreshness": "Profil tazeliği",
+        "applicability": "Uyum uygulanabilirliği"
+      },
+      "fields": {
+        "profile": "Profil",
+        "applicability": "Uygulanabilirlik değerlendirmesi",
+        "vesselCode": "Gemi kodu",
+        "vesselName": "Gemi adı"
+      },
+      "states": {
+        "BLOCKED": "Engellendi",
+        "REVIEW_REQUIRED": "İnceleme gerekli",
+        "UNKNOWN": "Bilinmiyor",
+        "STALE": "Eski",
+        "UNAVAILABLE": "Erişilemiyor",
+        "DECLARED_UNVERIFIED": "Beyan edildi · doğrulanmadı",
+        "QUALIFIED_CURRENT_UNVERIFIED": "Nitelikli değerlendirme güncel · doğrulanmadı"
+      },
+      "freshnessStates": {
+        "FRESH": "Politika süresi içinde (doğrulanmadı)",
+        "STALE": "Eski",
+        "UNKNOWN": "Bilinmiyor",
+        "UNAVAILABLE": "Erişilemiyor"
+      },
+      "sourceKinds": {
+        "RegulatoryDraft": "Gemi profili",
+        "ApplicabilityEvaluation": "Uygulanabilirlik değerlendirmesi"
+      },
+      "resolutions": {
+        "PROFILE_DECLARATION": "Profili beyan edin",
+        "REQUIRED_DECLARATION": "Gerekli değeri beyan edin",
+        "POLICY_OR_EVIDENCE": "Politika veya kanıt gerekli",
+        "QUALIFIED_EVIDENCE": "Nitelikli kanıt gerekli",
+        "SOURCE_DECLARATION": "Kaynağı beyan edin",
+        "SOURCE_RENEWAL": "Kaynağı yenileyin",
+        "FRESHNESS_POLICY_CONFIGURATION": "Onaylı tazelik politikası yapılandırın",
+        "SERVICE_RECOVERY": "Servis kurtarma gerekli",
+        "RE_EVALUATION": "Yeniden değerlendirin",
+        "QUALIFIED_EVALUATION": "Nitelikli değerlendirme çalıştırın",
+        "CATALOG_QUALIFICATION": "Kataloğu niteleyin",
+        "HUMAN_REVIEW": "Yetkili insan incelemesi"
+      },
+      "reasons": {
+        "PROFILE_MISSING": "Profil kaydedilmedi",
+        "REQUIRED_DATA_MISSING": "Gerekli veri eksik",
+        "REQUIRED_DATA_UNKNOWN": "Gerekli veri bilinmiyor",
+        "VERIFICATION_NOT_ESTABLISHED": "Doğrulama kurulmadı",
+        "FIELDS_UNKNOWN": "Bazı alanların tazeliği bilinmiyor",
+        "FIELDS_STALE": "Bazı alanlar eski",
+        "FIELDS_UNAVAILABLE": "Bazı alanlara erişilemiyor",
+        "ALL_FIELDS_WITHIN_POLICY": "Tüm alanlar politika süresi içinde (doğrulanmadı)",
+        "VALUE_NOT_RECORDED": "Değer kaydedilmedi",
+        "VALUE_UNKNOWN": "Değer bilinmiyor olarak kaydedildi",
+        "SOURCE_NOT_DECLARED": "Kaynak beyan edilmedi",
+        "FRESHNESS_POLICY_UNCONFIGURED": "Onaylı tazelik politikası yok",
+        "QUALIFIED_EVALUATION_UNAVAILABLE": "Nitelikli değerlendirme yok",
+        "PROFILE_CHANGED": "Değerlendirmeden sonra profil değişti",
+        "APPLICABILITY_REVIEW_REQUIRED": "Uygulanabilirlik incelemesi gerekli"
+      }
     }
   },
   "pairs": {

@@ -413,6 +413,98 @@
       "equipment": "سياق المعدات",
       "freshness": "الحداثة",
       "provenance": "سلسلة المنشأ"
+    },
+    "CriticalStatePanel_tsx_copy": {
+      "title": "الحالات الحرجة ومصادرها",
+      "loading": "جارٍ تحميل الحالات الحرجة…",
+      "reload": "إعادة تحميل الحالات الحرجة",
+      "offline": "دون اتصال: لا تُعرض الحالات الحرجة من ذاكرة التخزين المؤقت.",
+      "dirty": "لا تُضمَّن تعديلات النموذج غير المحفوظة. تعكس التوضيحات السجل المحفوظ فقط.",
+      "empty": "لا توجد حالات حرجة مرئية لصلاحية وصولك.",
+      "scope": "تُدرج فقط الحالات المسموح لك بعرضها.",
+      "restricted": "التفاصيل مقيدة لصلاحية وصولك. هذه الحالة ليست نتيجة جاهزة أو متحققًا منها.",
+      "source": "المصدر",
+      "revision": "المراجعة",
+      "noRevision": "لا توجد مراجعة محفوظة",
+      "recorded": "سُجّل",
+      "noSource": "لا يوجد سجل مالك بعد",
+      "verification": "التحقق",
+      "notVerified": "لم يتم التحقق",
+      "freshness": "الحداثة",
+      "observed": "رُصد",
+      "checked": "فُحص",
+      "reasonsTitle": "الأسباب",
+      "blockersTitle": "العوائق",
+      "noBlockers": "لا توجد عوائق مدرجة",
+      "resolution": "الحل",
+      "open": "فتح السجل المالك",
+      "errors": {
+        "e401": "انتهت صلاحية جلستك. سجّل الدخول مرة أخرى.",
+        "e403": "ليست لديك صلاحية لعرض هذه الحالات الحرجة.",
+        "e404": "هذه السفينة غير متاحة.",
+        "other": "تعذر تحميل الحالات الحرجة. حاول مرة أخرى."
+      },
+      "keys": {
+        "onboarding": "جاهزية الإلحاق",
+        "profileFreshness": "حداثة الملف التعريفي",
+        "applicability": "قابلية تطبيق الامتثال"
+      },
+      "fields": {
+        "profile": "الملف التعريفي",
+        "applicability": "تقييم قابلية التطبيق",
+        "vesselCode": "رمز السفينة",
+        "vesselName": "اسم السفينة"
+      },
+      "states": {
+        "BLOCKED": "محظور",
+        "REVIEW_REQUIRED": "تلزم المراجعة",
+        "UNKNOWN": "غير معروف",
+        "STALE": "قديم",
+        "UNAVAILABLE": "غير متاح",
+        "DECLARED_UNVERIFIED": "مُعلن · لم يتم التحقق",
+        "QUALIFIED_CURRENT_UNVERIFIED": "التقييم المؤهل حالي · لم يتم التحقق"
+      },
+      "freshnessStates": {
+        "FRESH": "ضمن العمر المحدد في السياسة (لم يتم التحقق)",
+        "STALE": "قديم",
+        "UNKNOWN": "غير معروف",
+        "UNAVAILABLE": "غير متاح"
+      },
+      "sourceKinds": {
+        "RegulatoryDraft": "الملف التعريفي للسفينة",
+        "ApplicabilityEvaluation": "تقييم قابلية التطبيق"
+      },
+      "resolutions": {
+        "PROFILE_DECLARATION": "أعلن الملف التعريفي",
+        "REQUIRED_DECLARATION": "أعلن القيمة المطلوبة",
+        "POLICY_OR_EVIDENCE": "تلزم سياسة أو أدلة",
+        "QUALIFIED_EVIDENCE": "تلزم أدلة مؤهلة",
+        "SOURCE_DECLARATION": "أعلن المصدر",
+        "SOURCE_RENEWAL": "جدّد المصدر",
+        "FRESHNESS_POLICY_CONFIGURATION": "اضبط سياسة حداثة معتمدة",
+        "SERVICE_RECOVERY": "تلزم استعادة الخدمة",
+        "RE_EVALUATION": "أعد التقييم",
+        "QUALIFIED_EVALUATION": "شغّل تقييمًا مؤهلًا",
+        "CATALOG_QUALIFICATION": "أهّل الفهرس",
+        "HUMAN_REVIEW": "مراجعة بشرية مخولة"
+      },
+      "reasons": {
+        "PROFILE_MISSING": "الملف التعريفي غير محفوظ",
+        "REQUIRED_DATA_MISSING": "بيانات مطلوبة مفقودة",
+        "REQUIRED_DATA_UNKNOWN": "بيانات مطلوبة غير معروفة",
+        "VERIFICATION_NOT_ESTABLISHED": "لم يثبت التحقق",
+        "FIELDS_UNKNOWN": "حداثة بعض الحقول غير معروفة",
+        "FIELDS_STALE": "بعض الحقول قديمة",
+        "FIELDS_UNAVAILABLE": "بعض الحقول غير متاحة",
+        "ALL_FIELDS_WITHIN_POLICY": "جميع الحقول ضمن عمر السياسة (لم يتم التحقق)",
+        "VALUE_NOT_RECORDED": "القيمة غير مسجلة",
+        "VALUE_UNKNOWN": "سُجّلت القيمة على أنها غير معروفة",
+        "SOURCE_NOT_DECLARED": "لم يُعلن أي مصدر",
+        "FRESHNESS_POLICY_UNCONFIGURED": "لا توجد سياسة حداثة معتمدة",
+        "QUALIFIED_EVALUATION_UNAVAILABLE": "لا يوجد تقييم مؤهل",
+        "PROFILE_CHANGED": "تغيّر الملف التعريفي بعد التقييم",
+        "APPLICABILITY_REVIEW_REQUIRED": "تلزم مراجعة قابلية التطبيق"
+      }
     }
   },
   "pairs": {

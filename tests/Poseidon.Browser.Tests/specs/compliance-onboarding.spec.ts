@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { complianceVessel, otherComplianceVessel } from '../../../frontend/src/product/compliance-test-fixtures.ts';
-// DEV-039 / T-S5-001 / 18.01 Backlog row40. Synthetic transport proves only
+// DEV-039 / T-S5-001 / 18.01 Backlog row40; DEV-024 redacted critical-state panel. Synthetic transport proves only
 // wizard navigation, retained edits and layout. No real authority/UAT claim.
 // Authored only; execute with the larger bundle at actual PR preparation.
 for (const width of [390, 1440])
@@ -35,6 +35,15 @@ for (const width of [390, 1440])
                 await route.fulfill({ json: { items: [], offset: 0, limit: 25, hasMore: false, available: true, canWrite: false, maxBytes: 1048576, allowedTypes: ['image/png'] } });
                 return;
             }
+            if (path.endsWith('/critical-states')) {
+                // DEV-024: server-redacted entries (existence only) for a reader without the owning detail.
+                const asOf = '2026-11-04T08:00:00Z';
+                await route.fulfill({ json: { vesselId: complianceVessel, readAt: asOf, scope: 'VISIBLE_ONLY', states: [
+                    // DEV024-DEC-02: a state-only reader never sees UNKNOWN; the server collapses it into REVIEW_REQUIRED.
+                    { key: 'vessel.onboarding', subjectId: complianceVessel, state: 'REVIEW_REQUIRED', disclosure: 'STATE_ONLY', asOf },
+                    { key: 'vessel.profile.freshness', subjectId: complianceVessel, state: 'REVIEW_REQUIRED', disclosure: 'STATE_ONLY', asOf }] } });
+                return;
+            }
             if (path.endsWith('/compliance-onboarding')) {
                 await route.fulfill({ status: 503, json: {} });
                 return;
@@ -62,6 +71,11 @@ for (const width of [390, 1440])
         await expect(wizard.getByText('Retained local declaration', { exact: true })).toBeVisible();
         await expect(wizard.getByText('Onboarding assessment unavailable.', { exact: true })).toBeVisible();
         await expect(wizard.getByRole('button', { name: 'Submit for review', exact: true })).toBeDisabled();
+        const critical = wizard.getByRole('region', { name: 'Critical states and their sources', exact: true });
+        await expect(critical.getByRole('article', { name: 'Onboarding readiness', exact: true })).toContainText('Details are restricted for your access');
+        await expect(critical.getByRole('article', { name: 'Profile freshness', exact: true })).toContainText('Review required');
+        await expect(critical.getByRole('link')).toHaveCount(0);
+        await expect(critical.getByText('Ready', { exact: true })).toHaveCount(0);
         expect(writes).toBe(0);
         // No overlap between adjacent step controls at either supported width.
         const previous = await wizard.getByRole('button', { name: 'Previous step', exact: true }).boundingBox();
