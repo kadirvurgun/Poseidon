@@ -3627,6 +3627,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/renewal-workflow/{id}/transitions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CertificateRenewalTransition"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/vessels/{vessel}/certificates/{id}/verification-capabilities": {
         parameters: {
             query?: never;
@@ -3691,6 +3707,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/fuel-bunker-logs/ledger": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["FuelShipOpsLedger"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/fuel-bunker-logs/{id}": {
         parameters: {
             query?: never;
@@ -3747,6 +3779,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["PortShipOpsCapabilities"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/port-activity-sof/timeline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PortShipOpsTimeline"];
         put?: never;
         post?: never;
         delete?: never;
@@ -5666,6 +5714,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/tug-jobs/{id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TugSubmit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-jobs/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TugCancel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/tug-command": {
         parameters: {
             query?: never;
@@ -6435,6 +6515,9 @@ export interface components {
             lowConfidence: boolean;
             state: string;
             reasons: string[];
+            region?: null | components["schemas"]["CertificateSourceRegion"];
+            /** @default false */
+            ambiguous: boolean;
         };
         CertificateCapabilitiesDto: {
             /** Format: uuid */
@@ -6627,6 +6710,27 @@ export interface components {
             surveyWindowStart?: null | string;
             surveyWindowEnd?: null | string;
         };
+        CertificateRenewalDecision: {
+            surveyStatus?: null | string;
+            documentsStatus?: null | string;
+            actionsStatus?: null | string;
+            /** Format: date */
+            applicationDate?: null | string;
+            authorityReference?: null | string;
+            /** Format: uuid */
+            newCertificateId?: null | string;
+            /** Format: int64 */
+            newCertificateRevision?: null | number;
+            /** Format: uint32 */
+            newCertificateVersion?: null | number;
+            newDocument?: null | components["schemas"]["CertificateFilePin"];
+            issuerMatch?: null | string;
+            numberMatch?: null | string;
+            subjectMatch?: null | string;
+            dateMatch?: null | string;
+            scopeMatch?: null | string;
+            evidence?: null | components["schemas"]["CertificateFilePin"];
+        };
         CertificateRenewalDto: {
             /** Format: uuid */
             id: string;
@@ -6655,6 +6759,19 @@ export interface components {
             currentRevision: boolean;
             /** @default UserDeclaredUnverified */
             provenance: string;
+            transition?: null | string;
+            decision?: null | components["schemas"]["CertificateRenewalDecision"];
+            allowedTransitions?: null | string[];
+        };
+        CertificateRenewalTransitionCommand: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uint32 */
+            expectedVersion: number;
+            /** Format: int64 */
+            expectedRevision: number;
+            action: string;
+            decision: components["schemas"]["CertificateRenewalDecision"];
         };
         CertificateSaveCommand: {
             /** Format: uuid */
@@ -6663,6 +6780,16 @@ export interface components {
             expectedVersion: number;
             content: components["schemas"]["VesselCertificateContent"];
             reasonCode: string;
+        };
+        CertificateSourceRegion: {
+            /** Format: double */
+            x: number;
+            /** Format: double */
+            y: number;
+            /** Format: double */
+            width: number;
+            /** Format: double */
+            height: number;
         };
         CertificateSupersessionDto: {
             /** Format: uuid */
@@ -8528,6 +8655,39 @@ export interface components {
             /** Format: int32 */
             unavailable: number;
         };
+        FuelLedgerAssessment: {
+            /** Format: uuid */
+            recordId: string;
+            reviewState: string;
+            balance: components["schemas"]["FuelLedgerCheck"];
+            continuity: components["schemas"]["FuelLedgerCheck"];
+            /** Format: uuid */
+            previousRecordId: null | string;
+            flags: string[];
+            basis: string[];
+        };
+        FuelLedgerCheck: {
+            state: string;
+            differenceMt: null | string;
+            reason: null | string;
+        };
+        FuelLedgerDto: {
+            /** Format: uuid */
+            vesselId: string;
+            entries: components["schemas"]["FuelLedgerEntryDto"][];
+            unplaced: components["schemas"]["ShipOpsRecordDto"][];
+            /** Format: int32 */
+            window: number;
+            truncated: boolean;
+            unit: string;
+            grouping: string;
+            qualifications: string[];
+            sourceVersion: string;
+        };
+        FuelLedgerEntryDto: {
+            record: components["schemas"]["ShipOpsRecordDto"];
+            assessment: components["schemas"]["FuelLedgerAssessment"];
+        };
         GraphPin: {
             kind: string;
             /** Format: uuid */
@@ -9899,6 +10059,30 @@ export interface components {
             blockers: string[];
             href: string;
         };
+        PortTimelineAssessment: {
+            /** Format: uuid */
+            recordId: string;
+            reviewState: string;
+            durationState: string;
+            durationTicks: null | string;
+            flags: string[];
+        };
+        PortTimelineDto: {
+            /** Format: uuid */
+            vesselId: string;
+            entries: components["schemas"]["PortTimelineEntryDto"][];
+            unplaced: components["schemas"]["ShipOpsRecordDto"][];
+            /** Format: int32 */
+            window: number;
+            truncated: boolean;
+            durationUnit: string;
+            qualifications: string[];
+            sourceVersion: string;
+        };
+        PortTimelineEntryDto: {
+            record: components["schemas"]["ShipOpsRecordDto"];
+            assessment: components["schemas"]["PortTimelineAssessment"];
+        };
         PredicateReason: {
             path: string;
             truth: components["schemas"]["RuleTruth"];
@@ -10189,6 +10373,9 @@ export interface components {
             canComplete: boolean;
             ownerOptions: components["schemas"]["RenewalOwnerDto"][];
             sourceVersion: string;
+            /** @default false */
+            canVerify: boolean;
+            states?: null | string[];
         };
         RenewalOwnerDto: {
             /** Format: uuid */
@@ -10776,6 +10963,16 @@ export interface components {
             /** @default SourceQualifiedMinimumRolesOnly;OtherCrewGatesAndMasterDecisionSeparate */
             coverage: string;
         };
+        TugLifecycleCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            reason?: null | string;
+        };
+        TugLifecycleFailure: {
+            code: string;
+            missing: string[];
+            correlationId: string;
+        };
         TugOfflineContext: {
             /** Format: uuid */
             id: string;
@@ -10949,6 +11146,8 @@ export interface components {
             replayed: boolean;
             /** @default poseidon-v46.3-20261030/14.02/1914-1931/TUG-FOUNDATION-01 */
             sourceVersion: string;
+            /** @default Draft */
+            state: string;
         };
         TugRequestInputs: {
             customerRef?: null | string;
@@ -16011,6 +16210,32 @@ export interface operations {
             };
         };
     };
+    CertificateRenewalTransition: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CertificateRenewalTransitionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CertificateRenewalDto"];
+                };
+            };
+        };
+    };
     CertificateAssertionCapabilities: {
         parameters: {
             query?: never;
@@ -16146,6 +16371,26 @@ export interface operations {
             };
         };
     };
+    FuelShipOpsLedger: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FuelLedgerDto"];
+                };
+            };
+        };
+    };
     FuelShipOpsRead: {
         parameters: {
             query?: never;
@@ -16276,6 +16521,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ShipOpsCapabilitiesDto"];
+                };
+            };
+        };
+    };
+    PortShipOpsTimeline: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortTimelineDto"];
                 };
             };
         };
@@ -19689,6 +19954,67 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    TugSubmit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TugLifecycleCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugRequestDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugLifecycleFailure"];
+                };
+            };
+        };
+    };
+    TugCancel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TugLifecycleCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugRequestDto"];
+                };
             };
         };
     };

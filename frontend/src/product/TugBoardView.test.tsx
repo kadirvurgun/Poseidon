@@ -9,7 +9,7 @@ vi.mock('./TugOwningEvidence', () => ({ TugOwningEvidence: () => <section aria-l
 const vessel = '11111111-1111-1111-1111-111111111111', id = '22222222-2222-2222-2222-222222222222'
 const row: TugBoard['items'][number] = { request: { id, vesselId: vessel, jobNumber: 'FICTIONAL-JOB-01', revision: 2, version: 1,
   inputs: { ...emptyTugInputs(), assistedVessel: 'FICTIONAL Assisted Vessel', requiredBollardPull: '45.01', requestedStart: '2026-11-02T23:30:00-03:00', priority: 'High' },
-  provenance: 'SyntheticUnverified', savedAt: '2026-11-02T12:00:00Z', missing: ['requested_end'], replayed: false, sourceVersion: 'synthetic-source' },
+  provenance: 'SyntheticUnverified', savedAt: '2026-11-02T12:00:00Z', missing: ['requested_end'], replayed: false, sourceVersion: 'synthetic-source', state: 'Draft' },
   windowState: 'EndNotSupplied', plannedTimeSource: 'RequestedWindowOnly;NoApprovedPlan', assignedTugs: [], assignmentCoverage: 'UnavailableControlledAssignmentAdapter',
   availableBollardPull: null, readiness: 'Unknown', conflict: 'Unknown', declaredComparisons: [], comparisonCoverage: 'VisiblePageEnteredDataOnly;NoBufferOrOperationalAssessment', blockingReasons: ['AssignmentCoverageUnavailable'], nextAction: 'CompleteDraft', detailHref: `/app/tug-job-detail/${id}?vessel=${vessel}` }
 const defaults = { board: { items: [row], hasMore: true }, priorities: ['Normal', 'High', 'Critical'], filter: { q: 'FICTIONAL', priority: 'High', offset: 25 }, language: 'en' as const, offline: false, onFilter: vi.fn(), onNavigate: vi.fn(), onRefresh: vi.fn() }
@@ -43,7 +43,7 @@ it('keeps search and priority together for server-side filtering, and preserves 
   await user.click(screen.getByRole('button', { name: 'Next' }))
   expect(onFilter).toHaveBeenLastCalledWith({ q: 'FICTIONAL', priority: 'High', offset: 50 })
   await user.click(screen.getByRole('button', { name: 'Clear filters' }))
-  expect(onFilter).toHaveBeenLastCalledWith({ q: '', priority: '', offset: 0 })
+  expect(onFilter).toHaveBeenLastCalledWith({ q: '', priority: '', state: '', window: '', offset: 0 })
   expect(screen.getByLabelText('Search requests')).toHaveValue('')
 })
 
@@ -74,4 +74,20 @@ it('encodes one scoped route without losing query delimiters or introducing dupl
   expect(url.pathname).toBe('/app/tug-job-board')
   expect([...url.searchParams.entries()]).toEqual([['vessel', vessel], ['q', 'FICTIONAL & /?#'], ['priority', 'High'], ['offset', '25']])
   expect(url.hash).toBe('')
+})
+
+// DEV-082: state and server-relative window filters are closed codes kept in the URL.
+it('filters by lifecycle state and server window, shows the state badge and lifecycle next action', async () => {
+  const onFilter = vi.fn(), user = userEvent.setup()
+  await changeAppLanguage('en', false)
+  render(<TugBoardView {...defaults} board={{ items: [{ ...row, nextAction: 'SubmitRequest' }], hasMore: false }} filter={{ q: '', priority: '', offset: 0, state: 'Draft', window: 'next4h' }} onFilter={onFilter} />)
+  const job = screen.getByRole('article', { name: 'FICTIONAL-JOB-01' })
+  expect(job).toHaveAttribute('data-job-state', 'Draft')
+  expect(job).toHaveTextContent('Next action: Submit request')
+  expect(screen.getByText(/requests without a start time stay listed as unknown/)).toBeInTheDocument()
+  await user.selectOptions(screen.getByLabelText('State'), 'Submitted')
+  expect(onFilter).toHaveBeenLastCalledWith({ q: '', priority: '', offset: 0, state: 'Submitted', window: 'next4h' })
+  await user.selectOptions(screen.getByLabelText('Time window'), 'next24h')
+  expect(onFilter).toHaveBeenLastCalledWith({ q: '', priority: '', offset: 0, state: 'Draft', window: 'next24h' })
+  expect(tugBoardHref(vessel, { q: '', priority: '', offset: 0, state: 'Cancelled', window: 'next72h' })).toBe(`/app/tug-job-board?vessel=${vessel}&state=Cancelled&window=next72h`)
 })

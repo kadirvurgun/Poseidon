@@ -25,6 +25,10 @@ public static class TugRequestPolicy
         if (!Regex.IsMatch(text, @"\A(0|[1-9][0-9]{0,7})(\.[0-9]{1,2})?\z", RegexOptions.CultureInvariant)) return false;
         value = decimal.Parse(text, CultureInfo.InvariantCulture); return true;
     }
+    // PostgreSQL timestamptz stores microseconds. Stored/serialized request instants are canonicalized
+    // to that precision so a revision body is identical whether built from a command or a reloaded row.
+    public static DateTimeOffset? StoragePrecision(DateTimeOffset? value) =>
+        value is { } t ? new DateTimeOffset(t.Ticks - t.Ticks % 10, t.Offset) : null;
     public static string[] Invalid(TugRequestInputs x)
     {
         var errors = new List<string>();

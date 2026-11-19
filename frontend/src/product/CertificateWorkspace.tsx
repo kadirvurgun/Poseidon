@@ -16,6 +16,7 @@ import type { CertificateVerification } from './certificate-assertion-contract';
 import { CertificateExtractionReview } from './CertificateExtractionReview';
 import { CertificateEditorView } from './CertificateEditorView';
 import { CertificateWorkflowHistory } from './CertificateWorkflowHistory';
+import { RenewalStateBadge } from './CertificateRenewalWorkflowPanel';
 import type { CertificateWorkflowEditor, CertificateWorkspaceSource } from './certificate-workspace-model';
 import { useWorkspaceRevalidation } from './use-workspace-revalidation';
 import './certificates-enterprise.css';
@@ -169,7 +170,7 @@ function CertificateSurface({ route, language, onLanguage, onNavigate, onDirty, 
         return () => { active = false; c.abort(); clearTimeout(timer); };
     }, [route, scope, historyOffset, online, visible]);
     const permitted = editor?.kind === 'certificate' ? !!current?.caps?.canWriteVessel : !!current?.renewalCaps?.canWrite;
-    const headEditable = !!editor && (!editor.record || editor.record.canEdit && editor.record.currentRevision && editor.record.state === 'DRAFT');
+    const headEditable = !!editor && (!editor.record || editor.record.canEdit && editor.record.currentRevision && (editor.record.state === 'DRAFT' || editor.record.state === 'PREPARING'));
     const editable = !!owner && !ownerChanged && permitted && headEditable && !busy && !frozen && !conflict && !denied && !extractionDirty && !extractionSaving && !assertionDirty && !assertionSaving;
     const changeCertificate = (content: VesselCertificateContent) => { if (editor?.kind !== 'certificate' || !editable)
         return; setEditor({ ...editor, content, dirty: true }); formDirty(true); setSaved(false); setFailure(null); };
@@ -301,6 +302,8 @@ function CertificateSurface({ route, language, onLanguage, onNavigate, onDirty, 
             return;
         void documentApplied({ ...editor.record, verification: value, currentRevision: false, canEdit: false }, false);
     }
+    // DEV-044: a recorded transition reloads the actual current head instead of trusting the receipt.
+    const transitioned = () => { humanDirty(false); setSaved(false); setFailure(null); setEditor(previous => previous?.kind === 'renewal' && !previous.dirty ? null : previous); retry(n => n + 1); };
     const readCurrent = () => onNavigate(certificateLocationPath({ page: route.page, vessel: route.vessel, id: editor?.record?.id ?? route.id, offset: 0 }));
     return <div className="product-shell enterprise-shell certificate-workspace">
     <EnterpriseChrome session={user ?? null} vessel={route.vessel} language={language} onLanguageChange={onLanguage} onNavigate={onNavigate} title={title} mainId="certificate-main"/>
@@ -319,7 +322,7 @@ function CertificateSurface({ route, language, onLanguage, onNavigate, onDirty, 
         </section>
                             : ownerChanged ? <p role="alert">{localizedText(en, "pairs.m_cc118a6321875778")}</p>
                                 : editor ? <>
-          <CertificateEditorView editor={editor} source={current} vessel={route.vessel} language={language} editable={editable} busy={busy} frozen={!!frozen} failure={failure} conflict={conflict} denied={denied} saved={saved} onCertificate={changeCertificate} onRenewal={changeRenewal} onSave={() => void save()} onCancel={readCurrent} onNavigate={onNavigate}/>
+          <CertificateEditorView editor={editor} source={current} vessel={route.vessel} language={language} editable={editable} busy={busy} frozen={!!frozen} failure={failure} conflict={conflict} denied={denied} saved={saved} onCertificate={changeCertificate} onRenewal={changeRenewal} onSave={() => void save()} onCancel={readCurrent} onNavigate={onNavigate} onWorkflowDirty={humanDirty} onTransitioned={transitioned}/>
           {route.id && <CertificateWorkflowHistory source={current} language={language} offset={historyOffset} disabled={busy || !!frozen || editor.dirty || extractionDirty || extractionSaving || assertionDirty || assertionSaving} onOffset={setHistoryOffset}/>}
         </>
                                     : route.page === 'center' && current.center && current.caps ? <CertificateCenterView page={current.center} caps={current.caps} route={route} language={language} onNavigate={onNavigate}/>
@@ -327,7 +330,7 @@ function CertificateSurface({ route, language, onLanguage, onNavigate, onDirty, 
           <h2>{localizedText(en, "pairs.m_0504bfb88f7c8672")}</h2>
           <Button variant="outline" onClick={() => onNavigate(certificateLocationPath({ page: 'center', vessel: route.vessel, id: null, offset: 0 }))}>{localizedText(en, "pairs.m_0d0f4d8267cdcbac")}</Button>
           {!current.renewalPage.items.length && <p>{localizedText(en, "pairs.m_a9d17cd187701742")}</p>}
-          <ul className="certificate-record-list">{current.renewalPage.items.map(row => <li key={row.id}><Button variant="outline" onClick={() => onNavigate(certificateLocationPath({ page: 'renewal', vessel: route.vessel, id: row.id, offset: 0 }))}>{localizedText(en, "pairs.m_89e95c66ebe0bd3e")} · r{row.revision} · {row.savedAt}</Button><p>{localizedText(en, "pairs.m_d49b61dd1a345a10")}</p></li>)}</ul>
+          <ul className="certificate-record-list">{current.renewalPage.items.map(row => <li key={row.id}><Button variant="outline" onClick={() => onNavigate(certificateLocationPath({ page: 'renewal', vessel: route.vessel, id: row.id, offset: 0 }))}>{localizedText(en, "pairs.m_89e95c66ebe0bd3e")} · r{row.revision} · {row.savedAt}</Button><p><RenewalStateBadge state={row.state} language={language}/> {localizedText(en, "pairs.m_d49b61dd1a345a10")}</p></li>)}</ul>
           <EnterprisePagination label={localizedText(en, "pairs.m_9947cd4f2282bcd8")} previous={localizedText(en, "pairs.m_56491fda6fb662a0")} next={localizedText(en, "pairs.m_c3bc0bb00641ca48")} previousDisabled={!route.offset} nextDisabled={!current.renewalPage.hasMore} onPrevious={() => onNavigate(certificateLocationPath({ ...route, offset: Math.max(0, route.offset - 25) }))} onNext={() => onNavigate(certificateLocationPath({ ...route, offset: route.offset + 25 }))}/>
         </section> : <p role="alert">{localizedText(en, "pairs.m_87f379f88cd920b2")}</p>}
       {editor?.kind === 'certificate' && editor.record && route.vessel && <CertificateExtractionReview key={editor.owner + '/' + route.vessel + '/' + editor.id} vessel={route.vessel} certificateId={editor.id} expectedVersion={editor.record.version} enabled={!!owner && !ownerChanged && !!current?.caps?.canWriteVessel && !!current?.certificate?.canEdit && (current.certificate.version === editor.record.version || extractionSaving) && headEditable && !editor.dirty && !busy && !frozen && (!conflict || extractionSaving) && !denied && !assertionDirty && !assertionSaving} language={language} onDirty={documentDirty} onSaving={documentSaving} onApplied={receipt => void documentApplied(receipt)}/>}

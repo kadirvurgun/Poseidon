@@ -11,7 +11,17 @@ export type TugInputs = {
   destinationPoint: string | null; requiredBollardPull: string | null; requiredTugCount: number | null
   specialRequirements: string | null; priority: string | null; requestOwner: string | null; notes: string | null
 }
-export type TugRequest = { id: string; vesselId: string; jobNumber: string; revision: number; version: number; inputs: TugInputs; provenance: string; savedAt: string; missing: string[]; replayed: boolean; sourceVersion: string }
+// DEV-081 lifecycle (60.02 §5). Planning/assignment/readiness states are not reachable in this slice.
+export const tugJobStates = ['Draft', 'Submitted', 'Cancelled'] as const
+export type TugJobState = typeof tugJobStates[number]
+export const tugBoardWindows = ['next4h', 'next24h', 'next72h'] as const
+export type TugBoardWindow = typeof tugBoardWindows[number]
+export type TugRequest = { id: string; vesselId: string; jobNumber: string; revision: number; version: number; inputs: TugInputs; provenance: string; savedAt: string; missing: string[]; replayed: boolean; sourceVersion: string; state: TugJobState }
+export type TugLifecycleAttempt = { key: string; operation: 'submit' | 'cancel'; jobId: string; body: { expectedVersion: number; reason?: string } }
+// A refused submission keeps the server's exact missing keys; nothing is defaulted client-side.
+export class TugLifecycleError extends ApiError {
+  constructor(status: number, code: string, public missing: string[] = [], correlationId?: string) { super(status, code, {}, correlationId) }
+}
 export type TugContext = {
   vessel: { id: string; code: string; name: string }; mode: 'Tug'; crossMode: boolean; roleReferences: string | null
   roleLens: TugRoleLens; shipModeDestinations: { key: TugShipModeKey; href: string }[]
@@ -50,7 +60,8 @@ const positive = (value: unknown) => typeof value === 'number' && Number.isSafeI
 export const tugRequestSource = 'poseidon-v46.3-20261030/14.02/1914-1931/TUG-FOUNDATION-01'
 export function decodeTugRequest(value: unknown, vessel: string, id?: string): TugRequest {
   function fail(): never { throw new ApiError(502, 'invalid_tug_request_contract') }
-  if (!isGuid(vessel) || !exact(value, ['id', 'vesselId', 'jobNumber', 'revision', 'version', 'inputs', 'provenance', 'savedAt', 'missing', 'replayed', 'sourceVersion']) ||
+  if (!isGuid(vessel) || !exact(value, ['id', 'vesselId', 'jobNumber', 'revision', 'version', 'inputs', 'provenance', 'savedAt', 'missing', 'replayed', 'sourceVersion', 'state']) ||
+    !tugJobStates.includes(value.state as TugJobState) ||
     !isGuid(value.id) || id !== undefined && value.id !== id || value.vesselId !== vessel || !contextText(value.jobNumber, 100) || !positive(value.revision) ||
     !positive(value.version) || Number(value.version) > 4294967295 || !['UserDeclaredUnverified', 'SyntheticUnverified'].includes(String(value.provenance)) ||
     !timestamp(value.savedAt) || typeof value.replayed !== 'boolean' || value.sourceVersion !== tugRequestSource || !Array.isArray(value.missing) || value.missing.length > 17 ||
@@ -89,12 +100,16 @@ export const tugApi = {
   context: async (vessel: string, signal: AbortSignal, tenant?: string) => decodeTugContext(await request<unknown>(`tug-command?vessel=${vessel}`, signal), vessel, tenant),
   vessels: (signal: AbortSignal) => request<{ vessels: TugContext['vessel'][] }>('tug-command', signal),
   detail: async (id: string, vessel: string, signal: AbortSignal) => decodeTugRequest(await request<unknown>(`tug-jobs/${id}?vessel=${vessel}`, signal), vessel, id),
-  board: async (vessel: string, priority: string, q: string, offset: number, signal: AbortSignal) => {
-    const result = await request<TugBoard>(`tug-job-board?${new URLSearchParams({ vessel, priority, q, offset: String(offset), limit: '25' })}`, signal)
+  board: async (vessel: string, priority: string, q: string, offset: number, signal: AbortSignal, state: TugJobState | '' = '', window: TugBoardWindow | '' = '') => {
+    const params = new URLSearchParams({ vessel, priority, q, offset: String(offset), limit: '25' })
+    if (state) params.set('state', state)
+    if (window) params.set('window', window)
+    const result = await request<TugBoard>(`tug-job-board?${params}`, signal)
     if (!result || !Array.isArray(result.items) || result.items.length > 25 || typeof result.hasMore !== 'boolean') throw new ApiError(502, 'invalid_tug_board_contract')
     const ids = new Set<string>()
     for (const row of result.items) {
       decodeTugRequest(row?.request, vessel)
+      if (state ? row.request.state !== state : row.request.state === 'Cancelled') throw new ApiError(502, 'invalid_tug_board_contract')
       if (!row || !isGuid(row.request?.id) || row.request.vesselId !== vessel || ids.has(row.request.id) ||
         row.detailHref !== `/app/tug-job-detail/${row.request.id}?vessel=${vessel}` ||
         !Array.isArray(row.assignedTugs) || !row.assignedTugs.every(isGuid) || new Set(row.assignedTugs).size !== row.assignedTugs.length ||
@@ -106,6 +121,20 @@ export const tugApi = {
         if (row.availableBollardPull !== current.availableBollardPull || row.readiness !== current.readiness || row.conflict !== current.conflictState) throw new ApiError(502, 'invalid_tug_board_contract')
       } else if (row.availableBollardPull !== null || row.readiness !== 'Unknown' || row.conflict !== 'Unknown') throw new ApiError(502, 'invalid_tug_board_contract')
     }
+    return result
+  },
+  lifecycle: async (vessel: string, attempt: TugLifecycleAttempt, csrf: string, signal: AbortSignal) => {
+    const response = await fetch(`/api/v1/tug-jobs/${attempt.jobId}/${attempt.operation}?vessel=${vessel}`, { credentials: 'same-origin', signal, method: 'POST',
+      headers: { Accept: 'application/json', 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'Idempotency-Key': attempt.key }, body: JSON.stringify(attempt.body) })
+    let body: unknown = null
+    try { body = await response.json() } catch { /* Proxy errors need not be JSON. */ }
+    if (!response.ok) {
+      const failure = object(body) ? body : {}
+      const missing = Array.isArray(failure.missing) && failure.missing.length <= 17 && failure.missing.every(key => typeof key === 'string' && /^[a-z_]{1,64}$/.test(key)) ? failure.missing as string[] : []
+      throw new TugLifecycleError(response.status, typeof failure.code === 'string' ? failure.code : 'request_failed', missing, typeof failure.correlationId === 'string' ? failure.correlationId : undefined)
+    }
+    const result = decodeTugRequest(body, vessel, attempt.jobId)
+    if (result.state !== (attempt.operation === 'submit' ? 'Submitted' : 'Cancelled')) throw new ApiError(502, 'invalid_tug_request_contract')
     return result
   },
   save: async (vessel: string, attempt: TugAttempt, csrf: string, signal: AbortSignal) => decodeTugRequest(await request<unknown>(`tug-jobs${attempt.update ? `/${attempt.body.clientId}` : ''}?vessel=${vessel}`, signal, {

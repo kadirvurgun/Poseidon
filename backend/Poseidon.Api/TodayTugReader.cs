@@ -18,7 +18,7 @@ internal static class TodayTugReader
         // Module + mode + vessel gates precede jobs, counts, plans and linked identifiers.
         if (!actor.CanReadTug || !await actor.Scope(db.Vessels).AnyAsync(v => v.Id == vessel && v.Kind == VesselKind.Tug, http.RequestAborted)) return null;
         var visible = await actor.Scope(db.Vessels).Where(v => v.Kind == VesselKind.Tug).Select(v => v.Id).ToArrayAsync(http.RequestAborted);
-        var jobs = await db.TugJobs.AsNoTracking().Where(j => j.VesselId == vessel && (jobId == null || j.Id == jobId))
+        var jobs = await db.TugJobs.AsNoTracking().Where(j => j.VesselId == vessel && (jobId == null || j.Id == jobId) && j.Status != Poseidon.Domain.TugJobLifecycle.Cancelled)
             .OrderBy(j => j.Id).ToArrayAsync(http.RequestAborted);
         var owners = TugEndpoints.Owners(http, vessel).ToHashSet();
         var result = new List<TodayTugProjection>();

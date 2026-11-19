@@ -2,7 +2,7 @@ import { afterEach, expect, it, vi } from 'vitest'
 import { decodeTugRequest, emptyTugInputs, tugApi, tugRequestSource } from './tug-api'
 
 const vessel = '11111111-1111-1111-1111-111111111111', id = '22222222-2222-2222-2222-222222222222', other = '33333333-3333-3333-3333-333333333333'
-const row = () => ({ id, vesselId: vessel, jobNumber: 'FICTIONAL-ONLY', revision: 3, version: 12, inputs: { ...emptyTugInputs(), requiredBollardPull: '45.01' }, provenance: 'UserDeclaredUnverified', savedAt: '2026-11-05T10:00:00Z', missing: ['requested_start'], replayed: false, sourceVersion: tugRequestSource })
+const row = () => ({ id, vesselId: vessel, jobNumber: 'FICTIONAL-ONLY', revision: 3, version: 12, inputs: { ...emptyTugInputs(), requiredBollardPull: '45.01' }, provenance: 'UserDeclaredUnverified', savedAt: '2026-11-05T10:00:00Z', missing: ['requested_start'], replayed: false, sourceVersion: tugRequestSource, state: 'Draft' })
 afterEach(() => vi.unstubAllGlobals())
 
 it('preserves exact decimal declaration and missing conditional fields in the owning response', () => {
@@ -11,7 +11,7 @@ it('preserves exact decimal declaration and missing conditional fields in the ow
   expect(result.inputs.requestedEnd).toBeNull()
 })
 
-it.each([{ vesselId: other }, { id: other }, { version: 0 }, { version: 4294967296 }, { revision: 1.5 }, { provenance: 'Verified' }, { sourceVersion: 'unrecognized' }, { savedAt: 'not-an-instant' }, { inputs: {} }, { inputs: { ...emptyTugInputs(), notes: ['malformed'] } }, { inputs: { ...emptyTugInputs(), requiredBollardPull: 45.01 } }, { inputs: { ...emptyTugInputs(), requestOwner: 'unscoped-label' } }])('rejects unpinned or malformed owning request data: %j', patch => {
+it.each([{ state: 'Ready' }, { state: 'Planned' }, { vesselId: other }, { id: other }, { version: 0 }, { version: 4294967296 }, { revision: 1.5 }, { provenance: 'Verified' }, { sourceVersion: 'unrecognized' }, { savedAt: 'not-an-instant' }, { inputs: {} }, { inputs: { ...emptyTugInputs(), notes: ['malformed'] } }, { inputs: { ...emptyTugInputs(), requiredBollardPull: 45.01 } }, { inputs: { ...emptyTugInputs(), requestOwner: 'unscoped-label' } }])('rejects unpinned or malformed owning request data: %j', patch => {
   expect(() => decodeTugRequest({ ...row(), ...patch }, vessel, id)).toThrow()
 })
 

@@ -10,12 +10,17 @@ public sealed record CertificateGoldenPrediction(string Id,string Json,bool Owni
     public override string ToString()=>nameof(CertificateGoldenPrediction);
 }
 public sealed record CertificateGoldenCaseScore(string Id,int CorrectFields,int ScoredFields,int ProposedFacts,int CorrectionsRequired,
-    int CriticalUnsupportedFacts,bool AuthorityBypass,bool Malformed,bool VersionMismatch,CertificateGoldenFieldScore[] Fields);
+    int CriticalUnsupportedFacts,bool AuthorityBypass,bool Malformed,bool VersionMismatch,CertificateGoldenFieldScore[] Fields) {
+    public bool ExactMatch=>!Malformed && !VersionMismatch && CorrectFields==ScoredFields;
+}
+// Accuracy = exact-match of value-or-absence per scored field. Precision =
+// correct proposals / proposals; Recall = correct proposals / present truths.
+// Null denominators stay null (no invented rate).
 public sealed record CertificateGoldenFieldScore(string Key,int Correct,int Scored,int Proposed,int Corrections,int CriticalUnsupported,
-    decimal? Accuracy,decimal? CorrectionRate);
+    decimal? Accuracy,decimal? CorrectionRate,int TruthPresent=0,int CorrectProposed=0,decimal? Precision=null,decimal? Recall=null);
 public sealed record CertificateGoldenReport(string DatasetVersion,string ModelVersion,string PromptVersion,string CorpusKind,
     string State,CertificateGoldenCaseScore[] Cases,CertificateGoldenFieldScore[] Fields,decimal? FieldAccuracy,decimal? CorrectionRate,string CorrectionMeaning,
-    int CriticalUnsupportedFacts,int AuthorityBypasses);
+    int CriticalUnsupportedFacts,int AuthorityBypasses,decimal? Precision=null,decimal? Recall=null,decimal? ExactMatchRate=null);
 public static class CertificateGoldenEvaluation
 {
     private static readonly JsonSerializerOptions Json=new(JsonSerializerDefaults.Web){PropertyNameCaseInsensitive=false,MaxDepth=6,UnmappedMemberHandling=JsonUnmappedMemberHandling.Disallow};
@@ -39,11 +44,12 @@ public static class CertificateGoldenEvaluation
         var scored=scores.Sum(s=>s.ScoredFields);var proposed=scores.Sum(s=>s.ProposedFacts);
         var fields=CertificateExtractionPolicy.Fields.Select(key=> {
             var rows=scores.Select(s=>s.Fields.Single(f=>f.Key==key)).ToArray();
-            return Field(key,rows.Sum(f=>f.Correct),rows.Sum(f=>f.Scored),rows.Sum(f=>f.Proposed),rows.Sum(f=>f.Corrections),rows.Sum(f=>f.CriticalUnsupported));
+            return Field(key,rows.Sum(f=>f.Correct),rows.Sum(f=>f.Scored),rows.Sum(f=>f.Proposed),rows.Sum(f=>f.Corrections),rows.Sum(f=>f.CriticalUnsupported),rows.Sum(f=>f.TruthPresent),rows.Sum(f=>f.CorrectProposed));
         }).ToArray();
         return new(datasetVersion,modelVersion,promptVersion,"SYNTHETIC_MASKED","SYNTHETIC_SOFTWARE_EVALUATION_ONLY",scores,fields,
             scored==0?null:(decimal)scores.Sum(s=>s.CorrectFields)/scored,proposed==0?null:(decimal)scores.Sum(s=>s.CorrectionsRequired)/proposed,
-            "GroundTruthRequiredCorrectionsPerProposedFact",scores.Sum(s=>s.CriticalUnsupportedFacts),scores.Count(s=>s.AuthorityBypass));
+            "GroundTruthRequiredCorrectionsPerProposedFact",scores.Sum(s=>s.CriticalUnsupportedFacts),scores.Count(s=>s.AuthorityBypass),
+            Rate(fields.Sum(f=>f.CorrectProposed),fields.Sum(f=>f.Proposed)),Rate(fields.Sum(f=>f.CorrectProposed),fields.Sum(f=>f.TruthPresent)),Rate(scores.Count(s=>s.ExactMatch),scores.Length));
     }
     private static CertificateGoldenCaseScore Score(CertificateGoldenExample example,CertificateGoldenPrediction prediction,string model,string prompt)
     {
@@ -56,18 +62,19 @@ public static class CertificateGoldenEvaluation
             raw=document.RootElement.Deserialize<CertificateRawExtraction>(Json)??throw new JsonException();
             mismatch=raw.ModelVersion!=model||raw.PromptVersion!=prompt;
             if(raw.Protocol!=CertificateExtractionPolicy.Protocol || raw.InputSha256!=example.InputSha256 || raw.Fields==null || raw.Fields.Any(f=>!CertificateExtractionPolicy.Fields.Contains(f.Key)||f.Value==null||
-                f.Value.Value!=null&&!CertificateExtractionPolicy.Text(f.Value.Value)||f.Value.Confidence is <0 or >1 || f.Value.Page is <1 or >1000))throw new JsonException();
+                !CertificateExtractionPolicy.ValidCandidate(f.Value)))throw new JsonException();
         }catch(Exception error)when(error is JsonException or ArgumentException){malformed=true;}
-        if(malformed || mismatch)return new(example.Id,0,CertificateExtractionPolicy.Fields.Length,0,0,0,bypass,malformed,mismatch,CertificateExtractionPolicy.Fields.Select(key=>Field(key,0,1,0,0,0)).ToArray());
+        if(malformed || mismatch)return new(example.Id,0,CertificateExtractionPolicy.Fields.Length,0,0,0,bypass,malformed,mismatch,CertificateExtractionPolicy.Fields.Select(key=>Field(key,0,1,0,0,0,example.Truth[key]==null?0:1,0)).ToArray());
         var proposed=0;var correct=0;var corrections=0;var critical=0;var fields=new List<CertificateGoldenFieldScore>();
         foreach(var key in CertificateExtractionPolicy.Fields) {
             var value=raw!.Fields.GetValueOrDefault(key)?.Value;var truth=example.Truth[key];var same=string.Equals(value,truth,StringComparison.Ordinal);
             if(same)correct++;
             if(value!=null){proposed++;if(!same){corrections++;if(example.CriticalFields.Contains(key))critical++;}}
-            fields.Add(Field(key,same?1:0,1,value==null?0:1,value!=null&&!same?1:0,value!=null&&!same&&example.CriticalFields.Contains(key)?1:0));
+            fields.Add(Field(key,same?1:0,1,value==null?0:1,value!=null&&!same?1:0,value!=null&&!same&&example.CriticalFields.Contains(key)?1:0,truth==null?0:1,value!=null&&same?1:0));
         }
         return new(example.Id,correct,CertificateExtractionPolicy.Fields.Length,proposed,corrections,critical,bypass,false,false,fields.ToArray());
     }
-    private static CertificateGoldenFieldScore Field(string key,int correct,int scored,int proposed,int corrections,int critical)=>new(key,correct,scored,proposed,corrections,critical,
-        scored==0?null:(decimal)correct/scored,proposed==0?null:(decimal)corrections/proposed);
+    private static decimal? Rate(int numerator,int denominator)=>denominator==0?null:(decimal)numerator/denominator;
+    private static CertificateGoldenFieldScore Field(string key,int correct,int scored,int proposed,int corrections,int critical,int present,int correctProposed)=>new(key,correct,scored,proposed,corrections,critical,
+        Rate(correct,scored),Rate(corrections,proposed),present,correctProposed,Rate(correctProposed,proposed),Rate(correctProposed,present));
 }

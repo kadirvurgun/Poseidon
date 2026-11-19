@@ -1,5 +1,5 @@
 // Synthetic transport declarations only; no qualified issuer, approval or live policy.
-import { certificateSourceVersion, type CertificateCapabilities, type CertificateDto, type CertificatePage, type RenewalCapabilities, type RenewalDto } from './certificates-api'
+import { certificateSourceVersion, renewalStates, type CertificateCapabilities, type CertificateDto, type CertificatePage, type RenewalCapabilities, type RenewalDto } from './certificates-api'
 import { emptyCertificateRenewal, emptyVesselCertificate } from './certificate-content'
 export const certificateVessel = '10000000-0000-4000-8000-000000000001'
 export const certificateId = '10000000-0000-4000-8000-000000000002'
@@ -22,10 +22,11 @@ export const certificatePageFixture = (items: CertificateDto[] = [certificateFix
   items, offset: 0, limit: 25, hasMore: false, scope: 'Vessel', coverage: 'AUTHORIZED_PAGE_ONLY', crewCoverage: 'NOT_REQUESTED',
   counts: { valid: 0, due90: 0, due60: 0, due30: 0, expired: 0, surveyWindow: 0, reviewRequired: items.length }, criticalGapCount: null, state: 'REVIEW_REQUIRED', referenceDate: '2026-11-05',
 })
-export const renewalCapsFixture = (): RenewalCapabilities => ({ vesselId: certificateVessel, canWrite: true, canComplete: false, ownerOptions: [], sourceVersion: certificateSourceVersion })
+export const renewalCapsFixture = (): RenewalCapabilities => ({ vesselId: certificateVessel, canWrite: true, canComplete: false, canVerify: false, ownerOptions: [], sourceVersion: certificateSourceVersion, states: [...renewalStates] })
 export const renewalFixture = (): RenewalDto => ({
   provenance: 'SyntheticUnverified',
   id: certificateAssignment, vesselId: certificateVessel, certificateId, certificateRevision: 1, certificateVersion: 19,
   revision: 1, version: 23, content: emptyCertificateRenewal(), sourceVersion: certificateSourceVersion, hash: 'B'.repeat(64),
   savedAt: '2026-11-05T04:00:00Z', state: 'DRAFT', qualification: 'REVIEW_REQUIRED', canEdit: true, canComplete: false, blockers: ['HUMAN_VERIFICATION_REQUIRED'], currentRevision: true,
+  transition: null, decision: null, allowedTransitions: ['CANCEL', 'OPEN'],
 })

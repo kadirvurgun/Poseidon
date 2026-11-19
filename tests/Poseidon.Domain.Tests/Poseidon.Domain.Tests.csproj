@@ -13,5 +13,6 @@
     <Content Include="../../contracts/parameters.v1.json" Link="Fixtures/parameters.v1.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="../../contracts/golden/pilot-dataset.v1.json" Link="Fixtures/pilot-dataset.v1.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="../fixtures/certificate-extraction/synthetic-masked-v1.json" Link="Fixtures/certificate-extraction.synthetic-masked-v1.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../fixtures/certificate-extraction/golden-pdf-v1.json" Link="Fixtures/certificate-extraction.golden-pdf-v1.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

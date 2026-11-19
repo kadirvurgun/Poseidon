@@ -61,8 +61,28 @@ public sealed class CertificateRenewalRevision : ITenantEntity
     public Guid? FileId {get;set;}
     public long? FileRevision {get;set;}
     public string? Checksum {get;set;}
+    // DEV-044 workflow state of this immutable revision; the head revision's row is current.
+    public string State {get;set;}="DRAFT";
+    public string? Transition {get;set;}
+    public string? DecisionJson {get;set;}
     public Guid ActorId {get;set;}
     public DateTimeOffset SavedAt {get;set;}
+}
+// Immutable supersession written only by a completed, human-verified renewal. The original
+// certificate revisions stay untouched; history and the old record remain readable.
+public sealed class CertificateSupersession : ITenantEntity
+{
+    public Guid TenantId {get;set;}
+    public Guid VesselId {get;set;}
+    public Guid CertificateId {get;set;}
+    public long CertificateRevision {get;set;}
+    public Guid ReplacementCertificateId {get;set;}
+    public long ReplacementRevision {get;set;}
+    public Guid RenewalId {get;set;}
+    public long RenewalRevision {get;set;}
+    public DateOnly EffectiveDate {get;set;}
+    public Guid ActorId {get;set;}
+    public DateTimeOffset CompletedAt {get;set;}
 }
 public sealed class CertificateCommandReceipt : ITenantEntity
 {
@@ -106,8 +126,8 @@ internal static class VesselCertificateStorage
                 .HasPrincipalKey(r=>new{r.TenantId,r.VesselId,r.Id}).HasConstraintName("FK_Renewal_Certificate").OnDelete(DeleteBehavior.Restrict);
         });
         model.Entity<CertificateRenewalRevision>(b=> {
-            b.ToTable("RenewalRevisions","assurance",t=>t.HasCheckConstraint("CK_RenewalRevision_Binding",
-                "\"Revision\" > 0 AND \"RecordVersion\" > 0 AND \"CertificateRevision\" > 0 AND \"CertificateVersion\" > 0 AND ((\"NewCertificateId\" IS NULL AND \"NewCertificateRevision\" IS NULL AND \"NewCertificateVersion\" IS NULL) OR (\"NewCertificateId\" IS NOT NULL AND \"NewCertificateRevision\" > 0 AND \"NewCertificateVersion\" > 0)) AND ((\"FileId\" IS NULL AND \"FileRevision\" IS NULL AND \"Checksum\" IS NULL) OR (\"FileId\" IS NOT NULL AND \"FileRevision\" > 0 AND \"Checksum\" IS NOT NULL))"));b.HasKey(r=>new{r.TenantId,r.RenewalId,r.Revision});
+            b.ToTable("RenewalRevisions","assurance",t=>{t.HasCheckConstraint("CK_RenewalRevision_Binding",
+                "\"Revision\" > 0 AND \"RecordVersion\" > 0 AND \"CertificateRevision\" > 0 AND \"CertificateVersion\" > 0 AND ((\"NewCertificateId\" IS NULL AND \"NewCertificateRevision\" IS NULL AND \"NewCertificateVersion\" IS NULL) OR (\"NewCertificateId\" IS NOT NULL AND \"NewCertificateRevision\" > 0 AND \"NewCertificateVersion\" > 0)) AND ((\"FileId\" IS NULL AND \"FileRevision\" IS NULL AND \"Checksum\" IS NULL) OR (\"FileId\" IS NOT NULL AND \"FileRevision\" > 0 AND \"Checksum\" IS NOT NULL))");t.HasCheckConstraint("CK_RenewalRevision_State","\"State\" IN ('DRAFT','PREPARING','READY_TO_APPLY','APPLICATION_RECORDED','AWAITING_AUTHORITY','ISSUED_UNVERIFIED','VERIFIED','COMPLETED','CANCELLED','REJECTED') AND (\"Transition\" IS NULL OR \"Transition\" IN ('OPEN','VALIDATE','RECORD_APPLICATION','AWAIT_AUTHORITY','RECORD_ISSUED_CANDIDATE','VERIFY','COMPLETE','REJECT','CANCEL'))");});b.HasKey(r=>new{r.TenantId,r.RenewalId,r.Revision});
             b.HasOne<CertificateRenewal>().WithMany().HasForeignKey(r=>new{r.TenantId,r.VesselId,r.CertificateId,r.RenewalId})
                 .HasPrincipalKey(r=>new{r.TenantId,r.VesselId,r.CertificateId,r.Id}).HasConstraintName("FK_RenewalRevision_Head").OnDelete(DeleteBehavior.Restrict);
             b.HasOne<VesselCertificateRevision>().WithMany().HasForeignKey(r=>new{r.TenantId,r.VesselId,r.CertificateId,r.CertificateRevision})
@@ -121,10 +141,26 @@ internal static class VesselCertificateStorage
             b.HasIndex(r=>new{r.TenantId,r.VesselId,r.CertificateId,r.CertificateRevision}).HasDatabaseName("IX_RenewalRevision_Original");
             b.HasIndex(r=>new{r.TenantId,r.VesselId,r.NewCertificateId,r.NewCertificateRevision}).HasDatabaseName("IX_RenewalRevision_Replacement");
             b.HasIndex(r=>new{r.TenantId,r.VesselId,r.FileId,r.FileRevision,r.Checksum}).HasDatabaseName("IX_RenewalRevision_FilePin");
+            b.Property(r=>r.State).HasMaxLength(32).HasDefaultValue("DRAFT");b.Property(r=>r.Transition).HasMaxLength(32);b.Property(r=>r.DecisionJson).HasColumnType("text");
+        });
+        model.Entity<CertificateSupersession>(b=> {
+            b.ToTable("CertificateSupersessions","assurance",t=>t.HasCheckConstraint("CK_CertificateSupersession_Binding",
+                "\"CertificateRevision\" > 0 AND \"ReplacementRevision\" > 0 AND \"RenewalRevision\" > 0 AND \"CertificateId\" <> \"ReplacementCertificateId\""));
+            b.HasKey(r=>new{r.TenantId,r.CertificateId});
+            b.HasIndex(r=>new{r.TenantId,r.ReplacementCertificateId}).IsUnique().HasDatabaseName("IX_CertificateSupersession_Replacement");
+            b.HasIndex(r=>new{r.TenantId,r.VesselId,r.CertificateId,r.CertificateRevision}).HasDatabaseName("IX_CertificateSupersession_Original");
+            b.HasIndex(r=>new{r.TenantId,r.VesselId,r.ReplacementCertificateId,r.ReplacementRevision}).HasDatabaseName("IX_CertificateSupersession_ReplacementRevision");
+            b.HasIndex(r=>new{r.TenantId,r.RenewalId,r.RenewalRevision}).IsUnique().HasDatabaseName("IX_CertificateSupersession_Renewal");
+            b.HasOne<VesselCertificateRevision>().WithMany().HasForeignKey(r=>new{r.TenantId,r.VesselId,r.CertificateId,r.CertificateRevision})
+                .HasPrincipalKey(r=>new{r.TenantId,r.VesselId,r.CertificateId,r.Revision}).HasConstraintName("FK_CertificateSupersession_Original").OnDelete(DeleteBehavior.Restrict);
+            b.HasOne<VesselCertificateRevision>().WithMany().HasForeignKey(r=>new{r.TenantId,r.VesselId,r.ReplacementCertificateId,r.ReplacementRevision})
+                .HasPrincipalKey(r=>new{r.TenantId,r.VesselId,r.CertificateId,r.Revision}).HasConstraintName("FK_CertificateSupersession_Replacement").OnDelete(DeleteBehavior.Restrict);
+            b.HasOne<CertificateRenewalRevision>().WithMany().HasForeignKey(r=>new{r.TenantId,r.RenewalId,r.RenewalRevision})
+                .HasConstraintName("FK_CertificateSupersession_Renewal").OnDelete(DeleteBehavior.Restrict);
         });
         model.Entity<CertificateCommandReceipt>(b=> {
             b.ToTable("CertificateReceipts","assurance",t=>t.HasCheckConstraint("CK_CertificateReceipt_Resource",
-                "(\"Action\" IN ('CertificateSave','CertificateAssertion') AND \"RenewalId\" IS NULL AND \"ResourceId\"=\"CertificateId\") OR (\"Action\"='RenewalSave' AND \"RenewalId\" IS NOT NULL AND \"ResourceId\"=\"RenewalId\")"));b.HasKey(r=>new{r.TenantId,r.ActorId,r.Key});
+                "(\"Action\" IN ('CertificateSave','CertificateAssertion') AND \"RenewalId\" IS NULL AND \"ResourceId\"=\"CertificateId\") OR (\"Action\" IN ('RenewalSave','RenewalTransition') AND \"RenewalId\" IS NOT NULL AND \"ResourceId\"=\"RenewalId\")"));b.HasKey(r=>new{r.TenantId,r.ActorId,r.Key});
             b.HasOne<VesselCertificate>().WithMany().HasForeignKey(r=>new{r.TenantId,r.VesselId,r.CertificateId})
                 .HasPrincipalKey(r=>new{r.TenantId,r.VesselId,r.Id}).HasConstraintName("FK_CertificateReceipt_Certificate").OnDelete(DeleteBehavior.Restrict);
             b.HasOne<CertificateRenewal>().WithMany().HasForeignKey(r=>new{r.TenantId,r.VesselId,r.CertificateId,r.RenewalId})

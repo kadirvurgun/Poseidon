@@ -1,4 +1,5 @@
-import { sourceText, localizedTuple } from "../i18n/messages";
+import { sourceText, localizedTuple, localizedCopy } from "../i18n/messages";
+import { ticksToMinutes } from './ship-operations-ledger-api';
 import { localizedLabel, localizedText } from "../i18n/messages";
 import { type Locale as AppLocale } from "../i18n";
 import { useState } from 'react';
@@ -7,6 +8,8 @@ import { Button } from '../components/ui/button';
 import { EnterprisePagination, EnterpriseToolbar } from './EnterprisePatterns';
 import type { DowntimeOriginContext, DowntimeOriginPin, DowntimeHistory, DowntimePage, DowntimeRecord } from './downtime-api';
 import { downtimeCodeLabel, downtimeFactLabel, downtimeFieldInfo } from './downtime-fields';
+// Exact minutes of the recorded interval (lossless from ticks); never the declared source minutes.
+const ledgerCopy = localizedCopy('ShipOperationsLedgerPanel_tsx_copy');
 const sourceLabel = (kind: DowntimeOriginPin['kind'], en: boolean) => kind === 'Defect' ? (localizedText(en, "pairs.m_5a545c0743bf17ab")) : kind === 'WorkOrder' ? (localizedText(en, "pairs.m_9654434147f84cde")) : (localizedText(en, "pairs.m_21eb6ede9f2b37f9"));
 const blockerLabel = (code: string, en: boolean) => ({ REVIEW_REQUIRED: localizedText(en, "pairs.m_33ca4856970bc649"), LOSS_OF_HIRE_ASSESSMENT_UNAVAILABLE: localizedText(en, "pairs.m_a9c1d9016a9ce9c1"), VERIFIED_CLOSURE_UNAVAILABLE: localizedText(en, "pairs.m_b07808047dabf912") } as Record<string, string>)[code] ?? (localizedText(en, "pairs.m_7ec6b15aa4eb7f7c")) + code;
 export function DowntimeSourceSummary({ value, language }: {
@@ -15,7 +18,7 @@ export function DowntimeSourceSummary({ value, language }: {
 }) {
     const en = language === 'en', type = value.fields.downtime_type, interval = value.engineeringInterval;
     return <section className="downtime-source" aria-label={localizedText(en, "pairs.m_f3dd1000b482b11c")}><div className="downtime-status"><Badge tone="neutral">{localizedText(en, "pairs.m_6f7b0af9992cd6bf")}</Badge><Badge tone="warning">{localizedText(en, "pairs.m_6edb7d9a4aca3fd7")}</Badge><Badge tone="neutral">{value.currentRevision ? (localizedText(en, "pairs.m_1a3d3c3350a777f0")) : (localizedText(en, "pairs.m_ff547086f1eac9a3"))}</Badge></div><p>{type.state === 'Known' ? downtimeCodeLabel(type.value!, en) : downtimeFactLabel(type.state, en)} · r{value.revision} · <time dateTime={value.savedAt}>{value.savedAt}</time></p>
- <dl className="downtime-summary-grid"><div><dt>{localizedText(en, "pairs.m_51771f089050bd76")}</dt><dd>{localizedText(en, "pairs.m_944f893af55e0ce7")}</dd></div><div><dt>{localizedText(en, "pairs.m_7884f6ae0f04a382")}</dt><dd>{localizedText(en, "pairs.m_3fb1b1bfbc2adcb7")}</dd></div><div><dt>{localizedText(en, "pairs.m_d40cafe20b56da0d")}</dt><dd>{value.fields.duration_minutes.state === 'Known' ? value.fields.duration_minutes.value : downtimeFactLabel(value.fields.duration_minutes.state, en)}</dd></div><div><dt>{localizedText(en, "pairs.m_4b6f66735448a657")}</dt><dd>{interval.state === 'KNOWN' ? interval.elapsedTicks : (localizedText(en, "pairs.m_3eba0a5fd7fb1500"))}</dd></div></dl>
+ <dl className="downtime-summary-grid"><div><dt>{localizedText(en, "pairs.m_51771f089050bd76")}</dt><dd>{localizedText(en, "pairs.m_944f893af55e0ce7")}</dd></div><div><dt>{localizedText(en, "pairs.m_7884f6ae0f04a382")}</dt><dd>{localizedText(en, "pairs.m_3fb1b1bfbc2adcb7")}</dd></div><div><dt>{localizedText(en, "pairs.m_d40cafe20b56da0d")}</dt><dd>{value.fields.duration_minutes.state === 'Known' ? value.fields.duration_minutes.value : downtimeFactLabel(value.fields.duration_minutes.state, en)}</dd></div><div><dt>{localizedText(en, "pairs.m_4b6f66735448a657")}</dt><dd>{interval.state === 'KNOWN' ? interval.elapsedTicks + ' tick · ' + ledgerCopy[language].minutes.replace('{{value}}', ticksToMinutes(interval.elapsedTicks!)) : (localizedText(en, "pairs.m_3eba0a5fd7fb1500"))}</dd></div></dl>
  <p className="downtime-hint">{localizedText(en, "pairs.m_77510b4e74a04170")}</p>
  <details><summary>{localizedText(en, "pairs.m_acaca6ac79bc7f42")}</summary><p>{value.id} / {value.revision} / {value.version} · {value.provenance}</p><code>{value.hash}</code><p><code>{value.sourceVersion}</code></p><dl className="downtime-summary-grid">{downtimeFieldInfo().map(field => <div key={field.key}><dt>{localizedLabel(field, en)}</dt><dd>{value.fields[field.key].state === 'Known' ? value.fields[field.key].value : downtimeFactLabel(value.fields[field.key].state, en)}</dd></div>)}</dl>{value.origin && <p>{sourceLabel(value.origin.kind, en)}: {value.origin.id} / {value.origin.revision} / {value.origin.version}<br /><code>{value.origin.hash}</code><br /><code>{value.origin.sourceVersion}</code></p>}</details><details><summary>{localizedText(en, "pairs.m_f3756323508b1048")}</summary><ul>{value.blockers.map(code => <li key={code}>{blockerLabel(code, en)}</li>)}</ul></details></section>;
 }

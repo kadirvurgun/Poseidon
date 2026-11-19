@@ -35,6 +35,7 @@ public static class SecurityEventCodes
         "ApplicabilityOverrideRead", "ApplicabilityOverrideCommand", "ApplicabilityOverrideReplay", "ComplianceControlCandidateCommand", "ComplianceControlCandidateReplay",
         "ControlLifecycleRead", "ControlLifecycleCommand", "ControlLifecycleReplay", "ControlSupportingEvidenceRead", "HumanReviewRead",
         "DailyEngineReferenceRead", "DailyEngineReferenceCommand",
+        "TugLifecycle",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static IReadOnlySet<string> Results { get; } = new string[]
     {
@@ -48,7 +49,7 @@ public static class SecurityEventCodes
         "decision_type_gate_unavailable", "duplicate_code", "duplicate_lineage", "enrollment_limit",
         "evaluation_lineage_unavailable", "evaluation_unavailable", "example_rule_not_admissible", "field_policy_denied",
         "file_attempt_conflict", "file_attempt_frozen", "file_bytes_unavailable", "file_capability_invalid",
-        "file_integrity_unavailable", "file_quarantined_or_unknown", "file_settings_unavailable", "file_type_or_size_invalid",
+        "file_integrity_unavailable", "ocr_capability_unavailable", "file_quarantined_or_unknown", "file_settings_unavailable", "file_type_or_size_invalid",
         "file_upload_not_accepted",
         "historical_outcome_unavailable", "human_acknowledgment_required", "human_authority_required", "human_catalog_authority_required",
         "idempotency_key_reused", "immutable_context", "immutable_file_reference", "immutable_position_conflict",
@@ -82,11 +83,15 @@ public static class SecurityEventCodes
         "owner_field_not_writable", "invariant_not_writable", "alias_read_only", "family_not_writable", "type_mismatch", "out_of_range",
         "unresolved_reference", "scope_not_allowed", "selector_invalid", "definition_version_mismatch", "effective_from_in_past",
         "pending_change_exists", "ambiguous_selection", "synthetic_not_approvable",
-        "quiet_hours_incomplete", "quiet_hours_invalid", "quiet_hours_zone_unknown",
+        "quiet_hours_incomplete", "tug_request_incomplete", "quiet_hours_invalid", "quiet_hours_zone_unknown",
         "control_retired", "control_record_incomplete", "control_reviewer_required", "control_revision_conflict",
         "override_reason_not_allowed", "override_evidence_required", "override_evidence_unavailable", "override_unknown_not_acceptable", "override_validity_invalid",
         "override_authority_unavailable", "override_overlap", "override_author_required", "override_rule_unavailable", "evaluation_stale", "human_actor_required",
         "current_applicability_unavailable", "no_control_candidates",
+        "renewal_owner_required", "renewal_due_required", "renewal_expiry_unknown", "renewal_requirements_unknown", "renewal_requirements_incomplete",
+        "renewal_application_incomplete", "renewal_replacement_required", "renewal_replacement_dates_unknown", "renewal_evidence_required",
+        "renewal_verification_not_matched", "renewal_replacement_not_effective", "renewal_cancellation_receipt_required", "renewal_already_open",
+        "renewal_state_locked", "certificate_already_superseded",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static bool Allows(string action, string result) => Actions.Contains(action) && Results.Contains(result);
 }

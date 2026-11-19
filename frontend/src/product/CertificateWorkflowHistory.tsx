@@ -2,6 +2,7 @@ import { localizedText } from "../i18n/messages";
 import { type Locale as AppLocale } from "../i18n";
 import { EnterprisePagination } from './EnterprisePatterns';
 import { CertificateSummary } from './CertificateSummary';
+import { RenewalStateBadge } from './CertificateRenewalWorkflowPanel';
 import type { CertificateWorkspaceSource } from './certificate-workspace-model';
 export function CertificateWorkflowHistory({ source, language, offset, disabled, onOffset }: {
     source: CertificateWorkspaceSource;
@@ -20,7 +21,7 @@ export function CertificateWorkflowHistory({ source, language, offset, disabled,
     </details>)}
     {source.renewalHistory?.items.map(row => <details key={row.revision}>
       <summary>{localizedText(en, "pairs.m_848ee04537e9381b")} {row.revision} · {row.savedAt}</summary>
-      <p>{row.state === 'COMPLETED' ? (localizedText(en, "pairs.m_baaf089168abc1ba")) : (localizedText(en, "pairs.m_f7cffbc5939f0938"))}</p>
+      <p><RenewalStateBadge state={row.state} language={language}/>{row.transition && <> · <code>{row.transition}</code></>} {row.state === 'COMPLETED' ? (localizedText(en, "pairs.m_baaf089168abc1ba")) : (localizedText(en, "pairs.m_f7cffbc5939f0938"))}</p>
       <dl className="certificate-summary-grid">
         <div><dt>{localizedText(en, "pairs.m_c0bf7fe707eb558b")}</dt><dd>{row.certificateRevision}</dd></div>
         <div><dt>{localizedText(en, "pairs.m_9c2013fa6196b1bd")}</dt><dd>{row.content.renewalType ?? (localizedText(en, "pairs.m_ee32b29512abd890"))}</dd></div>

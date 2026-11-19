@@ -2,6 +2,7 @@ import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ShipOperationsWorkspace } from './ShipOperationsWorkspace';
+import { fuelLedgerFixture, portTimelineFixture } from './ship-operations-ledger-test-fixtures';
 import { shipOpsSourceVersion, type ShipOpsKind } from './ship-operation-fields';
 import type { ShipOpsRecord } from './ship-operations-api';
 import { shipOpsActor, shipOpsCapsFixture, shipOpsOriginFixture, shipOpsOriginPinFixture, shipOpsRecordFixture, shipOpsRecordId, shipOpsTenant, shipOpsVessel } from './ship-operation-test-fixtures';
@@ -35,6 +36,8 @@ function transport(kind: ShipOpsKind = 'Fuel') {
                 state.sessionDenied = true;
             return json(receipt);
         }
+        if (path === api + (kind === 'Fuel' ? '/ledger' : '/timeline'))
+            return json(kind === 'Fuel' ? fuelLedgerFixture() : portTimelineFixture());
         if (path === api)
             return json({ items: [...rows.values()], offset: 0, limit: 25, hasMore: false, canWrite: state.writable, sourceVersion: shipOpsSourceVersion, offline: shipOpsCapsFixture(kind).offline });
         const record = [...rows.values()].find(row => path === api + '/' + row.id || path === api + '/' + row.id + '/history');
