@@ -197,6 +197,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapWorkOrderPlanOrigins();
             endpoints.MapOperationalDowntime();
             endpoints.MapDowntimeOrigins();
+            endpoints.MapRiskAssessments();
+            endpoints.MapRiskTemplates();
             endpoints.MapMaintenanceObservations();
             endpoints.MapTug();
             endpoints.MapParameters();

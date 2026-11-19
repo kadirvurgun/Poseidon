@@ -23,6 +23,8 @@ internal static class WorkspaceDestinationLabels
         ["defects"] = ["Arızalar ve önlemler", "Defects and safeguards"],
         ["work-order-center"] = ["İş emirleri", "Work orders"],
         ["operational-downtime"] = ["Operasyonel duruşlar", "Operational downtime"],
+        ["risk-assessment"] = ["Risk değerlendirmesi", "Risk assessment"],
+        ["risk-template-library"] = ["Risk şablon kütüphanesi", "Risk template library"],
         ["certificate-command-center"] = ["Sertifika merkezi", "Certificate center"],
         ["renewal-workflow"] = ["Sertifika yenileme", "Certificate renewal"],
         ["tug-command"] = ["Römorkör operasyonları", "Tug operations", "Römorkör merkezi", "Tug command"],

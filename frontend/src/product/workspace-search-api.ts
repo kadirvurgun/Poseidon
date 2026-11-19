@@ -8,6 +8,7 @@ export const searchPageSize = 25
 export const searchMaxOffset = 100000
 const destinations: Readonly<Record<string, string>> = {
   'operational-downtime': '/app/operational-downtime',
+  'risk-assessment': '/app/risk-assessment', 'risk-template-library': '/app/risk-template-library',
   'work-order-center': '/app/work-order-center',
   defects: '/app/defects',
   'fuel-bunker-log': '/app/fuel-bunker-log', 'port-activity-sof': '/app/port-activity-sof',
@@ -23,6 +24,7 @@ const destinations: Readonly<Record<string, string>> = {
 export const isSeparateWorkspaceDestination = (href: string) =>
   href === '/app/audit-ready' || /^\/app\/audit-ready\/[0-9a-f-]{36}$/.test(href) ||
   href === '/app/operational-downtime' || /^\/app\/operational-downtime\/[0-9a-f-]{36}$/.test(href) ||
+  href === '/app/risk-assessment' || /^\/app\/risk-assessment\/[0-9a-f-]{36}$/.test(href) || href === '/app/risk-template-library' ||
   href === '/app/work-order-center' || /^\/app\/work-order-center\/[0-9a-f-]{36}$/.test(href) ||
   href === '/app/defects' || /^\/app\/defects\/[0-9a-f-]{36}$/.test(href) ||
   href === '/app/fuel-bunker-log' || href === '/app/port-activity-sof' || /^\/app\/(fuel-bunker-log|port-activity-sof)\/[0-9a-f-]{36}$/.test(href) || href === '/app/certificate-command-center' || href === '/app/renewal-workflow' || /^\/app\/(certificate-command-center|renewal-workflow)\/[0-9a-f-]{36}$/.test(href) || href === '/app/noon-report' || href === '/app/deck-daily-log' || href === '/app/engine-daily-log' || /^\/app\/(noon-report|deck-daily-log|engine-daily-log)\/[0-9a-f-]{36}$/.test(href) || href === '/app/tug-command' || href === '/app/tug-job-board' || href === '/app/tug-job-intake' || href === '/app/system-health' || href === '/app/notification-escalation' || href === '/app/offline-conflict-center'

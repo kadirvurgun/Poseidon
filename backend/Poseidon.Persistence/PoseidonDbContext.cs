@@ -42,6 +42,16 @@ public sealed class PoseidonDbContext(
     public DbSet<Downtime> Downtimes => Set<Downtime>();
     public DbSet<DowntimeRevision> DowntimeRevisions => Set<DowntimeRevision>();
     public DbSet<DowntimeReceipt> DowntimeReceipts => Set<DowntimeReceipt>();
+    public DbSet<RiskAssessment> RiskAssessments => Set<RiskAssessment>();
+    public DbSet<RiskAssessmentRevision> RiskAssessmentRevisions => Set<RiskAssessmentRevision>();
+    public DbSet<RiskAssessmentDecision> RiskAssessmentDecisions => Set<RiskAssessmentDecision>();
+    public DbSet<RiskAssessmentAcknowledgement> RiskAssessmentAcknowledgements => Set<RiskAssessmentAcknowledgement>();
+    public DbSet<RiskTemplate> RiskTemplates => Set<RiskTemplate>();
+    public DbSet<RiskTemplateRevision> RiskTemplateRevisions => Set<RiskTemplateRevision>();
+    public DbSet<RiskTemplateDecision> RiskTemplateDecisions => Set<RiskTemplateDecision>();
+    public DbSet<RiskTemplateSuggestion> RiskTemplateSuggestions => Set<RiskTemplateSuggestion>();
+    public DbSet<RiskMethod> RiskMethods => Set<RiskMethod>();
+    public DbSet<RiskCommandReceipt> RiskCommandReceipts => Set<RiskCommandReceipt>();
     public DbSet<WorkOrder> WorkOrders => Set<WorkOrder>();
     public DbSet<WorkOrderRevision> WorkOrderRevisions => Set<WorkOrderRevision>();
     public DbSet<WorkOrderReceipt> WorkOrderReceipts => Set<WorkOrderReceipt>();
@@ -307,6 +317,17 @@ public sealed class PoseidonDbContext(
         model.Entity<Downtime>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         model.Entity<DowntimeRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         model.Entity<DowntimeReceipt>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        RiskStorage.Configure(model);
+        model.Entity<RiskAssessment>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<RiskAssessmentRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<RiskAssessmentDecision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<RiskAssessmentAcknowledgement>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<RiskTemplate>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<RiskTemplateRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<RiskTemplateDecision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<RiskTemplateSuggestion>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<RiskMethod>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<RiskCommandReceipt>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         WorkOrderStorage.Configure(model);
         model.Entity<WorkOrder>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         model.Entity<WorkOrderRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
@@ -608,6 +629,7 @@ public sealed class PoseidonDbContext(
             (e.Properties.Any(p=>p.IsModified && p.Metadata.Name is not("FieldsJson" or "PlanId" or "PlanRevision" or "PlanVersion" or "PlanHash" or "PlanSourceVersion" or "SourceVersion" or "Hash" or "Provenance" or "ActorId" or "SavedAt" or "Revision")) ||
                 (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue!+1))))
             throw new InvalidOperationException("WorkOrder ownership is immutable; append one revision.");
+        RiskStorage.Guard(changes);
         if(changes.Any(e=>e.Entity is DowntimeRevision or DowntimeReceipt && e.State!=EntityState.Added))
             throw new InvalidOperationException("Downtime history and outcomes are immutable.");
         if(changes.Any(e=>e.Entity is Downtime && (e.State==EntityState.Deleted || e.State==EntityState.Modified &&

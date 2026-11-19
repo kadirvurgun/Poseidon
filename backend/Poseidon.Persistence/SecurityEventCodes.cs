@@ -36,6 +36,7 @@ public static class SecurityEventCodes
         "ControlLifecycleRead", "ControlLifecycleCommand", "ControlLifecycleReplay", "ControlSupportingEvidenceRead", "HumanReviewRead",
         "DailyEngineReferenceRead", "DailyEngineReferenceCommand",
         "TugLifecycle",
+        "RiskAssessmentRead", "RiskAssessmentCommand", "RiskTemplateRead", "RiskTemplateCommand",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static IReadOnlySet<string> Results { get; } = new string[]
     {
@@ -92,6 +93,7 @@ public static class SecurityEventCodes
         "renewal_application_incomplete", "renewal_replacement_required", "renewal_replacement_dates_unknown", "renewal_evidence_required",
         "renewal_verification_not_matched", "renewal_replacement_not_effective", "renewal_cancellation_receipt_required", "renewal_already_open",
         "renewal_state_locked", "certificate_already_superseded",
+        "risk_record_incomplete", "method_matrix_incomplete", "template_not_effective", "risk_acknowledgement_exists",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static bool Allows(string action, string result) => Actions.Contains(action) && Results.Contains(result);
 }

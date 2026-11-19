@@ -20,6 +20,8 @@ import { CertificateWorkspace } from './product/CertificateWorkspace';
 import { DefectWorkspace } from './product/DefectWorkspace';
 import { WorkOrderWorkspace } from './product/WorkOrderWorkspace';
 import { DowntimeWorkspace } from './product/DowntimeWorkspace';
+import { RiskAssessmentWorkspace } from './product/RiskAssessmentWorkspace';
+import { RiskTemplateLibraryWorkspace } from './product/RiskTemplateLibraryWorkspace';
 import { AuditReadyWorkspace } from './product/AuditReadyWorkspace';
 import { AppearanceControls } from './theme/AppearanceControls';
 type Connection = 'loading' | 'available' | 'error';
@@ -52,6 +54,10 @@ export function App() {
         return <WorkOrderWorkspace />;
     if (/^\/app\/operational-downtime(?:\/|$)/.test(window.location.pathname))
         return <DowntimeWorkspace />;
+    if (/^\/app\/risk-assessment(?:\/|$)/.test(window.location.pathname))
+        return <RiskAssessmentWorkspace />;
+    if (/^\/app\/risk-template-library(?:\/|$)/.test(window.location.pathname))
+        return <RiskTemplateLibraryWorkspace />;
     const crew = /^\/app\/crew-roster\/([0-9a-fA-F-]{36})(?:\/crew-profile\/([0-9a-fA-F-]{36}))?\/?$/.exec(window.location.pathname);
     if (crew)
         return <CrewWorkspace key={`${crew[1]}:${crew[2] ?? ''}`} vessel={crew[1]} assignment={crew[2]}/>;

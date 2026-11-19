@@ -27,6 +27,8 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                 RegulatoryQualificationHead or RegulatoryQualificationEvent or RegulatoryQualificationReceipt or
                 ParameterRoot or ParameterRevision or ParameterDecision or ParameterCommandReceipt => "Tenant",
             CommandReceipt r when r.Action is "CompanyCreate" or "CompanyUpdate" or "SourceDraftSave" or "RequirementDraftSave" => "Tenant",
+            RiskTemplate or RiskTemplateRevision or RiskTemplateDecision or RiskTemplateSuggestion or RiskMethod => "Tenant",
+            RiskCommandReceipt { VesselId: null } => "Tenant",
             ApplicabilityReceipt r when r.Action is "author" or "review" => "Tenant",
             _ => "Unresolved"
         };
@@ -55,6 +57,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
 
     private static AuditMetadata Project(EntityEntry entry, Guid? parentVessel)
     {
+        if (RiskProjection(entry) is { } risk) return risk;
         if(entry.Entity is Defect defect)
             return new(defect.VesselId,defect.Id,"Defect",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,defect.Revision,
                 Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(defect.Revision)),Field("Binding",null,"OwnerReference")));
@@ -563,6 +566,52 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         }
         return new(vessel, resource, kind, before, after, JsonSerializer.Serialize(fields));
     }
+
+    // DEV-105/DEV-106: closed state/decision codes and revisions only. Hazard, control,
+    // reason, suggestion and matrix text is never copied (ValuesWithheld/RevisionReference).
+    private static AuditMetadata? RiskProjection(EntityEntry entry)
+    {
+        long? Before(string property) => entry.State == EntityState.Added ? null : (long?)entry.Property(property).OriginalValue;
+        string? BeforeState(string property, string[] allowed) => entry.State == EntityState.Added ? null : Closed((string)entry.Property(property).OriginalValue!, allowed);
+        var states = Poseidon.Domain.RiskPolicy.AssessmentStates; var templates = Poseidon.Domain.RiskPolicy.TemplateStates;
+        return entry.Entity switch
+        {
+            RiskAssessment a => new(a.VesselId, a.Id, "RiskAssessment", Before("Revision"), a.Revision, Fields(
+                Field("Revision", Before("Revision") is { } r ? Number(r) : null, Number(a.Revision)),
+                Field("State", BeforeState("State", states), Closed(a.State, states)), Field("ContentJson", null, null, "RevisionReference"),
+                Field("Binding", null, "OwnerReference"))),
+            RiskAssessmentRevision r => new(r.VesselId, r.AssessmentId, "RiskAssessmentRevision", null, r.Revision, Fields(
+                Field("Revision", null, Number(r.Revision)), Field("State", null, Closed(r.State, states)),
+                Field("ReasonCode", null, Closed(r.ReasonCode, "CREATE", "TEMPLATE_COPY", "EDIT", "SUBMIT", "APPROVE", "RETURN", "AMEND", "SYNTHETIC_INCOMPLETE_DRAFT")),
+                Field("ContentJson", null, null, "RevisionReference"))),
+            RiskAssessmentDecision d => new(d.VesselId, d.AssessmentId, "RiskAssessmentDecision", null, d.ResultRevision, Fields(
+                Field("Decision", null, Closed(d.Decision, Poseidon.Domain.RiskPolicy.AssessmentDecisions)), Field("Revision", null, Number(d.ResultRevision)),
+                Field("Reason", null, null, "ValuesWithheld"))),
+            RiskAssessmentAcknowledgement k => new(k.VesselId, k.AssessmentId, "RiskAssessmentAcknowledgement", null, k.Revision, Fields(
+                Field("Choice", null, Closed(k.Choice, Poseidon.Domain.RiskPolicy.AckChoices)), Field("Revision", null, Number(k.Revision)),
+                Field("Reason", null, null, "ValuesWithheld"))),
+            RiskTemplate t => new(null, t.Id, "RiskTemplate", Before("LatestRevision"), t.LatestRevision, Fields(
+                Field("Revision", Before("LatestRevision") is { } r ? Number(r) : null, Number(t.LatestRevision)), Field("Binding", null, "OwnerReference"))),
+            RiskTemplateRevision t => new(null, t.TemplateId, "RiskTemplateRevision", entry.State == EntityState.Added ? null : t.Revision, t.Revision, Fields(
+                Field("Revision", entry.State == EntityState.Added ? null : Number(t.Revision), Number(t.Revision)),
+                Field("Status", BeforeState("Status", templates), Closed(t.Status, templates)), Field("ContentJson", null, null, "RevisionReference"))),
+            RiskTemplateDecision d => new(null, d.TemplateId, "RiskTemplateDecision", null, d.Revision, Fields(
+                Field("Decision", null, Closed(d.Decision, Poseidon.Domain.RiskPolicy.TemplateDecisions)), Field("Revision", null, Number(d.Revision)),
+                Field("Reason", null, null, "ValuesWithheld"))),
+            RiskTemplateSuggestion g => new(null, g.Id, "RiskTemplateSuggestion", entry.State == EntityState.Added ? null : g.Revision, g.Revision, Fields(
+                Field("Status", BeforeState("Status", Poseidon.Domain.RiskPolicy.SuggestionStates), Closed(g.Status, Poseidon.Domain.RiskPolicy.SuggestionStates)),
+                Field("Revision", entry.State == EntityState.Added ? null : Number(g.Revision), Number(g.Revision)), Field("Text", null, null, "ValuesWithheld"))),
+            RiskMethod m => new(null, m.Id, "RiskMethod", entry.State == EntityState.Added ? null : m.Revision, m.Revision, Fields(
+                Field("Status", BeforeState("Status", Poseidon.Domain.RiskPolicy.MethodStates), Closed(m.Status, Poseidon.Domain.RiskPolicy.MethodStates)),
+                Field("Revision", entry.State == EntityState.Added ? null : Number(m.Revision), Number(m.Revision)), Field("ContentJson", null, null, "RevisionReference"))),
+            RiskCommandReceipt c => new(c.VesselId, c.ResourceId, "RiskCommandReceipt", null, c.Revision, Fields(
+                Field("Operation", null, Closed(c.Action, RiskOperations)), Field("Revision", null, Number(c.Revision)), Field("Binding", null, "CommittedResource"))),
+            _ => null
+        };
+    }
+    internal static readonly string[] RiskOperations = ["RiskAssessmentCreate", "RiskAssessmentUpdate", "RiskAssessmentSubmit", "RiskAssessmentReview",
+        "RiskAssessmentAmend", "RiskAssessmentAcknowledge", "RiskTemplateCreate", "RiskTemplateUpdate", "RiskTemplateSubmit", "RiskTemplateReview",
+        "RiskTemplateRevise", "RiskTemplateSuggest", "RiskTemplateSuggestionReview", "RiskMethodCreate", "RiskMethodPublish"];
 
     // PLAN-1511-5201: closed HR audit summaries. Names, legal names, registration values, employee numbers,
     // source references and reasons are never copied into audit summaries.
