@@ -89,3 +89,5 @@ Main: #16 #17 #18 #20 #23 #36 + **#37 paket 2** birleşik (`2995f70`, 19.11 ~08:
   - **WP-B** DEV-028+029+030 (29 SP) → `feature/s3-wpb-control-evidence-verification-20261119` (worktree s3-wpb-20261119): kontrol yaşam döngüsü, çok-çok kanıt, GET verifications, SUPERSEDED/SoD testleri. 54.01 tazelik sicili yok → tazelik 'declared' sınırı belgelenecek. Alt-ajanda.
   - **WP-C** DEV-031+032 (16 SP): AI/servis/genel admin karar reddi testleri, audit-ready drill-down rotası, EN/TR tarayıcı yolculuğu. WP-B bitince başlat (HumanReviewEndpoints.cs çakışması).
   - Sonra tek S3 kapısı (CI + DEV satırı başına bağımsız QA), S2-GATE gibi.
+- PR #40 dbe0683 kırmızı (push+PR): genişletilmiş axe kapısı `s2-axe.spec.ts:139` gerçek WCAG 2.5.3 ihlali buldu (`TodayWorkspace.tsx:117` aria-label görünen 'Open workspace' metnini kimlikle değiştiriyordu) → 380f747 (görünen etiket + sr-only kimlik, label-in-name testi; Today vitest 125/125). CI koşuyor.
+- Kullanıcı 'devam geliştirmeye' → **WP-C** DEV-031+032 başlatıldı: `feature/s3-wpc-decision-trace-20261119` (worktree s3-wpc-20261119; AI/servis/genel admin karar reddi testleri, bağımsız audit-ready ekranı). WP-A/WP-B sürüyor.
