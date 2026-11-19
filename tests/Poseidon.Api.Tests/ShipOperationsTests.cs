@@ -118,7 +118,7 @@ public sealed partial class DirectoryWorkspaceTests
     public async Task ShipOps_synthetic_fixture_is_add_missing_incomplete_and_preserves_operator_revisions_without_fake_receipts_or_evidence() {
         await using(var db=new PoseidonDbContext(SeedImporter.Options(postgres.GetConnectionString()),Guid.Empty,new("system:shipops-fixture","System","shipops-fixture"),administrativeImport:true)) {
             await using(var tx=await db.Database.BeginTransactionAsync(Ct)){await ShipOperationsFixtures.AddMissingAsync(db,[SeedVessel],Ct);await tx.CommitAsync(Ct);}
-            Assert.Equal(2,await db.ShipOperations.CountAsync(Ct));Assert.Empty(await db.ShipOperationReceipts.ToArrayAsync(Ct));
+            Assert.Equal(4,await db.ShipOperations.CountAsync(Ct));Assert.Empty(await db.ShipOperationReceipts.ToArrayAsync(Ct));
         }
         await using var host=Host();using var client=Client(host);ShipOpsPermissions(host.Services);var id=ShipOperationsFixtures.Id(SeedVessel.Id,"Fuel");
         var before=(await client.GetFromJsonAsync<ShipOpsRecordDto>(ShipOpsPath("Fuel",id),Ct))!;Assert.Equal("SyntheticUnverified",before.Provenance);Assert.All(before.Fields.Where(f=>!ShipOperationsPolicy.Schema("Fuel").Single(s=>s.Key==f.Key).ReadOnly),f=>Assert.Equal("Missing",f.Value.State));

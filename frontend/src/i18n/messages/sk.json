@@ -1,5 +1,42 @@
 {
   "copies": {
+    "ShipOperationsLedgerPanel_tsx_copy": {
+      "fuelTitle": "Kontrola kontinuity ROB",
+      "portTitle": "Časová os Statement of Facts",
+      "fuelIntro": "Odvodené z deklarovaných množstiev v mt. Zistenia sú označené na ľudskú kontrolu; nič sa neopravuje a „nezistený rozdiel“ nie je overenie.",
+      "portIntro": "Deklarované prístavné udalosti v poradí UTC so zaznamenaným intervalom. Nevzniká tu podpis, finalizácia, laytime ani demurrage.",
+      "offline": "Offline: pomôcka na kontrolu vyžaduje aktuálne online čítanie.",
+      "loading": "Načítava sa pomôcka na kontrolu…",
+      "unavailable": "Pomôcka na kontrolu nie je pre váš aktuálny prístup dostupná.",
+      "retry": "Skúsiť znova",
+      "empty": "Zatiaľ žiadne zaradené záznamy.",
+      "truncated": "Hodnotí sa len najnovších 100 záznamov; reťazec presahujúci toto okno začína ako neznámy.",
+      "historyBoundary": "Mimo hodnoteného okna existuje staršia história: kontinuita s predchádzajúcim záznamom tu nie je dostupná – nie je súvislá ani medzerou.",
+      "tankBasis": "Kontinuita sa kontroluje podľa deklarovaného druhu paliva, pretože chýba odkaz na nádrž; medzera pri lodi s viacerými nádržami je otázka na kontrolu pre chýbajúce údaje o nádržiach, nie chyba údajov.",
+      "unplaced": "Nezaradené záznamy (dátum, druh paliva alebo začiatok nedeklarovaný): {{count}}",
+      "notDeclared": "Nedeklarované",
+      "balance": "Bilancia (pred + prijaté − spotrebované − po)",
+      "continuity": "Kontinuita s predchádzajúcim záznamom",
+      "difference": "Rozdiel",
+      "open": "Otvoriť záznam",
+      "flags": "Príznaky na kontrolu",
+      "duration": "Zaznamenaný interval",
+      "minutes": "{{value}} min",
+      "durationUnknown": "Koniec nedeklarovaný",
+      "remarks": "Poznámky",
+      "delay": "Dôvod oneskorenia",
+      "signature": "Podpis ani finalizácia Statement of Facts nie sú zaznamenané; pridať ich môže len ľudský úkon.",
+      "noonTitle": "Súhrny paliva a ROB z Noon skontrolované kapitánom",
+      "noonQualifier": "Kontext len na čítanie zobrazený ako deklarovaný text; neporovnáva sa, neprevádza ani nekopíruje do denníka.",
+      "noonUnavailable": "Skontrolovaný kontext Noon nie je pre váš prístup dostupný.",
+      "noonNone": "Na najnovšej stránke nie je žiadny Noon report skontrolovaný kapitánom.",
+      "noonReviewed": "Kontrola kapitána zaznamenaná",
+      "states": {
+        "REVIEW_REQUIRED": "Vyžaduje sa kontrola",
+        "UNKNOWN": "Neznáme",
+        "NO_DISCREPANCY_DETECTED": "Nezistený rozdiel"
+      }
+    },
     "App_tsx_content": {
       "environment": "VÝVOJOVÉ PROSTREDIE",
       "page": "Pripojenie k systému",

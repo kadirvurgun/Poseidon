@@ -1,5 +1,42 @@
 {
   "copies": {
+    "ShipOperationsLedgerPanel_tsx_copy": {
+      "fuelTitle": "Contrôle de continuité ROB",
+      "portTitle": "Chronologie du Statement of Facts",
+      "fuelIntro": "Dérivé des quantités déclarées en mt. Les constats sont signalés pour revue humaine ; rien n’est corrigé et « aucun écart détecté » n’est pas une vérification.",
+      "portIntro": "Événements portuaires déclarés dans l’ordre UTC avec l’intervalle enregistré. Aucune signature, finalisation, laytime ou surestarie n’est produite ici.",
+      "offline": "Hors ligne : l’aide à la revue nécessite une lecture en ligne actuelle.",
+      "loading": "Chargement de l’aide à la revue…",
+      "unavailable": "L’aide à la revue n’est pas disponible pour votre accès actuel.",
+      "retry": "Réessayer",
+      "empty": "Aucun enregistrement placé pour l’instant.",
+      "truncated": "Seuls les 100 enregistrements les plus récents sont évalués ; une chaîne dépassant cette fenêtre commence comme inconnue.",
+      "historyBoundary": "Un historique plus ancien existe hors de la fenêtre évaluée : la continuité avec l’enregistrement précédent n’est pas disponible ici, ni continue ni en écart.",
+      "tankBasis": "La continuité est vérifiée par type de combustible déclaré, faute de référence de citerne ; un écart sur un navire à plusieurs citernes est une question de revue liée aux données de citerne manquantes, pas une erreur de données.",
+      "unplaced": "Enregistrements non placés (date, type de combustible ou début non déclaré) : {{count}}",
+      "notDeclared": "Non déclaré",
+      "balance": "Bilan (avant + reçu − consommé − après)",
+      "continuity": "Continuité avec l’enregistrement précédent",
+      "difference": "Écart",
+      "open": "Ouvrir l’enregistrement",
+      "flags": "Signalements de revue",
+      "duration": "Intervalle enregistré",
+      "minutes": "{{value}} min",
+      "durationUnknown": "Fin non déclarée",
+      "remarks": "Remarques",
+      "delay": "Motif du retard",
+      "signature": "Aucune signature ni finalisation du Statement of Facts n’est enregistrée ; seul un acte humain peut l’ajouter.",
+      "noonTitle": "Synthèses combustible et ROB des Noon reports revues par le capitaine",
+      "noonQualifier": "Contexte en lecture seule affiché comme texte déclaré ; il n’est ni comparé, ni converti, ni copié dans le registre.",
+      "noonUnavailable": "Le contexte Noon revu n’est pas disponible pour votre accès.",
+      "noonNone": "Aucun Noon report revu par le capitaine sur la dernière page.",
+      "noonReviewed": "Revue du capitaine enregistrée",
+      "states": {
+        "REVIEW_REQUIRED": "Revue requise",
+        "UNKNOWN": "Inconnu",
+        "NO_DISCREPANCY_DETECTED": "Aucun écart détecté"
+      }
+    },
     "App_tsx_content": {
       "environment": "ENVIRONNEMENT DE DÉVELOPPEMENT",
       "page": "Connexion au système",

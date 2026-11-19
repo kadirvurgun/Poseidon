@@ -1,5 +1,42 @@
 {
   "copies": {
+    "ShipOperationsLedgerPanel_tsx_copy": {
+      "fuelTitle": "ROB süreklilik incelemesi",
+      "portTitle": "Statement of Facts zaman çizelgesi",
+      "fuelIntro": "mt cinsinden beyan edilen miktarlardan türetilir. Bulgular insan incelemesi için işaretlenir; hiçbir şey düzeltilmez ve “uyumsuzluk saptanmadı” doğrulama değildir.",
+      "portIntro": "Beyan edilen liman olayları UTC sırasıyla ve kayıtlı aralıkla. Burada imza, kesinleştirme, laytime veya demuraj üretilmez.",
+      "offline": "Çevrimdışı: inceleme yardımı güncel çevrimiçi okuma gerektirir.",
+      "loading": "İnceleme yardımı yükleniyor…",
+      "unavailable": "İnceleme yardımı mevcut erişiminiz için kullanılamıyor.",
+      "retry": "Yeniden dene",
+      "empty": "Henüz yerleştirilmiş kayıt yok.",
+      "truncated": "Yalnızca en yeni 100 kayıt değerlendirilir; bu pencereyi aşan zincir bilinmiyor olarak başlar.",
+      "historyBoundary": "Değerlendirilen pencerenin dışında daha eski geçmiş var: önceki kayıtla süreklilik burada kullanılamaz; sürekli de değildir, fark da değildir.",
+      "tankBasis": "Tank referansı bulunmadığından süreklilik beyan edilen yakıt türüne göre denetlenir; çok tanklı gemide görülen fark, veri hatası değil eksik tank verisi nedeniyle bir inceleme sorusudur.",
+      "unplaced": "Yerleştirilemeyen kayıtlar (tarih, yakıt türü veya başlangıç beyan edilmedi): {{count}}",
+      "notDeclared": "Beyan edilmedi",
+      "balance": "Denge (önce + alınan − tüketilen − sonra)",
+      "continuity": "Önceki kayıtla süreklilik",
+      "difference": "Fark",
+      "open": "Kaydı aç",
+      "flags": "İnceleme işaretleri",
+      "duration": "Kayıtlı aralık",
+      "minutes": "{{value}} dk",
+      "durationUnknown": "Bitiş beyan edilmedi",
+      "remarks": "Açıklamalar",
+      "delay": "Gecikme nedeni",
+      "signature": "Statement of Facts imzası veya kesinleştirmesi kayıtlı değil; yalnızca bir insan eylemi ekleyebilir.",
+      "noonTitle": "Kaptan incelemeli Noon yakıt ve ROB özetleri",
+      "noonQualifier": "Beyan edilen metin olarak salt okunur bağlam; deftere karşılaştırılmaz, dönüştürülmez veya kopyalanmaz.",
+      "noonUnavailable": "İncelenmiş Noon bağlamı erişiminiz için kullanılamıyor.",
+      "noonNone": "Son sayfada kaptan incelemeli Noon raporu yok.",
+      "noonReviewed": "Kaptan incelemesi kayıtlı",
+      "states": {
+        "REVIEW_REQUIRED": "İnceleme gerekli",
+        "UNKNOWN": "Bilinmiyor",
+        "NO_DISCREPANCY_DETECTED": "Uyumsuzluk saptanmadı"
+      }
+    },
     "App_tsx_content": {
       "environment": "GELİŞTİRME ORTAMI",
       "page": "Sistem bağlantısı",

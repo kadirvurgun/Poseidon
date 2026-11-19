@@ -3691,6 +3691,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/fuel-bunker-logs/ledger": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["FuelShipOpsLedger"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/fuel-bunker-logs/{id}": {
         parameters: {
             query?: never;
@@ -3747,6 +3763,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["PortShipOpsCapabilities"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/port-activity-sof/timeline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PortShipOpsTimeline"];
         put?: never;
         post?: never;
         delete?: never;
@@ -8528,6 +8560,39 @@ export interface components {
             /** Format: int32 */
             unavailable: number;
         };
+        FuelLedgerAssessment: {
+            /** Format: uuid */
+            recordId: string;
+            reviewState: string;
+            balance: components["schemas"]["FuelLedgerCheck"];
+            continuity: components["schemas"]["FuelLedgerCheck"];
+            /** Format: uuid */
+            previousRecordId: null | string;
+            flags: string[];
+            basis: string[];
+        };
+        FuelLedgerCheck: {
+            state: string;
+            differenceMt: null | string;
+            reason: null | string;
+        };
+        FuelLedgerDto: {
+            /** Format: uuid */
+            vesselId: string;
+            entries: components["schemas"]["FuelLedgerEntryDto"][];
+            unplaced: components["schemas"]["ShipOpsRecordDto"][];
+            /** Format: int32 */
+            window: number;
+            truncated: boolean;
+            unit: string;
+            grouping: string;
+            qualifications: string[];
+            sourceVersion: string;
+        };
+        FuelLedgerEntryDto: {
+            record: components["schemas"]["ShipOpsRecordDto"];
+            assessment: components["schemas"]["FuelLedgerAssessment"];
+        };
         GraphPin: {
             kind: string;
             /** Format: uuid */
@@ -9898,6 +9963,30 @@ export interface components {
             freshness: string;
             blockers: string[];
             href: string;
+        };
+        PortTimelineAssessment: {
+            /** Format: uuid */
+            recordId: string;
+            reviewState: string;
+            durationState: string;
+            durationTicks: null | string;
+            flags: string[];
+        };
+        PortTimelineDto: {
+            /** Format: uuid */
+            vesselId: string;
+            entries: components["schemas"]["PortTimelineEntryDto"][];
+            unplaced: components["schemas"]["ShipOpsRecordDto"][];
+            /** Format: int32 */
+            window: number;
+            truncated: boolean;
+            durationUnit: string;
+            qualifications: string[];
+            sourceVersion: string;
+        };
+        PortTimelineEntryDto: {
+            record: components["schemas"]["ShipOpsRecordDto"];
+            assessment: components["schemas"]["PortTimelineAssessment"];
         };
         PredicateReason: {
             path: string;
@@ -16146,6 +16235,26 @@ export interface operations {
             };
         };
     };
+    FuelShipOpsLedger: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FuelLedgerDto"];
+                };
+            };
+        };
+    };
     FuelShipOpsRead: {
         parameters: {
             query?: never;
@@ -16276,6 +16385,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ShipOpsCapabilitiesDto"];
+                };
+            };
+        };
+    };
+    PortShipOpsTimeline: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortTimelineDto"];
                 };
             };
         };

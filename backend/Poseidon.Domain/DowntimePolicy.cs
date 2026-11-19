@@ -128,6 +128,19 @@ public static class DowntimePolicy
         return new("UNAVAILABLE", null, "tick", "UNASSESSED");
     }
 
+    // Declared source minutes versus the exact recorded interval. Minutes are
+    // compared as exact 600,000,000-tick units; a difference is a human
+    // REVIEW_REQUIRED question, never an automatic correction of either fact.
+    public static string DeclaredDurationConsistency(IReadOnlyDictionary<string, DowntimeFact> fields)
+    {
+        var interval = ObserveInterval(fields);
+        if (interval.State != "KNOWN" || !fields.TryGetValue("duration_minutes", out var declared) || declared is not { State: "Known", Value: { } text } ||
+            !decimal.TryParse(text, NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var minutes)) return "UNKNOWN";
+        try {
+            return minutes * 600_000_000m == decimal.Parse(interval.ElapsedTicks!, CultureInfo.InvariantCulture) ? "NO_DISCREPANCY_DETECTED" : "REVIEW_REQUIRED";
+        } catch (OverflowException) { return "UNKNOWN"; }
+    }
+
     public static string[] Blockers(IReadOnlyDictionary<string, DowntimeFact> fields) => Schema().Where(f => !f.ReadOnly)
         .SelectMany(f => new[] {
             f.Required && (!fields.TryGetValue(f.Key, out var fact) || fact?.State != "Known") ? "REQUIRED_" + f.Key.ToUpperInvariant() : null,
@@ -137,5 +150,6 @@ public static class DowntimePolicy
             "UNVERIFIED_DECLARATION", "SOURCE_POLICY_REVIEW_REQUIRED", "DURATION_FORMULA_NOT_APPROVED",
             "LOSS_OF_HIRE_NOT_ASSESSED", "CLAIM_EVIDENCE_ADOPTION_UNAVAILABLE", "CLOSURE_DEFAULT_UNAVAILABLE",
             "HUMAN_VERIFICATION_NOT_RECORDED", "VERIFIED_CLOSURE_UNAVAILABLE", "OFFLINE_POLICY_UNAVAILABLE"
-        ]).ToArray();
+        ]).Concat(DeclaredDurationConsistency(fields) == "REVIEW_REQUIRED" ? ["DECLARED_DURATION_DIFFERS_FROM_RECORDED_INTERVAL"] : [])
+        .Concat(fields.TryGetValue("end_at", out var end) && end?.State != "Known" ? ["DOWNTIME_PERIOD_OPEN_END_NOT_ASSUMED"] : []).ToArray();
 }

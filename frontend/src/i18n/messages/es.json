@@ -1,5 +1,42 @@
 {
   "copies": {
+    "ShipOperationsLedgerPanel_tsx_copy": {
+      "fuelTitle": "Revisión de continuidad ROB",
+      "portTitle": "Cronología del Statement of Facts",
+      "fuelIntro": "Derivado de cantidades declaradas en mt. Los hallazgos se marcan para revisión humana; nada se corrige y «sin discrepancia detectada» no es verificación.",
+      "portIntro": "Eventos portuarios declarados en orden UTC con el intervalo registrado. Aquí no se genera firma, finalización, laytime ni demora.",
+      "offline": "Sin conexión: la ayuda de revisión necesita una lectura en línea actual.",
+      "loading": "Cargando ayuda de revisión…",
+      "unavailable": "La ayuda de revisión no está disponible para su acceso actual.",
+      "retry": "Reintentar",
+      "empty": "Aún no hay registros ubicados.",
+      "truncated": "Solo se evalúan los 100 registros más recientes; una cadena que cruza esta ventana empieza como desconocida.",
+      "historyBoundary": "Existe historial más antiguo fuera de la ventana evaluada: la continuidad con el registro anterior no está disponible aquí; no es continua ni una brecha.",
+      "tankBasis": "La continuidad se comprueba por tipo de combustible declarado porque no hay referencia de tanque; una brecha en un buque con varios tanques es una cuestión de revisión por falta de datos de tanque, no un error de datos.",
+      "unplaced": "Registros no ubicados (fecha, tipo de combustible o inicio no declarados): {{count}}",
+      "notDeclared": "No declarado",
+      "balance": "Balance (antes + recibido − consumido − después)",
+      "continuity": "Continuidad con el registro anterior",
+      "difference": "Diferencia",
+      "open": "Abrir registro",
+      "flags": "Marcas de revisión",
+      "duration": "Intervalo registrado",
+      "minutes": "{{value}} min",
+      "durationUnknown": "Fin no declarado",
+      "remarks": "Observaciones",
+      "delay": "Motivo del retraso",
+      "signature": "No hay firma ni finalización del Statement of Facts registrada; solo un acto humano puede añadirla.",
+      "noonTitle": "Resúmenes de combustible y ROB de Noon revisados por el capitán",
+      "noonQualifier": "Contexto de solo lectura mostrado como texto declarado; no se compara, convierte ni copia en el libro.",
+      "noonUnavailable": "El contexto Noon revisado no está disponible para su acceso.",
+      "noonNone": "No hay Noon report revisado por el capitán en la última página.",
+      "noonReviewed": "Revisión del capitán registrada",
+      "states": {
+        "REVIEW_REQUIRED": "Revisión requerida",
+        "UNKNOWN": "Desconocido",
+        "NO_DISCREPANCY_DETECTED": "Sin discrepancia detectada"
+      }
+    },
     "App_tsx_content": {
       "environment": "ENTORNO DE DESARROLLO",
       "page": "Conexión del sistema",

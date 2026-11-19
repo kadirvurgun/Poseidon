@@ -1,5 +1,42 @@
 {
   "copies": {
+    "ShipOperationsLedgerPanel_tsx_copy": {
+      "fuelTitle": "ROB 连续性审核",
+      "portTitle": "Statement of Facts 时间线",
+      "fuelIntro": "根据以 mt 申报的数量推导。发现项标记为待人工审核；不做任何更正，“未发现差异”不等于核实。",
+      "portIntro": "按 UTC 顺序列出申报的港口事件及记录的时间间隔。此处不生成签字、定稿、装卸时间或滞期费。",
+      "offline": "离线：审核辅助需要当前的在线读取。",
+      "loading": "正在加载审核辅助…",
+      "unavailable": "您当前的访问权限无法使用审核辅助。",
+      "retry": "重试",
+      "empty": "尚无已排列的记录。",
+      "truncated": "仅评估最新的 100 条记录；跨越此窗口的链以未知开始。",
+      "historyBoundary": "评估窗口之外存在更早的历史：此处与上一条记录的连续性不可用，既不视为连续，也不视为差额。",
+      "tankBasis": "由于没有舱柜引用，连续性按申报的燃料类型检查；多舱船舶出现的差额是因缺少舱柜数据而需审核的问题，并非数据错误。",
+      "unplaced": "未排列的记录（日期、燃料类型或开始时间未申报）：{{count}}",
+      "notDeclared": "未申报",
+      "balance": "平衡（之前 + 接收 − 消耗 − 之后）",
+      "continuity": "与上一条记录的连续性",
+      "difference": "差值",
+      "open": "打开记录",
+      "flags": "审核标记",
+      "duration": "记录的时间间隔",
+      "minutes": "{{value}} 分钟",
+      "durationUnknown": "结束时间未申报",
+      "remarks": "备注",
+      "delay": "延误原因",
+      "signature": "未记录 Statement of Facts 签字或定稿；只能由人工行为添加。",
+      "noonTitle": "船长已审核的 Noon 燃油和 ROB 摘要",
+      "noonQualifier": "以申报文本显示的只读上下文；不会比较、换算或复制到台账中。",
+      "noonUnavailable": "您的访问权限无法查看已审核的 Noon 上下文。",
+      "noonNone": "最新一页没有船长已审核的 Noon report。",
+      "noonReviewed": "已记录船长审核",
+      "states": {
+        "REVIEW_REQUIRED": "需要审核",
+        "UNKNOWN": "未知",
+        "NO_DISCREPANCY_DETECTED": "未发现差异"
+      }
+    },
     "App_tsx_content": {
       "environment": "开发环境",
       "page": "系统连接",
