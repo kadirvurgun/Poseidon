@@ -68,7 +68,8 @@ export type QueuedOperation = Readonly<{
 }>
 
 export function queueDisplayState(op: QueuedOperation): Exclude<QueueDisplayState, 'blocked'> {
-  if (op.outcome?.result === 'Committed') return 'recorded'
+  // ServerRetained is a terminal explicit human resolution receipt (Daily keep-server).
+  if (op.outcome?.result === 'Committed' || op.outcome?.result === 'ServerRetained') return 'recorded'
   if (op.outcome?.result === 'MaterialConflict') return 'conflict'
   if (op.sync === 'PayloadMismatch' || op.sync === 'KeyReused') return 'rejected'
   if (op.sync === 'Unavailable') return 'unavailable'
@@ -98,4 +99,23 @@ export function orderReplayQueue<T extends QueuedOperation>(ops: readonly T[]): 
     }
     return { op, state, sendable: false }
   })
+}
+
+// Panel helper: derive ordering inputs from the frozen body without rewriting it.
+// Malformed bodies sort last and stay pending; nothing here supplies replay values.
+export function replayGate(rows: readonly { commandId: string; body: string; outcome?: Readonly<{ result: string }> | null }[],
+  resourceKey: string, states: ReadonlyMap<string, SyncState>): ReadonlyMap<string, { state: QueueDisplayState; sendable: boolean }> {
+  const ops = rows.map(row => {
+    let capturedAt = '', parentOperationId: string | null = null
+    try {
+      const value: unknown = row.body.length <= 65536 ? JSON.parse(row.body) : null
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        const v = value as Record<string, unknown>
+        if (typeof v.capturedAt === 'string') capturedAt = v.capturedAt
+        if (isGuid(v.parentCommandId)) parentOperationId = v.parentCommandId
+      }
+    } catch { /* malformed body: remains pending, ordered last */ }
+    return { operationId: row.commandId, resourceKey, capturedAt, outcome: row.outcome ?? null, sync: states.get(row.commandId) ?? null, parentOperationId }
+  })
+  return new Map(orderReplayQueue(ops).map(entry => [entry.op.operationId, { state: entry.state, sendable: entry.sendable }]))
 }

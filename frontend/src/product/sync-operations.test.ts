@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { decodeSyncResult, maxSyncOperations, orderReplayQueue, queueDisplayState, reconcileOperations, validSyncRequest,
+import { decodeSyncResult, maxSyncOperations, orderReplayQueue, queueDisplayState, reconcileOperations, replayGate, validSyncRequest,
   type QueuedOperation, type SyncOperationRef } from './sync-operations'
 
 // S4 WP-D DEV-033 / DEV-034 (T-S4-001 / T-S4-002).
@@ -90,5 +90,17 @@ describe('durable queue presentation and per-resource ordering', () => {
   it('equal or invalid capture timestamps keep a stable key order', () => {
     const order = orderReplayQueue([q(2, 'not-a-time'), q(5, '2026-11-19T10:00:00Z'), q(1, '2026-11-19T10:00:00Z')])
     expect(order.map(x => x.op.operationId)).toEqual([op(1), op(5), op(2)])
+  })
+  it('treats a Daily ServerRetained resolution receipt as recorded, not pending', () => {
+    expect(queueDisplayState(q(1, '2026-11-19T10:00:00Z', { outcome: { result: 'ServerRetained' } }))).toBe('recorded')
+  })
+  it('replayGate derives order from frozen bodies and keeps malformed bodies pending and last', () => {
+    const body = (n: number, capturedAt: string, parent?: number) => JSON.stringify({ commandId: op(n), capturedAt, ...(parent ? { parentCommandId: op(parent) } : {}) })
+    const gate = replayGate([{ commandId: op(2), body: body(2, '2026-11-19T10:01:00Z') }, { commandId: op(3), body: '{not json' },
+      { commandId: op(1), body: body(1, '2026-11-19T10:00:00Z') }], 'job', new Map([[op(1), 'NotReceived']]))
+    expect([op(1), op(2), op(3)].map(id => [gate.get(id)?.state, gate.get(id)?.sendable])).toEqual([['pending', true], ['blocked', false], ['blocked', false]])
+    const resolved = replayGate([{ commandId: op(1), body: body(1, '2026-11-19T10:00:00Z'), outcome: { result: 'MaterialConflict' } },
+      { commandId: op(2), body: body(2, '2026-11-19T10:01:00Z', 1) }], 'job', new Map())
+    expect(resolved.get(op(2))).toEqual({ state: 'pending', sendable: true })
   })
 })
