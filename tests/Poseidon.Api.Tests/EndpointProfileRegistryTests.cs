@@ -143,7 +143,7 @@ public sealed class EndpointProfileRegistryTests
         while (root != null && !File.Exists(Path.Combine(root.FullName, "Directory.Packages.props"))) root = root.Parent;
         Assert.NotNull(root);
         var source = File.ReadAllText(Path.Combine(root!.FullName, "backend", "Poseidon.Api", "FoundationIdentity.cs"));
-        var filter = Regex.Match(source, @"Permissions \?\? \[\]\)\.Where\(x => (?<body>x is .+?)\)\.Distinct\(\)");
+        var filter = Regex.Match(source, @"[Pp]ermissions \?\? \[\]\)\.Where\(x => (?<body>x is .+?)\)\.Distinct\(\)");
         Assert.True(filter.Success, "Server permission allowlist not found in FoundationIdentity.cs.");
         var accepted = Regex.Matches(filter.Groups["body"].Value, "\"([a-z_.]+)\"").Select(m => m.Groups[1].Value).ToHashSet(StringComparer.Ordinal);
         Assert.NotEmpty(accepted);
@@ -260,7 +260,9 @@ public sealed partial class DirectoryWorkspaceTests
         "operations.downtime.read", "operations.downtime.write", "operations.fuel.read", "operations.fuel.write", "operations.port.read",
         "operations.port.write", "regulatory.draft.read", "regulatory.draft.write", "regulatory.facts.attest", "regulatory.qualify",
         "rules.review", "rules.write", "system.health.read", "tug.owner.eligible", "tug.plan.write", "tug.read", "tug.write",
-        "workorder.read", "workorder.write", "workspace.search"];
+        "workorder.read", "workorder.write", "workspace.search",
+        "membership.read", "membership.manage", "membership.security.suspend",
+        "document.publish", "evidence.verify", "record.hold", "record.retention.manage", "record.purge.request", "record.purge.approve"];
 
     private async Task<HttpResponseMessage> ProfileSend(WebApplicationFactory<Program> host, HttpClient client, EndpointProfileEntry entry,
         string path, bool csrf, bool key)
