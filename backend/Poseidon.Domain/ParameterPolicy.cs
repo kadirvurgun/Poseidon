@@ -16,6 +16,9 @@ public sealed record ParameterProposal(string ScopeKind, string SelectorJson, st
 public static partial class ParameterValuePolicy
 {
     public const int ReasonMin = 10, ReasonMax = 2000; // ParameterRevision.reason 10-2000 (paragraph:15).
+    // Shared by proposal and decision reasons: 10-2000 characters, no control characters except line breaks/tab.
+    public static bool ValidReason(string reason) => reason.Trim().Length >= ReasonMin && reason.Length <= ReasonMax &&
+        !reason.Any(c => char.IsControl(c) && c is not ('\n' or '\r' or '\t'));
     private static readonly string[] ScopeOrder = ["VESSEL", "COMPANY", "TENANT", "GLOBAL"];
     [GeneratedRegex(@"\A[A-Za-z0-9][A-Za-z0-9._:\-]{0,127}\z", RegexOptions.CultureInvariant)] private static partial Regex SelectorValue();
     [GeneratedRegex(@"\A[A-Za-z][A-Za-z0-9_.]{0,63}\z", RegexOptions.CultureInvariant)] private static partial Regex ObjectType();
@@ -127,7 +130,7 @@ public static partial class ParameterValuePolicy
         var from = effectiveFrom ?? now;
         if (from < now) errors.Add(new("/effectiveFrom", "effective_from_in_past"));
         if (effectiveTo is { } to && to <= from) errors.Add(new("/effectiveTo", "outside_effective_dates"));
-        if (reason == null || reason.Trim().Length < ReasonMin || reason.Length > ReasonMax || reason.Any(c => char.IsControl(c) && c is not ('\n' or '\r' or '\t')))
+        if (reason == null || !ValidReason(reason))
             errors.Add(new("/reason", "invalid_reason"));
         if (errors.Count > 0) return (null, errors);
         return (new(scopeKind!, selector!.Value.Json, selector.Value.Hash, valueMode!, json, Micro(from), effectiveTo is { } end ? Micro(end) : null, reason!,
@@ -171,8 +174,13 @@ public static class ParameterResolver
         var reasons = new List<string>();
         ParameterResolution Result(string status, ParameterCandidate? source = null, string? value = null, string? scope = null, Guid? scopeId = null, bool fallback = false)
         {
-            var positive = status == "RESOLVED" && definition.OwnerVerification == "NOT_REQUIRED";
-            if (status == "RESOLVED" && !positive) reasons.Add("OWNER_VERIFICATION_REQUIRED_FOR_POSITIVE_USE");
+            // 54.01 paragraph:81-85: an APPROVED stored value is not ACTIVE until a system activate
+            // (schedule, quorum, approval lifetime, configEpoch) exists. Until then a value selected
+            // from a stored decision is reported but never allowed for positive use (P5401-OPEN-01).
+            var approvedNotActivated = status == "RESOLVED" && source != null;
+            var positive = status == "RESOLVED" && definition.OwnerVerification == "NOT_REQUIRED" && !approvedNotActivated;
+            if (approvedNotActivated) reasons.Add("APPROVED_NOT_ACTIVATED");
+            if (status == "RESOLVED" && definition.OwnerVerification != "NOT_REQUIRED") reasons.Add("OWNER_VERIFICATION_REQUIRED_FOR_POSITIVE_USE");
             return new(definition.Key, definition.DefinitionVersion, status, definition.ValueClass, value ?? source?.ValueJson, source?.ValueMode ?? (value != null ? "VALUE" : null),
                 source?.RevisionId, scope ?? source?.ScopeKind, scopeId ?? source?.ScopeId, source?.Sequence, source?.SelectedFrom, source?.ContentHash,
                 fallback, definition.OwnerVerification, positive, [.. reasons]);

@@ -234,4 +234,25 @@ public sealed class ParameterRegistryTests
         Assert.Equal(Now, ParameterGovernance.SelectedFrom(Now.AddDays(-1), Now));
         Assert.Equal(Now.AddDays(1), ParameterGovernance.SelectedFrom(Now.AddDays(1), Now));
     }
+
+    [Fact] // QA F1 (54.01 paragraph:81-85): an approved TECHNICAL value is reported but not ACTIVE.
+    public void Approved_technical_value_is_resolved_but_never_allowed_for_positive_use_before_activation()
+    {
+        var d = Def("mobile.offline.idleLockSeconds");
+        Assert.Equal("NOT_REQUIRED", d.OwnerVerification);
+        var result = ParameterResolver.Resolve(d, [new("VESSEL", Vessel)], ParameterValuePolicy.Hash("{}"), [C("VESSEL", Vessel, "900", Now.AddMinutes(-1))], Now, Now);
+        Assert.Equal("RESOLVED", result.Status); Assert.Equal("900", result.ValueJson);
+        Assert.False(result.PositiveUseAllowed);
+        Assert.Contains("APPROVED_NOT_ACTIVATED", result.ReasonCodes);
+        Assert.DoesNotContain("OWNER_VERIFICATION_REQUIRED_FOR_POSITIVE_USE", result.ReasonCodes);
+    }
+
+    [Theory] // QA F3: decision and proposal reasons share one rule; control characters are rejected.
+    [InlineData("Synthetic independent approval", true)]
+    [InlineData("Synthetic line one\nline two", true)]
+    [InlineData("Synthetic \u0000 approval", false)]
+    [InlineData("Synthetic \u001b[31m approval", false)]
+    [InlineData("too short", false)]
+    public void Reason_rule_rejects_control_characters_and_short_text(string reason, bool valid) =>
+        Assert.Equal(valid, ParameterValuePolicy.ValidReason(reason));
 }

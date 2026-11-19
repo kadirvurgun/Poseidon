@@ -283,6 +283,9 @@ public static class ParameterEndpoints
                 .Select(x => (DateTimeOffset?)x.CommittedAt).SingleOrDefaultAsync(ct) is { } accepted)
             (proposal, errors) = ParameterValuePolicy.Propose(definition, command.DefinitionVersion.Value, command.ScopeKind, command.Applicability,
                 command.ValueMode, command.Value, command.EffectiveFrom, command.EffectiveTo, command.Reason, accepted);
+        // 54.01 paragraph:96: a key already bound to another actor, route or payload is a 409
+        // conflict, never a validation answer for the reused key's new content.
+        if (proposal == null && await ParameterWriter.KeyBoundAsync(db, key!, ct)) return await Fail(http, "ParameterCommand", 409, "idempotency_key_reused");
         if (proposal == null) return await Fail(http, "ParameterCommand", 422, errors[0].Code, errors);
         var chain = await Chain(actor, db, proposal.ScopeKind, proposal.ScopeKind == "TENANT" ? command.ScopeId ?? actor.TenantId : command.ScopeId, ct);
         if (chain == null) return await Fail(http, "ParameterCommand", 404, "resource_not_found");
@@ -297,10 +300,12 @@ public static class ParameterEndpoints
         var (command, key, failure) = await Command<DecideParameterChange>(http, permission);
         if (failure != null) return failure;
         var actor = Actor(http)!; var ct = http.RequestAborted;
-        if (command!.ExpectedVersion == null || command.RevisionId is not { } revision || command.Reason is not { } reason ||
-            reason.Trim().Length < ParameterValuePolicy.ReasonMin || reason.Length > ParameterValuePolicy.ReasonMax)
-            return await Fail(http, "ParameterCommand", 400, "invalid_request", resource: id);
         var db = http.RequestServices.GetRequiredService<PoseidonDbContext>();
+        if (command!.ExpectedVersion == null || command.RevisionId is not { } revision || command.Reason is not { } reason ||
+            !ParameterValuePolicy.ValidReason(reason))
+            return await ParameterWriter.KeyBoundAsync(db, key!, ct)
+                ? await Fail(http, "ParameterCommand", 409, "idempotency_key_reused", resource: id)
+                : await Fail(http, "ParameterCommand", 400, "invalid_request", resource: id);
         var scope = await db.ParameterRoots.AsNoTracking().Where(x => x.Id == id).Select(x => new { x.ScopeKind, x.ScopeId }).SingleOrDefaultAsync(ct);
         if (scope == null || scope.ScopeKind == "VESSEL" && !await actor.Scope(db.Vessels.AsNoTracking()).AnyAsync(v => v.Id == scope.ScopeId, ct))
             return await Fail(http, "ParameterCommand", 404, "resource_not_found", resource: id);

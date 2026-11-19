@@ -106,6 +106,9 @@ public sealed partial class DirectoryWorkspaceTests
         }
         using (var reused = await Send(client, "parameter-changes", proposal with { reason = "Synthetic different payload reason" }, key))
         { Assert.Equal(HttpStatusCode.Conflict, reused.StatusCode); Assert.Equal("idempotency_key_reused", await Code(reused)); }
+        // QA F2 (paragraph:96): a reused key with an invalid payload is still a key conflict, not a validation answer.
+        using (var reusedInvalid = await Send(client, "parameter-changes", proposal with { reason = "short" }, key))
+        { Assert.Equal(HttpStatusCode.Conflict, reusedInvalid.StatusCode); Assert.Equal("idempotency_key_reused", await Code(reusedInvalid)); }
         // Pending proposal is never selectable.
         Assert.Equal("UNCONFIGURED", (await Effective(client, "ops.source.freshness_policy_ref", "TENANT", selectors: FreshnessSelectors)).GetProperty("status").GetString());
 
@@ -114,6 +117,9 @@ public sealed partial class DirectoryWorkspaceTests
         { Assert.Equal(HttpStatusCode.UnprocessableEntity, self.StatusCode); Assert.Equal("separation_of_duties", await Code(self)); }
 
         ParameterActor(host, approver, ConfigPermissions);
+        // QA F3: a decision reason with control characters is rejected like a proposal reason.
+        using (var control = await Send(client, $"parameter-changes/{root}/commands/approve", new { expectedVersion = version, revisionId = revision, reason = "Synthetic \u001b[31m approval" }))
+        { Assert.Equal(HttpStatusCode.BadRequest, control.StatusCode); Assert.Equal("invalid_request", await Code(control)); }
         using (var stale = await Send(client, $"parameter-changes/{root}/commands/approve", new { expectedVersion = version + 1, revisionId = revision, reason = "Synthetic stale approval attempt" }))
         { Assert.Equal(HttpStatusCode.Conflict, stale.StatusCode); Assert.Equal("version_conflict", await Code(stale)); }
         using var approved = await Send(client, $"parameter-changes/{root}/commands/approve", new { expectedVersion = version, revisionId = revision, reason = "Synthetic independent approval" });

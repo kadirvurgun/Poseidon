@@ -101,10 +101,20 @@ public sealed class ParameterPersistenceTests(ParameterPostgresFixture fixture) 
         root.Revision++; root.PendingRevisionId = null;
         db.ParameterDecisions.Add(new() { TenantId = db.TenantId, Id = Guid.NewGuid(), RootId = root.Id, RevisionId = proposed.RevisionId, Sequence = root.Revision,
             Outcome = "APPROVED", DeciderId = author, DecidedAt = Now(), SelectedFrom = Now(), Reason = "Forged self approval row" });
-        await Assert.ThrowsAnyAsync<DbUpdateException>(() => db.SaveChangesAsync(Ct));
+        var forged = await Assert.ThrowsAsync<DbUpdateException>(() => db.SaveChangesAsync(Ct));
+        AssertTrigger(forged, "23514", "independent decider");
         db.ChangeTracker.Clear();
         Assert.False(await db.ParameterDecisions.AnyAsync(x => x.RevisionId == proposed.RevisionId, Ct));
         await Settle(db);
+    }
+
+    // The guard must be the named trigger (SqlState + message), not any SQL failure (typo, FK, check).
+    private static void AssertTrigger(Exception error, string sqlState, string message)
+    {
+        var postgres = error as Npgsql.PostgresException ?? error.InnerException as Npgsql.PostgresException;
+        Assert.NotNull(postgres);
+        Assert.Equal(sqlState, postgres.SqlState);
+        Assert.Contains(message, postgres.MessageText, StringComparison.Ordinal);
     }
 
     [Fact] // P5401-AC-16
@@ -127,12 +137,12 @@ public sealed class ParameterPersistenceTests(ParameterPostgresFixture fixture) 
         root.ScopeKind = "COMPANY"; root.Revision++;
         await Assert.ThrowsAsync<InvalidOperationException>(() => db.SaveChangesAsync(Ct));
         db.ChangeTracker.Clear();
-        await Assert.ThrowsAnyAsync<Exception>(() => db.Database.ExecuteSqlInterpolatedAsync(
-            $"UPDATE config.\"ParameterRevisions\" SET \"ValueJson\"='1' WHERE \"TenantId\"={db.TenantId} AND \"Id\"={proposed.RevisionId}", Ct));
-        await Assert.ThrowsAnyAsync<Exception>(() => db.Database.ExecuteSqlInterpolatedAsync(
-            $"DELETE FROM config.\"ParameterDecisions\" WHERE \"TenantId\"={db.TenantId} AND \"RevisionId\"={proposed.RevisionId}", Ct));
-        await Assert.ThrowsAnyAsync<Exception>(() => db.Database.ExecuteSqlInterpolatedAsync(
-            $"DELETE FROM config.\"ParameterRoots\" WHERE \"TenantId\"={db.TenantId} AND \"Id\"={proposed.RootId}", Ct));
+        AssertTrigger(await Assert.ThrowsAnyAsync<Exception>(() => db.Database.ExecuteSqlInterpolatedAsync(
+            $"UPDATE config.\"ParameterRevisions\" SET \"ValueJson\"='1' WHERE \"TenantId\"={db.TenantId} AND \"Id\"={proposed.RevisionId}", Ct)), "55000", "Parameter lineage is immutable");
+        AssertTrigger(await Assert.ThrowsAnyAsync<Exception>(() => db.Database.ExecuteSqlInterpolatedAsync(
+            $"DELETE FROM config.\"ParameterDecisions\" WHERE \"TenantId\"={db.TenantId} AND \"RevisionId\"={proposed.RevisionId}", Ct)), "55000", "Parameter lineage is immutable");
+        AssertTrigger(await Assert.ThrowsAnyAsync<Exception>(() => db.Database.ExecuteSqlInterpolatedAsync(
+            $"DELETE FROM config.\"ParameterRoots\" WHERE \"TenantId\"={db.TenantId} AND \"Id\"={proposed.RootId}", Ct)), "55000", "Parameter roots cannot be removed");
         Assert.Equal("33", (await db.ParameterRevisions.AsNoTracking().SingleAsync(x => x.Id == proposed.RevisionId, Ct)).ValueJson);
     }
 

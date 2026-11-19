@@ -21,6 +21,10 @@ public static class ParameterWriter
 
     private static ParameterWriteResult Fail(string code) => new(code, Guid.Empty, Guid.Empty, 0, 0, "", null);
 
+    // Any stored receipt for this tenant-unique key: an invalid payload can never equal its fingerprint.
+    public static Task<bool> KeyBoundAsync(PoseidonDbContext db, string key, CancellationToken ct) =>
+        db.ParameterCommandReceipts.AsNoTracking().AnyAsync(x => x.Key == key, ct);
+
     private static async Task<ParameterWriteResult?> Replay(PoseidonDbContext db, Guid actor, string key, string action, string fingerprint, CancellationToken ct)
     {
         var receipt = await db.ParameterCommandReceipts.AsNoTracking().SingleOrDefaultAsync(x => x.Key == key, ct);
