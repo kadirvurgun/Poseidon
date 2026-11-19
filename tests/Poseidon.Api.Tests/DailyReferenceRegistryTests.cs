@@ -25,6 +25,39 @@ public sealed class DailyReferenceRegistryTests
         public Task<DailyReferenceOptionDto[]> Options(DailyReferenceContext c, string key, int take, CancellationToken ct) => Task.FromResult(Array.Empty<DailyReferenceOptionDto>());
     }
 
+    // Deck officer_of_watch reader stand-in: effective only on 2026-11-19; resolution depends on log_date.
+    private sealed class FakeWatchReader : IDailyReferenceReader
+    {
+        public int Calls { get; private set; }
+        public string Source => "crew-assignment";
+        public bool Supports(string kind, string key) => kind == "Deck" && key == "officer_of_watch";
+        public bool Available(TrustedActor actor) => true;
+        public IReadOnlyCollection<string> DependsOn => ["log_date"];
+        public Task<DailyReferenceCheck> Resolve(DailyReferenceContext c, DailyReferencePin pin, CancellationToken ct) {
+            Calls++;
+            return Task.FromResult(c.Fields?.GetValueOrDefault("log_date")?.Value == "2026-11-19"
+                ? new DailyReferenceCheck("Current", pin.Revision, "TEST") : new DailyReferenceCheck("ReviewRequired", pin.Revision, "ASSIGNMENT_NOT_EFFECTIVE_ON_LOG_DATE"));
+        }
+        public Task<DailyReferenceOptionDto[]> Options(DailyReferenceContext c, string key, int take, CancellationToken ct) => Task.FromResult(Array.Empty<DailyReferenceOptionDto>());
+    }
+
+    [Fact]
+    public async Task Changing_log_date_reverifies_an_unchanged_officer_of_watch_pin() {
+        var reader = new FakeWatchReader(); var registry = new DailyReferenceRegistry([reader]); var ct = TestContext.Current.CancellationToken;
+        Assert.Contains("log_date", new DailyCrewAssignmentReferenceReader(new CrewAssignmentPolicy(), new CrewPositionPolicy(), new FederationSettings()).DependsOn);
+        var pin = new DailyReferencePin("crew-assignment", Guid.NewGuid(), 1).Token;
+        Dictionary<string, DailyValue> Fields(string date) => new() { ["officer_of_watch"] = new("Known", pin), ["log_date"] = new("Known", date) };
+        DailyReferenceContext Ctx(Dictionary<string, DailyValue> fields) => new(null!, Actor("crew.read"), Guid.NewGuid(), "Deck", DateTimeOffset.UnixEpoch, fields);
+        var saved = Fields("2026-11-19");
+        // Unrelated edit: the pin and its dependency are unchanged, so it is not re-resolved.
+        Assert.True(await registry.VerifyChanged(Ctx(saved), saved, saved, ct)); Assert.Equal(0, reader.Calls);
+        // A new log_date on which the assignment is not effective rejects the unchanged pin.
+        var moved = Fields("2026-11-20");
+        Assert.False(await registry.VerifyChanged(Ctx(moved), moved, saved, ct)); Assert.Equal(1, reader.Calls);
+        // A log_date change where the pin remains effective is accepted after re-verification.
+        Assert.True(await registry.VerifyChanged(Ctx(saved), saved, moved, ct)); Assert.Equal(2, reader.Calls);
+    }
+
     [Fact]
     public void Owning_readers_resolve_only_their_source_fields_and_voyage_stays_unavailable() {
         var registry = Registry();

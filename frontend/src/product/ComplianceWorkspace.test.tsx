@@ -43,6 +43,9 @@ describe('S5-EXPERIENCE-01 honest source review (authored; execution deferred)',
     const fetch = vi.fn(async () => response(passportFixture())); vi.stubGlobal('fetch', fetch)
     const navigate = vi.fn(), user = userEvent.setup(); render(<CompliancePassport vessel={complianceVessel} language="en" onNavigate={navigate} />)
     await screen.findByRole('heading', { name: 'Vessel certificate declarations' })
+    // No authoring artifact (e.g. a literal shell escape) leaks into the rendered passport.
+    expect(document.body.textContent).not.toContain('`')
+    expect(screen.getByRole('heading', { name: 'Source freshness' })).toBeVisible()
     expect(screen.getByText(/Certificate reading is unavailable/)).toBeVisible()
     const coverage = screen.getByRole('heading', { name: 'Control-plan coverage' }).parentElement!
     expect(coverage).toHaveTextContent('Uncontrolled requirements: Unavailable')

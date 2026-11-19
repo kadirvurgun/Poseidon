@@ -35,10 +35,12 @@ public sealed partial class DirectoryWorkspaceTests
     [Trait("Requirement", "DEV-040")]
     public async Task Override_proposal_is_audited_maker_checker_and_cannot_activate_without_configured_authority()
     {
-        await using var host = Host(); using var c = Client(host); GraphPermissionsForTest(host.Services);
-        var author = host.Services.GetRequiredService<FederationSettings>().Memberships[0].ActorId;
-        OverrideActor(host.Services, extra: "applicability.override.author"); await Token(c);
+        await using var host = Host(); using var c = Client(host); GraphPermissionsForTest(host.Services); await Token(c);
+        // AdmittedByCommands replaces Memberships[0] (new synthetic regulatory human, own permission set), so the
+        // override author permission and actor id are established only after the qualified evaluation exists.
         var (rule, _, evaluation) = await AdmittedByCommands(c, host.Services);
+        OverrideActor(host.Services, extra: "applicability.override.author"); await Token(c);
+        var author = host.Services.GetRequiredService<FederationSettings>().Memberships[0].ActorId;
         var review = (await c.GetFromJsonAsync<ComplianceApplicabilityDto>(CompliancePath("applicability-review"), Ct))!;
         Assert.True(review.Current); Assert.False(review.ManualOverrideAvailable);
         var empty = (await c.GetFromJsonAsync<ApplicabilityOverrideListDto>("/api/v1/" + OverridesRoute(), Ct))!;
@@ -102,9 +104,9 @@ public sealed partial class DirectoryWorkspaceTests
     [Trait("Requirement", "DEV-040")]
     public async Task Override_requires_review_after_reevaluation_inputs_change_and_foreign_tenant_cannot_see_it()
     {
-        await using var host = Host(); using var c = Client(host); GraphPermissionsForTest(host.Services);
-        OverrideActor(host.Services, extra: "applicability.override.author"); await Token(c);
+        await using var host = Host(); using var c = Client(host); GraphPermissionsForTest(host.Services); await Token(c);
         var (rule, _, _) = await AdmittedByCommands(c, host.Services);
+        OverrideActor(host.Services, extra: "applicability.override.author"); await Token(c);
         var review = (await c.GetFromJsonAsync<ComplianceApplicabilityDto>(CompliancePath("applicability-review"), Ct))!;
         var proposed = await OverrideAccepted(await Send(c, OverridesRoute(), OverrideCommand(review, rule.Current.Id, rule.Current.Revision)));
         Assert.Equal("NOT_ACTIVE", proposed.CurrentValidity);

@@ -33,6 +33,9 @@ public interface IDailyReferenceReader
     // State: Current | Superseded | ReviewRequired | NotFound.
     Task<DailyReferenceCheck> Resolve(DailyReferenceContext context, DailyReferencePin pin, CancellationToken ct);
     Task<DailyReferenceOptionDto[]> Options(DailyReferenceContext context, string field, int take, CancellationToken ct);
+    // Record fields whose value the resolution depends on (e.g. Deck log_date). When one of them changes,
+    // an otherwise unchanged pin is re-verified against the new value.
+    IReadOnlyCollection<string> DependsOn => [];
 }
 
 public sealed class DailyReferenceRegistry(IEnumerable<IDailyReferenceReader> readers)
@@ -57,14 +60,16 @@ public sealed class DailyReferenceRegistry(IEnumerable<IDailyReferenceReader> re
         return new(field, check.State, pin.Source, pin.Id, pin.Revision, check.CurrentRevision, check.Qualification);
     }
 
-    // Only references whose Known value changed in this command are resolved;
-    // an unchanged earlier pin stays as the immutable fact it was when saved
-    // and its current state is shown by the read projection (Superseded etc.).
+    // Only references whose Known value changed in this command are resolved, plus unchanged pins whose
+    // reader depends on a field that changed (DEV-098: a new log_date re-checks officer_of_watch). Any other
+    // unchanged earlier pin stays the immutable fact it was when saved; its current state is shown by the
+    // read projection (Superseded etc.).
     public async Task<bool> VerifyChanged(DailyReferenceContext context, IReadOnlyDictionary<string, DailyValue> fields,
         IReadOnlyDictionary<string, DailyValue> previous, CancellationToken ct) {
         foreach (var field in DailyOperationsPolicy.Schema(context.Kind).Where(f => f.Type == "Reference" && !f.ReadOnly)) {
             if (!fields.TryGetValue(field.Key, out var value) || value.State != "Known") continue;
-            if (previous.TryGetValue(field.Key, out var before) && before == value) continue;
+            var dependencyChanged = For(context.Kind, field.Key)?.DependsOn.Any(key => fields.GetValueOrDefault(key) != previous.GetValueOrDefault(key)) == true;
+            if (previous.TryGetValue(field.Key, out var before) && before == value && !dependencyChanged) continue;
             var described = await Describe(context, field.Key, value, ct);
             if (described.State != "Current") return false;
         }
@@ -96,6 +101,8 @@ internal sealed class DailyCrewAssignmentReferenceReader(CrewAssignmentPolicy as
 {
     public string Source => "crew-assignment";
     public bool Supports(string kind, string field) => kind == "Deck" && field == "officer_of_watch";
+    // Effectiveness is checked on the deck log's own log_date.
+    public IReadOnlyCollection<string> DependsOn => ["log_date"];
     public bool Available(TrustedActor actor) => actor.Permissions.Contains("crew.read");
     private async Task<bool> EffectiveOn(DailyReferenceContext c, CrewAssignment a, CrewPosition p, DateOnly date, CancellationToken ct) {
         if (!assignments.Configured || assignments.ReferenceDate(c.Now) is not { } today || date > today) return false;
