@@ -56,6 +56,7 @@ Kullanıcı tercihi: yeni geliştirmelerde güncel **kararlı** ve karşılıkl�
 | Vite | 8.3.5 | Frontend exact pin |
 | Node.js LTS | 26.13.0 | Node registry/dist metadata; yerel arşiv SHA256 doğrulandı; CI aynı sürüm |
 | Playwright | 1.64.1 | Desktop/mobile Chromium smoke, exact pin |
+| axe-core / @axe-core/playwright | 4.14.0 / 4.14.0 | tests/Poseidon.Browser.Tests exact pin + npm lock; DEV025-AC-12 WCAG A/AA axe gate (`specs/s2-axe.spec.ts`); sürümler birlikte güncellenir |
 | ASP.NET Core OpenAPI / Mvc.Testing | 10.0.14 | Gerçek API host ve contract testleri |
 | xUnit v3 | 4.0.2 | Backend test projesi |
 | Microsoft.NET.Test.Sdk | 18.11.0 | Backend test projesi |

@@ -75,14 +75,14 @@ public static class ControlledDocumentPolicy
 
     // DE-009: hold blocks disposal; open active use, unconfigured or unelapsed retention blocks disposal.
     public static string? DisposalRequestBlocker(bool holdActive, string? policyRef, DateOnly? retainUntil, DateOnly today, string disposal, string? reason,
-        bool activeUseOpen = false) =>
+        bool activeUseOpen) =>
         !Text(reason, 1000) ? "invalid_request" : holdActive ? "legal_hold_active" : disposal != "NONE" ? "invalid_state" :
         activeUseOpen ? "active_use_open" :
         Retention(policyRef, retainUntil, today) switch { "UNCONFIGURED" => "retention_unconfigured", "RETAINING" => "retention_not_elapsed", _ => null };
 
     // Approval re-checks hold/active use/retention at approval time and requires a different approver.
     public static string? DisposalApproveBlocker(bool holdActive, string? policyRef, DateOnly? retainUntil, DateOnly today, string disposal,
-        Guid? requester, Guid approver, string? reason, bool activeUseOpen = false) =>
+        Guid? requester, Guid approver, string? reason, bool activeUseOpen) =>
         !Text(reason, 1000) ? "invalid_request" : disposal != "REQUESTED" ? "invalid_state" : requester == approver ? "separation_of_duties" :
         holdActive ? "legal_hold_active" : activeUseOpen ? "active_use_open" :
         Retention(policyRef, retainUntil, today) switch { "UNCONFIGURED" => "retention_unconfigured", "RETAINING" => "retention_not_elapsed", _ => null };

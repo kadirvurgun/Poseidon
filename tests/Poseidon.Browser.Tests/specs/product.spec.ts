@@ -36,7 +36,7 @@ test('product navigation is keyboard accessible and direct technical route is pr
         await menu.click();
         const drawer = page.getByRole('dialog', { name: 'POSEIDON', exact: true });
         await expect(drawer).toHaveAttribute('aria-modal', 'true');
-        const brand = drawer.getByRole('link', { name: 'POSEIDON', exact: true });
+        const brand = drawer.getByRole('link', { name: /^POSEIDON\b/ });
         await expect(brand).toBeFocused();
         const workView = drawer.locator('summary').filter({ hasText: /^Çalışma görünümü$/ });
         const workViewDisclosure = drawer.locator('details').filter({ has: page.locator('summary').filter({ hasText: /^Çalışma görünümü$/ }) });
