@@ -5,19 +5,21 @@
  "sourceVersion": "18.01:DEV045-046:rows46-47:v46.3",
  "notice": "Every document, name, number, authority and date here is fictional and generated for software evaluation. No real certificate, person or vessel data. Results measure the in-process text-layer engine on this synthetic set only; they are not operational accuracy, provider qualification or approval evidence.",
  "regressionThresholds": {
-  "basis": "Measured baseline of poseidon-pdf-text-layer-1.0.0 + poseidon-certificate-label-rules-1.0.0 on this set, 19.11.2026, floored to 2 decimals; lowering requires a reviewed change.",
+  "basis": "Measured baseline of poseidon-pdf-text-layer-1.0.0 + poseidon-certificate-label-rules-1.0.0 on this set (20 docs, vessel identifier matching), 19.11.2026, floored to 2 decimals; lowering requires a reviewed change.",
   "microPrecision": 1.0,
-  "microRecall": 0.83,
-  "exactMatchRate": 0.77,
+  "microRecall": 0.84,
+  "exactMatchRate": 0.8,
   "criticalUnsupportedFactsMax": 0,
   "authorityBypassesMax": 0,
+  "vesselFalseMatchesMax": 0,
+  "vesselMatchRecall": 1.0,
   "fieldRecall": {
    "certificate_type": 1.0,
-   "certificate_no": 0.82,
+   "certificate_no": 0.84,
    "issuer": 1.0,
    "issue_date": 1.0,
    "expiry_date": 0.73,
-   "vessel_reference": 0.63,
+   "vessel_reference": 0.69,
    "person_reference": 1.0
   }
  },
@@ -102,7 +104,13 @@
     "expiry_date",
     "vessel_reference",
     "person_reference"
-   ]
+   ],
+   "vesselProfile": {
+    "name": "Synthetic Alpha",
+    "code": "SYN-ALPHA",
+    "imo": null
+   },
+   "expectVesselMatch": "NAME"
   },
   {
    "id": "two-column",
@@ -172,7 +180,13 @@
     "expiry_date",
     "vessel_reference",
     "person_reference"
-   ]
+   ],
+   "vesselProfile": {
+    "name": "Synthetic Beta",
+    "code": "SYN-BETA",
+    "imo": null
+   },
+   "expectVesselMatch": "NAME"
   },
   {
    "id": "label-above-value",
@@ -254,7 +268,13 @@
     "expiry_date",
     "vessel_reference",
     "person_reference"
-   ]
+   ],
+   "vesselProfile": {
+    "name": "Synthetic Gamma",
+    "code": "SYN-GAMMA",
+    "imo": null
+   },
+   "expectVesselMatch": "NAME"
   },
   {
    "id": "dotted-dates",
@@ -318,7 +338,13 @@
     "expiry_date",
     "vessel_reference",
     "person_reference"
-   ]
+   ],
+   "vesselProfile": {
+    "name": "Synthetic Delta",
+    "code": "SYN-DELTA",
+    "imo": null
+   },
+   "expectVesselMatch": "NAME"
   },
   {
    "id": "named-month-dates",
@@ -382,7 +408,13 @@
     "expiry_date",
     "vessel_reference",
     "person_reference"
-   ]
+   ],
+   "vesselProfile": {
+    "name": "Synthetic Default",
+    "code": "SYN-DEFAULT",
+    "imo": null
+   },
+   "expectVesselMatch": null
   },
   {
    "id": "ambiguous-slash-date",
@@ -436,7 +468,13 @@
     "expiry_date",
     "vessel_reference",
     "person_reference"
-   ]
+   ],
+   "vesselProfile": {
+    "name": "Synthetic Epsilon",
+    "code": "SYN-EPSILON",
+    "imo": null
+   },
+   "expectVesselMatch": "NAME"
   },
   {
    "id": "turkish-tounicode",
@@ -506,7 +544,13 @@
     "expiry_date",
     "vessel_reference",
     "person_reference"
-   ]
+   ],
+   "vesselProfile": {
+    "name": "Sentetik Zeta",
+    "code": "SYN-ZETA",
+    "imo": null
+   },
+   "expectVesselMatch": "NAME"
   },
   {
    "id": "identity-without-tounicode",
@@ -558,7 +602,13 @@
     "expiry_date",
     "vessel_reference",
     "person_reference"
-   ]
+   ],
+   "vesselProfile": {
+    "name": "Synthetic Eta",
+    "code": "SYN-ETA",
+    "imo": null
+   },
+   "expectVesselMatch": null
   },
   {
    "id": "scanned-image-only-pdf",
@@ -591,7 +641,13 @@
     "expiry_date",
     "vessel_reference",
     "person_reference"
-   ]
+   ],
+   "vesselProfile": {
+    "name": "Synthetic Theta",
+    "code": "SYN-THETA",
+    "imo": null
+   },
+   "expectVesselMatch": null
   },
   {
    "id": "photo-png",
@@ -622,7 +678,13 @@
     "expiry_date",
     "vessel_reference",
     "person_reference"
-   ]
+   ],
+   "vesselProfile": {
+    "name": "Synthetic Iota",
+    "code": "SYN-IOTA",
+    "imo": null
+   },
+   "expectVesselMatch": null
   },
   {
    "id": "adversarial-instructions",
@@ -680,7 +742,13 @@
     "expiry_date",
     "vessel_reference",
     "person_reference"
-   ]
+   ],
+   "vesselProfile": {
+    "name": "Synthetic Default",
+    "code": "SYN-DEFAULT",
+    "imo": null
+   },
+   "expectVesselMatch": null
   },
   {
    "id": "conflicting-numbers",
@@ -734,7 +802,13 @@
     "expiry_date",
     "vessel_reference",
     "person_reference"
-   ]
+   ],
+   "vesselProfile": {
+    "name": "Synthetic Default",
+    "code": "SYN-DEFAULT",
+    "imo": null
+   },
+   "expectVesselMatch": null
   },
   {
    "id": "multi-page",
@@ -797,7 +871,13 @@
     "expiry_date",
     "vessel_reference",
     "person_reference"
-   ]
+   ],
+   "vesselProfile": {
+    "name": "Synthetic Default",
+    "code": "SYN-DEFAULT",
+    "imo": null
+   },
+   "expectVesselMatch": null
   },
   {
    "id": "object-stream",
@@ -849,7 +929,13 @@
     "expiry_date",
     "vessel_reference",
     "person_reference"
-   ]
+   ],
+   "vesselProfile": {
+    "name": "Synthetic Default",
+    "code": "SYN-DEFAULT",
+    "imo": null
+   },
+   "expectVesselMatch": null
   },
   {
    "id": "partial-fields",
@@ -895,7 +981,13 @@
     "expiry_date",
     "vessel_reference",
     "person_reference"
-   ]
+   ],
+   "vesselProfile": {
+    "name": "Synthetic Default",
+    "code": "SYN-DEFAULT",
+    "imo": null
+   },
+   "expectVesselMatch": null
   },
   {
    "id": "unlabelled-prose",
@@ -947,7 +1039,13 @@
     "expiry_date",
     "vessel_reference",
     "person_reference"
-   ]
+   ],
+   "vesselProfile": {
+    "name": "Synthetic Kappa",
+    "code": "SYN-KAPPA",
+    "imo": null
+   },
+   "expectVesselMatch": null
   },
   {
    "id": "tj-kerning",
@@ -999,7 +1097,13 @@
     "expiry_date",
     "vessel_reference",
     "person_reference"
-   ]
+   ],
+   "vesselProfile": {
+    "name": "Synthetic Default",
+    "code": "SYN-DEFAULT",
+    "imo": null
+   },
+   "expectVesselMatch": null
   },
   {
    "id": "cm-scaled",
@@ -1051,7 +1155,117 @@
     "expiry_date",
     "vessel_reference",
     "person_reference"
-   ]
+   ],
+   "vesselProfile": {
+    "name": "Synthetic Lambda",
+    "code": "SYN-LAMBDA",
+    "imo": null
+   },
+   "expectVesselMatch": "NAME"
+  },
+  {
+   "id": "vessel-name-variant",
+   "description": "Vessel name printed with M/V prefix, mixed case and hyphen; normalised match against the profile name.",
+   "mime": "application/pdf",
+   "encoding": "winansi",
+   "compress": true,
+   "objectStream": false,
+   "textMode": "tj",
+   "scale": 1,
+   "imageOnly": false,
+   "expectCapability": null,
+   "expectAmbiguous": [],
+   "expectPage": {},
+   "pages": [
+    [
+     {
+      "x": 72,
+      "y": 700,
+      "size": 11,
+      "text": "Certificate No: SYN-0019"
+     },
+     {
+      "x": 72,
+      "y": 680,
+      "size": 11,
+      "text": "Name of Vessel: M/V Synthetic-Mu"
+     }
+    ]
+   ],
+   "truth": {
+    "certificate_type": null,
+    "certificate_no": "SYN-0019",
+    "issuer": null,
+    "issue_date": null,
+    "expiry_date": null,
+    "vessel_reference": "M/V Synthetic-Mu",
+    "person_reference": null
+   },
+   "criticalFields": [
+    "certificate_type",
+    "certificate_no",
+    "expiry_date",
+    "vessel_reference",
+    "person_reference"
+   ],
+   "vesselProfile": {
+    "name": "Synthetic Mu",
+    "code": "SYN-MU",
+    "imo": null
+   },
+   "expectVesselMatch": "NAME"
+  },
+  {
+   "id": "foreign-vessel",
+   "description": "Certificate names a different vessel than the scoped profile; must stay UNMATCHED.",
+   "mime": "application/pdf",
+   "encoding": "winansi",
+   "compress": true,
+   "objectStream": false,
+   "textMode": "tj",
+   "scale": 1,
+   "imageOnly": false,
+   "expectCapability": null,
+   "expectAmbiguous": [],
+   "expectPage": {},
+   "pages": [
+    [
+     {
+      "x": 72,
+      "y": 700,
+      "size": 11,
+      "text": "Certificate No: SYN-0020"
+     },
+     {
+      "x": 72,
+      "y": 680,
+      "size": 11,
+      "text": "Name of Ship: MV FOREIGN SYNTHETIC NU"
+     }
+    ]
+   ],
+   "truth": {
+    "certificate_type": null,
+    "certificate_no": "SYN-0020",
+    "issuer": null,
+    "issue_date": null,
+    "expiry_date": null,
+    "vessel_reference": "MV FOREIGN SYNTHETIC NU",
+    "person_reference": null
+   },
+   "criticalFields": [
+    "certificate_type",
+    "certificate_no",
+    "expiry_date",
+    "vessel_reference",
+    "person_reference"
+   ],
+   "vesselProfile": {
+    "name": "Synthetic Nu",
+    "code": "SYN-NU",
+    "imo": null
+   },
+   "expectVesselMatch": null
   }
  ]
 }

@@ -49,6 +49,20 @@ public static class CertificateExtractionEndpoints
         using var document=JsonDocument.Parse(bounded.ToArray(),new(){MaxDepth=10});ApplicabilityEngine.RejectDuplicateKeys(document.RootElement);
         return document.RootElement.Deserialize<T>(Json)??throw new JsonException();
     }
+    // Scoped vessel identifiers for vessel_reference matching: Vessel.Name/Code and
+    // only a user-declared Known IMO from the regulatory draft. Read through the
+    // actor's vessel scope and tenant filter; values never leave the server or logs.
+    private static async Task<CertificateVesselIdentifiers?> VesselIdentifiers(PoseidonDbContext db,TrustedActor actor,Guid vessel,CancellationToken ct) {
+        var row=await actor.Scope(db.Vessels.AsNoTracking()).Where(v=>v.Id==vessel).Select(v=>new{v.Name,v.Code}).SingleOrDefaultAsync(ct);
+        if(row==null)return null;
+        var draft=await db.RegulatoryDrafts.AsNoTracking().Where(d=>d.VesselId==vessel).Select(d=>d.ContentJson).SingleOrDefaultAsync(ct);
+        string? imo=null;
+        if(draft!=null) {
+            try{if(RegulatoryDraftStorage.Deserialize(draft).Imo is {State:"Known",Value:{} known})imo=known;}
+            catch(Exception e)when(e is JsonException or InvalidOperationException or ArgumentException){imo=null;}
+        }
+        return new(row.Name,row.Code,imo);
+    }
     private static async Task<IResult> Extract(Guid vessel,Guid id,Guid? assignment,HttpContext h,PoseidonDbContext db) {
         h.Response.Headers.CacheControl="no-store";var ct=h.RequestAborted;var a=Actor(h);
         if(!CertificateExtractionAccess.Permission(a))return await Fail(h,403,"permission_denied",id);
@@ -75,7 +89,7 @@ public static class CertificateExtractionEndpoints
         CertificateCandidate[] candidates;
         try {
             var raw=await h.RequestServices.GetRequiredService<CertificateExtractionProvider>().Extract(policy,bytes,source.File.Mime,source.File.Checksum,ct);
-            candidates=CertificateExtractionPolicy.Project(raw,source.File.Checksum,policy.ModelVersion!,policy.PromptVersion!,policy.LowConfidenceThreshold!.Value,vessel.ToString("D"),source.Binding.PersonId?.ToString("D"));
+            candidates=CertificateExtractionPolicy.Project(raw,source.File.Checksum,policy.ModelVersion!,policy.PromptVersion!,policy.LowConfidenceThreshold!.Value,await VesselIdentifiers(db,a!,vessel,ct),source.Binding.PersonId?.ToString("D"));
         }catch(CertificateOcrCapabilityUnavailableException){return await Fail(h,503,"ocr_capability_unavailable",id);}
         catch(CertificateExtractionUnavailableException){return await Fail(h,503,"source_contract_changed",id);}
         finally{CryptographicOperations.ZeroMemory(bytes);}
