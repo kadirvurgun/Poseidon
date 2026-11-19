@@ -81,3 +81,11 @@ Main: #16 #17 #18 #20 #23 #36 + **#37 paket 2** birleşik (`2995f70`, 19.11 ~08:
 - `docs/s2-gate-acceptance-20261119` **b97686b** (push edildi, PR yok): project-status.json/md → **26 iş / 145 SP / %14,95**, `docs/phases/S2-GATE-20261119.md`, QA kanıtı `docs/evidence/s2-20261119-55d5e1f/qa/`, CLAUDE.md sayım satırı.
 - `fix/qa-low-notes-20261119` alt-ajanda (probe regex, IF-MATCH 409 belgesi, STORED-OUTCOME metni, ControlledDocumentPolicy activeUseOpen zorunlu, axe kapsamı + incomplete ek, EnterpriseChrome tagline). Bitince: `integration/bundle5-20261119` = main + s2-gate docs + qa-notes → tek PR.
 - Ertelenen tasarım işi: critical-write kapısında Modified satırlar için gerçek durum geçişi kanıtı (OwnerReference sabiti yerine Status/AccessRevision/State; belge revizyonunda IntakeState/PublicationState).
+
+### Paket 5 + S3 başlangıcı (19.11 ~14:40)
+- **PR #40** = `integration/bundle5-20261119` dbe0683 (S2 kabul kaydı b97686b + QA düşük-not takip 58cf216). CI + bağımsız QA koşuyor; geçerse `gh pr merge 40 --merge --match-head-commit <tam SHA>`.
+- S3 keşfi: 7 iş / 66 SP, kodun çoğu main'de (AUTHORED_UNVERIFIED); iş = kanonik AC (18.01 satır 27–33) boşluklarını kapatmak. Paketler:
+  - **WP-A** DEV-026+027 (21 SP) → `feature/s3-wpa-requirement-applicability-20261119` (worktree s3-wpa-20261119): /api/v1/requirements okuma projeksiyonu, üzerine-yazmama testi, UNKNOWN reload bulgusu, 6 yüklem golden + crosswalk, eksik DEV-020 profil verisi → REVIEW_REQUIRED. Alt-ajanda.
+  - **WP-B** DEV-028+029+030 (29 SP) → `feature/s3-wpb-control-evidence-verification-20261119` (worktree s3-wpb-20261119): kontrol yaşam döngüsü, çok-çok kanıt, GET verifications, SUPERSEDED/SoD testleri. 54.01 tazelik sicili yok → tazelik 'declared' sınırı belgelenecek. Alt-ajanda.
+  - **WP-C** DEV-031+032 (16 SP): AI/servis/genel admin karar reddi testleri, audit-ready drill-down rotası, EN/TR tarayıcı yolculuğu. WP-B bitince başlat (HumanReviewEndpoints.cs çakışması).
+  - Sonra tek S3 kapısı (CI + DEV satırı başına bağımsız QA), S2-GATE gibi.
