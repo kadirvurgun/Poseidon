@@ -95,10 +95,20 @@ public sealed partial class DirectoryWorkspaceTests
         finally { if (Directory.Exists(root)) Directory.Delete(root, true); }
     }
 
-    private async Task WaitForComplianceAuditLock(long key) {
+    // Waits for the explicit PostgreSQL condition (the paused request blocked on the advisory
+    // lock). The bound is the request's own progress, not a wall-clock race: a fixed 3 s window
+    // raced cold host/EF query compilation on loaded CI shards (ShipOps postcommit revocation,
+    // push run 44526997373) and failed before the request reached its Success audit. When the
+    // pending request is supplied and completes without ever blocking, the wait fails at once
+    // with its actual status instead of timing out; 30 s matches the pending-response bound.
+    private async Task WaitForComplianceAuditLock(long key, Task<HttpResponseMessage>? pending = null) {
         await using var connection = new NpgsqlConnection(postgres.GetConnectionString()); await connection.OpenAsync(Ct);
-        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(Ct); deadline.CancelAfter(TimeSpan.FromSeconds(3));
+        using var deadline = CancellationTokenSource.CreateLinkedTokenSource(Ct); deadline.CancelAfter(TimeSpan.FromSeconds(30));
         while (true) {
+            if (pending is { IsCompleted: true }) {
+                var status = pending.IsCompletedSuccessfully ? ((int)pending.Result.StatusCode).ToString(System.Globalization.CultureInfo.InvariantCulture) : pending.Status.ToString();
+                Assert.Fail($"The paused request completed ({status}) before blocking on advisory lock {key}.");
+            }
             await using var command = new NpgsqlCommand("""
                 SELECT EXISTS(SELECT 1 FROM pg_locks WHERE locktype='advisory' AND NOT granted
                   AND database=(SELECT oid FROM pg_database WHERE datname=current_database()) AND classid=0 AND objid::bigint=@key)

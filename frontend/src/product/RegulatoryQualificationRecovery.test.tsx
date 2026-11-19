@@ -4,6 +4,7 @@ import { ApiError } from './api'
 import * as api from './qualification-api'
 import { qualifiedFixture } from './qualification.test-fixtures'
 import { RegulatoryQualification } from './RegulatoryQualification'
+import { purgeQualificationRecovery, unknownEnvelopeTtlMs } from './use-qualification-recovery'
 import { localizedText } from '../i18n/messages'
 
 afterEach(() => vi.restoreAllMocks())
@@ -301,7 +302,7 @@ it('reports a current source-file read failure without a mutation or uncertain c
 
 // S3-WPA / DEV-026 open QOR finding: a hard reload previously destroyed the in-memory
 // UNKNOWN envelope. Mocked transport only; real browser reload journey DEFERRED.
-const storedKey = (rule: string) => `poseidon.qualification.unknown.v1:${rule}`
+const storedKey = (rule: string) => `poseidon.qualification.unknown.v2:${rule}`
 it('retains the UNKNOWN envelope across a hard reload and retries only the exact original attempt', async () => {
   const h = setup(), successful = h.sent.getMockImplementation()!
   h.sent.mockImplementationOnce(async () => { throw new Error('synthetic response lost') })
@@ -311,7 +312,8 @@ it('retains the UNKNOWN envelope across a hard reload and retries only the exact
   const original = h.sent.mock.calls[0][1]
   first.unmount() // Hard reload: every React state, ref and closure is gone.
   const stored = JSON.parse(window.sessionStorage.getItem(storedKey(h.row.ruleId))!) as Record<string, unknown>
-  expect(Object.keys(stored).sort()).toEqual(['action', 'body', 'context', 'key', 'nextRevision', 'owner', 'rule', 'unknown', 'version'])
+  expect(Object.keys(stored).sort()).toEqual(['action', 'body', 'context', 'key', 'nextRevision', 'owner', 'rule', 'savedAt', 'source', 'unknown', 'version'])
+  expect(stored.source).toBeNull()
   expect(stored.unknown).toBe(true); expect(JSON.stringify(stored)).not.toContain(h.props.csrf)
   const reloaded = render(<RegulatoryQualification {...h.props} />)
   await unknown()
@@ -348,12 +350,119 @@ it('does not expose or replay a reloaded UNKNOWN envelope for a different authen
 it.each([
   '{not json', JSON.stringify({ unknown: true }),
   JSON.stringify({ owner: 'x', context: 'c', version: 0, rule: 'other-rule', action: 'events', body: '{}', key: crypto.randomUUID(), unknown: true, nextRevision: 1 }),
+  // Private source bytes written without a proof are never accepted as an envelope.
+  'bytes-without-proof',
+  'placeholder-without-proof',
 ])('discards a malformed stored envelope instead of inventing an attempt: %s', async raw => {
   const h = setup()
-  window.sessionStorage.setItem(storedKey(h.row.ruleId), raw)
+  const record = (sourceBytesBase64: string) => JSON.stringify({ owner: h.originalOwner, context: `${h.row.ruleId}:1:`, version: 0, rule: h.row.ruleId, action: 'events',
+    body: JSON.stringify({ state: 'DRAFT', content: { ...api.blank(), sourceBytesBase64 } }), key: crypto.randomUUID(), unknown: true, nextRevision: 4, source: null, savedAt: Date.now() })
+  window.sessionStorage.setItem(storedKey(h.row.ruleId), raw === 'bytes-without-proof' ? record('AQID') : raw === 'placeholder-without-proof' ? record('') : raw)
   const view = render(<RegulatoryQualification {...h.props} />)
   expect(await screen.findByLabelText('Publisher')).toBeEnabled()
   expect(screen.queryByText('Outcome uncertain. The exact original attempt is locked until retry.')).not.toBeInTheDocument()
   expect(window.sessionStorage.getItem(storedKey(h.row.ruleId))).toBeNull()
   view.unmount()
+})
+
+// S3 gate B1 (privacy): source bytes never reach browser storage; TTL; owner/sign-out purge.
+const withheldLabel = 'The original source file is not kept in this browser. Select the same file again to retry the exact original attempt.'
+const mismatchText = 'The selected file does not match the original attempt. The attempt stays locked.'
+const expiredText = 'An earlier uncertain attempt expired in this browser. Check the history before submitting again.'
+const retryButton = () => screen.getByRole('button', { name: 'Retry exact qualification command' })
+const sourceFile = (bytes: number[]) => Object.assign(new File([new Uint8Array(bytes)], 'fictional-source.txt'), {
+  arrayBuffer: vi.fn(async () => new Uint8Array(bytes).buffer),
+})
+const hex = async (bytes: number[]) => Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new Uint8Array(bytes))), b => b.toString(16).padStart(2, '0')).join('')
+
+it('never stores private source bytes and retries a reloaded UNKNOWN attempt only with the identical re-supplied file', async () => {
+  const h = setup(), successful = h.sent.getMockImplementation()!
+  h.sent.mockImplementationOnce(async () => { throw new Error('synthetic response lost') })
+  const first = render(<RegulatoryQualification {...h.props} />)
+  await waitFor(() => expect(screen.getByLabelText('Publisher')).toBeEnabled())
+  const bytes = [70, 73, 67, 84, 73, 79, 78, 65, 76, 0, 255]
+  fireEvent.change(screen.getByLabelText('Exact source bytes (maximum 2 MiB)'), { target: { files: [sourceFile(bytes)] } })
+  await waitFor(() => expect(h.props.onDirty).toHaveBeenLastCalledWith(true))
+  save(); await unknown()
+  const original = h.sent.mock.calls[0][1], base64 = btoa(String.fromCharCode(...bytes))
+  expect(JSON.parse(original.body).content.sourceBytesBase64).toBe(base64)
+  first.unmount() // Hard reload.
+  const raw = window.sessionStorage.getItem(storedKey(h.row.ruleId))!
+  expect(raw).not.toContain(base64)
+  const stored = JSON.parse(raw) as { body: string; source: unknown; key: string }
+  expect(JSON.parse(stored.body).content.sourceBytesBase64).toBe('')
+  expect(stored.source).toEqual({ sha256: await hex(bytes), bytes: bytes.length })
+  expect(stored.key).toBe(original.key)
+  const reloaded = render(<RegulatoryQualification {...h.props} />)
+  const input = await screen.findByLabelText(withheldLabel)
+  await unknown()
+  // UNKNOWN stays honest and locked: no retry without the exact bytes, nothing resent.
+  expect(retryButton()).toBeDisabled()
+  expect(screen.getByRole('button', { name: 'Discard local changes and reload' })).toBeDisabled()
+  expect(h.props.onSaving).toHaveBeenLastCalledWith(true)
+  fireEvent.change(input, { target: { files: [sourceFile([...bytes.slice(0, -1), 254])] } })
+  await screen.findByText(mismatchText)
+  expect(retryButton()).toBeDisabled()
+  fireEvent.change(screen.getByLabelText(withheldLabel), { target: { files: [sourceFile(bytes.slice(0, -1))] } })
+  await screen.findByText(mismatchText)
+  expect(retryButton()).toBeDisabled()
+  expect(h.sent).toHaveBeenCalledTimes(1)
+  fireEvent.change(screen.getByLabelText(withheldLabel), { target: { files: [sourceFile(bytes)] } })
+  await waitFor(() => expect(retryButton()).toBeEnabled())
+  expect(screen.queryByText(mismatchText)).not.toBeInTheDocument()
+  // Re-supplying the bytes does not write them to storage either.
+  expect(window.sessionStorage.getItem(storedKey(h.row.ruleId))).not.toContain(base64)
+  h.sent.mockImplementation(successful)
+  retry()
+  await screen.findByText('Human record saved. No operational release follows.')
+  expect(h.sent).toHaveBeenCalledTimes(2)
+  expect(h.sent.mock.calls[1][1].body).toBe(original.body); expect(h.sent.mock.calls[1][1].key).toBe(original.key)
+  expect(window.sessionStorage.getItem(storedKey(h.row.ruleId))).toBeNull()
+  reloaded.unmount()
+})
+
+it('expires a stored UNKNOWN envelope after its TTL and tells its owner to check the history instead of reviving it', async () => {
+  const h = setup()
+  h.sent.mockImplementationOnce(async () => { throw new Error('synthetic response lost') })
+  const first = render(<RegulatoryQualification {...h.props} />)
+  fireEvent.change(await screen.findByLabelText('Publisher'), { target: { value: 'FICTIONAL-expiring-publisher' } })
+  save(); await unknown(); first.unmount()
+  const key = storedKey(h.row.ruleId), stored = JSON.parse(window.sessionStorage.getItem(key)!) as Record<string, unknown>
+  window.sessionStorage.setItem(key, JSON.stringify({ ...stored, savedAt: Date.now() - unknownEnvelopeTtlMs - 1 }))
+  const reloaded = render(<RegulatoryQualification {...h.props} />)
+  await screen.findByText(expiredText)
+  expect(window.sessionStorage.getItem(key)).toBeNull()
+  expect(await screen.findByLabelText('Publisher')).toBeEnabled()
+  expect(screen.queryByDisplayValue('FICTIONAL-expiring-publisher')).not.toBeInTheDocument()
+  expect(screen.queryByText('Outcome uncertain. The exact original attempt is locked until retry.')).not.toBeInTheDocument()
+  expect(screen.queryByRole('button', { name: 'Retry exact qualification command' })).not.toBeInTheDocument()
+  expect(h.sent).toHaveBeenCalledTimes(1)
+  reloaded.unmount()
+})
+
+it('does not tell a different owner that another owner expired attempt existed', async () => {
+  const h = setup()
+  window.sessionStorage.setItem(storedKey(h.row.ruleId), JSON.stringify({ owner: `${other}/${h.row.actorId}`, context: `${h.row.ruleId}:1:`, version: 0, rule: h.row.ruleId,
+    action: 'events', body: JSON.stringify({ state: 'DRAFT', content: api.blank() }), key: crypto.randomUUID(), unknown: true, nextRevision: 4, source: null,
+    savedAt: Date.now() - unknownEnvelopeTtlMs - 1 }))
+  const view = render(<RegulatoryQualification {...h.props} />)
+  expect(await screen.findByLabelText('Publisher')).toBeEnabled()
+  expect(screen.queryByText(expiredText)).not.toBeInTheDocument()
+  expect(window.sessionStorage.getItem(storedKey(h.row.ruleId))).toBeNull()
+  view.unmount()
+})
+
+it('purges every other owner envelope (any format version) and all of them without an owner', () => {
+  const s = window.sessionStorage, record = (owner: string) => JSON.stringify({ owner })
+  s.setItem('poseidon.qualification.unknown.v2:a', record('t/a'))
+  s.setItem('poseidon.qualification.unknown.v2:b', record('t/b'))
+  s.setItem('poseidon.qualification.unknown.v2:c', '{not json')
+  s.setItem('poseidon.qualification.unknown.v1:d', record('t/a'))
+  s.setItem('poseidon.unrelated', 'kept')
+  purgeQualificationRecovery('t/a')
+  expect(s.getItem('poseidon.qualification.unknown.v2:a')).not.toBeNull()
+  for (const k of ['v2:b', 'v2:c', 'v1:d']) expect(s.getItem(`poseidon.qualification.unknown.${k}`)).toBeNull()
+  purgeQualificationRecovery(null)
+  expect(s.getItem('poseidon.qualification.unknown.v2:a')).toBeNull()
+  expect(s.getItem('poseidon.unrelated')).toBe('kept')
 })

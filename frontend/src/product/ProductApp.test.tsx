@@ -126,3 +126,43 @@ describe('FOUNDATION-APP-01 product states (mocked HTTP, not backend acceptance)
         expect(fetchMock).toHaveBeenCalledTimes(1);
     });
 });
+describe('S3 gate B1: per-tab UNKNOWN qualification envelopes (mocked HTTP)', () => {
+    const own = `${navigationTestIdentity.tenantId}/${navigationTestIdentity.actorId}`;
+    const ownKey = 'poseidon.qualification.unknown.v2:own-rule', foreignKey = 'poseidon.qualification.unknown.v2:foreign-rule';
+    const seedEnvelopes = () => {
+        window.sessionStorage.setItem(ownKey, JSON.stringify({ owner: own }));
+        window.sessionStorage.setItem(foreignKey, JSON.stringify({ owner: '10000000-0000-0000-0000-000000000001/10000000-0000-0000-0000-000000000002' }));
+        window.sessionStorage.setItem('poseidon.qualification.unknown.v1:legacy-rule', JSON.stringify({ owner: own, body: '{"content":{"sourceBytesBase64":"AQID"}}' }));
+    };
+    const fetchFor = (session: unknown) => vi.fn(async (url: string) => url.endsWith('auth/session') ? reply(session)
+        : url.endsWith('workspace') ? reply(navigationTestWorkspace()) : reply({ items: [], offset: 0, limit: 25, hasMore: false }));
+    it('removes another owner and legacy envelopes when the shell observes the session owner', async () => {
+        seedEnvelopes();
+        vi.stubGlobal('fetch', fetchFor(signedIn));
+        render(<ProductApp />);
+        await screen.findByRole('button', { name: 'Oturumu kapat' });
+        expect(window.sessionStorage.getItem(foreignKey)).toBeNull();
+        expect(window.sessionStorage.getItem('poseidon.qualification.unknown.v1:legacy-rule')).toBeNull();
+        expect(window.sessionStorage.getItem(ownKey)).not.toBeNull();
+    });
+    it('removes every envelope for an anonymous session', async () => {
+        seedEnvelopes();
+        vi.stubGlobal('fetch', fetchFor(anonymous));
+        render(<ProductApp />);
+        await screen.findByRole('link', { name: 'Oturum aç' });
+        expect([ownKey, foreignKey].map(k => window.sessionStorage.getItem(k))).toEqual([null, null]);
+    });
+    it('removes every envelope on sign-out before the logout navigation', async () => {
+        seedEnvelopes();
+        let atSubmit: (string | null)[] = [];
+        const submit = vi.spyOn(HTMLFormElement.prototype, 'submit').mockImplementation(() => { atSubmit = [ownKey, foreignKey].map(k => window.sessionStorage.getItem(k)); });
+        try {
+            vi.stubGlobal('fetch', fetchFor(signedIn));
+            const user = userEvent.setup();
+            render(<ProductApp />);
+            await user.click(await screen.findByRole('button', { name: 'Oturumu kapat' }));
+            await waitFor(() => expect(submit).toHaveBeenCalledTimes(1));
+            expect(atSubmit).toEqual([null, null]);
+        } finally { submit.mockRestore(); }
+    });
+});

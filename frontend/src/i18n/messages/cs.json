@@ -3439,6 +3439,11 @@
     "m_5bfa5323a04a472d": "Čekající následná revize (neplatí, dokud nebude publikována)",
     "m_ae1a44f3c88cf989": "Žádná publikovaná revize neplatí",
     "m_12e4b7ce9141120d": "Nahrazuje revizi",
-    "m_372c48ba7e84c124": "Stopa připravená k auditu"
+    "m_372c48ba7e84c124": "Stopa připravená k auditu",
+    "m_401a5953741e7377": "Původní zdrojový soubor se v tomto prohlížeči neuchovává. Pro přesné opakování původního pokusu vyberte znovu stejný soubor.",
+    "m_2adab3886ca18b5e": "Vybraný soubor neodpovídá původnímu pokusu. Pokus zůstává zamčený.",
+    "m_6eb8ee576dacf887": "Dřívější nejistý pokus v tomto prohlížeči vypršel. Před dalším odesláním zkontrolujte historii.",
+    "m_dbbdcf309e8f24c3": "Navázaná pravidla zaznamenávají různé stavy životního cyklu. Zobrazená hodnota je softwarová priorita; je nutná odborná kontrola.",
+    "m_d6eb29d9d9dfbe8b": "Je navázáno více pravidel, než toto zobrazení pojme; z neúplné sady se životní cyklus neodvozuje."
   }
 }

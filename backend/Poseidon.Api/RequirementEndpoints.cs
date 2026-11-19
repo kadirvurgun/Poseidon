@@ -67,27 +67,54 @@ public static class RequirementEndpoints
     }
     private sealed record Row(Guid RequirementId, long RequirementRevision, Guid RuleId, long RuleRevision, long CurrentRuleRevision,
         long QualificationRevision, string State, DateTimeOffset SavedAt);
-    // Only each rule's qualification HEAD counts; older events are immutable history.
-    private static async Task<ILookup<Guid, Row>> Qualifications(PoseidonDbContext db, Guid[] ids, CancellationToken ct)
+    // Member-init shape so EF can group/filter on it before materializing Row.
+    private sealed class HeadRow
     {
-        if (ids.Length == 0) return Array.Empty<Row>().ToLookup(x => x.RequirementId);
-        var rows = await (from head in db.RegulatoryQualificationHeads.AsNoTracking()
+        public Guid RequirementId { get; init; }
+        public long RequirementRevision { get; init; }
+        public Guid RuleId { get; init; }
+        public long RuleRevision { get; init; }
+        public long CurrentRuleRevision { get; init; }
+        public long QualificationRevision { get; init; }
+        public string State { get; init; } = "";
+        public DateTimeOffset SavedAt { get; init; }
+    }
+    private sealed record Heads(ILookup<Guid, Row> Rows, IReadOnlySet<Guid> LimitExceeded);
+    // Only each rule's qualification HEAD counts; older events are immutable history.
+    // Exact per requirement: a requirement with more than MaxQualifications bound heads is
+    // reported LIMIT_EXCEEDED (UNAVAILABLE) instead of being silently truncated, and no
+    // requirement's rows can be crowded out by another requirement's rows in the page.
+    private static async Task<Heads> Qualifications(PoseidonDbContext db, Guid[] ids, CancellationToken ct)
+    {
+        if (ids.Length == 0) return new(Array.Empty<Row>().ToLookup(x => x.RequirementId), new HashSet<Guid>());
+        var heads = from head in db.RegulatoryQualificationHeads.AsNoTracking()
             join e in db.RegulatoryQualificationEvents.AsNoTracking() on new { head.TenantId, head.RuleId, head.Revision } equals new { e.TenantId, e.RuleId, e.Revision }
             join rule in db.RuleDrafts.AsNoTracking() on new { head.TenantId, Id = head.RuleId } equals new { rule.TenantId, rule.Id }
             join rr in db.RuleRevisions.AsNoTracking() on new { e.TenantId, Id = e.RuleId, Revision = e.RuleRevision } equals new { rr.TenantId, rr.Id, rr.Revision }
             where rr.RequirementKind == "Requirement" && rr.RequirementId != null && rr.RequirementRevision != null && ids.Contains(rr.RequirementId.Value)
-            orderby e.SavedAt descending, e.RuleId
-            select new Row(rr.RequirementId!.Value, rr.RequirementRevision!.Value, e.RuleId, e.RuleRevision, rule.Revision, e.Revision, e.State, e.SavedAt))
-            .Take(ids.Length * MaxQualifications).ToArrayAsync(ct);
-        return rows.ToLookup(x => x.RequirementId);
+            select new HeadRow { RequirementId = rr.RequirementId!.Value, RequirementRevision = rr.RequirementRevision!.Value, RuleId = e.RuleId,
+                RuleRevision = e.RuleRevision, CurrentRuleRevision = rule.Revision, QualificationRevision = e.Revision, State = e.State, SavedAt = e.SavedAt };
+        var counts = await heads.GroupBy(x => x.RequirementId).Select(g => new { Id = g.Key, Count = g.Count() }).ToDictionaryAsync(x => x.Id, x => x.Count, ct);
+        var within = ids.Where(id => counts.GetValueOrDefault(id) is > 0 and <= MaxQualifications).ToArray();
+        var rows = within.Length == 0 ? [] : await heads.Where(x => within.Contains(x.RequirementId))
+            .OrderByDescending(x => x.SavedAt).ThenBy(x => x.RuleId).ToArrayAsync(ct);
+        var lookup = rows.Select(x => new Row(x.RequirementId, x.RequirementRevision, x.RuleId, x.RuleRevision, x.CurrentRuleRevision,
+            x.QualificationRevision, x.State, x.SavedAt)).ToLookup(x => x.RequirementId);
+        // A rule bound between the count and the row read is re-checked on the rows themselves.
+        var exceeded = ids.Where(id => counts.GetValueOrDefault(id) > MaxQualifications || lookup[id].Count() > MaxQualifications).ToHashSet();
+        return new(lookup, exceeded);
     }
-    private static RequirementDto Dto(RegisterDraft d, RegisterRevision r, ILookup<Guid, Row> qualifications)
+    private static RequirementDto Dto(RegisterDraft d, RegisterRevision r, Heads qualifications)
     {
+        if (qualifications.LimitExceeded.Contains(d.Id)) {
+            var (unavailable, limitBasis) = RequirementLifecyclePolicy.LimitExceeded();
+            return new(d.Id, d.Revision, d.Version, unavailable, limitBasis, r.SavedAt, r.Provenance, r.Hash, RegisterStorage.Deserialize(r.ContentJson), r.SourceId, r.SourceRevision, []);
+        }
         // A qualification counts toward the current lifecycle only when it is the head for the
         // rule's current revision AND that revision pins this requirement's current revision.
         // A new requirement revision therefore starts as DRAFT while the prior in-force
         // revision stays visible here and in /requirement-drafts/{id}/history.
-        var items = qualifications[d.Id].Take(MaxQualifications).Select(x => new RequirementQualificationDto(x.RuleId, x.RuleRevision, x.QualificationRevision,
+        var items = qualifications.Rows[d.Id].Select(x => new RequirementQualificationDto(x.RuleId, x.RuleRevision, x.QualificationRevision,
             x.RequirementRevision, x.State, RequirementLifecyclePolicy.Map(x.State), x.RuleRevision == x.CurrentRuleRevision && x.RequirementRevision == d.Revision, x.SavedAt)).ToArray();
         var (lifecycle, basis) = RequirementLifecyclePolicy.Derive(items.Where(x => x.Current).Select(x => x.State));
         return new(d.Id, d.Revision, d.Version, lifecycle, basis, r.SavedAt, r.Provenance, r.Hash, RegisterStorage.Deserialize(r.ContentJson), r.SourceId, r.SourceRevision, items);

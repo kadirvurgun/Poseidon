@@ -3439,6 +3439,11 @@
     "m_5bfa5323a04a472d": "Révision successeur en attente (non en vigueur avant publication)",
     "m_ae1a44f3c88cf989": "Aucune révision publiée n’est en vigueur",
     "m_12e4b7ce9141120d": "Remplace la révision",
-    "m_372c48ba7e84c124": "Traçabilité prête pour l’audit"
+    "m_372c48ba7e84c124": "Traçabilité prête pour l’audit",
+    "m_401a5953741e7377": "Le fichier source d’origine n’est pas conservé dans ce navigateur. Sélectionnez à nouveau le même fichier pour relancer exactement la tentative d’origine.",
+    "m_2adab3886ca18b5e": "Le fichier sélectionné ne correspond pas à la tentative d’origine. La tentative reste verrouillée.",
+    "m_6eb8ee576dacf887": "Une tentative incertaine antérieure a expiré dans ce navigateur. Vérifiez l’historique avant de soumettre à nouveau.",
+    "m_dbbdcf309e8f24c3": "Les règles liées enregistrent des états de cycle de vie différents. La valeur affichée est une priorité logicielle ; un examen d’expert est requis.",
+    "m_d6eb29d9d9dfbe8b": "Plus de règles sont liées que cette vue ne peut en contenir ; aucun cycle de vie n’est dérivé d’un ensemble partiel."
   }
 }

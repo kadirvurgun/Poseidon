@@ -3439,6 +3439,11 @@
     "m_5bfa5323a04a472d": "Revisão sucessora pendente (não vigente até ser publicada)",
     "m_ae1a44f3c88cf989": "Nenhuma revisão publicada está vigente",
     "m_12e4b7ce9141120d": "Substitui a revisão",
-    "m_372c48ba7e84c124": "Rastreabilidade pronta para auditoria"
+    "m_372c48ba7e84c124": "Rastreabilidade pronta para auditoria",
+    "m_401a5953741e7377": "O arquivo de origem original não é mantido neste navegador. Selecione o mesmo arquivo novamente para repetir exatamente a tentativa original.",
+    "m_2adab3886ca18b5e": "O arquivo selecionado não corresponde à tentativa original. A tentativa permanece bloqueada.",
+    "m_6eb8ee576dacf887": "Uma tentativa incerta anterior expirou neste navegador. Verifique o histórico antes de enviar novamente.",
+    "m_dbbdcf309e8f24c3": "As regras vinculadas registram estados de ciclo de vida diferentes. O valor exibido é uma precedência de software; é necessária revisão especializada.",
+    "m_d6eb29d9d9dfbe8b": "Há mais regras vinculadas do que esta visualização comporta; nenhum ciclo de vida é derivado de um conjunto parcial."
   }
 }
