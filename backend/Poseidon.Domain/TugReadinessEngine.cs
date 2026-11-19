@@ -95,7 +95,9 @@ public static class TugReadinessDecisionPolicy
     {
         if (!Decisions.Contains(decision, StringComparer.Ordinal) || !TugReadinessEngine.States.Contains(assessedState, StringComparer.Ordinal)) return "validation_failed";
         if (!ValidReason(reason)) return "validation_failed";
-        if (decision == Go && assessedState is not (TugReadinessEngine.Ready or TugReadinessEngine.Conditional)) return "tug_go_not_permitted";
+        // 60.02 p201: release only on a current PASS or a *source-permitted* verified CONDITIONAL. No source
+        // currently defines which CONDITIONAL states permit release, so GO is accepted on READY only.
+        if (decision == Go && assessedState != TugReadinessEngine.Ready) return "tug_go_not_permitted";
         return null;
     }
 }

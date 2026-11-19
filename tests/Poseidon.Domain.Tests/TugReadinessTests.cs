@@ -124,7 +124,7 @@ public sealed class TugReadinessTests
 
     [Theory]
     [InlineData("GO", TugReadinessEngine.Ready, null)]
-    [InlineData("GO", TugReadinessEngine.Conditional, null)]
+    [InlineData("GO", TugReadinessEngine.Conditional, "tug_go_not_permitted")] // no source-permitted CONDITIONAL yet (60.02 p201)
     [InlineData("GO", TugReadinessEngine.ReviewRequired, "tug_go_not_permitted")]
     [InlineData("GO", TugReadinessEngine.NotReady, "tug_go_not_permitted")]
     [InlineData("NO_GO", TugReadinessEngine.NotReady, null)]
