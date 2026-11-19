@@ -1653,6 +1653,39 @@
         "x-poseidon-profile": "NATIVE-OBSERVATION-COMMAND-1"
       }
     },
+    "/api/v1/sync/conflicts": {
+      "get": {
+        "tags": [
+          "SyncConflictCenterEndpoints"
+        ],
+        "operationId": "SyncConflictList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncConflictPageDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
     "/api/v1/vessels/{vessel}/crew/{assignment}/current-assignment": {
       "get": {
         "tags": [
@@ -29825,6 +29858,136 @@
         },
         "additionalProperties": false
       },
+      "SyncConflictItemDto": {
+        "required": [
+          "source",
+          "resourceId",
+          "resourceKind",
+          "enrollmentId",
+          "commandId",
+          "baseVersion",
+          "serverVersionAtConflict",
+          "capturedAt",
+          "receivedAt",
+          "state",
+          "resolutionCommandId",
+          "resolutionResult"
+        ],
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "resourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "resourceKind": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "enrollmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "commandId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "baseVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "serverVersionAtConflict": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "capturedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "receivedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "state": {
+            "type": "string"
+          },
+          "resolutionCommandId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "resolutionResult": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "SyncConflictPageDto": {
+        "required": [
+          "vesselId",
+          "readAt",
+          "sources",
+          "items",
+          "offset",
+          "hasMore"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "readAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SyncConflictSourceDto"
+            }
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SyncConflictItemDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SyncConflictSourceDto": {
+        "required": [
+          "source",
+          "state"
+        ],
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      },
       "SyncOperationOutcomeDto": {
         "required": [
           "operationId",
@@ -32584,6 +32747,9 @@
     },
     {
       "name": "SyncOperationEndpoints"
+    },
+    {
+      "name": "SyncConflictCenterEndpoints"
     },
     {
       "name": "CrewAssignmentSelectionEndpoints"
