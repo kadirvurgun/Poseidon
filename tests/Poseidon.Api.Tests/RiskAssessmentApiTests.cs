@@ -153,6 +153,48 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(2, final.Decisions.Count(d => d.Decision == "PUBLISH" && d.ActorId == hseq));
     }
 
+    // S1 critical-write coverage (RiskTemplateUpdate, RiskTemplateSuggestionReview): a draft edit by the author and the
+    // review of a crew suggestion by a different template writer; acceptance never edits or publishes the template.
+    [Fact]
+    [Trait("Requirement", "DEV-106")]
+    public async Task Risk_template_draft_edit_and_suggestion_review_are_attributed_writes_that_never_publish()
+    {
+        await using var host = Host(); using var c = Client(host);
+        var author = Guid.NewGuid(); var hseq = Guid.NewGuid(); var crew = Guid.NewGuid();
+        RiskActor(host.Services, author, RiskPermissions); await Token(c);
+        var template = new RiskTemplateContent("FICTIONAL mooring", "MOORING", [], ["FICTIONAL-MOOR"],
+            [new(Guid.NewGuid(), "Single up lines", "FICTIONAL snap-back", ["Injury"], [new(Guid.NewGuid(), "FICTIONAL snap-back zone marking", "EXISTING", "Bosun", true, [])], [])],
+            ["FICTIONAL-SMS-7"], "FICTIONAL HSEQ owner", null);
+        var created = await RiskOk<RiskTemplateDetailDto>(await Send(c, "hse/risk-templates", new RiskTemplateCreateCommand(Guid.NewGuid(), "FICTIONAL-T-" + Guid.NewGuid().ToString("N")[..6], template)));
+        var r1 = created.Revisions.Single();
+        var edited = await RiskOk<RiskTemplateDetailDto>(await Send(c, $"hse/risk-templates/{created.Id}",
+            new RiskTemplateUpdateCommand(1, r1.Version, template with { Title = "FICTIONAL mooring and unmooring" }), update: true));
+        var e1 = edited.Revisions.Single();
+        Assert.Equal(("DRAFT", "FICTIONAL mooring and unmooring", author), (e1.Status, e1.Content.Title, e1.ActorId));
+        Assert.NotEqual(r1.Hash, e1.Hash); Assert.NotEqual(r1.Version, e1.Version);
+        await AssertCode(await Send(c, $"hse/risk-templates/{created.Id}", new RiskTemplateUpdateCommand(1, r1.Version, template), update: true), HttpStatusCode.Conflict, "version_conflict");
+        var inReview = (await RiskOk<RiskTemplateDetailDto>(await Send(c, $"hse/risk-templates/{created.Id}/submit", new RiskTemplateSubmitCommand(1, e1.Version, e1.Hash)))).Revisions.Single();
+        RiskActor(host.Services, hseq, RiskPermissions); await Token(c);
+        await RiskOk<RiskTemplateDetailDto>(await Send(c, $"hse/risk-templates/{created.Id}/review",
+            new RiskTemplateReviewCommand(1, inReview.Version, inReview.Hash, "PUBLISH", "FICTIONAL HSEQ publication record", DateTimeOffset.UtcNow)));
+        RiskActor(host.Services, crew, "hse.risk_template.read", "hse.risk_template.suggest", "hse.risk.read"); await Token(c);
+        var suggested = await RiskOk<RiskTemplateDetailDto>(await Send(c, $"hse/risk-templates/{created.Id}/suggestions", new RiskTemplateSuggestCommand(Guid.NewGuid(), 1, "FICTIONAL add a line inspection step")));
+        var suggestion = Assert.Single(suggested.Suggestions); Assert.Equal("OPEN", suggestion.Status);
+        RiskActor(host.Services, author, RiskPermissions); await Token(c);
+        var reviewed = await RiskOk<RiskTemplateDetailDto>(await Send(c, $"hse/risk-templates/{created.Id}/suggestions/{suggestion.Id}/review",
+            new RiskTemplateSuggestionReviewCommand(suggestion.Version, "ACCEPT", "FICTIONAL accepted for the next revision")));
+        var closed = Assert.Single(reviewed.Suggestions);
+        Assert.Equal(("ACCEPTED", author), (closed.Status, closed.ReviewedBy!.Value)); Assert.False(closed.CanReview);
+        var current = reviewed.Revisions.Single(); Assert.Equal(("PUBLISHED", 1L, hseq), (current.Status, reviewed.LatestRevision, current.PublishedBy!.Value));
+        await AssertCode(await Send(c, $"hse/risk-templates/{created.Id}/suggestions/{suggestion.Id}/review",
+            new RiskTemplateSuggestionReviewCommand(closed.Version, "REJECT", "FICTIONAL second review attempt")), HttpStatusCode.Conflict, "invalid_state");
+        await using var db = Db();
+        var audit = await db.AuditEvents.Where(e => e.ResourceId == created.Id || e.ResourceId == suggestion.Id).ToArrayAsync(Ct);
+        Assert.Contains(audit, e => e.EntityType == nameof(RiskTemplateRevision) && e.Action == "Modified" && e.ChangeSummary!.Contains("RiskTemplateUpdate") && e.ActorId == author.ToString());
+        Assert.Contains(audit, e => e.EntityType == nameof(RiskTemplateSuggestion) && e.Action == "Modified" && e.ChangeSummary!.Contains("RiskTemplateSuggestionReview") && e.ActorId == author.ToString());
+        Assert.DoesNotContain("FICTIONAL", JsonSerializer.Serialize(audit));
+    }
+
     [Fact]
     [Trait("Requirement", "DEV-105")]
     public async Task Risk_endpoints_enforce_permissions_tenant_vessel_scope_closed_queries_and_menu_projection()

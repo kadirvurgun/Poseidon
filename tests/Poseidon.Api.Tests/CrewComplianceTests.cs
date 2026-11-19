@@ -230,4 +230,70 @@ public sealed partial class DirectoryWorkspaceTests
         var next = await ManningView(client);
         using var hold = await Send(client, path, Accept(next, grant.Id) with { Decision = "MANNING_HOLD" }); Assert.Equal(HttpStatusCode.OK, hold.StatusCode);
     }
+
+    // S1 critical-write coverage (CrewCompetenceSignOff, CrewCredentialAssertionRecord): the positive human act is
+    // performed over HTTP by a second synthetic person who holds the appointment and never recorded/declared the row.
+    private static void CrewComplianceActor(IServiceProvider services, Guid actor, params CrewAuthority[] authorities) {
+        CrewCompliancePermissions(services, authorities);
+        var settings = services.GetRequiredService<FederationSettings>(); settings.Memberships[0] = settings.Memberships[0] with { ActorId = actor };
+    }
+
+    [Fact]
+    [Trait("Requirement", "DEV-049")]
+    public async Task Appointed_independent_assessor_records_the_competence_sign_off_on_the_exact_record_revision()
+    {
+        await using var host = Host(crewRead: true, crewWrite: true); using var client = Client(host);
+        var grant = CrewGrant("CompetenceAssessment", "Assessor"); CrewCompliancePermissions(host.Services); await Token(client);
+        var requirement = new CrewCompetenceRequirementCommand(Guid.NewGuid(), null, SeedVessel.Id, CrewRequirementTypes.Familiarization, "FICTIONAL-FAM", true, null, null, null, null, null, "ACTIVE");
+        Assert.Equal(HttpStatusCode.OK, (await Send(client, CrewBase + "/competence-matrix", requirement)).StatusCode);
+        var record = new CrewCompetenceRecordCommand(Guid.NewGuid(), null, requirement.Id, CrewCompetenceKinds.Familiarization, new(2026, 1, 1), null, null);
+        Assert.Equal(HttpStatusCode.OK, (await Send(client, $"{CrewBase}/{SeedVessel.Id}/competence", record)).StatusCode);
+        var assessor = Guid.NewGuid(); CrewComplianceActor(host.Services, assessor, grant); await Token(client);
+        var path = $"{CrewBase}/{SeedVessel.Id}/competence/{record.Id}/sign-off";
+        var signOff = new CrewCompetenceSignOffCommand(1, 0, grant.Id, "CONFIRMED", "FICTIONAL assessor rationale");
+        using var signed = await Send(client, path, signOff); Assert.Equal(HttpStatusCode.OK, signed.StatusCode);
+        var outcome = (await signed.Content.ReadFromJsonAsync<CrewCommandOutcome>(Ct))!; Assert.False(outcome.Replayed); Assert.Equal(1, outcome.Revision);
+        // The sequence moved: replaying the same expectation with a new key is a conflict, never a second sign-off.
+        Assert.Equal(HttpStatusCode.Conflict, (await Send(client, path, signOff)).StatusCode);
+        var view = (await client.GetFromJsonAsync<CrewCompetenceView>($"/api/v1/{CrewBase}/{SeedVessel.Id}/competence?from={Today}&to={Today}", Ct))!;
+        var row = Assert.Single(view.Records, r => r.Id == record.Id); Assert.False(row.ActorIsRecorder);
+        Assert.NotNull(row.SignOff); Assert.Equal(("CONFIRMED", assessor, "Assessor", 1L, true), (row.SignOff!.Outcome, row.SignOff.ActorId, row.SignOff.Duty, row.SignOff.RecordRevision, row.SignOff.Current));
+        await using var db = Db(); var stored = await db.CrewCompetenceSignOffs.SingleAsync(s => s.RecordId == record.Id, Ct);
+        Assert.Equal((assessor, grant.Id, 1L, 1L), (stored.ActorId, stored.AuthorityId, stored.RecordRevision, stored.Sequence));
+        var audit = await db.AuditEvents.Where(e => e.ResourceId == record.Id && e.ActorId == assessor.ToString()).ToArrayAsync(Ct);
+        Assert.Contains(audit, e => e.EntityType == nameof(CrewCompetenceSignOff) && e.ChangeSummary!.Contains("CrewCompetenceSignOff"));
+        Assert.DoesNotContain("FICTIONAL assessor rationale", JsonSerializer.Serialize(audit));
+    }
+
+    [Fact]
+    [Trait("Requirement", "DEV-048")]
+    public async Task Independent_appointed_verifier_records_the_credential_assertion_against_the_scanned_document()
+    {
+        var root = PersonFileRoot(); using var peer = new ScanPeer("stream: OK\0"); using var host = PersonFileHost(root, peer.Port); using var client = Client(host);
+        PersonFilePermissions(host.Services); var grant = CrewGrant("CredentialVerification", "Crewing"); CrewCompliancePermissions(host.Services, grant); await Token(client);
+        var filePath = PersonalVersion("CertificateDocument");
+        var stage = (await (await Send(client, filePath, PersonalPng("CertificateDocument"))).Content.ReadFromJsonAsync<FileDto>(Ct))!;
+        Assert.Equal(HttpStatusCode.OK, (await PutPersonalPng(client, filePath, stage.Id)).StatusCode);
+        var id = Guid.NewGuid();
+        Assert.Equal(HttpStatusCode.OK, (await Send(client, $"{CrewBase}/{SeedVessel.Id}/certificates", new CredentialSaveCommand(id, null,
+            new(new("FICTIONAL-COC", null, null, new(2025, 1, 1), new(2030, 1, 1)), DocumentReference: stage.Id)))).StatusCode);
+        var path = $"{CrewBase}/{SeedVessel.Id}/certificates/{id}/verification";
+        var command = new CrewCredentialAssertionCommand(1, 0, grant.Id, "Verified", "FICTIONAL independent document check");
+        // Document and appointment present: the declarer is still refused.
+        using var own = await Send(client, path, command); Assert.Equal(HttpStatusCode.Forbidden, own.StatusCode);
+        Assert.Contains("separation_of_duties", await own.Content.ReadAsStringAsync(Ct));
+        var verifier = Guid.NewGuid(); CrewComplianceActor(host.Services, verifier, grant); await Token(client);
+        var before = (await client.GetFromJsonAsync<CrewCredentialVerificationView>("/api/v1/" + path, Ct))!;
+        Assert.True(before.CanRecord); Assert.False(before.ActorIsDeclarer); Assert.True(before.DocumentAvailable); Assert.Empty(before.Blockers);
+        using var recorded = await Send(client, path, command); Assert.Equal(HttpStatusCode.OK, recorded.StatusCode);
+        var outcome = (await recorded.Content.ReadFromJsonAsync<CrewCommandOutcome>(Ct))!; Assert.False(outcome.Replayed); Assert.Equal(1, outcome.Revision);
+        var after = (await client.GetFromJsonAsync<CrewCredentialVerificationView>("/api/v1/" + path, Ct))!;
+        Assert.NotNull(after.Latest); Assert.Equal(("Verified", verifier, "Crewing", 1L, true), (after.Latest!.State, after.Latest.ActorId, after.Latest.Duty, after.Latest.CredentialRevision, after.Latest.Current));
+        await using var db = Db(); var stored = await db.CrewCredentialAssertions.SingleAsync(a => a.CredentialId == id, Ct);
+        Assert.Equal((verifier, grant.Id, 1L, 1L), (stored.ActorId, stored.AuthorityId, stored.CredentialRevision, stored.Sequence));
+        var audit = await db.AuditEvents.Where(e => e.ResourceId == id && e.ActorId == verifier.ToString()).ToArrayAsync(Ct);
+        Assert.Contains(audit, e => e.EntityType == nameof(CrewCredentialAssertion) && e.ChangeSummary!.Contains("CrewCredentialAssertionRecord"));
+        Assert.DoesNotContain("FICTIONAL independent document check", JsonSerializer.Serialize(audit));
+        File.Delete(Path.Combine(root, SeedVessel.TenantId.ToString("N") + "-" + stage.Id.ToString("N") + ".object")); Directory.Delete(root, false);
+    }
 }

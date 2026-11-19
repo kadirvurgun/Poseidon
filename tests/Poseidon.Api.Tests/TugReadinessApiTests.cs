@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Poseidon.Api;
 using Poseidon.Domain;
 using Poseidon.Persistence;
@@ -145,5 +146,40 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal((HttpStatusCode)422, foreign.StatusCode);
         await using var db = Db();
         Assert.False(await db.TowEquipmentVerifications.AnyAsync(v => v.ItemId == saved.Id, Ct));
+    }
+
+    // S1 critical-write coverage (TugTowEquipmentUpdate, TugAssignmentRespond, TugTowEquipmentVerify): the declarer/proposer
+    // edits and proposes; a second synthetic person holding the Tug Master and Chief Engineer appointments records the
+    // acknowledgement and the verification. Neither is a GO or a release, and no readiness decision is created.
+    [Fact]
+    public async Task Independent_tug_master_acknowledges_the_exact_scope_and_chief_engineer_verifies_the_updated_equipment_revision() {
+        using var host = ReadinessHost(true); using var c = Client(host); await Token(c);
+        var inputs = new TowEquipmentInputs("Winch", "FICTIONAL winch", "45", new DateOnly(2026, 1, 1), new DateOnly(2027, 1, 1), "Degraded", true, null, null, null);
+        var saved = (await (await Send(c, $"tug-tow-equipment?vessel={Tug.Id}", new TowEquipmentSaveCommand(Guid.NewGuid(), null, inputs))).Content.ReadFromJsonAsync<TowEquipmentDto>(Ct))!;
+        using var edit = await Send(c, $"tug-tow-equipment/{saved.Id}?vessel={Tug.Id}",
+            new TowEquipmentSaveCommand(saved.Id, saved.Version, inputs with { Condition = "Serviceable", Notes = "FICTIONAL repaired" }), update: true);
+        Assert.Equal(HttpStatusCode.OK, edit.StatusCode);
+        var updated = (await edit.Content.ReadFromJsonAsync<TowEquipmentDto>(Ct))!;
+        Assert.Equal((saved.Id, 2L, "Serviceable", "UserDeclaredUnverified", false), (updated.Id, updated.Revision, updated.Inputs.Condition, updated.Provenance, updated.Replayed));
+        var job = await SubmittedJob(c);
+        var proposal = (await (await Send(c, $"tug-assignments?vessel={Tug.Id}", Proposal(job))).Content.ReadFromJsonAsync<TugAssignmentDto>(Ct))!;
+        var master = Guid.NewGuid(); var settings = host.Services.GetRequiredService<FederationSettings>();
+        settings.Memberships[0] = settings.Memberships[0] with { ActorId = master }; await Token(c);
+        using var respond = await Send(c, $"tug-assignments/{proposal.Id}/respond?vessel={Tug.Id}", new TugAssignmentRespondCommand(proposal.Version, proposal.ScopeHash, "ACCEPT", TugMasterGrant));
+        Assert.Equal(HttpStatusCode.OK, respond.StatusCode);
+        var acknowledged = (await respond.Content.ReadFromJsonAsync<TugAssignmentDto>(Ct))!;
+        Assert.Equal(("Proposed", "Accepted", proposal.Revision + 1, false), (acknowledged.State, acknowledged.MasterAck, acknowledged.Revision, acknowledged.Replayed));
+        using var verify = await Send(c, $"tug-tow-equipment/{saved.Id}/verifications?vessel={Tug.Id}", new TowEquipmentVerifyCommand(updated.Version, updated.Revision, "VERIFIED", ChiefEngineerGrant));
+        Assert.Equal(HttpStatusCode.OK, verify.StatusCode);
+        var verification = (await verify.Content.ReadFromJsonAsync<TowEquipmentVerificationDto>(Ct))!;
+        Assert.Equal((2L, "VERIFIED", "ChiefEngineer"), (verification.ItemRevision, verification.Outcome, verification.Duty));
+        await using var db = Db();
+        var response = Assert.Single(await db.TugAssignmentResponses.Where(r => r.AssignmentId == proposal.Id).ToArrayAsync(Ct));
+        Assert.Equal((master, TugMasterGrant, "TugMaster", "ACCEPT"), (response.ActorId, response.AuthorityId, response.Duty, response.Decision));
+        Assert.Equal("Accepted", (await db.TugAssignmentProposals.SingleAsync(p => p.Id == proposal.Id, Ct)).MasterAck);
+        var stored = Assert.Single(await db.TowEquipmentVerifications.Where(v => v.ItemId == saved.Id).ToArrayAsync(Ct));
+        Assert.Equal((master, ChiefEngineerGrant, 2L), (stored.ActorId, stored.AuthorityId, stored.ItemRevision));
+        Assert.Equal(2, await db.TowEquipmentRevisions.CountAsync(r => r.ItemId == saved.Id, Ct));
+        Assert.Empty(await db.TugReadinessDecisions.Where(d => d.AssignmentId == proposal.Id).ToArrayAsync(Ct));
     }
 }
