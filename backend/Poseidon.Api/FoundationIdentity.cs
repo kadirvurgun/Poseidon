@@ -68,26 +68,55 @@ public sealed record TrustedActor(Guid Id, Guid TenantId, string[] Permissions, 
     }
 }
 
-public sealed class ActorResolver(FederationSettings settings)
+// Operator-provisioned identity binding used by membership revalidation (PLAN-1511-5202).
+public sealed record ConfiguredIdentity(string Issuer, string Subject, Guid ActorId, Guid TenantId);
+
+public sealed class ActorResolver(FederationSettings settings, IHttpContextAccessor? http = null)
 {
-    // Operator-assigned local role references are observations only: never permission grants or IdP labels.
-    public static string? TrustedRoleContext(string[]? refs) => refs is { Length: > 0 and <= 16 } &&
-        refs.All(x => x != null && x.Length == 36 && Guid.TryParseExact(x, "D", out var id) && id != Guid.Empty) &&
-        refs.Distinct(StringComparer.OrdinalIgnoreCase).Count() == refs.Length
-        ? string.Join(',', refs.Select(x => Guid.Parse(x).ToString("D")).Order(StringComparer.Ordinal)) : null;
-    public TrustedActor? Resolve(ClaimsPrincipal principal)
+    private Membership? Configured(ClaimsPrincipal principal)
     {
         if (principal.Identity?.IsAuthenticated != true) return null;
         var subjects = principal.FindAll("sub").ToArray();
         var issuers = principal.FindAll("iss").ToArray();
         if (subjects.Length != 1 || issuers.Length != 1) return null;
         var matches = settings.Memberships.Where(x => x.Issuer == issuers[0].Value && x.Subject == subjects[0].Value).ToArray();
-        if (matches.Length != 1 || matches[0].ActorId == Guid.Empty || matches[0].TenantId == Guid.Empty) return null;
-        var m = matches[0];
-        return new TrustedActor(m.ActorId, m.TenantId, (m.Permissions ?? []).Where(x => x is "hr.legal_entity.read" or "hr.legal_entity.write" or "hr.legal_entity.identifier.read" or "hr.person.read" or "hr.person.write" or "hr.person.verify" or "hr.employment.read" or "hr.employment.write" or "hr.employment.approve" or "hr.assignment.read" or "hr.assignment.write" or "hr.assignment.approve" or "hr.actual.record" or "config.read" or "config.resolve" or "config.draft" or "config.approve" or "config.reject" or "operations.downtime.read" or "operations.downtime.write" or "workorder.read" or "workorder.write" or "defect.read" or "defect.write" or "operations.fuel.read" or "operations.fuel.write" or "operations.port.read" or "operations.port.write" or "certificate.verify.record" or "certificate.read" or "certificate.extract" or "certificate.write" or "certificate.renewal.write" or "certificate.renewal.owner" or "daily.noon.review" or "daily.deck.review" or "daily.engine.review" or "daily.noon.read" or "daily.noon.write" or "daily.deck.read" or "daily.deck.write" or "daily.engine.read" or "daily.engine.write" or "system.health.read" or "notification.evaluate" or "notification.read" or "notification.manage" or "notification.acknowledge" or "notification.preference.write" or "crew.catalog.govern" or "crew.assessment.read" or "regulatory.qualify" or "regulatory.facts.attest" or "human.trace.read" or "human.review.read" or "human.review.submit" or "human.verify" or "human.decide" or "control.read" or "control.write" or "control.owner.eligible" or "evidence.read" or "evidence.write" or "applicability.read" or "applicability.evaluate" or "rules.write" or "rules.review" or "import.legacy.convert" or "crew.identity.convert" or "crew.documents.read" or "crew.documents.write" or "crew.position.write" or "maintenance.observation.write" or "crew.assignment.declare" or "import.read" or "import.write" or "crew.certificate.read" or "crew.certificate.write" or "crew.profile.identity.read" or "crew.profile.identity.write" or "crew.profile.contact.read" or "crew.profile.contact.write" or "crew.profile.medical.read" or "crew.profile.medical.write" or "crew.profile.employment.read" or "crew.profile.employment.write" or "mode.tug" or "mode.cross" or "tug.read" or "tug.write" or "tug.plan.write" or "tug.owner.eligible" or "crew.read" or "crew.write" or "crew.identity.read" or "crew.identity.write" or "crew.history.read" or "directory.read" or "directory.write" or "workspace.search" or "regulatory.draft.read" or "regulatory.draft.write" or "audit.read" or "file.read" or "file.write" or "equipment.read" or "equipment.write" or "equipment.history.read" or "maintenance.read" or "maintenance.write" or "maintenance.history.read" or "maintenance.owner.eligible").Distinct().ToArray(),
-            m.TenantWideRead, m.TenantWideManage, (m.VesselGrants ?? []).Where(g => g.VesselId != Guid.Empty).ToArray()) {
-                RoleContext = TrustedRoleContext(m.RoleReferences),
-                ActiveCompanyId = m.ActiveCompanyId is { } company && company != Guid.Empty ? company : null
+        return matches.Length != 1 || matches[0].ActorId == Guid.Empty || matches[0].TenantId == Guid.Empty ? null : matches[0];
+    }
+
+    public ConfiguredIdentity? ConfiguredIdentityFor(ClaimsPrincipal principal) =>
+        Configured(principal) is { } m ? new(m.Issuer, m.Subject, m.ActorId, m.TenantId) : null;
+
+    // Persisted lifecycle state loaded by MembershipSessionGate for this request. It can only
+    // narrow the operator grant: inactive => no actor; scope/role/company must agree.
+    private MembershipOverlay? Overlay(Membership m) =>
+        http?.HttpContext?.Items[MembershipSession.OverlayItem] is MembershipOverlay o && o.Issuer == m.Issuer && o.Subject == m.Subject ? o : null;
+    // Operator-assigned local role references are observations only: never permission grants or IdP labels.
+    public static string? TrustedRoleContext(string[]? refs) => refs is { Length: > 0 and <= 16 } &&
+        refs.All(x => x != null && x.Length == 36 && Guid.TryParseExact(x, "D", out var id) && id != Guid.Empty) &&
+        refs.Distinct(StringComparer.OrdinalIgnoreCase).Count() == refs.Length
+        ? string.Join(',', refs.Select(x => Guid.Parse(x).ToString("D")).Order(StringComparer.Ordinal)) : null;
+    // Closed allow-list of operator permissions the API understands; unknown values are dropped.
+    public static string[] TrustedPermissions(string[]? permissions) => (permissions ?? []).Where(x => x is "hr.legal_entity.read" or "hr.legal_entity.write" or "hr.legal_entity.identifier.read" or "hr.person.read" or "hr.person.write" or "hr.person.verify" or "hr.employment.read" or "hr.employment.write" or "hr.employment.approve" or "hr.assignment.read" or "hr.assignment.write" or "hr.assignment.approve" or "hr.actual.record" or "config.read" or "config.resolve" or "config.draft" or "config.approve" or "config.reject" or "operations.downtime.read" or "operations.downtime.write" or "workorder.read" or "workorder.write" or "defect.read" or "defect.write" or "operations.fuel.read" or "operations.fuel.write" or "operations.port.read" or "operations.port.write" or "certificate.verify.record" or "certificate.read" or "certificate.extract" or "certificate.write" or "certificate.renewal.write" or "certificate.renewal.owner" or "daily.noon.review" or "daily.deck.review" or "daily.engine.review" or "daily.noon.read" or "daily.noon.write" or "daily.deck.read" or "daily.deck.write" or "daily.engine.read" or "daily.engine.write" or "system.health.read" or "notification.evaluate" or "notification.read" or "notification.manage" or "notification.acknowledge" or "notification.preference.write" or "crew.catalog.govern" or "crew.assessment.read" or "regulatory.qualify" or "regulatory.facts.attest" or "human.trace.read" or "human.review.read" or "human.review.submit" or "human.verify" or "human.decide" or "control.read" or "control.write" or "control.owner.eligible" or "evidence.read" or "evidence.write" or "applicability.read" or "applicability.evaluate" or "rules.write" or "rules.review" or "import.legacy.convert" or "crew.identity.convert" or "crew.documents.read" or "crew.documents.write" or "crew.position.write" or "maintenance.observation.write" or "crew.assignment.declare" or "import.read" or "import.write" or "crew.certificate.read" or "crew.certificate.write" or "crew.profile.identity.read" or "crew.profile.identity.write" or "crew.profile.contact.read" or "crew.profile.contact.write" or "crew.profile.medical.read" or "crew.profile.medical.write" or "crew.profile.employment.read" or "crew.profile.employment.write" or "mode.tug" or "mode.cross" or "tug.read" or "tug.write" or "tug.plan.write" or "tug.owner.eligible" or "crew.read" or "crew.write" or "crew.identity.read" or "crew.identity.write" or "crew.history.read" or "directory.read" or "directory.write" or "workspace.search" or "regulatory.draft.read" or "regulatory.draft.write" or "audit.read" or "file.read" or "file.write" or "equipment.read" or "equipment.write" or "equipment.history.read" or "maintenance.read" or "maintenance.write" or "maintenance.history.read" or "maintenance.owner.eligible" or "membership.read" or "membership.manage" or "membership.security.suspend").Distinct().ToArray();
+    public TrustedActor? Resolve(ClaimsPrincipal principal)
+    {
+        if (Configured(principal) is not { } m) return null;
+        var overlay = Overlay(m);
+        if (overlay is { Denied: true } || overlay?.Snapshot is { } inactive && (inactive.IdentityConflict || inactive.Status != Poseidon.Domain.MembershipStatus.Active)) return null;
+        var persisted = overlay?.Snapshot;
+        var roleContext = TrustedRoleContext(m.RoleReferences);
+        var company = m.ActiveCompanyId is { } configuredCompany && configuredCompany != Guid.Empty ? configuredCompany : (Guid?)null;
+        var grants = (m.VesselGrants ?? []).Where(g => g.VesselId != Guid.Empty).ToArray();
+        if (persisted != null)
+        {
+            grants = grants.Where(g => persisted.VesselGrants.Any(p => p.VesselId == g.VesselId))
+                .Select(g => g with { CanEdit = g.CanEdit && persisted.VesselGrants.Any(p => p.VesselId == g.VesselId && p.CanEdit) }).ToArray();
+            if (roleContext != persisted.RoleContext) roleContext = null;
+            if (company != persisted.ActiveCompanyId) company = null;
+        }
+        return new TrustedActor(m.ActorId, m.TenantId, TrustedPermissions(m.Permissions),
+            m.TenantWideRead, m.TenantWideManage, grants) {
+                RoleContext = roleContext,
+                ActiveCompanyId = company
             };
     }
 }
@@ -115,6 +144,8 @@ public static class FoundationIdentity
             throw new InvalidOperationException("Local OIDC trust requires a matching configured authority and issuer.");
         services.AddSingleton(settings);
         services.AddSingleton<ActorResolver>();
+        services.AddSingleton<MembershipStateReader>();
+        services.AddScoped<ICurrentMembershipResolver, CurrentMembershipResolver>();
         services.AddAntiforgery(o =>
         {
             o.HeaderName = "X-CSRF-TOKEN";
@@ -180,24 +211,34 @@ public static class FoundationIdentity
             };
             o.Events = new OpenIdConnectEvents
             {
-                OnTokenValidated = c =>
+                OnTokenValidated = async c =>
                 {
-                    var actor = c.HttpContext.RequestServices.GetRequiredService<ActorResolver>().Resolve(c.Principal!);
-                    if (actor == null || !actor.Permissions.Contains("directory.read"))
+                    var actors = c.HttpContext.RequestServices.GetRequiredService<ActorResolver>();
+                    var actor = actors.Resolve(c.Principal!);
+                    if (actor == null || !actor.Permissions.Contains("directory.read") || actors.ConfiguredIdentityFor(c.Principal!) is not { } identity)
                     {
                         c.Fail("Membership unavailable.");
-                        return Task.CompletedTask;
+                        return;
+                    }
+                    // PLAN-1511-5202: a persisted suspended/revoked membership or identity conflict
+                    // denies new sessions; the current access revision is stamped into the session.
+                    var persisted = await c.HttpContext.RequestServices.GetRequiredService<MembershipStateReader>()
+                        .ReadAsync(identity, c.HttpContext.TraceIdentifier, c.HttpContext.RequestAborted);
+                    if (persisted != null && (persisted.IdentityConflict || persisted.Status != Poseidon.Domain.MembershipStatus.Active))
+                    {
+                        c.Fail("Membership unavailable.");
+                        return;
                     }
                     c.Principal = new ClaimsPrincipal(new ClaimsIdentity([
                         new Claim("sub", c.Principal!.FindFirst("sub")!.Value),
                         new Claim("iss", c.Principal!.FindFirst("iss")!.Value),
-                        new Claim(ClaimTypes.NameIdentifier, actor.Id.ToString())
+                        new Claim(ClaimTypes.NameIdentifier, actor.Id.ToString()),
+                        new Claim(MembershipSession.AccessRevisionClaim, (persisted?.AccessRevision ?? 0).ToString(System.Globalization.CultureInfo.InvariantCulture))
                     ], Oidc));
                     // Cookie must expire no later than the validated ID token, with a 30 minute ceiling.
                     var expiry = new DateTimeOffset(c.SecurityToken.ValidTo, TimeSpan.Zero);
                     c.Properties!.ExpiresUtc = expiry < DateTimeOffset.UtcNow.AddMinutes(30) ? expiry : DateTimeOffset.UtcNow.AddMinutes(30);
                     c.Properties.IsPersistent = false;
-                    return Task.CompletedTask;
                 },
                 OnTicketReceived = async c => await c.HttpContext.RequestServices.GetRequiredService<SecurityAudit>()
                     .WriteAsync(c.HttpContext, "Login", "Success", c.Principal),

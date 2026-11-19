@@ -29,7 +29,7 @@ public static class SecurityEventCodes
         "TodayRead", "TodayWhyRead", "MetricCatalogRead", "MetricScalarRead", "TugRead", "TugSave",
         "VesselCreate", "VesselUpdate", "VesselsRead", "WorkspaceRead",
         "WorkspaceSearch", "SystemHealthRead", "NotificationRead", "NotificationCommand", "ComplianceWorkspaceRead", "CriticalStateRead", "DailyOfflineRead", "DailyOfflineRequest", "DailyOperationsRead", "DailyOperationsCommand", "DailyReviewRead", "DailyReviewCommand", "ShipOperationsRead", "ShipOperationsCommand",
-        "ParameterRead", "ParameterCommand", "HrRead", "HrCommand",
+        "ParameterRead", "ParameterCommand", "HrRead", "HrCommand", "MembershipRead", "MembershipCommand", "SessionRevalidation",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static IReadOnlySet<string> Results { get; } = new string[]
     {
@@ -69,7 +69,7 @@ public static class SecurityEventCodes
         "invalid_reason", "invalid_state", "expiry_not_due", "supersession_not_proven", "freshness_review_required",
         "version_conflict", "invalid_qualification_transition", "independent_reviewer_required",
         "incomplete_qualification", "acceptance_trigger_required", "impact_review_required",
-        "outside_effective_dates", "superseding_rule_required", "hr_reference_incomplete", "hr_identifier_duplicate", "hr_role_overlap", "hr_employee_no_overlap", "hr_person_not_verified", "hr_legal_entity_inactive", "hr_employer_role_missing", "hr_employment_not_active", "hr_period_outside_employment", "hr_operator_path_missing", "hr_assignment_overlap", "hr_active_assignment_at_exit", "hr_actual_exists", "hr_event_conflict", "hr_employment_outside_legal_entity", "hr_employment_outside_employer_role",
+        "outside_effective_dates", "superseding_rule_required", "hr_reference_incomplete", "hr_identifier_duplicate", "hr_role_overlap", "hr_employee_no_overlap", "hr_person_not_verified", "hr_legal_entity_inactive", "hr_employer_role_missing", "hr_employment_not_active", "hr_period_outside_employment", "hr_operator_path_missing", "hr_assignment_overlap", "hr_active_assignment_at_exit", "hr_actual_exists", "hr_event_conflict", "hr_employment_outside_legal_entity", "hr_employment_outside_employer_role", "last_admin", "membership_inactive",
         "invalid_metric_query", "invalid_metric_scope", "metric_not_found",
         "owner_field_not_writable", "invariant_not_writable", "alias_read_only", "family_not_writable", "type_mismatch", "out_of_range",
         "unresolved_reference", "scope_not_allowed", "selector_invalid", "definition_version_mismatch", "effective_from_in_past",
