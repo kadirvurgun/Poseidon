@@ -63,7 +63,10 @@ test.describe('Today vessel selector reflow', () => {
                 await expect(card.getByRole('heading', { name: vessel.code, exact: true })).toHaveText(vessel.code);
                 await expect(card.getByText(vessel.name, { exact: true })).toHaveText(vessel.name);
                 expect(await card.evaluate(node => node.scrollWidth <= node.clientWidth + 1)).toBe(true);
-                const button = await card.getByRole('button', { name: identity, exact: true }).boundingBox();
+                // WCAG 2.5.3: the action's name is its visible label followed by the hidden vessel identity.
+                const action = card.getByRole('button', { name: new RegExp(` ${identity.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`) });
+                await expect(action).toHaveCount(1);
+                const button = await action.boundingBox();
                 const bounds = await card.boundingBox();
                 expect(button).not.toBeNull(); expect(bounds).not.toBeNull();
                 expect(button!.x).toBeGreaterThanOrEqual(bounds!.x);
