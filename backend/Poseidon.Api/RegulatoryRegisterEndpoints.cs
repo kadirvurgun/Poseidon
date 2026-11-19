@@ -107,7 +107,13 @@ public static class RegulatoryRegisterEndpoints
             return Results.Problem(statusCode: status, title: code, extensions: new Dictionary<string, object?> { ["code"] = code, ["errors"] = errors ?? [], ["correlationId"] = h.TraceIdentifier });
         }
         // Rechecked before any receipt lookup. Neither body claims nor directory.write grant this authority.
-        if (!actor.CanWriteRegulatory) return await Fail(403, "permission_denied");
+        // PLAN-1511-5402: exact action derived equal to the former CanWriteRegulatory predicate.
+        var access = new ExactAccessRequest(kind == "Source"
+                ? id == null ? ExactActionCatalog.RegulatorySourceCreate : ExactActionCatalog.RegulatorySourceEdit
+                : id == null ? ExactActionCatalog.RegulatoryRequirementCreate : ExactActionCatalog.RegulatoryRequirementEdit,
+            ExactActionCatalog.PurposeRegisterDraft, actor.TenantId, null);
+        var decision = ExactActionAccess.Evaluate(actor, access);
+        if (!decision.Allowed) return await Fail(403, "permission_denied");
         await audit.WriteAsync(h, "RegisterSave", "Attempted", resourceId: id);
         try { await h.RequestServices.GetRequiredService<IAntiforgery>().ValidateRequestAsync(h); }
         catch (AntiforgeryValidationException) { return await Fail(403, "csrf_invalid"); }
@@ -164,7 +170,13 @@ public static class RegulatoryRegisterEndpoints
             var revision = draft.Snapshot(command.SourceId, command.SourceRevision); db.RegisterRevisions.Add(revision);
             await db.SaveChangesAsync(h.RequestAborted);
             db.CommandReceipts.Add(new() { TenantId = actor.TenantId, ActorId = actor.Id, Key = key, Action = action, Fingerprint = fingerprint, ResourceId = draft.Id, CommittedAt = draft.SavedAt, RegisterRevision = revision.Revision, RegisterVersion = draft.Version });
-            await db.SaveChangesAsync(h.RequestAborted); await transaction.CommitAsync(h.RequestAborted);
+            await db.SaveChangesAsync(h.RequestAborted);
+            // Commit-time revalidation (54.02 A03-007 step 8): access lost after the first check rolls back.
+            if (!ExactActionAccess.RevalidateBeforeCommit(h, decision, access, actor.Id).Allowed) {
+                await transaction.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear();
+                return await Fail(403, "permission_denied");
+            }
+            await transaction.CommitAsync(h.RequestAborted);
             return Results.Ok(Dto(actor, draft, revision));
         } catch (DbUpdateConcurrencyException) {
             await transaction.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear(); return await Replay() ?? await Fail(409, "version_conflict");

@@ -2,20 +2,20 @@
 .appearance-controls > summary, .enterprise-shell .appearance-controls > summary { display: flex; align-items: center; gap: 7px; min-height: 44px; padding: 6px 10px; cursor: pointer; border: 1px solid var(--border); border-radius: var(--radius); background: var(--card); color: var(--foreground); list-style: none; }
 .appearance-controls > summary::-webkit-details-marker { display: none; }
 .appearance-controls > summary > svg { width: 16px; height: 16px; }
-.appearance-controls > summary:focus-visible, .appearance-panel select:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
-.appearance-panel { position: absolute; z-index: 20; right: 0; top: calc(100% + 8px); width: min(240px, calc(100vw - 32px)); display: grid; gap: 8px; padding: 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--popover); color: var(--popover-foreground); box-shadow: 0 10px 30px #0003; }
+.appearance-controls > summary:focus-visible, .appearance-panel select:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
+.appearance-panel { position: absolute; z-index: 20; inset-inline-end: 0; top: calc(100% + 8px); width: min(240px, calc(100vw - 32px)); display: grid; gap: 8px; padding: 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--popover); color: var(--popover-foreground); box-shadow: 0 10px 30px #0003; }
 .appearance-controls .appearance-panel > label { color: var(--popover-foreground); font-weight: 600; }
 .appearance-controls .appearance-panel > select { width: 100%; min-height: 44px; font: inherit; border: 1px solid var(--input); border-radius: calc(var(--radius) - 2px); padding: 8px; background: var(--card); color: var(--foreground); }
 @media (max-width: 580px) { .appearance-controls > summary > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); } }
 .appearance-controls .appearance-panel > .appearance-customize { min-height: 44px; font: inherit; font-weight: 600; border: 1px solid var(--border); border-radius: calc(var(--radius) - 2px); background: var(--secondary); color: var(--secondary-foreground); cursor: pointer; }
-.appearance-panel .appearance-customize:focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; }
+.appearance-panel .appearance-customize:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 3px; }
 /* THEME-BUILDER-01 side sheet; app chrome stays visible behind a light scrim for live preview. */
 .theme-builder-backdrop { position: fixed; inset: 0; z-index: 1000; background: #0000002e; display: flex; justify-content: flex-end; }
 .theme-builder { box-sizing: border-box; width: min(440px, 100vw); height: 100%; overflow-y: auto; display: grid; align-content: start; gap: 10px; padding: 18px 18px 24px; background: var(--popover); color: var(--popover-foreground); border-inline-start: 1px solid var(--border); box-shadow: -12px 0 40px #0004; font-size: 13px; }
 .theme-builder-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .theme-builder h2 { margin: 0; font-size: 18px; }
 .theme-builder h3 { margin: 0 0 6px; font-size: 13px; }
-.theme-builder h2:focus-visible, .theme-builder :is(button, select, textarea, input):focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.theme-builder h2:focus-visible, .theme-builder :is(button, select, textarea, input):focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .theme-builder button, .theme-builder select, .theme-builder textarea { font: inherit; min-height: 44px; border: 1px solid var(--input); border-radius: calc(var(--radius) - 2px); background: var(--card); color: var(--card-foreground); padding: 8px 10px; }
 .theme-builder button { cursor: pointer; font-weight: 600; }
 .theme-builder button:disabled { cursor: not-allowed; opacity: .55; }
@@ -29,7 +29,7 @@
 .theme-builder-option { position: relative; display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 6px 10px; border: 1px solid var(--border); border-radius: calc(var(--radius) - 2px); background: var(--card); cursor: pointer; }
 .theme-builder-option > input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
 .theme-builder-option:has(input:checked) { border-color: var(--primary); box-shadow: inset 0 0 0 1px var(--primary); font-weight: 600; }
-.theme-builder-option:has(input:focus-visible) { outline: 2px solid var(--ring); outline-offset: 2px; }
+.theme-builder .theme-builder-option:has(input:focus-visible) { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 .theme-builder-swatch { width: 14px; height: 14px; border-radius: 50%; border: 1px solid #0003; }
 .theme-builder-preview, .theme-builder-contrast { display: grid; gap: 8px; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--background); color: var(--foreground); }
 .theme-builder-preview-row { display: flex; flex-wrap: wrap; gap: 8px; }
@@ -48,3 +48,9 @@
 .theme-builder .theme-builder-apply { background: var(--primary); color: var(--primary-foreground); border-color: transparent; }
 @media (prefers-reduced-motion: no-preference) { .theme-builder { animation: theme-builder-in .16s ease-out; } }
 @keyframes theme-builder-in { from { transform: translateX(16px); opacity: .6; } to { transform: none; opacity: 1; } }
+/* DEV-025 / 65.03 paragraph 73: on a narrow shell the popover spans the top bar (its positioned
+   ancestor) with an inline gutter, so it never overflows the 320 px viewport in LTR or RTL. */
+@media (max-width: 580px) {
+  .enterprise-topbar .appearance-controls { position: static; }
+  .enterprise-topbar .appearance-panel { inset-inline: 12px; top: 64px; width: auto; }
+}

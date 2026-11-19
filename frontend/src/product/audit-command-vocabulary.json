@@ -21,6 +21,7 @@
     "CreateVessel": "PREPARATION_COMMAND",
     "UpdateVessel": "PREPARATION_COMMAND",
     "SaveRegulatoryDraft": "PREPARATION_COMMAND",
+    "DeclareProfileFieldSource": "PREPARATION_COMMAND",
     "CreateSourceDraft": "REGULATORY_WORKFLOW",
     "SaveSourceDraft": "REGULATORY_WORKFLOW",
     "CreateRequirementDraft": "REGULATORY_WORKFLOW",

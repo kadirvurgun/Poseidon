@@ -35,3 +35,13 @@ it('admits actual scoped daily destinations without manufacturing missing role w
   expect(decodeLenses(base, tenant, actor, vessel).lenses[0].items.some(item => item.key === 'noon-report')).toBe(false)
   expect(() => decodeLenses({ ...daily, lenses: [{ ...daily.lenses[0], items: [{ ...daily.lenses[0].items[0], href: `/app/noon-report/${actor}` }] }] }, tenant, actor, vessel)).toThrow()
 })
+
+// DEV022-AC-07: closed lens shape at every level; no hidden count, denied list or extra role data.
+it('rejects extra members on the envelope, a lens or an item', () => {
+  expect(() => decodeLenses({ ...value(), hiddenCount: 1 }, tenant, actor, vessel)).toThrow()
+  const lens = value(); (lens.lenses[0] as Record<string, unknown>).deniedItems = ['audit']
+  expect(() => decodeLenses(lens, tenant, actor, vessel)).toThrow()
+  const item = value(); (item.lenses[0].items[0] as Record<string, unknown>).badge = 3
+  expect(() => decodeLenses(item, tenant, actor, vessel)).toThrow()
+  expect(decodeLenses(value(), tenant, actor, vessel).lenses).toHaveLength(1)
+})

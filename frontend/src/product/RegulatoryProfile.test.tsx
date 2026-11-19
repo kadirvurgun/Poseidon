@@ -30,12 +30,15 @@ beforeEach(() => {
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 describe('VESSEL-PROFILE-DRAFT-01 component and transport coverage (mocked API, no external IdP)', () => {
   it('removes saved source context when a history read withdraws access', async () => {
-    let finish!: (response: Response) => void
+    let finish: ((response: Response) => void) | undefined
     vi.stubGlobal('fetch', vi.fn(async (url: string) => url.includes('/history?') ? new Promise<Response>(resolve => { finish = resolve }) : url.includes('/files?') ?
       reply({ items: [], offset: 0, hasMore: false, available: true, canWrite: false, maxBytes: 1048576, allowedTypes: ['image/png'] }) : reply(profile)))
     render(<RegulatoryProfile {...callbacks()} />)
     expect(await screen.findByRole('region', { name: 'Saved source context' })).toBeVisible()
-    finish(reply({}, 403))
+    // The history read starts only after the profile read and its session proof settle, so it can lag the
+    // rendered region. Withdraw access only once that exact pending history request has been issued.
+    await waitFor(() => expect(finish).toBeTypeOf('function'))
+    finish!(reply({}, 403))
     await waitFor(() => expect(screen.queryByRole('region', { name: 'Saved source context' })).not.toBeInTheDocument())
     expect(screen.queryByLabelText('GT')).not.toBeInTheDocument()
     expect(screen.getByRole('alert')).toHaveTextContent('permission')

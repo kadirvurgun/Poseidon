@@ -12,7 +12,7 @@ const vessel = { id, companyId: '10000000-0000-0000-0000-000000000002', code: 'T
 const vesselPage = (count: number) => Array.from({ length: count }, (_, i) => ({ ...vessel, id: `10000000-0000-0000-0000-${String(i + 1).padStart(12, '0')}`, code: `T${i + 1}` }))
 const now = '2026-11-01T00:00:00Z'
 const href = `/app/fleet/${id}/profile`
-const data = { vessel, readAt: now, coverage: ['RegulatoryDraft', 'OperationalTasks', 'SafetyDecisions', 'Permits', 'EvidenceVerification', 'TechnicalMaintenance', 'TugPlanning'].map((source, i) => ({ source, status: i ? 'Unavailable' : 'Available' })), cards: { items: [{ key: 'regulatory-draft', priority: 'Advisory', source: 'RegulatoryDraft', reason: 'DraftUnverified', owner: null, nextAction: 'ReviewDraft', href }], offset: 0, limit: 25, hasMore: false } }
+const data = { vessel, readAt: now, coverage: ['RegulatoryDraft', 'OperationalTasks', 'SafetyDecisions', 'Permits', 'EvidenceVerification', 'TechnicalMaintenance', 'TugPlanning'].map((source, i) => ({ source, status: i ? 'Unavailable' : 'Available' })), cards: { items: [{ key: 'regulatory-draft', priority: 'Advisory', source: 'RegulatoryDraft', reason: 'DraftUnverified', owner: null, nextAction: 'ReviewDraft', href, sourceRef: { owner: 'REGULATORY', kind: 'RegulatoryDraft', id, revision: 1, savedAt: now } }], offset: 0, limit: 25, hasMore: false }, viewState: 'Partial' }
 const why = { vesselId: id, cardKey: 'regulatory-draft', rule: 'TW-DRAFT-01', reason: 'DraftUnverified', inputs: { known: 0, missing: 19, unknown: 1, reason: 'DraftUnverified' }, readAt: now, savedAt: now, sourceObservedAt: null, freshness: 'Unverified', provenance: 'Synthetic', blockers: ['VerificationUnavailable', 'OperationalSourcesUnavailable'], owner: null, nextAction: 'ReviewDraft', href }
 const response = (body: unknown, status = 200) => ({ ok: status === 200, status, json: async () => body }) as Response
 afterEach(() => vi.restoreAllMocks())
@@ -102,7 +102,7 @@ it('aborts the previous vessel request and ignores a late response when the cont
   const otherId = '10000000-0000-0000-0000-000000000003'
   const fetch = vi.fn((url: string, init: RequestInit) => {
     if (url.includes(id)) { oldSignal = init.signal as AbortSignal; return new Promise<Response>(resolve => { resolveOld = resolve }) }
-    return Promise.resolve(response({ ...data, vessel: { ...vessel, id: otherId, name: 'Other synthetic vessel' }, cards: { ...data.cards, items: [{ ...data.cards.items[0], href: `/app/fleet/${otherId}/profile` }] } }))
+    return Promise.resolve(response({ ...data, vessel: { ...vessel, id: otherId, name: 'Other synthetic vessel' }, cards: { ...data.cards, items: [{ ...data.cards.items[0], href: `/app/fleet/${otherId}/profile`, sourceRef: { ...data.cards.items[0].sourceRef, id: otherId } }] } }))
   })
   vi.stubGlobal('fetch', fetch)
   const props = { language: 'en' as const, offline: false, onNavigate: vi.fn() }

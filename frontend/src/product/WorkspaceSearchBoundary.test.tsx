@@ -116,3 +116,16 @@ it('aborts an in-flight read on disconnect and ignores success returned after ab
   expect(screen.queryByRole('link')).not.toBeInTheDocument()
   expect(screen.getByRole('status')).toHaveTextContent('Offline')
 })
+
+// DEV022-AC-09: authorized destinations show their localized menu label, never the raw route key.
+it('labels every authorized destination with its localized menu name instead of the route key', async () => {
+  const results = [
+    { key: 'work-order-center', href: '/app/work-order-center', label: 'work-order-center', kind: 'Destination' },
+    { key: 'defects', href: '/app/defects', label: 'defects', kind: 'Destination' },
+  ]
+  vi.stubGlobal('fetch', vi.fn().mockResolvedValue(response(page(results))))
+  render(<WorkspaceSearch {...props} />)
+  expect(await screen.findByRole('link', { name: 'Work orders' })).toHaveAttribute('href', '/app/work-order-center')
+  expect(screen.getByRole('link', { name: 'Defects and safeguards' })).toHaveAttribute('href', '/app/defects')
+  expect(screen.queryByText('work-order-center')).not.toBeInTheDocument()
+})
