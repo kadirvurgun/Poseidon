@@ -13,6 +13,7 @@ import { DailyOfflinePanel } from './daily-offline/DailyOfflinePanel';
 import { DailyReviewPanel } from './DailyReviewPanel';
 import { DailyReportFields } from './DailyReportFields';
 import { isGuid } from './identifiers';
+import { calendar } from './date-validation';
 import { ApiError, session, vessels, type Session, type Vessel } from './api';
 import { dailyApi, dailyAttempt, type DailyAttempt, type DailyCapabilities, type DailyCollection, type DailyPage, type DailyRecord, type DailyReferenceOption } from './daily-operations-api';
 import { dailyFields, dailyTitle, emptyDailyFields, type DailyFields } from './daily-report-fields';
@@ -161,19 +162,21 @@ function DailySurface({ route, language, onLanguage, onNavigate, onDirty, onSavi
     // stays unavailable: a typed free-text reference can never become Known.
     const [referenceOptions, setReferenceOptions] = useState<Record<string, readonly DailyReferenceOption[]>>({});
     const referenceKeys = caps?.canWrite ? caps.schema.filter(field => field.type === 'Reference' && !field.readOnly && !field.referenceUnavailable).map(field => field.key).join(',') : '';
+    // Deck officer candidates must cover the log's own date (server re-checks on save).
+    const logDate = route.kind === 'Deck' && editor?.fields.log_date?.state === 'Known' && calendar(editor.fields.log_date.value) ? editor.fields.log_date.value : null;
     useEffect(() => {
         const vessel = route.vessel;
         if (!vessel || !referenceKeys || !online || !visible)
             return;
         const c = new AbortController();
         let live = true;
-        Promise.all(referenceKeys.split(',').map(async key => [key, await dailyApi.referenceOptions(route.kind, vessel, key, c.signal)] as const))
+        Promise.all(referenceKeys.split(',').map(async key => [key, await dailyApi.referenceOptions(route.kind, vessel, key, c.signal, logDate)] as const))
             .then(rows => { if (live)
             setReferenceOptions(Object.fromEntries(rows.filter(([, options]) => options.available).map(([key, options]) => [key, options.items]))); })
             .catch(() => { if (live)
             setReferenceOptions({}); });
         return () => { live = false; c.abort(); };
-    }, [route.kind, route.vessel, referenceKeys, online, visible, epoch]);
+    }, [route.kind, route.vessel, referenceKeys, online, visible, epoch, logDate]);
     const owner = user?.tenantId && user?.actorId ? `${user.tenantId}/${user.actorId}` : null;
     const identityBoundary = useRef<string | null>(null);
     useLayoutEffect(() => { identityBoundary.current = owner; }, [owner]);

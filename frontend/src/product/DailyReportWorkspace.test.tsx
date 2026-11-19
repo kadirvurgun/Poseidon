@@ -138,6 +138,10 @@ describe('T-OPS2 daily source interactions (authored; execution deferred)', () =
     caps.schema = caps.schema.map(field => field.key === 'officer_of_watch' ? { ...field, referenceUnavailable: false } : field)
     const fetch = transport('Deck', { caps, references: url => json({ vesselId: dailyVessel, kind: 'Deck', field: new URL(url, 'http://x').searchParams.get('field'), available: true, items: [{ token, source: 'crew-assignment', id: dailyActor, revision: 4, label: 'FICTIONAL-2O · Second Officer', qualification: 'DECLARED_ASSIGNMENT_NO_QUALIFICATION_DECISION' }], hasMore: false }) })
     const user = userEvent.setup(); render(<DailyReportWorkspace />); await english(); const form = await newDraft()
+    await user.selectOptions(within(form).getByLabelText('Log date — Data state'), 'Known')
+    await user.type(within(form).getByLabelText('Log date'), '2026-10-30')
+    // Candidates are requested for the back-dated log's own date, not today.
+    await waitFor(() => expect(fetch.mock.calls.some(([url]) => String(url).includes('field=officer_of_watch&logDate=2026-10-30'))).toBe(true))
     const state = within(form).getByLabelText('Officer of watch reference — Data state')
     await waitFor(() => expect(within(state).getByRole('option', { name: 'Known' })).toBeEnabled())
     expect(within(within(form).getByLabelText('Evidence reference — Data state')).getByRole('option', { name: 'Known' })).toBeDisabled()
@@ -149,7 +153,7 @@ describe('T-OPS2 daily source interactions (authored; execution deferred)', () =
     await screen.findByText('Draft saved. Human review and operational approval remain separate.')
     const body = JSON.parse(fetch.mock.calls.find(([, init]) => init?.method === 'POST')![1]!.body as string)
     expect(body.fields.officer_of_watch).toEqual({ state: 'Known', value: token })
-    expect(fetch.mock.calls.some(([url]) => String(url).includes('deck-daily-logs/reference-options?vesselId=' + dailyVessel + '&field=officer_of_watch'))).toBe(true)
+    expect(body.fields.log_date).toEqual({ state: 'Known', value: '2026-10-30' })
   })
   it('DEV-098: keeps a resolvable reference unavailable when its owning source is not readable', async () => {
     window.history.replaceState(null, '', `/app/deck-daily-log/${dailyVessel}`)

@@ -14,7 +14,9 @@ namespace Poseidon.Api;
 // remains lookup_source_unavailable (Missing/Unknown stay editable). Other
 // packages add a reader by registering another IDailyReferenceReader; the
 // domain policy is not edited (e.g. Engine work_orders/defect readers).
-public sealed record DailyReferenceContext(PoseidonDbContext Db, TrustedActor Actor, Guid VesselId, string Kind, DateTimeOffset Now);
+// Fields: the record's normalized declaration being written/read (e.g. Deck log_date).
+public sealed record DailyReferenceContext(PoseidonDbContext Db, TrustedActor Actor, Guid VesselId, string Kind, DateTimeOffset Now,
+    IReadOnlyDictionary<string, DailyValue>? Fields = null);
 public sealed record DailyReferenceCheck(string State, long? CurrentRevision, string Qualification);
 public sealed record DailyReferenceDto(string Field, string State, string? Source, Guid? Id, long? Revision, long? CurrentRevision, string Qualification);
 public sealed record DailyReferencesDto(Guid RecordId, Guid VesselId, string Kind, long Revision, uint Version, DailyReferenceDto[] Items);
@@ -83,13 +85,26 @@ public static class DailyReferenceRegistration
 
 // Deck officer_of_watch -> crew roster assignment (DEV-047 owning module).
 // Current only while the assignment head is exactly the pinned revision AND
-// the configured assignment/position policy says it is effective now. The
-// option label carries the operator-managed position, never a person name.
-internal sealed class DailyCrewAssignmentReferenceReader : IDailyReferenceReader
+// the configured assignment/position policy declares it effective on the
+// deck log's own log_date (not the save date): a back-dated log may pin an
+// assignment that has since ended; an assignment that started after, or
+// ended before, the log date is rejected. A log_date that is missing,
+// malformed or later than today's policy date fails closed. Assignment
+// periods are date-granular, so watch_period is not inferred. The option
+// label carries the operator-managed position, never a person name.
+internal sealed class DailyCrewAssignmentReferenceReader(CrewAssignmentPolicy assignments, CrewPositionPolicy positions, FederationSettings settings) : IDailyReferenceReader
 {
     public string Source => "crew-assignment";
     public bool Supports(string kind, string field) => kind == "Deck" && field == "officer_of_watch";
     public bool Available(TrustedActor actor) => actor.Permissions.Contains("crew.read");
+    private async Task<bool> EffectiveOn(DailyReferenceContext c, CrewAssignment a, CrewPosition p, DateOnly date, CancellationToken ct) {
+        if (!assignments.Configured || assignments.ReferenceDate(c.Now) is not { } today || date > today) return false;
+        var catalog = await CrewCatalogEndpoints.Resolve(c.Db, settings, positions, a.VesselId, c.Now, ct);
+        return catalog.Allows(p, date) && a.AssignmentPolicyVersion == assignments.Version && a.AssignmentPolicyFingerprint == assignments.Fingerprint() &&
+            a.PositionPolicyVersion == catalog.Version && a.PositionPolicyFingerprint == catalog.Fingerprint() &&
+            assignments.EffectiveStatuses.Contains(a.Status, StringComparer.Ordinal) && assignments.Provenances.Contains(a.Provenance, StringComparer.Ordinal) &&
+            a.SourceObservedAt != null && a.SourceObservedAt <= c.Now && DailyOfficerAssignment.Covers(a.From, a.To, date);
+    }
     public async Task<DailyReferenceCheck> Resolve(DailyReferenceContext c, DailyReferencePin pin, CancellationToken ct) {
         var head = await c.Db.CrewAssignments.AsNoTracking().SingleOrDefaultAsync(a => a.VesselId == c.VesselId && a.Id == pin.Id, ct);
         if (head == null) return new("NotFound", null, "OWNING_RECORD_NOT_FOUND");
@@ -97,23 +112,29 @@ internal sealed class DailyCrewAssignmentReferenceReader : IDailyReferenceReader
             var existed = await c.Db.CrewAssignmentRevisions.AsNoTracking().AnyAsync(r => r.VesselId == c.VesselId && r.AssignmentId == pin.Id && r.Revision == pin.Revision, ct);
             return existed && pin.Revision < head.Revision ? new("Superseded", head.Revision, "OWNING_REVISION_SUPERSEDED") : new("NotFound", null, "OWNING_REVISION_NOT_FOUND");
         }
+        if (!DailyOfficerAssignment.TryLogDate(c.Fields, out var logDate)) return new("ReviewRequired", head.Revision, "LOG_DATE_REQUIRED_FOR_ASSIGNMENT_CHECK");
         var position = head.PositionId == null ? null : await c.Db.CrewPositions.AsNoTracking().SingleOrDefaultAsync(p => p.VesselId == c.VesselId && p.Id == head.PositionId, ct);
-        var current = position != null && c.Db.QualifiedInputs != null && await c.Db.QualifiedInputs.AssignmentPolicyCurrent(c.Db, head, position, c.Now, ct);
-        return current ? new("Current", head.Revision, "DECLARED_ASSIGNMENT_NO_QUALIFICATION_DECISION")
-            : new("ReviewRequired", head.Revision, "ASSIGNMENT_NOT_EFFECTIVE_UNDER_CURRENT_POLICY");
+        return position != null && await EffectiveOn(c, head, position, logDate, ct)
+            ? new("Current", head.Revision, "DECLARED_ASSIGNMENT_ON_LOG_DATE_NO_QUALIFICATION_DECISION")
+            : new("ReviewRequired", head.Revision, "ASSIGNMENT_NOT_EFFECTIVE_ON_LOG_DATE");
     }
+    // Candidates for the log date the author supplies (default: today's policy date).
     public async Task<DailyReferenceOptionDto[]> Options(DailyReferenceContext c, string field, int take, CancellationToken ct) {
-        var rows = await (from a in c.Db.CrewAssignments.AsNoTracking().Where(a => a.VesselId == c.VesselId && a.PositionId != null && a.Status != "Draft")
+        DateOnly date;
+        if (c.Fields != null) { if (!DailyOfficerAssignment.TryLogDate(c.Fields, out date)) return []; }
+        else if (assignments.ReferenceDate(c.Now) is { } today) date = today; else return [];
+        var rows = await (from a in c.Db.CrewAssignments.AsNoTracking().Where(a => a.VesselId == c.VesselId && a.PositionId != null && a.Status != "Draft" &&
+                              a.From != null && a.From <= date && (a.To == null || a.To > date))
                           join p in c.Db.CrewPositions.AsNoTracking() on new { a.TenantId, Id = a.PositionId, a.VesselId } equals new { p.TenantId, Id = (Guid?)p.Id, p.VesselId }
                           orderby p.Code, a.From, a.Id
                           select new { Assignment = a, Position = p }).Take(200).ToArrayAsync(ct);
         var result = new List<DailyReferenceOptionDto>();
         foreach (var row in rows) {
             if (result.Count >= take) break;
-            if (c.Db.QualifiedInputs == null || !await c.Db.QualifiedInputs.AssignmentPolicyCurrent(c.Db, row.Assignment, row.Position, c.Now, ct)) continue;
+            if (!await EffectiveOn(c, row.Assignment, row.Position, date, ct)) continue;
             var pin = new DailyReferencePin(Source, row.Assignment.Id, row.Assignment.Revision);
             var label = string.Join(" · ", new[] { row.Position.Code, row.Position.Rank, row.Assignment.From?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) }.Where(s => !string.IsNullOrWhiteSpace(s)));
-            result.Add(new(pin.Token, Source, pin.Id, pin.Revision, label, "DECLARED_ASSIGNMENT_NO_QUALIFICATION_DECISION"));
+            result.Add(new(pin.Token, Source, pin.Id, pin.Revision, label, "DECLARED_ASSIGNMENT_ON_LOG_DATE_NO_QUALIFICATION_DECISION"));
         }
         return result.ToArray();
     }

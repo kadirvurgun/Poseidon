@@ -74,26 +74,33 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(HttpStatusCode.OK,(await DailySend(client,"noon-reports",command with{Fields=new(){[field]=new("Unknown",null)}},Guid.NewGuid().ToString("D"))).StatusCode);
     }
 
-    [Fact]
-    public async Task Deck_officer_of_watch_requires_crew_read_and_a_policy_current_assignment_revision() {
-        await using var host=Host(crewRead:true,crewWrite:true).WithWebHostBuilder(b=>b.ConfigureTestServices(s=>s.AddSingleton(new CrewAssignmentPolicy {
-            Version="FICTIONAL-oow-assignment-v1",TimeZone="UTC",EffectiveStatuses=["FICTIONAL-onboard"],PlannedStatuses=["FICTIONAL-planned"],Provenances=["UserDeclaredUnverified"]})));
-        using var client=Client(host);DailyPermissions(host.Services);
-        var settings=host.Services.GetRequiredService<FederationSettings>();
+    private Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<Program> OfficerHost() => Host(crewRead:true,crewWrite:true).WithWebHostBuilder(b=>b.ConfigureTestServices(s=>s.AddSingleton(new CrewAssignmentPolicy {
+        Version="FICTIONAL-oow-assignment-v1",TimeZone="UTC",EffectiveStatuses=["FICTIONAL-onboard"],PlannedStatuses=["FICTIONAL-planned"],Provenances=["UserDeclaredUnverified"]})));
+    private async Task<(Guid Id,long Revision)> DeclareOfficer(IServiceProvider services,HttpClient client,DateOnly from,DateOnly to) {
+        var settings=services.GetRequiredService<FederationSettings>();
         settings.Memberships[0]=settings.Memberships[0] with{Permissions=[..settings.Memberships[0].Permissions,"crew.read","crew.write","crew.assignment.declare","crew.identity.write","crew.identity.read"]};await Token(client);
-        var today=DateOnly.FromDateTime(DateTime.UtcNow);
-        var declaration=NewCrew() with{From=today,To=today.AddDays(2),PositionId=SeedVessel.Id,PositionPolicyVersion="synthetic-position-v1",DeclaredStatus="FICTIONAL-onboard",
+        var declaration=NewCrew() with{From=from,To=to,PositionId=SeedVessel.Id,PositionPolicyVersion="synthetic-position-v1",DeclaredStatus="FICTIONAL-onboard",
             AssignmentPolicyVersion="FICTIONAL-oow-assignment-v1",SourceObservedAt=DateTimeOffset.UtcNow.AddSeconds(-1)};
         using var saved=await Send(client,CrewUrl,declaration);Assert.Equal(HttpStatusCode.OK,saved.StatusCode);
-        long revision;await using(var db=Db())revision=(await db.CrewAssignments.SingleAsync(a=>a.Id==declaration.Id,Ct)).Revision;
-        var options=(await client.GetFromJsonAsync<DailyReferenceOptionsDto>(DailyPath("deck-daily-logs",suffix:"/reference-options")+"&field=officer_of_watch",Ct))!;
-        var option=Assert.Single(options.Items,o=>o.Id==declaration.Id);Assert.Equal(revision,option.Revision);
+        await using var db=Db();return (declaration.Id,(await db.CrewAssignments.SingleAsync(a=>a.Id==declaration.Id,Ct)).Revision);
+    }
+    private static string Iso(DateOnly date)=>date.ToString("yyyy-MM-dd",System.Globalization.CultureInfo.InvariantCulture);
+
+    [Fact]
+    public async Task Deck_officer_of_watch_requires_crew_read_and_a_policy_current_assignment_revision() {
+        await using var host=OfficerHost();using var client=Client(host);DailyPermissions(host.Services);
+        var today=DateOnly.FromDateTime(DateTime.UtcNow);var (id,revision)=await DeclareOfficer(host.Services,client,today,today.AddDays(2));
+        var settings=host.Services.GetRequiredService<FederationSettings>();
+        var options=(await client.GetFromJsonAsync<DailyReferenceOptionsDto>(DailyPath("deck-daily-logs",suffix:"/reference-options")+"&field=officer_of_watch&logDate="+Iso(today),Ct))!;
+        var option=Assert.Single(options.Items,o=>o.Id==id);Assert.Equal(revision,option.Revision);
         Assert.DoesNotContain("FICTIONAL",option.Label);// operator position label only, never a person identity
-        var deck=new DailyDraftCommand(Guid.NewGuid(),0,new(){["officer_of_watch"]=new("Known",option.Token)},"INITIAL_AUTHORING");
+        var deck=new DailyDraftCommand(Guid.NewGuid(),0,new(){["log_date"]=new("Known",Iso(today)),["officer_of_watch"]=new("Known",option.Token)},"INITIAL_AUTHORING");
         using var created=await DailySend(client,"deck-daily-logs",deck,Guid.NewGuid().ToString("D"));Assert.Equal(HttpStatusCode.OK,created.StatusCode);
         var row=(await created.Content.ReadFromJsonAsync<DailyRecordDto>(Ct))!;
         var refs=(await client.GetFromJsonAsync<DailyReferencesDto>(DailyPath("deck-daily-logs",row.Id,suffix:"/references"),Ct))!;
         Assert.Equal("Current",refs.Items.Single(r=>r.Field=="officer_of_watch").State);
+        // Without a known log_date the officer pin cannot be checked and is rejected.
+        Assert.Equal(HttpStatusCode.BadRequest,(await DailySend(client,"deck-daily-logs",deck with{Id=Guid.NewGuid(),Fields=new(){["log_date"]=new("Unknown",null),["officer_of_watch"]=new("Known",option.Token)}},Guid.NewGuid().ToString("D"))).StatusCode);
         // Without crew.read the pin is neither listed, resolvable, nor writable.
         settings.Memberships[0]=settings.Memberships[0] with{Permissions=settings.Memberships[0].Permissions.Where(p=>p!="crew.read").ToArray()};
         options=(await client.GetFromJsonAsync<DailyReferenceOptionsDto>(DailyPath("deck-daily-logs",suffix:"/reference-options")+"&field=officer_of_watch",Ct))!;
@@ -103,11 +110,33 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(HttpStatusCode.BadRequest,(await DailySend(client,"deck-daily-logs",deck with{Id=Guid.NewGuid()},Guid.NewGuid().ToString("D"))).StatusCode);
     }
 
+    // The assignment must have covered the deck log's own log_date, not the save date.
+    [Theory]
+    [InlineData(-10,-2,-5,true)]   // ended after log_date: back-dated log accepted although the assignment has ended
+    [InlineData(0,5,-3,false)]     // started after log_date
+    [InlineData(-10,-4,-1,false)]  // ended before log_date
+    [InlineData(-2,5,1,false)]     // future log_date
+    public async Task Deck_officer_assignment_is_checked_against_the_logs_own_date(int fromDays,int toDays,int logDays,bool accepted) {
+        await using var host=OfficerHost();using var client=Client(host);DailyPermissions(host.Services);
+        var today=DateOnly.FromDateTime(DateTime.UtcNow);var (id,revision)=await DeclareOfficer(host.Services,client,today.AddDays(fromDays),today.AddDays(toDays));
+        var log=Iso(today.AddDays(logDays));var token=new DailyReferencePin("crew-assignment",id,revision).Token;
+        var options=(await client.GetFromJsonAsync<DailyReferenceOptionsDto>(DailyPath("deck-daily-logs",suffix:"/reference-options")+"&field=officer_of_watch&logDate="+log,Ct))!;
+        Assert.Equal(accepted,options.Items.Any(o=>o.Token==token));
+        var deck=new DailyDraftCommand(Guid.NewGuid(),0,new(){["log_date"]=new("Known",log),["officer_of_watch"]=new("Known",token)},"INITIAL_AUTHORING");
+        using var response=await DailySend(client,"deck-daily-logs",deck,Guid.NewGuid().ToString("D"));
+        Assert.Equal(accepted?HttpStatusCode.OK:HttpStatusCode.BadRequest,response.StatusCode);
+        await using var db=Db();Assert.Equal(accepted,await db.DailyOperations.AnyAsync(r=>r.Id==deck.Id,Ct));
+        if(accepted) {
+            var refs=(await client.GetFromJsonAsync<DailyReferencesDto>(DailyPath("deck-daily-logs",deck.Id,suffix:"/references"),Ct))!;
+            Assert.Equal("Current",refs.Items.Single(r=>r.Field=="officer_of_watch").State);
+        }
+    }
+
     [Fact]
     public async Task Seeded_unconfigured_assignment_policy_never_makes_an_officer_reference_current() {
         await using var host=Host(crewRead:true);using var client=Client(host);DailyPermissions(host.Services);
         long revision;await using(var db=Db())revision=(await db.CrewAssignments.SingleAsync(a=>a.Id==SeedVessel.Id,Ct)).Revision;
-        var deck=new DailyDraftCommand(Guid.NewGuid(),0,new(){["officer_of_watch"]=new("Known",new DailyReferencePin("crew-assignment",SeedVessel.Id,revision).Token)},"INITIAL_AUTHORING");
+        var deck=new DailyDraftCommand(Guid.NewGuid(),0,new(){["log_date"]=new("Known",Iso(DateOnly.FromDateTime(DateTime.UtcNow))),["officer_of_watch"]=new("Known",new DailyReferencePin("crew-assignment",SeedVessel.Id,revision).Token)},"INITIAL_AUTHORING");
         using var response=await DailySend(client,"deck-daily-logs",deck,Guid.NewGuid().ToString("D"));
         Assert.Equal(HttpStatusCode.BadRequest,response.StatusCode);Assert.Contains("linked_resource_unavailable",await response.Content.ReadAsStringAsync(Ct));
         var options=(await client.GetFromJsonAsync<DailyReferenceOptionsDto>(DailyPath("deck-daily-logs",suffix:"/reference-options")+"&field=officer_of_watch",Ct))!;

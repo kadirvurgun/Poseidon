@@ -64,8 +64,14 @@ public static class DailyReferenceEndpoints
 
     private static async Task<IResult> Options(string kind, HttpContext h, PoseidonDbContext db) {
         h.Response.Headers.CacheControl = "no-store";
-        if (!Query(h, ["vesselId", "field"], out var vessel) || h.Request.Query["field"].ToString() is not { Length: > 0 and <= 64 } field ||
+        if (!Query(h, ["vesselId", "field", "logDate"], out var vessel) || h.Request.Query["field"].ToString() is not { Length: > 0 and <= 64 } field ||
             !DailyOperationsPolicy.Schema(kind).Any(f => f.Key == field && f.Type == "Reference" && !f.ReadOnly)) return await Fail(h, 400, "invalid_query");
+        // Optional exact yyyy-MM-dd log date the candidates must cover (Deck officer_of_watch).
+        Dictionary<string, DailyValue>? declared = null;
+        if (h.Request.Query.ContainsKey("logDate")) {
+            var text = h.Request.Query["logDate"].ToString(); declared = new() { ["log_date"] = new("Known", text) };
+            if (!DailyOfficerAssignment.TryLogDate(declared, out _)) return await Fail(h, 400, "invalid_query");
+        }
         var a = Actor(h);
         // Lookup candidates are an authoring aid: only a current writer sees them.
         if (a == null || !DailyOperationsEndpoints.CanWrite(a, kind, vessel)) return await Fail(h, 403, "permission_denied");
@@ -75,7 +81,7 @@ public static class DailyReferenceEndpoints
         DailyReferenceOptionsDto result;
         if (reader == null || !reader.Available(a)) result = new(vessel, kind, field, false, [], false);
         else {
-            var items = await reader.Options(new(db, a, vessel, kind, Now(h)), field, 51, h.RequestAborted);
+            var items = await reader.Options(new(db, a, vessel, kind, Now(h), declared), field, 51, h.RequestAborted);
             result = new(vessel, kind, field, true, items.Take(50).ToArray(), items.Length > 50);
         }
         return await Respond(h, kind, vessel, rights, vessel, result);
@@ -91,7 +97,7 @@ public static class DailyReferenceEndpoints
         var row = await db.DailyOperations.AsNoTracking().SingleOrDefaultAsync(r => r.Id == id && r.VesselId == vessel && r.Kind == kind, h.RequestAborted);
         if (row == null) return await Fail(h, 404, "resource_not_found");
         var fields = DailyOperationsPolicy.ReadFields(kind, vessel, row.FieldsJson);
-        var registry = DailyOperationsEndpoints.References(h); var context = new DailyReferenceContext(db, a, vessel, kind, Now(h));
+        var registry = DailyOperationsEndpoints.References(h); var context = new DailyReferenceContext(db, a, vessel, kind, Now(h), fields);
         var items = new List<DailyReferenceDto>();
         foreach (var field in DailyOperationsPolicy.Schema(kind).Where(f => f.Type == "Reference" && !f.ReadOnly))
             items.Add(await registry.Describe(context, field.Key, fields.GetValueOrDefault(field.Key), h.RequestAborted));

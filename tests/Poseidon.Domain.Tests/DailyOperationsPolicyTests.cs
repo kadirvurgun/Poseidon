@@ -61,6 +61,26 @@ public sealed class DailyOperationsPolicyTests
     [InlineData("crew-assignment:6b1f8a8e-3f43-4d2a-9a3c-1d4f6c0b9e21@-3")] [InlineData("crew-assignment:6b1f8a8e-3f43-4d2a-9a3c-1d4f6c0b9e21@1234567890123456789")]
     public void Reference_pin_accepts_only_the_exact_canonical_lexical_form(string text) =>
         Assert.False(DailyReferencePin.TryParse(text, out _));
+    private static DateOnly D(string s) => DateOnly.ParseExact(s, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);
+    // DEV-098 officer_of_watch: the assignment must cover the deck log's own date.
+    [Theory]
+    [InlineData("2026-10-01", "2026-11-01", "2026-10-20", true)]   // ended after log_date: back-dated log accepted
+    [InlineData("2026-10-01", null, "2026-10-20", true)]           // open-ended
+    [InlineData("2026-10-20", "2026-11-01", "2026-10-20", true)]   // starts on log_date (inclusive)
+    [InlineData("2026-10-21", "2026-11-01", "2026-10-20", false)]  // started after log_date
+    [InlineData("2026-10-01", "2026-10-15", "2026-10-20", false)]  // ended before log_date
+    [InlineData("2026-10-01", "2026-10-20", "2026-10-20", false)]  // end is exclusive
+    [InlineData(null, "2026-11-01", "2026-10-20", false)]          // unknown start never covers
+    public void Officer_assignment_must_cover_the_log_date_not_the_save_date(string? from, string? to, string log, bool covers) =>
+        Assert.Equal(covers, DailyOfficerAssignment.Covers(from == null ? null : D(from), to == null ? null : D(to), D(log)));
+    [Fact]
+    public void Officer_check_requires_a_known_exact_log_date() {
+        Assert.True(DailyOfficerAssignment.TryLogDate(new Dictionary<string,DailyValue>{["log_date"]=new("Known","2026-10-20")}, out var date));
+        Assert.Equal(new DateOnly(2026,10,20), date);
+        foreach (var value in new DailyValue[]{ new("Unknown",null), new("Missing",null), new("Known","20.10.2026"), new("Known","2026-02-30"), new("Known","2026-10-20T00:00Z") })
+            Assert.False(DailyOfficerAssignment.TryLogDate(new Dictionary<string,DailyValue>{["log_date"]=value}, out _));
+        Assert.False(DailyOfficerAssignment.TryLogDate(null, out _));
+    }
     [Fact]
     public void Narrative_handover_preserves_paragraphs_but_never_NUL_or_unknown_code_values() {
         Assert.True(DailyOperationsPolicy.TryNormalize("Deck",new Dictionary<string,DailyValue>{["handover_note"]=new("Known","FICTIONAL first\r\n\tsecond")},out var fields,out _));

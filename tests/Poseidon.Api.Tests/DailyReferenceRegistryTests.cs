@@ -11,7 +11,7 @@ namespace Poseidon.Api.Tests;
 public sealed class DailyReferenceRegistryTests
 {
     private static DailyReferenceRegistry Registry(params IDailyReferenceReader[] extra) =>
-        new([new DailyCrewAssignmentReferenceReader(), new DailyPortCallReferenceReader(), new DailyEvidenceReferenceReader(), .. extra]);
+        new([new DailyCrewAssignmentReferenceReader(new CrewAssignmentPolicy(), new CrewPositionPolicy(), new FederationSettings()),new DailyPortCallReferenceReader(), new DailyEvidenceReferenceReader(), .. extra]);
     private static TrustedActor Actor(params string[] permissions) =>
         new(Guid.NewGuid(), Guid.NewGuid(), ["directory.read", .. permissions], true, false, []) { RoleContext = Guid.NewGuid().ToString("D") };
     private static DailyReferenceContext Context(string kind, TrustedActor actor) => new(null!, actor, Guid.NewGuid(), kind, DateTimeOffset.UnixEpoch);

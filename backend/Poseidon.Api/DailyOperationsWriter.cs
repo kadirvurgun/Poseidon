@@ -29,7 +29,7 @@ internal static class DailyOperationsWriter
         // before any business row changes, against the actor's current scope.
         var previous=row==null?new SortedDictionary<string,DailyValue>(StringComparer.Ordinal)
             :JsonSerializer.Deserialize<SortedDictionary<string,DailyValue>>(row.FieldsJson)??new(StringComparer.Ordinal);
-        if (!await references.VerifyChanged(new(db,actor,vessel,kind,now),fields,previous,ct)) return new(null,400,"linked_resource_unavailable");
+        if (!await references.VerifyChanged(new(db,actor,vessel,kind,now,fields),fields,previous,ct)) return new(null,400,"linked_resource_unavailable");
         if (row==null) { row=new(){TenantId=db.TenantId,VesselId=vessel,Id=command.Id,Kind=kind,SourceVersion=DailyOperationsPolicy.SourceVersion}; db.DailyOperations.Add(row); }
         else row.Revision++;
         var fieldsJson=JsonSerializer.Serialize(fields);
