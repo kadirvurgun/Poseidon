@@ -169,7 +169,7 @@ describe('NAV-WORKSPACE-01 mocked component journeys, separate from real API/bro
         await user.click(await screen.findByRole('button', { name: 'Keep editing' }));
         expect(screen.getByLabelText('GT')).toHaveValue('42.1');
         expect(window.location.pathname).toContain('/profile');
-        await user.click(screen.getByRole('link', { name: 'POSEIDON' }));
+        await user.click(screen.getByRole('link', { name: /^POSEIDON\b/ }));
         await user.click(await screen.findByRole('button', { name: 'Keep editing' }));
         expect(screen.getByLabelText('GT')).toHaveValue('42.1');
     });
@@ -182,19 +182,19 @@ describe('NAV-WORKSPACE-01 mocked component journeys, separate from real API/bro
         await user.click(menu);
         const drawer = screen.getByRole('dialog', { name: 'POSEIDON' });
         const url = window.location.pathname;
-        expect(within(drawer).getByRole('link', { name: 'POSEIDON' })).toHaveFocus();
+        expect(within(drawer).getByRole('link', { name: /^POSEIDON\b/ })).toHaveFocus();
         const workView = within(drawer).getByText('Çalışma görünümü', { selector: 'summary' });
         expect(workView.closest('details')).not.toHaveAttribute('open');
         await user.click(workView);
         expect(workView.closest('details')).toHaveAttribute('open');
         expect(within(drawer).getByRole('combobox', { name: 'Menü merceği' })).toBeVisible();
-        within(drawer).getByRole('link', { name: 'POSEIDON' }).focus();
+        within(drawer).getByRole('link', { name: /^POSEIDON\b/ }).focus();
         await user.tab({ shift: true });
         // This fixture's workspace group follows its daily items. The actual final
         // tabbable destination is Companies, after the visible role controls.
         expect(within(drawer).getByRole('button', { name: 'Şirketler' })).toHaveFocus();
         await user.tab();
-        expect(within(drawer).getByRole('link', { name: 'POSEIDON' })).toHaveFocus();
+        expect(within(drawer).getByRole('link', { name: /^POSEIDON\b/ })).toHaveFocus();
         await user.keyboard('{Escape}');
         expect(menu).toHaveFocus();
         expect(menu).toHaveAttribute('aria-expanded', 'false');

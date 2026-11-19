@@ -114,8 +114,9 @@ function TodayContext({ id, language, offline, onNavigate }: Props) {
             <p dir="auto" title={v.name}>{v.name}</p>
           </div>
         </div>
-        <Button className="enterprise-vessel-card-action" variant="outline" size="sm" aria-label={identity} onClick={() => onNavigate(`/app/today/${v.id}`)}>
-          <span>{localizedText(language, "pairs.m_dc42cf81fa770206")}</span><ArrowUpRight aria-hidden="true"/>
+        {/* WCAG 2.5.3: the accessible name starts with the visible label; the vessel identity follows as hidden text. */}
+        <Button className="enterprise-vessel-card-action" variant="outline" size="sm" onClick={() => onNavigate(`/app/today/${v.id}`)}>
+          <span>{localizedText(language, "pairs.m_dc42cf81fa770206")}{' '}<span className="sr-only">{identity}</span></span><ArrowUpRight aria-hidden="true"/>
         </Button>
       </Card>;
     })}</div>
