@@ -1,0 +1,97 @@
+"""PLAN-1511-5401: regenerate the 54.01 CFG3 definition inventory from the pinned source DOCX.
+
+Reads only the controlled 54.01 Rev4 file (SHA256 pinned), extracts every PARAMETER_DEFINITION
+record and writes contracts/parameters.v1.json (registry subset + full inventory) and the
+human-readable docs/tasks/plan-1511-5401-01.inventory.md. No model calls, no network.
+The registry subset is the explicit FOUNDATION list below; every other definition is
+NOT_IMPLEMENTED. Inventory rows are source contract records, not runtime registrations.
+"""
+import hashlib
+import json
+import re
+import sys
+from pathlib import Path
+
+from import_documents import paragraphs
+
+ROOT = Path(__file__).resolve().parents[1]
+SOURCE = 'analiz/POSEIDON GUNCEL 30.10.2026/son analizler 15.11.26/54.01_POSEIDON_Islev_Parametreleri_ve_Kontrollu_Politika_Sicili_Tam_Analiz_Rev4(1).docx'
+SHA256 = '73fcde366550ff1eb23aaebb33c8d246f4173b03b5c416a1b74736078a36c892'
+COUNT = 354  # REGISTRATION_COMMON_definitionCount, paragraph:1004
+FOUNDATION = [
+    'ops.source.freshness_policy_ref', 'regulatory.source.freshness_policy_ref', 'pms.measurement.freshness_minutes',
+    'rpt.freshness.online_min', 'rpt.export.rows', 'regulatory.cache.max_age_seconds', 'control.assurance.maxAgeSeconds',
+    'mobile.offline.idleLockSeconds', 'safety.deferral.max_count', 'common.list.default_limit', 'tug.history.export.max_rows',
+    'eligibility.rule_version',
+]
+# Source paragraph:39: tug.history.export.max_rows is an explicit consumer binding of rpt.export.rows.
+ALIASES = {'tug.history.export.max_rows': 'rpt.export.rows'}
+SENSITIVITY = 'NOT_DECLARED_IN_SOURCE_VALUES_WITHHELD'
+RUNTIME = 'FOUNDATION_REGISTERED_OWNER_ADAPTER_NOT_REGISTERED'
+VALUE_CLASS = {'POLICY_REF': 'POLICY', 'TECHNICAL_PARAMETER': 'TECHNICAL', 'PARAMETER': 'PARAMETER'}
+
+
+def extract():
+    path = ROOT / SOURCE
+    data = path.read_bytes()
+    if hashlib.sha256(data).hexdigest() != SHA256:
+        raise SystemExit('54.01 source hash mismatch')
+    definitions, risks = [], {}
+    for locator, text in paragraphs(path):
+        if text.startswith('PARAMETER_DEFINITION: {"key"'):
+            record = json.loads(re.sub(r'@C\d+', 'null', text[len('PARAMETER_DEFINITION: '):]))
+            record['_locator'] = locator
+            definitions.append(record)
+        match = re.match(r'PARAMETER_REGISTRATION: \{"approvalContract": \{"contractId": "54\.01\.cfg\.(.+?)\.v1\.approve", "risk": "(\w+)"', text)
+        if match:
+            risks[match.group(1)] = match.group(2)
+    keys = [d['key'] for d in definitions]
+    if len(definitions) != COUNT or len(set(keys)) != COUNT or any(k not in keys for k in FOUNDATION):
+        raise SystemExit('54.01 definition inventory changed; review before regenerating')
+    return definitions, risks
+
+
+def registry_entry(d, risk):
+    schema = d.get('typeSchema') or {}
+    default = d.get('approvedProductDefault')
+    return {
+        'key': d['key'], 'definitionVersion': 1, 'ownerDomain': d['owner'], 'classification': d['classification'],
+        'valueClass': VALUE_CLASS.get(d['classification'], d['classification']), 'risk': risk,
+        'type': {'type': schema.get('type'), 'nullable': bool(schema.get('nullable')), 'minimum': schema.get('minimum'),
+                 'maximum': schema.get('maximum'), 'unit': schema.get('unit')},
+        'allowedScopes': d['allowedSecurityScopes'], 'requiredSelectors': d['requiredSelectors'], 'fallback': d['fallback'],
+        'approvedProductDefault': None if default is None else json.dumps(default, separators=(',', ':')),
+        'productDefaultDeploymentAccepted': False, 'aliasTarget': ALIASES.get(d['key']), 'sensitivity': SENSITIVITY,
+        'sourceLocator': d['_locator'], 'runtimeStatus': RUNTIME,
+    }
+
+
+def main():
+    definitions, risks = extract()
+    by_key = {d['key']: d for d in definitions}
+    registry = [registry_entry(by_key[k], risks.get(k)) for k in FOUNDATION]
+    inventory = [{'ordinal': i, 'key': d['key'], 'classification': d['classification'], 'ownerDomain': d['owner'],
+                  'sourceLocator': d['_locator'], 'risk': risks.get(d['key']),
+                  'status': 'IMPLEMENTED_FOUNDATION' if d['key'] in FOUNDATION else 'NOT_IMPLEMENTED'}
+                 for i, d in enumerate(definitions, 1)]
+    contract = {
+        'schemaVersion': 'poseidon.parameters.v1', 'trackingId': 'PLAN-1511-5401',
+        'source': {'path': SOURCE, 'sha256': SHA256, 'definitionCountLocator': 'paragraph:1004', 'definitionCount': COUNT},
+        'meaning': 'Software contract of the 54.01 CFG3 registry subset implemented by this repository. Not a production registration, owner adapter admission, deployment acceptance or approved value.',
+        'definitions': registry, 'inventory': inventory,
+    }
+    (ROOT / 'contracts/parameters.v1.json').write_text(json.dumps(contract, indent=2, ensure_ascii=False) + '\n', encoding='utf-8', newline='\n')
+    lines = ['# PLAN-1511-5401-01 — 54.01 CFG3 definition inventory', '',
+             f'Generated by `py scripts/parameter_inventory.py` from `{SOURCE}` (SHA256 `{SHA256}`).',
+             f'The source declares {COUNT} definitions (paragraph:1004). Each row is a source contract record at its `PARAMETER_DEFINITION` paragraph; '
+             'status `IMPLEMENTED_FOUNDATION` means the definition is in the code registry (`backend/Poseidon.Domain/ParameterRegistry.cs`) and '
+             '`contracts/parameters.v1.json`, never that an owner adapter, deployment acceptance or approved value exists. No definition was invented.', '',
+             f'Implemented foundation: {len(FOUNDATION)}; not implemented: {COUNT - len(FOUNDATION)}.', '',
+             '| # | Key | Classification | Owner | Risk | Locator | Status |', '| --- | --- | --- | --- | --- | --- | --- |']
+    lines += [f"| {r['ordinal']} | `{r['key']}` | {r['classification']} | {r['ownerDomain']} | {r['risk'] or '—'} | {r['sourceLocator']} | {r['status']} |" for r in inventory]
+    (ROOT / 'docs/tasks/plan-1511-5401-01.inventory.md').write_text('\n'.join(lines) + '\n', encoding='utf-8', newline='\n')
+    print(json.dumps({'definitions': len(registry), 'inventory': len(inventory)}))
+
+
+if __name__ == '__main__':
+    sys.exit(main())

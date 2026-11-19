@@ -15,6 +15,10 @@ public sealed class PoseidonDbContext(
     public bool IsAdministrativeImport { get; } = administrativeImport;
     internal string AuditActorId => actor.Id;
     public DbSet<FleetCatalogDraft> FleetCatalogDrafts => Set<FleetCatalogDraft>();
+    public DbSet<ParameterRoot> ParameterRoots => Set<ParameterRoot>();
+    public DbSet<ParameterRevision> ParameterRevisions => Set<ParameterRevision>();
+    public DbSet<ParameterDecision> ParameterDecisions => Set<ParameterDecision>();
+    public DbSet<ParameterCommandReceipt> ParameterCommandReceipts => Set<ParameterCommandReceipt>();
     public DbSet<FleetCatalogDraftRevision> FleetCatalogDraftRevisions => Set<FleetCatalogDraftRevision>();
     public DbSet<Tenant> Tenants => Set<Tenant>();
     public DbSet<VesselCertificate> VesselCertificates => Set<VesselCertificate>();
@@ -135,6 +139,11 @@ public sealed class PoseidonDbContext(
     protected override void OnModelCreating(ModelBuilder model)
     {
         FleetCatalogDraftStorage.Configure(model);
+        ParameterStorage.Configure(model);
+        model.Entity<ParameterRoot>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ParameterRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ParameterDecision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ParameterCommandReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<FleetCatalogDraft>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<FleetCatalogDraftRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         CrewCatalogStorage.Configure(model);
@@ -482,6 +491,7 @@ public sealed class PoseidonDbContext(
         var changes = ChangeTracker.Entries().Where(e => e.State is EntityState.Added or EntityState.Modified or EntityState.Deleted).ToList();
         if (changes.Count == 0) return [];
         FleetCatalogDraftStorage.Guard(this, changes);
+        ParameterStorage.Guard(changes);
         if (string.IsNullOrWhiteSpace(actor.Id) || string.IsNullOrWhiteSpace(actor.Type) || string.IsNullOrWhiteSpace(actor.CorrelationId))
             throw new InvalidOperationException("An authenticated or explicit system actor and correlation ID are required.");
         if (actor.Command != null && !actor.Command.IsValid)
