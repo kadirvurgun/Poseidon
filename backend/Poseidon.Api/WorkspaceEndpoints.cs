@@ -22,6 +22,9 @@ public static class WorkspaceEndpoints
         if (DefectAssetContextReader.CanRead(actor)) destinations = [.. destinations, new("defects", "/app/defects")];
         if (WorkOrderEndpoints.CanRead(actor)) destinations = [.. destinations, new("work-order-center", "/app/work-order-center")];
         if (OperationalDowntimeEndpoints.CanRead(actor)) destinations = [.. destinations, new("operational-downtime", "/app/operational-downtime")];
+        // DEV-105/DEV-106: the same server predicates as the risk endpoints.
+        if (RiskAssessmentEndpoints.CanRead(actor)) destinations = [.. destinations, new("risk-assessment", "/app/risk-assessment")];
+        if (RiskTemplateEndpoints.CanRead(actor)) destinations = [.. destinations, new("risk-template-library", "/app/risk-template-library")];
         if (CertificateReader.Read(actor)) destinations = [.. destinations,
             new("certificate-command-center", "/app/certificate-command-center"), new("renewal-workflow", "/app/renewal-workflow")];
         if (actor.CanReadTug) destinations = [.. destinations, new("tug-command", "/app/tug-command"), new("tug-job-board", "/app/tug-job-board"), new("tug-job-intake", "/app/tug-job-intake")];

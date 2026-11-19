@@ -43,6 +43,8 @@ export function vesselContextHref(path: string, vessel: string, kind: 'Ship' | '
         return `/app/offline-conflict-center?vessel=${id}`;
     if (/^\/app\/today(?:\/|$)/.test(path))
         return `/app/today/${id}`;
+    if (/^\/app\/risk-assessment(?:\/|$)/.test(path))
+        return `/app/risk-assessment/${id}`;
     if (/^\/app\/operational-downtime(?:\/|$)/.test(path))
         return kind === 'Ship' ? `/app/operational-downtime/${id}` : `/app/fleet/${id}`;
     const family = /^\/app\/(audit-ready|work-order-center|defects|crew-roster|equipment-hierarchy|maintenance-plan|excel-migration)(?:\/|$)/.exec(path);
