@@ -4944,6 +4944,108 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/parameter-definitions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description config.read. Registered 54.01 CFG3 definition subset with source locators; the source declares 354 definitions. Registration is not owner adapter admission. */
+        get: operations["ListParameterDefinitions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/effective-parameters": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description config.resolve. Query key, scopeKind TENANT|COMPANY|VESSEL, scopeId (COMPANY/VESSEL), applicability (base64url canonical JSON object), mode CURRENT|HISTORICAL, effectiveAt+knownAt (HISTORICAL only). Reports status RESOLVED|UNCONFIGURED|AMBIGUOUS|BLOCKED|UNKNOWN with source scope and version; never fabricates a value. */
+        get: operations["ResolveEffectiveParameter"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parameter-changes/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description config.read. Immutable revision and decision lineage of one parameter root; version is the CAS token for decisions. */
+        get: operations["GetParameterChange"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parameter-changes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description config.draft. Proposes one typed value revision (IN_REVIEW). expectedVersion 0 creates the root. Owner fields, invariants, aliases and family references are rejected with 422. No approval, schedule or activation. */
+        post: operations["ProposeParameterChange"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parameter-changes/{id}/commands/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description config.approve. Independent approver only (maker != checker). The selection is append-only and effective no earlier than the decision. */
+        post: operations["ApproveParameterChange"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parameter-changes/{id}/commands/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description config.reject. Independent reviewer only; REJECTED is terminal and never selectable. */
+        post: operations["RejectParameterChange"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/hr/legal-entities": {
         parameters: {
             query?: never;
@@ -6515,6 +6617,13 @@ export interface components {
             state: string;
             value: null | string;
         };
+        DecideParameterChange: {
+            /** Format: uint32 */
+            expectedVersion: null | number;
+            /** Format: uuid */
+            revisionId: null | string;
+            reason: null | string;
+        };
         DecisionRecording: {
             decisionType: string;
             subjectType: string;
@@ -6813,6 +6922,40 @@ export interface components {
             /** Format: int32 */
             unknown: number;
             reason: string;
+        };
+        EffectiveParameterDto: {
+            requestedKey: string;
+            key: string;
+            aliasOf: null | string;
+            /** Format: int32 */
+            definitionVersion: number;
+            mode: string;
+            /** Format: date-time */
+            effectiveAt: string;
+            /** Format: date-time */
+            knownAt: string;
+            scopeKind: string;
+            /** Format: uuid */
+            scopeId: string;
+            status: string;
+            valueClass: string;
+            value: null | components["schemas"]["JsonElement"];
+            valueMode: null | string;
+            /** Format: uuid */
+            sourceRevisionId: null | string;
+            sourceScope: null | string;
+            /** Format: uuid */
+            sourceScopeId: null | string;
+            /** Format: int64 */
+            sourceVersion: null | number;
+            /** Format: date-time */
+            selectedFrom: null | string;
+            contentHash: null | string;
+            fallbackUsed: boolean;
+            ownerVerification: string;
+            positiveUseAllowed: boolean;
+            reasonCodes: string[];
+            applicabilityHash: string;
         };
         EquipmentCommand: {
             /** Format: uuid */
@@ -8130,6 +8273,113 @@ export interface components {
             limit: number;
             hasMore: boolean;
         };
+        ParameterChangeDto: {
+            /** Format: uuid */
+            id: string;
+            key: string;
+            scopeKind: string;
+            /** Format: uuid */
+            scopeId: string;
+            applicability: components["schemas"]["JsonElement"];
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            /** Format: uuid */
+            pendingRevisionId: null | string;
+            revisions: components["schemas"]["ParameterRevisionDto"][];
+        };
+        ParameterCommandDto: {
+            /** Format: uuid */
+            changeId: string;
+            /** Format: uuid */
+            revisionId: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            state: string;
+            /** Format: date-time */
+            selectedFrom: null | string;
+            replayed: boolean;
+        };
+        ParameterDecisionDto: {
+            /** Format: uuid */
+            id: string;
+            outcome: string;
+            /** Format: uuid */
+            deciderId: string;
+            /** Format: date-time */
+            decidedAt: string;
+            /** Format: date-time */
+            selectedFrom: null | string;
+            reason: string;
+        };
+        ParameterDefinitionDto: {
+            key: string;
+            /** Format: int32 */
+            definitionVersion: number;
+            ownerDomain: string;
+            classification: string;
+            valueClass: string;
+            risk: null | string;
+            type: components["schemas"]["ParameterTypeDto"];
+            allowedScopes: string[];
+            requiredSelectors: string[];
+            fallback: string;
+            approvedProductDefault: null | string;
+            productDefaultDeploymentAccepted: boolean;
+            aliasTarget: null | string;
+            writable: boolean;
+            ownerVerification: string;
+            sensitivity: string;
+            sourceLocator: string;
+            runtimeStatus: string;
+        };
+        ParameterDefinitionListDto: {
+            items: components["schemas"]["ParameterDefinitionDto"][];
+            /** Format: int32 */
+            sourceDefinitionCount: number;
+            /** Format: int32 */
+            registeredCount: number;
+            source: components["schemas"]["ParameterSourceDto"];
+        };
+        ParameterRevisionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            sequence: number;
+            /** Format: int32 */
+            definitionVersion: number;
+            valueMode: string;
+            value: null | components["schemas"]["JsonElement"];
+            /** Format: date-time */
+            effectiveFrom: string;
+            /** Format: date-time */
+            effectiveTo: null | string;
+            reason: string;
+            /** Format: uuid */
+            authorId: string;
+            /** Format: date-time */
+            authoredAt: string;
+            provenance: string;
+            contentHash: string;
+            state: string;
+            decision: null | components["schemas"]["ParameterDecisionDto"];
+        };
+        ParameterSourceDto: {
+            path: string;
+            sha256: string;
+        };
+        ParameterTypeDto: {
+            type: string;
+            nullable: boolean;
+            /** Format: int64 */
+            minimum: null | number;
+            /** Format: int64 */
+            maximum: null | number;
+            unit: null | string;
+        };
         PredicateReason: {
             path: string;
             truth: components["schemas"]["RuleTruth"];
@@ -8201,6 +8451,26 @@ export interface components {
             legalEntityId: string;
             binding: string;
             registeredOwnerState: string;
+        };
+        ProposeParameterChange: {
+            /** Format: uint32 */
+            expectedVersion: null | number;
+            key: null | string;
+            /** Format: int32 */
+            definitionVersion: null | number;
+            scopeKind: null | string;
+            /** Format: uuid */
+            scopeId: null | string;
+            applicability: null | {
+                [key: string]: string;
+            };
+            valueMode: null | string;
+            value: null | components["schemas"]["JsonElement"];
+            /** Format: date-time */
+            effectiveFrom: null | string;
+            /** Format: date-time */
+            effectiveTo: null | string;
+            reason: null | string;
         };
         QualificationCommand: {
             /** Format: uint32 */
@@ -16207,6 +16477,435 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["TugRequestDto"];
                 };
+            };
+        };
+    };
+    ListParameterDefinitions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ParameterDefinitionListDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ResolveEffectiveParameter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EffectiveParameterDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GetParameterChange: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ParameterChangeDto"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ProposeParameterChange: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-CSRF-TOKEN": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProposeParameterChange"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ParameterCommandDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ApproveParameterChange: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-CSRF-TOKEN": string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DecideParameterChange"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ParameterCommandDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    RejectParameterChange: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-CSRF-TOKEN": string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DecideParameterChange"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ParameterCommandDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

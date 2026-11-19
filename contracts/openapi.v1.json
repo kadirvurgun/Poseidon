@@ -10470,6 +10470,501 @@
         }
       }
     },
+    "/api/v1/parameter-definitions": {
+      "get": {
+        "tags": [
+          "ParameterEndpoints"
+        ],
+        "description": "config.read. Registered 54.01 CFG3 definition subset with source locators; the source declares 354 definitions. Registration is not owner adapter admission.",
+        "operationId": "ListParameterDefinitions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParameterDefinitionListDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/effective-parameters": {
+      "get": {
+        "tags": [
+          "ParameterEndpoints"
+        ],
+        "description": "config.resolve. Query key, scopeKind TENANT|COMPANY|VESSEL, scopeId (COMPANY/VESSEL), applicability (base64url canonical JSON object), mode CURRENT|HISTORICAL, effectiveAt+knownAt (HISTORICAL only). Reports status RESOLVED|UNCONFIGURED|AMBIGUOUS|BLOCKED|UNKNOWN with source scope and version; never fabricates a value.",
+        "operationId": "ResolveEffectiveParameter",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EffectiveParameterDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/parameter-changes/{id}": {
+      "get": {
+        "tags": [
+          "ParameterEndpoints"
+        ],
+        "description": "config.read. Immutable revision and decision lineage of one parameter root; version is the CAS token for decisions.",
+        "operationId": "GetParameterChange",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParameterChangeDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/parameter-changes": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "description": "config.draft. Proposes one typed value revision (IN_REVIEW). expectedVersion 0 creates the root. Owner fields, invariants, aliases and family references are rejected with 422. No approval, schedule or activation.",
+        "operationId": "ProposeParameterChange",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-CSRF-TOKEN",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProposeParameterChange"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParameterCommandDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/parameter-changes/{id}/commands/approve": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "description": "config.approve. Independent approver only (maker != checker). The selection is append-only and effective no earlier than the decision.",
+        "operationId": "ApproveParameterChange",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-CSRF-TOKEN",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecideParameterChange"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParameterCommandDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/v1/parameter-changes/{id}/commands/reject": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "description": "config.reject. Independent reviewer only; REJECTED is terminal and never selectable.",
+        "operationId": "RejectParameterChange",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-CSRF-TOKEN",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecideParameterChange"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ParameterCommandDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
     "/api/v1/hr/legal-entities": {
       "get": {
         "tags": [
@@ -17352,6 +17847,37 @@
           }
         }
       },
+      "DecideParameterChange": {
+        "required": [
+          "expectedVersion",
+          "revisionId",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          },
+          "revisionId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
       "DecisionRecording": {
         "required": [
           "decisionType",
@@ -18484,6 +19010,151 @@
             "format": "int32"
           },
           "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "EffectiveParameterDto": {
+        "required": [
+          "requestedKey",
+          "key",
+          "aliasOf",
+          "definitionVersion",
+          "mode",
+          "effectiveAt",
+          "knownAt",
+          "scopeKind",
+          "scopeId",
+          "status",
+          "valueClass",
+          "value",
+          "valueMode",
+          "sourceRevisionId",
+          "sourceScope",
+          "sourceScopeId",
+          "sourceVersion",
+          "selectedFrom",
+          "contentHash",
+          "fallbackUsed",
+          "ownerVerification",
+          "positiveUseAllowed",
+          "reasonCodes",
+          "applicabilityHash"
+        ],
+        "type": "object",
+        "properties": {
+          "requestedKey": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "aliasOf": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "definitionVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "effectiveAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "knownAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "scopeKind": {
+            "type": "string"
+          },
+          "scopeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string"
+          },
+          "valueClass": {
+            "type": "string"
+          },
+          "value": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/JsonElement"
+              }
+            ]
+          },
+          "valueMode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sourceRevisionId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "sourceScope": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sourceScopeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "sourceVersion": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "selectedFrom": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "contentHash": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "fallbackUsed": {
+            "type": "boolean"
+          },
+          "ownerVerification": {
+            "type": "string"
+          },
+          "positiveUseAllowed": {
+            "type": "boolean"
+          },
+          "reasonCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "applicabilityHash": {
             "type": "string"
           }
         }
@@ -23304,6 +23975,404 @@
           }
         }
       },
+      "ParameterChangeDto": {
+        "required": [
+          "id",
+          "key",
+          "scopeKind",
+          "scopeId",
+          "applicability",
+          "revision",
+          "version",
+          "pendingRevisionId",
+          "revisions"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "key": {
+            "type": "string"
+          },
+          "scopeKind": {
+            "type": "string"
+          },
+          "scopeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "applicability": {
+            "$ref": "#/components/schemas/JsonElement"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "pendingRevisionId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "revisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ParameterRevisionDto"
+            }
+          }
+        }
+      },
+      "ParameterCommandDto": {
+        "required": [
+          "changeId",
+          "revisionId",
+          "revision",
+          "version",
+          "state",
+          "selectedFrom",
+          "replayed"
+        ],
+        "type": "object",
+        "properties": {
+          "changeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revisionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "state": {
+            "type": "string"
+          },
+          "selectedFrom": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "replayed": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ParameterDecisionDto": {
+        "required": [
+          "id",
+          "outcome",
+          "deciderId",
+          "decidedAt",
+          "selectedFrom",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "deciderId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "decidedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "selectedFrom": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "ParameterDefinitionDto": {
+        "required": [
+          "key",
+          "definitionVersion",
+          "ownerDomain",
+          "classification",
+          "valueClass",
+          "risk",
+          "type",
+          "allowedScopes",
+          "requiredSelectors",
+          "fallback",
+          "approvedProductDefault",
+          "productDefaultDeploymentAccepted",
+          "aliasTarget",
+          "writable",
+          "ownerVerification",
+          "sensitivity",
+          "sourceLocator",
+          "runtimeStatus"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "definitionVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ownerDomain": {
+            "type": "string"
+          },
+          "classification": {
+            "type": "string"
+          },
+          "valueClass": {
+            "type": "string"
+          },
+          "risk": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "type": {
+            "$ref": "#/components/schemas/ParameterTypeDto"
+          },
+          "allowedScopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "requiredSelectors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "fallback": {
+            "type": "string"
+          },
+          "approvedProductDefault": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "productDefaultDeploymentAccepted": {
+            "type": "boolean"
+          },
+          "aliasTarget": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "writable": {
+            "type": "boolean"
+          },
+          "ownerVerification": {
+            "type": "string"
+          },
+          "sensitivity": {
+            "type": "string"
+          },
+          "sourceLocator": {
+            "type": "string"
+          },
+          "runtimeStatus": {
+            "type": "string"
+          }
+        }
+      },
+      "ParameterDefinitionListDto": {
+        "required": [
+          "items",
+          "sourceDefinitionCount",
+          "registeredCount",
+          "source"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ParameterDefinitionDto"
+            }
+          },
+          "sourceDefinitionCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "registeredCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "source": {
+            "$ref": "#/components/schemas/ParameterSourceDto"
+          }
+        }
+      },
+      "ParameterRevisionDto": {
+        "required": [
+          "id",
+          "sequence",
+          "definitionVersion",
+          "valueMode",
+          "value",
+          "effectiveFrom",
+          "effectiveTo",
+          "reason",
+          "authorId",
+          "authoredAt",
+          "provenance",
+          "contentHash",
+          "state",
+          "decision"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "definitionVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "valueMode": {
+            "type": "string"
+          },
+          "value": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/JsonElement"
+              }
+            ]
+          },
+          "effectiveFrom": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "effectiveTo": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "authorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "authoredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "contentHash": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "decision": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ParameterDecisionDto"
+              }
+            ]
+          }
+        }
+      },
+      "ParameterSourceDto": {
+        "required": [
+          "path",
+          "sha256"
+        ],
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string"
+          }
+        }
+      },
+      "ParameterTypeDto": {
+        "required": [
+          "type",
+          "nullable",
+          "minimum",
+          "maximum",
+          "unit"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "nullable": {
+            "type": "boolean"
+          },
+          "minimum": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "maximum": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "unit": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "PredicateReason": {
         "required": [
           "path",
@@ -23591,6 +24660,103 @@
             "type": "string"
           }
         }
+      },
+      "ProposeParameterChange": {
+        "required": [
+          "expectedVersion",
+          "key",
+          "definitionVersion",
+          "scopeKind",
+          "scopeId",
+          "applicability",
+          "valueMode",
+          "value",
+          "effectiveFrom",
+          "effectiveTo",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          },
+          "key": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "definitionVersion": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "scopeKind": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "scopeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "applicability": {
+            "type": [
+              "null",
+              "object"
+            ],
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "valueMode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "value": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/JsonElement"
+              }
+            ]
+          },
+          "effectiveFrom": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "effectiveTo": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
       },
       "QualificationCommand": {
         "required": [
@@ -28035,6 +29201,9 @@
     },
     {
       "name": "TugEndpoints"
+    },
+    {
+      "name": "ParameterEndpoints"
     }
   ]
 }
