@@ -146,7 +146,9 @@ describe('VESSEL-PROFILE-DRAFT-01 component and transport coverage (mocked API, 
         expect(calls[1][1].headers).toEqual(calls[0][1].headers);
         complete(reply({ ...profile, provenance: 'Missing', version: 20, revision: 2 }));
         await screen.findByText('Taslak kaydedildi.');
-        expect(props.onSaving).toHaveBeenLastCalledWith(false);
+        // onSaving is reported from a passive effect (use-profile-recovery.ts:44) that React
+        // flushes after the commit that renders the notice; await it instead of racing it.
+        await waitFor(() => expect(props.onSaving).toHaveBeenLastCalledWith(false));
     });
     it('associates safe server validation with fields and never displays arbitrary server text', async () => {
         mock(async () => reply({ code: 'validation_failed', errors: { imo: ['secret or unsafe error text'] } }, 400));
