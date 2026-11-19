@@ -30,6 +30,10 @@ test('profile exact decimal save and malformed background history recovery retai
         }
         else if (url.includes('/files?'))
             body = { items: [], offset: 0, hasMore: false, available: true, canWrite: false, maxBytes: 1048576, allowedTypes: ['image/png'] };
+        // DEV-024: no critical state is visible to this synthetic reader (empty, never a positive state),
+        // so the only alert on the page is the profile history failure under test.
+        else if (new URL(url).pathname.endsWith('/critical-states'))
+            body = { vesselId: vessel.id, readAt: '2026-01-01T00:00:00Z', scope: 'VISIBLE_ONLY', states: [] };
         // DEV-020 field provenance endpoints are routed before the generic profile/history
         // branches. Synthetic, unconfigured policy, no declared sources and no positive state.
         else if (new URL(url).pathname.endsWith('/regulatory-profile/fields')) {
