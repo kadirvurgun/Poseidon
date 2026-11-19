@@ -129,6 +129,7 @@
     "VesselCertificateUpdate": "PREPARATION_COMMAND",
     "CertificateRenewalCreate": "PREPARATION_COMMAND",
     "CertificateRenewalUpdate": "PREPARATION_COMMAND",
+    "CertificateRenewalTransition": "REGULATORY_WORKFLOW",
     "FuelShipOpsCreate": "PREPARATION_COMMAND",
     "FuelShipOpsUpdate": "PREPARATION_COMMAND",
     "PortShipOpsCreate": "PREPARATION_COMMAND",

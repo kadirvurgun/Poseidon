@@ -56,6 +56,14 @@ internal static class CertificateReader
             VesselCertificatePolicy.Calendar(content.Metadata.Declaration,reference,content.SurveyWindowStart,content.SurveyWindowEnd),"REVIEW_REQUIRED","DRAFT",VesselCertificatePolicy.Blockers(content),
             current && Write(a,row.VesselId),$"/app/certificate-command-center/{row.VesselId:D}?id={row.CertificateId:D}",current);
     }
+    // DEV-044: a completed, human-verified renewal marks every revision of the original as
+    // SUPERSEDED (read-only) while its own history stays unchanged and readable.
+    internal static async Task<CertificateDto[]> Superseded(PoseidonDbContext db,Guid vessel,CertificateDto[] rows,CancellationToken ct) {
+        var ids=rows.Where(r=>r.Scope=="Vessel").Select(r=>r.Id).Distinct().ToArray();if(ids.Length==0)return rows;
+        var map=await db.CertificateSupersessions.AsNoTracking().Where(s=>s.VesselId==vessel && ids.Contains(s.CertificateId)).ToDictionaryAsync(s=>s.CertificateId,ct);
+        return rows.Select(r=>r.Scope=="Vessel" && map.TryGetValue(r.Id,out var s)?r with{State="SUPERSEDED",CanEdit=false,
+            SupersededBy=new(s.ReplacementCertificateId,s.ReplacementRevision,s.RenewalId,s.CompletedAt)}:r).ToArray();
+    }
     internal static CertificateDto CrewDto(Credential row,DateOnly reference)=>new(row.Id,row.VesselId,"Crew",row.AssignmentId,row.PersonId,row.Revision,row.Version,
         new(row.Metadata()),VesselCertificatePolicy.SourceVersion,row.Provenance,null,null,VesselCertificatePolicy.Calendar(row.Metadata().Declaration,reference),
         "REVIEW_REQUIRED","DRAFT",["SOURCE_QUALIFICATION_REQUIRED","HUMAN_VERIFICATION_REQUIRED"],false,$"/app/crew-roster/{row.VesselId:D}/crew-profile/{row.AssignmentId:D}",true);

@@ -92,9 +92,23 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if(entry.Entity is CertificateRenewal renewal)
             return new(renewal.VesselId,renewal.Id,"CertificateRenewal",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,renewal.Revision,
                 Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(renewal.Revision)),Field("Binding",null,"OwnerReference")));
-        if(entry.Entity is CertificateRenewalRevision renewalRevision)
-            return new(renewalRevision.VesselId,renewalRevision.RenewalId,"CertificateRenewalRevision",null,renewalRevision.Revision,
-                Fields(Field("Revision",null,Number(renewalRevision.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is CertificateRenewalRevision renewalRevision) {
+            // DEV-044: closed workflow state/transition codes only; DecisionJson (authority reference,
+            // match decisions, evidence pins) is never copied into the audit summary.
+            if(!CertificateRenewalWorkflow.Known(renewalRevision.State) || renewalRevision.Transition!=null && !CertificateRenewalWorkflow.Transitions.ContainsKey(renewalRevision.Transition))
+                throw new InvalidOperationException("Invalid renewal workflow metadata.");
+            var renewalFields=new List<object>{Field("Revision",null,Number(renewalRevision.Revision)),Field("RenewalState",null,renewalRevision.State),Field("Binding",null,"OwnerReference")};
+            if(renewalRevision.Transition!=null)renewalFields.Add(Field("Transition",null,renewalRevision.Transition));
+            if(renewalRevision.DecisionJson!=null)renewalFields.Add(Field("Decision",null,null,"ValuesWithheld"));
+            return new(renewalRevision.VesselId,renewalRevision.RenewalId,"CertificateRenewalRevision",null,renewalRevision.Revision,Fields([..renewalFields]));
+        }
+        if(entry.Entity is CertificateSupersession supersession) {
+            if(supersession.CertificateRevision<=0 || supersession.ReplacementRevision<=0 || supersession.RenewalRevision<=0 || supersession.CertificateId==supersession.ReplacementCertificateId)
+                throw new InvalidOperationException("Invalid certificate supersession metadata.");
+            return new(supersession.VesselId,supersession.CertificateId,"CertificateSupersession",null,supersession.CertificateRevision,
+                Fields(Field("CertificateRevision",null,Number(supersession.CertificateRevision)),Field("ReplacementRevision",null,Number(supersession.ReplacementRevision)),
+                    Field("RenewalRevision",null,Number(supersession.RenewalRevision)),Field("SupersessionState",null,"SUPERSEDED_BY_COMPLETED_RENEWAL"),Field("Binding",null,"OwnerReference")));
+        }
         if(entry.Entity is CertificateAssertionHead assertionHead)
             return new(assertionHead.VesselId,assertionHead.CertificateId,"CertificateAssertionHead",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,assertionHead.Revision,
                 Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(assertionHead.Revision)),Field("Binding",null,"OwnerReference")));

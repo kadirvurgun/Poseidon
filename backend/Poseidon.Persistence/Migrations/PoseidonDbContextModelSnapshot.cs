@@ -782,7 +782,7 @@ namespace Poseidon.Persistence.Migrations
 
                     b.ToTable("CertificateReceipts", "assurance", t =>
                         {
-                            t.HasCheckConstraint("CK_CertificateReceipt_Resource", "(\"Action\" IN ('CertificateSave','CertificateAssertion') AND \"RenewalId\" IS NULL AND \"ResourceId\"=\"CertificateId\") OR (\"Action\"='RenewalSave' AND \"RenewalId\" IS NOT NULL AND \"ResourceId\"=\"RenewalId\")");
+                            t.HasCheckConstraint("CK_CertificateReceipt_Resource", "(\"Action\" IN ('CertificateSave','CertificateAssertion') AND \"RenewalId\" IS NULL AND \"ResourceId\"=\"CertificateId\") OR (\"Action\" IN ('RenewalSave','RenewalTransition') AND \"RenewalId\" IS NOT NULL AND \"ResourceId\"=\"RenewalId\")");
                         });
                 });
 
@@ -848,6 +848,9 @@ namespace Poseidon.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("DecisionJson")
+                        .HasColumnType("text");
+
                     b.Property<Guid?>("FileId")
                         .HasColumnType("uuid");
 
@@ -884,6 +887,17 @@ namespace Poseidon.Persistence.Migrations
                         .HasMaxLength(192)
                         .HasColumnType("character varying(192)");
 
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasDefaultValue("DRAFT");
+
+                    b.Property<string>("Transition")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
                     b.Property<Guid>("VesselId")
                         .HasColumnType("uuid");
 
@@ -904,6 +918,65 @@ namespace Poseidon.Persistence.Migrations
                     b.ToTable("RenewalRevisions", "assurance", t =>
                         {
                             t.HasCheckConstraint("CK_RenewalRevision_Binding", "\"Revision\" > 0 AND \"RecordVersion\" > 0 AND \"CertificateRevision\" > 0 AND \"CertificateVersion\" > 0 AND ((\"NewCertificateId\" IS NULL AND \"NewCertificateRevision\" IS NULL AND \"NewCertificateVersion\" IS NULL) OR (\"NewCertificateId\" IS NOT NULL AND \"NewCertificateRevision\" > 0 AND \"NewCertificateVersion\" > 0)) AND ((\"FileId\" IS NULL AND \"FileRevision\" IS NULL AND \"Checksum\" IS NULL) OR (\"FileId\" IS NOT NULL AND \"FileRevision\" > 0 AND \"Checksum\" IS NOT NULL))");
+
+                            t.HasCheckConstraint("CK_RenewalRevision_State", "\"State\" IN ('DRAFT','PREPARING','READY_TO_APPLY','APPLICATION_RECORDED','AWAITING_AUTHORITY','ISSUED_UNVERIFIED','VERIFIED','COMPLETED','CANCELLED','REJECTED') AND (\"Transition\" IS NULL OR \"Transition\" IN ('OPEN','VALIDATE','RECORD_APPLICATION','AWAIT_AUTHORITY','RECORD_ISSUED_CANDIDATE','VERIFY','COMPLETE','REJECT','CANCEL'))");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.CertificateSupersession", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CertificateId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("CertificateRevision")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("CompletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateOnly>("EffectiveDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("RenewalId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("RenewalRevision")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("ReplacementCertificateId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("ReplacementRevision")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "CertificateId");
+
+                    b.HasIndex("TenantId", "ReplacementCertificateId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_CertificateSupersession_Replacement");
+
+                    b.HasIndex("TenantId", "RenewalId", "RenewalRevision")
+                        .IsUnique()
+                        .HasDatabaseName("IX_CertificateSupersession_Renewal");
+
+                    b.HasIndex("TenantId", "VesselId", "CertificateId", "CertificateRevision")
+                        .HasDatabaseName("IX_CertificateSupersession_Original");
+
+                    b.HasIndex("TenantId", "VesselId", "ReplacementCertificateId", "ReplacementRevision")
+                        .HasDatabaseName("IX_CertificateSupersession_ReplacementRevision");
+
+                    b.ToTable("CertificateSupersessions", "assurance", t =>
+                        {
+                            t.HasCheckConstraint("CK_CertificateSupersession_Binding", "\"CertificateRevision\" > 0 AND \"ReplacementRevision\" > 0 AND \"RenewalRevision\" > 0 AND \"CertificateId\" <> \"ReplacementCertificateId\"");
                         });
                 });
 
@@ -8438,6 +8511,32 @@ namespace Poseidon.Persistence.Migrations
                         .HasPrincipalKey("TenantId", "VesselId", "Id", "Revision", "Checksum")
                         .OnDelete(DeleteBehavior.Restrict)
                         .HasConstraintName("FK_RenewalRevision_File");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.CertificateSupersession", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.CertificateRenewalRevision", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "RenewalId", "RenewalRevision")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_CertificateSupersession_Renewal");
+
+                    b.HasOne("Poseidon.Persistence.VesselCertificateRevision", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId", "CertificateId", "CertificateRevision")
+                        .HasPrincipalKey("TenantId", "VesselId", "CertificateId", "Revision")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_CertificateSupersession_Original");
+
+                    b.HasOne("Poseidon.Persistence.VesselCertificateRevision", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId", "ReplacementCertificateId", "ReplacementRevision")
+                        .HasPrincipalKey("TenantId", "VesselId", "CertificateId", "Revision")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_CertificateSupersession_Replacement");
                 });
 
             modelBuilder.Entity("Poseidon.Persistence.CommandReceipt", b =>

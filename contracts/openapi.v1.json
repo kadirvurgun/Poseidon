@@ -7144,6 +7144,48 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/renewal-workflow/{id}/transitions": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "CertificateRenewalTransition",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CertificateRenewalTransitionCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificateRenewalDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
     "/api/v1/vessels/{vessel}/certificates/{id}/verification-capabilities": {
       "get": {
         "tags": [
@@ -17908,6 +17950,114 @@
         },
         "additionalProperties": false
       },
+      "CertificateRenewalDecision": {
+        "type": "object",
+        "properties": {
+          "surveyStatus": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "documentsStatus": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "actionsStatus": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "applicationDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "authorityReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "newCertificateId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "newCertificateRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "newCertificateVersion": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          },
+          "newDocument": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/CertificateFilePin"
+              }
+            ]
+          },
+          "issuerMatch": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "numberMatch": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "subjectMatch": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "dateMatch": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "scopeMatch": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "evidence": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/CertificateFilePin"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
       "CertificateRenewalDto": {
         "required": [
           "id",
@@ -17995,8 +18145,64 @@
           "provenance": {
             "type": "string",
             "default": "UserDeclaredUnverified"
+          },
+          "transition": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "decision": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/CertificateRenewalDecision"
+              }
+            ]
+          },
+          "allowedTransitions": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
           }
         }
+      },
+      "CertificateRenewalTransitionCommand": {
+        "required": [
+          "id",
+          "expectedVersion",
+          "expectedRevision",
+          "action",
+          "decision"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "action": {
+            "type": "string"
+          },
+          "decision": {
+            "$ref": "#/components/schemas/CertificateRenewalDecision"
+          }
+        },
+        "additionalProperties": false
       },
       "CertificateSaveCommand": {
         "required": [
@@ -31549,6 +31755,19 @@
           },
           "sourceVersion": {
             "type": "string"
+          },
+          "canVerify": {
+            "type": "boolean",
+            "default": false
+          },
+          "states": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
