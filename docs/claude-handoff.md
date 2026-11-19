@@ -42,7 +42,8 @@ Main: #16 #17 #18 #20 #23 #36 + **#37 paket 2** birleşik (`2995f70`, 19.11 ~08:
 - #38 CI 8/8 yeşil (f39793a); #32 QA sonucu kaybolmuştu → bağımsız QA yeniden başlatıldı.
 - Kullanıcı "kaldığın yerden devam et" dedi → #28 (2a55677) ve #30 (c4367d4) teşhisli düzeltmeleri **tek push** ile gönderildi; CI bekleniyor. Yine kırmızıysa dur ve raporla.
 - #32 bağımsız QA **PASS-WITH-NOTES** (f408876; engelleyici yok). Düşük notlar: (1) `EnterpriseChrome.tsx:181` tagline `aria-hidden` (aria-label kaldırmak yeterdi); (2) `s2-axe.spec.ts:71` yalnız `/app/today/{vessel}` taranıyor (filo listesi, araç seçilmemiş, arama diyaloğu yok); (3) axe `incomplete` sonuçları raporlanmıyor; (4) `docs/dependency-policy.md`'de axe paket kaydı yok; (5) `enterprise.css:77` CSS-üretimli kısayol ipucu kontrast denetiminden çıktı (belgeli). Sonraki takip paketinde düzelt.
-- #38 birleştirme denemesi (`gh pr merge 38 --merge --match-head-commit f39793a…`) harness auto-mode tarafından **reddedildi** → kullanıcı GitHub UI'dan birleştirmeli veya izin kuralı eklemeli.
+- #38 birleştirme denemesi (`gh pr merge 38 --merge --match-head-commit f39793a…`) harness auto-mode tarafından **reddedildi** → kullanıcı izin verdi; settings.json'a dar gh kuralları eklendi (`gh pr merge/create/comment`, `gh run`; geniş liste harness'ça reddedildi). `gh`'ı doğrudan çağır (`& $gh` kurala uymaz). **#38 birleşti → main `e488b34`** (#32 otomatik).
+- #25 (58.03): alt-ajan main birleşimi + yeni uçlara profil ekliyor (worktree `plan-5803-20261118`), tek push.
 
 ### Entegrasyon paketi 2
 `integration/bundle2-20261119` = main + #29 + replay-race + #34 + #33 (hepsi CI yeşil + QA'lı); alt-ajan birleştirip tek PR açıyor (03:50'de başladı). #28 ve #30 durma limiti nedeniyle dışarıda — kullanıcı onayıyla push edilip CI yeşillenince paket 3'e.
