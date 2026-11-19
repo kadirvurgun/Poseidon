@@ -213,6 +213,51 @@ public sealed partial class DirectoryWorkspaceTests
         }
         finally { try { Directory.Delete(root, true); } catch (IOException) { } catch (UnauthorizedAccessException) { } }
     }
+    // DEV-024 re-QA note 2: the live access fence's 403 branch. A grant change committed while
+    // composition is paused withholds the whole response (no partial or redacted body) and is
+    // audited as permission_denied; an equivalent (reordered) grant still answers 200.
+    [Theory, Trait("Requirement", "DEV-024")]
+    [InlineData("directory")]
+    [InlineData("file")]
+    [InlineData("scope")]
+    [InlineData("actor")]
+    [InlineData("unchanged")]
+    public async Task Critical_states_withhold_the_response_when_the_live_grant_changes_during_composition(string change)
+    {
+        var barrier = new ComplianceRowsBarrier();
+        await using var host = Host(interceptor: barrier); using var client = Client(host); GraphPermissionsForTest(host.Services); await Token(client);
+        var settings = host.Services.GetRequiredService<FederationSettings>(); var original = settings.Memberships[0];
+        barrier.Arm(); var pending = client.GetAsync(CriticalPath(SeedVessel.Id), Ct); HttpResponseMessage? response = null;
+        try
+        {
+            await barrier.Wait(Ct);
+            settings.Memberships[0] = change switch
+            {
+                "directory" => original with { Permissions = original.Permissions.Where(p => p != "directory.read").ToArray() },
+                "file" => original with { Permissions = original.Permissions.Where(p => p != "file.read").ToArray() },
+                "scope" => original with { TenantWideRead = false, TenantWideManage = false, VesselGrants = [] },
+                "actor" => original with { ActorId = Guid.NewGuid() },
+                _ => original with { Permissions = original.Permissions.Reverse().ToArray() }
+            };
+            barrier.Release(); response = await pending.WaitAsync(TimeSpan.FromSeconds(30), Ct);
+            var body = await response.Content.ReadAsStringAsync(Ct);
+            await using var db = Db();
+            var events = await db.Set<SecurityEvent>().Where(e => e.Action == "CriticalStateRead" && e.ResourceId == SeedVessel.Id).ToArrayAsync(Ct);
+            if (change == "unchanged")
+            {
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                Assert.Contains(events, e => e.Result == "Success");
+                return;
+            }
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            foreach (var hidden in new[] { "states", "disclosure", "RegulatoryDraft", "reasonCodes", "blockers", "/app/fleet" })
+                Assert.DoesNotContain(hidden, body, StringComparison.OrdinalIgnoreCase);
+            Assert.Contains(events, e => e.Result == "permission_denied");
+            Assert.DoesNotContain(events, e => e.Result == "Success");
+        }
+        finally { barrier.Release(); response ??= await pending.WaitAsync(TimeSpan.FromSeconds(30), Ct); response.Dispose(); }
+    }
+
     [Fact, Trait("Requirement", "DEV-024")]
     public async Task Other_tenant_and_unscoped_vessels_are_not_found_and_unscoped_readers_are_denied_without_an_oracle()
     {
