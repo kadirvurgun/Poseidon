@@ -110,6 +110,27 @@ public sealed class WorkspaceLensPolicyTests
         Assert.DoesNotContain(WorkspaceLensPolicy.Available(actor, Vessel, VesselKind.Tug), item => item.Key is "fuel-bunker-log" or "port-activity-sof");
         Assert.DoesNotContain(WorkspaceEndpoints.Destinations(Actor("operations.fuel.write")), item => item.Key == "fuel-bunker-log");
     }
+    // DEV-080 / T-TUG-001: Ship Mode screens stay hidden in Tug mode unless the trusted cross-mode role exists.
+    [Fact]
+    public void Ship_mode_daily_screens_are_hidden_on_tug_context_unless_cross_mode_is_granted() {
+        string[] ship = ["noon-report", "deck-daily-log", "engine-daily-log"];
+        string[] daily = ["daily.noon.read", "daily.deck.read", "daily.engine.read"];
+        var tugOnly = Actor([.. daily, "mode.tug", "tug.read"]);
+        Assert.DoesNotContain(WorkspaceLensPolicy.Available(tugOnly, Vessel, VesselKind.Tug), i => ship.Contains(i.Key));
+        Assert.Contains(WorkspaceLensPolicy.Available(tugOnly, Vessel, VesselKind.Tug), i => i.Key == "tug-command");
+        var cross = Actor([.. daily, "mode.tug", "mode.cross", "tug.read"]);
+        var crossItems = WorkspaceLensPolicy.Available(cross, Vessel, VesselKind.Tug);
+        Assert.All(ship, key => Assert.Contains(crossItems, i => i.Key == key && i.Href == $"/app/{key}/{Vessel}"));
+        // Cross-mode never adds an ungranted daily family or a Ship-only operational screen.
+        var partial = Actor("daily.engine.read", "mode.tug", "mode.cross", "tug.read", "operations.fuel.read");
+        var partialItems = WorkspaceLensPolicy.Available(partial, Vessel, VesselKind.Tug);
+        Assert.Contains(partialItems, i => i.Key == "engine-daily-log");
+        Assert.DoesNotContain(partialItems, i => i.Key is "noon-report" or "deck-daily-log" or "fuel-bunker-log");
+        // Configured role lens in Tug mode intersects with the same server policy.
+        var c = Config(); c["WorkspaceNavigation:Mappings:0:Keys:0"] = "engine-daily-log";
+        Assert.DoesNotContain(Assert.Single(Describe(tugOnly, c, VesselKind.Tug).Lenses).Items, i => i.Key == "engine-daily-log");
+        Assert.Contains(Assert.Single(Describe(cross, c, VesselKind.Tug).Lenses).Items, i => i.Key == "engine-daily-log");
+    }
 }
 
 public sealed partial class DirectoryWorkspaceTests

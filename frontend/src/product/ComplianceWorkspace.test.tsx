@@ -15,7 +15,7 @@ describe('S5-EXPERIENCE-01 honest source review (authored; execution deferred)',
     await screen.findByText('Review required')
     expect(screen.getByText(/Unsaved inputs are not included/)).toBeVisible()
     expect(screen.getByRole('button', { name: 'Submit for review' })).toBeDisabled()
-    expect(screen.getAllByText('Incomplete · review required')).toHaveLength(8)
+    expect(screen.getAllByText('Incomplete · review required')).toHaveLength(9) // nine profile fields incl. DEV-039 class number
     view.rerender(<OnboardingAssessmentView vessel={complianceVessel} savedRevision={2} dirty={false} language="en" />)
     await screen.findByRole('alert')
     expect(screen.getByRole('alert')).toHaveTextContent('saved profile revision changed')
@@ -33,7 +33,7 @@ describe('S5-EXPERIENCE-01 honest source review (authored; execution deferred)',
     vi.stubGlobal('fetch', vi.fn(async () => response(assessmentFixture())))
     const view = render(<OnboardingAssessmentView vessel={complianceVessel} savedRevision={1} dirty={false} language="en" />)
     const blockers = await screen.findByRole('region', { name: 'Onboarding blockers' })
-    expect(within(blockers).getAllByText('Required declaration')).toHaveLength(8)
+    expect(within(blockers).getAllByText('Required declaration')).toHaveLength(9)
     expect(within(blockers).getByText('Qualified evidence required')).toBeVisible()
     expect(blockers).not.toHaveTextContent(complianceVessel)
     view.rerender(<OnboardingAssessmentView vessel={complianceVessel} savedRevision={1} dirty={false} language="tr" />)
@@ -43,6 +43,9 @@ describe('S5-EXPERIENCE-01 honest source review (authored; execution deferred)',
     const fetch = vi.fn(async () => response(passportFixture())); vi.stubGlobal('fetch', fetch)
     const navigate = vi.fn(), user = userEvent.setup(); render(<CompliancePassport vessel={complianceVessel} language="en" onNavigate={navigate} />)
     await screen.findByRole('heading', { name: 'Vessel certificate declarations' })
+    // No authoring artifact (e.g. a literal shell escape) leaks into the rendered passport.
+    expect(document.body.textContent).not.toContain('`')
+    expect(screen.getByRole('heading', { name: 'Source freshness' })).toBeVisible()
     expect(screen.getByText(/Certificate reading is unavailable/)).toBeVisible()
     const coverage = screen.getByRole('heading', { name: 'Control-plan coverage' }).parentElement!
     expect(coverage).toHaveTextContent('Uncontrolled requirements: Unavailable')

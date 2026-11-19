@@ -39,10 +39,10 @@ public sealed partial class DirectoryWorkspaceTests
         var observed = S1SecurityContract.ValidateEndpointInventory(endpoints);
         // S6 adds owning drafts, extraction and assigned Human assertion recording.
         // Historical native receipts remain unchanged; these are source denominators.
-        // PLAN-1511-5201 adds 14 audited HR commands; PLAN-1511-5401 adds 3; main S2 bundle adds 1 (legal entity, person master, employment, plan, actual; QA: role cancel); PLAN-1511-5202 adds 7 tenant-scoped membership/delegation lifecycle commands; PLAN-1511-5802 adds 11 controlled document/evidence custody commands; S3 WP-B (DEV-028) adds 1 control lifecycle transition; S4 WP-D adds 1 DEV-034 sync reconciliation observation (no business effect).
-        Assert.Equal(153, observed.Count);
-        Assert.Equal(144, observed.Count(x => x.IsCritical));
-        Assert.Equal(154, S1SecurityContract.CriticalOperationIds.Count);
+        // PLAN-1511-5201 adds 14 audited HR commands; PLAN-1511-5401 adds 3; main S2 bundle adds 1 (legal entity, person master, employment, plan, actual; QA: role cancel); PLAN-1511-5202 adds 7 tenant-scoped membership/delegation lifecycle commands; PLAN-1511-5802 adds 11 controlled document/evidence custody commands; S3 WP-B (DEV-028) adds 1 control lifecycle transition; S4 WP-D adds 1 DEV-034 sync reconciliation observation (no business effect); S5 WP-C adds 1 DEV-099 engine log WO/defect reference link; S5 WP-A adds 3 (DEV-040 override propose/decision, DEV-041 control candidates).
+        Assert.Equal(157, observed.Count);
+        Assert.Equal(148, observed.Count(x => x.IsCritical));
+        Assert.Equal(158, S1SecurityContract.CriticalOperationIds.Count);
         Assert.Equal(9, observed.Count(x => !x.IsCritical));
         var extra = new RouteEndpoint(_ => Task.CompletedTask, RoutePatternFactory.Parse("/api/v1/unclassified-write"), 0,
             new EndpointMetadataCollection(new HttpMethodMetadata(["POST"]), new AuthorizeAttribute("DirectoryRead")), "unclassified");

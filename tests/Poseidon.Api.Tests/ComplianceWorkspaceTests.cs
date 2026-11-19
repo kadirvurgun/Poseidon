@@ -108,7 +108,7 @@ public sealed partial class DirectoryWorkspaceTests
         await using var host = Host(); using var client = Client(host); await Token(client);
         var before = await Profile(client);
         var saved = await SaveProfile(client, before, before.Content with {
-            Imo = new("Known", "1234567"), Flag = new("Known", "FICTIONAL"), ClassSociety = new("Known", "FICTIONAL"),
+            Imo = new("Known", "1234567"), Flag = new("Known", "FICTIONAL"), ClassSociety = new("Known", "FICTIONAL"), ClassNumber = new("Known", "FICTIONAL-0001"),
             ShipType = new("Known", "FICTIONAL"), Gt = new("Known", "1000.00000000000000000001"),
             BuildDate = new("Known", "2000-01-01"), TradingArea = new("Known", "FICTIONAL"), CargoContext = new("Known", "FICTIONAL") });
         var dto = (await client.GetFromJsonAsync<ComplianceOnboardingDto>(CompliancePath("onboarding"), Ct))!;

@@ -554,6 +554,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/noon-reports/reviewed-summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["NoonReviewedSummary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/vessels/{vessel}/crew/{assignment}/personal-files": {
         parameters: {
             query?: never;
@@ -2967,6 +2983,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/vessels/{id}/applicability-overrides": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ApplicabilityOverrides"];
+        put?: never;
+        post: operations["ApplicabilityOverridePropose"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{id}/applicability-overrides/{overrideId}/decisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ApplicabilityOverrideDecision"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{id}/compliance-control-plan/candidates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ComplianceControlCandidates"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/verifications": {
         parameters: {
             query?: never;
@@ -3877,6 +3941,118 @@ export interface paths {
         get: operations["EngineDailyReviews"];
         put?: never;
         post: operations["EngineDailyReviewRecord"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/noon-reports/reference-options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["NoonDailyReferenceOptions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/noon-reports/{id}/references": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["NoonDailyReferences"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/deck-daily-logs/reference-options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["DeckDailyReferenceOptions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/deck-daily-logs/{id}/references": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["DeckDailyReferences"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/engine-daily-logs/reference-options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["EngineDailyReferenceOptions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/engine-daily-logs/reference-candidates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["EngineDailyReferenceCandidates"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/engine-daily-logs/{id}/references": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["EngineDailyReferences"];
+        put?: never;
+        post: operations["EngineDailyReferenceRecord"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5979,6 +6155,109 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        ApplicabilityOverrideCommand: {
+            /** Format: uuid */
+            evaluationId: string;
+            inputHash: string;
+            ruleSetHash: string;
+            /** Format: uuid */
+            ruleId: string;
+            /** Format: int64 */
+            ruleRevision: number;
+            action: string;
+            reasonCode: string;
+            purpose: string;
+            rationale: string;
+            evidenceIds: string[];
+            /** Format: date-time */
+            validFrom: string;
+            /** Format: date-time */
+            expiresAt: string;
+            /** Format: date-time */
+            reviewAt: string;
+        };
+        ApplicabilityOverrideDecisionCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            /** Format: int64 */
+            expectedSequence: number;
+            decision: string;
+            rationale: string;
+        };
+        ApplicabilityOverrideDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: uuid */
+            evaluationId: string;
+            /** Format: uuid */
+            ruleId: string;
+            /** Format: int64 */
+            ruleRevision: number;
+            /** Format: uuid */
+            requirementId: null | string;
+            /** Format: int64 */
+            requirementRevision: null | number;
+            /** Format: uuid */
+            sourceId: null | string;
+            /** Format: int64 */
+            sourceRevision: null | number;
+            baseResult: string;
+            purpose: string;
+            action: string;
+            reasonCode: string;
+            rationale: null | string;
+            evidenceIds: string[];
+            /** Format: date-time */
+            validFrom: string;
+            /** Format: date-time */
+            expiresAt: string;
+            /** Format: date-time */
+            reviewAt: string;
+            /** Format: uuid */
+            authorId: string;
+            /** Format: uuid */
+            approverId: null | string;
+            state: string;
+            currentValidity: string;
+            /** Format: int64 */
+            sequence: number;
+            /** Format: uint32 */
+            version: number;
+            /** Format: date-time */
+            createdAt: string;
+            events: components["schemas"]["ApplicabilityOverrideEventDto"][];
+        };
+        ApplicabilityOverrideEventDto: {
+            /** Format: int64 */
+            sequence: number;
+            fromState: null | string;
+            toState: string;
+            eventCode: string;
+            /** Format: uuid */
+            actorId: string;
+            rationale: null | string;
+            /** Format: date-time */
+            savedAt: string;
+        };
+        ApplicabilityOverrideListDto: {
+            /** Format: uuid */
+            vesselId: string;
+            authority: string;
+            authorityBlockers: string[];
+            canPropose: boolean;
+            canDecide: boolean;
+            canRevoke: boolean;
+            /** Format: uuid */
+            currentEvaluationId: null | string;
+            items: components["schemas"]["ApplicabilityOverrideDto"][];
+            /** Format: int32 */
+            offset: number;
+            hasMore: boolean;
+            /** @default 18.01/Backlog/row:41;60.03/paragraph:154-166,575-580 */
+            source: string;
+        };
         Asset: {
             /** Format: uuid */
             tenantId?: string;
@@ -6567,6 +6846,7 @@ export interface components {
             applicability: components["schemas"]["ComplianceApplicabilityDto"];
             plan: components["schemas"]["ComplianceControlPlanDto"];
             certificates: components["schemas"]["ComplianceCertificatePageDto"];
+            sources: components["schemas"]["PassportSourceDto"][];
         };
         ComplianceRequirementPlanDto: {
             /** Format: uuid */
@@ -6591,6 +6871,46 @@ export interface components {
             /** Format: int64 */
             revision: number;
             checksum: string;
+        };
+        ControlCandidateCommand: {
+            /** Format: uuid */
+            evaluationId: string;
+            inputHash: string;
+            ruleSetHash: string;
+        };
+        ControlCandidateItem: {
+            /** Format: uuid */
+            controlId: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            /** Format: uuid */
+            ruleId: string;
+            /** Format: int64 */
+            ruleRevision: number;
+            /** Format: uuid */
+            requirementId: string;
+            /** Format: int64 */
+            requirementRevision: number;
+            /** Format: uuid */
+            sourceId: string;
+            /** Format: int64 */
+            sourceRevision: number;
+            title: string;
+            lifecycle: string;
+            controlState: string;
+            blockers: string[];
+        };
+        ControlCandidateOutcome: {
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: uuid */
+            evaluationId: string;
+            created: components["schemas"]["ControlCandidateItem"][];
+            /** Format: int32 */
+            alreadyLinked: number;
+            blockers: string[];
         };
         ControlEvidenceCommand: {
             /** Format: uint32 */
@@ -7266,6 +7586,107 @@ export interface components {
             };
             reasonCode: string;
         };
+        DailyEngineReferenceCandidateDto: {
+            pin: components["schemas"]["DailyEngineReferencePin"];
+            label: null | string;
+            detail: null | string;
+            provenance: string;
+            /** Format: date-time */
+            savedAt: string;
+            qualification: string;
+            href: string;
+        };
+        DailyEngineReferenceCandidatePageDto: {
+            /** Format: uuid */
+            vesselId: string;
+            kind: string;
+            items: components["schemas"]["DailyEngineReferenceCandidateDto"][];
+            /** Format: int32 */
+            offset: number;
+            /** Format: int32 */
+            limit: number;
+            hasMore: boolean;
+        };
+        DailyEngineReferenceCommand: {
+            /** Format: uint32 */
+            expectedRecordVersion: number;
+            /** Format: int64 */
+            recordRevision: number;
+            /** Format: uint32 */
+            expectedReferenceVersion: number;
+            operation: string;
+            target: components["schemas"]["DailyEngineReferencePin"];
+        };
+        DailyEngineReferenceEventDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            recordId: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: int64 */
+            sequence: number;
+            /** Format: uint32 */
+            referenceVersion: number;
+            /** Format: int64 */
+            recordRevision: number;
+            operation: string;
+            target: components["schemas"]["DailyEngineReferencePin"];
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            savedAt: string;
+            /** @default REVIEW_REQUIRED */
+            qualification: string;
+            /** @default 18.01:09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674:100;14.02:3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018:2177-2178:v46.3 */
+            sourceVersion: string;
+        };
+        DailyEngineReferenceItemDto: {
+            kind: string;
+            pin: null | components["schemas"]["DailyEngineReferencePin"];
+            /** Format: int64 */
+            sequence: number;
+            state: string;
+            qualification: string;
+            label: null | string;
+            href: null | string;
+            reason: null | string;
+        };
+        DailyEngineReferencePin: {
+            kind: string;
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            hash: string;
+            sourceVersion: string;
+        };
+        DailyEngineReferencesDto: {
+            /** Format: uuid */
+            recordId: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: int64 */
+            recordRevision: number;
+            /** Format: uint32 */
+            recordVersion: number;
+            /** Format: uint32 */
+            referenceVersion: number;
+            /** Format: int64 */
+            sequence: number;
+            canLink: boolean;
+            sources: components["schemas"]["DailyEngineReferenceSourceDto"][];
+            items: components["schemas"]["DailyEngineReferenceItemDto"][];
+            offline: string;
+            /** @default 18.01:09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674:100;14.02:3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018:2177-2178:v46.3 */
+            sourceVersion: string;
+        };
+        DailyEngineReferenceSourceDto: {
+            kind: string;
+            state: string;
+        };
         DailyFieldDefinition: {
             key: string;
             type: string;
@@ -7395,6 +7816,49 @@ export interface components {
             /** Format: date-time */
             reviewedAt: null | string;
             blockers: string[];
+        };
+        DailyReferenceDto: {
+            field: string;
+            state: string;
+            source: null | string;
+            /** Format: uuid */
+            id: null | string;
+            /** Format: int64 */
+            revision: null | number;
+            /** Format: int64 */
+            currentRevision: null | number;
+            qualification: string;
+        };
+        DailyReferenceOptionDto: {
+            token: string;
+            source: string;
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            label: string;
+            qualification: string;
+        };
+        DailyReferenceOptionsDto: {
+            /** Format: uuid */
+            vesselId: string;
+            kind: string;
+            field: string;
+            available: boolean;
+            items: components["schemas"]["DailyReferenceOptionDto"][];
+            hasMore: boolean;
+        };
+        DailyReferencesDto: {
+            /** Format: uuid */
+            recordId: string;
+            /** Format: uuid */
+            vesselId: string;
+            kind: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            items: components["schemas"]["DailyReferenceDto"][];
         };
         DailyReviewCapabilitiesDto: {
             /** Format: uuid */
@@ -8922,6 +9386,46 @@ export interface components {
             key: string;
             href: string;
         };
+        NoonSummaryFieldDto: {
+            key: string;
+            type: string;
+            unit: null | string;
+            /** Format: int32 */
+            sourceRow: number;
+            value: components["schemas"]["DailyValue"];
+        };
+        NoonSummaryItemDto: {
+            /** Format: uuid */
+            recordId: string;
+            state: string;
+            consumable: boolean;
+            reviewedPin: null | components["schemas"]["ShipOperationOriginPin"];
+            /** Format: int64 */
+            headRevision: number;
+            reviewedIsCurrent: boolean;
+            /** Format: uuid */
+            reviewEventId: null | string;
+            /** Format: date-time */
+            reviewedAt: null | string;
+            provenance: string;
+            fields: components["schemas"]["NoonSummaryFieldDto"][];
+            references: components["schemas"]["DailyReferenceDto"][];
+            href: string;
+            qualifications: string[];
+        };
+        NoonSummaryPageDto: {
+            /** Format: uuid */
+            vesselId: string;
+            items: components["schemas"]["NoonSummaryItemDto"][];
+            /** Format: int32 */
+            offset: number;
+            /** Format: int32 */
+            limit: number;
+            hasMore: boolean;
+            consumers: string[];
+            emissionsBasis: string;
+            sourceVersion: string;
+        };
         NotificationAckCommand: {
             /** Format: uint32 */
             expectedVersion: number;
@@ -9382,6 +9886,18 @@ export interface components {
             /** Format: int64 */
             maximum: null | number;
             unit: null | string;
+        };
+        PassportSourceDto: {
+            /** Format: uuid */
+            sourceId: string;
+            /** Format: int64 */
+            sourceRevision: number;
+            ruleIds: string[];
+            /** Format: date-time */
+            qualifiedAt: null | string;
+            freshness: string;
+            blockers: string[];
+            href: string;
         };
         PredicateReason: {
             path: string;
@@ -12177,6 +12693,26 @@ export interface operations {
             };
         };
     };
+    NoonReviewedSummary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NoonSummaryPageDto"];
+                };
+            };
+        };
+    };
     CrewPersonalFileVersions: {
         parameters: {
             query?: never;
@@ -14597,6 +15133,107 @@ export interface operations {
             };
         };
     };
+    ApplicabilityOverrides: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApplicabilityOverrideListDto"];
+                };
+            };
+        };
+    };
+    ApplicabilityOverridePropose: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ApplicabilityOverrideCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApplicabilityOverrideDto"];
+                };
+            };
+        };
+    };
+    ApplicabilityOverrideDecision: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                overrideId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ApplicabilityOverrideDecisionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApplicabilityOverrideDto"];
+                };
+            };
+        };
+    };
+    ComplianceControlCandidates: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ControlCandidateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ControlCandidateOutcome"];
+                };
+            };
+        };
+    };
     NotificationInbox: {
         parameters: {
             query?: never;
@@ -16025,6 +16662,178 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DailyReviewDto"];
+                };
+            };
+        };
+    };
+    NoonDailyReferenceOptions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyReferenceOptionsDto"];
+                };
+            };
+        };
+    };
+    NoonDailyReferences: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyReferencesDto"];
+                };
+            };
+        };
+    };
+    DeckDailyReferenceOptions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyReferenceOptionsDto"];
+                };
+            };
+        };
+    };
+    DeckDailyReferences: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyReferencesDto"];
+                };
+            };
+        };
+    };
+    EngineDailyReferenceOptions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyReferenceOptionsDto"];
+                };
+            };
+        };
+    };
+    EngineDailyReferenceCandidates: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyEngineReferenceCandidatePageDto"];
+                };
+            };
+        };
+    };
+    EngineDailyReferences: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyEngineReferencesDto"];
+                };
+            };
+        };
+    };
+    EngineDailyReferenceRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DailyEngineReferenceCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyEngineReferenceEventDto"];
                 };
             };
         };

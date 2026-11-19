@@ -4,6 +4,29 @@ using System.Text.Json;
 namespace Poseidon.Domain;
 
 public sealed record DailyValue(string State, string? Value);
+// Exact owning-record pin carried as the Known value of a daily reference field.
+// Canonical lexical form only: "<source>:<lowercase guid D>@<revision>". A pin
+// identifies one immutable owning revision; it is not verification of that
+// record's content, qualification or safety meaning.
+public sealed record DailyReferencePin(string Source, Guid Id, long Revision)
+{
+    public string Token => Source + ":" + Id.ToString("D") + "@" + Revision.ToString(CultureInfo.InvariantCulture);
+    public static bool TryParse(string? text, out DailyReferencePin pin)
+    {
+        pin = new("", Guid.Empty, 0);
+        if (text == null || text.Length is < 40 or > 96) return false;
+        var colon = text.IndexOf(':'); var at = text.LastIndexOf('@');
+        if (colon is < 2 or > 32 || at != colon + 37) return false;
+        var source = text[..colon];
+        if (!(source[0] is >= 'a' and <= 'z') || !source.All(c => c is >= 'a' and <= 'z' || c == '-') || source.EndsWith('-')) return false;
+        if (!Guid.TryParseExact(text[(colon + 1)..at], "D", out var id) || id == Guid.Empty) return false;
+        var digits = text[(at + 1)..];
+        if (digits.Length is < 1 or > 18 || digits[0] == '0' || !digits.All(c => c is >= '0' and <= '9')) return false;
+        var candidate = new DailyReferencePin(source, id, long.Parse(digits, NumberStyles.None, CultureInfo.InvariantCulture));
+        if (candidate.Token != text) return false;
+        pin = candidate; return true;
+    }
+}
 public sealed record DailyFieldDefinition(string Key, string Type, bool Required, string[] Options,
     bool ReadOnly, bool ReferenceUnavailable, int SourceRow, string? Unit = null);
 
@@ -47,7 +70,16 @@ public static class DailyOperationsPolicy
     };
 
     public static bool TryNormalize(string kind, IReadOnlyDictionary<string, DailyValue>? input,
-        out SortedDictionary<string, DailyValue> result, out string error)
+        out SortedDictionary<string, DailyValue> result, out string error) => TryNormalize(kind, input, out result, out error, null);
+
+    // `resolvable(kind, key)` is supplied by the API reference registry: a
+    // reference field may be Known only when an owning lookup reader exists for
+    // it, and then only as an exact canonical pin token (source:id@revision).
+    // The domain never resolves the pin; the owning reader verifies it against
+    // tenant/vessel-scoped data inside the write transaction. No reader means
+    // the source stays unavailable (Missing/Unknown remain editable).
+    public static bool TryNormalize(string kind, IReadOnlyDictionary<string, DailyValue>? input,
+        out SortedDictionary<string, DailyValue> result, out string error, Func<string, string, bool>? resolvable)
     {
         result = new(StringComparer.Ordinal); error = "invalid_payload";
         if (input == null || !Kinds.Contains(kind)) return false;
@@ -61,7 +93,10 @@ public static class DailyOperationsPolicy
                 var text = value.Value;
                 if (string.IsNullOrWhiteSpace(text) || text.Length > (field.Type == "Narrative" ? 4000 : 512)
                     || text.Any(c => char.IsControl(c) && !(field.Type == "Narrative" && c is '\r' or '\n' or '\t'))) return false;
-                if (field.ReferenceUnavailable) { error = "lookup_source_unavailable"; return false; }
+                if (field.ReferenceUnavailable) {
+                    if (resolvable == null || !resolvable(kind, field.Key)) { error = "lookup_source_unavailable"; return false; }
+                    if (!DailyReferencePin.TryParse(text, out _)) return false;
+                }
                 if (field.Type == "Code" && !field.Options.Contains(text, StringComparer.Ordinal)) return false;
                 if (field.Type == "Date" && !DateOnly.TryParseExact(text,"yyyy-MM-dd",CultureInfo.InvariantCulture,DateTimeStyles.None,out _)) return false;
                 if (field.Type == "Number" && !ExactDecimal(text)) return false;

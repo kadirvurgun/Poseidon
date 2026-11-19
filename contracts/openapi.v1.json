@@ -1565,6 +1565,27 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/noon-reports/reviewed-summary": {
+      "get": {
+        "tags": [
+          "DailyReferenceEndpoints"
+        ],
+        "operationId": "NoonReviewedSummary",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoonSummaryPageDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
     "/api/v1/vessels/{vessel}/crew/{assignment}/personal-files": {
       "get": {
         "tags": [
@@ -5754,6 +5775,171 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/vessels/{id}/applicability-overrides": {
+      "get": {
+        "tags": [
+          "ApplicabilityOverrideEndpoints"
+        ],
+        "operationId": "ApplicabilityOverrides",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicabilityOverrideListDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "ApplicabilityOverrideEndpoints"
+        ],
+        "operationId": "ApplicabilityOverridePropose",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicabilityOverrideCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicabilityOverrideDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/vessels/{id}/applicability-overrides/{overrideId}/decisions": {
+      "post": {
+        "tags": [
+          "ApplicabilityOverrideEndpoints"
+        ],
+        "operationId": "ApplicabilityOverrideDecision",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "overrideId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicabilityOverrideDecisionCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicabilityOverrideDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/vessels/{id}/compliance-control-plan/candidates": {
+      "post": {
+        "tags": [
+          "ApplicabilityOverrideEndpoints"
+        ],
+        "operationId": "ComplianceControlCandidates",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ControlCandidateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ControlCandidateOutcome"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
     "/api/v1/verifications": {
       "post": {
         "tags": [
@@ -7929,6 +8115,226 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/DailyReviewDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/noon-reports/reference-options": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "NoonDailyReferenceOptions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyReferenceOptionsDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/noon-reports/{id}/references": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "NoonDailyReferences",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyReferencesDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/deck-daily-logs/reference-options": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DeckDailyReferenceOptions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyReferenceOptionsDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/deck-daily-logs/{id}/references": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DeckDailyReferences",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyReferencesDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/engine-daily-logs/reference-options": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "EngineDailyReferenceOptions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyReferenceOptionsDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/engine-daily-logs/reference-candidates": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "EngineDailyReferenceCandidates",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyEngineReferenceCandidatePageDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/engine-daily-logs/{id}/references": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "EngineDailyReferences",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyEngineReferencesDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "EngineDailyReferenceRecord",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DailyEngineReferenceCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DailyEngineReferenceEventDto"
                 }
               }
             }
@@ -15573,6 +15979,362 @@
   },
   "components": {
     "schemas": {
+      "ApplicabilityOverrideCommand": {
+        "required": [
+          "evaluationId",
+          "inputHash",
+          "ruleSetHash",
+          "ruleId",
+          "ruleRevision",
+          "action",
+          "reasonCode",
+          "purpose",
+          "rationale",
+          "evidenceIds",
+          "validFrom",
+          "expiresAt",
+          "reviewAt"
+        ],
+        "type": "object",
+        "properties": {
+          "evaluationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "inputHash": {
+            "type": "string"
+          },
+          "ruleSetHash": {
+            "type": "string"
+          },
+          "ruleId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "ruleRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "action": {
+            "type": "string"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "evidenceIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "validFrom": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reviewAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApplicabilityOverrideDecisionCommand": {
+        "required": [
+          "expectedVersion",
+          "expectedSequence",
+          "decision",
+          "rationale"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "expectedSequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApplicabilityOverrideDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "evaluationId",
+          "ruleId",
+          "ruleRevision",
+          "requirementId",
+          "requirementRevision",
+          "sourceId",
+          "sourceRevision",
+          "baseResult",
+          "purpose",
+          "action",
+          "reasonCode",
+          "rationale",
+          "evidenceIds",
+          "validFrom",
+          "expiresAt",
+          "reviewAt",
+          "authorId",
+          "approverId",
+          "state",
+          "currentValidity",
+          "sequence",
+          "version",
+          "createdAt",
+          "events"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "evaluationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "ruleId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "ruleRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "requirementId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "requirementRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "sourceId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "sourceRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "baseResult": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "evidenceIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "validFrom": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reviewAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "authorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "approverId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "currentValidity": {
+            "type": "string"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicabilityOverrideEventDto"
+            }
+          }
+        }
+      },
+      "ApplicabilityOverrideEventDto": {
+        "required": [
+          "sequence",
+          "fromState",
+          "toState",
+          "eventCode",
+          "actorId",
+          "rationale",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "fromState": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "toState": {
+            "type": "string"
+          },
+          "eventCode": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "rationale": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ApplicabilityOverrideListDto": {
+        "required": [
+          "vesselId",
+          "authority",
+          "authorityBlockers",
+          "canPropose",
+          "canDecide",
+          "canRevoke",
+          "currentEvaluationId",
+          "items",
+          "offset",
+          "hasMore"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "authority": {
+            "type": "string"
+          },
+          "authorityBlockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "canPropose": {
+            "type": "boolean"
+          },
+          "canDecide": {
+            "type": "boolean"
+          },
+          "canRevoke": {
+            "type": "boolean"
+          },
+          "currentEvaluationId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicabilityOverrideDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "source": {
+            "type": "string",
+            "default": "18.01/Backlog/row:41;60.03/paragraph:154-166,575-580"
+          }
+        }
+      },
       "Asset": {
         "type": "object",
         "properties": {
@@ -17774,7 +18536,8 @@
           "onboarding",
           "applicability",
           "plan",
-          "certificates"
+          "certificates",
+          "sources"
         ],
         "type": "object",
         "properties": {
@@ -17812,6 +18575,12 @@
           },
           "certificates": {
             "$ref": "#/components/schemas/ComplianceCertificatePageDto"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PassportSourceDto"
+            }
           }
         }
       },
@@ -17904,6 +18673,134 @@
           }
         },
         "additionalProperties": false
+      },
+      "ControlCandidateCommand": {
+        "required": [
+          "evaluationId",
+          "inputHash",
+          "ruleSetHash"
+        ],
+        "type": "object",
+        "properties": {
+          "evaluationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "inputHash": {
+            "type": "string"
+          },
+          "ruleSetHash": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ControlCandidateItem": {
+        "required": [
+          "controlId",
+          "revision",
+          "version",
+          "ruleId",
+          "ruleRevision",
+          "requirementId",
+          "requirementRevision",
+          "sourceId",
+          "sourceRevision",
+          "title",
+          "lifecycle",
+          "controlState",
+          "blockers"
+        ],
+        "type": "object",
+        "properties": {
+          "controlId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "ruleId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "ruleRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "requirementId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "requirementRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "title": {
+            "type": "string"
+          },
+          "lifecycle": {
+            "type": "string"
+          },
+          "controlState": {
+            "type": "string"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ControlCandidateOutcome": {
+        "required": [
+          "vesselId",
+          "evaluationId",
+          "created",
+          "alreadyLinked",
+          "blockers"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "evaluationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "created": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ControlCandidateItem"
+            }
+          },
+          "alreadyLinked": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
       },
       "ControlEvidenceCommand": {
         "required": [
@@ -20548,6 +21445,348 @@
         },
         "additionalProperties": false
       },
+      "DailyEngineReferenceCandidateDto": {
+        "required": [
+          "pin",
+          "label",
+          "detail",
+          "provenance",
+          "savedAt",
+          "qualification",
+          "href"
+        ],
+        "type": "object",
+        "properties": {
+          "pin": {
+            "$ref": "#/components/schemas/DailyEngineReferencePin"
+          },
+          "label": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "detail": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "qualification": {
+            "type": "string"
+          },
+          "href": {
+            "type": "string"
+          }
+        }
+      },
+      "DailyEngineReferenceCandidatePageDto": {
+        "required": [
+          "vesselId",
+          "kind",
+          "items",
+          "offset",
+          "limit",
+          "hasMore"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DailyEngineReferenceCandidateDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DailyEngineReferenceCommand": {
+        "required": [
+          "expectedRecordVersion",
+          "recordRevision",
+          "expectedReferenceVersion",
+          "operation",
+          "target"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedRecordVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "recordRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expectedReferenceVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "operation": {
+            "type": "string"
+          },
+          "target": {
+            "$ref": "#/components/schemas/DailyEngineReferencePin"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DailyEngineReferenceEventDto": {
+        "required": [
+          "id",
+          "recordId",
+          "vesselId",
+          "sequence",
+          "referenceVersion",
+          "recordRevision",
+          "operation",
+          "target",
+          "actorId",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "referenceVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "recordRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "operation": {
+            "type": "string"
+          },
+          "target": {
+            "$ref": "#/components/schemas/DailyEngineReferencePin"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "qualification": {
+            "type": "string",
+            "default": "REVIEW_REQUIRED"
+          },
+          "sourceVersion": {
+            "type": "string",
+            "default": "18.01:09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674:100;14.02:3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018:2177-2178:v46.3"
+          }
+        }
+      },
+      "DailyEngineReferenceItemDto": {
+        "required": [
+          "kind",
+          "pin",
+          "sequence",
+          "state",
+          "qualification",
+          "label",
+          "href",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "pin": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DailyEngineReferencePin"
+              }
+            ]
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "qualification": {
+            "type": "string"
+          },
+          "label": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "href": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "DailyEngineReferencePin": {
+        "required": [
+          "kind",
+          "id",
+          "revision",
+          "version",
+          "hash",
+          "sourceVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DailyEngineReferencesDto": {
+        "required": [
+          "recordId",
+          "vesselId",
+          "recordRevision",
+          "recordVersion",
+          "referenceVersion",
+          "sequence",
+          "canLink",
+          "sources",
+          "items",
+          "offline"
+        ],
+        "type": "object",
+        "properties": {
+          "recordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "recordVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "referenceVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "canLink": {
+            "type": "boolean"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DailyEngineReferenceSourceDto"
+            }
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DailyEngineReferenceItemDto"
+            }
+          },
+          "offline": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string",
+            "default": "18.01:09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674:100;14.02:3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018:2177-2178:v46.3"
+          }
+        }
+      },
+      "DailyEngineReferenceSourceDto": {
+        "required": [
+          "kind",
+          "state"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      },
       "DailyFieldDefinition": {
         "required": [
           "key",
@@ -20982,6 +22221,162 @@
             "type": "array",
             "items": {
               "type": "string"
+            }
+          }
+        }
+      },
+      "DailyReferenceDto": {
+        "required": [
+          "field",
+          "state",
+          "source",
+          "id",
+          "revision",
+          "currentRevision",
+          "qualification"
+        ],
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "source": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "id": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "revision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "currentRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "qualification": {
+            "type": "string"
+          }
+        }
+      },
+      "DailyReferenceOptionDto": {
+        "required": [
+          "token",
+          "source",
+          "id",
+          "revision",
+          "label",
+          "qualification"
+        ],
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "label": {
+            "type": "string"
+          },
+          "qualification": {
+            "type": "string"
+          }
+        }
+      },
+      "DailyReferenceOptionsDto": {
+        "required": [
+          "vesselId",
+          "kind",
+          "field",
+          "available",
+          "items",
+          "hasMore"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "field": {
+            "type": "string"
+          },
+          "available": {
+            "type": "boolean"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DailyReferenceOptionDto"
+            }
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DailyReferencesDto": {
+        "required": [
+          "recordId",
+          "vesselId",
+          "kind",
+          "revision",
+          "version",
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "recordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DailyReferenceDto"
             }
           }
         }
@@ -26664,6 +28059,170 @@
           }
         }
       },
+      "NoonSummaryFieldDto": {
+        "required": [
+          "key",
+          "type",
+          "unit",
+          "sourceRow",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "unit": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sourceRow": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "value": {
+            "$ref": "#/components/schemas/DailyValue"
+          }
+        }
+      },
+      "NoonSummaryItemDto": {
+        "required": [
+          "recordId",
+          "state",
+          "consumable",
+          "reviewedPin",
+          "headRevision",
+          "reviewedIsCurrent",
+          "reviewEventId",
+          "reviewedAt",
+          "provenance",
+          "fields",
+          "references",
+          "href",
+          "qualifications"
+        ],
+        "type": "object",
+        "properties": {
+          "recordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "consumable": {
+            "type": "boolean"
+          },
+          "reviewedPin": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ShipOperationOriginPin"
+              }
+            ]
+          },
+          "headRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "reviewedIsCurrent": {
+            "type": "boolean"
+          },
+          "reviewEventId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "reviewedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NoonSummaryFieldDto"
+            }
+          },
+          "references": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DailyReferenceDto"
+            }
+          },
+          "href": {
+            "type": "string"
+          },
+          "qualifications": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "NoonSummaryPageDto": {
+        "required": [
+          "vesselId",
+          "items",
+          "offset",
+          "limit",
+          "hasMore",
+          "consumers",
+          "emissionsBasis",
+          "sourceVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NoonSummaryItemDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "consumers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "emissionsBasis": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          }
+        }
+      },
       "NotificationAckCommand": {
         "required": [
           "expectedVersion"
@@ -28294,6 +29853,54 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "PassportSourceDto": {
+        "required": [
+          "sourceId",
+          "sourceRevision",
+          "ruleIds",
+          "qualifiedAt",
+          "freshness",
+          "blockers",
+          "href"
+        ],
+        "type": "object",
+        "properties": {
+          "sourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "ruleIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "qualifiedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "freshness": {
+            "type": "string"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "href": {
+            "type": "string"
           }
         }
       },
@@ -33453,6 +35060,9 @@
       "name": "DailyOperationOriginReader"
     },
     {
+      "name": "DailyReferenceEndpoints"
+    },
+    {
       "name": "CrewPositionPolicyEndpoints"
     },
     {
@@ -33496,6 +35106,9 @@
     },
     {
       "name": "ControlEvidenceEndpoints"
+    },
+    {
+      "name": "ApplicabilityOverrideEndpoints"
     },
     {
       "name": "NotificationEndpoints"

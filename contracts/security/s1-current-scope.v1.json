@@ -30,9 +30,9 @@
     "TenantPerson",
     "Unresolved"
   ],
-  "mutationRouteTemplates": 153,
-  "criticalRouteTemplates": 144,
-  "criticalOperations": 154,
+  "mutationRouteTemplates": 157,
+  "criticalRouteTemplates": 148,
+  "criticalOperations": 158,
   "scopeMeaning": "Current exposed HTTP command surface, including aliases. Counts are authoring definitions until actual EndpointDataSource drift and real audit observations pass the phase gate. Technical codes describe accepted commands, never human justification or safety authority.",
   "operations": [
     { "operationId": "ProposeParameterChange", "method": "POST", "routePattern": "/api/v1/parameter-changes", "family": "Parameter", "scope": "Tenant", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "ParameterCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
@@ -62,6 +62,7 @@
     { "operationId": "NoonDailyReviewRecord", "method": "POST", "routePattern": "/api/v1/noon-reports/{id:guid}/reviews", "family": "DailyReview", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "HUMAN_REVIEW_WORKFLOW", "denialAction": "DailyReviewCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "DeckDailyReviewRecord", "method": "POST", "routePattern": "/api/v1/deck-daily-logs/{id:guid}/reviews", "family": "DailyReview", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "HUMAN_REVIEW_WORKFLOW", "denialAction": "DailyReviewCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "EngineDailyReviewRecord", "method": "POST", "routePattern": "/api/v1/engine-daily-logs/{id:guid}/reviews", "family": "DailyReview", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "HUMAN_REVIEW_WORKFLOW", "denialAction": "DailyReviewCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "EngineDailyReferenceRecord", "method": "POST", "routePattern": "/api/v1/engine-daily-logs/{id:guid}/references", "family": "DailyOperations", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DailyEngineReferenceCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "NoonDailyCreate", "method": "POST", "routePattern": "/api/v1/noon-reports", "family": "DailyOperations", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DailyOperationsCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "NoonDailyUpdate", "method": "PUT", "routePattern": "/api/v1/noon-reports/{id:guid}", "family": "DailyOperations", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DailyOperationsCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "DeckDailyCreate", "method": "POST", "routePattern": "/api/v1/deck-daily-logs", "family": "DailyOperations", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DailyOperationsCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
@@ -230,6 +231,57 @@
       "kind": "CriticalWrite",
       "reasonCode": "REGULATORY_WORKFLOW",
       "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "ApplicabilityOverridePropose",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels/{id:guid}/applicability-overrides",
+      "family": "Applicability",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "REGULATORY_WORKFLOW",
+      "denialAction": "ApplicabilityOverrideCommand",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "ApplicabilityOverrideDecision",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels/{id:guid}/applicability-overrides/{overrideId:guid}/decisions",
+      "family": "Applicability",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "REGULATORY_WORKFLOW",
+      "denialAction": "ApplicabilityOverrideCommand",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "ComplianceControlCandidates",
+      "method": "POST",
+      "routePattern": "/api/v1/vessels/{id:guid}/compliance-control-plan/candidates",
+      "family": "Applicability",
+      "scope": "Vessel",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "ComplianceControlCandidateCommand",
       "variants": [],
       "traceIds": [
         "T-S1-002",

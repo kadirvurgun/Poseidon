@@ -21,9 +21,15 @@ public sealed record ComplianceRequirementPlanDto(Guid RuleId, long RuleRevision
 public sealed record ComplianceControlPlanDto(string Coverage, ComplianceRequirementPlanDto[] Requirements,
     ControlEvidenceDto[] Controls, ControlEvidenceDto[] Evidence, bool HasMore,
     int? UncontrolledRequirementCount, int? OrphanCriticalCount, string[] Blockers);
+// DEV-042 source freshness drill-down: one row per pinned source revision of the recorded evaluation.
+// Without a published 60.03 SOURCE_FRESHNESS policy freshness is UNKNOWN (paragraph:580), never "fresh";
+// QualifiedAt is the recorded qualification time, not an official source check.
+public sealed record PassportSourceDto(Guid SourceId, long SourceRevision, Guid[] RuleIds, DateTimeOffset? QualifiedAt,
+    string Freshness, string[] Blockers, string Href);
 public sealed record CompliancePassportDto(Guid VesselId, DateTimeOffset ReadAt, string State, string Freshness,
     string CertificateCoverage, string[] Blockers, ComplianceOnboardingDto Onboarding,
-    ComplianceApplicabilityDto Applicability, ComplianceControlPlanDto Plan, ComplianceCertificatePageDto Certificates);
+    ComplianceApplicabilityDto Applicability, ComplianceControlPlanDto Plan, ComplianceCertificatePageDto Certificates,
+    PassportSourceDto[] Sources);
 public sealed record ComplianceCertificateDto(Guid Id, long Revision, uint Version, string? TypeReference,
     string? Number, string? Issuer, DateOnly? IssueDate, DateOnly? ExpiryDate, string TemporalState,
     string Qualification, CertificateFilePin? Document, string SourceVersion, string Hash, string Href,
@@ -225,6 +231,22 @@ public static class ComplianceWorkspaceEndpoints
             evidence.Items, controls.More || evidence.More,
             review.Current ? requirements.Count(r => r.ControlIds.Length == 0) : null, null, blockers.ToArray());
     }
+    private static readonly string[] SourceCauses = ["QUALIFICATION_CHANGED", "RULE_CHANGED", "SOURCE_NOT_CURRENT", "SOURCE_REVIEW_REQUIRED"];
+    private static async Task<PassportSourceDto[]> Sources(PoseidonDbContext db, ComplianceApplicabilityDto review, CancellationToken ct) {
+        if (!review.Available || review.EvaluationId is not { } evaluation) return [];
+        var pins = await db.EvaluationQualifications.AsNoTracking().Where(q => q.EvaluationId == evaluation)
+            .Select(q => new { q.RuleId, QualifiedAt = db.RegulatoryQualificationEvents.Where(e => e.RuleId == q.RuleId && e.Revision == q.QualificationRevision).Select(e => (DateTimeOffset?)e.SavedAt).FirstOrDefault() })
+            .ToArrayAsync(ct);
+        var causes = review.Blockers.Where(b => SourceCauses.Contains(b)).ToArray();
+        return review.Results.Where(r => r.SourceId != null && r.SourceRevision != null)
+            .GroupBy(r => (Id: r.SourceId!.Value, Revision: r.SourceRevision!.Value)).OrderBy(g => g.Key.Id).ThenBy(g => g.Key.Revision).Take(64)
+            .Select(g => {
+                var rules = g.Select(r => r.RuleId).Distinct().Order().ToArray();
+                var qualified = pins.Where(p => rules.Contains(p.RuleId) && p.QualifiedAt != null).Select(p => p.QualifiedAt).Min();
+                return new PassportSourceDto(g.Key.Id, g.Key.Revision, rules, qualified, "UNKNOWN",
+                    causes.Append("SOURCE_FRESHNESS_POLICY_UNAVAILABLE").Distinct().Order(StringComparer.Ordinal).ToArray(), $"/app/sources/{g.Key.Id:D}");
+            }).ToArray();
+    }
     private static async Task<IResult> Workspace(Guid id, HttpContext h, PoseidonDbContext db, string view, bool canonicalAlias = false) {
         h.Response.Headers.CacheControl = "no-store";
         var actor = Actor(h); var ct = h.RequestAborted;
@@ -252,9 +274,11 @@ public static class ComplianceWorkspaceEndpoints
             if (view == "plan") outcome = plan;
             else {
                 responseCertificates = await Certificates(id, actor, h, db, now, offset, ct);
+                var sources = await Sources(db, review, ct);
                 outcome = new CompliancePassportDto(id, now, "REVIEW_REQUIRED", "Unverified", responseCertificates.Page.Coverage,
-                    onboarding.Blockers.Concat(review.Blockers).Concat(plan.Blockers).Concat(responseCertificates.Page.Blockers).Distinct().Order(StringComparer.Ordinal).ToArray(),
-                    onboarding, review, plan, responseCertificates.Page);
+                    onboarding.Blockers.Concat(review.Blockers).Concat(plan.Blockers).Concat(responseCertificates.Page.Blockers)
+                        .Concat(sources.Length == 0 ? ["SOURCE_FRESHNESS_UNAVAILABLE"] : sources.SelectMany(s => s.Blockers)).Distinct().Order(StringComparer.Ordinal).ToArray(),
+                    onboarding, review, plan, responseCertificates.Page, sources);
             }
         }
         await transaction.CommitAsync(ct);

@@ -39,6 +39,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddSingleton<LocalFileObjects>();
         services.AddSingleton<FileObjects>();
         services.AddScoped<IQualifiedInputRuntime, QualifiedInputRuntime>();
+        services.AddDailyReferenceReaders();
         services.AddSingleton<ClamdScanner>();
         services.AddSingleton<FileCapabilities>();
         services.AddFoundationIdentity(configuration, hostEnvironment);
@@ -158,6 +159,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapRegulatoryQualifications();
             endpoints.MapControlEvidence();
             endpoints.MapComplianceWorkspaces();
+            endpoints.MapApplicabilityOverrides();
             endpoints.MapHumanReviews();
             endpoints.MapAuditReady();
             endpoints.MapToday();
@@ -173,6 +175,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapDailyOperationOrigins();
             endpoints.MapDailyOffline();
             endpoints.MapDailyReviews();
+            endpoints.MapDailyReferences();
+            endpoints.MapDailyEngineReferences();
             endpoints.MapAuditHistory();
             endpoints.MapSecureFiles();
             endpoints.MapDocuments();

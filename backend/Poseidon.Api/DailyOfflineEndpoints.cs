@@ -132,10 +132,11 @@ public static class DailyOfflineEndpoints
     internal static bool ShipVisible(TrustedActor a,Vessel v)=>v.Kind==VesselKind.Ship || a.Permissions.Contains("mode.cross");
     private static SortedDictionary<string,DailyValue> Select(DailyOfflinePolicy p,IReadOnlyDictionary<string,DailyValue> fields)=>
         new(p.Fields.ToDictionary(f=>f.Key,f=>fields.GetValueOrDefault(f.Key)??new DailyValue("Missing",null)),StringComparer.Ordinal);
-    private static bool Fields(DailyOfflinePolicy p,Dictionary<string,DailyValue>? fields,out SortedDictionary<string,DailyValue> normalized) {
+    private static bool Fields(HttpContext h,DailyOfflinePolicy p,Dictionary<string,DailyValue>? fields,out SortedDictionary<string,DailyValue> normalized) {
         normalized=new(StringComparer.Ordinal);
+        // Pin grammar only here; the owning reference is resolved on server apply.
         if(fields==null || fields.Count!=p.Fields.Length || fields.Keys.Any(k=>!p.Fields.Any(f=>f.Key==k)) ||
-            !DailyOperationsPolicy.TryNormalize(p.Kind,fields,out var all,out _))return false;
+            !DailyOperationsPolicy.TryNormalize(p.Kind,fields,out var all,out _,DailyOperationsEndpoints.References(h).Resolvable))return false;
         normalized=Select(p,all);return true;
     }
     private static void Event(PoseidonDbContext db,DailyOfflineEnrollment e,string action,DateTimeOffset now)=>db.DailyOfflineLifecycles.Add(new(){
@@ -252,7 +253,7 @@ public static class DailyOfflineEndpoints
         var full=row==null?new SortedDictionary<string,DailyValue>(StringComparer.Ordinal):JsonSerializer.Deserialize<SortedDictionary<string,DailyValue>>(row.FieldsJson)!;
         var server=Select(p,full);var before=Private(h,e,e.ProtectedBase).Base;SortedDictionary<string,DailyValue> local;
         if(capture.ParentCommandId==null) {
-            if(capture.BaseVersion!=e.BaseVersion || capture.ExpectedServerVersion!=null || capture.Choice!=null || capture.ReasonCode!=null || !Fields(p,capture.Fields,out local))return await Fail(h,400,"invalid_offline_command");
+            if(capture.BaseVersion!=e.BaseVersion || capture.ExpectedServerVersion!=null || capture.Choice!=null || capture.ReasonCode!=null || !Fields(h,p,capture.Fields,out local))return await Fail(h,400,"invalid_offline_command");
         }else {
             var parent=await Outcomes(db,e).SingleOrDefaultAsync(o=>o.CommandId==capture.ParentCommandId && o.Result=="MaterialConflict",ct);
             if(parent==null || capture.Fields==null || capture.Fields.Count!=0 || capture.ExpectedServerVersion!=serverVersion || capture.BaseVersion!=serverVersion ||
@@ -260,13 +261,14 @@ public static class DailyOfflineEndpoints
             if(await Outcomes(db,e).AnyAsync(o=>o.ParentCommandId==parent.CommandId,ct))return await Fail(h,409,"offline_resolution_exists");
             var retained=Private(h,e,parent.ProtectedContext);
             local=capture.Choice=="keepServer"?server:retained.Local!;
-            if(!Fields(p,local.ToDictionary(),out local))return await Fail(h,403,"offline_policy_denied");
+            if(!Fields(h,p,local.ToDictionary(),out local))return await Fail(h,403,"offline_policy_denied");
         }
         var result=capture.ParentCommandId!=null && capture.Choice=="keepServer"?"ServerRetained":serverVersion==capture.BaseVersion?"Committed":"MaterialConflict";
         if(result=="Committed") {
             foreach(var field in local)full[field.Key]=field.Value;
             var ordinary=new DailyDraftCommand(e.RecordId,serverVersion,full.ToDictionary(),serverVersion==0?"INITIAL_AUTHORING":"AUTHORING_CORRECTION");
-            var applied=await DailyOperationsWriter.Apply(db,e.ActorId,e.VesselId,e.Kind,ordinary,row==null,now,ct);
+            if(Actor(h) is not {} writer || writer.Id!=e.ActorId || writer.TenantId!=e.TenantId)return await Fail(h,403,"permission_denied");
+            var applied=await DailyOperationsWriter.Apply(db,writer,e.VesselId,e.Kind,ordinary,row==null,now,DailyOperationsEndpoints.References(h),ct);
             if(applied.Record==null)return await Fail(h,applied.Status,applied.Code??"invalid_request");
             serverVersion=applied.Record.Version;revision=applied.Record.Revision;
         }

@@ -3,11 +3,11 @@ import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { DailyReportWorkspace } from './DailyReportWorkspace'
 import { dailyActor, dailyCapsFixture, dailyId, dailyPageFixture, dailyRecordFixture, dailyVessel } from './daily-test-fixtures'
-import { dailyRoutes, dailySourceVersion, type DailyRecord } from './daily-operations-api'
+import { dailyRoutes, dailySourceVersion, type DailyCapabilities, type DailyRecord } from './daily-operations-api'
 import type { DailyKind } from './daily-report-fields'
 const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers: { 'Content-Type': 'application/json' } })
 const identity = (actor = dailyActor) => ({ authenticated: true, setupRequired: false, canRead: true, canReadCompanies: false, canCreate: false, canSearch: false, csrfToken: 'synthetic-daily-csrf', actorId: actor, tenantId: dailyVessel, tenantName: 'Synthetic workspace' })
-function transport(kind: DailyKind, options: { writable?: boolean; row?: boolean; user?: () => Promise<Response>; write?: (init: RequestInit) => Promise<Response> } = {}) {
+function transport(kind: DailyKind, options: { writable?: boolean; row?: boolean; user?: () => Promise<Response>; write?: (init: RequestInit) => Promise<Response>; caps?: DailyCapabilities; references?: (url: string) => Response } = {}) {
   const route = dailyRoutes[kind].api, saved = new Map<string, DailyRecord>()
   const fetch = vi.fn(async (url: string, init?: RequestInit) => {
     if (url.endsWith('/auth/session')) return options.user ? options.user() : json(identity())
@@ -21,7 +21,8 @@ function transport(kind: DailyKind, options: { writable?: boolean; row?: boolean
     if (selected && url.includes('/review-capabilities?')) return json({ recordId: selected.id, vesselId: dailyVessel, kind, recordRevision: selected.revision, recordVersion: selected.version, reviewVersion: 0, canRecord: false, authorities: [], blockers: ['HUMAN_REVIEW_AUTHORITY_UNAVAILABLE'], sourceVersion: dailySourceVersion })
     if (selected && url.includes('/reviews?')) return json({ items: [], offset: 0, limit: 25, hasMore: false })
     if (selected && !url.includes('/offline')) return json(selected)
-    if (url.includes(`/${route}/capabilities?`)) return json(dailyCapsFixture(kind, options.writable !== false))
+    if (url.includes('/reference-options?')) return options.references ? options.references(url) : json({}, 403)
+    if (url.includes(`/${route}/capabilities?`)) return json(options.caps ?? dailyCapsFixture(kind, options.writable !== false))
     if (url.includes(`/${route}/${dailyId}/review-capabilities?`)) return json({ recordId: dailyId, vesselId: dailyVessel, kind, recordRevision: 1, recordVersion: 17, reviewVersion: 0, canRecord: false, authorities: [], blockers: ['HUMAN_REVIEW_AUTHORITY_UNAVAILABLE'], sourceVersion: dailySourceVersion })
     if (url.includes(`/${route}/${dailyId}/reviews?`)) return json({ items: [], offset: 0, limit: 25, hasMore: false })
     if (url.includes(`/${route}/${dailyId}/history?`)) return json({ items: [dailyRecordFixture(kind)], offset: 0, limit: 25, hasMore: false })
@@ -130,6 +131,38 @@ describe('T-OPS2 daily source interactions (authored; execution deferred)', () =
     expect(await screen.findByDisplayValue('PRIVATE original identity draft')).toBeDisabled()
     expect(screen.getByRole('button', { name: 'Retry exact saved command' })).toBeEnabled()
     expect(fetch.mock.calls.filter(([, init]) => init?.method === 'POST')).toHaveLength(1)
+  })
+  it('DEV-098: picks the officer of watch only from server-issued owning assignment pins, never typed text', async () => {
+    window.history.replaceState(null, '', `/app/deck-daily-log/${dailyVessel}`)
+    const caps = dailyCapsFixture('Deck'), token = `crew-assignment:${dailyActor}@4`
+    caps.schema = caps.schema.map(field => field.key === 'officer_of_watch' ? { ...field, referenceUnavailable: false } : field)
+    const fetch = transport('Deck', { caps, references: url => json({ vesselId: dailyVessel, kind: 'Deck', field: new URL(url, 'http://x').searchParams.get('field'), available: true, items: [{ token, source: 'crew-assignment', id: dailyActor, revision: 4, label: 'FICTIONAL-2O · Second Officer', qualification: 'DECLARED_ASSIGNMENT_NO_QUALIFICATION_DECISION' }], hasMore: false }) })
+    const user = userEvent.setup(); render(<DailyReportWorkspace />); await english(); const form = await newDraft()
+    await user.selectOptions(within(form).getByLabelText('Log date — Data state'), 'Known')
+    await user.type(within(form).getByLabelText('Log date'), '2026-10-30')
+    // Candidates are requested for the back-dated log's own date, not today.
+    await waitFor(() => expect(fetch.mock.calls.some(([url]) => String(url).includes('field=officer_of_watch&logDate=2026-10-30'))).toBe(true))
+    const state = within(form).getByLabelText('Officer of watch reference — Data state')
+    await waitFor(() => expect(within(state).getByRole('option', { name: 'Known' })).toBeEnabled())
+    expect(within(within(form).getByLabelText('Evidence reference — Data state')).getByRole('option', { name: 'Known' })).toBeDisabled()
+    await user.selectOptions(state, 'Known')
+    const picker = within(form).getByLabelText('Officer of watch reference')
+    expect(picker.tagName).toBe('SELECT')
+    await user.selectOptions(picker, token)
+    await user.click(within(form).getByRole('button', { name: 'Save draft' }))
+    await screen.findByText('Draft saved. Human review and operational approval remain separate.')
+    const body = JSON.parse(fetch.mock.calls.find(([, init]) => init?.method === 'POST')![1]!.body as string)
+    expect(body.fields.officer_of_watch).toEqual({ state: 'Known', value: token })
+    expect(body.fields.log_date).toEqual({ state: 'Known', value: '2026-10-30' })
+  })
+  it('DEV-098: keeps a resolvable reference unavailable when its owning source is not readable', async () => {
+    window.history.replaceState(null, '', `/app/deck-daily-log/${dailyVessel}`)
+    const caps = dailyCapsFixture('Deck')
+    caps.schema = caps.schema.map(field => field.key === 'officer_of_watch' ? { ...field, referenceUnavailable: false } : field)
+    const fetch = transport('Deck', { caps, references: () => json({ vesselId: dailyVessel, kind: 'Deck', field: 'officer_of_watch', available: false, items: [], hasMore: false }) })
+    render(<DailyReportWorkspace />); await english(); const form = await newDraft()
+    await waitFor(() => expect(fetch.mock.calls.some(([url]) => String(url).includes('/reference-options?'))).toBe(true))
+    expect(within(within(form).getByLabelText('Officer of watch reference — Data state')).getByRole('option', { name: 'Known' })).toBeDisabled()
   })
   it('does not convert failure or offline state into an empty healthy record set', async () => {
     const fetch = transport('Noon'); render(<DailyReportWorkspace />); await english(); await newDraft()

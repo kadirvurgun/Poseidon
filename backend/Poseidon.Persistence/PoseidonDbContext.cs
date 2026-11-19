@@ -69,6 +69,9 @@ public sealed class PoseidonDbContext(
     public DbSet<DailyReviewHead> DailyReviewHeads => Set<DailyReviewHead>();
     public DbSet<DailyReviewEvent> DailyReviewEvents => Set<DailyReviewEvent>();
     public DbSet<DailyReviewReceipt> DailyReviewReceipts => Set<DailyReviewReceipt>();
+    public DbSet<DailyEngineReferenceHead> DailyEngineReferenceHeads => Set<DailyEngineReferenceHead>();
+    public DbSet<DailyEngineReferenceEvent> DailyEngineReferenceEvents => Set<DailyEngineReferenceEvent>();
+    public DbSet<DailyEngineReferenceReceipt> DailyEngineReferenceReceipts => Set<DailyEngineReferenceReceipt>();
     public DbSet<OfflineEnrollment> OfflineEnrollments => Set<OfflineEnrollment>();
     public DbSet<OfflineLifecycle> OfflineLifecycles => Set<OfflineLifecycle>();
     public DbSet<OfflineOutcome> OfflineOutcomes => Set<OfflineOutcome>();
@@ -148,6 +151,9 @@ public sealed class PoseidonDbContext(
     public DbSet<ControlEvidenceEdge> ControlEvidenceEdges => Set<ControlEvidenceEdge>();
     public DbSet<ControlEvidenceReceipt> ControlEvidenceReceipts => Set<ControlEvidenceReceipt>();
     public DbSet<ControlStateEvent> ControlStateEvents => Set<ControlStateEvent>();
+    public DbSet<ApplicabilityOverride> ApplicabilityOverrides => Set<ApplicabilityOverride>();
+    public DbSet<ApplicabilityOverrideEvent> ApplicabilityOverrideEvents => Set<ApplicabilityOverrideEvent>();
+    public DbSet<ComplianceCommandReceipt> ComplianceCommandReceipts => Set<ComplianceCommandReceipt>();
 
     public DbSet<CrewCatalogHead> CrewCatalogHeads => Set<CrewCatalogHead>();
     public DbSet<CrewCatalogEvent> CrewCatalogEvents => Set<CrewCatalogEvent>();
@@ -214,6 +220,10 @@ public sealed class PoseidonDbContext(
         model.Entity<DailyReviewHead>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<DailyReviewEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<DailyReviewReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        DailyEngineReferenceStorage.Configure(model);
+        model.Entity<DailyEngineReferenceHead>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<DailyEngineReferenceEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<DailyEngineReferenceReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<DailyOperation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<DailyOperationRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<DailyOperationReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -225,6 +235,7 @@ public sealed class PoseidonDbContext(
         model.Entity<NotificationDispatchState>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<NotificationEpisode>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         ControlEvidenceStorage.Configure(model);
+        ApplicabilityOverrideStorage.Configure(model);
         HumanReviewStorage.Configure(model);
         RegulatoryQualificationStorage.Configure(model);
         model.Entity<RegulatoryQualificationHead>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -241,6 +252,9 @@ public sealed class PoseidonDbContext(
         model.Entity<ControlEvidenceEdge>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ControlEvidenceReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ControlStateEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ApplicabilityOverride>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ApplicabilityOverrideEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ComplianceCommandReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         ApplicabilityStorage.Configure(model);
         model.Entity<RuleDraft>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<RuleRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -608,6 +622,12 @@ public sealed class PoseidonDbContext(
             throw new InvalidOperationException("Daily operation history and command outcomes are immutable.");
         if (changes.Any(e => e.Entity is DailyReviewEvent or DailyReviewReceipt && e.State != EntityState.Added))
             throw new InvalidOperationException("Recorded daily human review provenance is immutable.");
+        if (changes.Any(e => e.Entity is DailyEngineReferenceEvent or DailyEngineReferenceReceipt && e.State != EntityState.Added))
+            throw new InvalidOperationException("Engine log reference links and outcomes are immutable.");
+        if (changes.Any(e => e.Entity is DailyEngineReferenceHead && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            (e.Properties.Any(p => p.IsModified && p.Metadata.Name != "Sequence") ||
+                (long)e.Property("Sequence").CurrentValue! != (long)e.Property("Sequence").OriginalValue! + 1))))
+            throw new InvalidOperationException("Engine log reference ownership is immutable; append one event.");
         if (changes.Any(e => e.Entity is DailyReviewHead && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
             (e.Properties.Any(p => p.IsModified && p.Metadata.Name != "Sequence") ||
                 (long)e.Property("Sequence").CurrentValue! != (long)e.Property("Sequence").OriginalValue! + 1))))
@@ -647,6 +667,21 @@ public sealed class PoseidonDbContext(
         if (changes.Any(e => e.Entity is ControlEvidenceHead head && (e.State == EntityState.Deleted || e.State == EntityState.Modified && e.Properties.Any(p => p.IsModified &&
             !(p.Metadata.Name == "Revision" || p.Metadata.Name is "ControlState" or "PublishedRevision" && head.Kind == "Control")))))
             throw new InvalidOperationException("Control/evidence ownership is immutable.");
+        // DEV-040: override events and compliance receipts are append-only; the override head only
+        // changes state/approver/grant/sequence, never its pinned evaluation, scope, reason or validity,
+        // and each state change carries its exact next event.
+        if (changes.Any(e => e.Entity is ApplicabilityOverrideEvent or ComplianceCommandReceipt && e.State != EntityState.Added))
+            throw new InvalidOperationException("Applicability override history is immutable.");
+        if (changes.Any(e => e.Entity is ApplicabilityOverride && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            e.Properties.Any(p => p.IsModified && p.Metadata.Name is not ("State" or "ApproverId" or "AuthorityGrantId" or "Sequence")))))
+            throw new InvalidOperationException("Applicability override scope is immutable.");
+        if (changes.Any(e => e.Entity is ApplicabilityOverride head && e.State is EntityState.Added or EntityState.Modified &&
+            !changes.Any(x => x.State == EntityState.Added && x.Entity is ApplicabilityOverrideEvent ev && ev.TenantId == head.TenantId &&
+                ev.VesselId == head.VesselId && ev.OverrideId == head.Id && ev.Sequence == head.Sequence && ev.ToState == head.State &&
+                (e.State == EntityState.Added ? ev.FromState == null && head.Sequence == 1 :
+                    ev.FromState == (string?)e.Property(nameof(ApplicabilityOverride.State)).OriginalValue &&
+                    head.Sequence == (long)e.Property(nameof(ApplicabilityOverride.Sequence)).OriginalValue! + 1))))
+            throw new InvalidOperationException("Applicability override change requires its event.");
         // DEV-028: a control lifecycle change is never silent; it carries its exact append-only event
         // (a stored NULL state is the derived DRAFT of a control with no lifecycle event yet).
         if (changes.Any(e => e.Entity is ControlEvidenceHead head && e.State == EntityState.Modified && e.Property(nameof(ControlEvidenceHead.ControlState)).IsModified &&
@@ -824,6 +859,12 @@ public sealed class PoseidonDbContext(
                     e.Entity.Kind == dailyOutcome.Kind && e.Entity.Id == dailyOutcome.RecordId)?.Entity;
                 events[^1].AfterVersion = saved?.Version;
                 events[^1].AfterRevision = saved?.Revision;
+            }
+            if (entry.Entity is DailyEngineReferenceReceipt referenceOutcome) {
+                var saved = ChangeTracker.Entries<DailyEngineReferenceHead>().SingleOrDefault(e => e.State == EntityState.Unchanged &&
+                    e.Entity.TenantId == referenceOutcome.TenantId && e.Entity.VesselId == referenceOutcome.VesselId && e.Entity.RecordId == referenceOutcome.RecordId)?.Entity;
+                events[^1].AfterVersion = saved?.Version;
+                events[^1].AfterRevision = saved?.Sequence;
             }
             if (entry.Entity is DailyReviewReceipt reviewOutcome) {
                 var saved = ChangeTracker.Entries<DailyReviewHead>().SingleOrDefault(e => e.State == EntityState.Unchanged &&

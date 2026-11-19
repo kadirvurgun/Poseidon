@@ -5,7 +5,8 @@ public sealed record OnboardingBlocker(Guid SubjectId, string FieldPath, string 
 public sealed record OnboardingAssessment(string State, OnboardingField[] Fields, string[] Blockers,
     OnboardingBlocker[] BlockerDetails);
 
-// 18.01/Backlog/row:40 and 59.01/paragraph:55. Completeness is a declaration
+// 18.01/Backlog/row:40 and 59.01/paragraph:55. Class context is the class society plus the class
+// register number (DEV-039 gap close, S5 WP-A); both are critical identity declarations. Completeness is a declaration
 // check, never verification, source admission, a safety decision, or permission
 // to submit an incomplete draft.
 public static class ComplianceOnboardingPolicy
@@ -25,7 +26,7 @@ public static class ComplianceOnboardingPolicy
         Field("vessel.code", "Known", code); Field("vessel.name", "Known", name);
         foreach (var (key, input) in new (string, TextInput?)[] {
             ("profile.imo", profile?.Imo), ("profile.flag", profile?.Flag),
-            ("profile.classSociety", profile?.ClassSociety), ("profile.shipType", profile?.ShipType),
+            ("profile.classSociety", profile?.ClassSociety), ("profile.classNumber", profile?.ClassNumber), ("profile.shipType", profile?.ShipType),
             ("profile.buildDate", profile?.BuildDate), ("profile.tradingArea", profile?.TradingArea),
             ("profile.cargoContext", profile?.CargoContext) }) Field(key, input?.State ?? "Missing", input?.Value);
         Field("profile.gt", profile?.Gt.State ?? "Missing", profile?.Gt.Value);
