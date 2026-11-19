@@ -246,6 +246,39 @@ public sealed partial class DirectoryWorkspaceTests
         }
     }
 
+    // DEV-022 / DEV-035 (T-S4-003): the offline conflict center is a server-projected destination only when
+    // its list endpoint can return at least one source for the current actor (crew, tug or a daily kind).
+    // Without such a right the menu omits it and its TR/EN label search is byte-identical to a no-match.
+    [Fact]
+    public async Task Dev022_conflict_center_destination_follows_the_conflict_list_permissions()
+    {
+        const string key = "offline-conflict-center", href = "/app/offline-conflict-center";
+        await using (var host = Host(manage: false, read: false, search: true))
+        {
+            using var client = Client(host);
+            var menu = (await client.GetFromJsonAsync<WorkspaceDto>("/api/v1/workspace", Ct))!;
+            Assert.DoesNotContain(menu.Destinations, d => d.Key == key || d.Href == href);
+            var nothing = await client.GetStringAsync("/api/v1/workspace/search?q=zz-no-such-entry", Ct);
+            foreach (var hidden in new[] { "offline-conflict", "Material conflict center", "Önemli çakışma merkezi", "ONEMLI CAKISMA" })
+                Assert.Equal(nothing, await client.GetStringAsync("/api/v1/workspace/search?q=" + Uri.EscapeDataString(hidden), Ct));
+        }
+        foreach (var (crew, tug) in new[] { (true, false), (false, true) })
+        {
+            await using var host = Host(manage: false, read: false, search: true, crewRead: crew, tugRead: tug);
+            using var client = Client(host);
+            var menu = (await client.GetFromJsonAsync<WorkspaceDto>("/api/v1/workspace", Ct))!;
+            Assert.Single(menu.Destinations, d => d.Key == key && d.Href == href);
+            foreach (var label in new[] { "Material conflict center", "önemli ÇAKIŞMA merkezi", "onemli cakisma" })
+            {
+                var page = (await client.GetFromJsonAsync<PageDto<SearchItemDto>>("/api/v1/workspace/search?q=" + Uri.EscapeDataString(label), Ct))!;
+                var item = Assert.Single(page.Items, i => i.Kind == "Destination");
+                Assert.Equal((key, href), (item.Key, item.Href));
+            }
+            using var list = await client.GetAsync($"/api/v1/sync/conflicts?vesselId={SeedVessel.Id:D}", Ct);
+            Assert.Equal(HttpStatusCode.OK, list.StatusCode);
+        }
+    }
+
     // DEV022-AC-08: a foreign-tenant, an ungranted same-tenant and a nonexistent vessel produce the
     // same lens denial, so the menu route cannot be used to probe vessel existence.
     [Fact]

@@ -18,13 +18,14 @@ const destinations: Readonly<Record<string, string>> = {
   'tug-command': '/app/tug-command', 'tug-job-board': '/app/tug-job-board', 'tug-job-intake': '/app/tug-job-intake',
   'system-health': '/app/system-health',
   'notification-escalation': '/app/notification-escalation',
+  'offline-conflict-center': '/app/offline-conflict-center',
 }
 export const isSeparateWorkspaceDestination = (href: string) =>
   href === '/app/audit-ready' || /^\/app\/audit-ready\/[0-9a-f-]{36}$/.test(href) ||
   href === '/app/operational-downtime' || /^\/app\/operational-downtime\/[0-9a-f-]{36}$/.test(href) ||
   href === '/app/work-order-center' || /^\/app\/work-order-center\/[0-9a-f-]{36}$/.test(href) ||
   href === '/app/defects' || /^\/app\/defects\/[0-9a-f-]{36}$/.test(href) ||
-  href === '/app/fuel-bunker-log' || href === '/app/port-activity-sof' || /^\/app\/(fuel-bunker-log|port-activity-sof)\/[0-9a-f-]{36}$/.test(href) || href === '/app/certificate-command-center' || href === '/app/renewal-workflow' || /^\/app\/(certificate-command-center|renewal-workflow)\/[0-9a-f-]{36}$/.test(href) || href === '/app/noon-report' || href === '/app/deck-daily-log' || href === '/app/engine-daily-log' || /^\/app\/(noon-report|deck-daily-log|engine-daily-log)\/[0-9a-f-]{36}$/.test(href) || href === '/app/tug-command' || href === '/app/tug-job-board' || href === '/app/tug-job-intake' || href === '/app/system-health' || href === '/app/notification-escalation'
+  href === '/app/fuel-bunker-log' || href === '/app/port-activity-sof' || /^\/app\/(fuel-bunker-log|port-activity-sof)\/[0-9a-f-]{36}$/.test(href) || href === '/app/certificate-command-center' || href === '/app/renewal-workflow' || /^\/app\/(certificate-command-center|renewal-workflow)\/[0-9a-f-]{36}$/.test(href) || href === '/app/noon-report' || href === '/app/deck-daily-log' || href === '/app/engine-daily-log' || /^\/app\/(noon-report|deck-daily-log|engine-daily-log)\/[0-9a-f-]{36}$/.test(href) || href === '/app/tug-command' || href === '/app/tug-job-board' || href === '/app/tug-job-intake' || href === '/app/system-health' || href === '/app/notification-escalation' || href === '/app/offline-conflict-center'
 const object = (value: unknown): value is Record<string, unknown> =>
   value !== null && typeof value === 'object' && !Array.isArray(value)
 const exact = (value: Record<string, unknown>, keys: string[]) =>

@@ -1658,6 +1658,70 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/sync/operations": {
+      "post": {
+        "tags": [
+          "SyncOperationEndpoints"
+        ],
+        "operationId": "SyncOperationReconcile",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SyncOperationsQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncOperationsResultDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-OBSERVATION-COMMAND-1"
+      }
+    },
+    "/api/v1/sync/conflicts": {
+      "get": {
+        "tags": [
+          "SyncConflictCenterEndpoints"
+        ],
+        "operationId": "SyncConflictList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncConflictPageDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
     "/api/v1/vessels/{vessel}/crew/{assignment}/current-assignment": {
       "get": {
         "tags": [
@@ -23571,6 +23635,78 @@
           }
         }
       },
+      "HealthNotificationsDto": {
+        "required": [
+          "state",
+          "scope",
+          "openUnacknowledged",
+          "overdueEscalations",
+          "dispatch",
+          "lastCompletedAt",
+          "nextRunAt"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "openUnacknowledged": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "overdueEscalations": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "dispatch": {
+            "type": "string"
+          },
+          "lastCompletedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "nextRunAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "HealthServiceDto": {
+        "required": [
+          "state",
+          "startedAt",
+          "uptimeSeconds"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "startedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "uptimeSeconds": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          }
+        }
+      },
       "HealthSyncDto": {
         "required": [
           "state",
@@ -23601,6 +23737,13 @@
               "integer"
             ],
             "format": "int64"
+          },
+          "lastCommittedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
           }
         }
       },
@@ -26642,7 +26785,9 @@
           "delivery",
           "canManage",
           "canAcknowledge",
-          "canWritePreference"
+          "canWritePreference",
+          "quietHoursState",
+          "quietUntil"
         ],
         "type": "object",
         "properties": {
@@ -26673,13 +26818,26 @@
           },
           "canWritePreference": {
             "type": "boolean"
+          },
+          "quietHoursState": {
+            "type": "string"
+          },
+          "quietUntil": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
           }
         }
       },
       "NotificationPreferenceCommand": {
         "required": [
           "expectedVersion",
-          "mutedAdvisory"
+          "mutedAdvisory",
+          "quietStart",
+          "quietEnd",
+          "zoneId"
         ],
         "type": "object",
         "properties": {
@@ -26689,6 +26847,24 @@
           },
           "mutedAdvisory": {
             "type": "boolean"
+          },
+          "quietStart": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "quietEnd": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "zoneId": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
         "additionalProperties": false
@@ -26696,6 +26872,9 @@
       "NotificationPreferenceDto": {
         "required": [
           "mutedAdvisory",
+          "quietStart",
+          "quietEnd",
+          "zoneId",
           "revision",
           "version"
         ],
@@ -26703,6 +26882,24 @@
         "properties": {
           "mutedAdvisory": {
             "type": "boolean"
+          },
+          "quietStart": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "quietEnd": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "zoneId": {
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "revision": {
             "type": "integer",
@@ -30371,6 +30568,278 @@
         },
         "additionalProperties": false
       },
+      "SyncConflictItemDto": {
+        "required": [
+          "source",
+          "resourceId",
+          "resourceKind",
+          "enrollmentId",
+          "commandId",
+          "baseVersion",
+          "serverVersionAtConflict",
+          "capturedAt",
+          "receivedAt",
+          "state",
+          "resolutionCommandId",
+          "resolutionResult"
+        ],
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "resourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "resourceKind": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "enrollmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "commandId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "baseVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "serverVersionAtConflict": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "capturedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "receivedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "state": {
+            "type": "string"
+          },
+          "resolutionCommandId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "resolutionResult": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "SyncConflictPageDto": {
+        "required": [
+          "vesselId",
+          "readAt",
+          "sources",
+          "items",
+          "offset",
+          "hasMore"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "readAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SyncConflictSourceDto"
+            }
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SyncConflictItemDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SyncConflictSourceDto": {
+        "required": [
+          "source",
+          "state"
+        ],
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      },
+      "SyncOperationOutcomeDto": {
+        "required": [
+          "operationId",
+          "domain",
+          "resourceId",
+          "state",
+          "result",
+          "baseVersion",
+          "serverVersion",
+          "revision",
+          "parentCommandId",
+          "receivedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "operationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "resourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "result": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "baseVersion": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          },
+          "serverVersion": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          },
+          "revision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "parentCommandId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "receivedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "SyncOperationReferenceDto": {
+        "required": [
+          "operationId",
+          "domain",
+          "resourceId",
+          "payloadDigest"
+        ],
+        "type": "object",
+        "properties": {
+          "operationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "resourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "payloadDigest": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SyncOperationsQuery": {
+        "required": [
+          "vesselId",
+          "operations"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "operations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SyncOperationReferenceDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "SyncOperationsResultDto": {
+        "required": [
+          "vesselId",
+          "serverTime",
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "serverTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SyncOperationOutcomeDto"
+            }
+          }
+        }
+      },
       "SystemHealthDto": {
         "required": [
           "vesselId",
@@ -30379,7 +30848,9 @@
           "audit",
           "sync",
           "files",
-          "freshness"
+          "freshness",
+          "service",
+          "notifications"
         ],
         "type": "object",
         "properties": {
@@ -30405,6 +30876,12 @@
           },
           "freshness": {
             "$ref": "#/components/schemas/HealthFreshnessDto"
+          },
+          "service": {
+            "$ref": "#/components/schemas/HealthServiceDto"
+          },
+          "notifications": {
+            "$ref": "#/components/schemas/HealthNotificationsDto"
           }
         }
       },
@@ -32980,6 +33457,12 @@
     },
     {
       "name": "CrewOwningInputEndpoints"
+    },
+    {
+      "name": "SyncOperationEndpoints"
+    },
+    {
+      "name": "SyncConflictCenterEndpoints"
     },
     {
       "name": "CrewAssignmentSelectionEndpoints"

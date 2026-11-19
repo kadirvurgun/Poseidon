@@ -52,7 +52,10 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal("Observed", health.Api.State); Assert.True(health.Api.Requests > 0); Assert.True(health.Api.Errors > 0);
         Assert.True(health.Api.AverageLatencyMs >= 0); Assert.True(health.Audit.Persisted > 0);
         Assert.Equal("SelectedVesselServerOutcomes", health.Sync.Scope); Assert.Equal(0, health.Sync.Committed);
-        Assert.Equal(0, health.Sync.UnresolvedConflicts); Assert.Null(health.Sync.LocalBacklog);
+        Assert.Equal(0, health.Sync.UnresolvedConflicts); Assert.Null(health.Sync.LocalBacklog); Assert.Null(health.Sync.LastCommittedAt);
+        Assert.Equal("Observed", health.Service.State); Assert.True(health.Service.StartedAt <= health.ReadAt); Assert.True(health.Service.UptimeSeconds >= 0);
+        Assert.Equal("SelectedVesselDurable", health.Notifications.Scope); Assert.Equal("NotObserved", health.Notifications.Dispatch);
+        Assert.Equal(0, health.Notifications.OpenUnacknowledged); Assert.Null(health.Notifications.LastCompletedAt);
         Assert.Equal("Unavailable", health.Files.State); Assert.Equal("Unavailable", health.Files.ScanState);
         var other = seed.Vessels.First(v => v.TenantId != SeedVessel.TenantId);
         c.DefaultRequestHeaders.Add("X-Tenant-Id", other.TenantId.ToString());
@@ -77,6 +80,7 @@ public sealed partial class DirectoryWorkspaceTests
         using var retry = await Deliver(c, first, resolution); Assert.Equal(HttpStatusCode.OK, retry.StatusCode);
         var after = (await c.GetFromJsonAsync<SystemHealthDto>(HealthPath, Ct))!;
         Assert.Equal(2, after.Sync.Committed); Assert.Equal(0, after.Sync.UnresolvedConflicts); Assert.Null(after.Sync.LocalBacklog);
+        Assert.NotNull(before.Sync.LastCommittedAt); Assert.True(after.Sync.LastCommittedAt >= before.Sync.LastCommittedAt);
         await using var db = Db(); Assert.Equal("MaterialConflict", (await db.OfflineOutcomes.SingleAsync(o => o.CommandId == local.CommandId, Ct)).Result);
         Assert.Equal(3, await db.OfflineOutcomes.CountAsync(Ct));
     }
@@ -98,5 +102,26 @@ public sealed partial class DirectoryWorkspaceTests
             Assert.DoesNotContain("unresolvedConflicts", await unavailable.Content.ReadAsStringAsync(Ct));
         }
         finally { barrier.Release(); response ??= await pending.WaitAsync(TimeSpan.FromSeconds(30), Ct); response.Dispose(); }
+    }
+    [Fact]
+    public async Task Health_reports_durable_notification_queue_overdue_escalation_and_disabled_scheduler_without_claiming_delivery()
+    {
+        var clock = new NotificationClock(); await using var host = NotificationHost(clock); using var c = Client(host);
+        NotificationPermissions(host.Services); HealthPermissions(host.Services); await Token(c);
+        Assert.Equal(HttpStatusCode.OK, (await Send(c, PlansUrl, CurrentCalendar())).StatusCode);
+        clock.Current = DateTimeOffset.UtcNow; await RefreshNotifications(c);
+        var raised = (await c.GetFromJsonAsync<SystemHealthDto>(HealthPath, Ct))!.Notifications;
+        Assert.Equal("Observed", raised.State); Assert.Equal(2, raised.OpenUnacknowledged); Assert.Equal(0, raised.OverdueEscalations);
+        // Manual refresh wrote a real dispatch row, but the product scheduler is not enabled: never "Current".
+        Assert.Equal("SchedulerDisabled", raised.Dispatch); Assert.NotNull(raised.LastCompletedAt);
+        // Fake clock passes the configured escalation timer without any evaluation run: the lag is visible.
+        clock.Current = clock.Current.AddSeconds(61);
+        var lagging = (await c.GetFromJsonAsync<SystemHealthDto>(HealthPath, Ct))!.Notifications;
+        Assert.Equal(1, lagging.OverdueEscalations); Assert.Equal(2, lagging.OpenUnacknowledged);
+        await RefreshNotifications(c);
+        var escalated = (await c.GetFromJsonAsync<SystemHealthDto>(HealthPath, Ct))!.Notifications;
+        Assert.Equal(0, escalated.OverdueEscalations); Assert.Equal(2, escalated.OpenUnacknowledged);
+        await using var db = Db();
+        Assert.True(await db.AuditEvents.AnyAsync(e => e.EntityType == nameof(Poseidon.Persistence.NotificationDispatchState), Ct));
     }
 }

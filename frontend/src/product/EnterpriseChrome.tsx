@@ -45,6 +45,7 @@ const labels: Record<string, {
     companies: { tr: sourceText("tr", "pairs.m_3ff4996c5348b429"), en: sourceText("en", "pairs.m_3ff4996c5348b429"), icon: Building2, group: 'workspace' },
     'system-health': { tr: sourceText("tr", "pairs.m_4e40e458d82d0a06"), en: sourceText("en", "pairs.m_4e40e458d82d0a06"), icon: Gauge, group: 'workspace' },
     'notification-escalation': { tr: sourceText("tr", "pairs.m_11fcfe7e5ea66ca5"), en: sourceText("en", "pairs.m_11fcfe7e5ea66ca5"), icon: ClipboardList, group: 'workspace' },
+    'offline-conflict-center': { tr: sourceText("tr", "pairs.m_494839deca172186"), en: sourceText("en", "pairs.m_494839deca172186"), icon: ClipboardList, group: 'workspace' },
     crew: { tr: sourceText("tr", "pairs.m_9c7ff80bf1b60400"), en: sourceText("en", "pairs.m_9c7ff80bf1b60400"), icon: Users, group: 'operations' },
     equipment: { tr: sourceText("tr", "pairs.m_77e9d3d4c2e4b44f"), en: sourceText("en", "pairs.m_77e9d3d4c2e4b44f"), icon: Wrench, group: 'operations' },
     maintenance: { tr: sourceText("tr", "pairs.m_21f68c2e5c640595"), en: sourceText("en", "pairs.m_21f68c2e5c640595"), icon: ClipboardList, group: 'operations' },
@@ -74,7 +75,7 @@ export function EnterpriseChrome({ session, vessel = null, language, onLanguageC
     const currentLens = roleLens?.owner === session && roleLens.vessel === vessel && roleLens.epoch === navigation.epoch ? roleLens : null;
     // A service-observation utility remains separately granted by the server;
     // selecting a role lens never grants it or hides it from an assigned operator.
-    const menuItems = currentLens ? [...currentLens.items, ...navigation.destinations.filter(item => ['system-health', 'notification-escalation'].includes(item.key) && !currentLens.items.some(lens => lens.key === item.key))] : navigation.destinations;
+    const menuItems = currentLens ? [...currentLens.items, ...navigation.destinations.filter(item => ['system-health', 'notification-escalation', 'offline-conflict-center'].includes(item.key) && !currentLens.items.some(lens => lens.key === item.key))] : navigation.destinations;
     const menuButton = useRef<HTMLButtonElement>(null);
     const header = useRef<HTMLElement>(null);
     // DEV-025 / 65.03 paragraph 90 + UX-013: scroll padding equals the real sticky bar height, so a

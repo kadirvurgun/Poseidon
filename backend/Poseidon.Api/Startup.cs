@@ -179,6 +179,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapControlledDocuments();
             endpoints.MapCrew();
             endpoints.MapOfflineApplication();
+            endpoints.MapSyncOperations();
+            endpoints.MapSyncConflictCenter();
             endpoints.MapCrewPersonalProfiles();
             endpoints.MapCrewSelection();
             endpoints.MapCredentials();

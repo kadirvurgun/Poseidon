@@ -602,6 +602,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/sync/operations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SyncOperationReconcile"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sync/conflicts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SyncConflictList"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/vessels/{vessel}/crew/{assignment}/current-assignment": {
         parameters: {
             query?: never;
@@ -8080,6 +8112,26 @@ export interface components {
             /** Format: int64 */
             unavailable: null | number;
         };
+        HealthNotificationsDto: {
+            state: string;
+            scope: string;
+            /** Format: int64 */
+            openUnacknowledged: number;
+            /** Format: int64 */
+            overdueEscalations: number;
+            dispatch: string;
+            /** Format: date-time */
+            lastCompletedAt: null | string;
+            /** Format: date-time */
+            nextRunAt: null | string;
+        };
+        HealthServiceDto: {
+            state: string;
+            /** Format: date-time */
+            startedAt: null | string;
+            /** Format: int64 */
+            uptimeSeconds: null | number;
+        };
         HealthSyncDto: {
             state: string;
             scope: string;
@@ -8089,6 +8141,8 @@ export interface components {
             unresolvedConflicts: number;
             /** Format: int64 */
             localBacklog: null | number;
+            /** Format: date-time */
+            lastCommittedAt?: null | string;
         };
         HrActualEventCommand: {
             kind: null | string;
@@ -8914,14 +8968,23 @@ export interface components {
             canManage: boolean;
             canAcknowledge: boolean;
             canWritePreference: boolean;
+            quietHoursState: string;
+            /** Format: date-time */
+            quietUntil: null | string;
         };
         NotificationPreferenceCommand: {
             /** Format: uint32 */
             expectedVersion: number;
             mutedAdvisory: boolean;
+            quietStart: null | string;
+            quietEnd: null | string;
+            zoneId: null | string;
         };
         NotificationPreferenceDto: {
             mutedAdvisory: boolean;
+            quietStart: null | string;
+            quietEnd: null | string;
+            zoneId: null | string;
             /** Format: int64 */
             revision: number;
             /** Format: uint32 */
@@ -9892,6 +9955,82 @@ export interface components {
             /** Format: date */
             expiresOn?: null | string;
         };
+        SyncConflictItemDto: {
+            source: string;
+            /** Format: uuid */
+            resourceId: string;
+            resourceKind: null | string;
+            /** Format: uuid */
+            enrollmentId: string;
+            /** Format: uuid */
+            commandId: string;
+            /** Format: uint32 */
+            baseVersion: number;
+            /** Format: uint32 */
+            serverVersionAtConflict: number;
+            /** Format: date-time */
+            capturedAt: null | string;
+            /** Format: date-time */
+            receivedAt: string;
+            state: string;
+            /** Format: uuid */
+            resolutionCommandId: null | string;
+            resolutionResult: null | string;
+        };
+        SyncConflictPageDto: {
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: date-time */
+            readAt: string;
+            sources: components["schemas"]["SyncConflictSourceDto"][];
+            items: components["schemas"]["SyncConflictItemDto"][];
+            /** Format: int32 */
+            offset: number;
+            hasMore: boolean;
+        };
+        SyncConflictSourceDto: {
+            source: string;
+            state: string;
+        };
+        SyncOperationOutcomeDto: {
+            /** Format: uuid */
+            operationId: string;
+            domain: string;
+            /** Format: uuid */
+            resourceId: string;
+            state: string;
+            result: null | string;
+            /** Format: uint32 */
+            baseVersion: null | number;
+            /** Format: uint32 */
+            serverVersion: null | number;
+            /** Format: int64 */
+            revision: null | number;
+            /** Format: uuid */
+            parentCommandId: null | string;
+            /** Format: date-time */
+            receivedAt: null | string;
+        };
+        SyncOperationReferenceDto: {
+            /** Format: uuid */
+            operationId: string;
+            domain: string;
+            /** Format: uuid */
+            resourceId: string;
+            payloadDigest: string;
+        };
+        SyncOperationsQuery: {
+            /** Format: uuid */
+            vesselId: string;
+            operations: components["schemas"]["SyncOperationReferenceDto"][];
+        };
+        SyncOperationsResultDto: {
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: date-time */
+            serverTime: string;
+            items: components["schemas"]["SyncOperationOutcomeDto"][];
+        };
         SystemHealthDto: {
             /** Format: uuid */
             vesselId: string;
@@ -9902,6 +10041,8 @@ export interface components {
             sync: components["schemas"]["HealthSyncDto"];
             files: components["schemas"]["HealthFilesDto"];
             freshness: components["schemas"]["HealthFreshnessDto"];
+            service: components["schemas"]["HealthServiceDto"];
+            notifications: components["schemas"]["HealthNotificationsDto"];
         };
         SystemStatus: {
             service: string;
@@ -12091,6 +12232,78 @@ export interface operations {
         responses: {
             /** @description OK */
             200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    SyncOperationReconcile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SyncOperationsQuery"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SyncOperationsResultDto"];
+                };
+            };
+        };
+    };
+    SyncConflictList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SyncConflictPageDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };

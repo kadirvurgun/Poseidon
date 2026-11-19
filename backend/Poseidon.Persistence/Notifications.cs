@@ -43,6 +43,10 @@ public sealed class NotificationPreference : ITenantEntity
     public Guid VesselId { get; set; }
     public Guid ActorId { get; set; }
     public bool MutedAdvisory { get; set; }
+    // 58.01 PL-035/PL-036 personal quiet hours; all null means none. Mandatory routes ignore them.
+    public TimeOnly? QuietStart { get; set; }
+    public TimeOnly? QuietEnd { get; set; }
+    public string? QuietZoneId { get; set; }
     public long Revision { get; set; } = 1;
     public uint Version { get; set; }
 }
@@ -95,6 +99,7 @@ internal static class NotificationStorage
 {
     internal const string StateConstraint = "\"State\" IN ('Open','Acknowledged','Escalated','SourceChanged','SyntheticUnverified') AND \"Revision\" > 0 AND \"PlanRevision\" > 0 AND \"Severity\" IN ('Info','Warning','Critical','Unknown') AND (\"Severity\" <> 'Critical' OR \"Mandatory\")";
     internal const string ReceiptConstraint = "(\"Action\" = 'Acknowledge' AND \"NotificationId\" IS NOT NULL AND \"ResourceId\" = \"NotificationId\" AND \"PreferenceActorId\" IS NULL) OR (\"Action\" = 'Preference' AND \"NotificationId\" IS NULL AND \"PreferenceActorId\" IS NOT NULL AND \"PreferenceActorId\" = \"ActorId\" AND \"ResourceId\" = \"ActorId\")";
+    internal const string QuietHoursConstraint = "(\"QuietStart\" IS NULL AND \"QuietEnd\" IS NULL AND \"QuietZoneId\" IS NULL) OR (\"QuietStart\" IS NOT NULL AND \"QuietEnd\" IS NOT NULL AND \"QuietZoneId\" IS NOT NULL AND \"QuietStart\" <> \"QuietEnd\")";
     internal static void Configure(ModelBuilder model)
     {
         model.Entity<Notification>(b => {
@@ -118,7 +123,8 @@ internal static class NotificationStorage
                 .HasPrincipalKey(n => new { n.TenantId, n.VesselId, n.Id }).HasConstraintName("FK_NotificationEvent_Notification").OnDelete(DeleteBehavior.Restrict);
         });
         model.Entity<NotificationPreference>(b => {
-            b.ToTable("NotificationPreferences", "engagement"); b.HasKey(p => new { p.TenantId, p.VesselId, p.ActorId });
+            b.ToTable("NotificationPreferences", "engagement", t => t.HasCheckConstraint("CK_NotificationPreference_QuietHours", QuietHoursConstraint));
+            b.HasKey(p => new { p.TenantId, p.VesselId, p.ActorId }); b.Property(p => p.QuietZoneId).HasMaxLength(64);
             b.HasOne<Vessel>().WithMany().HasForeignKey(p => new { p.TenantId, p.VesselId }).HasConstraintName("FK_NotificationPreference_Vessel").OnDelete(DeleteBehavior.Restrict);
             b.Property(p => p.Version).IsRowVersion();
         });

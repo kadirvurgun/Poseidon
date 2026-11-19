@@ -34,3 +34,11 @@ it('admits only exact server granted daily workspace destinations', () => {
 it.each([{ hiddenCount: 2 }, { totalCount: 9 }, { deniedDestinations: [{ key: 'audit', href: '/app/audit' }] }])('rejects an extra aggregate member %#', extra => {
   expect(() => decodeEnterpriseNavigation({ ...source, ...extra })).toThrow()
 })
+
+// DEV-022 / DEV-035 (T-S4-003): the conflict center appears only when the server projects it.
+it('admits the exact server-projected offline conflict center destination and never invents it', () => {
+  const center = { key: 'offline-conflict-center', href: '/app/offline-conflict-center' }
+  expect(decodeEnterpriseNavigation(source).destinations).not.toContainEqual(center)
+  expect(decodeEnterpriseNavigation({ ...source, destinations: [...source.destinations, center] }).destinations).toContainEqual(center)
+  expect(() => decodeEnterpriseNavigation({ ...source, destinations: [{ ...center, href: '/app/offline-conflict-center?vessel=forged' }] })).toThrow()
+})

@@ -64,7 +64,7 @@ public sealed partial class DirectoryWorkspaceTests
         var first = await Inbox(c); Assert.Equal(2, first.Items.Length); Assert.Equal("InAppOnly", first.Delivery);
         var critical = Assert.Single(first.Items, n => n.Severity == "Critical"); Assert.True(critical.Mandatory);
         Assert.Equal(plan.Id, critical.SourceId); Assert.Equal(1, critical.SourceRevision); Assert.Equal("ConfiguredUnverified", critical.Provenance);
-        using var preference = await Send(c, NotificationPath("/preference"), new NotificationPreferenceCommand(0, true), update: true);
+        using var preference = await Send(c, NotificationPath("/preference"), new NotificationPreferenceCommand(0, true, null, null, null), update: true);
         Assert.Equal(HttpStatusCode.OK, preference.StatusCode);
         var setting = (await preference.Content.ReadFromJsonAsync<NotificationPreferenceDto>(Ct))!;
         Assert.True(setting.MutedAdvisory); Assert.False(setting.MandatoryRouteMutable);
@@ -121,7 +121,7 @@ public sealed partial class DirectoryWorkspaceTests
         settings.Memberships[0] = member with { Permissions = member.Permissions.Where(p => !p.StartsWith("notification.", StringComparison.Ordinal)).ToArray() };
         using var revoked = await Send(c, NotificationPath($"/{notice.Id}/acknowledge"), command, key); Assert.Equal(HttpStatusCode.Forbidden, revoked.StatusCode);
         using var hidden = await c.GetAsync("/api/v1/" + NotificationPath($"/{notice.Id}/history"), Ct); Assert.Equal(HttpStatusCode.Forbidden, hidden.StatusCode);
-        using var pref = await Send(c, NotificationPath("/preference"), new NotificationPreferenceCommand(0, true), update: true); Assert.Equal(HttpStatusCode.Forbidden, pref.StatusCode);
+        using var pref = await Send(c, NotificationPath("/preference"), new NotificationPreferenceCommand(0, true, null, null, null), update: true); Assert.Equal(HttpStatusCode.Forbidden, pref.StatusCode);
         await using var db = Db(); Assert.Single(await db.NotificationReceipts.ToArrayAsync(Ct)); Assert.Empty(await db.NotificationPreferences.ToArrayAsync(Ct));
     }
     private sealed class RejectNotificationReceipt : DbCommandInterceptor
@@ -264,5 +264,40 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Empty(await verify.NotificationEvents.Where(e => e.Kind == "SourceChanged").ToArrayAsync(Ct));
         Assert.All(await verify.NotificationEpisodes.Where(e => e.RuleKey != "review-warning").ToArrayAsync(Ct), e => Assert.Null(e.Active));
         Assert.Equal(1, (await verify.MaintenancePlans.SingleAsync(p => p.Id == plan.Id, Ct)).Revision);
+    }
+    [Fact]
+    public async Task Quiet_hours_defer_only_optional_notices_raised_inside_the_window_and_reject_equal_or_partial_settings()
+    {
+        // 58.01 PL-035/PL-036: recipient zone, start=end 422, mandatory route immediate. Fake clock.
+        var clock = new NotificationClock { Current = new DateTimeOffset(2026, 11, 19, 20, 30, 0, TimeSpan.Zero) }; // 23:30 Istanbul
+        await using var host = NotificationHost(clock); using var c = Client(host); NotificationPermissions(host.Services); await Token(c);
+        using var equal = await Send(c, NotificationPath("/preference"), new NotificationPreferenceCommand(0, false, "22:00", "22:00", "Europe/Istanbul"), update: true);
+        Assert.Equal(HttpStatusCode.UnprocessableEntity, equal.StatusCode); Assert.Contains("quiet_hours_invalid", await equal.Content.ReadAsStringAsync(Ct));
+        using var partial = await Send(c, NotificationPath("/preference"), new NotificationPreferenceCommand(0, false, "22:00", null, "Europe/Istanbul"), update: true);
+        Assert.Equal(HttpStatusCode.UnprocessableEntity, partial.StatusCode);
+        using var windowsZone = await Send(c, NotificationPath("/preference"), new NotificationPreferenceCommand(0, false, "22:00", "07:00", "Turkey Standard Time"), update: true);
+        Assert.Equal(HttpStatusCode.UnprocessableEntity, windowsZone.StatusCode);
+        await using (var empty = Db()) Assert.Empty(await empty.NotificationPreferences.ToArrayAsync(Ct));
+        using var saved = await Send(c, NotificationPath("/preference"), new NotificationPreferenceCommand(0, false, "22:00", "07:00", "Europe/Istanbul"), update: true);
+        Assert.Equal(HttpStatusCode.OK, saved.StatusCode);
+        var preference = (await saved.Content.ReadFromJsonAsync<NotificationPreferenceDto>(Ct))!;
+        Assert.Equal("22:00", preference.QuietStart); Assert.Equal("07:00", preference.QuietEnd); Assert.Equal("Europe/Istanbul", preference.ZoneId);
+        Assert.False(preference.MandatoryRouteMutable);
+        Assert.Equal(HttpStatusCode.OK, (await Send(c, PlansUrl, CurrentCalendar())).StatusCode);
+        await RefreshNotifications(c);
+        var quiet = await Inbox(c);
+        Assert.Equal("Active", quiet.QuietHoursState);
+        Assert.Equal(new DateTimeOffset(2026, 11, 20, 4, 0, 0, TimeSpan.Zero), quiet.QuietUntil);
+        var mandatory = Assert.Single(quiet.Items); Assert.Equal("Critical", mandatory.Severity); Assert.True(mandatory.Mandatory);
+        // The deferred advisory still exists as an immutable record; only its in-app visibility waits.
+        await using (var db = Db()) Assert.Equal(2, await db.Notifications.CountAsync(n => n.State == "Open", Ct));
+        clock.Current = new DateTimeOffset(2026, 11, 20, 4, 0, 0, TimeSpan.Zero);
+        var morning = await Inbox(c);
+        Assert.Equal("Inactive", morning.QuietHoursState); Assert.Null(morning.QuietUntil); Assert.Equal(2, morning.Items.Length);
+        using var cleared = await Send(c, NotificationPath("/preference"), new NotificationPreferenceCommand(preference.Version, false, null, null, null), update: true);
+        Assert.Equal(HttpStatusCode.OK, cleared.StatusCode);
+        Assert.Equal("NotConfigured", (await Inbox(c)).QuietHoursState);
+        await using var audit = Db();
+        Assert.Equal(2, await audit.AuditEvents.CountAsync(a => a.EntityType == nameof(NotificationPreference), Ct));
     }
 }

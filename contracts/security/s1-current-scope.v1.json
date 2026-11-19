@@ -30,7 +30,7 @@
     "TenantPerson",
     "Unresolved"
   ],
-  "mutationRouteTemplates": 152,
+  "mutationRouteTemplates": 153,
   "criticalRouteTemplates": 144,
   "criticalOperations": 154,
   "scopeMeaning": "Current exposed HTTP command surface, including aliases. Counts are authoring definitions until actual EndpointDataSource drift and real audit observations pass the phase gate. Technical codes describe accepted commands, never human justification or safety authority.",
@@ -1156,6 +1156,23 @@
       "kind": "CriticalWrite",
       "reasonCode": "OFFLINE_LIFECYCLE",
       "denialAction": "AccessDenied",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "SyncOperationReconcile",
+      "method": "POST",
+      "routePattern": "/api/v1/sync/operations",
+      "family": "SyncOperation",
+      "scope": "Tenant",
+      "kind": "SecurityObservation",
+      "reasonCode": null,
+      "denialAction": "SyncOperationRead",
       "variants": [],
       "traceIds": [
         "T-S1-002",

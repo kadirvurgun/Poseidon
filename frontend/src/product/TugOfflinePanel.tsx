@@ -7,6 +7,8 @@ import { OfflineCaptureMetadata, OfflineQueueSummary } from './OfflineQueueSumma
 import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { ApiError } from './api';
 import { prepareOfflineShell } from './offline-application';
+import { replayGate, type SyncState } from './sync-operations';
+import { SyncQueueNotice } from './SyncQueueNotice';
 import { TugOfflineApplication, tugOfflineInventory, reportTugLostKey, type TugConflict, type TugPending } from './tug-offline';
 export function TugOfflinePanel({ job, vessel, language, onDirty }: {
     job: string;
@@ -22,6 +24,8 @@ export function TugOfflinePanel({ job, vessel, language, onDirty }: {
     const [app, setApp] = useState<TugOfflineApplication | null>(null), [pending, setPending] = useState<TugPending[]>([]);
     const [start, setStart] = useState(''), [end, setEnd] = useState(''), [busy, setBusy] = useState(false), [state, setState] = useState('locked');
     const [conflict, setConflict] = useState<TugConflict | null>(null);
+    // DEV-034 reconnect reconciliation states; never persisted, never shown as saved.
+    const [syncStates, setSyncStates] = useState<ReadonlyMap<string, SyncState>>(new Map());
     const [online, setOnline] = useState(navigator.onLine);
     const scope = useRef(new AbortController()), handle = useRef<TugOfflineApplication | null>(null);
     const generation = useRef(0);
@@ -63,6 +67,7 @@ export function TugOfflinePanel({ job, vessel, language, onDirty }: {
             handle.current = null;
             setApp(null);
             setPending([]);
+            setSyncStates(new Map());
             setConflict(null);
             setStart('');
             setEnd('');
@@ -111,6 +116,7 @@ export function TugOfflinePanel({ job, vessel, language, onDirty }: {
                 handle.current = null;
                 setApp(null);
                 setPending([]);
+            setSyncStates(new Map());
                 setConflict(null);
                 setStart('');
                 setEnd('');
@@ -140,7 +146,14 @@ export function TugOfflinePanel({ job, vessel, language, onDirty }: {
             return;
         }
         let rows: TugPending[];
+        let reconciled: ReadonlyMap<string, SyncState> = new Map();
         try {
+            if (navigator.onLine) {
+                // Lost replay responses are recovered from server receipts without re-sending.
+                // Failure is non-fatal: unproven captures simply remain pending.
+                try { reconciled = await next.reconcile(c.signal); }
+                catch (error) { if (c.signal.aborted) throw error; }
+            }
             rows = await next.captures();
         }
         catch (error) {
@@ -155,11 +168,14 @@ export function TugOfflinePanel({ job, vessel, language, onDirty }: {
         setApp(next);
         setEnrollment(next.context.id);
         setPending(rows);
+        setSyncStates(reconciled);
         setStart(next.context.plannedStart?.slice(0, 19) ?? '');
         setEnd(next.context.plannedEnd?.slice(0, 19) ?? '');
         setDirty(false);
         setState('active');
     }
+    // DEV-033 ordered per resource (this tug job): only the oldest unresolved capture may be replayed.
+    const replayOrder = replayGate(pending, job, syncStates);
     const iso = (s: string) => s ? `${s.length === 16 ? s + ':00' : s}Z` : null;
     return <section className="offline-workspace" aria-label={localizedText(en, "pairs.m_8100a2d4355f0baa")}>
     <h4>{localizedText(en, "pairs.m_8100a2d4355f0baa")}</h4>
@@ -179,15 +195,16 @@ export function TugOfflinePanel({ job, vessel, language, onDirty }: {
         <label>{localizedText(en, "pairs.m_b5896013c8b89991")}<input type="datetime-local" step="1" value={end} onChange={e => { setEnd(e.target.value); setDirty(true); }}/></label></EnterpriseFormGrid>
       <EnterpriseActions aria-label={localizedText(en, "pairs.m_04ba784116a2cf40")}><Button type="submit" disabled={busy}>{localizedText(en, "pairs.m_c06237d67b5bdf8e")}</Button></EnterpriseActions></form>
       {pending.length === 0 && <p>{localizedText(en, "pairs.m_b12762cacd67e426")}</p>}
-      <OfflineQueueSummary captures={pending} language={language}/><ol className="offline-capture-list">{pending.map(p => <li key={p.commandId}>{p.commandId} · {p.outcome?.result === 'Committed' ? (localizedText(en, "pairs.m_7eec2adba8b1cdfb")) : p.outcome ? (localizedText(en, "pairs.m_7c7b4472a50a0056")) : (localizedText(en, "pairs.m_c85b0869794fddb8"))}
-        <OfflineCaptureMetadata capture={p} language={language}/><EnterpriseActions align="start" aria-label={localizedText(en, "pairs.m_6554165b4d2b56b4")}><Button variant="outline" disabled={busy || !online} onClick={() => void work(async (current) => { await app.replay(p, scope.current.signal); if (!current())
+      <OfflineQueueSummary captures={pending} language={language}/><ol className="offline-capture-list">{pending.map(p => { const order = replayOrder.get(p.commandId); return <li key={p.commandId}>{p.commandId} · {p.outcome?.result === 'Committed' ? (localizedText(en, "pairs.m_7eec2adba8b1cdfb")) : p.outcome ? (localizedText(en, "pairs.m_7c7b4472a50a0056")) : (localizedText(en, "pairs.m_c85b0869794fddb8"))}
+        <OfflineCaptureMetadata capture={p} language={language}/><SyncQueueNotice state={order?.state} en={en}/><EnterpriseActions align="start" aria-label={localizedText(en, "pairs.m_6554165b4d2b56b4")}><Button variant="outline" disabled={busy || !online || order?.state === 'blocked' || order?.state === 'rejected'} onClick={() => void work(async (current) => { await app.replay(p, scope.current.signal); if (!current())
                 return; const rows = await app.captures(); if (current()) {
                 setPending(rows);
+                setSyncStates(previous => { const next = new Map(previous); next.delete(p.commandId); return next; });
                 setState('active');
             } })}>{localizedText(en, "pairs.m_921504dd280991fe")}</Button>
         {p.outcome?.result === 'MaterialConflict' && <Button variant="outline" disabled={busy} onClick={() => void work(async (current) => { const v = await app.conflict(p.commandId, scope.current.signal); if (current())
                 setConflict(v); })}>{localizedText(en, "pairs.m_72beb0ccb90927ac")}</Button>}</EnterpriseActions>
-      </li>)}</ol>
+      </li>; })}</ol>
       {conflict && <article aria-label={localizedText(en, "pairs.m_18a5e934d3ff952e")}><p>{localizedText(en, "pairs.m_79776c1186a28b3b")}</p><dl className="offline-window-comparison">{[conflict.base, conflict.captured, conflict.server].map((v, i) => <div key={i}><dt>{[localizedText(language, 'pairs.m_5eb8aabea964097a'), localizedText(language, 'pairs.m_b9441f91545d6179'), presentationLabel(language, 'currentServer')][i]}</dt><dd>{v.plannedStart ?? '—'} / {v.plannedEnd ?? '—'}</dd></div>)}</dl><EnterpriseActions align="start" aria-label={localizedText(en, "pairs.m_3f91f6fcc0796342")}>
         {(['keepServer', 'useCaptured'] as const).filter(c => conflict.choices.includes(c)).map(choice => <Button variant="outline" key={choice} disabled={busy} onClick={() => void work(async (current) => { const rows = await app.capture(choice === 'keepServer' ? conflict.server : conflict.captured, { conflict, choice }); if (current()) {
                 setPending(rows);
@@ -198,6 +215,7 @@ export function TugOfflinePanel({ job, vessel, language, onDirty }: {
             handle.current = null;
             setApp(null);
             setPending([]);
+            setSyncStates(new Map());
             setConflict(null);
             setStart('');
             setEnd('');

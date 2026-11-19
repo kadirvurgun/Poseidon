@@ -8,7 +8,7 @@ import { EnterpriseChrome } from './EnterpriseChrome';
 import { EnterprisePageHeader, EnterprisePagination, EnterpriseToolbar } from './EnterprisePatterns';
 import * as api from './api';
 import { isGuid } from './identifiers';
-import { loadSystemHealth, type SystemHealth } from './system-health-api';
+import { loadSystemHealth, type NotificationDispatch, type SystemHealth } from './system-health-api';
 import { useWorkspaceRevalidation } from './use-workspace-revalidation';
 import { decodeTodayVessels } from './today-api';
 import './offline-enterprise.css';
@@ -74,6 +74,7 @@ export function SystemHealthWorkspace() {
       </>}
     </main></div>;
 }
+const staleAfterMs = 120000;
 function HealthSnapshot({ vessel, language }: {
     vessel: string;
     language: AppLocale;
@@ -81,13 +82,24 @@ function HealthSnapshot({ vessel, language }: {
     const en = language === 'en', [result, setResult] = useState<{
         data?: SystemHealth;
         error?: number;
-    } | null>(null);
+        stale?: boolean;
+    } | null>(null), [aged, setAged] = useState(false);
+    // The server read time is authoritative. A replayed/cached or aging snapshot is marked stale
+    // instead of being presented as current; ordinary revalidation replaces it every minute.
+    useEffect(() => {
+        const readAt = result?.data?.readAt;
+        if (!readAt)
+            return;
+        const interval = setInterval(() => setAged(Date.now() - Date.parse(readAt) >= staleAfterMs), 15000);
+        return () => clearInterval(interval);
+    }, [result]);
+    const stale = !!result?.stale || aged;
     useEffect(() => {
         const c = new AbortController();
         let active = true;
         const timer = setTimeout(() => c.abort(), 10000);
         loadSystemHealth(vessel, c.signal).then(data => { if (active)
-            setResult({ data }); }).catch(error => { if (active)
+            setResult({ data, stale: Date.now() - Date.parse(data.readAt) >= staleAfterMs }); }).catch(error => { if (active)
             setResult({ error: error instanceof api.ApiError ? error.status : 0 }); }).finally(() => clearTimeout(timer));
         return () => { active = false; c.abort(); clearTimeout(timer); };
     }, [vessel]);
@@ -96,10 +108,14 @@ function HealthSnapshot({ vessel, language }: {
     if (!result.data)
         return <p role="alert">{[401, 403, 404].includes(result.error ?? 0) ? (localizedText(en, "pairs.m_e17715a04d098321")) : (localizedText(en, "pairs.m_4f4cbc436901d390"))}</p>;
     const data = result.data, unknown = localizedText(en, "pairs.m_49138f2831bf4262"), number = (value: number | null) => value === null ? unknown : new Intl.NumberFormat(language, { maximumFractionDigits: 3 }).format(value);
-    return <section aria-label={localizedText(en, "pairs.m_7f4f2ed6d01ca685")}><p>{localizedText(en, "pairs.m_49b1431c59b5cdfd")}: <time dateTime={data.readAt}>{data.readAt}</time></p><div className="health-observation-grid">
+    const notObserved = localizedText(language, "pairs.m_234ab3e1777a1660"), instant = (value: string | null) => value === null ? notObserved : <time dateTime={value}>{value}</time>;
+    const dispatch: Record<NotificationDispatch, string> = { NotObserved: notObserved, Running: localizedText(language, "pairs.m_9dc2800cc1229aab"), LeaseExpired: localizedText(language, "pairs.m_9b4eb6aa1cab71ff"), SchedulerDisabled: localizedText(language, "pairs.m_a6ebd564a399d994"), Overdue: localizedText(language, "pairs.m_18cef36cdc4c6890"), Current: localizedText(language, "pairs.m_6c8d6165db887e5a") };
+    return <section aria-label={localizedText(en, "pairs.m_7f4f2ed6d01ca685")}><p>{localizedText(en, "pairs.m_49b1431c59b5cdfd")}: <time dateTime={data.readAt}>{data.readAt}</time></p>{stale && <p role="status" className="health-stale">{localizedText(language, "pairs.m_6c8e6bbe52fa209e")}</p>}<div className="health-observation-grid">
+    <Card><h2>{localizedText(language, "pairs.m_7d3f888dda76b443")}</h2><p>{localizedText(language, "pairs.m_dbff653c44312069")}</p><dl><dt>{localizedText(language, "pairs.m_282329953d593348")}</dt><dd>{data.service.startedAt === null ? unknown : <time dateTime={data.service.startedAt}>{data.service.startedAt}</time>}</dd><dt>{localizedText(language, "pairs.m_b0eda60934a1b07c")}</dt><dd>{number(data.service.uptimeSeconds)}</dd></dl></Card>
     <Card><h2>{localizedText(en, "pairs.m_4e835cca4a574454")}</h2><p>{localizedText(en, "pairs.m_4b0406792f2ebb98")}</p><dl><dt>{localizedText(en, "pairs.m_6333a772dad696bb")}</dt><dd>{number(data.api.requests)}</dd><dt>{localizedText(en, "pairs.m_802b2eb1d78ce6c8")}</dt><dd>{number(data.api.errors)}</dd><dt>{localizedText(en, "pairs.m_b9bb7b900e01b2b5")}</dt><dd>{number(data.api.averageLatencyMs)}</dd></dl></Card>
     <Card><h2>{localizedText(en, "pairs.m_703e106740210efa")}</h2><p>{localizedText(en, "pairs.m_4b0406792f2ebb98")}</p><dl><dt>{localizedText(en, "pairs.m_ac7c66b5f6d69401")}</dt><dd>{number(data.audit.persisted)}</dd><dt>{localizedText(en, "pairs.m_6c48bc2696e63fab")}</dt><dd>{number(data.audit.unavailable)}</dd><dt>{localizedText(en, "pairs.m_b9bb7b900e01b2b5")}</dt><dd>{number(data.audit.averageLatencyMs)}</dd></dl></Card>
-    <Card><h2>{localizedText(en, "pairs.m_d5b1251f1235a186")}</h2><p>{localizedText(en, "pairs.m_bf7595a5d9ae3c10")}</p><dl><dt>{localizedText(en, "pairs.m_e0a1492c7fc3092b")}</dt><dd>{number(data.sync.committed)}</dd><dt>{localizedText(en, "pairs.m_36764ce358d73457")}</dt><dd>{number(data.sync.unresolvedConflicts)}</dd><dt>{localizedText(en, "pairs.m_b7692b58ee122093")}</dt><dd>{unknown}</dd></dl></Card>
+    <Card><h2>{localizedText(en, "pairs.m_d5b1251f1235a186")}</h2><p>{localizedText(en, "pairs.m_bf7595a5d9ae3c10")}</p><dl><dt>{localizedText(en, "pairs.m_e0a1492c7fc3092b")}</dt><dd>{number(data.sync.committed)}</dd><dt>{localizedText(en, "pairs.m_36764ce358d73457")}</dt><dd>{number(data.sync.unresolvedConflicts)}</dd><dt>{localizedText(en, "pairs.m_b7692b58ee122093")}</dt><dd>{unknown}</dd><dt>{localizedText(language, "pairs.m_a792130bea8acccc")}</dt><dd>{instant(data.sync.lastCommittedAt)}</dd></dl></Card>
+    <Card><h2>{localizedText(language, "pairs.m_ca641aee308ee152")}</h2><p>{localizedText(language, "pairs.m_4955b0053e062e8c")}</p><dl><dt>{localizedText(language, "pairs.m_6d89f54b45f8ff04")}</dt><dd>{number(data.notifications.openUnacknowledged)}</dd><dt>{localizedText(language, "pairs.m_86de4abf7b2e277a")}</dt><dd>{number(data.notifications.overdueEscalations)}</dd><dt>{localizedText(language, "pairs.m_9f119ea055a25762")}</dt><dd>{dispatch[data.notifications.dispatch]}</dd><dt>{localizedText(language, "pairs.m_b105ad00ee469d8b")}</dt><dd>{instant(data.notifications.lastCompletedAt)}</dd><dt>{localizedText(language, "pairs.m_fce6bb8f1f7c0347")}</dt><dd>{instant(data.notifications.nextRunAt)}</dd></dl></Card>
     <Card><h2>{localizedText(en, "pairs.m_82bf2623c669ec68")}</h2><p>{localizedText(en, "pairs.m_0a9a9fc0151ccf83")}</p><dl><dt>{localizedText(en, "pairs.m_74f30816b309c257")}</dt><dd>{data.files.adapter === 'Unavailable' ? unknown : data.files.adapter}</dd><dt>{localizedText(en, "pairs.m_60f28cada3892ea3")}</dt><dd>{data.files.state === 'ConfiguredUnprobed' ? (localizedText(en, "pairs.m_4fa0648c24a4530a")) : unknown}</dd><dt>{localizedText(en, "pairs.m_07d03a88278a463d")}</dt><dd>{data.files.scanState === 'ConfiguredUnprobed' ? (localizedText(en, "pairs.m_4fa0648c24a4530a")) : unknown}</dd></dl></Card>
     <Card><h2>{localizedText(en, "pairs.m_b80dfb7247613250")}</h2><p>{localizedText(en, "pairs.m_66a73f8e5625ca28")}</p><dl>{(['current', 'stale', 'future', 'unknown', 'unavailable'] as const).map((key, index) => <div key={key}><dt>{[localizedText(language, 'pairs.m_3d20d517375ac03d'), localizedText(language, 'pairs.m_ebe8426d02ff1c56'), presentationLabel(language, 'futureDated'), localizedText(language, 'pairs.m_a5a7675bd7000dbd'), localizedText(language, 'pairs.m_49138f2831bf4262')][index]}</dt><dd>{number(data.freshness[key])}</dd></div>)}</dl></Card>
   </div></section>;

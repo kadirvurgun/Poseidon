@@ -631,7 +631,7 @@ public sealed class PoseidonDbContext(
                 (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue! + 1))))
             throw new InvalidOperationException("Notification source and routing are immutable.");
         if (changes.Any(e => e.Entity is NotificationPreference && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
-            (e.Properties.Any(p => p.IsModified && p.Metadata.Name is not "MutedAdvisory" and not "Revision") ||
+            (e.Properties.Any(p => p.IsModified && p.Metadata.Name is not ("MutedAdvisory" or "QuietStart" or "QuietEnd" or "QuietZoneId" or "Revision")) ||
                 (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue! + 1))))
             throw new InvalidOperationException("Notification preference ownership is immutable.");
         if (changes.Any(e => e.Entity is RegulatoryQualificationEvent or RegulatoryFactAttestation or EvaluationQualification or RegulatoryQualificationReceipt && e.State != EntityState.Added))

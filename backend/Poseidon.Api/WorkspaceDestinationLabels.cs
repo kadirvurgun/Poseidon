@@ -19,6 +19,7 @@ internal static class WorkspaceDestinationLabels
         ["audit-ready"] = ["Denetime hazır iz", "Audit-ready trace"],
         ["system-health"] = ["Sistem sağlığı", "System health"],
         ["notification-escalation"] = ["Bildirimler", "Notifications"],
+        ["offline-conflict-center"] = ["Önemli çakışma merkezi", "Material conflict center"],
         ["defects"] = ["Arızalar ve önlemler", "Defects and safeguards"],
         ["work-order-center"] = ["İş emirleri", "Work orders"],
         ["operational-downtime"] = ["Operasyonel duruşlar", "Operational downtime"],

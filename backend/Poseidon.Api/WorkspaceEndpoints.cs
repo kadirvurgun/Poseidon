@@ -18,6 +18,7 @@ public static class WorkspaceEndpoints
         if (AuditReadyEndpoints.CanRead(actor)) destinations = [.. destinations, new("audit-ready", "/app/audit-ready")];
         if (SystemHealthEndpoints.Permitted(actor)) destinations = [.. destinations, new("system-health", "/app/system-health")];
         if (NotificationEndpoints.CanRead(actor)) destinations = [.. destinations, new("notification-escalation", "/app/notification-escalation")];
+        if (SyncConflictCenterEndpoints.CanOpen(actor)) destinations = [.. destinations, new("offline-conflict-center", "/app/offline-conflict-center")];
         if (DefectAssetContextReader.CanRead(actor)) destinations = [.. destinations, new("defects", "/app/defects")];
         if (WorkOrderEndpoints.CanRead(actor)) destinations = [.. destinations, new("work-order-center", "/app/work-order-center")];
         if (OperationalDowntimeEndpoints.CanRead(actor)) destinations = [.. destinations, new("operational-downtime", "/app/operational-downtime")];

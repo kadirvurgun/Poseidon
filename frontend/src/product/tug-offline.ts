@@ -2,6 +2,7 @@ import { ApiError, request, session } from './api'
 import { isGuid } from './identifiers'
 import { timestamp } from './date-validation'
 import { base64, hash, vault, type KeySlot } from './offline-application'
+import { maxSyncOperations, reconcileOperations, type SyncState } from './sync-operations'
 import { openOfflineRecord, sealOfflineRecord } from './offline-cipher'
 import { OfflineEncryptedRecordStore } from './offline-record-store'
 import { offlineKeys as exact, offlineInteger as integer } from './offline-capture-contract'
@@ -165,6 +166,26 @@ export class TugOfflineApplication {
       { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': user.csrfToken, 'X-Offline-Proof': proof }, body: capture.body }), decodeTugCapture(JSON.parse(capture.body), this.context, capture.commandId))
     if (signal.aborted) throw new Error('response_withdrawn')
     await this.write(capture.commandId, capture.body, capture.revision, result); return result
+  }
+  // DEV-034 reconnect reconciliation: recover receipts for lost replay responses from the
+  // server's durable outcomes without re-signing or re-sending. Unproven captures stay pending.
+  async reconcile(signal: AbortSignal): Promise<ReadonlyMap<string, SyncState>> {
+    this.requireActive()
+    const pending = (await this.captures()).filter(row => !row.outcome).slice(0, maxSyncOperations)
+    const states = new Map<string, SyncState>()
+    if (pending.length === 0) return states
+    const refs = await Promise.all(pending.map(async row => ({ operationId: row.commandId, domain: 'TugPlanWindow' as const,
+      resourceId: this.context.jobId, payloadDigest: await hash(row.body) })))
+    const results = await reconcileOperations(this.context.vesselId, refs, signal)
+    this.requireActive(); if (signal.aborted) throw new Error('response_withdrawn')
+    for (const [index, item] of results.entries()) {
+      const row = pending[index]; states.set(row.commandId, item.state)
+      if (item.state !== 'Recorded') continue
+      const result = outcome({ commandId: row.commandId, result: item.result, serverVersion: item.serverVersion, revision: item.revision,
+        parentCommandId: item.parentCommandId }, decodeTugCapture(JSON.parse(row.body), this.context, row.commandId))
+      await this.write(row.commandId, row.body, row.revision, result)
+    }
+    return states
   }
   async conflict(id: string, signal: AbortSignal): Promise<TugConflict> {
     this.requireActive()
