@@ -81,9 +81,18 @@ public static partial class TugEndpoints
         var bindings = configuredContext ? policy.Contexts.Where(x => x.TenantId == a.TenantId && x.VesselId == vessel).Take(2).ToArray() : [];
         var binding = configuredContext && bindings.Length == 1 && bindings[0].ObservedAt <= DateTimeOffset.UtcNow && bindings[0].SourceRevision > 0 &&
             policy.Types.Any(t => t.Code == bindings[0].Code) ? bindings[0] : null;
+        // DEV-080 role lens: server-provisioned role labels and Tug-mode lens references only;
+        // Ship Mode screens appear only when the server lens policy grants mode.cross.
+        var config = h.RequestServices.GetRequiredService<IConfiguration>();
+        var roleContext = WorkspaceRoleContext.Describe(a.TenantId, a.RoleContext, config);
+        var lenses = WorkspaceLensPolicy.Describe(a, vessel, VesselKind.Tug, config);
+        var shipModeDestinations = WorkspaceLensPolicy.Available(a, vessel, VesselKind.Tug)
+            .Where(x => x.Key is "noon-report" or "deck-daily-log" or "engine-daily-log").Select(x => new { x.Key, x.Href }).ToArray();
         await Observe(h, "Success", vessel);
         return Results.Ok(new { vessel = new { v.Id, v.Code, v.Name }, mode = "Tug", crossMode = a.Permissions.Contains("mode.cross"),
-            roleReferences = a.RoleContext, canWrite = Write(a, vessel), owners = Owners(h, vessel),
+            roleReferences = a.RoleContext, roleLens = new { roleState = roleContext.State, roleCatalogVersion = roleContext.CatalogVersion, roles = roleContext.Roles,
+                lensState = lenses.State, lensVersion = lenses.Version, lenses = lenses.Lenses.Select(l => new { l.Reference, l.Tr, l.En }).ToArray() },
+            shipModeDestinations, canWrite = Write(a, vessel), owners = Owners(h, vessel),
             bollardPull = new { value = bp?.BollardPullTonnes.ToString(CultureInfo.InvariantCulture), version = bp?.Version,
                 provenance = bp == null ? "Missing" : "LegacyMeasurementUnverified", source = "TugProfile", observedAt = (DateTimeOffset?)null, freshness = "Unknown" },
             tugType = binding?.Code ?? "Unavailable", tugTypeContext = binding, tugTypeOptions = configuredContext ? policy.Types : [], tugTypePolicyVersion = configuredContext ? policy.Version : null, equipment = assets, equipmentCoverage = assets == null ? "Unavailable" : "DraftDeclarationsOnly",

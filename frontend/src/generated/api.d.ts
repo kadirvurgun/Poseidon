@@ -3883,6 +3883,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/engine-daily-logs/reference-candidates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["EngineDailyReferenceCandidates"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/engine-daily-logs/{id}/references": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["EngineDailyReferences"];
+        put?: never;
+        post: operations["EngineDailyReferenceRecord"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/audit": {
         parameters: {
             query?: never;
@@ -7265,6 +7297,107 @@ export interface components {
                 [key: string]: components["schemas"]["DailyValue"];
             };
             reasonCode: string;
+        };
+        DailyEngineReferenceCandidateDto: {
+            pin: components["schemas"]["DailyEngineReferencePin"];
+            label: null | string;
+            detail: null | string;
+            provenance: string;
+            /** Format: date-time */
+            savedAt: string;
+            qualification: string;
+            href: string;
+        };
+        DailyEngineReferenceCandidatePageDto: {
+            /** Format: uuid */
+            vesselId: string;
+            kind: string;
+            items: components["schemas"]["DailyEngineReferenceCandidateDto"][];
+            /** Format: int32 */
+            offset: number;
+            /** Format: int32 */
+            limit: number;
+            hasMore: boolean;
+        };
+        DailyEngineReferenceCommand: {
+            /** Format: uint32 */
+            expectedRecordVersion: number;
+            /** Format: int64 */
+            recordRevision: number;
+            /** Format: uint32 */
+            expectedReferenceVersion: number;
+            operation: string;
+            target: components["schemas"]["DailyEngineReferencePin"];
+        };
+        DailyEngineReferenceEventDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            recordId: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: int64 */
+            sequence: number;
+            /** Format: uint32 */
+            referenceVersion: number;
+            /** Format: int64 */
+            recordRevision: number;
+            operation: string;
+            target: components["schemas"]["DailyEngineReferencePin"];
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            savedAt: string;
+            /** @default REVIEW_REQUIRED */
+            qualification: string;
+            /** @default 18.01:09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674:100;14.02:3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018:2177-2178:v46.3 */
+            sourceVersion: string;
+        };
+        DailyEngineReferenceItemDto: {
+            kind: string;
+            pin: null | components["schemas"]["DailyEngineReferencePin"];
+            /** Format: int64 */
+            sequence: number;
+            state: string;
+            qualification: string;
+            label: null | string;
+            href: null | string;
+            reason: null | string;
+        };
+        DailyEngineReferencePin: {
+            kind: string;
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            hash: string;
+            sourceVersion: string;
+        };
+        DailyEngineReferencesDto: {
+            /** Format: uuid */
+            recordId: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: int64 */
+            recordRevision: number;
+            /** Format: uint32 */
+            recordVersion: number;
+            /** Format: uint32 */
+            referenceVersion: number;
+            /** Format: int64 */
+            sequence: number;
+            canLink: boolean;
+            sources: components["schemas"]["DailyEngineReferenceSourceDto"][];
+            items: components["schemas"]["DailyEngineReferenceItemDto"][];
+            offline: string;
+            /** @default 18.01:09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674:100;14.02:3b30f8e779890b3d4291fa41d4d55502dbd2c876894bc5e7f6dee7fe2f3e4018:2177-2178:v46.3 */
+            sourceVersion: string;
+        };
+        DailyEngineReferenceSourceDto: {
+            kind: string;
+            state: string;
         };
         DailyFieldDefinition: {
             key: string;
@@ -16025,6 +16158,74 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DailyReviewDto"];
+                };
+            };
+        };
+    };
+    EngineDailyReferenceCandidates: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyEngineReferenceCandidatePageDto"];
+                };
+            };
+        };
+    };
+    EngineDailyReferences: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyEngineReferencesDto"];
+                };
+            };
+        };
+    };
+    EngineDailyReferenceRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DailyEngineReferenceCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyEngineReferenceEventDto"];
                 };
             };
         };

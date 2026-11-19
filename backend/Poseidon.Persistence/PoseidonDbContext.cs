@@ -69,6 +69,9 @@ public sealed class PoseidonDbContext(
     public DbSet<DailyReviewHead> DailyReviewHeads => Set<DailyReviewHead>();
     public DbSet<DailyReviewEvent> DailyReviewEvents => Set<DailyReviewEvent>();
     public DbSet<DailyReviewReceipt> DailyReviewReceipts => Set<DailyReviewReceipt>();
+    public DbSet<DailyEngineReferenceHead> DailyEngineReferenceHeads => Set<DailyEngineReferenceHead>();
+    public DbSet<DailyEngineReferenceEvent> DailyEngineReferenceEvents => Set<DailyEngineReferenceEvent>();
+    public DbSet<DailyEngineReferenceReceipt> DailyEngineReferenceReceipts => Set<DailyEngineReferenceReceipt>();
     public DbSet<OfflineEnrollment> OfflineEnrollments => Set<OfflineEnrollment>();
     public DbSet<OfflineLifecycle> OfflineLifecycles => Set<OfflineLifecycle>();
     public DbSet<OfflineOutcome> OfflineOutcomes => Set<OfflineOutcome>();
@@ -214,6 +217,10 @@ public sealed class PoseidonDbContext(
         model.Entity<DailyReviewHead>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<DailyReviewEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<DailyReviewReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        DailyEngineReferenceStorage.Configure(model);
+        model.Entity<DailyEngineReferenceHead>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<DailyEngineReferenceEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<DailyEngineReferenceReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<DailyOperation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<DailyOperationRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<DailyOperationReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -608,6 +615,12 @@ public sealed class PoseidonDbContext(
             throw new InvalidOperationException("Daily operation history and command outcomes are immutable.");
         if (changes.Any(e => e.Entity is DailyReviewEvent or DailyReviewReceipt && e.State != EntityState.Added))
             throw new InvalidOperationException("Recorded daily human review provenance is immutable.");
+        if (changes.Any(e => e.Entity is DailyEngineReferenceEvent or DailyEngineReferenceReceipt && e.State != EntityState.Added))
+            throw new InvalidOperationException("Engine log reference links and outcomes are immutable.");
+        if (changes.Any(e => e.Entity is DailyEngineReferenceHead && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            (e.Properties.Any(p => p.IsModified && p.Metadata.Name != "Sequence") ||
+                (long)e.Property("Sequence").CurrentValue! != (long)e.Property("Sequence").OriginalValue! + 1))))
+            throw new InvalidOperationException("Engine log reference ownership is immutable; append one event.");
         if (changes.Any(e => e.Entity is DailyReviewHead && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
             (e.Properties.Any(p => p.IsModified && p.Metadata.Name != "Sequence") ||
                 (long)e.Property("Sequence").CurrentValue! != (long)e.Property("Sequence").OriginalValue! + 1))))
@@ -824,6 +837,12 @@ public sealed class PoseidonDbContext(
                     e.Entity.Kind == dailyOutcome.Kind && e.Entity.Id == dailyOutcome.RecordId)?.Entity;
                 events[^1].AfterVersion = saved?.Version;
                 events[^1].AfterRevision = saved?.Revision;
+            }
+            if (entry.Entity is DailyEngineReferenceReceipt referenceOutcome) {
+                var saved = ChangeTracker.Entries<DailyEngineReferenceHead>().SingleOrDefault(e => e.State == EntityState.Unchanged &&
+                    e.Entity.TenantId == referenceOutcome.TenantId && e.Entity.VesselId == referenceOutcome.VesselId && e.Entity.RecordId == referenceOutcome.RecordId)?.Entity;
+                events[^1].AfterVersion = saved?.Version;
+                events[^1].AfterRevision = saved?.Sequence;
             }
             if (entry.Entity is DailyReviewReceipt reviewOutcome) {
                 var saved = ChangeTracker.Entries<DailyReviewHead>().SingleOrDefault(e => e.State == EntityState.Unchanged &&
