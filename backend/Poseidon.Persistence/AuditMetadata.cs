@@ -132,6 +132,30 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         }
         if(entry.Entity is PreSurveyReceipt preSurveyReceipt)
             return new(preSurveyReceipt.VesselId,preSurveyReceipt.ChecklistId,"PreSurveyReceipt",null,null,Fields(Field("Binding",null,"CommittedResource")));
+        // S7 WP-A crew human acts and matrix: closed codes and revisions only; rationale,
+        // references and certificate data are withheld (crew PII never enters audit text).
+        if(entry.Entity is CrewCredentialAssertion crewAssertion)
+            return new(crewAssertion.VesselId,crewAssertion.CredentialId,"CrewCredentialAssertion",null,crewAssertion.Sequence,Fields(
+                Field("State",null,Closed(crewAssertion.State,CrewCompetenceStorage.AssertionStates)),Field("Duty",null,Closed(crewAssertion.Duty,CrewCompetenceStorage.CredentialDuties)),
+                Field("CredentialRevision",null,Number(crewAssertion.CredentialRevision)),Field("Rationale",null,null,"ValuesWithheld"),Field("Binding",null,"RecordedHumanAssertion")));
+        if(entry.Entity is CrewCompetenceRequirement crewRequirement)
+            return new(crewRequirement.VesselId,crewRequirement.Id,"CrewCompetenceRequirement",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,crewRequirement.Revision,Fields(
+                Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(crewRequirement.Revision)),
+                Field("RequirementType",null,Closed(crewRequirement.RequirementType,Poseidon.Domain.CrewRequirementTypes.All)),
+                Field("Status",entry.State==EntityState.Added?null:Closed((string)entry.Property("Status").OriginalValue!,CrewCompetenceStorage.RequirementStatuses),Closed(crewRequirement.Status,CrewCompetenceStorage.RequirementStatuses)),
+                Field("Mandatory",null,crewRequirement.Mandatory?"true":"false"),Field("Reference",null,null,"ValuesWithheld"),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is CrewCompetenceRecord crewRecord)
+            return new(crewRecord.VesselId,crewRecord.AssignmentId,"CrewCompetenceRecord",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,crewRecord.Revision,Fields(
+                Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(crewRecord.Revision)),
+                Field("Kind",null,Closed(crewRecord.Kind,Poseidon.Domain.CrewCompetenceKinds.All)),Field("Dates",null,null,"ValuesWithheld"),Field("Reference",null,null,"ValuesWithheld"),Field("Binding",null,"DeclaredUnverified")));
+        if(entry.Entity is CrewCompetenceSignOff crewSignOff)
+            return new(crewSignOff.VesselId,crewSignOff.RecordId,"CrewCompetenceSignOff",null,crewSignOff.Sequence,Fields(
+                Field("Outcome",null,Closed(crewSignOff.Outcome,CrewCompetenceStorage.SignOffOutcomes)),Field("Duty",null,Closed(crewSignOff.Duty,CrewCompetenceStorage.AssessmentDuties)),
+                Field("RecordRevision",null,Number(crewSignOff.RecordRevision)),Field("Rationale",null,null,"ValuesWithheld"),Field("Binding",null,"RecordedHumanSignOff")));
+        if(entry.Entity is CrewSafeManningDecision manningDecision)
+            return new(manningDecision.VesselId,manningDecision.Id,"CrewSafeManningDecision",null,manningDecision.Sequence,Fields(
+                Field("Decision",null,Closed(manningDecision.Decision,CrewCompetenceStorage.Decisions)),Field("Duty",null,Closed(manningDecision.Duty,CrewCompetenceStorage.DecisionDuties)),
+                Field("EvaluationState",null,Closed(manningDecision.EvaluationState,Poseidon.Domain.CrewEligibilityStates.All)),Field("Rationale",null,null,"ValuesWithheld"),Field("Binding",null,"RecordedHumanDecision")));
         if(entry.Entity is CertificateCommandReceipt certificateReceipt)
             return new(certificateReceipt.VesselId,certificateReceipt.ResourceId,"CertificateReceipt",null,null,Fields(Field("Binding",null,"CommittedResource")));
         if (entry.Entity is DailyOfflineEnrollment dailyEnrollment)

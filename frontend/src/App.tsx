@@ -9,6 +9,7 @@ import { TugWorkspace } from './product/TugWorkspace';
 import { TugReadinessWorkspace } from './product/TugReadinessWorkspace';
 import { TechnicalWorkspace } from './product/TechnicalWorkspace';
 import { CrewWorkspace } from './product/CrewWorkspace';
+import { CrewComplianceWorkspace } from './product/CrewComplianceWorkspace';
 import { useEffect, useState } from 'react';
 import { getSystemStatus } from './api';
 import { AgentsDashboard } from './agents/AgentsDashboard';
@@ -67,6 +68,10 @@ export function App() {
     const crew = /^\/app\/crew-roster\/([0-9a-fA-F-]{36})(?:\/crew-profile\/([0-9a-fA-F-]{36}))?\/?$/.exec(window.location.pathname);
     if (crew)
         return <CrewWorkspace key={`${crew[1]}:${crew[2] ?? ''}`} vessel={crew[1]} assignment={crew[2]}/>;
+    // S7 WP-A: crew certificates (DEV-048), training-position matrix (DEV-049), Safe Manning (DEV-050).
+    const compliance = /^\/app\/(crew-certificates|training-position-matrix|safe-manning)\/([0-9a-fA-F-]{36})\/?$/.exec(window.location.pathname);
+    if (compliance)
+        return <CrewComplianceWorkspace key={`${compliance[1]}:${compliance[2]}`} view={compliance[1] === 'crew-certificates' ? 'certificates' : compliance[1] === 'training-position-matrix' ? 'matrix' : 'safe-manning'} vessel={compliance[2]}/>;
     if (window.location.pathname === '/app' || window.location.pathname.startsWith('/app/'))
         return <ProductApp />;
     return window.location.pathname.replace(/\/$/, '') === '/agents' ? <AgentsDashboard /> : <ExistingApp />;

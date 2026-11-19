@@ -62,6 +62,9 @@ public sealed class CredentialRevision : ITenantEntity
     public long Revision { get; set; }
     public DateTimeOffset SavedAt { get; set; }
     public string Provenance { get; set; } = "UserDeclaredUnverified";
+    // S7 WP-A DEV-048: declaring actor, required for separation of duties. Null only on
+    // historical rows recorded before this column; those can never be self-verified-proof.
+    public Guid? ActorId { get; set; }
 }
 
 public sealed class ImportBatch : ITenantEntity

@@ -11722,6 +11722,472 @@
         "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
+    "/api/v1/vessels/{vessel}/crew/certificates": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "CrewCertificateRegister",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrewCertificateRegister"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/vessels/{vessel}/crew/{assignment}/certificates/{id}/verification": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "CrewCredentialVerification",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "assignment",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrewCredentialVerificationView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "CrewCredentialAssertionRecord",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "assignment",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrewCredentialAssertionCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrewCommandOutcome"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/vessels/{vessel}/crew/competence-matrix": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "CrewCompetenceMatrix",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrewCompetenceMatrix"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "CrewCompetenceRequirementSave",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrewCompetenceRequirementCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrewCommandOutcome"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/vessels/{vessel}/crew/{assignment}/competence": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "CrewCompetenceGaps",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "assignment",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrewCompetenceView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "CrewCompetenceRecordSave",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "assignment",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrewCompetenceRecordCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrewCommandOutcome"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/vessels/{vessel}/crew/{assignment}/competence/{record}/sign-off": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "CrewCompetenceSignOff",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "assignment",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "record",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrewCompetenceSignOffCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrewCommandOutcome"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/vessels/{id}/safe-manning/evaluate": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "SafeManningEvaluate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafeManningView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/vessels/{id}/safe-manning/decisions": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "SafeManningDecisions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafeManningDecisionPage"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "SafeManningDecisionRecord",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SafeManningDecisionCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CrewCommandOutcome"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
     "/api/v1/vessels/{vessel}/imports/coverage": {
       "get": {
         "tags": [
@@ -21758,6 +22224,27 @@
         },
         "additionalProperties": false
       },
+      "CrewAuthorityDto": {
+        "required": [
+          "id",
+          "roleId",
+          "duty"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "roleId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "duty": {
+            "type": "string"
+          }
+        }
+      },
       "CrewCatalogCommand": {
         "required": [
           "expectedVersion",
@@ -21794,6 +22281,810 @@
         },
         "additionalProperties": false
       },
+      "CrewCertificateRegister": {
+        "required": [
+          "vesselId",
+          "referenceDate",
+          "items",
+          "truncated",
+          "qualifications"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "referenceDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CrewCertificateRegisterRow"
+            }
+          },
+          "truncated": {
+            "type": "boolean"
+          },
+          "qualifications": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "CrewCertificateRegisterRow": {
+        "required": [
+          "credentialId",
+          "assignmentId",
+          "positionId",
+          "certificateTypeReference",
+          "expiryDate",
+          "endorsementRequired",
+          "endorsementExpiry",
+          "revision",
+          "assertionState",
+          "assertionCurrent",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "credentialId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "assignmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "positionId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "certificateTypeReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "expiryDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "endorsementRequired": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "endorsementExpiry": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "assertionState": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "assertionCurrent": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "CrewCommandOutcome": {
+        "required": [
+          "id",
+          "revision",
+          "version",
+          "replayed"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "replayed": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CrewCompetenceMatrix": {
+        "required": [
+          "vesselId",
+          "items",
+          "canWrite",
+          "requirementTypes",
+          "qualifications"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CrewCompetenceRequirementDto"
+            }
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "requirementTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "qualifications": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "CrewCompetenceRecordCommand": {
+        "required": [
+          "id",
+          "expectedVersion",
+          "requirementId",
+          "kind",
+          "completedOn",
+          "validUntil",
+          "reference"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedVersion": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          },
+          "requirementId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "completedOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "validUntil": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "reference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "CrewCompetenceRecordDto": {
+        "required": [
+          "id",
+          "requirementId",
+          "kind",
+          "completedOn",
+          "validUntil",
+          "reference",
+          "provenance",
+          "revision",
+          "version",
+          "savedAt",
+          "actorIsRecorder",
+          "signOff"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "requirementId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "completedOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "validUntil": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "reference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "actorIsRecorder": {
+            "type": "boolean"
+          },
+          "signOff": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/CrewCompetenceSignOffDto"
+              }
+            ]
+          }
+        }
+      },
+      "CrewCompetenceRequirementCommand": {
+        "required": [
+          "id",
+          "expectedVersion",
+          "positionId",
+          "requirementType",
+          "reference",
+          "mandatory",
+          "validityMonths",
+          "vesselTypeScope",
+          "cargoScope",
+          "competenceLinkId",
+          "familiarizationLinkId",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedVersion": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          },
+          "positionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "requirementType": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string"
+          },
+          "mandatory": {
+            "type": "boolean"
+          },
+          "validityMonths": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "vesselTypeScope": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "cargoScope": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "competenceLinkId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "familiarizationLinkId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CrewCompetenceRequirementDto": {
+        "required": [
+          "id",
+          "positionId",
+          "positionCode",
+          "requirementType",
+          "reference",
+          "mandatory",
+          "validityMonths",
+          "vesselTypeScope",
+          "cargoScope",
+          "competenceLinkId",
+          "familiarizationLinkId",
+          "status",
+          "provenance",
+          "revision",
+          "version",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "positionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "positionCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "requirementType": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string"
+          },
+          "mandatory": {
+            "type": "boolean"
+          },
+          "validityMonths": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "vesselTypeScope": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "cargoScope": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "competenceLinkId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "familiarizationLinkId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CrewCompetenceSignOffCommand": {
+        "required": [
+          "recordRevision",
+          "expectedSequence",
+          "authorityId",
+          "outcome",
+          "rationale"
+        ],
+        "type": "object",
+        "properties": {
+          "recordRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expectedSequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CrewCompetenceSignOffDto": {
+        "required": [
+          "id",
+          "recordRevision",
+          "sequence",
+          "outcome",
+          "actorId",
+          "roleId",
+          "duty",
+          "savedAt",
+          "current"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "roleId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "duty": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "current": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CrewCompetenceView": {
+        "required": [
+          "vesselId",
+          "assignmentId",
+          "positionId",
+          "window",
+          "records",
+          "evaluation",
+          "authorities",
+          "canWrite",
+          "canSignOff",
+          "kinds",
+          "qualifications"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "assignmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "positionId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "window": {
+            "$ref": "#/components/schemas/CrewEligibilityWindow"
+          },
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CrewCompetenceRecordDto"
+            }
+          },
+          "evaluation": {
+            "$ref": "#/components/schemas/CrewEligibilityResult"
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CrewAuthorityDto"
+            }
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "canSignOff": {
+            "type": "boolean"
+          },
+          "kinds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "qualifications": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "CrewCredentialAssertionCommand": {
+        "required": [
+          "credentialRevision",
+          "expectedSequence",
+          "authorityId",
+          "state",
+          "rationale"
+        ],
+        "type": "object",
+        "properties": {
+          "credentialRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expectedSequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CrewCredentialAssertionDto": {
+        "required": [
+          "id",
+          "credentialId",
+          "credentialRevision",
+          "sequence",
+          "state",
+          "actorId",
+          "roleId",
+          "duty",
+          "savedAt",
+          "current"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "credentialId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "credentialRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "roleId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "duty": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "current": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CrewCredentialVerificationView": {
+        "required": [
+          "credentialId",
+          "assignmentId",
+          "credentialRevision",
+          "sequence",
+          "status",
+          "latest",
+          "history",
+          "authorities",
+          "canRecord",
+          "actorIsDeclarer",
+          "documentAvailable",
+          "states",
+          "blockers",
+          "qualifications"
+        ],
+        "type": "object",
+        "properties": {
+          "credentialId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "assignmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "credentialRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "status": {
+            "type": "string"
+          },
+          "latest": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/CrewCredentialAssertionDto"
+              }
+            ]
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CrewCredentialAssertionDto"
+            }
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CrewAuthorityDto"
+            }
+          },
+          "canRecord": {
+            "type": "boolean"
+          },
+          "actorIsDeclarer": {
+            "type": "boolean"
+          },
+          "documentAvailable": {
+            "type": "boolean"
+          },
+          "states": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "qualifications": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
       "CrewDeclarationPolicyDto": {
         "required": [
           "version",
@@ -21809,6 +23100,108 @@
             "items": {
               "type": "string"
             }
+          }
+        }
+      },
+      "CrewEligibilityReason": {
+        "required": [
+          "code",
+          "dimension",
+          "severity"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "dimension": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "requirementId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "sourceId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
+      },
+      "CrewEligibilityResult": {
+        "required": [
+          "assignmentId",
+          "positionId",
+          "state",
+          "reasons",
+          "gaps",
+          "qualifications"
+        ],
+        "type": "object",
+        "properties": {
+          "assignmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "positionId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CrewEligibilityReason"
+            }
+          },
+          "gaps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CrewRequirementGap"
+            }
+          },
+          "qualifications": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "authority": {
+            "type": "string",
+            "default": "ADVISORY_ONLY_NOT_A_DECISION"
+          }
+        }
+      },
+      "CrewEligibilityWindow": {
+        "required": [
+          "from",
+          "to"
+        ],
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "valid": {
+            "type": "boolean"
           }
         }
       },
@@ -21955,6 +23348,27 @@
                 "$ref": "#/components/schemas/CrewIdentityPolicyDto"
               }
             ]
+          },
+          "filter": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/CrewRosterFilter"
+              }
+            ]
+          },
+          "matchCount": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "filterTruncated": {
+            "type": "boolean",
+            "default": false
           }
         }
       },
@@ -22499,6 +23913,42 @@
           }
         }
       },
+      "CrewRequirementGap": {
+        "required": [
+          "requirementId",
+          "type",
+          "mandatory",
+          "state",
+          "reason",
+          "satisfiedBy"
+        ],
+        "type": "object",
+        "properties": {
+          "requirementId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string"
+          },
+          "mandatory": {
+            "type": "boolean"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "satisfiedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
+      },
       "CrewRoleAssessmentReference": {
         "type": "object",
         "properties": {
@@ -22581,6 +24031,49 @@
           }
         },
         "additionalProperties": false
+      },
+      "CrewRosterFilter": {
+        "required": [
+          "q",
+          "presence",
+          "department",
+          "status",
+          "position"
+        ],
+        "type": "object",
+        "properties": {
+          "q": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "presence": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "department": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "position": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
       },
       "CrewRow": {
         "required": [
@@ -22747,6 +24240,14 @@
           "positionState": {
             "type": "string",
             "default": "Unknown"
+          },
+          "profileStatus": {
+            "type": "string",
+            "default": "REVIEW_REQUIRED"
+          },
+          "profileStatusBasis": {
+            "type": "string",
+            "default": "DECLARED_UNVERIFIED_PRESENCE"
           }
         }
       },
@@ -34419,6 +35920,253 @@
           "savedAt": {
             "type": "string",
             "format": "date-time"
+          }
+        }
+      },
+      "SafeManningDecisionCommand": {
+        "required": [
+          "from",
+          "to",
+          "evaluationHash",
+          "expectedSequence",
+          "authorityId",
+          "decision",
+          "rationale"
+        ],
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "evaluationHash": {
+            "type": "string"
+          },
+          "expectedSequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SafeManningDecisionDto": {
+        "required": [
+          "id",
+          "sequence",
+          "decision",
+          "evaluationState",
+          "evaluationHash",
+          "windowFrom",
+          "windowTo",
+          "actorId",
+          "roleId",
+          "duty",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "evaluationState": {
+            "type": "string"
+          },
+          "evaluationHash": {
+            "type": "string"
+          },
+          "windowFrom": {
+            "type": "string",
+            "format": "date"
+          },
+          "windowTo": {
+            "type": "string",
+            "format": "date"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "roleId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "duty": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SafeManningDecisionPage": {
+        "required": [
+          "items",
+          "offset",
+          "hasMore"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SafeManningDecisionDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SafeManningEvaluation": {
+        "required": [
+          "vesselId",
+          "state",
+          "reasons",
+          "msmdState",
+          "msmdId",
+          "msmdRevision",
+          "roles",
+          "members",
+          "window",
+          "evaluatedAt",
+          "hash",
+          "qualifications"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CrewEligibilityReason"
+            }
+          },
+          "msmdState": {
+            "type": "string"
+          },
+          "msmdId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "msmdRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ManningRoleCoverage"
+            }
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CrewEligibilityResult"
+            }
+          },
+          "window": {
+            "$ref": "#/components/schemas/CrewEligibilityWindow"
+          },
+          "evaluatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "qualifications": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "authority": {
+            "type": "string",
+            "default": "ADVISORY_ONLY_NOT_A_DECISION"
+          }
+        }
+      },
+      "SafeManningView": {
+        "required": [
+          "evaluation",
+          "authorities",
+          "canDecide",
+          "sequence",
+          "latestDecision",
+          "decisions"
+        ],
+        "type": "object",
+        "properties": {
+          "evaluation": {
+            "$ref": "#/components/schemas/SafeManningEvaluation"
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CrewAuthorityDto"
+            }
+          },
+          "canDecide": {
+            "type": "boolean"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "latestDecision": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/SafeManningDecisionDto"
+              }
+            ]
+          },
+          "decisions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },

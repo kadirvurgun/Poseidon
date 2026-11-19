@@ -5154,6 +5154,118 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/vessels/{vessel}/crew/certificates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CrewCertificateRegister"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/crew/{assignment}/certificates/{id}/verification": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CrewCredentialVerification"];
+        put?: never;
+        post: operations["CrewCredentialAssertionRecord"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/crew/competence-matrix": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CrewCompetenceMatrix"];
+        put?: never;
+        post: operations["CrewCompetenceRequirementSave"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/crew/{assignment}/competence": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CrewCompetenceGaps"];
+        put?: never;
+        post: operations["CrewCompetenceRecordSave"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/crew/{assignment}/competence/{record}/sign-off": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CrewCompetenceSignOff"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{id}/safe-manning/evaluate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SafeManningEvaluate"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{id}/safe-manning/decisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SafeManningDecisions"];
+        put?: never;
+        post: operations["SafeManningDecisionRecord"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/vessels/{vessel}/imports/coverage": {
         parameters: {
             query?: never;
@@ -7889,6 +8001,13 @@ export interface components {
             baseVersion: null | number;
             metadata: components["schemas"]["CertificateMetadata"];
         };
+        CrewAuthorityDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            roleId: string;
+            duty: string;
+        };
         CrewCatalogCommand: {
             /** Format: uint32 */
             expectedVersion: number;
@@ -7898,9 +8017,255 @@ export interface components {
             reason: string;
             content?: null | components["schemas"]["CrewPositionPolicy"];
         };
+        CrewCertificateRegister: {
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: date */
+            referenceDate: string;
+            items: components["schemas"]["CrewCertificateRegisterRow"][];
+            truncated: boolean;
+            qualifications: string[];
+        };
+        CrewCertificateRegisterRow: {
+            /** Format: uuid */
+            credentialId: string;
+            /** Format: uuid */
+            assignmentId: string;
+            /** Format: uuid */
+            positionId: null | string;
+            certificateTypeReference: null | string;
+            /** Format: date */
+            expiryDate: null | string;
+            endorsementRequired: null | boolean;
+            /** Format: date */
+            endorsementExpiry: null | string;
+            /** Format: int64 */
+            revision: number;
+            assertionState: null | string;
+            assertionCurrent: boolean;
+            status: string;
+        };
+        CrewCommandOutcome: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            replayed: boolean;
+        };
+        CrewCompetenceMatrix: {
+            /** Format: uuid */
+            vesselId: string;
+            items: components["schemas"]["CrewCompetenceRequirementDto"][];
+            canWrite: boolean;
+            requirementTypes: string[];
+            qualifications: string[];
+        };
+        CrewCompetenceRecordCommand: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uint32 */
+            expectedVersion: null | number;
+            /** Format: uuid */
+            requirementId: string;
+            kind: string;
+            /** Format: date */
+            completedOn: null | string;
+            /** Format: date */
+            validUntil: null | string;
+            reference: null | string;
+        };
+        CrewCompetenceRecordDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            requirementId: string;
+            kind: string;
+            /** Format: date */
+            completedOn: null | string;
+            /** Format: date */
+            validUntil: null | string;
+            reference: null | string;
+            provenance: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            /** Format: date-time */
+            savedAt: string;
+            actorIsRecorder: boolean;
+            signOff: null | components["schemas"]["CrewCompetenceSignOffDto"];
+        };
+        CrewCompetenceRequirementCommand: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uint32 */
+            expectedVersion: null | number;
+            /** Format: uuid */
+            positionId: string;
+            requirementType: string;
+            reference: string;
+            mandatory: boolean;
+            /** Format: int32 */
+            validityMonths: null | number;
+            vesselTypeScope: null | string;
+            cargoScope: null | string;
+            /** Format: uuid */
+            competenceLinkId: null | string;
+            /** Format: uuid */
+            familiarizationLinkId: null | string;
+            status: string;
+        };
+        CrewCompetenceRequirementDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            positionId: string;
+            positionCode: null | string;
+            requirementType: string;
+            reference: string;
+            mandatory: boolean;
+            /** Format: int32 */
+            validityMonths: null | number;
+            vesselTypeScope: null | string;
+            cargoScope: null | string;
+            /** Format: uuid */
+            competenceLinkId: null | string;
+            /** Format: uuid */
+            familiarizationLinkId: null | string;
+            status: string;
+            provenance: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            /** Format: date-time */
+            savedAt: string;
+        };
+        CrewCompetenceSignOffCommand: {
+            /** Format: int64 */
+            recordRevision: number;
+            /** Format: int64 */
+            expectedSequence: number;
+            /** Format: uuid */
+            authorityId: string;
+            outcome: string;
+            rationale: string;
+        };
+        CrewCompetenceSignOffDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            recordRevision: number;
+            /** Format: int64 */
+            sequence: number;
+            outcome: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: uuid */
+            roleId: string;
+            duty: string;
+            /** Format: date-time */
+            savedAt: string;
+            current: boolean;
+        };
+        CrewCompetenceView: {
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: uuid */
+            assignmentId: string;
+            /** Format: uuid */
+            positionId: null | string;
+            window: components["schemas"]["CrewEligibilityWindow"];
+            records: components["schemas"]["CrewCompetenceRecordDto"][];
+            evaluation: components["schemas"]["CrewEligibilityResult"];
+            authorities: components["schemas"]["CrewAuthorityDto"][];
+            canWrite: boolean;
+            canSignOff: boolean;
+            kinds: string[];
+            qualifications: string[];
+        };
+        CrewCredentialAssertionCommand: {
+            /** Format: int64 */
+            credentialRevision: number;
+            /** Format: int64 */
+            expectedSequence: number;
+            /** Format: uuid */
+            authorityId: string;
+            state: string;
+            rationale: string;
+        };
+        CrewCredentialAssertionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            credentialId: string;
+            /** Format: int64 */
+            credentialRevision: number;
+            /** Format: int64 */
+            sequence: number;
+            state: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: uuid */
+            roleId: string;
+            duty: string;
+            /** Format: date-time */
+            savedAt: string;
+            current: boolean;
+        };
+        CrewCredentialVerificationView: {
+            /** Format: uuid */
+            credentialId: string;
+            /** Format: uuid */
+            assignmentId: string;
+            /** Format: int64 */
+            credentialRevision: number;
+            /** Format: int64 */
+            sequence: number;
+            status: string;
+            latest: null | components["schemas"]["CrewCredentialAssertionDto"];
+            history: components["schemas"]["CrewCredentialAssertionDto"][];
+            authorities: components["schemas"]["CrewAuthorityDto"][];
+            canRecord: boolean;
+            actorIsDeclarer: boolean;
+            documentAvailable: boolean;
+            states: string[];
+            blockers: string[];
+            qualifications: string[];
+        };
         CrewDeclarationPolicyDto: {
             version: string;
             statuses: string[];
+        };
+        CrewEligibilityReason: {
+            code: string;
+            dimension: string;
+            severity: string;
+            /** Format: uuid */
+            requirementId?: null | string;
+            /** Format: uuid */
+            sourceId?: null | string;
+        };
+        CrewEligibilityResult: {
+            /** Format: uuid */
+            assignmentId: string;
+            /** Format: uuid */
+            positionId: null | string;
+            state: string;
+            reasons: components["schemas"]["CrewEligibilityReason"][];
+            gaps: components["schemas"]["CrewRequirementGap"][];
+            qualifications: string[];
+            /** @default ADVISORY_ONLY_NOT_A_DECISION */
+            authority: string;
+        };
+        CrewEligibilityWindow: {
+            /** Format: date */
+            from: string;
+            /** Format: date */
+            to: string;
+            valid?: boolean;
         };
         CrewFileVersionDto: {
             /** Format: uuid */
@@ -7939,6 +8304,11 @@ export interface components {
             canWriteIdentity: boolean;
             declarationPolicy?: null | components["schemas"]["CrewDeclarationPolicyDto"];
             identityPolicy?: null | components["schemas"]["CrewIdentityPolicyDto"];
+            filter?: null | components["schemas"]["CrewRosterFilter"];
+            /** Format: int32 */
+            matchCount?: null | number;
+            /** @default false */
+            filterTruncated: boolean;
         };
         CrewPersonalData: {
             nationality?: null | string;
@@ -8070,6 +8440,16 @@ export interface components {
             field: components["schemas"]["CrewPersonalField"];
             values: string[];
         };
+        CrewRequirementGap: {
+            /** Format: uuid */
+            requirementId: string;
+            type: string;
+            mandatory: boolean;
+            state: string;
+            reason: string;
+            /** Format: uuid */
+            satisfiedBy: null | string;
+        };
         CrewRoleAssessmentReference: {
             /** Format: uuid */
             assignmentId?: null | string;
@@ -8089,6 +8469,14 @@ export interface components {
             recordReference?: null | string;
             satisfied?: null | boolean;
             credential?: null | components["schemas"]["CredentialInputReference"];
+        };
+        CrewRosterFilter: {
+            q: null | string;
+            presence: null | string;
+            department: null | string;
+            status: null | string;
+            /** Format: uuid */
+            position: null | string;
         };
         CrewRow: {
             /** Format: uuid */
@@ -8139,6 +8527,10 @@ export interface components {
             presenceReason: string;
             /** @default Unknown */
             positionState: string;
+            /** @default REVIEW_REQUIRED */
+            profileStatus: string;
+            /** @default DECLARED_UNVERIFIED_PRESENCE */
+            profileStatusBasis: string;
         };
         CrewSaveCommand: {
             /** Format: uuid */
@@ -11271,6 +11663,74 @@ export interface components {
             reviewStatus: string;
             /** Format: date-time */
             savedAt: string;
+        };
+        SafeManningDecisionCommand: {
+            /** Format: date */
+            from: string;
+            /** Format: date */
+            to: string;
+            evaluationHash: string;
+            /** Format: int64 */
+            expectedSequence: number;
+            /** Format: uuid */
+            authorityId: string;
+            decision: string;
+            rationale: string;
+        };
+        SafeManningDecisionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            sequence: number;
+            decision: string;
+            evaluationState: string;
+            evaluationHash: string;
+            /** Format: date */
+            windowFrom: string;
+            /** Format: date */
+            windowTo: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: uuid */
+            roleId: string;
+            duty: string;
+            /** Format: date-time */
+            savedAt: string;
+        };
+        SafeManningDecisionPage: {
+            items: components["schemas"]["SafeManningDecisionDto"][];
+            /** Format: int32 */
+            offset: number;
+            hasMore: boolean;
+        };
+        SafeManningEvaluation: {
+            /** Format: uuid */
+            vesselId: string;
+            state: string;
+            reasons: components["schemas"]["CrewEligibilityReason"][];
+            msmdState: string;
+            /** Format: uuid */
+            msmdId: null | string;
+            /** Format: int64 */
+            msmdRevision: null | number;
+            roles: components["schemas"]["ManningRoleCoverage"][];
+            members: components["schemas"]["CrewEligibilityResult"][];
+            window: components["schemas"]["CrewEligibilityWindow"];
+            /** Format: date-time */
+            evaluatedAt: string;
+            hash: string;
+            qualifications: string[];
+            /** @default ADVISORY_ONLY_NOT_A_DECISION */
+            authority: string;
+        };
+        SafeManningView: {
+            evaluation: components["schemas"]["SafeManningEvaluation"];
+            authorities: components["schemas"]["CrewAuthorityDto"][];
+            canDecide: boolean;
+            /** Format: int64 */
+            sequence: number;
+            latestDecision: null | components["schemas"]["SafeManningDecisionDto"];
+            decisions: string[];
         };
         SaveRegulatoryDraft: {
             /** Format: uint32 */
@@ -20622,6 +21082,276 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CrewSavedDto"];
+                };
+            };
+        };
+    };
+    CrewCertificateRegister: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CrewCertificateRegister"];
+                };
+            };
+        };
+    };
+    CrewCredentialVerification: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                assignment: string;
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CrewCredentialVerificationView"];
+                };
+            };
+        };
+    };
+    CrewCredentialAssertionRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                assignment: string;
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CrewCredentialAssertionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CrewCommandOutcome"];
+                };
+            };
+        };
+    };
+    CrewCompetenceMatrix: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CrewCompetenceMatrix"];
+                };
+            };
+        };
+    };
+    CrewCompetenceRequirementSave: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CrewCompetenceRequirementCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CrewCommandOutcome"];
+                };
+            };
+        };
+    };
+    CrewCompetenceGaps: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                assignment: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CrewCompetenceView"];
+                };
+            };
+        };
+    };
+    CrewCompetenceRecordSave: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                assignment: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CrewCompetenceRecordCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CrewCommandOutcome"];
+                };
+            };
+        };
+    };
+    CrewCompetenceSignOff: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                assignment: string;
+                record: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CrewCompetenceSignOffCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CrewCommandOutcome"];
+                };
+            };
+        };
+    };
+    SafeManningEvaluate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafeManningView"];
+                };
+            };
+        };
+    };
+    SafeManningDecisions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafeManningDecisionPage"];
+                };
+            };
+        };
+    };
+    SafeManningDecisionRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafeManningDecisionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CrewCommandOutcome"];
                 };
             };
         };

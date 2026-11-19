@@ -39,6 +39,7 @@ public static class SecurityEventCodes
         "TugLifecycle",
         "RiskAssessmentRead", "RiskAssessmentCommand", "RiskTemplateRead", "RiskTemplateCommand",
         "PreSurveyRead", "PreSurveyCommand", "SurveyPlannerRead",
+        "CredentialVerificationRead", "CredentialVerificationCommand", "CrewCompetenceRead", "CrewCompetenceCommand", "SafeManningRead", "SafeManningCommand",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static IReadOnlySet<string> Results { get; } = new string[]
     {
@@ -98,6 +99,7 @@ public static class SecurityEventCodes
         "renewal_state_locked", "certificate_already_superseded",
         "risk_record_incomplete", "method_matrix_incomplete", "template_not_effective", "risk_acknowledgement_exists",
         "checklist_items_mismatch", "na_not_authorized", "port_call_unavailable", "template_unavailable", "verification_rejected",
+        "credential_document_required", "competence_requirement_unavailable", "evaluation_window_invalid",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static bool Allows(string action, string result) => Actions.Contains(action) && Results.Contains(result);
 }

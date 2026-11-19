@@ -49,9 +49,9 @@ public static class CrewOwningInputEndpoints
         }
         var inputs = new[] {
             certificate, contact,
-            new CrewOwningInput("competence_state", "EvaluationUnavailable", "DEV-049", "owning_evaluator_not_implemented"),
+            new CrewOwningInput("competence_state", "EvaluationUnavailable", "DEV-049", "see_competence_gap_view"),
             new CrewOwningInput("work_rest_state", "EvaluationUnavailable", "DEV-050", "owning_evaluator_not_implemented"),
-            await CrewEligibilityObservation.Read(db, actor, h.RequestServices.GetRequiredService<FederationSettings>(), owner, h.RequestServices.GetRequiredService<TimeProvider>().GetUtcNow(), h.RequestAborted),
+            await CrewEligibilityObservation.Read(db, actor, h.RequestServices.GetRequiredService<FederationSettings>(), owner, h.RequestServices.GetRequiredService<TimeProvider>().GetUtcNow(), h.RequestAborted, h.RequestServices.GetRequiredService<CrewEligibilityEvaluator>()),
             new CrewOwningInput("fitness_state", "EvaluationUnavailable", "DEV-048", "qualified_clinical_workflow_not_implemented")
         };
         await audit.WriteAsync(h, "CrewProfile", "Success", resourceId: owner.PersonId);

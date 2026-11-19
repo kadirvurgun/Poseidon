@@ -44,6 +44,10 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddSingleton<FileCapabilities>();
         services.AddFoundationIdentity(configuration, hostEnvironment);
         services.AddScoped<SecurityAudit>();
+        // S7 WP-A: advisory crew eligibility (stable consumer contract ICrewEligibilityEvaluator).
+        services.AddSingleton<ICrewWorkRestSource, UnavailableCrewWorkRestSource>();
+        services.AddScoped<CrewEligibilityEvaluator>();
+        services.AddScoped<ICrewEligibilityEvaluator>(sp => sp.GetRequiredService<CrewEligibilityEvaluator>());
         services.AddSingleton<Microsoft.AspNetCore.Authorization.IAuthorizationMiddlewareResultHandler, DirectoryAuthorizationResultHandler>();
         services.AddHttpContextAccessor();
         services.AddScoped(sp =>
@@ -190,6 +194,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapCrewPersonalProfiles();
             endpoints.MapCrewSelection();
             endpoints.MapCredentials();
+            endpoints.MapCrewCompliance();
             endpoints.MapImports();
             endpoints.MapLegacyCrewImports();
             endpoints.MapTechnical();

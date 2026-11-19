@@ -28,10 +28,13 @@ public sealed record CrewRow(Guid Id, Guid VesselId, Guid PersonId, uint Version
     string? FullName, string? EmployeeNo, string PrivacyScope, DateTimeOffset? SourceObservedAt,
     string EligibilityState = "Unknown", string WorkRestState = "Unknown", string CertificateState = "Unknown",
     string CompetenceState = "Unknown", string ContactStatus = "Unavailable", string? Nationality = null, string NationalityState = "Withheld",
-    string PresenceState = "Unknown", string PresenceReason = "assignment_policy_unavailable", string PositionState = "Unknown");
+    string PresenceState = "Unknown", string PresenceReason = "assignment_policy_unavailable", string PositionState = "Unknown",
+    string ProfileStatus = "REVIEW_REQUIRED", string ProfileStatusBasis = "DECLARED_UNVERIFIED_PRESENCE");
 public sealed record CrewDeclarationPolicyDto(string Version, string[] Statuses);
 public sealed record CrewIdentityPolicyDto(string Version, string Purpose, string EmployeeNumberMode);
-public sealed record CrewPage(CrewRow[] Items, int Offset, bool HasMore, bool CanWrite, bool CanWriteIdentity, CrewDeclarationPolicyDto? DeclarationPolicy = null, CrewIdentityPolicyDto? IdentityPolicy = null);
+public sealed record CrewRosterFilter(string? Q, string? Presence, string? Department, string? Status, Guid? Position);
+public sealed record CrewPage(CrewRow[] Items, int Offset, bool HasMore, bool CanWrite, bool CanWriteIdentity, CrewDeclarationPolicyDto? DeclarationPolicy = null, CrewIdentityPolicyDto? IdentityPolicy = null,
+    CrewRosterFilter? Filter = null, int? MatchCount = null, bool FilterTruncated = false);
 public sealed record CrewProfile(CrewRow Assignment, string EmploymentState, string FitnessState,
     string IdentityStatus, string ContactStatus, string HealthStatus, uint? PersonVersion, CrewIdentityPolicyDto? IdentityPolicy = null, bool CanConvertIdentity = false, CrewStatusSpecification? StatusSpecification = null);
 public sealed record CrewStatusSpecification(string State = "DERIVATION_REQUIRES_SPECIFICATION", string Field = "crew-profile.status", string Source = "14.02/Data Dictionary 2316/row:1615", string Authority = "SYSTEM_DERIVED;BA_DEFINITION_PENDING");
@@ -101,16 +104,52 @@ public static class CrewEndpoints
         var a = Actor(h); var ct = h.RequestAborted;
         if (!Read(a)) return await Fail(h, 403, "permission_denied");
         if (!await Scope(db, a, vessel, ct)) return await Fail(h, 404, "resource_not_found");
-        if (h.Request.Query.Keys.Any(k => k != "offset") || h.Request.Query["offset"].Count > 1 ||
+        string[] keys = ["offset", "q", "presence", "department", "status", "position"];
+        if (h.Request.Query.Any(k => !keys.Contains(k.Key) || k.Value.Count != 1) ||
             h.Request.Query.ContainsKey("offset") && !int.TryParse(h.Request.Query["offset"], out _)) return await Fail(h, 400, "invalid_request");
         var offset = h.Request.Query.ContainsKey("offset") ? int.Parse(h.Request.Query["offset"]!) : 0;
         if (offset < 0 || offset > 100000) return await Fail(h, 400, "invalid_request");
-        var rows = await Identities(await Nationalities(await Rows(db, vessel, Identity(a), offset: offset).ToArrayAsync(ct), h, db), h, db);
+        if (!Filter(h, out var filter)) return await Fail(h, 400, "invalid_request");
+        CrewRow[] rows; int? matches = null; var truncated = false;
+        if (filter == null) rows = await Identities(await Nationalities(await Rows(db, vessel, Identity(a), offset: offset).ToArrayAsync(ct), h, db), h, db);
+        else {
+            // DEV-047 server-side search/filter over a bounded window. Derived states are computed
+            // first; identity text is only searched when this actor may already see it.
+            var all = await Rows(db, vessel, Identity(a), limit: FilterWindow + 1).ToArrayAsync(ct);
+            truncated = all.Length > FilterWindow;
+            var matched = (await Identities(await Nationalities(all.Take(FilterWindow).ToArray(), h, db), h, db)).Where(r => Matches(r, filter)).ToArray();
+            matches = matched.Length; rows = matched.Skip(offset).Take(26).ToArray();
+        }
         await Observe(h, "CrewRead", vessel);
         var policy = h.RequestServices.GetRequiredService<CrewAssignmentPolicy>();
         var declaration = policy.Configured && a.Permissions.Contains("crew.assignment.declare") && Write(a, vessel)
             ? new CrewDeclarationPolicyDto(policy.Version, new[] { "Draft" }.Concat(policy.EffectiveStatuses).Concat(policy.PlannedStatuses).Distinct().ToArray()) : null;
-        return Results.Ok(new CrewPage(rows.Take(25).ToArray(), offset, rows.Length > 25, Write(a, vessel), IdentityPolicy(h, true) != null, declaration, IdentityPolicy(h, true)));
+        return Results.Ok(new CrewPage(rows.Take(25).ToArray(), offset, rows.Length > 25, Write(a, vessel), IdentityPolicy(h, true) != null, declaration, IdentityPolicy(h, true),
+            filter, matches, truncated));
+    }
+    private const int FilterWindow = 1000;
+    private static bool Filter(HttpContext h, out CrewRosterFilter? filter)
+    {
+        filter = null;
+        var q = h.Request.Query;
+        string? Value(string key) => q.TryGetValue(key, out var v) ? v.ToString() : null;
+        var text = Value("q"); var presence = Value("presence"); var department = Value("department"); var status = Value("status"); var position = Value("position");
+        if (text == null && presence == null && department == null && status == null && position == null) return true;
+        if (text is { Length: 0 or > 100 } || text?.Any(char.IsControl) == true || department is { Length: 0 or > 100 } || department?.Any(char.IsControl) == true) return false;
+        if (presence != null && presence is not ("Draft" or "Unknown" or "Stale" or "OutsidePeriod" or "PlannedDeclaration" or "OnboardDeclaration")) return false;
+        if (status != null && !CrewRosterPresencePolicy.ProfileStatuses.Contains(status)) return false;
+        Guid? positionId = null;
+        if (position != null) { if (!Guid.TryParseExact(position, "D", out var p) || p == Guid.Empty) return false; positionId = p; }
+        filter = new(text?.Trim(), presence, department, status, positionId);
+        return true;
+    }
+    private static bool Matches(CrewRow r, CrewRosterFilter f)
+    {
+        bool Contains(string? value) => value != null && value.Contains(f.Q!, StringComparison.OrdinalIgnoreCase);
+        return (f.Presence == null || r.PresenceState == f.Presence) && (f.Status == null || r.ProfileStatus == f.Status) &&
+            (f.Position == null || r.PositionId == f.Position) && (f.Department == null || string.Equals(r.Department, f.Department, StringComparison.Ordinal)) &&
+            (string.IsNullOrEmpty(f.Q) || Contains(r.Rank) || Contains(r.Capacity) || Contains(r.Department) || Contains(r.WatchGroup) ||
+                r.PrivacyScope == "IdentityPermitted" && (Contains(r.FullName) || Contains(r.EmployeeNo)));
     }
     private static async Task<IResult> Profile(Guid vessel, Guid id, HttpContext h, PoseidonDbContext db)
     {
@@ -149,7 +188,7 @@ public static class CrewEndpoints
             var positionState = row.PositionId == null ? "Missing" : !lookup.Configured ? "PolicyUnavailable" :
                 declaration.PositionPolicyVersion != lookup.Version || declaration.PositionPolicyFingerprint != lookup.Fingerprint() ? "Stale" :
                 currentPositions.Any(p => p.Id == row.PositionId && p.VesselId == row.VesselId && lookup.Allows(p)) ? "DeclaredUnverified" : "Unavailable";
-            return row with { PresenceState = presence.State, PresenceReason = presence.Reason, PositionState = positionState,
+            return row with { PresenceState = presence.State, PresenceReason = presence.Reason, PositionState = positionState, ProfileStatus = CrewRosterPresencePolicy.ProfileStatus(presence),
                 Rank = positionState == "DeclaredUnverified" ? row.Rank : null,
                 Capacity = positionState == "DeclaredUnverified" ? row.Capacity : null,
                 Department = positionState == "DeclaredUnverified" ? row.Department : null };

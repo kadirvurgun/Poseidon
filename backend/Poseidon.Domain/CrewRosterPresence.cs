@@ -21,4 +21,15 @@ public static class CrewRosterPresencePolicy
             ? new("OnboardDeclaration", "unverified_onboard_declaration") : new("OutsidePeriod", "period_not_started");
         return new("Unknown", "status_unrecognized");
     }
+
+    // DEV-047 derived profile status (14.02 row 1615 is SYSTEM_DERIVED; BA definition pending).
+    // A projection of the declared, unverified presence only: never fitness, eligibility or GO.
+    public static readonly string[] ProfileStatuses = ["ONBOARD", "PLANNED", "ENDED", "DRAFT", "REVIEW_REQUIRED"];
+    public static string ProfileStatus(CrewRosterPresence presence) => presence.State switch {
+        "OnboardDeclaration" => "ONBOARD",
+        "PlannedDeclaration" => "PLANNED",
+        "OutsidePeriod" => presence.Reason == "period_not_started" ? "PLANNED" : "ENDED",
+        "Draft" => "DRAFT",
+        _ => "REVIEW_REQUIRED"
+    };
 }

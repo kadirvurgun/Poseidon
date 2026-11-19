@@ -8,7 +8,9 @@ import { Badge } from '../components/ui/badge';
 import { Button } from '../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { ScopeMetric } from './DirectoryOverview';
-import type { CrewPage, CrewRow } from './crew-api';
+import { crewProfileStatuses, type CrewPage, type CrewRosterFilter, type CrewRow } from './crew-api';
+import { localizedCopy } from '../i18n/messages';
+const serverCopy = localizedCopy('CrewCompliance_tsx_copy');
 type Language = AppLocale;
 type Presence = CrewRow['presenceState'];
 const states: Presence[] = ['Draft', 'Unknown', 'Stale', 'OutsidePeriod', 'PlannedDeclaration', 'OnboardDeclaration'];
@@ -29,15 +31,19 @@ export function crewPresenceLabel(state: Presence, language: Language) {
     };
     return localizedTuple(labels[state], language, 1);
 }
-export function CrewEnterpriseRoster({ page, language, locked, rosterHref, onNavigate, onPage }: {
+export function CrewEnterpriseRoster({ page, language, locked, rosterHref, onNavigate, onPage, filter, onFilter }: {
     page: CrewPage;
     language: Language;
     locked: boolean;
     rosterHref: string;
     onNavigate: (href: string) => void;
     onPage: (offset: number) => void;
+    filter?: CrewRosterFilter;
+    onFilter?: (filter: CrewRosterFilter) => void;
 }) {
     const filterId = useId();
+    const s = serverCopy[language];
+    const [query, setQuery] = useState(filter?.q ?? ''), [status, setStatus] = useState<string>(filter?.status ?? '');
     const [state, setState] = useState<Presence | ''>('');
     const [department, setDepartment] = useState('');
     const departments = [...new Set(page.items.map(item => item.department).filter((value): value is string => value !== null))].sort((a, b) => a.localeCompare(b, language));
@@ -63,6 +69,14 @@ export function CrewEnterpriseRoster({ page, language, locked, rosterHref, onNav
           <label htmlFor={`${filterId}-department`}>{localizedText(language, "pairs.m_3b1cbbb26d2a528c")}<select id={`${filterId}-department`} value={department} disabled={locked} onChange={event => setDepartment(event.target.value)}><option value="">{localizedText(language, "pairs.m_1d0caa31652eab45")}</option>{departments.map(value => <option key={value}>{value}</option>)}</select></label>
           {(state || department) && <Button variant="ghost" disabled={locked} onClick={() => { setState(''); setDepartment(''); }}>{localizedText(language, "pairs.m_82b8bb60a3e95b62")}</Button>}
         </div>
+        {onFilter && <form className="crew-enterprise-filters" role="search" aria-label={s.search} onSubmit={event => { event.preventDefault(); onFilter({ q: query.trim() || undefined, status: (status || undefined) as CrewRosterFilter['status'] }); }}>
+          <label htmlFor={`${filterId}-q`}>{s.search}<input id={`${filterId}-q`} type="search" maxLength={100} value={query} disabled={locked} onChange={event => setQuery(event.target.value)}/></label>
+          <label htmlFor={`${filterId}-status`}>{s.profileStatus}<select id={`${filterId}-status`} value={status} disabled={locked} onChange={event => setStatus(event.target.value)}><option value="">{localizedText(language, "pairs.m_7e1de9557e6b30fd")}</option>{crewProfileStatuses.map(value => <option key={value} value={value}>{(s as Record<string, string>)['ps_' + value]}</option>)}</select></label>
+          <Button type="submit" variant="outline" disabled={locked}>{s.search}</Button>
+          {(filter?.q || filter?.status) && <Button type="button" variant="ghost" disabled={locked} onClick={() => { setQuery(''); setStatus(''); onFilter({}); }}>{s.clear}</Button>}
+          {page.matchCount != null && <span role="status">{s.matches.replace('{{count}}', new Intl.NumberFormat(language).format(page.matchCount))}</span>}
+          {page.filterTruncated && <span role="status">{s.truncated}</span>}
+        </form>}
         <p className="crew-enterprise-result-count" role="status">{presentationLabel(language, 'crewRosterCount', { visible: new Intl.NumberFormat(language).format(rows.length), total: new Intl.NumberFormat(language).format(page.items.length) })}</p>
         {page.items.length === 0 ? <div className="crew-enterprise-empty"><Users aria-hidden="true"/><h3>{localizedText(language, "pairs.m_16af712d0e2ac44f")}</h3><p>{localizedText(language, "pairs.m_24435511a9d92dca")}</p></div> : rows.length === 0 ? <div className="crew-enterprise-empty"><Filter aria-hidden="true"/><h3>{localizedText(language, "pairs.m_f18d932d4e6ce405")}</h3><p>{localizedText(language, "pairs.m_e7e4b65319267171")}</p></div> : <div className="product-table crew-enterprise-table" tabIndex={0} role="region" aria-label={localizedText(language, "pairs.m_5fee12d42e0d584a")}><table><caption className="sr-only">{localizedText(language, "pairs.m_e84eb503ee16759a")}</caption><thead><tr><th scope="col">{localizedText(language, "pairs.m_f04dc1ac65b41999")}</th><th scope="col">{localizedText(language, "pairs.m_2a71ee9d575cc57d")}</th><th scope="col">{localizedText(language, "pairs.m_be47e945be197f43")}</th><th scope="col">{localizedText(language, "pairs.m_3b1cbbb26d2a528c")}</th><th scope="col">{localizedText(language, "pairs.m_772cc086671705f3")}</th><th scope="col">{localizedText(language, "pairs.m_20c8fd7c94a7ce75")}</th><th scope="col">{localizedText(language, "pairs.m_ce23a5bf1cb267e3")}</th></tr></thead><tbody>{rows.map(item => <tr key={item.id}>
           <td><a href={`${rosterHref}/crew-profile/${item.id}`} onClick={event => { event.preventDefault(); onNavigate(`${rosterHref}/crew-profile/${item.id}`); }}>{item.fullName ?? withheld}</a></td>
