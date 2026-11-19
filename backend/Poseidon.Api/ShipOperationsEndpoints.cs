@@ -17,6 +17,10 @@ public sealed record ShipOpsCapabilitiesDto(Guid VesselId,string Kind,bool CanRe
     ShipOpsFieldDefinition[] Schema,string SourceVersion,ShipOpsOfflineDto Offline);
 public sealed record ShipOpsPageDto(ShipOpsRecordDto[] Items,int Offset,int Limit,bool HasMore,bool CanWrite,string SourceVersion,ShipOpsOfflineDto Offline);
 public sealed record ShipOpsHistoryDto(ShipOpsRecordDto[] Items,int Offset,int Limit,bool HasMore);
+public sealed record FuelLedgerEntryDto(ShipOpsRecordDto Record,FuelLedgerAssessment Assessment);
+public sealed record FuelLedgerDto(Guid VesselId,FuelLedgerEntryDto[] Entries,ShipOpsRecordDto[] Unplaced,int Window,bool Truncated,string Unit,string Grouping,string[] Qualifications,string SourceVersion);
+public sealed record PortTimelineEntryDto(ShipOpsRecordDto Record,PortTimelineAssessment Assessment);
+public sealed record PortTimelineDto(Guid VesselId,PortTimelineEntryDto[] Entries,ShipOpsRecordDto[] Unplaced,int Window,bool Truncated,string DurationUnit,string[] Qualifications,string SourceVersion);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record ShipOpsDraftCommand([property:JsonRequired] Guid Id,[property:JsonRequired] uint ExpectedVersion,
     [property:JsonRequired] Dictionary<string,ShipOpsFact> Fields,[property:JsonRequired] string ReasonCode,ShipOperationOriginPin? Origin=null);
@@ -30,6 +34,8 @@ public static class ShipOperationsEndpoints
             var kind=family.Kind;var group=app.MapGroup("/api/v1/"+family.Route).RequireAuthorization("DirectoryRead");
             group.MapGet("",(HttpContext h,PoseidonDbContext db)=>Read(kind,null,false,false,h,db)).WithName(kind+"ShipOpsList").Produces<ShipOpsPageDto>();
             group.MapGet("/capabilities",(HttpContext h,PoseidonDbContext db)=>Read(kind,null,false,true,h,db)).WithName(kind+"ShipOpsCapabilities").Produces<ShipOpsCapabilitiesDto>();
+            if(kind=="Fuel")group.MapGet("/ledger",(HttpContext h,PoseidonDbContext db)=>Ledger(kind,h,db)).WithName("FuelShipOpsLedger").Produces<FuelLedgerDto>();
+            else group.MapGet("/timeline",(HttpContext h,PoseidonDbContext db)=>Ledger(kind,h,db)).WithName("PortShipOpsTimeline").Produces<PortTimelineDto>();
             group.MapGet("/{id:guid}",(Guid id,HttpContext h,PoseidonDbContext db)=>Read(kind,id,false,false,h,db)).WithName(kind+"ShipOpsRead").Produces<ShipOpsRecordDto>();
             group.MapGet("/{id:guid}/history",(Guid id,HttpContext h,PoseidonDbContext db)=>Read(kind,id,true,false,h,db)).WithName(kind+"ShipOpsHistory").Produces<ShipOpsHistoryDto>();
             group.MapPost("",(HttpContext h,PoseidonDbContext db)=>Save(kind,null,h,db)).WithName(kind+"ShipOpsCreate").Accepts<ShipOpsDraftCommand>("application/json").Produces<ShipOpsRecordDto>();
@@ -115,6 +121,34 @@ public static class ShipOperationsEndpoints
             }
         }
         if(!await Current(h,kind,vessel,rights,records))return await Fail(h,403,"permission_denied");await Audit(h,"Success",id??vessel);
+        if(!await Current(h,kind,vessel,rights,records))return await Fail(h,403,"permission_denied");return Results.Ok(result);
+    }
+    // DEV-100/101 derived review aid over the newest current heads of one Ship.
+    // Read-only: findings are REVIEW_REQUIRED flags; nothing is corrected,
+    // completed or written. Every returned head is pinned by the same final
+    // fresh rights/visibility fence as the list route, before and after audit.
+    internal const int LedgerWindow=100;
+    private static async Task<IResult> Ledger(string kind,HttpContext h,PoseidonDbContext db) {
+        h.Response.Headers.CacheControl="no-store";if(!Query(h,false,out var vessel,out _))return await Fail(h,400,"invalid_query");
+        var actor=Actor(h);if(!CanRead(actor,kind))return await Fail(h,403,"permission_denied");var rights=Rights(actor!);
+        if(!await Vessels(db,actor!,vessel).AnyAsync(h.RequestAborted))return await Fail(h,404,"resource_not_found");
+        var canWrite=CanWrite(actor,kind,vessel);
+        // Newest window first, then chronological assessment inside it. A chain
+        // crossing the window edge starts UNKNOWN (no previous record in window).
+        var rows=await db.ShipOperations.AsNoTracking().Where(r=>r.VesselId==vessel && r.Kind==kind).OrderByDescending(r=>r.OccurredAt??r.SavedAt).ThenBy(r=>r.Id)
+            .Take(LedgerWindow+1).ToArrayAsync(h.RequestAborted);
+        var records=rows.Take(LedgerWindow).Select(r=>Dto(r,true,canWrite)).ToArray();var truncated=rows.Length>LedgerWindow;
+        var inputs=records.Select(r=>new LedgerInput(r.Id,r.Fields)).ToArray();var byId=records.ToDictionary(r=>r.Id);object result;
+        if(kind=="Fuel") {
+            var assessed=ShipOperationsLedger.AssessFuel(inputs);var placed=assessed.Select(a=>a.RecordId).ToHashSet();
+            result=new FuelLedgerDto(vessel,assessed.Select(a=>new FuelLedgerEntryDto(byId[a.RecordId],a)).ToArray(),records.Where(r=>!placed.Contains(r.Id)).ToArray(),
+                LedgerWindow,truncated,ShipOperationsLedger.Unit,ShipOperationsLedger.FuelGrouping,ShipOperationsLedger.FuelQualifications,ShipOperationsPolicy.SourceVersion);
+        }else {
+            var assessed=ShipOperationsLedger.AssessPort(inputs);var placed=assessed.Select(a=>a.RecordId).ToHashSet();
+            result=new PortTimelineDto(vessel,assessed.Select(a=>new PortTimelineEntryDto(byId[a.RecordId],a)).ToArray(),records.Where(r=>!placed.Contains(r.Id)).ToArray(),
+                LedgerWindow,truncated,"tick",ShipOperationsLedger.PortQualifications,ShipOperationsPolicy.SourceVersion);
+        }
+        if(!await Current(h,kind,vessel,rights,records))return await Fail(h,403,"permission_denied");await Audit(h,"Success",vessel);
         if(!await Current(h,kind,vessel,rights,records))return await Fail(h,403,"permission_denied");return Results.Ok(result);
     }
     private static async Task<IResult> Save(string kind,Guid? routeId,HttpContext h,PoseidonDbContext db) {

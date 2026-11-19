@@ -1,5 +1,40 @@
 {
   "copies": {
+    "ShipOperationsLedgerPanel_tsx_copy": {
+      "fuelTitle": "Verifica di continuità ROB",
+      "portTitle": "Cronologia dello Statement of Facts",
+      "fuelIntro": "Derivato dalle quantità dichiarate in mt. I rilievi sono segnalati per revisione umana; nulla viene corretto e «nessuna discrepanza rilevata» non è una verifica.",
+      "portIntro": "Eventi portuali dichiarati in ordine UTC con l’intervallo registrato. Qui non si producono firma, finalizzazione, laytime o controstallie.",
+      "offline": "Offline: l’aiuto alla revisione richiede una lettura online attuale.",
+      "loading": "Caricamento dell’aiuto alla revisione…",
+      "unavailable": "L’aiuto alla revisione non è disponibile per il tuo accesso attuale.",
+      "retry": "Riprova",
+      "empty": "Nessun record collocato finora.",
+      "truncated": "Vengono valutati solo i 100 record più recenti; una catena oltre questa finestra inizia come sconosciuta.",
+      "unplaced": "Record non collocati (data, tipo di combustibile o inizio non dichiarati): {{count}}",
+      "notDeclared": "Non dichiarato",
+      "balance": "Bilancio (prima + ricevuto − consumato − dopo)",
+      "continuity": "Continuità con il record precedente",
+      "difference": "Differenza",
+      "open": "Apri record",
+      "flags": "Segnalazioni di revisione",
+      "duration": "Intervallo registrato",
+      "minutes": "{{value}} min",
+      "durationUnknown": "Fine non dichiarata",
+      "remarks": "Osservazioni",
+      "delay": "Motivo del ritardo",
+      "signature": "Nessuna firma o finalizzazione dello Statement of Facts è registrata; solo un atto umano può aggiungerla.",
+      "noonTitle": "Riepiloghi combustibile e ROB dei Noon report rivisti dal comandante",
+      "noonQualifier": "Contesto di sola lettura mostrato come testo dichiarato; non viene confrontato, convertito o copiato nel registro.",
+      "noonUnavailable": "Il contesto Noon rivisto non è disponibile per il tuo accesso.",
+      "noonNone": "Nessun Noon report rivisto dal comandante nell’ultima pagina.",
+      "noonReviewed": "Revisione del comandante registrata",
+      "states": {
+        "REVIEW_REQUIRED": "Revisione necessaria",
+        "UNKNOWN": "Sconosciuto",
+        "NO_DISCREPANCY_DETECTED": "Nessuna discrepanza rilevata"
+      }
+    },
     "App_tsx_content": {
       "environment": "AMBIENTE DI SVILUPPO",
       "page": "Connessione al sistema",

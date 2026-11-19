@@ -13,6 +13,7 @@ import { readShipOpsOrigin, type ShipOpsOriginContext } from './ship-operation-o
 import { readShipOpsLocation, shipOpsLocationPath, useShipOpsLocation, type ShipOpsLocation } from './ship-operation-location';
 import { ShipOperationsFields } from './ShipOperationsFields';
 import { ShipOperationOriginView } from './ShipOperationOriginView';
+import { ShipOperationsLedgerPanel } from './ShipOperationsLedgerPanel';
 import { ShipOpsRecordHistory, ShipOpsRecordList, ShipOpsRecordSummary } from './ShipOperationsRecordView';
 import { useWorkspaceRevalidation } from './use-workspace-revalidation';
 import { unsavedState, useUnsavedChangesSource } from './unsaved-changes';
@@ -259,7 +260,8 @@ function ShipOpsSurface({ route, language, onLanguage, onNavigate, onCanonical, 
           {editor.record && <EnterpriseActions align="start" aria-label={localizedText(en, "pairs.m_6abad8c133e1acac")}><Button variant="outline" disabled={busy || !!frozen} onClick={readCurrent}>{localizedText(en, "pairs.m_391249d8f314090a")}</Button></EnterpriseActions>}
           {current.history && <ShipOpsRecordHistory value={current.history} language={language} offset={historyOffset} disabled={busy || !!frozen || editor.dirty} onOffset={setHistoryOffset}/>}
         </section>
-                                    : current.page ? <ShipOpsRecordList kind={route.kind} page={current.page} language={language} offset={route.offset} onOffset={offset => onNavigate(shipOpsLocationPath({ ...route, offset }))} onOpen={id => onNavigate(shipOpsLocationPath({ kind: route.kind, vessel: route.vessel, id, offset: 0 }))}/>
+                                    : current.page ? <><ShipOpsRecordList kind={route.kind} page={current.page} language={language} offset={route.offset} onOffset={offset => onNavigate(shipOpsLocationPath({ ...route, offset }))} onOpen={id => onNavigate(shipOpsLocationPath({ kind: route.kind, vessel: route.vessel, id, offset: 0 }))}/>
+                                        {route.vessel && <ShipOperationsLedgerPanel kind={route.kind} vessel={route.vessel} language={language} onOpen={id => onNavigate(shipOpsLocationPath({ kind: route.kind, vessel: route.vessel, id, offset: 0 }))}/>}</>
                                         : <p role="alert">{localizedText(en, "pairs.m_900492ac3734bc78")}</p>}
       <p className="ship-operations-hint">{localizedText(en, "pairs.m_c3cb745115573974")}</p>
     </main>

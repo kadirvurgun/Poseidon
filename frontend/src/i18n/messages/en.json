@@ -1,5 +1,40 @@
 {
   "copies": {
+    "ShipOperationsLedgerPanel_tsx_copy": {
+      "fuelTitle": "ROB continuity review",
+      "portTitle": "Statement of Facts timeline",
+      "fuelIntro": "Derived from declared quantities in mt. Findings are flagged for human review; nothing is corrected, and “no discrepancy detected” is not verification.",
+      "portIntro": "Declared port events in UTC order with the recorded interval. No signature, finalization, laytime or demurrage is produced here.",
+      "offline": "Offline: the review aid needs a current online read.",
+      "loading": "Loading review aid…",
+      "unavailable": "The review aid is unavailable for your current access.",
+      "retry": "Retry",
+      "empty": "No placed records yet.",
+      "truncated": "Only the newest 100 records are assessed; a chain crossing this window starts as unknown.",
+      "unplaced": "Records not placed (date, fuel type or start not declared): {{count}}",
+      "notDeclared": "Not declared",
+      "balance": "Balance (before + received − consumed − after)",
+      "continuity": "Continuity with previous record",
+      "difference": "Difference",
+      "open": "Open record",
+      "flags": "Review flags",
+      "duration": "Recorded interval",
+      "minutes": "{{value}} min",
+      "durationUnknown": "End not declared",
+      "remarks": "Remarks",
+      "delay": "Delay reason",
+      "signature": "No Statement of Facts signature or finalization is recorded; only a human act can add one.",
+      "noonTitle": "Master-reviewed Noon fuel and ROB summaries",
+      "noonQualifier": "Read-only context shown as declared text; it is not compared, converted or copied into the ledger.",
+      "noonUnavailable": "Reviewed Noon context is unavailable for your access.",
+      "noonNone": "No master-reviewed Noon report on the latest page.",
+      "noonReviewed": "Master review recorded",
+      "states": {
+        "REVIEW_REQUIRED": "Review required",
+        "UNKNOWN": "Unknown",
+        "NO_DISCREPANCY_DETECTED": "No discrepancy detected"
+      }
+    },
     "App_tsx_content": {
       "environment": "DEVELOPMENT ENVIRONMENT",
       "page": "System connection",

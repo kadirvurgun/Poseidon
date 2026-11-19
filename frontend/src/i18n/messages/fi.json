@@ -1,5 +1,40 @@
 {
   "copies": {
+    "ShipOperationsLedgerPanel_tsx_copy": {
+      "fuelTitle": "ROB-jatkuvuuden tarkistus",
+      "portTitle": "Statement of Facts -aikajana",
+      "fuelIntro": "Johdettu ilmoitetuista määristä yksikössä mt. Havainnot merkitään ihmisen tarkistettaviksi; mitään ei korjata, eikä ”poikkeamaa ei havaittu” ole todentaminen.",
+      "portIntro": "Ilmoitetut satamatapahtumat UTC-järjestyksessä kirjatulla aikavälillä. Tässä ei synny allekirjoitusta, viimeistelyä, laytimea eikä seisontamaksua.",
+      "offline": "Offline: tarkistusapu tarvitsee ajantasaisen verkkoluvun.",
+      "loading": "Ladataan tarkistusapua…",
+      "unavailable": "Tarkistusapu ei ole käytettävissä nykyisillä käyttöoikeuksillasi.",
+      "retry": "Yritä uudelleen",
+      "empty": "Ei vielä sijoitettuja kirjauksia.",
+      "truncated": "Vain 100 uusinta kirjausta arvioidaan; tämän ikkunan ylittävä ketju alkaa tuntemattomana.",
+      "unplaced": "Sijoittamattomat kirjaukset (päivä, polttoainetyyppi tai alku ilmoittamatta): {{count}}",
+      "notDeclared": "Ei ilmoitettu",
+      "balance": "Tase (ennen + vastaanotettu − kulutettu − jälkeen)",
+      "continuity": "Jatkuvuus edelliseen kirjaukseen",
+      "difference": "Erotus",
+      "open": "Avaa kirjaus",
+      "flags": "Tarkistusmerkinnät",
+      "duration": "Kirjattu aikaväli",
+      "minutes": "{{value}} min",
+      "durationUnknown": "Loppua ei ilmoitettu",
+      "remarks": "Huomautukset",
+      "delay": "Viivästyksen syy",
+      "signature": "Statement of Facts -allekirjoitusta tai viimeistelyä ei ole kirjattu; vain ihmisen toimi voi lisätä sen.",
+      "noonTitle": "Päällikön tarkistamat Noon-polttoaine- ja ROB-yhteenvedot",
+      "noonQualifier": "Vain luku -konteksti ilmoitettuna tekstinä; sitä ei verrata, muunneta eikä kopioida kirjanpitoon.",
+      "noonUnavailable": "Tarkistettu Noon-konteksti ei ole käytettävissä käyttöoikeuksillasi.",
+      "noonNone": "Uusimmalla sivulla ei ole päällikön tarkistamaa Noon reportia.",
+      "noonReviewed": "Päällikön tarkistus kirjattu",
+      "states": {
+        "REVIEW_REQUIRED": "Tarkistus tarvitaan",
+        "UNKNOWN": "Tuntematon",
+        "NO_DISCREPANCY_DETECTED": "Poikkeamaa ei havaittu"
+      }
+    },
     "App_tsx_content": {
       "environment": "KEHITYSYMPÄRISTÖ",
       "page": "Järjestelmäyhteys",

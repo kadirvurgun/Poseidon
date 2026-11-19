@@ -1,5 +1,40 @@
 {
   "copies": {
+    "ShipOperationsLedgerPanel_tsx_copy": {
+      "fuelTitle": "ROB-Kontinuitätsprüfung",
+      "portTitle": "Statement-of-Facts-Zeitleiste",
+      "fuelIntro": "Abgeleitet aus deklarierten Mengen in mt. Befunde werden zur menschlichen Prüfung markiert; nichts wird korrigiert, und „keine Abweichung festgestellt“ ist keine Verifizierung.",
+      "portIntro": "Deklarierte Hafenereignisse in UTC-Reihenfolge mit dem erfassten Intervall. Hier werden weder Unterschrift, Abschluss, Laytime noch Demurrage erzeugt.",
+      "offline": "Offline: Die Prüfhilfe benötigt einen aktuellen Online-Abruf.",
+      "loading": "Prüfhilfe wird geladen…",
+      "unavailable": "Die Prüfhilfe ist für Ihren aktuellen Zugriff nicht verfügbar.",
+      "retry": "Erneut versuchen",
+      "empty": "Noch keine eingeordneten Einträge.",
+      "truncated": "Nur die neuesten 100 Einträge werden bewertet; eine Kette über dieses Fenster hinaus beginnt als unbekannt.",
+      "unplaced": "Nicht eingeordnete Einträge (Datum, Kraftstoffart oder Beginn nicht deklariert): {{count}}",
+      "notDeclared": "Nicht deklariert",
+      "balance": "Bilanz (vorher + erhalten − verbraucht − nachher)",
+      "continuity": "Kontinuität zum vorherigen Eintrag",
+      "difference": "Differenz",
+      "open": "Eintrag öffnen",
+      "flags": "Prüfhinweise",
+      "duration": "Erfasstes Intervall",
+      "minutes": "{{value}} min",
+      "durationUnknown": "Ende nicht deklariert",
+      "remarks": "Bemerkungen",
+      "delay": "Verzögerungsgrund",
+      "signature": "Keine Statement-of-Facts-Unterschrift oder -Freigabe erfasst; nur eine menschliche Handlung kann sie hinzufügen.",
+      "noonTitle": "Vom Kapitän geprüfte Noon-Kraftstoff- und ROB-Zusammenfassungen",
+      "noonQualifier": "Schreibgeschützter Kontext als deklarierter Text; er wird nicht verglichen, umgerechnet oder ins Journal kopiert.",
+      "noonUnavailable": "Geprüfter Noon-Kontext ist für Ihren Zugriff nicht verfügbar.",
+      "noonNone": "Kein vom Kapitän geprüfter Noon-Bericht auf der neuesten Seite.",
+      "noonReviewed": "Kapitänsprüfung erfasst",
+      "states": {
+        "REVIEW_REQUIRED": "Prüfung erforderlich",
+        "UNKNOWN": "Unbekannt",
+        "NO_DISCREPANCY_DETECTED": "Keine Abweichung festgestellt"
+      }
+    },
     "App_tsx_content": {
       "environment": "ENTWICKLUNGSUMGEBUNG",
       "page": "Systemverbindung",

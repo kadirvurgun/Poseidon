@@ -7339,6 +7339,27 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/fuel-bunker-logs/ledger": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "FuelShipOpsLedger",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FuelLedgerDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
     "/api/v1/fuel-bunker-logs/{id}": {
       "get": {
         "tags": [
@@ -7506,6 +7527,27 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ShipOpsCapabilitiesDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/port-activity-sof/timeline": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "PortShipOpsTimeline",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortTimelineDto"
                 }
               }
             }
@@ -24851,6 +24893,139 @@
           }
         }
       },
+      "FuelLedgerAssessment": {
+        "required": [
+          "recordId",
+          "reviewState",
+          "balance",
+          "continuity",
+          "previousRecordId",
+          "flags"
+        ],
+        "type": "object",
+        "properties": {
+          "recordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reviewState": {
+            "type": "string"
+          },
+          "balance": {
+            "$ref": "#/components/schemas/FuelLedgerCheck"
+          },
+          "continuity": {
+            "$ref": "#/components/schemas/FuelLedgerCheck"
+          },
+          "previousRecordId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "FuelLedgerCheck": {
+        "required": [
+          "state",
+          "differenceMt",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "differenceMt": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "FuelLedgerDto": {
+        "required": [
+          "vesselId",
+          "entries",
+          "unplaced",
+          "window",
+          "truncated",
+          "unit",
+          "grouping",
+          "qualifications",
+          "sourceVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FuelLedgerEntryDto"
+            }
+          },
+          "unplaced": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipOpsRecordDto"
+            }
+          },
+          "window": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "truncated": {
+            "type": "boolean"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "grouping": {
+            "type": "string"
+          },
+          "qualifications": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sourceVersion": {
+            "type": "string"
+          }
+        }
+      },
+      "FuelLedgerEntryDto": {
+        "required": [
+          "record",
+          "assessment"
+        ],
+        "type": "object",
+        "properties": {
+          "record": {
+            "$ref": "#/components/schemas/ShipOpsRecordDto"
+          },
+          "assessment": {
+            "$ref": "#/components/schemas/FuelLedgerAssessment"
+          }
+        }
+      },
       "GraphPin": {
         "required": [
           "kind",
@@ -29901,6 +30076,105 @@
           },
           "href": {
             "type": "string"
+          }
+        }
+      },
+      "PortTimelineAssessment": {
+        "required": [
+          "recordId",
+          "reviewState",
+          "durationState",
+          "durationTicks",
+          "flags"
+        ],
+        "type": "object",
+        "properties": {
+          "recordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reviewState": {
+            "type": "string"
+          },
+          "durationState": {
+            "type": "string"
+          },
+          "durationTicks": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "PortTimelineDto": {
+        "required": [
+          "vesselId",
+          "entries",
+          "unplaced",
+          "window",
+          "truncated",
+          "durationUnit",
+          "qualifications",
+          "sourceVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PortTimelineEntryDto"
+            }
+          },
+          "unplaced": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipOpsRecordDto"
+            }
+          },
+          "window": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "truncated": {
+            "type": "boolean"
+          },
+          "durationUnit": {
+            "type": "string"
+          },
+          "qualifications": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sourceVersion": {
+            "type": "string"
+          }
+        }
+      },
+      "PortTimelineEntryDto": {
+        "required": [
+          "record",
+          "assessment"
+        ],
+        "type": "object",
+        "properties": {
+          "record": {
+            "$ref": "#/components/schemas/ShipOpsRecordDto"
+          },
+          "assessment": {
+            "$ref": "#/components/schemas/PortTimelineAssessment"
           }
         }
       },

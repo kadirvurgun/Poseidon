@@ -1,5 +1,40 @@
 {
   "copies": {
+    "ShipOperationsLedgerPanel_tsx_copy": {
+      "fuelTitle": "ROB-folytonossági ellenőrzés",
+      "portTitle": "Statement of Facts idővonal",
+      "fuelIntro": "A bejelentett, mt-ben megadott mennyiségekből származik. A megállapítások emberi felülvizsgálatra jelölve; semmi sem kerül javításra, és az „eltérés nem észlelhető” nem ellenőrzés.",
+      "portIntro": "Bejelentett kikötői események UTC-sorrendben a rögzített időtartammal. Itt nem keletkezik aláírás, véglegesítés, laytime vagy demurrage.",
+      "offline": "Offline: a felülvizsgálati segédnek aktuális online olvasás kell.",
+      "loading": "Felülvizsgálati segéd betöltése…",
+      "unavailable": "A felülvizsgálati segéd a jelenlegi hozzáférésével nem érhető el.",
+      "retry": "Újra",
+      "empty": "Még nincs elhelyezett bejegyzés.",
+      "truncated": "Csak a legújabb 100 bejegyzés kerül értékelésre; az ablakon átnyúló lánc ismeretlenként indul.",
+      "unplaced": "El nem helyezett bejegyzések (dátum, üzemanyagtípus vagy kezdet nincs bejelentve): {{count}}",
+      "notDeclared": "Nincs bejelentve",
+      "balance": "Mérleg (előtte + átvett − fogyasztott − utána)",
+      "continuity": "Folytonosság az előző bejegyzéssel",
+      "difference": "Eltérés",
+      "open": "Bejegyzés megnyitása",
+      "flags": "Felülvizsgálati jelzések",
+      "duration": "Rögzített időtartam",
+      "minutes": "{{value}} perc",
+      "durationUnknown": "Vége nincs bejelentve",
+      "remarks": "Megjegyzések",
+      "delay": "Késés oka",
+      "signature": "Nincs rögzített Statement of Facts aláírás vagy véglegesítés; csak emberi cselekmény adhatja hozzá.",
+      "noonTitle": "A kapitány által felülvizsgált Noon üzemanyag- és ROB-összesítők",
+      "noonQualifier": "Csak olvasható kontextus bejelentett szövegként; nem kerül összehasonlításra, átváltásra vagy a naplóba másolásra.",
+      "noonUnavailable": "A felülvizsgált Noon-kontextus a hozzáférésével nem érhető el.",
+      "noonNone": "A legújabb oldalon nincs kapitány által felülvizsgált Noon report.",
+      "noonReviewed": "Kapitányi felülvizsgálat rögzítve",
+      "states": {
+        "REVIEW_REQUIRED": "Felülvizsgálat szükséges",
+        "UNKNOWN": "Ismeretlen",
+        "NO_DISCREPANCY_DETECTED": "Eltérés nem észlelhető"
+      }
+    },
     "App_tsx_content": {
       "environment": "FEJLESZTŐI KÖRNYEZET",
       "page": "Rendszerkapcsolat",
