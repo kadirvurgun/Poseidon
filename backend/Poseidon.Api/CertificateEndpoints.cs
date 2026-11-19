@@ -56,7 +56,7 @@ public static class CertificateEndpoints
         var rows=new List<CertificateDto>();
         if(selection!="Crew")rows.AddRange((await certificates.OrderBy(r=>r.CertificateId).Skip(offset).Take(26).ToArrayAsync(h.RequestAborted)).Select(r=>CertificateReader.Dto(r,actor,date)));
         if(selection!="Vessel" && crewAllowed && rows.Count<26)rows.AddRange((await crew.OrderBy(r=>r.Id).Skip(Math.Max(0,offset-vesselCount)).Take(26-rows.Count).ToArrayAsync(h.RequestAborted)).Select(r=>CertificateReader.CrewDto(r,date)));
-        var returned=await CertificateAssertions.Decorate(h,db,actor,rows.Take(25).ToArray(),h.RequestAborted);var result=new CertificateCenterDto(returned,offset,25,rows.Count>25,selection,"AUTHORIZED_PAGE_ONLY",
+        var returned=await CertificateReader.Superseded(db,vessel,await CertificateAssertions.Decorate(h,db,actor,rows.Take(25).ToArray(),h.RequestAborted),h.RequestAborted);var result=new CertificateCenterDto(returned,offset,25,rows.Count>25,selection,"AUTHORIZED_PAGE_ONLY",
             selection=="Vessel"?"NOT_REQUESTED":crewAllowed?"AVAILABLE":"UNAVAILABLE_POLICY_OR_AUTHORITY",CertificateReader.Counts(returned),null,"REVIEW_REQUIRED",date);
         if(!await CertificateReader.Current(h,vessel,rights,returned,purpose:purpose))return await Fail(h,403,"permission_denied");
         if(selection!="Vessel" && policyHash!=RegisterStorage.Hash(JsonSerializer.Serialize(CrewFilePolicy.Current(h),CertificateReader.Json)))return await Fail(h,403,"permission_denied");
@@ -74,7 +74,8 @@ public static class CertificateEndpoints
         var policyHash=RegisterStorage.Hash(JsonSerializer.Serialize(policy,CertificateReader.Json));
         var result=new CertificateCapabilitiesDto(vessel,true,CertificateReader.Write(a,vessel),crew,crew?policy.Purpose:null,VesselCertificatePolicy.SourceVersion,
             crew?["Vessel","Crew","All"]:["Vessel"],"DeclaredUtcCalendarNotLegalValidity",["Available","Missing","Review"],
-            ["declaration","documentReference","renewalLeadDaysNumeric","sourceSystem","notes"]);
+            ["declaration","documentReference","renewalLeadDaysNumeric","sourceSystem","notes"],
+            CertificateRenewalEndpoints.TransitionPermitted(h,a,vessel,"VERIFY"),CertificateRenewalEndpoints.TransitionPermitted(h,a,vessel,"COMPLETE"));
         async Task<bool> Current()=>await CertificateReader.Current(h,vessel,rights,[]) && policyHash==RegisterStorage.Hash(JsonSerializer.Serialize(CrewFilePolicy.Current(h),CertificateReader.Json));
         if(!await Current())return await Fail(h,403,"permission_denied");
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h,"CertificateRead","Success",resourceId:vessel);
@@ -89,7 +90,7 @@ public static class CertificateEndpoints
         if(head==null)return await Fail(h,404,"resource_not_found");
         var rows=await CertificateReader.Visible(db,a,vessel,!history).Where(r=>r.CertificateId==id).OrderByDescending(r=>r.Revision).Skip(offset).Take(history?26:1).ToArrayAsync(h.RequestAborted);
         if(rows.Length==0)return await Fail(h,404,"resource_not_found");var date=DateOnly.FromDateTime(Now(h).UtcDateTime);
-        var returned=await CertificateAssertions.Decorate(h,db,a,rows.Take(25).Select(r=>CertificateReader.Dto(r,a,date,r.Revision==head.Revision)).ToArray(),h.RequestAborted);
+        var returned=await CertificateReader.Superseded(db,vessel,await CertificateAssertions.Decorate(h,db,a,rows.Take(25).Select(r=>CertificateReader.Dto(r,a,date,r.Revision==head.Revision)).ToArray(),h.RequestAborted),h.RequestAborted);
         if(!await CertificateReader.Current(h,vessel,rights,returned))return await Fail(h,403,"permission_denied");
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h,"CertificateRead","Success",resourceId:id);
         if(!await CertificateReader.Current(h,vessel,rights,returned))return await Fail(h,403,"permission_denied");
@@ -124,6 +125,9 @@ public static class CertificateEndpoints
         IDbContextTransaction? tx=null;CertificateDto? savedRecord=null;string? outcome=null;
         try {
             tx=await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable,h.RequestAborted);
+            // A superseded original stays read-only history; corrections need a new owning record.
+            if(routeId!=null && await db.CertificateSupersessions.AnyAsync(s=>s.VesselId==vessel && s.CertificateId==command.Id,h.RequestAborted))
+                return await Fail(h,409,"certificate_already_superseded");
             var result=await CertificateWriter.Apply(db,actor,vessel,command,routeId==null,Now(h),h.RequestAborted);
             if(result.Record==null)return (result.Status==409?await Replay():null)??await Fail(h,result.Status,result.Code!);
             savedRecord=result.Record;outcome=JsonSerializer.Serialize(savedRecord,CertificateReader.Json);

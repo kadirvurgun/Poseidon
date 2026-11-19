@@ -7,11 +7,15 @@ import { CertificateMetadataForm } from './CertificateMetadataForm';
 import { CertificateDocumentPicker } from './CertificateDocumentPicker';
 import { CertificateRenewalForm } from './CertificateRenewalForm';
 import { CertificateSummary } from './CertificateSummary';
+import { CertificateRenewalWorkflowPanel } from './CertificateRenewalWorkflowPanel';
+import type { RenewalDto } from './certificates-api';
 import type { CertificateWorkflowEditor, CertificateWorkspaceSource } from './certificate-workspace-model';
 import type { CertificateRenewalContent, VesselCertificateContent } from './certificate-content';
 import type { ApiError } from './api';
 import { certificateLocationPath } from './certificate-location';
-export function CertificateEditorView({ editor, source, vessel, language, editable, busy, frozen, failure, conflict, denied, saved, onCertificate, onRenewal, onSave, onCancel, onNavigate }: {
+export function CertificateEditorView({ editor, source, vessel, language, editable, busy, frozen, failure, conflict, denied, saved, onCertificate, onRenewal, onSave, onCancel, onNavigate, onWorkflowDirty, onTransitioned }: {
+    onWorkflowDirty?: (value: boolean) => void;
+    onTransitioned?: (receipt: RenewalDto) => void;
     editor: CertificateWorkflowEditor;
     source: CertificateWorkspaceSource;
     vessel: string;
@@ -79,7 +83,8 @@ export function CertificateEditorView({ editor, source, vessel, language, editab
         {actions}
       </form>
       <p>{localizedText(en, "pairs.m_7e4e96172f321199")}</p>
-      <Button disabled>{localizedText(en, "pairs.m_8cb7f72fb9fa00d9")}</Button>
+      {editor.record ? <CertificateRenewalWorkflowPanel key={editor.owner + '/' + editor.record.id + '/' + editor.record.version} vessel={vessel} record={editor.record} enabled={!busy && !frozen && !editor.dirty && !denied && !conflict} language={language} onDirty={onWorkflowDirty ?? (() => undefined)} onApplied={receipt => onTransitioned?.(receipt)}/>
+        : <Button disabled>{localizedText(en, "pairs.m_8cb7f72fb9fa00d9")}</Button>}
     </>}
   </section>;
 }

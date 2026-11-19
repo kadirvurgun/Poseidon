@@ -3627,6 +3627,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/renewal-workflow/{id}/transitions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CertificateRenewalTransition"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/vessels/{vessel}/certificates/{id}/verification-capabilities": {
         parameters: {
             query?: never;
@@ -6627,6 +6643,27 @@ export interface components {
             surveyWindowStart?: null | string;
             surveyWindowEnd?: null | string;
         };
+        CertificateRenewalDecision: {
+            surveyStatus?: null | string;
+            documentsStatus?: null | string;
+            actionsStatus?: null | string;
+            /** Format: date */
+            applicationDate?: null | string;
+            authorityReference?: null | string;
+            /** Format: uuid */
+            newCertificateId?: null | string;
+            /** Format: int64 */
+            newCertificateRevision?: null | number;
+            /** Format: uint32 */
+            newCertificateVersion?: null | number;
+            newDocument?: null | components["schemas"]["CertificateFilePin"];
+            issuerMatch?: null | string;
+            numberMatch?: null | string;
+            subjectMatch?: null | string;
+            dateMatch?: null | string;
+            scopeMatch?: null | string;
+            evidence?: null | components["schemas"]["CertificateFilePin"];
+        };
         CertificateRenewalDto: {
             /** Format: uuid */
             id: string;
@@ -6655,6 +6692,19 @@ export interface components {
             currentRevision: boolean;
             /** @default UserDeclaredUnverified */
             provenance: string;
+            transition?: null | string;
+            decision?: null | components["schemas"]["CertificateRenewalDecision"];
+            allowedTransitions?: null | string[];
+        };
+        CertificateRenewalTransitionCommand: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uint32 */
+            expectedVersion: number;
+            /** Format: int64 */
+            expectedRevision: number;
+            action: string;
+            decision: components["schemas"]["CertificateRenewalDecision"];
         };
         CertificateSaveCommand: {
             /** Format: uuid */
@@ -10189,6 +10239,9 @@ export interface components {
             canComplete: boolean;
             ownerOptions: components["schemas"]["RenewalOwnerDto"][];
             sourceVersion: string;
+            /** @default false */
+            canVerify: boolean;
+            states?: null | string[];
         };
         RenewalOwnerDto: {
             /** Format: uuid */
@@ -16007,6 +16060,32 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RenewalPageDto"];
+                };
+            };
+        };
+    };
+    CertificateRenewalTransition: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CertificateRenewalTransitionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CertificateRenewalDto"];
                 };
             };
         };

@@ -15,9 +15,9 @@ public sealed record CertificateRenewalCommand([property:JsonRequired] Guid Id,[
     [property:JsonRequired] CertificateRenewalContent Content,[property:JsonRequired] string ReasonCode);
 public sealed record CertificateRenewalDto(Guid Id,Guid VesselId,Guid CertificateId,long CertificateRevision,uint CertificateVersion,long Revision,uint Version,
     CertificateRenewalContent Content,string SourceVersion,string Hash,DateTimeOffset SavedAt,string State,string Qualification,bool CanEdit,bool CanComplete,
-    string[] Blockers,bool CurrentRevision,string Provenance="UserDeclaredUnverified");
+    string[] Blockers,bool CurrentRevision,string Provenance="UserDeclaredUnverified",string? Transition=null,CertificateRenewalDecision? Decision=null,string[]? AllowedTransitions=null);
 public sealed record RenewalOwnerDto(Guid RoleId);
-public sealed record RenewalCapabilitiesDto(Guid VesselId,bool CanWrite,bool CanComplete,RenewalOwnerDto[] OwnerOptions,string SourceVersion);
+public sealed record RenewalCapabilitiesDto(Guid VesselId,bool CanWrite,bool CanComplete,RenewalOwnerDto[] OwnerOptions,string SourceVersion,bool CanVerify=false,string[]? States=null);
 public sealed record RenewalPageDto(CertificateRenewalDto[] Items,int Offset,int Limit,bool HasMore);
 
 // Renewal plans reference exact owning revisions. A draft link never supersedes
@@ -30,7 +30,7 @@ public static class CertificateRenewalEndpoints
         .Where(m=>m.TenantId==a.TenantId && m.ActorKind=="Human" && (m.Permissions??[]).Contains("certificate.renewal.owner") &&
             (m.TenantWideManage || m.VesselGrants?.Any(v=>v.VesselId==vessel && v.CanEdit)==true))
         .SelectMany(m=>(ActorResolver.TrustedRoleContext(m.RoleReferences)??"").Split(',',StringSplitOptions.RemoveEmptyEntries)).Select(Guid.Parse).Distinct().Order().Take(257).ToArray();
-    private static string OwnerHash(HttpContext h,TrustedActor a,Guid vessel)=>RegisterStorage.Hash(JsonSerializer.Serialize(Owners(h,a,vessel)));
+    internal static string OwnerHash(HttpContext h,TrustedActor a,Guid vessel)=>RegisterStorage.Hash(JsonSerializer.Serialize(Owners(h,a,vessel)));
     public static void MapCertificateRenewals(this IEndpointRouteBuilder app) {
         var g=app.MapGroup("/api/v1/renewal-workflow").RequireAuthorization("DirectoryRead");
         g.MapGet("",(HttpContext h,PoseidonDbContext db)=>Read(null,false,false,h,db)).WithName("CertificateRenewals").Produces<RenewalPageDto>();
@@ -39,8 +39,10 @@ public static class CertificateRenewalEndpoints
         g.MapGet("/{id:guid}/history",(Guid id,HttpContext h,PoseidonDbContext db)=>Read(id,true,false,h,db)).WithName("CertificateRenewalHistory").Produces<RenewalPageDto>();
         g.MapPost("",(HttpContext h,PoseidonDbContext db)=>Save(null,h,db)).WithName("CertificateRenewalCreate").Accepts<CertificateRenewalCommand>("application/json");
         g.MapPut("/{id:guid}",(Guid id,HttpContext h,PoseidonDbContext db)=>Save(id,h,db)).WithName("CertificateRenewalUpdate").Accepts<CertificateRenewalCommand>("application/json");
+        g.MapPost("/{id:guid}/transitions",(Guid id,HttpContext h,PoseidonDbContext db)=>CertificateRenewalTransitions.Transition(id,h,db)).WithName("CertificateRenewalTransition")
+            .Accepts<CertificateRenewalTransitionCommand>("application/json").Produces<CertificateRenewalDto>();
     }
-    private static bool Query(HttpContext h,bool paging,out Guid vessel,out int offset) {
+    internal static bool Query(HttpContext h,bool paging,out Guid vessel,out int offset) {
         vessel=Guid.Empty;
         return CertificateEndpoints.Offset(h,paging?new HashSet<string>{"vesselId","offset"}:new HashSet<string>{"vesselId"},out offset) &&
             Guid.TryParseExact(h.Request.Query["vesselId"],"D",out vessel) && vessel!=Guid.Empty;
@@ -56,21 +58,26 @@ public static class CertificateRenewalEndpoints
         return currentOnly?rows.Where(r=>heads.Any(head=>head.Id==r.RenewalId && head.Revision==r.Revision)):
             rows.Where(r=>heads.Any(head=>head.Id==r.RenewalId && rows.Any(current=>current.RenewalId==head.Id && current.Revision==head.Revision)));
     }
-    private static CertificateRenewalDto Dto(CertificateRenewalRevision row,TrustedActor actor,bool current,Guid[] owners) {
-        var content=JsonSerializer.Deserialize<CertificateRenewalContent>(row.ContentJson,CertificateReader.Json)??throw new InvalidDataException("renewal_content_unavailable");
-        var blockers=new List<string>{"SOURCE_QUALIFICATION_REQUIRED","HUMAN_VERIFICATION_REQUIRED","COMPLETION_PREREQUISITES_REQUIRED"};
-        if(content.OwnerRoleId==null || !owners.Contains(content.OwnerRoleId.Value))blockers.Add("RENEWAL_OWNER_UNAVAILABLE");
-        if(content.NewCertificateId==null)blockers.Add("REPLACEMENT_CERTIFICATE_NOT_PINNED");
-        if(content.NewDocument==null)blockers.Add("RENEWAL_EVIDENCE_NOT_LINKED");
-        if(content.DueDate==null)blockers.Add("RENEWAL_DUE_NOT_DECLARED");
-        if(content.RequiredSurvey==null || content.RequiredDocuments==null || content.RequiredActions==null)blockers.Add("RENEWAL_REQUIREMENTS_UNKNOWN");
+    internal static bool Human(HttpContext h,TrustedActor a) {
+        var m=h.RequestServices.GetRequiredService<FederationSettings>().Memberships.Where(x=>x.TenantId==a.TenantId && x.ActorId==a.Id).Take(2).ToArray();
+        return m.Length==1 && m[0].ActorKind=="Human";
+    }
+    // Computed for the current actor from state + permission; SoD is decided at commit.
+    internal static bool TransitionPermitted(HttpContext? h,TrustedActor a,Guid vessel,string action)=>Write(a,vessel) &&
+        (CertificateRenewalWorkflow.Permission(action) is not {} p || a.Permissions.Contains(p)) && (!CertificateRenewalWorkflow.HumanOnly(action) || h!=null && Human(h,a));
+    internal static CertificateRenewalContent Content(CertificateRenewalRevision row)=>JsonSerializer.Deserialize<CertificateRenewalContent>(row.ContentJson,CertificateReader.Json)??throw new InvalidDataException("renewal_content_unavailable");
+    internal static CertificateRenewalDto Dto(CertificateRenewalRevision row,TrustedActor actor,bool current,Guid[] owners,HttpContext? h=null) {
+        var content=Content(row);var eligible=content.OwnerRoleId is {} owner && owners.Contains(owner);
+        var decision=row.DecisionJson==null?null:JsonSerializer.Deserialize<CertificateRenewalDecision>(row.DecisionJson,CertificateReader.Json);
+        var allowed=current?CertificateRenewalWorkflow.Allowed(row.State).Where(a=>TransitionPermitted(h,actor,row.VesselId,a)).ToArray():[];
         return new(row.RenewalId,row.VesselId,row.CertificateId,row.CertificateRevision,checked((uint)row.CertificateVersion),row.Revision,checked((uint)row.RecordVersion),content,
-            row.SourceVersion,row.Hash,row.SavedAt,"DRAFT","REVIEW_REQUIRED",current && Write(actor,row.VesselId),false,blockers.ToArray(),current,row.Provenance);
+            row.SourceVersion,row.Hash,row.SavedAt,row.State,"REVIEW_REQUIRED",current && Write(actor,row.VesselId) && CertificateRenewalWorkflow.Editable(row.State),allowed.Contains("COMPLETE"),
+            CertificateRenewalWorkflow.Blockers(row.State,content,eligible),current,row.Provenance,row.Transition,decision,allowed);
     }
     private sealed class ParameterSwap(ParameterExpression from,ParameterExpression to):ExpressionVisitor { protected override Expression VisitParameter(ParameterExpression p)=>p==from?to:base.VisitParameter(p); }
     private static Expression<Func<T,bool>> Or<T>(Expression<Func<T,bool>> left,Expression<Func<T,bool>> right)=>Expression.Lambda<Func<T,bool>>(
         Expression.OrElse(left.Body,new ParameterSwap(right.Parameters[0],left.Parameters[0]).Visit(right.Body)!),left.Parameters);
-    private static async Task<bool> Current(HttpContext h,Guid vessel,string rights,CertificateRenewalDto[] records,string ownerHash,bool write=false,
+    internal static async Task<bool> Current(HttpContext h,Guid vessel,string rights,CertificateRenewalDto[] records,string ownerHash,bool write=false,
         CertificateDto[]? sources=null,CertificateFilePin[]? files=null) {
         await using var scope=h.RequestServices.GetRequiredService<IServiceScopeFactory>().CreateAsyncScope();var resolver=scope.ServiceProvider.GetRequiredService<ActorResolver>();var actor=resolver.Resolve(h.User);
         if(actor==null || !CertificateReader.Read(actor) || CertificateReader.Rights(actor)!=rights || write && !Write(actor,vessel))return false;
@@ -95,14 +102,16 @@ public static class CertificateRenewalEndpoints
         if(!await actor.Scope(db.Vessels).AnyAsync(v=>v.Id==vessel,h.RequestAborted))return await CertificateEndpoints.Fail(h,404,"resource_not_found");
         var rights=CertificateReader.Rights(actor);var ownerHash=OwnerHash(h,actor,vessel);var owners=Owners(h,actor,vessel);if(owners.Length>256)owners=[];
         CertificateRenewalDto[] returned=[];object result;
-        if(caps)result=new RenewalCapabilitiesDto(vessel,Write(actor,vessel),false,owners.Select(r=>new RenewalOwnerDto(r)).ToArray(),VesselCertificatePolicy.SourceVersion);
+        if(caps)result=new RenewalCapabilitiesDto(vessel,Write(actor,vessel),TransitionPermitted(h,actor,vessel,"COMPLETE"),owners.Select(r=>new RenewalOwnerDto(r)).ToArray(),
+            VesselCertificatePolicy.SourceVersion,TransitionPermitted(h,actor,vessel,"VERIFY"),CertificateRenewalWorkflow.States);
         else {
             var head=id==null?null:await db.CertificateRenewals.AsNoTracking().SingleOrDefaultAsync(r=>r.Id==id && r.VesselId==vessel,h.RequestAborted);
             if(id!=null && head==null)return await CertificateEndpoints.Fail(h,404,"resource_not_found");
             var query=Visible(db,actor,vessel,!history);if(id!=null)query=query.Where(r=>r.RenewalId==id);
             var rows=await query.OrderBy(r=>r.RenewalId).ThenByDescending(r=>r.Revision).Skip(offset).Take(id!=null && !history?1:26).ToArrayAsync(h.RequestAborted);
             if(id!=null && rows.Length==0)return await CertificateEndpoints.Fail(h,404,"resource_not_found");
-            returned=rows.Take(25).Select(r=>Dto(r,actor,head==null || head.Revision==r.Revision,owners)).ToArray();
+            // The list query returns current rows only; detail/history mark the head revision.
+            returned=rows.Take(25).Select(r=>Dto(r,actor,head==null || head.Revision==r.Revision,owners,h)).ToArray();
             result=id!=null && !history?returned[0]:new RenewalPageDto(returned,offset,25,rows.Length>25);
         }
         if(!await Current(h,vessel,rights,returned,ownerHash))return await CertificateEndpoints.Fail(h,403,"permission_denied");
@@ -151,21 +160,31 @@ public static class CertificateRenewalEndpoints
                 if(command.Content.NewDocument!=null && (replacement.FileId!=command.Content.NewDocument.Id || replacement.FileRevision!=command.Content.NewDocument.Revision || replacement.Checksum!=command.Content.NewDocument.Checksum))return await CertificateEndpoints.Fail(h,409,"linked_version_conflict");
             }
             if(!await CertificateReader.FileAllowed(db,actor,vessel,command.Content.NewDocument,h.RequestAborted))return await CertificateEndpoints.Fail(h,403,"linked_resource_unavailable");
-            var head=await db.CertificateRenewals.SingleOrDefaultAsync(r=>r.Id==command.Id,h.RequestAborted);CertificateRenewalDto? previous=null;
+            var head=await db.CertificateRenewals.SingleOrDefaultAsync(r=>r.Id==command.Id,h.RequestAborted);CertificateRenewalDto? previous=null;var state=CertificateRenewalWorkflow.Draft;
             if(head!=null && (head.VesselId!=vessel || head.CertificateId!=command.CertificateId))return await CertificateEndpoints.Fail(h,404,"resource_not_found");
             if(routeId==null && (head!=null || command.ExpectedVersion!=0) || head!=null && head.Version!=command.ExpectedVersion)return await Replay()??await CertificateEndpoints.Fail(h,409,"version_conflict");
             if(routeId!=null && head==null)return await CertificateEndpoints.Fail(h,404,"resource_not_found");
             if(head!=null) {
                 var old=await Visible(db,actor,vessel).SingleOrDefaultAsync(r=>r.RenewalId==head.Id,h.RequestAborted);if(old==null)return await CertificateEndpoints.Fail(h,404,"resource_not_found");
-                previous=Dto(old,actor,true,owners);head.Revision++;
-            }else{head=new(){TenantId=actor.TenantId,VesselId=vessel,Id=command.Id,CertificateId=command.CertificateId};db.CertificateRenewals.Add(head);}
+                // DEV-044: content is frozen once validated; later facts only enter through audited transitions.
+                if(!CertificateRenewalWorkflow.Editable(old.State))return await CertificateEndpoints.Fail(h,409,"renewal_state_locked");
+                state=old.State;previous=Dto(old,actor,true,owners,h);head.Revision++;
+            }else {
+                if(await db.CertificateSupersessions.AnyAsync(s=>s.VesselId==vessel && s.CertificateId==command.CertificateId,h.RequestAborted))
+                    return await CertificateEndpoints.Fail(h,409,"certificate_already_superseded");
+                // 60.04 VC-012: one open renewal case per certificate.
+                var openHeads=db.CertificateRenewals.Where(r=>r.VesselId==vessel && r.CertificateId==command.CertificateId);
+                if(await db.CertificateRenewalRevisions.AnyAsync(r=>r.VesselId==vessel && r.CertificateId==command.CertificateId && openHeads.Any(x=>x.Id==r.RenewalId && x.Revision==r.Revision) &&
+                    r.State!="COMPLETED" && r.State!="CANCELLED" && r.State!="REJECTED",h.RequestAborted))return await CertificateEndpoints.Fail(h,409,"renewal_already_open");
+                head=new(){TenantId=actor.TenantId,VesselId=vessel,Id=command.Id,CertificateId=command.CertificateId};db.CertificateRenewals.Add(head);
+            }
             await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h,"CertificateCommand","Attempted",resourceId:command.Id);
             await db.SaveChangesAsync(h.RequestAborted);var json=JsonSerializer.Serialize(command.Content,CertificateReader.Json);var now=CertificateEndpoints.Now(h);
             var row=new CertificateRenewalRevision{TenantId=actor.TenantId,VesselId=vessel,RenewalId=head.Id,CertificateId=source.CertificateId,CertificateRevision=source.Revision,CertificateVersion=source.RecordVersion,
                 Revision=head.Revision,RecordVersion=head.Version,ContentJson=json,Hash=RegisterStorage.Hash(JsonSerializer.Serialize(new{vessel,head.Id,head.Revision,command.CertificateId,command.CertificateRevision,command.CertificateVersion,json},CertificateReader.Json)),
                 SourceVersion=VesselCertificatePolicy.SourceVersion,NewCertificateId=command.Content.NewCertificateId,NewCertificateRevision=command.Content.NewCertificateRevision,NewCertificateVersion=command.Content.NewCertificateVersion,
-                FileId=command.Content.NewDocument?.Id,FileRevision=command.Content.NewDocument?.Revision,Checksum=command.Content.NewDocument?.Checksum,ActorId=actor.Id,SavedAt=now};
-            db.CertificateRenewalRevisions.Add(row);saved=Dto(row,actor,false,owners);outcome=JsonSerializer.Serialize(saved,CertificateReader.Json);
+                FileId=command.Content.NewDocument?.Id,FileRevision=command.Content.NewDocument?.Revision,Checksum=command.Content.NewDocument?.Checksum,State=state,ActorId=actor.Id,SavedAt=now};
+            db.CertificateRenewalRevisions.Add(row);saved=Dto(row,actor,false,owners,h);outcome=JsonSerializer.Serialize(saved,CertificateReader.Json);
             db.CertificateCommandReceipts.Add(new(){TenantId=actor.TenantId,VesselId=vessel,ActorId=actor.Id,Key=key,ResourceId=head.Id,CertificateId=source.CertificateId,RenewalId=head.Id,Action="RenewalSave",Fingerprint=fingerprint,OutcomeJson=outcome,SavedAt=now});
             await db.SaveChangesAsync(h.RequestAborted);
             var refs=new List<CertificateDto>{CertificateReader.Dto(source,actor,DateOnly.FromDateTime(now.UtcDateTime))};if(replacement!=null)refs.Add(CertificateReader.Dto(replacement,actor,DateOnly.FromDateTime(now.UtcDateTime)));

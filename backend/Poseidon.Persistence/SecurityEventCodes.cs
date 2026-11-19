@@ -87,6 +87,10 @@ public static class SecurityEventCodes
         "override_reason_not_allowed", "override_evidence_required", "override_evidence_unavailable", "override_unknown_not_acceptable", "override_validity_invalid",
         "override_authority_unavailable", "override_overlap", "override_author_required", "override_rule_unavailable", "evaluation_stale", "human_actor_required",
         "current_applicability_unavailable", "no_control_candidates",
+        "renewal_owner_required", "renewal_due_required", "renewal_expiry_unknown", "renewal_requirements_unknown", "renewal_requirements_incomplete",
+        "renewal_application_incomplete", "renewal_replacement_required", "renewal_replacement_dates_unknown", "renewal_evidence_required",
+        "renewal_verification_not_matched", "renewal_replacement_not_effective", "renewal_cancellation_receipt_required", "renewal_already_open",
+        "renewal_state_locked", "certificate_already_superseded",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static bool Allows(string action, string result) => Actions.Contains(action) && Results.Contains(result);
 }
