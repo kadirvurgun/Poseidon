@@ -207,8 +207,12 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                     Field("Retention", null, null, "ValuesWithheld")));
         }
         if (entry.Entity is ControlledDocumentRevision controlledRevision)
-            return new(controlledRevision.VesselId, controlledRevision.DocumentId, "ControlledDocumentRevision", null, controlledRevision.Revision,
-                Fields(Field("IntakeState", entry.State == EntityState.Added ? null : (string?)entry.Property(nameof(controlledRevision.IntakeState)).OriginalValue,
+            // Intake release and publication modify the revision row in place: its immutable revision number is the honest
+            // before/after reference (the row has no xmin and its receipt carries none), never a content value.
+            return new(controlledRevision.VesselId, controlledRevision.DocumentId, "ControlledDocumentRevision",
+                entry.State == EntityState.Added ? null : (long?)entry.Property(nameof(controlledRevision.Revision)).OriginalValue, controlledRevision.Revision,
+                Fields(Field("Revision", entry.State == EntityState.Added ? null : Number((long)entry.Property(nameof(controlledRevision.Revision)).OriginalValue!), Number(controlledRevision.Revision)),
+                    Field("IntakeState", entry.State == EntityState.Added ? null : (string?)entry.Property(nameof(controlledRevision.IntakeState)).OriginalValue,
                         Closed(controlledRevision.IntakeState, ControlledDocumentPolicy.IntakeStates)),
                     Field("PublicationState", entry.State == EntityState.Added ? null : (string?)entry.Property(nameof(controlledRevision.PublicationState)).OriginalValue,
                         Closed(controlledRevision.PublicationState, ControlledDocumentPolicy.PublicationStates)),
@@ -223,12 +227,13 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                     Field("Result", null, Closed(controlledVerification.Result, ControlledDocumentPolicy.VerificationResults)), Field("Basis", null, null, "ValuesWithheld")));
         if (entry.Entity is ControlledDocumentReceipt controlledReceipt)
             return new(controlledReceipt.VesselId, controlledReceipt.DocumentId, "ControlledDocumentReceipt", null, null, "[]");
+        // Append-only link rows carry no revision or xmin: the closed owner binding proves them, like other immutable owner-bound rows.
         if (entry.Entity is ControlledDocumentCertificateLink certificateLink)
-            return new(certificateLink.VesselId, certificateLink.DocumentId, "ControlledDocumentLink", null, null, Fields(Field("TargetKind", null, "VesselCertificate")));
+            return new(certificateLink.VesselId, certificateLink.DocumentId, "ControlledDocumentLink", null, null, Fields(Field("TargetKind", null, "VesselCertificate"), Field("Binding", null, "OwnerReference")));
         if (entry.Entity is ControlledDocumentEvidenceLink evidenceLink)
-            return new(evidenceLink.VesselId, evidenceLink.DocumentId, "ControlledDocumentLink", null, null, Fields(Field("TargetKind", null, "ControlEvidence")));
+            return new(evidenceLink.VesselId, evidenceLink.DocumentId, "ControlledDocumentLink", null, null, Fields(Field("TargetKind", null, "ControlEvidence"), Field("Binding", null, "OwnerReference")));
         if (entry.Entity is ControlledDocumentCredentialLink credentialLink)
-            return new(credentialLink.VesselId, credentialLink.DocumentId, "ControlledDocumentLink", null, null, Fields(Field("TargetKind", null, "Credential")));
+            return new(credentialLink.VesselId, credentialLink.DocumentId, "ControlledDocumentLink", null, null, Fields(Field("TargetKind", null, "Credential"), Field("Binding", null, "OwnerReference")));
         Guid? vessel = entry.Entity switch {
             OperationEquipmentBinding e => e.VesselId, EvaluationOwningReference e => e.VesselId,
             EvaluationUpstreamReference e => e.VesselId, MsmdRoleBinding e => e.VesselId,
