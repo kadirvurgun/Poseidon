@@ -3554,6 +3554,8 @@
     "m_2adab3886ca18b5e": "Die ausgewählte Datei stimmt nicht mit dem ursprünglichen Versuch überein. Der Versuch bleibt gesperrt.",
     "m_6eb8ee576dacf887": "Ein früherer ungewisser Versuch ist in diesem Browser abgelaufen. Prüfen Sie den Verlauf, bevor Sie erneut senden.",
     "m_dbbdcf309e8f24c3": "Gebundene Regeln erfassen unterschiedliche Lebenszykluszustände. Der angezeigte Wert ist eine Software-Rangfolge; eine Expertenprüfung ist erforderlich.",
-    "m_d6eb29d9d9dfbe8b": "Es sind mehr Regeln gebunden, als diese Ansicht aufnehmen kann; aus einer Teilmenge wird kein Lebenszyklus abgeleitet."
+    "m_d6eb29d9d9dfbe8b": "Es sind mehr Regeln gebunden, als diese Ansicht aufnehmen kann; aus einer Teilmenge wird kein Lebenszyklus abgeleitet.",
+    "m_5e0d7a1c3b9f2e41": "Nur Verknüpfung zum führenden Datensatz; eine Verknüpfung ist keine Verifizierung.",
+    "m_8c2f6b0e4a7d1395": "Kein aktueller führender Datensatz verfügbar. Fehlend oder Unbekannt beibehalten."
   }
 }

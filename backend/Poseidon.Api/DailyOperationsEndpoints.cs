@@ -41,6 +41,7 @@ public static class DailyOperationsEndpoints
         }
     }
     private static TrustedActor? Actor(HttpContext h) => h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User);
+    internal static DailyReferenceRegistry References(HttpContext h) => h.RequestServices.GetRequiredService<DailyReferenceRegistry>();
     private static string Permission(string kind,string action) => "daily." + kind.ToLowerInvariant() + "." + action;
     internal static bool CanRead(TrustedActor? a,string kind) => a?.CanRead == true && a.Permissions.Contains(Permission(kind,"read"));
     internal static bool CanWrite(TrustedActor? a,string kind,Guid vessel) => a!=null && CanRead(a,kind) && a.HasWriteAttribution && a.CanEditVessel(vessel) && a.Permissions.Contains(Permission(kind,"write"));
@@ -51,8 +52,8 @@ public static class DailyOperationsEndpoints
     private static IQueryable<Vessel> Vessels(PoseidonDbContext db,TrustedActor actor,Guid vessel) =>
         actor.Scope(db.Vessels.AsNoTracking()).Where(v => v.Id == vessel && (v.Kind == VesselKind.Ship || actor.Permissions.Contains("mode.cross")));
     internal static async Task<bool> Current(HttpContext h,string kind,Guid vessel,string rights,bool write = false) {
-        // Re-open outside a transaction's old snapshot. No private reference is
-        // accepted as Known in this version, so vessel+rights is the owning boundary.
+        // Re-open outside a transaction's old snapshot. Owning reference pins are
+        // resolved inside the write transaction; their read rights are part of Rights.
         await using var scope = h.RequestServices.GetRequiredService<IServiceScopeFactory>().CreateAsyncScope();
         var resolver = scope.ServiceProvider.GetRequiredService<ActorResolver>(); var a = resolver.Resolve(h.User);
         if (!CanRead(a,kind) || Rights(a!) != rights || write && !CanWrite(a,kind,vessel)) return false;
@@ -98,7 +99,7 @@ public static class DailyOperationsEndpoints
                 destinations = [.. destinations,new("port-activity-sof",$"/app/port-activity-sof/{vessel:D}")];
             if (vesselKind == VesselKind.Ship && kind == "Engine" && OperationalDowntimeEndpoints.CanWrite(a,vessel))
                 destinations = [.. destinations,new("operational-downtime",$"/app/operational-downtime/{vessel:D}")];
-            result=new DailyCapabilitiesDto(vessel,kind,true,CanWrite(a,kind,vessel),canReview,false,DailyOperationsPolicy.Schema(kind),DailyOperationsPolicy.SourceVersion,Offline(h,a!,kind,vessel),destinations);
+            result=new DailyCapabilitiesDto(vessel,kind,true,CanWrite(a,kind,vessel),canReview,false,References(h).Schema(kind),DailyOperationsPolicy.SourceVersion,Offline(h,a!,kind,vessel),destinations);
         } else if (history) {
             if (!await db.DailyOperations.AnyAsync(r=>r.VesselId==vessel && r.Kind==kind && r.Id==id,h.RequestAborted)) return await Fail(h,404,"resource_not_found");
             var rows=await db.DailyOperationRevisions.AsNoTracking().Where(r=>r.VesselId==vessel && r.Kind==kind && r.RecordId==id)
@@ -141,7 +142,7 @@ public static class DailyOperationsEndpoints
             command=document.RootElement.Deserialize<DailyDraftCommand>(Json)??throw new JsonException();
             if(command.Id==Guid.Empty || routeId!=null && routeId!=command.Id || routeId==null && command.ExpectedVersion!=0 ||
                 command.ReasonCode is not ("INITIAL_AUTHORING" or "AUTHORING_CORRECTION")) throw new JsonException();
-            if (!DailyOperationsPolicy.TryNormalize(kind,command.Fields,out normalized,out var error))
+            if (!DailyOperationsPolicy.TryNormalize(kind,command.Fields,out normalized,out var error,References(h).Resolvable))
                 return await Fail(h,400,error=="lookup_source_unavailable"?"linked_resource_unavailable":"invalid_request");
         } catch (Exception e) when (e is JsonException or InvalidDataException) { return await Fail(h,400,"invalid_request"); }
         var fieldsJson=JsonSerializer.Serialize(normalized);
@@ -162,7 +163,7 @@ public static class DailyOperationsEndpoints
         try {
             tx=await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable,ct);
             var now=h.RequestServices.GetRequiredService<TimeProvider>().GetUtcNow();
-            var applied=await DailyOperationsWriter.Apply(db,a!.Id,vessel,kind,command,routeId==null,now,ct);
+            var applied=await DailyOperationsWriter.Apply(db,a!,vessel,kind,command,routeId==null,now,References(h),ct);
             if(applied.Record==null) return (applied.Status==409?await Replay():null)??await Fail(h,applied.Status,applied.Code!);
             var outcome=JsonSerializer.Serialize(applied.Record,Json);
             db.DailyOperationReceipts.Add(new(){TenantId=a.TenantId,VesselId=vessel,ActorId=a.Id,Key=key,RecordId=command.Id,Kind=kind,Fingerprint=fingerprint,OutcomeJson=outcome,SavedAt=now});

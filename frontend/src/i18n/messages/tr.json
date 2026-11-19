@@ -3554,6 +3554,8 @@
     "m_2adab3886ca18b5e": "Seçilen dosya özgün denemeyle eşleşmiyor. Deneme kilitli kalır.",
     "m_6eb8ee576dacf887": "Önceki belirsiz deneme bu tarayıcıda süresi dolduğu için kaldırıldı. Yeniden göndermeden önce geçmişi kontrol edin.",
     "m_dbbdcf309e8f24c3": "Bağlı kurallar farklı yaşam döngüsü durumları kaydediyor. Gösterilen değer bir yazılım önceliğidir; uzman incelemesi gerekir.",
-    "m_d6eb29d9d9dfbe8b": "Bu görünümün taşıyabileceğinden fazla kural bağlı; kısmi bir kümeden yaşam döngüsü türetilmez."
+    "m_d6eb29d9d9dfbe8b": "Bu görünümün taşıyabileceğinden fazla kural bağlı; kısmi bir kümeden yaşam döngüsü türetilmez.",
+    "m_5e0d7a1c3b9f2e41": "Yalnızca sahip kayıt bağlantısı; bağlantı doğrulama değildir.",
+    "m_8c2f6b0e4a7d1395": "Güncel sahip kayıt yok. Eksik veya Bilinmiyor olarak bırakın."
   }
 }

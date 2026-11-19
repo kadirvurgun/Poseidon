@@ -3554,6 +3554,8 @@
     "m_2adab3886ca18b5e": "The selected file does not match the original attempt. The attempt stays locked.",
     "m_6eb8ee576dacf887": "An earlier uncertain attempt expired in this browser. Check the history before submitting again.",
     "m_dbbdcf309e8f24c3": "Bound rules record different lifecycle states. The shown value is a software precedence; expert review is required.",
-    "m_d6eb29d9d9dfbe8b": "More rules are bound than this view can carry; no lifecycle is derived from a partial set."
+    "m_d6eb29d9d9dfbe8b": "More rules are bound than this view can carry; no lifecycle is derived from a partial set.",
+    "m_5e0d7a1c3b9f2e41": "Owning record link only; linking is not verification.",
+    "m_8c2f6b0e4a7d1395": "No current owning record is available. Keep Missing or Unknown."
   }
 }

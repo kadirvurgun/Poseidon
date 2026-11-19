@@ -54,6 +54,32 @@ export function decodeDailyPage(value: unknown, vessel: string, kind: DailyKind,
   if (collection && (typeof value.canWrite !== 'boolean' || typeof value.canReview !== 'boolean' || value.canSubmit !== false)) fail()
   return { ...value, items, ...(collection ? { offline: offline(value.offline, kind) } : {}) } as DailyPage | DailyCollection
 }
+// DEV-097/098 owning lookup options. A Known reference is only an exact
+// server-issued pin; labels never carry a person identity and a pin is not verification.
+export type DailyReferenceOption = { token: string; source: string; id: string; revision: number; label: string; qualification: string }
+export type DailyReferenceOptions = { vesselId: string; kind: DailyKind; field: string; available: boolean; items: DailyReferenceOption[]; hasMore: boolean }
+const referenceSource = /^[a-z][a-z-]{0,30}[a-z]$/
+export function decodeDailyReferenceOptions(value: unknown, vessel: string, kind: DailyKind, field: string): DailyReferenceOptions {
+  if (!exact(value, ['vesselId', 'kind', 'field', 'available', 'items', 'hasMore']) || value.vesselId !== vessel || value.kind !== kind || value.field !== field || typeof value.available !== 'boolean' || typeof value.hasMore !== 'boolean' || !Array.isArray(value.items) || value.items.length > 50 || !value.available && (value.items.length > 0 || value.hasMore)) fail()
+  for (const item of value.items) if (!exact(item, ['token', 'source', 'id', 'revision', 'label', 'qualification']) || typeof item.source !== 'string' || !referenceSource.test(item.source) || !isGuid(item.id) || item.id !== (item.id as string).toLowerCase() || !integer(item.revision) || item.token !== `${item.source}:${item.id}@${item.revision}` || !text(item.label, 300) || !text(item.qualification, 100)) fail()
+  if (new Set(value.items.map(item => item.token)).size !== value.items.length) fail()
+  return value as DailyReferenceOptions
+}
+export type NoonSummaryField = { key: string; type: string; unit: string | null; sourceRow: number; value: { state: 'Known' | 'Missing' | 'Unknown'; value: string | null } }
+export type NoonSummaryItem = { recordId: string; state: 'MASTER_REVIEW_RECORDED' | 'UNREVIEWED'; consumable: boolean; reviewedPin: { kind: 'Noon'; id: string; revision: number; version: number; hash: string; sourceVersion: string } | null; headRevision: number; reviewedIsCurrent: boolean; reviewEventId: string | null; reviewedAt: string | null; provenance: string; fields: NoonSummaryField[]; references: unknown[]; href: string; qualifications: string[] }
+export type NoonSummaryPage = { vesselId: string; items: NoonSummaryItem[]; offset: number; limit: 25; hasMore: boolean; consumers: string[]; emissionsBasis: 'INPUTS_ONLY_NO_SOURCE_DEFINED_FORMULA'; sourceVersion: string }
+// Downstream (voyage/emissions/dashboard) consumers: unreviewed items must carry no
+// field values and reviewed items must keep the not-verification qualification.
+export function decodeNoonSummary(value: unknown, vessel: string, offset: number): NoonSummaryPage {
+  if (!exact(value, ['vesselId', 'items', 'offset', 'limit', 'hasMore', 'consumers', 'emissionsBasis', 'sourceVersion']) || value.vesselId !== vessel || value.offset !== offset || value.limit !== 25 || typeof value.hasMore !== 'boolean' || value.emissionsBasis !== 'INPUTS_ONLY_NO_SOURCE_DEFINED_FORMULA' || value.sourceVersion !== dailySourceVersion || !Array.isArray(value.items) || value.items.length > 25 || !Array.isArray(value.consumers)) fail()
+  for (const item of value.items) {
+    if (!exact(item, ['recordId', 'state', 'consumable', 'reviewedPin', 'headRevision', 'reviewedIsCurrent', 'reviewEventId', 'reviewedAt', 'provenance', 'fields', 'references', 'href', 'qualifications']) || !isGuid(item.recordId) || !Array.isArray(item.fields) || !Array.isArray(item.references) || !Array.isArray(item.qualifications) || !item.qualifications.every(code => text(code)) || typeof item.consumable !== 'boolean' || item.href !== `/app/noon-report/${vessel}?id=${item.recordId}`) fail()
+    if (item.state === 'UNREVIEWED') { if (item.consumable || item.reviewedPin !== null || item.fields.length > 0 || item.references.length > 0) fail() }
+    else if (item.state !== 'MASTER_REVIEW_RECORDED' || !object(item.reviewedPin) || item.reviewedPin.id !== item.recordId || !integer(item.reviewedPin.revision) || !timestamp(item.reviewedAt) || !item.qualifications.includes('REVIEW_RECORDING_IS_NOT_VERIFICATION') || !item.qualifications.includes('NO_COMPUTED_EMISSIONS')) fail()
+    for (const field of item.fields) if (!exact(field, ['key', 'type', 'unit', 'sourceRow', 'value']) || !dailyRoutes.Noon.keys.includes(field.key as string) || !exact(field.value, ['state', 'value']) || (field.value.state === 'Known' ? !text(field.value.value, 4000) : !['Missing', 'Unknown'].includes(field.value.state as string) || field.value.value !== null)) fail()
+  }
+  return value as NoonSummaryPage
+}
 const root = (kind: DailyKind, vessel: string) => { if (!isGuid(vessel)) throw new ApiError(400, 'invalid_context'); return `${dailyRoutes[kind].api}?vesselId=${vessel}` }
 const offsetQuery = (offset: number) => { if (!integer(offset, 0, 100000)) throw new ApiError(400, 'invalid_context'); return `&offset=${offset}` }
 export const dailyApi = {
@@ -61,6 +87,8 @@ export const dailyApi = {
   list: async (kind: DailyKind, vessel: string, offset: number, signal: AbortSignal) => decodeDailyPage(await request<unknown>(root(kind, vessel) + offsetQuery(offset), signal), vessel, kind, offset, true) as DailyCollection,
   read: async (kind: DailyKind, vessel: string, id: string, signal: AbortSignal) => { if (!isGuid(id) || !isGuid(vessel)) throw new ApiError(400, 'invalid_context'); return decodeDailyRecord(await request<unknown>(`${dailyRoutes[kind].api}/${id}?vesselId=${vessel}`, signal), vessel, kind, id) },
   history: async (kind: DailyKind, vessel: string, id: string, offset: number, signal: AbortSignal) => { if (!isGuid(id) || !isGuid(vessel)) throw new ApiError(400, 'invalid_context'); return decodeDailyPage(await request<unknown>(`${dailyRoutes[kind].api}/${id}/history?vesselId=${vessel}${offsetQuery(offset)}`, signal), vessel, kind, offset, false, id) as DailyPage },
+  referenceOptions: async (kind: DailyKind, vessel: string, field: string, signal: AbortSignal) => { if (!isGuid(vessel) || !dailyRoutes[kind].keys.includes(field)) throw new ApiError(400, 'invalid_context'); return decodeDailyReferenceOptions(await request<unknown>(`${dailyRoutes[kind].api}/reference-options?vesselId=${vessel}&field=${encodeURIComponent(field)}`, signal), vessel, kind, field) },
+  noonSummary: async (vessel: string, offset: number, signal: AbortSignal) => { if (!isGuid(vessel)) throw new ApiError(400, 'invalid_context'); return decodeNoonSummary(await request<unknown>(`noon-reports/reviewed-summary?vesselId=${vessel}${offsetQuery(offset)}`, signal), vessel, offset) },
   save: async (attempt: DailyAttempt, csrf: string, signal: AbortSignal) => decodeDailyRecord(await request<unknown>(`${dailyRoutes[attempt.kind].api}${attempt.expectedVersion > 0 ? `/${attempt.id}` : ''}?vesselId=${attempt.vessel}`, signal, { method: attempt.expectedVersion > 0 ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'Idempotency-Key': attempt.key }, body: attempt.body }), attempt.vessel, attempt.kind, attempt.id),
 }
 export function dailyAttempt(kind: DailyKind, vessel: string, fields: DailyFields, record?: DailyRecord, recordId?: string): DailyAttempt {

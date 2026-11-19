@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { dailyAttempt, dailyApi, decodeDailyCapabilities, decodeDailyPage, decodeDailyRecord } from './daily-operations-api'
+import { dailyAttempt, dailyApi, dailySourceVersion, decodeDailyCapabilities, decodeDailyPage, decodeDailyRecord, decodeDailyReferenceOptions, decodeNoonSummary } from './daily-operations-api'
 import { dailyFields, dailyKinds, emptyDailyFields } from './daily-report-fields'
 import { dailyCapsFixture, dailyId, dailyRecordFixture, dailyVessel } from './daily-test-fixtures'
 import { dailyLocationPath, readDailyLocation } from './daily-location'
@@ -40,6 +40,25 @@ describe('T-OPS2-001/002/003 exact owning boundaries (authored; execution deferr
     expect(fetch).toHaveBeenCalledWith(`/api/v1/engine-daily-logs/${dailyId}?vesselId=${dailyVessel}`, expect.objectContaining({ method: 'PUT', credentials: 'same-origin', body: attempt.body, headers: expect.objectContaining({ 'Content-Type': 'application/json', 'X-CSRF-TOKEN': 'fixture-csrf', 'Idempotency-Key': attempt.key }) }))
     expect(JSON.parse(attempt.body).expectedVersion).toBe(17)
     expect(JSON.parse(attempt.body).fields.fuel_consumption.value).toBe(fields.fuel_consumption.value)
+  })
+  it('DEV-097/098 admits only exact owning pins and keeps unreviewed noon data out of downstream reuse', () => {
+    const option = { token: `port-call:${dailyId}@3`, source: 'port-call', id: dailyId, revision: 3, label: 'Arrival · 2026-11-04T08:00:00Z', qualification: 'PORT_CALL_DRAFT_UNVERIFIED_PORT_IDENTITY_UNRESOLVED' }
+    const options = { vesselId: dailyVessel, kind: 'Noon', field: 'from_port', available: true, items: [option], hasMore: false }
+    expect(decodeDailyReferenceOptions(options, dailyVessel, 'Noon', 'from_port').items[0].token).toBe(option.token)
+    for (const item of [{ ...option, token: `port-call:${dailyId}@4` }, { ...option, id: 'ABCDEF00-0000-4000-8000-000000000002', token: 'port-call:ABCDEF00-0000-4000-8000-000000000002@3' }, { ...option, revision: 0, token: `port-call:${dailyId}@0` }, { ...option, source: 'Port', token: `Port:${dailyId}@3` }])
+      expect(() => decodeDailyReferenceOptions({ ...options, items: [item] }, dailyVessel, 'Noon', 'from_port')).toThrow()
+    expect(() => decodeDailyReferenceOptions({ ...options, available: false }, dailyVessel, 'Noon', 'from_port')).toThrow()
+    expect(() => decodeDailyReferenceOptions(options, dailyVessel, 'Noon', 'to_port')).toThrow()
+    const reviewed = { recordId: dailyId, state: 'MASTER_REVIEW_RECORDED', consumable: true, reviewedPin: { kind: 'Noon', id: dailyId, revision: 2, version: 9, hash: 'A'.repeat(64), sourceVersion: dailySourceVersion }, headRevision: 2, reviewedIsCurrent: true, reviewEventId: dailyVessel, reviewedAt: '2026-11-04T09:00:00Z', provenance: 'UserDeclaredUnverified',
+      fields: [{ key: 'fuel_summary', type: 'Text', unit: null, sourceRow: 2144, value: { state: 'Known', value: 'FICTIONAL declared' } }, { key: 'avg_speed_kn', type: 'Number', unit: 'kn', sourceRow: 2140, value: { state: 'Unknown', value: null } }], references: [], href: `/app/noon-report/${dailyVessel}?id=${dailyId}`, qualifications: ['REVIEW_RECORDING_IS_NOT_VERIFICATION', 'USER_DECLARED_UNVERIFIED', 'NO_COMPUTED_EMISSIONS'] }
+    const page = { vesselId: dailyVessel, items: [reviewed], offset: 0, limit: 25, hasMore: false, consumers: ['voyage', 'emissions', 'dashboard'], emissionsBasis: 'INPUTS_ONLY_NO_SOURCE_DEFINED_FORMULA', sourceVersion: dailySourceVersion }
+    expect(decodeNoonSummary(page, dailyVessel, 0).items[0].fields[1].value.state).toBe('Unknown')
+    const unreviewed = { ...reviewed, state: 'UNREVIEWED', consumable: false, reviewedPin: null, reviewedIsCurrent: false, reviewEventId: null, reviewedAt: null, references: [], qualifications: ['MASTER_REVIEW_NOT_RECORDED', 'NOT_FOR_DOWNSTREAM_REUSE'] }
+    expect(() => decodeNoonSummary({ ...page, items: [unreviewed] }, dailyVessel, 0)).toThrow()
+    expect(decodeNoonSummary({ ...page, items: [{ ...unreviewed, fields: [] }] }, dailyVessel, 0).items[0].consumable).toBe(false)
+    expect(() => decodeNoonSummary({ ...page, items: [{ ...reviewed, qualifications: ['USER_DECLARED_UNVERIFIED'] }] }, dailyVessel, 0)).toThrow()
+    expect(() => decodeNoonSummary({ ...page, emissionsBasis: 'CO2_COMPUTED' }, dailyVessel, 0)).toThrow()
+    expect(() => decodeNoonSummary({ ...page, items: [{ ...reviewed, fields: [{ ...reviewed.fields[1], value: { state: 'Unknown', value: '0' } }] }] }, dailyVessel, 0)).toThrow()
   })
   it('roundtrips only scoped app paths and refuses duplicate, encoded and unknown query inputs', () => {
     for (const kind of dailyKinds) {

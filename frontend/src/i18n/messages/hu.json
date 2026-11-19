@@ -3554,6 +3554,8 @@
     "m_2adab3886ca18b5e": "A kiválasztott fájl nem egyezik az eredeti kísérlettel. A kísérlet zárolva marad.",
     "m_6eb8ee576dacf887": "Egy korábbi bizonytalan kísérlet lejárt ebben a böngészőben. Újbóli beküldés előtt ellenőrizze az előzményeket.",
     "m_dbbdcf309e8f24c3": "A kapcsolt szabályok eltérő életciklus-állapotokat rögzítenek. A megjelenített érték szoftveres elsőbbség; szakértői felülvizsgálat szükséges.",
-    "m_d6eb29d9d9dfbe8b": "Több szabály van kapcsolva, mint amennyit ez a nézet kezel; részleges halmazból nem származtatunk életciklust."
+    "m_d6eb29d9d9dfbe8b": "Több szabály van kapcsolva, mint amennyit ez a nézet kezel; részleges halmazból nem származtatunk életciklust.",
+    "m_5e0d7a1c3b9f2e41": "Csak a forrásrekordra mutató hivatkozás; a hivatkozás nem ellenőrzés.",
+    "m_8c2f6b0e4a7d1395": "Nincs elérhető aktuális forrásrekord. Hagyja Hiányzó vagy Ismeretlen állapotban."
   }
 }

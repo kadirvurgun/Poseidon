@@ -39,6 +39,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddSingleton<LocalFileObjects>();
         services.AddSingleton<FileObjects>();
         services.AddScoped<IQualifiedInputRuntime, QualifiedInputRuntime>();
+        services.AddDailyReferenceReaders();
         services.AddSingleton<ClamdScanner>();
         services.AddSingleton<FileCapabilities>();
         services.AddFoundationIdentity(configuration, hostEnvironment);
@@ -173,6 +174,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapDailyOperationOrigins();
             endpoints.MapDailyOffline();
             endpoints.MapDailyReviews();
+            endpoints.MapDailyReferences();
             endpoints.MapAuditHistory();
             endpoints.MapSecureFiles();
             endpoints.MapDocuments();
