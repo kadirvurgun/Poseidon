@@ -25,6 +25,8 @@ internal static class WorkspaceDestinationLabels
         ["operational-downtime"] = ["Operasyonel duruşlar", "Operational downtime"],
         ["certificate-command-center"] = ["Sertifika merkezi", "Certificate center"],
         ["renewal-workflow"] = ["Sertifika yenileme", "Certificate renewal"],
+        ["pre-survey-checklist"] = ["Sörvey öncesi kontrol listesi", "Pre-survey checklist"],
+        ["survey-planner"] = ["Sörvey planlayıcı", "Survey planner"],
         ["tug-command"] = ["Römorkör operasyonları", "Tug operations", "Römorkör merkezi", "Tug command"],
         ["tug-job-board"] = ["Römorkör iş panosu", "Tug job board", "İş panosu", "Job board"],
         ["tug-job-intake"] = ["Römorkör iş kaydı", "Tug job intake", "İş talebi", "Job intake"],

@@ -115,6 +115,20 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if(entry.Entity is CertificateAssertionEvent assertion)
             return new(assertion.VesselId,assertion.CertificateId,"CertificateAssertion",null,assertion.Revision,
                 Fields(Field("Revision",null,Number(assertion.Revision)),Field("Binding",null,"RecordedUnassessedAssertion")));
+        if(entry.Entity is PreSurveyChecklist preSurvey)
+            return new(preSurvey.VesselId,preSurvey.Id,"PreSurveyChecklist",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,preSurvey.Revision,
+                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(preSurvey.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is PreSurveyChecklistRevision preSurveyRevision) {
+            // DEV-104: closed transition/readiness codes only. Item answers, findings, comments,
+            // evidence pins, planned dates and verifier identities are never copied into audit.
+            if(!PreSurveyChecklistPolicy.Transitions.Contains(preSurveyRevision.Transition) || !PreSurveyChecklistPolicy.ReadinessStates.Contains(preSurveyRevision.Readiness))
+                throw new InvalidOperationException("Invalid pre-survey checklist metadata.");
+            return new(preSurveyRevision.VesselId,preSurveyRevision.ChecklistId,"PreSurveyChecklistRevision",null,preSurveyRevision.Revision,
+                Fields(Field("Revision",null,Number(preSurveyRevision.Revision)),Field("Transition",null,preSurveyRevision.Transition),Field("Readiness",null,preSurveyRevision.Readiness),
+                    Field("Content",null,null,"ValuesWithheld"),Field("Binding",null,"OwnerReference")));
+        }
+        if(entry.Entity is PreSurveyReceipt preSurveyReceipt)
+            return new(preSurveyReceipt.VesselId,preSurveyReceipt.ChecklistId,"PreSurveyReceipt",null,null,Fields(Field("Binding",null,"CommittedResource")));
         if(entry.Entity is CertificateCommandReceipt certificateReceipt)
             return new(certificateReceipt.VesselId,certificateReceipt.ResourceId,"CertificateReceipt",null,null,Fields(Field("Binding",null,"CommittedResource")));
         if (entry.Entity is DailyOfflineEnrollment dailyEnrollment)

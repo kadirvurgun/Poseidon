@@ -36,6 +36,9 @@ public sealed class PoseidonDbContext(
     public DbSet<CertificateAssertionEvent> CertificateAssertionEvents => Set<CertificateAssertionEvent>();
     public DbSet<CertificateCommandReceipt> CertificateCommandReceipts => Set<CertificateCommandReceipt>();
     public DbSet<CertificateSupersession> CertificateSupersessions => Set<CertificateSupersession>();
+    public DbSet<PreSurveyChecklist> PreSurveyChecklists => Set<PreSurveyChecklist>();
+    public DbSet<PreSurveyChecklistRevision> PreSurveyChecklistRevisions => Set<PreSurveyChecklistRevision>();
+    public DbSet<PreSurveyReceipt> PreSurveyReceipts => Set<PreSurveyReceipt>();
     public DbSet<ShipOperation> ShipOperations => Set<ShipOperation>();
     public DbSet<ShipOperationRevision> ShipOperationRevisions => Set<ShipOperationRevision>();
     public DbSet<ShipOperationReceipt> ShipOperationReceipts => Set<ShipOperationReceipt>();
@@ -213,6 +216,10 @@ public sealed class PoseidonDbContext(
         model.Entity<CertificateRenewalRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         model.Entity<CertificateCommandReceipt>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         model.Entity<CertificateSupersession>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        PreSurveyStorage.Configure(model);
+        model.Entity<PreSurveyChecklist>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<PreSurveyChecklistRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<PreSurveyReceipt>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         DailyOperationsStorage.Configure(model);
         DailyOfflineStorage.Configure(model);
         model.Entity<DailyOfflineEnrollment>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -588,6 +595,12 @@ public sealed class PoseidonDbContext(
         if(changes.Any(e=>e.Entity is VesselCertificate or CertificateRenewal or CertificateAssertionHead && (e.State==EntityState.Deleted || e.State==EntityState.Modified &&
             (e.Properties.Any(p=>p.IsModified && p.Metadata.Name!="Revision") || (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue!+1))))
             throw new InvalidOperationException("Certificate and renewal ownership are immutable; append one revision.");
+        // DEV-104: checklist history and receipts are append-only; the head only advances its revision.
+        if(changes.Any(e=>e.Entity is PreSurveyChecklistRevision or PreSurveyReceipt && e.State!=EntityState.Added))
+            throw new InvalidOperationException("Pre-survey checklist history and receipts are immutable.");
+        if(changes.Any(e=>e.Entity is PreSurveyChecklist && (e.State==EntityState.Deleted || e.State==EntityState.Modified &&
+            (e.Properties.Any(p=>p.IsModified && p.Metadata.Name!="Revision") || (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue!+1))))
+            throw new InvalidOperationException("Pre-survey checklist ownership is immutable; append one revision.");
         if (changes.Any(e => e.Entity is DailyOfflineLifecycle or DailyOfflineOutcome && e.State != EntityState.Added))
             throw new InvalidOperationException("Daily offline lineage is immutable.");
         if (changes.Any(e => e.Entity is DailyOfflineEnrollment && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
@@ -801,6 +814,7 @@ public sealed class PoseidonDbContext(
                 Action = entry.State.ToString(), EntityType = entry.Metadata.ClrType.Name,
                 EntityId = entry.Entity is CommandReceipt receipt ? receipt.ResourceId.ToString() :
                     entry.Entity is CertificateCommandReceipt certificateReceipt ? certificateReceipt.ResourceId.ToString() :
+                    entry.Entity is PreSurveyReceipt preSurveyReceipt ? preSurveyReceipt.ChecklistId.ToString() :
                     entry.Entity is DailyOperationReceipt dailyReceipt ? dailyReceipt.RecordId.ToString() :
                     entry.Entity is DailyReviewReceipt reviewReceipt ? reviewReceipt.RecordId.ToString() :
                     entry.Entity is ApplicabilityReceipt applicabilityReceipt ? applicabilityReceipt.ResourceId.ToString() :
@@ -840,6 +854,11 @@ public sealed class PoseidonDbContext(
                         e.Entity.VesselId==certificateOutcome.VesselId && e.Entity.Id==certificateOutcome.RenewalId)?.Entity;
                     events[^1].AfterVersion=saved?.Version;events[^1].AfterRevision=saved?.Revision;
                 }
+            }
+            if(entry.Entity is PreSurveyReceipt preSurveyOutcome) {
+                var saved=ChangeTracker.Entries<PreSurveyChecklist>().SingleOrDefault(e=>e.State==EntityState.Unchanged && e.Entity.TenantId==preSurveyOutcome.TenantId &&
+                    e.Entity.VesselId==preSurveyOutcome.VesselId && e.Entity.Id==preSurveyOutcome.ChecklistId)?.Entity;
+                events[^1].AfterVersion=saved?.Version;events[^1].AfterRevision=saved?.Revision;
             }
             if(entry.Entity is DefectReceipt defectOutcome) {
                 events[^1].AfterVersion=checked((uint)defectOutcome.RecordVersion);events[^1].AfterRevision=defectOutcome.Revision;

@@ -232,3 +232,11 @@ CertificateRenewalFixtures still seeds only one incomplete SyntheticUnverified D
 renewal (State column defaults to DRAFT). No transition, application, issued candidate,
 human verification, completion or CertificateSupersession row is ever seeded: those are
 attributable human workflow decisions and must come from real audited commands.
+
+## S7 WP-D DEV-104 pre-survey checklist — optional fixture, AUTHORED / PG DEFERRED
+
+`PreSurveyChecklistFixtures.AddMissingAsync` is an explicit administrative fixture and is not
+wired into `SeedImporter`. It adds one FICTIONAL `SyntheticUnverified` checklist per supplied
+vessel from the `STARTER_UNAPPROVED` annual template, linked to the synthetic certificate. All
+items stay OPEN. No owner, due date, evidence, finding, plan date, port call, verification or
+receipt is seeded. Persisted or pending repeats are skipped, and operator revisions are never rewritten.
