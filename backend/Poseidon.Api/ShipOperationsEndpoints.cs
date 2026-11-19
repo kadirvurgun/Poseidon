@@ -151,11 +151,11 @@ public static class ShipOperationsEndpoints
         ShipOpsRecordDto[] previous=existing==null?[]:[Dto(existing,true,true)];
         var originJson=command.Origin==null?null:JsonSerializer.Serialize(command.Origin,Json);
         var unchangedOrigin=existing!=null && existing.Version==command.ExpectedVersion && existing.OriginJson==originJson;
-        if(!await Current(h,kind,vessel,rights,previous,true,command.Origin,!unchangedOrigin))return await Fail(h,403,"linked_resource_unavailable");
+        if(!await Current(h,kind,vessel,rights,previous,true,command.Origin,!unchangedOrigin))return await Replay()??await Fail(h,403,"linked_resource_unavailable");
         await Audit(h,"Attempted",command.Id);IDbContextTransaction? tx=null;string? outcome=null;
         try {
             tx=await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable,ct);var now=h.RequestServices.GetRequiredService<TimeProvider>().GetUtcNow();
-            var applied=await ShipOperationsWriter.Apply(db,actor,vessel,kind,command,routeId==null,now,ct);if(applied.Record==null)return await Fail(h,applied.Status,applied.Code!);
+            var applied=await ShipOperationsWriter.Apply(db,actor,vessel,kind,command,routeId==null,now,ct);if(applied.Record==null)return (applied.Status==409?await Replay():null)??await Fail(h,applied.Status,applied.Code!);
             outcome=JsonSerializer.Serialize(applied.Record,Json);db.ShipOperationReceipts.Add(new(){TenantId=actor.TenantId,VesselId=vessel,ActorId=actor.Id,Key=key,RecordId=command.Id,Kind=kind,
                 OriginJson=command.Origin==null?null:JsonSerializer.Serialize(command.Origin,Json),Fingerprint=fingerprint,OutcomeJson=outcome,SavedAt=now});await db.SaveChangesAsync(ct);
             if(!await Current(h,kind,vessel,rights,previous,true,command.Origin,!unchangedOrigin))return await Fail(h,403,"permission_denied");await tx.CommitAsync(ct);

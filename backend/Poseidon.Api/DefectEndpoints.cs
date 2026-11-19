@@ -141,11 +141,11 @@ public static class DefectEndpoints
         var existing=routeId==null?null:await db.Defects.AsNoTracking().SingleOrDefaultAsync(r=>r.Id==command.Id && r.VesselId==vessel,ct);
         if(routeId!=null && existing==null)return await Fail(h,404,"resource_not_found");DefectRecordDto[] previous=existing==null?[]:[Dto(existing,true,true,Now(h))];
         var unchangedAsset=existing!=null && Asset(existing.AssetId,existing.AssetRevision,existing.AssetVersion,existing.AssetHash)==command.Asset;
-        if(!await Current(h,vessel,rights,previous,true,command.Asset,!unchangedAsset))return await Fail(h,403,"linked_resource_unavailable");
+        if(!await Current(h,vessel,rights,previous,true,command.Asset,!unchangedAsset))return await Replay()??await Fail(h,403,"linked_resource_unavailable");
         await Audit(h,"Attempted",command.Id);IDbContextTransaction? tx=null;string? outcome=null;
         try {
             tx=await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable,ct);var now=Now(h);
-            var applied=await DefectWriter.Apply(db,actor,vessel,command,routeId==null,now,ct);if(applied.Record==null)return await Fail(h,applied.Status,applied.Code!);
+            var applied=await DefectWriter.Apply(db,actor,vessel,command,routeId==null,now,ct);if(applied.Record==null)return (applied.Status==409?await Replay():null)??await Fail(h,applied.Status,applied.Code!);
             outcome=JsonSerializer.Serialize(applied.Record,Json);db.DefectReceipts.Add(new(){TenantId=actor.TenantId,VesselId=vessel,ActorId=actor.Id,Key=key,DefectId=command.Id,Revision=applied.Record.Revision,
                 RecordVersion=applied.Record.Version,Fingerprint=fingerprint,OutcomeJson=outcome,SavedAt=now});await db.SaveChangesAsync(ct);
             if(!await Current(h,vessel,rights,previous,true,command.Asset,!unchangedAsset))return await Fail(h,403,"permission_denied");await tx.CommitAsync(ct);

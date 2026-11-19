@@ -148,7 +148,7 @@ public static class CertificateAssertions
             var file=await db.StoredFiles.SingleOrDefaultAsync(f=>f.Id==source.FileId && f.VesselId==vessel && f.Revision==source.FileRevision && f.Checksum==source.Checksum,h.RequestAborted);
             if(file==null || db.QualifiedInputs==null || !await db.QualifiedInputs.FileIntact(file,h.RequestAborted))return await CertificateEndpoints.Fail(h,403,"file_integrity_unavailable");
             var head=await db.CertificateAssertionHeads.SingleOrDefaultAsync(c=>c.CertificateId==id && c.VesselId==vessel,h.RequestAborted);
-            if((head?.Version??0)!=command.ExpectedAssertionVersion)return await CertificateEndpoints.Fail(h,409,"version_conflict");
+            if((head?.Version??0)!=command.ExpectedAssertionVersion)return await Replay()??await CertificateEndpoints.Fail(h,409,"version_conflict");
             if(head==null){head=new(){TenantId=actor.TenantId,VesselId=vessel,CertificateId=id};db.CertificateAssertionHeads.Add(head);}else head.Revision++;
             await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h,"CertificateCommand","Attempted",resourceId:id);await db.SaveChangesAsync(h.RequestAborted);
             var entry=new CertificateAssertionEvent{TenantId=actor.TenantId,VesselId=vessel,CertificateId=id,Id=Guid.NewGuid(),Revision=head.Revision,RecordVersion=head.Version,

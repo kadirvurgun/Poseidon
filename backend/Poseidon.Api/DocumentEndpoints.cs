@@ -75,20 +75,23 @@ public static class DocumentEndpoints
         if (command == null || command.Title is { Length: > 200 } || command.Title?.Any(char.IsControl) == true) return await Failure(h, 400, "invalid_request");
         var etag = h.Request.Headers.IfMatch.ToString();
         var fingerprint = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(new { vessel, document, command.Title, etag }))));
-        var receipt = await db.CommandReceipts.SingleOrDefaultAsync(x => x.ActorId == a.Id && x.Key == key, ct);
-        if (receipt != null) {
+        async Task<IResult?> Replay() {
+            var receipt = await db.CommandReceipts.AsNoTracking().SingleOrDefaultAsync(x => x.ActorId == a.Id && x.Key == key, ct);
+            if (receipt == null) return null;
             if (receipt.Action != "DocumentDraftSave" || receipt.Fingerprint != fingerprint) return await Failure(h, 409, "idempotency_key_reused");
             var original = await db.Documents.AsNoTracking().SingleOrDefaultAsync(x => x.Id == receipt.ResourceId && x.VesselId == vessel, ct);
             var snapshot = await db.DocumentVersions.AsNoTracking().SingleOrDefaultAsync(x => x.DocumentId == receipt.ResourceId && x.VesselId == vessel && x.Revision == receipt.RegisterRevision, ct);
             if (original == null || snapshot == null) return await Failure(h, 404, "resource_not_found");
             return Results.Ok(Dto(original, snapshot) with { Version = receipt.RegisterVersion ?? 0 });
         }
+        var replay = await Replay(); if (replay != null) return replay;
         Document d;
         if (document == null) { d = new() { TenantId = a.TenantId, Id = Guid.NewGuid(), VesselId = vessel }; db.Documents.Add(d); }
         else {
             var existing = await db.Documents.SingleOrDefaultAsync(x => x.Id == document && x.VesselId == vessel, ct);
             if (existing == null) return await Failure(h, 404, "resource_not_found");
-            if (etag != $"\"{existing.Version}\"") return await Failure(h, 409, "file_attempt_conflict");
+            // A same-key winner may commit document and receipt after the lookup above.
+            if (etag != $"\"{existing.Version}\"") return await Replay() ?? await Failure(h, 409, "file_attempt_conflict");
             d = existing; d.Revision = checked(d.Revision + 1);
         }
         var version = new DocumentVersion { TenantId = a.TenantId, DocumentId = d.Id, VesselId = vessel, Revision = d.Revision, Title = command.Title, CreatedAt = DateTimeOffset.UtcNow };
@@ -99,6 +102,6 @@ public static class DocumentEndpoints
             db.CommandReceipts.Add(new() { TenantId = a.TenantId, ActorId = a.Id, Key = key, Action = "DocumentDraftSave", Fingerprint = fingerprint, ResourceId = d.Id, RegisterRevision = d.Revision, RegisterVersion = d.Version, CommittedAt = DateTimeOffset.UtcNow });
             await db.SaveChangesAsync(ct); await tx.CommitAsync(ct);
             return Results.Ok(Dto(d, version));
-        } catch (DbUpdateException) { return await Failure(h, 409, "file_attempt_conflict"); }
+        } catch (DbUpdateException) { db.ChangeTracker.Clear(); return await Replay() ?? await Failure(h, 409, "file_attempt_conflict"); }
     }
 }
