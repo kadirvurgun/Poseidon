@@ -6467,6 +6467,9 @@ export interface components {
             lowConfidence: boolean;
             state: string;
             reasons: string[];
+            region?: null | components["schemas"]["CertificateSourceRegion"];
+            /** @default false */
+            ambiguous: boolean;
         };
         CertificateCapabilitiesDto: {
             /** Format: uuid */
@@ -6695,6 +6698,16 @@ export interface components {
             expectedVersion: number;
             content: components["schemas"]["VesselCertificateContent"];
             reasonCode: string;
+        };
+        CertificateSourceRegion: {
+            /** Format: double */
+            x: number;
+            /** Format: double */
+            y: number;
+            /** Format: double */
+            width: number;
+            /** Format: double */
+            height: number;
         };
         CertificateSupersessionDto: {
             /** Format: uuid */

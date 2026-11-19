@@ -6,12 +6,12 @@ namespace Poseidon.Domain;
 // DEV045/T-S6-003. Closed advisory contract. Confidence is neither verification
 // nor permission to change certificate ownership, status, approval or readiness.
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
-public sealed record CertificateRawCandidate(string? Value, decimal? Confidence, int? Page) { public override string ToString()=>nameof(CertificateRawCandidate); }
+public sealed record CertificateRawCandidate(string? Value, decimal? Confidence, int? Page, CertificateSourceRegion? Region=null, bool Ambiguous=false) { public override string ToString()=>nameof(CertificateRawCandidate); }
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record CertificateRawExtraction(string Protocol, string ModelVersion, string PromptVersion, string InputSha256,
     Dictionary<string,CertificateRawCandidate> Fields) { public override string ToString()=>nameof(CertificateRawExtraction); }
 public sealed record CertificateCandidate(string Key, string? Value, decimal? Confidence, int? Page,
-    bool LowConfidence, string State, string[] Reasons) { public override string ToString()=>nameof(CertificateCandidate); }
+    bool LowConfidence, string State, string[] Reasons, CertificateSourceRegion? Region=null, bool Ambiguous=false) { public override string ToString()=>nameof(CertificateCandidate); }
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record CertificateConfirmedFact(string Key, string Value, [property:JsonRequired] bool Confirmed) { public override string ToString()=>nameof(CertificateConfirmedFact); }
 
@@ -22,9 +22,11 @@ public static class CertificateExtractionPolicy
     public static readonly string[] MutableFields=["certificate_type","certificate_no","issuer","issue_date","expiry_date"];
     public static readonly string[] Fields=[..MutableFields,"vessel_reference","person_reference"];
     public static bool Text(string? value,int maximum=512)=>value is {Length:>0} && value.Length<=maximum && !string.IsNullOrWhiteSpace(value) && !value.Any(char.IsControl);
+    // A region is only meaningful on a stated page; ambiguity needs a value.
+    public static bool ValidCandidate(CertificateRawCandidate? c)=>c!=null && (c.Value==null || Text(c.Value)) && c.Confidence is not (<0 or >1) && c.Page is not (<1 or >1000) &&
+        (c.Region==null || c.Page!=null && c.Region.Valid()) && (!c.Ambiguous || c.Value!=null);
     public static bool ValidRaw(CertificateRawExtraction? raw,string checksum,string model,string prompt)=>raw!=null && raw.Protocol==Protocol && raw.ModelVersion==model && raw.PromptVersion==prompt && raw.InputSha256==checksum &&
-        raw.Fields!=null && raw.Fields.Count<=Fields.Length && raw.Fields.All(f=>Fields.Contains(f.Key,StringComparer.Ordinal) && f.Value!=null &&
-            (f.Value.Value==null || Text(f.Value.Value)) && f.Value.Confidence is not (<0 or >1) && f.Value.Page is not (<1 or >1000));
+        raw.Fields!=null && raw.Fields.Count<=Fields.Length && raw.Fields.All(f=>Fields.Contains(f.Key,StringComparer.Ordinal) && ValidCandidate(f.Value));
     public static CertificateCandidate[] Project(CertificateRawExtraction raw,string checksum,string model,string prompt,decimal threshold,
         string vesselReference,string? personReference)
     {
@@ -33,15 +35,18 @@ public static class CertificateExtractionPolicy
             var field=raw.Fields.GetValueOrDefault(key);var reasons=new List<string>();
             if(field?.Value==null)reasons.Add("NOT_EXTRACTED");
             if(field?.Confidence==null)reasons.Add("CONFIDENCE_UNAVAILABLE");
-            var low=field?.Confidence is not {} confidence || confidence<threshold;if(low)reasons.Add("LOW_CONFIDENCE_REVIEW");
+            var ambiguous=field?.Ambiguous==true;
+            var low=field?.Confidence is not {} confidence || confidence<threshold || ambiguous;if(low)reasons.Add("LOW_CONFIDENCE_REVIEW");
+            if(ambiguous)reasons.Add("AMBIGUOUS_CANDIDATE_REVIEW");
             if(field?.Page==null)reasons.Add("SOURCE_LOCATOR_UNAVAILABLE");
+            else if(field.Region==null)reasons.Add("SOURCE_REGION_UNAVAILABLE");
             if(field?.Value!=null && (key is "issue_date" or "expiry_date") && !DateOnly.TryParseExact(field.Value,"yyyy-MM-dd",CultureInfo.InvariantCulture,DateTimeStyles.None,out _))reasons.Add("DATE_FORMAT_REVIEW");
             if(key is "vessel_reference" or "person_reference") {
                 var expected=key=="vessel_reference"?vesselReference:personReference;
                 if(expected==null || field?.Value==null || !string.Equals(expected,field.Value,StringComparison.OrdinalIgnoreCase))reasons.Add("SCOPED_REFERENCE_UNMATCHED");
             }
             reasons.Add("PROVIDER_CANDIDATE_NOT_VERIFICATION");
-            return new CertificateCandidate(key,field?.Value,field?.Confidence,field?.Page,low,"REVIEW_REQUIRED",reasons.ToArray());
+            return new CertificateCandidate(key,field?.Value,field?.Confidence,field?.Page,low,"REVIEW_REQUIRED",reasons.ToArray(),field?.Region,ambiguous);
         }).ToArray();
     }
     public static bool TryMerge(CertificateMetadata current,IReadOnlyList<CertificateConfirmedFact>? facts,out CertificateMetadata merged)

@@ -95,3 +95,20 @@ describe('DEV045 human confirmation interaction source, not executed', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('Processing policy'); expect(screen.queryByLabelText('Reviewed value · Certificate number')).not.toBeInTheDocument(); expect(fetch.mock.calls.filter(([url]) => url.endsWith('/confirm'))).toHaveLength(0)
   })
 })
+describe('DEV045 OCR assist source region, ambiguity and capability gap', () => {
+  it('shows the source region and an ambiguous badge, keeping ambiguous candidates low-confidence review', async () => {
+    const { fetch } = transport(); const ambiguous = extractionFixture()
+    ambiguous.candidates = ambiguous.candidates.map(c => c.key === 'expiry_date' ? { ...c, value: '2031-04-03', confidence: 0.4, page: 1, lowConfidence: true, region: { x: 0.12, y: 0.15, width: 0.3, height: 0.02 }, ambiguous: true, reasons: ['LOW_CONFIDENCE_REVIEW', 'AMBIGUOUS_CANDIDATE_REVIEW', 'PROVIDER_CANDIDATE_NOT_VERIFICATION'] } : c)
+    fetch.mockImplementation(async (url: string) => url.endsWith('/auth/session') ? json({ authenticated: true, canRead: true, actorId: extractionActor, tenantId: extractionVessel, csrfToken: 'synthetic-csrf-only' }) : url.endsWith(`/certificates/${extractionId}`) ? json({ ...extractionSavedFixture(), currentRevision: true, canEdit: true }) : json(ambiguous))
+    render(<CertificateExtractionReview {...props()} />); await preview()
+    expect(screen.getByText('Ambiguous · review')).toBeInTheDocument(); expect(screen.getAllByText(/Source region 12%, 15%/).length).toBe(1)
+    expect(screen.getByLabelText('I checked this fact against the source · Expiry date')).not.toBeChecked()
+  })
+  it('reports image or scanned documents as an OCR capability gap without inventing candidates', async () => {
+    const { fetch } = transport()
+    fetch.mockImplementation(async (url: string) => url.endsWith('/auth/session') ? json({ authenticated: true, canRead: true, actorId: extractionActor, tenantId: extractionVessel, csrfToken: 'synthetic-csrf-only' }) : url.endsWith(`/certificates/${extractionId}`) ? json({ ...extractionSavedFixture(), currentRevision: true, canEdit: true }) : json({ code: 'ocr_capability_unavailable' }, 503))
+    render(<CertificateExtractionReview {...props()} />); const user = userEvent.setup()
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Extract from linked document' })).toBeEnabled()); await user.click(screen.getByRole('button', { name: 'Extract from linked document' }))
+    expect(await screen.findByRole('alert')).toHaveTextContent('Automatic reading is not available'); expect(screen.queryByLabelText('Reviewed value · Certificate number')).not.toBeInTheDocument()
+  })
+})

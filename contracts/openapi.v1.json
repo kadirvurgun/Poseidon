@@ -17064,6 +17064,20 @@
             "items": {
               "type": "string"
             }
+          },
+          "region": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/CertificateSourceRegion"
+              }
+            ]
+          },
+          "ambiguous": {
+            "type": "boolean",
+            "default": false
           }
         }
       },
@@ -17915,6 +17929,33 @@
           }
         },
         "additionalProperties": false
+      },
+      "CertificateSourceRegion": {
+        "required": [
+          "x",
+          "y",
+          "width",
+          "height"
+        ],
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "number",
+            "format": "double"
+          },
+          "y": {
+            "type": "number",
+            "format": "double"
+          },
+          "width": {
+            "type": "number",
+            "format": "double"
+          },
+          "height": {
+            "type": "number",
+            "format": "double"
+          }
+        }
       },
       "CertificateSupersessionDto": {
         "required": [

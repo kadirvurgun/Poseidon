@@ -15,3 +15,18 @@ describe('DEV045 closed extraction contract sources, not executed', () => {
     expect(() => freezeExtraction(extractionVessel, extractionId, owner, { ...source, canConfirm: false }, [{ key: 'issuer', value: 'MASKED', confirmed: true }], true)).toThrow()
   })
 })
+describe('DEV045 source region and ambiguity contract', () => {
+  it('accepts bounded regions on a stated page and rejects ambiguous candidates that are not low-confidence review', () => {
+    const source = extractionFixture(); const at = (patch: Record<string, unknown>) => ({ ...source, candidates: source.candidates.map((f, i) => i === 1 ? { ...f, ...patch } : f) })
+    const ambiguous = at({ value: 'SYN-1', confidence: 0.95, page: 1, lowConfidence: true, ambiguous: true, region: { x: 0.1, y: 0.2, width: 0.3, height: 0.02 }, reasons: ['LOW_CONFIDENCE_REVIEW', 'AMBIGUOUS_CANDIDATE_REVIEW', 'PROVIDER_CANDIDATE_NOT_VERIFICATION'] })
+    expect(decodeExtraction(ambiguous, extractionVessel, extractionId, 17).candidates[1].ambiguous).toBe(true)
+    for (const changed of [
+      at({ value: 'SYN-1', confidence: 0.95, page: 1, lowConfidence: false, ambiguous: true, reasons: ['AMBIGUOUS_CANDIDATE_REVIEW', 'PROVIDER_CANDIDATE_NOT_VERIFICATION'] }),
+      at({ value: 'SYN-1', confidence: 0.4, page: 1, lowConfidence: true, ambiguous: true, reasons: ['PROVIDER_CANDIDATE_NOT_VERIFICATION'] }),
+      at({ region: { x: 0.9, y: 0.2, width: 0.3, height: 0.02 } }),
+      at({ region: { x: 0.1, y: 0.2, width: 0.3, height: 0.02 }, page: null }),
+      at({ region: { x: 0.1, y: 0.2, width: 0.3 } }),
+      at({ ambiguous: 'no' }),
+    ]) expect(() => decodeExtraction(changed, extractionVessel, extractionId, 17)).toThrow()
+  })
+})

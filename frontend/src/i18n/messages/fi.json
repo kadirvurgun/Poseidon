@@ -3688,6 +3688,9 @@
     "m_5a0e3c2f1b7d4e89": "Lähteiden ajantasaisuuskäytäntö ei ole saatavilla",
     "m_5a0e3c2f1b7d4e8a": "Lähteiden ajantasaisuus ei ole saatavilla",
     "m_5a0e3c2f1b7d4e8b": "Ohitusvaltuutuskäytäntö ei ole saatavilla",
-    "m_5a0e3c2f1b7d4e8c": "Tälle arvioinnille ei ole kiinnitettyä lähdeversiota."
+    "m_5a0e3c2f1b7d4e8c": "Tälle arvioinnille ei ole kiinnitettyä lähdeversiota.",
+    "m_6a4ee1c3d53a8c2f": "Lähdealue",
+    "m_c7911ebbb226ea1e": "Monitulkintainen · tarkista",
+    "m_dbaed08e117db708": "Automaattinen luku ei ole käytettävissä tälle asiakirjalle (valokuva, skannattu tai tukematon tiedosto). Syötä arvot käsin lähdeasiakirjasta."
   }
 }
