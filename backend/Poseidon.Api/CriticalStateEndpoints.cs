@@ -42,7 +42,7 @@ public static class CriticalStateEndpoints
         var access = ComplianceWorkspaceEndpoints.AccessHash(actor);
         var ct = http.RequestAborted;
         CriticalStateExplanation? onboarding = null, freshness = null, applicability = null;
-        bool profileDetail, fieldDetail;
+        bool profileDetail, fieldDetail, policyUnavailable;
         long? headRevision;
         Guid? evaluation = null;
         DateTimeOffset now;
@@ -62,6 +62,8 @@ public static class CriticalStateEndpoints
             headRevision = head?.Revision;
             var content = head == null ? null : RegulatoryDraftStorage.Deserialize(head.ContentJson);
             now = projection.CheckedAt;
+            // The coarse UNAVAILABLE derives from the policy service, never from withheld fields.
+            policyUnavailable = projection.Policy.Status == "UNAVAILABLE";
             if (only is null or CriticalStatePolicy.Onboarding)
                 onboarding = CriticalStatePolicy.ForOnboarding(id, ComplianceOnboardingPolicy.Assess(vessel.Id, vessel.Code, vessel.Name, content),
                     head?.Revision, head?.SavedAt, head?.Provenance ?? "Missing", projection.Summary, now, $"/app/fleet/{id:D}/onboarding");
@@ -95,7 +97,7 @@ public static class CriticalStateEndpoints
             var states = new List<CriticalStateExplanation>();
             if (onboarding != null)
                 states.Add(!profile ? CriticalStatePolicy.Redact(onboarding) : field ? onboarding : CriticalStatePolicy.WithoutProfileFreshness(onboarding));
-            if (freshness != null) states.Add(profile && field ? freshness : CriticalStatePolicy.Redact(freshness));
+            if (freshness != null) states.Add(profile && field ? freshness : CriticalStatePolicy.Redact(freshness, policyUnavailable));
             if (applicability != null && profile && field) states.Add(applicability);
             return new(id, now, "VISIBLE_ONLY", [.. states]);
         }

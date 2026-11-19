@@ -4,5 +4,8 @@
   "rangeStrategy": "pin",
   "automerge": false,
   "ignorePaths": ["sources/**", "docs/sources/**", ".tools/**", ".runtime/**", "graphify-out/**"],
-  "packageRules": [{ "matchManagers": ["nuget"], "groupName": "dotnet-compatible-updates" }]
+  "packageRules": [
+    { "matchManagers": ["nuget"], "groupName": "dotnet-compatible-updates" },
+    { "matchPackageNames": ["axe-core", "@axe-core/playwright"], "groupName": "axe-core", "minimumReleaseAge": "14 days" }
+  ]
 }

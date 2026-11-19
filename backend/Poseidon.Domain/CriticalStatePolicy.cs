@@ -36,7 +36,7 @@ public static class CriticalStatePolicy
     // DEV024-DEC-02: a state-only reader learns only that the state is not positive.
     // BLOCKED/STALE/DECLARED/UNKNOWN would reveal a reason class (missing data, source age,
     // undeclared source); all collapse into the non-positive REVIEW_REQUIRED, so UNKNOWN is
-    // never converted to a positive state. Only service unavailability stays distinct.
+    // never converted to a positive state. Only an owner service outage stays distinct.
     public static IReadOnlyList<string> RedactedStates { get; } = ["REVIEW_REQUIRED", "UNAVAILABLE"];
     public static IReadOnlyList<string> ResolutionTypes { get; } =
     [
@@ -45,16 +45,17 @@ public static class CriticalStatePolicy
         "CATALOG_QUALIFICATION", "HUMAN_REVIEW",
     ];
 
-    public static string Redact(string state) => state switch
-    {
-        "UNAVAILABLE" => "UNAVAILABLE",
-        _ when States.Contains(state) => "REVIEW_REQUIRED",
-        _ => throw new ArgumentOutOfRangeException(nameof(state), "Unsupported critical state.")
-    };
+    // QA note 1 (DEV-024 re-QA): the full state UNAVAILABLE is reached only after a field passed
+    // every source check, so echoing it would leak one bit of the withheld profile. The coarse
+    // UNAVAILABLE therefore comes only from the owner's service status (e.g. the freshness policy
+    // resolution), which is independent of withheld content; every full state otherwise collapses.
+    public static string Redact(string state, bool serviceUnavailable = false) => States.Contains(state)
+        ? serviceUnavailable ? "UNAVAILABLE" : "REVIEW_REQUIRED"
+        : throw new ArgumentOutOfRangeException(nameof(state), "Unsupported critical state.");
 
     // Server-side redaction: keeps only key, subject, coarse state, disclosure and time.
-    public static CriticalStateExplanation Redact(CriticalStateExplanation full) =>
-        new(full.Key, full.SubjectId, Redact(full.State), StateOnly, full.AsOf);
+    public static CriticalStateExplanation Redact(CriticalStateExplanation full, bool serviceUnavailable = false) =>
+        new(full.Key, full.SubjectId, Redact(full.State, serviceUnavailable), StateOnly, full.AsOf);
 
     // DEV024-DEC-01 per sub-object: the onboarding explanation embeds the DEV-020 freshness
     // summary, whose owner gate (any construction-file-bound revision withholds it) is
