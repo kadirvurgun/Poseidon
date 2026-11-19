@@ -48,6 +48,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddSingleton<ICrewWorkRestSource, UnavailableCrewWorkRestSource>();
         services.AddScoped<CrewEligibilityEvaluator>();
         services.AddScoped<ICrewEligibilityEvaluator>(sp => sp.GetRequiredService<CrewEligibilityEvaluator>());
+        // S7 integration: WP-B tug crew readiness (DEV-086) reads the WP-A engine; advisory only, UNKNOWN never PASS.
+        services.AddScoped<ITugCrewCompetenceSource, CrewEligibilityTugCompetenceSource>();
         services.AddSingleton<Microsoft.AspNetCore.Authorization.IAuthorizationMiddlewareResultHandler, DirectoryAuthorizationResultHandler>();
         services.AddHttpContextAccessor();
         services.AddScoped(sp =>

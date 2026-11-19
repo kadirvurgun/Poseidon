@@ -13589,6 +13589,842 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/hse/risk-assessments": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "RiskAssessmentList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskAssessmentPageDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "RiskAssessmentCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskAssessmentCreateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskAssessmentDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/hse/risk-assessments/capabilities": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "RiskAssessmentCapabilities",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskCapabilitiesDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/hse/risk-assessments/{id}": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "RiskAssessmentRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskAssessmentDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "RiskAssessmentUpdate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskAssessmentUpdateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskAssessmentDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/hse/risk-assessments/{id}/revisions/{revision}": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "RiskAssessmentRevisionRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "revision",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskAssessmentRevisionDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/hse/risk-assessments/{id}/submit": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "RiskAssessmentSubmit",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskAssessmentSubmitCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskAssessmentDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/hse/risk-assessments/{id}/review": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "RiskAssessmentReview",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskAssessmentReviewCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskAssessmentDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/hse/risk-assessments/{id}/amend": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "RiskAssessmentAmend",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskAssessmentAmendCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskAssessmentDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/hse/risk-assessments/{id}/acknowledgements": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "RiskAssessmentAcknowledge",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskAssessmentAcknowledgeCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskAssessmentDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/hse/risk-templates": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "RiskTemplateList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskTemplatePageDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "RiskTemplateCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskTemplateCreateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskTemplateDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/hse/risk-templates/applicable": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "RiskTemplateApplicable",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskApplicableTemplatesDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/hse/risk-templates/{id}": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "RiskTemplateRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskTemplateDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "RiskTemplateUpdate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskTemplateUpdateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskTemplateDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/hse/risk-templates/{id}/submit": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "RiskTemplateSubmit",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskTemplateSubmitCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskTemplateDetailDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/hse/risk-templates/{id}/review": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "RiskTemplateReview",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskTemplateReviewCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskTemplateDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/hse/risk-templates/{id}/revise": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "RiskTemplateRevise",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskTemplateReviseCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskTemplateDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/hse/risk-templates/{id}/suggestions": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "RiskTemplateSuggest",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskTemplateSuggestCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskTemplateDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/hse/risk-templates/{id}/suggestions/{suggestionId}/review": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "RiskTemplateSuggestionReview",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "suggestionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskTemplateSuggestionReviewCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskTemplateDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/hse/risk-methods": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "RiskMethodList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskMethodListDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "RiskMethodCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskMethodCreateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskMethodDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/hse/risk-methods/{id}/publish": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "RiskMethodPublish",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskMethodPublishCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskMethodDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
     "/api/v1/equipment-hierarchy/{vessel}/{asset}/observations": {
       "get": {
         "tags": [
@@ -17209,842 +18045,6 @@
           },
           "503": {
             "description": "Service Unavailable"
-          }
-        },
-        "x-poseidon-profile": "NATIVE-COMMAND-1"
-      }
-    },
-    "/api/v1/hse/risk-assessments": {
-      "get": {
-        "tags": [
-          "Poseidon.Api"
-        ],
-        "operationId": "RiskAssessmentList",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RiskAssessmentPageDto"
-                }
-              }
-            }
-          }
-        },
-        "x-poseidon-profile": "NATIVE-READ-1"
-      },
-      "post": {
-        "tags": [
-          "Poseidon.Api"
-        ],
-        "operationId": "RiskAssessmentCreate",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RiskAssessmentCreateCommand"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RiskAssessmentDto"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RiskFailure"
-                }
-              }
-            }
-          }
-        },
-        "x-poseidon-profile": "NATIVE-COMMAND-1"
-      }
-    },
-    "/api/v1/hse/risk-assessments/capabilities": {
-      "get": {
-        "tags": [
-          "Poseidon.Api"
-        ],
-        "operationId": "RiskAssessmentCapabilities",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RiskCapabilitiesDto"
-                }
-              }
-            }
-          }
-        },
-        "x-poseidon-profile": "NATIVE-READ-1"
-      }
-    },
-    "/api/v1/hse/risk-assessments/{id}": {
-      "get": {
-        "tags": [
-          "Poseidon.Api"
-        ],
-        "operationId": "RiskAssessmentRead",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RiskAssessmentDto"
-                }
-              }
-            }
-          }
-        },
-        "x-poseidon-profile": "NATIVE-READ-1"
-      },
-      "put": {
-        "tags": [
-          "Poseidon.Api"
-        ],
-        "operationId": "RiskAssessmentUpdate",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RiskAssessmentUpdateCommand"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RiskAssessmentDto"
-                }
-              }
-            }
-          }
-        },
-        "x-poseidon-profile": "NATIVE-COMMAND-1"
-      }
-    },
-    "/api/v1/hse/risk-assessments/{id}/revisions/{revision}": {
-      "get": {
-        "tags": [
-          "Poseidon.Api"
-        ],
-        "operationId": "RiskAssessmentRevisionRead",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "revision",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RiskAssessmentRevisionDto"
-                }
-              }
-            }
-          }
-        },
-        "x-poseidon-profile": "NATIVE-READ-1"
-      }
-    },
-    "/api/v1/hse/risk-assessments/{id}/submit": {
-      "post": {
-        "tags": [
-          "Poseidon.Api"
-        ],
-        "operationId": "RiskAssessmentSubmit",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RiskAssessmentSubmitCommand"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RiskAssessmentDto"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RiskFailure"
-                }
-              }
-            }
-          }
-        },
-        "x-poseidon-profile": "NATIVE-COMMAND-1"
-      }
-    },
-    "/api/v1/hse/risk-assessments/{id}/review": {
-      "post": {
-        "tags": [
-          "Poseidon.Api"
-        ],
-        "operationId": "RiskAssessmentReview",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RiskAssessmentReviewCommand"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RiskAssessmentDto"
-                }
-              }
-            }
-          }
-        },
-        "x-poseidon-profile": "NATIVE-COMMAND-1"
-      }
-    },
-    "/api/v1/hse/risk-assessments/{id}/amend": {
-      "post": {
-        "tags": [
-          "Poseidon.Api"
-        ],
-        "operationId": "RiskAssessmentAmend",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RiskAssessmentAmendCommand"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RiskAssessmentDto"
-                }
-              }
-            }
-          }
-        },
-        "x-poseidon-profile": "NATIVE-COMMAND-1"
-      }
-    },
-    "/api/v1/hse/risk-assessments/{id}/acknowledgements": {
-      "post": {
-        "tags": [
-          "Poseidon.Api"
-        ],
-        "operationId": "RiskAssessmentAcknowledge",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RiskAssessmentAcknowledgeCommand"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RiskAssessmentDto"
-                }
-              }
-            }
-          }
-        },
-        "x-poseidon-profile": "NATIVE-COMMAND-1"
-      }
-    },
-    "/api/v1/hse/risk-templates": {
-      "get": {
-        "tags": [
-          "Poseidon.Api"
-        ],
-        "operationId": "RiskTemplateList",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RiskTemplatePageDto"
-                }
-              }
-            }
-          }
-        },
-        "x-poseidon-profile": "NATIVE-READ-1"
-      },
-      "post": {
-        "tags": [
-          "Poseidon.Api"
-        ],
-        "operationId": "RiskTemplateCreate",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RiskTemplateCreateCommand"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RiskTemplateDetailDto"
-                }
-              }
-            }
-          }
-        },
-        "x-poseidon-profile": "NATIVE-COMMAND-1"
-      }
-    },
-    "/api/v1/hse/risk-templates/applicable": {
-      "get": {
-        "tags": [
-          "Poseidon.Api"
-        ],
-        "operationId": "RiskTemplateApplicable",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RiskApplicableTemplatesDto"
-                }
-              }
-            }
-          }
-        },
-        "x-poseidon-profile": "NATIVE-READ-1"
-      }
-    },
-    "/api/v1/hse/risk-templates/{id}": {
-      "get": {
-        "tags": [
-          "Poseidon.Api"
-        ],
-        "operationId": "RiskTemplateRead",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RiskTemplateDetailDto"
-                }
-              }
-            }
-          }
-        },
-        "x-poseidon-profile": "NATIVE-READ-1"
-      },
-      "put": {
-        "tags": [
-          "Poseidon.Api"
-        ],
-        "operationId": "RiskTemplateUpdate",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RiskTemplateUpdateCommand"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RiskTemplateDetailDto"
-                }
-              }
-            }
-          }
-        },
-        "x-poseidon-profile": "NATIVE-COMMAND-1"
-      }
-    },
-    "/api/v1/hse/risk-templates/{id}/submit": {
-      "post": {
-        "tags": [
-          "Poseidon.Api"
-        ],
-        "operationId": "RiskTemplateSubmit",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RiskTemplateSubmitCommand"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RiskTemplateDetailDto"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Unprocessable Entity",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RiskFailure"
-                }
-              }
-            }
-          }
-        },
-        "x-poseidon-profile": "NATIVE-COMMAND-1"
-      }
-    },
-    "/api/v1/hse/risk-templates/{id}/review": {
-      "post": {
-        "tags": [
-          "Poseidon.Api"
-        ],
-        "operationId": "RiskTemplateReview",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RiskTemplateReviewCommand"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RiskTemplateDetailDto"
-                }
-              }
-            }
-          }
-        },
-        "x-poseidon-profile": "NATIVE-COMMAND-1"
-      }
-    },
-    "/api/v1/hse/risk-templates/{id}/revise": {
-      "post": {
-        "tags": [
-          "Poseidon.Api"
-        ],
-        "operationId": "RiskTemplateRevise",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RiskTemplateReviseCommand"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RiskTemplateDetailDto"
-                }
-              }
-            }
-          }
-        },
-        "x-poseidon-profile": "NATIVE-COMMAND-1"
-      }
-    },
-    "/api/v1/hse/risk-templates/{id}/suggestions": {
-      "post": {
-        "tags": [
-          "Poseidon.Api"
-        ],
-        "operationId": "RiskTemplateSuggest",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RiskTemplateSuggestCommand"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RiskTemplateDetailDto"
-                }
-              }
-            }
-          }
-        },
-        "x-poseidon-profile": "NATIVE-COMMAND-1"
-      }
-    },
-    "/api/v1/hse/risk-templates/{id}/suggestions/{suggestionId}/review": {
-      "post": {
-        "tags": [
-          "Poseidon.Api"
-        ],
-        "operationId": "RiskTemplateSuggestionReview",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "suggestionId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RiskTemplateSuggestionReviewCommand"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RiskTemplateDetailDto"
-                }
-              }
-            }
-          }
-        },
-        "x-poseidon-profile": "NATIVE-COMMAND-1"
-      }
-    },
-    "/api/v1/hse/risk-methods": {
-      "get": {
-        "tags": [
-          "Poseidon.Api"
-        ],
-        "operationId": "RiskMethodList",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RiskMethodListDto"
-                }
-              }
-            }
-          }
-        },
-        "x-poseidon-profile": "NATIVE-READ-1"
-      },
-      "post": {
-        "tags": [
-          "Poseidon.Api"
-        ],
-        "operationId": "RiskMethodCreate",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RiskMethodCreateCommand"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RiskMethodDto"
-                }
-              }
-            }
-          }
-        },
-        "x-poseidon-profile": "NATIVE-COMMAND-1"
-      }
-    },
-    "/api/v1/hse/risk-methods/{id}/publish": {
-      "post": {
-        "tags": [
-          "Poseidon.Api"
-        ],
-        "operationId": "RiskMethodPublish",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RiskMethodPublishCommand"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RiskMethodDto"
-                }
-              }
-            }
           }
         },
         "x-poseidon-profile": "NATIVE-COMMAND-1"
@@ -35663,6 +35663,2042 @@
           }
         }
       },
+      "RiskAcknowledgementDto": {
+        "required": [
+          "actorId",
+          "revision",
+          "choice",
+          "reason",
+          "recordedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "choice": {
+            "type": "string"
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "RiskApplicableTemplateDto": {
+        "required": [
+          "templateId",
+          "templateCode",
+          "revision",
+          "title",
+          "workType",
+          "effectiveFrom",
+          "hash",
+          "hazardCount",
+          "qualification"
+        ],
+        "type": "object",
+        "properties": {
+          "templateId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "templateCode": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "workType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "effectiveFrom": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "hazardCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "qualification": {
+            "type": "string"
+          }
+        }
+      },
+      "RiskApplicableTemplatesDto": {
+        "required": [
+          "vesselId",
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskApplicableTemplateDto"
+            }
+          }
+        }
+      },
+      "RiskAssessmentAcknowledgeCommand": {
+        "required": [
+          "revision",
+          "contentHash",
+          "choice"
+        ],
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "contentHash": {
+            "type": "string"
+          },
+          "choice": {
+            "type": "string"
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskAssessmentAmendCommand": {
+        "required": [
+          "expectedVersion",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskAssessmentContent": {
+        "required": [
+          "title",
+          "operationContext",
+          "workType",
+          "workScope",
+          "methodId",
+          "hazards",
+          "stopWorkRequired",
+          "stopWorkConditions",
+          "participants"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "operationContext": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "workType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "workScope": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "methodId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "hazards": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskHazard"
+            }
+          },
+          "stopWorkRequired": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "stopWorkConditions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskStopCondition"
+            }
+          },
+          "participants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskParticipant"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskAssessmentCreateCommand": {
+        "required": [
+          "id",
+          "assessmentNo",
+          "content",
+          "links"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "assessmentNo": {
+            "type": "string"
+          },
+          "content": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RiskAssessmentContent"
+              }
+            ]
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskLinkRequest"
+            }
+          },
+          "templateId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "templateRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskAssessmentDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "assessmentNo",
+          "revision",
+          "version",
+          "state",
+          "content",
+          "links",
+          "template",
+          "method",
+          "results",
+          "blockers",
+          "hash",
+          "approvedRevision",
+          "acknowledgementState",
+          "acknowledgements",
+          "decisions",
+          "revisions",
+          "canEdit",
+          "canSubmit",
+          "canReview",
+          "canAmend",
+          "canAcknowledge",
+          "provenance",
+          "savedAt",
+          "sourceVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "assessmentNo": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "state": {
+            "type": "string"
+          },
+          "content": {
+            "$ref": "#/components/schemas/RiskAssessmentContent"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskLinkDto"
+            }
+          },
+          "template": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RiskTemplatePin"
+              }
+            ]
+          },
+          "method": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RiskMethodSummaryDto"
+              }
+            ]
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskHazardResultDto"
+            }
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "hash": {
+            "type": "string"
+          },
+          "approvedRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "acknowledgementState": {
+            "type": "string"
+          },
+          "acknowledgements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskAcknowledgementDto"
+            }
+          },
+          "decisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskDecisionDto"
+            }
+          },
+          "revisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskRevisionSummaryDto"
+            }
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canSubmit": {
+            "type": "boolean"
+          },
+          "canReview": {
+            "type": "boolean"
+          },
+          "canAmend": {
+            "type": "boolean"
+          },
+          "canAcknowledge": {
+            "type": "boolean"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sourceVersion": {
+            "type": "string"
+          }
+        }
+      },
+      "RiskAssessmentListItemDto": {
+        "required": [
+          "id",
+          "assessmentNo",
+          "title",
+          "state",
+          "revision",
+          "stopWorkRequired",
+          "approvedRevision",
+          "savedAt",
+          "provenance"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "assessmentNo": {
+            "type": "string"
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "state": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "stopWorkRequired": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "approvedRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "provenance": {
+            "type": "string"
+          }
+        }
+      },
+      "RiskAssessmentPageDto": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore",
+          "canWrite"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskAssessmentListItemDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "canWrite": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RiskAssessmentReviewCommand": {
+        "required": [
+          "expectedVersion",
+          "contentHash",
+          "decision",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "contentHash": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskAssessmentRevisionDto": {
+        "required": [
+          "assessmentId",
+          "vesselId",
+          "revision",
+          "state",
+          "reasonCode",
+          "content",
+          "links",
+          "template",
+          "methodId",
+          "hash",
+          "actorId",
+          "savedAt",
+          "provenance"
+        ],
+        "type": "object",
+        "properties": {
+          "assessmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "content": {
+            "$ref": "#/components/schemas/RiskAssessmentContent"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskLinkPin"
+            }
+          },
+          "template": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RiskTemplatePin"
+              }
+            ]
+          },
+          "methodId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "provenance": {
+            "type": "string"
+          }
+        }
+      },
+      "RiskAssessmentSubmitCommand": {
+        "required": [
+          "expectedVersion",
+          "contentHash"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "contentHash": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskAssessmentUpdateCommand": {
+        "required": [
+          "expectedVersion",
+          "content",
+          "links"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "content": {
+            "$ref": "#/components/schemas/RiskAssessmentContent"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskLinkRequest"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskCapabilitiesDto": {
+        "required": [
+          "vesselId",
+          "canRead",
+          "canWrite",
+          "canApprove",
+          "canAcknowledge",
+          "methodConfigured",
+          "publishedMethods",
+          "linkKinds",
+          "workTypes",
+          "sourceVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "canRead": {
+            "type": "boolean"
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "canApprove": {
+            "type": "boolean"
+          },
+          "canAcknowledge": {
+            "type": "boolean"
+          },
+          "methodConfigured": {
+            "type": "boolean"
+          },
+          "publishedMethods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskMethodSummaryDto"
+            }
+          },
+          "linkKinds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "workTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sourceVersion": {
+            "type": "string"
+          }
+        }
+      },
+      "RiskControl": {
+        "required": [
+          "id",
+          "description",
+          "kind",
+          "owner",
+          "required",
+          "barrierRefs"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "owner": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "barrierRefs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskDecisionDto": {
+        "required": [
+          "id",
+          "revision",
+          "resultRevision",
+          "decision",
+          "actorId",
+          "reason",
+          "decidedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "resultRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "decidedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "RiskFailure": {
+        "required": [
+          "code",
+          "missing",
+          "correlationId"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "missing": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "correlationId": {
+            "type": "string"
+          }
+        }
+      },
+      "RiskHazard": {
+        "required": [
+          "id",
+          "step",
+          "description",
+          "consequences",
+          "initial",
+          "controls",
+          "barrierRefs",
+          "residual"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "step": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "description": {
+            "type": "string"
+          },
+          "consequences": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "initial": {
+            "$ref": "#/components/schemas/RiskRating"
+          },
+          "controls": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskControl"
+            }
+          },
+          "barrierRefs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "residual": {
+            "$ref": "#/components/schemas/RiskRating"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskHazardResultDto": {
+        "required": [
+          "hazardId",
+          "initial",
+          "residual"
+        ],
+        "type": "object",
+        "properties": {
+          "hazardId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "initial": {
+            "$ref": "#/components/schemas/RiskResult"
+          },
+          "residual": {
+            "$ref": "#/components/schemas/RiskResult"
+          }
+        }
+      },
+      "RiskLinkDto": {
+        "required": [
+          "kind",
+          "id",
+          "revision",
+          "currency"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "currency": {
+            "type": "string"
+          }
+        }
+      },
+      "RiskLinkPin": {
+        "required": [
+          "kind",
+          "id",
+          "revision"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "RiskLinkRequest": {
+        "required": [
+          "kind",
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "RiskMatrixCell": {
+        "required": [
+          "likelihood",
+          "severity",
+          "result",
+          "rank"
+        ],
+        "type": "object",
+        "properties": {
+          "likelihood": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          },
+          "rank": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskMatrixCode": {
+        "required": [
+          "code",
+          "label"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskMethodContent": {
+        "required": [
+          "code",
+          "title",
+          "likelihoods",
+          "severities",
+          "cells",
+          "sourceRefs",
+          "changeReason"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "likelihoods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskMatrixCode"
+            }
+          },
+          "severities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskMatrixCode"
+            }
+          },
+          "cells": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskMatrixCell"
+            }
+          },
+          "sourceRefs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "changeReason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskMethodCreateCommand": {
+        "required": [
+          "id",
+          "content"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "content": {
+            "$ref": "#/components/schemas/RiskMethodContent"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskMethodDto": {
+        "required": [
+          "id",
+          "code",
+          "revision",
+          "version",
+          "status",
+          "content",
+          "hash",
+          "actorId",
+          "savedAt",
+          "publishedBy",
+          "publishedAt",
+          "canPublish"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "status": {
+            "type": "string"
+          },
+          "content": {
+            "$ref": "#/components/schemas/RiskMethodContent"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "publishedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "publishedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "canPublish": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RiskMethodListDto": {
+        "required": [
+          "items",
+          "canWrite",
+          "canPublish"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskMethodDto"
+            }
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "canPublish": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RiskMethodPublishCommand": {
+        "required": [
+          "expectedVersion",
+          "contentHash",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "contentHash": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskMethodSummaryDto": {
+        "required": [
+          "id",
+          "code",
+          "revision",
+          "status",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "status": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        }
+      },
+      "RiskParticipant": {
+        "required": [
+          "actorId",
+          "role"
+        ],
+        "type": "object",
+        "properties": {
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "role": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskRating": {
+        "required": [
+          "likelihood",
+          "severity",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "likelihood": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "severity": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskResult": {
+        "required": [
+          "state",
+          "result",
+          "rank"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "result": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "rank": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "RiskRevisionSummaryDto": {
+        "required": [
+          "revision",
+          "state",
+          "reasonCode",
+          "hash",
+          "actorId",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "RiskStopCondition": {
+        "required": [
+          "id",
+          "description"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskTemplateContent": {
+        "required": [
+          "title",
+          "workType",
+          "vesselKinds",
+          "requiredBarriers",
+          "hazards",
+          "sourceRefs",
+          "approvalOwner",
+          "changeReason"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "workType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "vesselKinds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "requiredBarriers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "hazards": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskTemplateHazard"
+            }
+          },
+          "sourceRefs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "approvalOwner": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "changeReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskTemplateControl": {
+        "required": [
+          "id",
+          "description",
+          "kind",
+          "ownerRole",
+          "required",
+          "barrierRefs"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "ownerRole": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "barrierRefs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskTemplateCreateCommand": {
+        "required": [
+          "id",
+          "templateCode",
+          "content"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "templateCode": {
+            "type": "string"
+          },
+          "content": {
+            "$ref": "#/components/schemas/RiskTemplateContent"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskTemplateDecisionDto": {
+        "required": [
+          "id",
+          "revision",
+          "decision",
+          "actorId",
+          "reason",
+          "effectiveFrom",
+          "decidedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "effectiveFrom": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "decidedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "RiskTemplateDetailDto": {
+        "required": [
+          "id",
+          "templateCode",
+          "latestRevision",
+          "version",
+          "revisions",
+          "decisions",
+          "suggestions",
+          "suggestionCount",
+          "canRevise",
+          "canSuggest",
+          "sourceVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "templateCode": {
+            "type": "string"
+          },
+          "latestRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "revisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskTemplateRevisionDto"
+            }
+          },
+          "decisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskTemplateDecisionDto"
+            }
+          },
+          "suggestions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskTemplateSuggestionDto"
+            }
+          },
+          "suggestionCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "canRevise": {
+            "type": "boolean"
+          },
+          "canSuggest": {
+            "type": "boolean"
+          },
+          "sourceVersion": {
+            "type": "string"
+          }
+        }
+      },
+      "RiskTemplateHazard": {
+        "required": [
+          "id",
+          "step",
+          "description",
+          "consequences",
+          "defaultControls",
+          "barrierRefs"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "step": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "description": {
+            "type": "string"
+          },
+          "consequences": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "defaultControls": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskTemplateControl"
+            }
+          },
+          "barrierRefs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskTemplateListItemDto": {
+        "required": [
+          "id",
+          "templateCode",
+          "title",
+          "workType",
+          "latestRevision",
+          "latestStatus",
+          "currentRevision",
+          "currentEffectiveFrom",
+          "suggestionCount"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "templateCode": {
+            "type": "string"
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "workType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "latestRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "latestStatus": {
+            "type": "string"
+          },
+          "currentRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "currentEffectiveFrom": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "suggestionCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "RiskTemplatePageDto": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore",
+          "canWrite",
+          "canPublish",
+          "workTypes"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskTemplateListItemDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "canPublish": {
+            "type": "boolean"
+          },
+          "workTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "RiskTemplatePin": {
+        "required": [
+          "templateId",
+          "revision",
+          "hash"
+        ],
+        "type": "object",
+        "properties": {
+          "templateId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "hash": {
+            "type": "string"
+          }
+        }
+      },
+      "RiskTemplateReviewCommand": {
+        "required": [
+          "revision",
+          "expectedVersion",
+          "contentHash",
+          "decision",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "contentHash": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "effectiveFrom": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskTemplateReviseCommand": {
+        "required": [
+          "baseRevision",
+          "expectedVersion",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "baseRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskTemplateRevisionDto": {
+        "required": [
+          "templateId",
+          "templateCode",
+          "revision",
+          "version",
+          "status",
+          "effectiveState",
+          "effectiveFrom",
+          "content",
+          "hash",
+          "blockers",
+          "publishedBy",
+          "publishedAt",
+          "supersededByRevision",
+          "canEdit",
+          "canSubmit",
+          "canPublish",
+          "actorId",
+          "savedAt",
+          "provenance"
+        ],
+        "type": "object",
+        "properties": {
+          "templateId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "templateCode": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "status": {
+            "type": "string"
+          },
+          "effectiveState": {
+            "type": "string"
+          },
+          "effectiveFrom": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "content": {
+            "$ref": "#/components/schemas/RiskTemplateContent"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "publishedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "publishedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "supersededByRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canSubmit": {
+            "type": "boolean"
+          },
+          "canPublish": {
+            "type": "boolean"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "provenance": {
+            "type": "string"
+          }
+        }
+      },
+      "RiskTemplateSubmitCommand": {
+        "required": [
+          "revision",
+          "expectedVersion",
+          "contentHash"
+        ],
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "contentHash": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskTemplateSuggestCommand": {
+        "required": [
+          "id",
+          "revision",
+          "text"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskTemplateSuggestionDto": {
+        "required": [
+          "id",
+          "revision",
+          "text",
+          "status",
+          "actorId",
+          "createdAt",
+          "reviewedBy",
+          "reviewReason",
+          "reviewedAt",
+          "version",
+          "canReview"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "text": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reviewedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "reviewReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reviewedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "canReview": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RiskTemplateSuggestionReviewCommand": {
+        "required": [
+          "expectedVersion",
+          "decision",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RiskTemplateUpdateCommand": {
+        "required": [
+          "revision",
+          "expectedVersion",
+          "content"
+        ],
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "content": {
+            "$ref": "#/components/schemas/RiskTemplateContent"
+          }
+        },
+        "additionalProperties": false
+      },
       "RuleAuthorCommand": {
         "required": [
           "expectedVersion",
@@ -41051,2042 +43087,6 @@
             "type": "string"
           }
         }
-      },
-      "RiskAcknowledgementDto": {
-        "required": [
-          "actorId",
-          "revision",
-          "choice",
-          "reason",
-          "recordedAt"
-        ],
-        "type": "object",
-        "properties": {
-          "actorId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "revision": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "choice": {
-            "type": "string"
-          },
-          "reason": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "recordedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "RiskApplicableTemplateDto": {
-        "required": [
-          "templateId",
-          "templateCode",
-          "revision",
-          "title",
-          "workType",
-          "effectiveFrom",
-          "hash",
-          "hazardCount",
-          "qualification"
-        ],
-        "type": "object",
-        "properties": {
-          "templateId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "templateCode": {
-            "type": "string"
-          },
-          "revision": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "title": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "workType": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "effectiveFrom": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "hash": {
-            "type": "string"
-          },
-          "hazardCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "qualification": {
-            "type": "string"
-          }
-        }
-      },
-      "RiskApplicableTemplatesDto": {
-        "required": [
-          "vesselId",
-          "items"
-        ],
-        "type": "object",
-        "properties": {
-          "vesselId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RiskApplicableTemplateDto"
-            }
-          }
-        }
-      },
-      "RiskAssessmentAcknowledgeCommand": {
-        "required": [
-          "revision",
-          "contentHash",
-          "choice"
-        ],
-        "type": "object",
-        "properties": {
-          "revision": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "contentHash": {
-            "type": "string"
-          },
-          "choice": {
-            "type": "string"
-          },
-          "reason": {
-            "type": [
-              "null",
-              "string"
-            ]
-          }
-        },
-        "additionalProperties": false
-      },
-      "RiskAssessmentAmendCommand": {
-        "required": [
-          "expectedVersion",
-          "reason"
-        ],
-        "type": "object",
-        "properties": {
-          "expectedVersion": {
-            "type": "integer",
-            "format": "uint32"
-          },
-          "reason": {
-            "type": "string"
-          }
-        },
-        "additionalProperties": false
-      },
-      "RiskAssessmentContent": {
-        "required": [
-          "title",
-          "operationContext",
-          "workType",
-          "workScope",
-          "methodId",
-          "hazards",
-          "stopWorkRequired",
-          "stopWorkConditions",
-          "participants"
-        ],
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "operationContext": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "workType": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "workScope": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "methodId": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "uuid"
-          },
-          "hazards": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RiskHazard"
-            }
-          },
-          "stopWorkRequired": {
-            "type": [
-              "null",
-              "boolean"
-            ]
-          },
-          "stopWorkConditions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RiskStopCondition"
-            }
-          },
-          "participants": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RiskParticipant"
-            }
-          }
-        },
-        "additionalProperties": false
-      },
-      "RiskAssessmentCreateCommand": {
-        "required": [
-          "id",
-          "assessmentNo",
-          "content",
-          "links"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "assessmentNo": {
-            "type": "string"
-          },
-          "content": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/RiskAssessmentContent"
-              }
-            ]
-          },
-          "links": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RiskLinkRequest"
-            }
-          },
-          "templateId": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "uuid"
-          },
-          "templateRevision": {
-            "type": [
-              "null",
-              "integer"
-            ],
-            "format": "int64"
-          }
-        },
-        "additionalProperties": false
-      },
-      "RiskAssessmentDto": {
-        "required": [
-          "id",
-          "vesselId",
-          "assessmentNo",
-          "revision",
-          "version",
-          "state",
-          "content",
-          "links",
-          "template",
-          "method",
-          "results",
-          "blockers",
-          "hash",
-          "approvedRevision",
-          "acknowledgementState",
-          "acknowledgements",
-          "decisions",
-          "revisions",
-          "canEdit",
-          "canSubmit",
-          "canReview",
-          "canAmend",
-          "canAcknowledge",
-          "provenance",
-          "savedAt",
-          "sourceVersion"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "vesselId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "assessmentNo": {
-            "type": "string"
-          },
-          "revision": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "version": {
-            "type": "integer",
-            "format": "uint32"
-          },
-          "state": {
-            "type": "string"
-          },
-          "content": {
-            "$ref": "#/components/schemas/RiskAssessmentContent"
-          },
-          "links": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RiskLinkDto"
-            }
-          },
-          "template": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/RiskTemplatePin"
-              }
-            ]
-          },
-          "method": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/RiskMethodSummaryDto"
-              }
-            ]
-          },
-          "results": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RiskHazardResultDto"
-            }
-          },
-          "blockers": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "hash": {
-            "type": "string"
-          },
-          "approvedRevision": {
-            "type": [
-              "null",
-              "integer"
-            ],
-            "format": "int64"
-          },
-          "acknowledgementState": {
-            "type": "string"
-          },
-          "acknowledgements": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RiskAcknowledgementDto"
-            }
-          },
-          "decisions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RiskDecisionDto"
-            }
-          },
-          "revisions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RiskRevisionSummaryDto"
-            }
-          },
-          "canEdit": {
-            "type": "boolean"
-          },
-          "canSubmit": {
-            "type": "boolean"
-          },
-          "canReview": {
-            "type": "boolean"
-          },
-          "canAmend": {
-            "type": "boolean"
-          },
-          "canAcknowledge": {
-            "type": "boolean"
-          },
-          "provenance": {
-            "type": "string"
-          },
-          "savedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "sourceVersion": {
-            "type": "string"
-          }
-        }
-      },
-      "RiskAssessmentListItemDto": {
-        "required": [
-          "id",
-          "assessmentNo",
-          "title",
-          "state",
-          "revision",
-          "stopWorkRequired",
-          "approvedRevision",
-          "savedAt",
-          "provenance"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "assessmentNo": {
-            "type": "string"
-          },
-          "title": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "state": {
-            "type": "string"
-          },
-          "revision": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "stopWorkRequired": {
-            "type": [
-              "null",
-              "boolean"
-            ]
-          },
-          "approvedRevision": {
-            "type": [
-              "null",
-              "integer"
-            ],
-            "format": "int64"
-          },
-          "savedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "provenance": {
-            "type": "string"
-          }
-        }
-      },
-      "RiskAssessmentPageDto": {
-        "required": [
-          "items",
-          "offset",
-          "limit",
-          "hasMore",
-          "canWrite"
-        ],
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RiskAssessmentListItemDto"
-            }
-          },
-          "offset": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "limit": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "hasMore": {
-            "type": "boolean"
-          },
-          "canWrite": {
-            "type": "boolean"
-          }
-        }
-      },
-      "RiskAssessmentReviewCommand": {
-        "required": [
-          "expectedVersion",
-          "contentHash",
-          "decision",
-          "reason"
-        ],
-        "type": "object",
-        "properties": {
-          "expectedVersion": {
-            "type": "integer",
-            "format": "uint32"
-          },
-          "contentHash": {
-            "type": "string"
-          },
-          "decision": {
-            "type": "string"
-          },
-          "reason": {
-            "type": "string"
-          }
-        },
-        "additionalProperties": false
-      },
-      "RiskAssessmentRevisionDto": {
-        "required": [
-          "assessmentId",
-          "vesselId",
-          "revision",
-          "state",
-          "reasonCode",
-          "content",
-          "links",
-          "template",
-          "methodId",
-          "hash",
-          "actorId",
-          "savedAt",
-          "provenance"
-        ],
-        "type": "object",
-        "properties": {
-          "assessmentId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "vesselId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "revision": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "state": {
-            "type": "string"
-          },
-          "reasonCode": {
-            "type": "string"
-          },
-          "content": {
-            "$ref": "#/components/schemas/RiskAssessmentContent"
-          },
-          "links": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RiskLinkPin"
-            }
-          },
-          "template": {
-            "oneOf": [
-              {
-                "type": "null"
-              },
-              {
-                "$ref": "#/components/schemas/RiskTemplatePin"
-              }
-            ]
-          },
-          "methodId": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "uuid"
-          },
-          "hash": {
-            "type": "string"
-          },
-          "actorId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "savedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "provenance": {
-            "type": "string"
-          }
-        }
-      },
-      "RiskAssessmentSubmitCommand": {
-        "required": [
-          "expectedVersion",
-          "contentHash"
-        ],
-        "type": "object",
-        "properties": {
-          "expectedVersion": {
-            "type": "integer",
-            "format": "uint32"
-          },
-          "contentHash": {
-            "type": "string"
-          }
-        },
-        "additionalProperties": false
-      },
-      "RiskAssessmentUpdateCommand": {
-        "required": [
-          "expectedVersion",
-          "content",
-          "links"
-        ],
-        "type": "object",
-        "properties": {
-          "expectedVersion": {
-            "type": "integer",
-            "format": "uint32"
-          },
-          "content": {
-            "$ref": "#/components/schemas/RiskAssessmentContent"
-          },
-          "links": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RiskLinkRequest"
-            }
-          }
-        },
-        "additionalProperties": false
-      },
-      "RiskCapabilitiesDto": {
-        "required": [
-          "vesselId",
-          "canRead",
-          "canWrite",
-          "canApprove",
-          "canAcknowledge",
-          "methodConfigured",
-          "publishedMethods",
-          "linkKinds",
-          "workTypes",
-          "sourceVersion"
-        ],
-        "type": "object",
-        "properties": {
-          "vesselId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "canRead": {
-            "type": "boolean"
-          },
-          "canWrite": {
-            "type": "boolean"
-          },
-          "canApprove": {
-            "type": "boolean"
-          },
-          "canAcknowledge": {
-            "type": "boolean"
-          },
-          "methodConfigured": {
-            "type": "boolean"
-          },
-          "publishedMethods": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RiskMethodSummaryDto"
-            }
-          },
-          "linkKinds": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "workTypes": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "sourceVersion": {
-            "type": "string"
-          }
-        }
-      },
-      "RiskControl": {
-        "required": [
-          "id",
-          "description",
-          "kind",
-          "owner",
-          "required",
-          "barrierRefs"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "description": {
-            "type": "string"
-          },
-          "kind": {
-            "type": "string"
-          },
-          "owner": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "required": {
-            "type": "boolean"
-          },
-          "barrierRefs": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "additionalProperties": false
-      },
-      "RiskDecisionDto": {
-        "required": [
-          "id",
-          "revision",
-          "resultRevision",
-          "decision",
-          "actorId",
-          "reason",
-          "decidedAt"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "revision": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "resultRevision": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "decision": {
-            "type": "string"
-          },
-          "actorId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "reason": {
-            "type": "string"
-          },
-          "decidedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "RiskFailure": {
-        "required": [
-          "code",
-          "missing",
-          "correlationId"
-        ],
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "string"
-          },
-          "missing": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "correlationId": {
-            "type": "string"
-          }
-        }
-      },
-      "RiskHazard": {
-        "required": [
-          "id",
-          "step",
-          "description",
-          "consequences",
-          "initial",
-          "controls",
-          "barrierRefs",
-          "residual"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "step": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "description": {
-            "type": "string"
-          },
-          "consequences": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "initial": {
-            "$ref": "#/components/schemas/RiskRating"
-          },
-          "controls": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RiskControl"
-            }
-          },
-          "barrierRefs": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "residual": {
-            "$ref": "#/components/schemas/RiskRating"
-          }
-        },
-        "additionalProperties": false
-      },
-      "RiskHazardResultDto": {
-        "required": [
-          "hazardId",
-          "initial",
-          "residual"
-        ],
-        "type": "object",
-        "properties": {
-          "hazardId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "initial": {
-            "$ref": "#/components/schemas/RiskResult"
-          },
-          "residual": {
-            "$ref": "#/components/schemas/RiskResult"
-          }
-        }
-      },
-      "RiskLinkDto": {
-        "required": [
-          "kind",
-          "id",
-          "revision",
-          "currency"
-        ],
-        "type": "object",
-        "properties": {
-          "kind": {
-            "type": "string"
-          },
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "revision": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "currency": {
-            "type": "string"
-          }
-        }
-      },
-      "RiskLinkPin": {
-        "required": [
-          "kind",
-          "id",
-          "revision"
-        ],
-        "type": "object",
-        "properties": {
-          "kind": {
-            "type": "string"
-          },
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "revision": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
-      },
-      "RiskLinkRequest": {
-        "required": [
-          "kind",
-          "id"
-        ],
-        "type": "object",
-        "properties": {
-          "kind": {
-            "type": "string"
-          },
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          }
-        }
-      },
-      "RiskMatrixCell": {
-        "required": [
-          "likelihood",
-          "severity",
-          "result",
-          "rank"
-        ],
-        "type": "object",
-        "properties": {
-          "likelihood": {
-            "type": "string"
-          },
-          "severity": {
-            "type": "string"
-          },
-          "result": {
-            "type": "string"
-          },
-          "rank": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "RiskMatrixCode": {
-        "required": [
-          "code",
-          "label"
-        ],
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "string"
-          },
-          "label": {
-            "type": "string"
-          }
-        },
-        "additionalProperties": false
-      },
-      "RiskMethodContent": {
-        "required": [
-          "code",
-          "title",
-          "likelihoods",
-          "severities",
-          "cells",
-          "sourceRefs",
-          "changeReason"
-        ],
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "string"
-          },
-          "title": {
-            "type": "string"
-          },
-          "likelihoods": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RiskMatrixCode"
-            }
-          },
-          "severities": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RiskMatrixCode"
-            }
-          },
-          "cells": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RiskMatrixCell"
-            }
-          },
-          "sourceRefs": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "changeReason": {
-            "type": "string"
-          }
-        },
-        "additionalProperties": false
-      },
-      "RiskMethodCreateCommand": {
-        "required": [
-          "id",
-          "content"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "content": {
-            "$ref": "#/components/schemas/RiskMethodContent"
-          }
-        },
-        "additionalProperties": false
-      },
-      "RiskMethodDto": {
-        "required": [
-          "id",
-          "code",
-          "revision",
-          "version",
-          "status",
-          "content",
-          "hash",
-          "actorId",
-          "savedAt",
-          "publishedBy",
-          "publishedAt",
-          "canPublish"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "code": {
-            "type": "string"
-          },
-          "revision": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "version": {
-            "type": "integer",
-            "format": "uint32"
-          },
-          "status": {
-            "type": "string"
-          },
-          "content": {
-            "$ref": "#/components/schemas/RiskMethodContent"
-          },
-          "hash": {
-            "type": "string"
-          },
-          "actorId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "savedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "publishedBy": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "uuid"
-          },
-          "publishedAt": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "date-time"
-          },
-          "canPublish": {
-            "type": "boolean"
-          }
-        }
-      },
-      "RiskMethodListDto": {
-        "required": [
-          "items",
-          "canWrite",
-          "canPublish"
-        ],
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RiskMethodDto"
-            }
-          },
-          "canWrite": {
-            "type": "boolean"
-          },
-          "canPublish": {
-            "type": "boolean"
-          }
-        }
-      },
-      "RiskMethodPublishCommand": {
-        "required": [
-          "expectedVersion",
-          "contentHash",
-          "reason"
-        ],
-        "type": "object",
-        "properties": {
-          "expectedVersion": {
-            "type": "integer",
-            "format": "uint32"
-          },
-          "contentHash": {
-            "type": "string"
-          },
-          "reason": {
-            "type": "string"
-          }
-        },
-        "additionalProperties": false
-      },
-      "RiskMethodSummaryDto": {
-        "required": [
-          "id",
-          "code",
-          "revision",
-          "status",
-          "title"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "code": {
-            "type": "string"
-          },
-          "revision": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "status": {
-            "type": "string"
-          },
-          "title": {
-            "type": "string"
-          }
-        }
-      },
-      "RiskParticipant": {
-        "required": [
-          "actorId",
-          "role"
-        ],
-        "type": "object",
-        "properties": {
-          "actorId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "role": {
-            "type": "string"
-          }
-        },
-        "additionalProperties": false
-      },
-      "RiskRating": {
-        "required": [
-          "likelihood",
-          "severity",
-          "reason"
-        ],
-        "type": "object",
-        "properties": {
-          "likelihood": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "severity": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "reason": {
-            "type": [
-              "null",
-              "string"
-            ]
-          }
-        },
-        "additionalProperties": false
-      },
-      "RiskResult": {
-        "required": [
-          "state",
-          "result",
-          "rank"
-        ],
-        "type": "object",
-        "properties": {
-          "state": {
-            "type": "string"
-          },
-          "result": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "rank": {
-            "type": [
-              "null",
-              "integer"
-            ],
-            "format": "int32"
-          }
-        }
-      },
-      "RiskRevisionSummaryDto": {
-        "required": [
-          "revision",
-          "state",
-          "reasonCode",
-          "hash",
-          "actorId",
-          "savedAt"
-        ],
-        "type": "object",
-        "properties": {
-          "revision": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "state": {
-            "type": "string"
-          },
-          "reasonCode": {
-            "type": "string"
-          },
-          "hash": {
-            "type": "string"
-          },
-          "actorId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "savedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "RiskStopCondition": {
-        "required": [
-          "id",
-          "description"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "description": {
-            "type": "string"
-          }
-        },
-        "additionalProperties": false
-      },
-      "RiskTemplateContent": {
-        "required": [
-          "title",
-          "workType",
-          "vesselKinds",
-          "requiredBarriers",
-          "hazards",
-          "sourceRefs",
-          "approvalOwner",
-          "changeReason"
-        ],
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "workType": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "vesselKinds": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "requiredBarriers": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "hazards": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RiskTemplateHazard"
-            }
-          },
-          "sourceRefs": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "approvalOwner": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "changeReason": {
-            "type": [
-              "null",
-              "string"
-            ]
-          }
-        },
-        "additionalProperties": false
-      },
-      "RiskTemplateControl": {
-        "required": [
-          "id",
-          "description",
-          "kind",
-          "ownerRole",
-          "required",
-          "barrierRefs"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "description": {
-            "type": "string"
-          },
-          "kind": {
-            "type": "string"
-          },
-          "ownerRole": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "required": {
-            "type": "boolean"
-          },
-          "barrierRefs": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "additionalProperties": false
-      },
-      "RiskTemplateCreateCommand": {
-        "required": [
-          "id",
-          "templateCode",
-          "content"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "templateCode": {
-            "type": "string"
-          },
-          "content": {
-            "$ref": "#/components/schemas/RiskTemplateContent"
-          }
-        },
-        "additionalProperties": false
-      },
-      "RiskTemplateDecisionDto": {
-        "required": [
-          "id",
-          "revision",
-          "decision",
-          "actorId",
-          "reason",
-          "effectiveFrom",
-          "decidedAt"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "revision": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "decision": {
-            "type": "string"
-          },
-          "actorId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "reason": {
-            "type": "string"
-          },
-          "effectiveFrom": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "date-time"
-          },
-          "decidedAt": {
-            "type": "string",
-            "format": "date-time"
-          }
-        }
-      },
-      "RiskTemplateDetailDto": {
-        "required": [
-          "id",
-          "templateCode",
-          "latestRevision",
-          "version",
-          "revisions",
-          "decisions",
-          "suggestions",
-          "suggestionCount",
-          "canRevise",
-          "canSuggest",
-          "sourceVersion"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "templateCode": {
-            "type": "string"
-          },
-          "latestRevision": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "version": {
-            "type": "integer",
-            "format": "uint32"
-          },
-          "revisions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RiskTemplateRevisionDto"
-            }
-          },
-          "decisions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RiskTemplateDecisionDto"
-            }
-          },
-          "suggestions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RiskTemplateSuggestionDto"
-            }
-          },
-          "suggestionCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "canRevise": {
-            "type": "boolean"
-          },
-          "canSuggest": {
-            "type": "boolean"
-          },
-          "sourceVersion": {
-            "type": "string"
-          }
-        }
-      },
-      "RiskTemplateHazard": {
-        "required": [
-          "id",
-          "step",
-          "description",
-          "consequences",
-          "defaultControls",
-          "barrierRefs"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "step": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "description": {
-            "type": "string"
-          },
-          "consequences": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "defaultControls": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RiskTemplateControl"
-            }
-          },
-          "barrierRefs": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        "additionalProperties": false
-      },
-      "RiskTemplateListItemDto": {
-        "required": [
-          "id",
-          "templateCode",
-          "title",
-          "workType",
-          "latestRevision",
-          "latestStatus",
-          "currentRevision",
-          "currentEffectiveFrom",
-          "suggestionCount"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "templateCode": {
-            "type": "string"
-          },
-          "title": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "workType": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "latestRevision": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "latestStatus": {
-            "type": "string"
-          },
-          "currentRevision": {
-            "type": [
-              "null",
-              "integer"
-            ],
-            "format": "int64"
-          },
-          "currentEffectiveFrom": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "date-time"
-          },
-          "suggestionCount": {
-            "type": "integer",
-            "format": "int32"
-          }
-        }
-      },
-      "RiskTemplatePageDto": {
-        "required": [
-          "items",
-          "offset",
-          "limit",
-          "hasMore",
-          "canWrite",
-          "canPublish",
-          "workTypes"
-        ],
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/RiskTemplateListItemDto"
-            }
-          },
-          "offset": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "limit": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "hasMore": {
-            "type": "boolean"
-          },
-          "canWrite": {
-            "type": "boolean"
-          },
-          "canPublish": {
-            "type": "boolean"
-          },
-          "workTypes": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        }
-      },
-      "RiskTemplatePin": {
-        "required": [
-          "templateId",
-          "revision",
-          "hash"
-        ],
-        "type": "object",
-        "properties": {
-          "templateId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "revision": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "hash": {
-            "type": "string"
-          }
-        }
-      },
-      "RiskTemplateReviewCommand": {
-        "required": [
-          "revision",
-          "expectedVersion",
-          "contentHash",
-          "decision",
-          "reason"
-        ],
-        "type": "object",
-        "properties": {
-          "revision": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "expectedVersion": {
-            "type": "integer",
-            "format": "uint32"
-          },
-          "contentHash": {
-            "type": "string"
-          },
-          "decision": {
-            "type": "string"
-          },
-          "reason": {
-            "type": "string"
-          },
-          "effectiveFrom": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "date-time"
-          }
-        },
-        "additionalProperties": false
-      },
-      "RiskTemplateReviseCommand": {
-        "required": [
-          "baseRevision",
-          "expectedVersion",
-          "reason"
-        ],
-        "type": "object",
-        "properties": {
-          "baseRevision": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "expectedVersion": {
-            "type": "integer",
-            "format": "uint32"
-          },
-          "reason": {
-            "type": "string"
-          }
-        },
-        "additionalProperties": false
-      },
-      "RiskTemplateRevisionDto": {
-        "required": [
-          "templateId",
-          "templateCode",
-          "revision",
-          "version",
-          "status",
-          "effectiveState",
-          "effectiveFrom",
-          "content",
-          "hash",
-          "blockers",
-          "publishedBy",
-          "publishedAt",
-          "supersededByRevision",
-          "canEdit",
-          "canSubmit",
-          "canPublish",
-          "actorId",
-          "savedAt",
-          "provenance"
-        ],
-        "type": "object",
-        "properties": {
-          "templateId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "templateCode": {
-            "type": "string"
-          },
-          "revision": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "version": {
-            "type": "integer",
-            "format": "uint32"
-          },
-          "status": {
-            "type": "string"
-          },
-          "effectiveState": {
-            "type": "string"
-          },
-          "effectiveFrom": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "date-time"
-          },
-          "content": {
-            "$ref": "#/components/schemas/RiskTemplateContent"
-          },
-          "hash": {
-            "type": "string"
-          },
-          "blockers": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "publishedBy": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "uuid"
-          },
-          "publishedAt": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "date-time"
-          },
-          "supersededByRevision": {
-            "type": [
-              "null",
-              "integer"
-            ],
-            "format": "int64"
-          },
-          "canEdit": {
-            "type": "boolean"
-          },
-          "canSubmit": {
-            "type": "boolean"
-          },
-          "canPublish": {
-            "type": "boolean"
-          },
-          "actorId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "savedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "provenance": {
-            "type": "string"
-          }
-        }
-      },
-      "RiskTemplateSubmitCommand": {
-        "required": [
-          "revision",
-          "expectedVersion",
-          "contentHash"
-        ],
-        "type": "object",
-        "properties": {
-          "revision": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "expectedVersion": {
-            "type": "integer",
-            "format": "uint32"
-          },
-          "contentHash": {
-            "type": "string"
-          }
-        },
-        "additionalProperties": false
-      },
-      "RiskTemplateSuggestCommand": {
-        "required": [
-          "id",
-          "revision",
-          "text"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "revision": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "text": {
-            "type": "string"
-          }
-        },
-        "additionalProperties": false
-      },
-      "RiskTemplateSuggestionDto": {
-        "required": [
-          "id",
-          "revision",
-          "text",
-          "status",
-          "actorId",
-          "createdAt",
-          "reviewedBy",
-          "reviewReason",
-          "reviewedAt",
-          "version",
-          "canReview"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "revision": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "text": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
-          },
-          "actorId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "reviewedBy": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "uuid"
-          },
-          "reviewReason": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "reviewedAt": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "date-time"
-          },
-          "version": {
-            "type": "integer",
-            "format": "uint32"
-          },
-          "canReview": {
-            "type": "boolean"
-          }
-        }
-      },
-      "RiskTemplateSuggestionReviewCommand": {
-        "required": [
-          "expectedVersion",
-          "decision",
-          "reason"
-        ],
-        "type": "object",
-        "properties": {
-          "expectedVersion": {
-            "type": "integer",
-            "format": "uint32"
-          },
-          "decision": {
-            "type": "string"
-          },
-          "reason": {
-            "type": "string"
-          }
-        },
-        "additionalProperties": false
-      },
-      "RiskTemplateUpdateCommand": {
-        "required": [
-          "revision",
-          "expectedVersion",
-          "content"
-        ],
-        "type": "object",
-        "properties": {
-          "revision": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "expectedVersion": {
-            "type": "integer",
-            "format": "uint32"
-          },
-          "content": {
-            "$ref": "#/components/schemas/RiskTemplateContent"
-          }
-        },
-        "additionalProperties": false
       }
     }
   },

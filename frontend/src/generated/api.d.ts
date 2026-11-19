@@ -5778,6 +5778,294 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/hse/risk-assessments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["RiskAssessmentList"];
+        put?: never;
+        post: operations["RiskAssessmentCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-assessments/capabilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["RiskAssessmentCapabilities"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-assessments/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["RiskAssessmentRead"];
+        put: operations["RiskAssessmentUpdate"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-assessments/{id}/revisions/{revision}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["RiskAssessmentRevisionRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-assessments/{id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RiskAssessmentSubmit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-assessments/{id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RiskAssessmentReview"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-assessments/{id}/amend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RiskAssessmentAmend"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-assessments/{id}/acknowledgements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RiskAssessmentAcknowledge"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["RiskTemplateList"];
+        put?: never;
+        post: operations["RiskTemplateCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-templates/applicable": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["RiskTemplateApplicable"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-templates/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["RiskTemplateRead"];
+        put: operations["RiskTemplateUpdate"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-templates/{id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RiskTemplateSubmit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-templates/{id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RiskTemplateReview"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-templates/{id}/revise": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RiskTemplateRevise"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-templates/{id}/suggestions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RiskTemplateSuggest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-templates/{id}/suggestions/{suggestionId}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RiskTemplateSuggestionReview"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-methods": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["RiskMethodList"];
+        put?: never;
+        post: operations["RiskMethodCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-methods/{id}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RiskMethodPublish"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/equipment-hierarchy/{vessel}/{asset}/observations": {
         parameters: {
             query?: never;
@@ -6609,294 +6897,6 @@ export interface paths {
         put?: never;
         /** @description Audited HR command. Requires tenant-wide HR permission, a trusted role, antiforgery and a 16-80 character Idempotency-Key. Mutations of existing records require expectedVersion (409 on conflict). Replay returns the fresh authorized representation. */
         post: operations["HrRecordActualEvent"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/hse/risk-assessments": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["RiskAssessmentList"];
-        put?: never;
-        post: operations["RiskAssessmentCreate"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/hse/risk-assessments/capabilities": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["RiskAssessmentCapabilities"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/hse/risk-assessments/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["RiskAssessmentRead"];
-        put: operations["RiskAssessmentUpdate"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/hse/risk-assessments/{id}/revisions/{revision}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["RiskAssessmentRevisionRead"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/hse/risk-assessments/{id}/submit": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["RiskAssessmentSubmit"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/hse/risk-assessments/{id}/review": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["RiskAssessmentReview"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/hse/risk-assessments/{id}/amend": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["RiskAssessmentAmend"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/hse/risk-assessments/{id}/acknowledgements": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["RiskAssessmentAcknowledge"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/hse/risk-templates": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["RiskTemplateList"];
-        put?: never;
-        post: operations["RiskTemplateCreate"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/hse/risk-templates/applicable": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["RiskTemplateApplicable"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/hse/risk-templates/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["RiskTemplateRead"];
-        put: operations["RiskTemplateUpdate"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/hse/risk-templates/{id}/submit": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["RiskTemplateSubmit"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/hse/risk-templates/{id}/review": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["RiskTemplateReview"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/hse/risk-templates/{id}/revise": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["RiskTemplateRevise"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/hse/risk-templates/{id}/suggestions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["RiskTemplateSuggest"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/hse/risk-templates/{id}/suggestions/{suggestionId}/review": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["RiskTemplateSuggestionReview"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/hse/risk-methods": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["RiskMethodList"];
-        put?: never;
-        post: operations["RiskMethodCreate"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/hse/risk-methods/{id}/publish": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["RiskMethodPublish"];
         delete?: never;
         options?: never;
         head?: never;
@@ -11598,6 +11598,538 @@ export interface components {
             /** Format: date-time */
             savedAt: string;
         };
+        RiskAcknowledgementDto: {
+            /** Format: uuid */
+            actorId: string;
+            /** Format: int64 */
+            revision: number;
+            choice: string;
+            reason: null | string;
+            /** Format: date-time */
+            recordedAt: string;
+        };
+        RiskApplicableTemplateDto: {
+            /** Format: uuid */
+            templateId: string;
+            templateCode: string;
+            /** Format: int64 */
+            revision: number;
+            title: null | string;
+            workType: null | string;
+            /** Format: date-time */
+            effectiveFrom: string;
+            hash: string;
+            /** Format: int32 */
+            hazardCount: number;
+            qualification: string;
+        };
+        RiskApplicableTemplatesDto: {
+            /** Format: uuid */
+            vesselId: string;
+            items: components["schemas"]["RiskApplicableTemplateDto"][];
+        };
+        RiskAssessmentAcknowledgeCommand: {
+            /** Format: int64 */
+            revision: number;
+            contentHash: string;
+            choice: string;
+            reason?: null | string;
+        };
+        RiskAssessmentAmendCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            reason: string;
+        };
+        RiskAssessmentContent: {
+            title: null | string;
+            operationContext: null | string;
+            workType: null | string;
+            workScope: null | string;
+            /** Format: uuid */
+            methodId: null | string;
+            hazards: components["schemas"]["RiskHazard"][];
+            stopWorkRequired: null | boolean;
+            stopWorkConditions: components["schemas"]["RiskStopCondition"][];
+            participants: components["schemas"]["RiskParticipant"][];
+        };
+        RiskAssessmentCreateCommand: {
+            /** Format: uuid */
+            id: string;
+            assessmentNo: string;
+            content: null | components["schemas"]["RiskAssessmentContent"];
+            links: components["schemas"]["RiskLinkRequest"][];
+            /** Format: uuid */
+            templateId?: null | string;
+            /** Format: int64 */
+            templateRevision?: null | number;
+        };
+        RiskAssessmentDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            assessmentNo: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            state: string;
+            content: components["schemas"]["RiskAssessmentContent"];
+            links: components["schemas"]["RiskLinkDto"][];
+            template: null | components["schemas"]["RiskTemplatePin"];
+            method: null | components["schemas"]["RiskMethodSummaryDto"];
+            results: components["schemas"]["RiskHazardResultDto"][];
+            blockers: string[];
+            hash: string;
+            /** Format: int64 */
+            approvedRevision: null | number;
+            acknowledgementState: string;
+            acknowledgements: components["schemas"]["RiskAcknowledgementDto"][];
+            decisions: components["schemas"]["RiskDecisionDto"][];
+            revisions: components["schemas"]["RiskRevisionSummaryDto"][];
+            canEdit: boolean;
+            canSubmit: boolean;
+            canReview: boolean;
+            canAmend: boolean;
+            canAcknowledge: boolean;
+            provenance: string;
+            /** Format: date-time */
+            savedAt: string;
+            sourceVersion: string;
+        };
+        RiskAssessmentListItemDto: {
+            /** Format: uuid */
+            id: string;
+            assessmentNo: string;
+            title: null | string;
+            state: string;
+            /** Format: int64 */
+            revision: number;
+            stopWorkRequired: null | boolean;
+            /** Format: int64 */
+            approvedRevision: null | number;
+            /** Format: date-time */
+            savedAt: string;
+            provenance: string;
+        };
+        RiskAssessmentPageDto: {
+            items: components["schemas"]["RiskAssessmentListItemDto"][];
+            /** Format: int32 */
+            offset: number;
+            /** Format: int32 */
+            limit: number;
+            hasMore: boolean;
+            canWrite: boolean;
+        };
+        RiskAssessmentReviewCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+            decision: string;
+            reason: string;
+        };
+        RiskAssessmentRevisionDto: {
+            /** Format: uuid */
+            assessmentId: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: int64 */
+            revision: number;
+            state: string;
+            reasonCode: string;
+            content: components["schemas"]["RiskAssessmentContent"];
+            links: components["schemas"]["RiskLinkPin"][];
+            template: null | components["schemas"]["RiskTemplatePin"];
+            /** Format: uuid */
+            methodId: null | string;
+            hash: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            savedAt: string;
+            provenance: string;
+        };
+        RiskAssessmentSubmitCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+        };
+        RiskAssessmentUpdateCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            content: components["schemas"]["RiskAssessmentContent"];
+            links: components["schemas"]["RiskLinkRequest"][];
+        };
+        RiskCapabilitiesDto: {
+            /** Format: uuid */
+            vesselId: string;
+            canRead: boolean;
+            canWrite: boolean;
+            canApprove: boolean;
+            canAcknowledge: boolean;
+            methodConfigured: boolean;
+            publishedMethods: components["schemas"]["RiskMethodSummaryDto"][];
+            linkKinds: string[];
+            workTypes: string[];
+            sourceVersion: string;
+        };
+        RiskControl: {
+            /** Format: uuid */
+            id: string;
+            description: string;
+            kind: string;
+            owner: null | string;
+            required: boolean;
+            barrierRefs: string[];
+        };
+        RiskDecisionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: int64 */
+            resultRevision: number;
+            decision: string;
+            /** Format: uuid */
+            actorId: string;
+            reason: string;
+            /** Format: date-time */
+            decidedAt: string;
+        };
+        RiskFailure: {
+            code: string;
+            missing: string[];
+            correlationId: string;
+        };
+        RiskHazard: {
+            /** Format: uuid */
+            id: string;
+            step: null | string;
+            description: string;
+            consequences: string[];
+            initial: components["schemas"]["RiskRating"];
+            controls: components["schemas"]["RiskControl"][];
+            barrierRefs: string[];
+            residual: components["schemas"]["RiskRating"];
+        };
+        RiskHazardResultDto: {
+            /** Format: uuid */
+            hazardId: string;
+            initial: components["schemas"]["RiskResult"];
+            residual: components["schemas"]["RiskResult"];
+        };
+        RiskLinkDto: {
+            kind: string;
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            currency: string;
+        };
+        RiskLinkPin: {
+            kind: string;
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+        };
+        RiskLinkRequest: {
+            kind: string;
+            /** Format: uuid */
+            id: string;
+        };
+        RiskMatrixCell: {
+            likelihood: string;
+            severity: string;
+            result: string;
+            /** Format: int32 */
+            rank: number;
+        };
+        RiskMatrixCode: {
+            code: string;
+            label: string;
+        };
+        RiskMethodContent: {
+            code: string;
+            title: string;
+            likelihoods: components["schemas"]["RiskMatrixCode"][];
+            severities: components["schemas"]["RiskMatrixCode"][];
+            cells: components["schemas"]["RiskMatrixCell"][];
+            sourceRefs: string[];
+            changeReason: string;
+        };
+        RiskMethodCreateCommand: {
+            /** Format: uuid */
+            id: string;
+            content: components["schemas"]["RiskMethodContent"];
+        };
+        RiskMethodDto: {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            status: string;
+            content: components["schemas"]["RiskMethodContent"];
+            hash: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            savedAt: string;
+            /** Format: uuid */
+            publishedBy: null | string;
+            /** Format: date-time */
+            publishedAt: null | string;
+            canPublish: boolean;
+        };
+        RiskMethodListDto: {
+            items: components["schemas"]["RiskMethodDto"][];
+            canWrite: boolean;
+            canPublish: boolean;
+        };
+        RiskMethodPublishCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+            reason: string;
+        };
+        RiskMethodSummaryDto: {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            /** Format: int64 */
+            revision: number;
+            status: string;
+            title: string;
+        };
+        RiskParticipant: {
+            /** Format: uuid */
+            actorId: string;
+            role: string;
+        };
+        RiskRating: {
+            likelihood: null | string;
+            severity: null | string;
+            reason: null | string;
+        };
+        RiskResult: {
+            state: string;
+            result: null | string;
+            /** Format: int32 */
+            rank: null | number;
+        };
+        RiskRevisionSummaryDto: {
+            /** Format: int64 */
+            revision: number;
+            state: string;
+            reasonCode: string;
+            hash: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            savedAt: string;
+        };
+        RiskStopCondition: {
+            /** Format: uuid */
+            id: string;
+            description: string;
+        };
+        RiskTemplateContent: {
+            title: null | string;
+            workType: null | string;
+            vesselKinds: string[];
+            requiredBarriers: string[];
+            hazards: components["schemas"]["RiskTemplateHazard"][];
+            sourceRefs: string[];
+            approvalOwner: null | string;
+            changeReason: null | string;
+        };
+        RiskTemplateControl: {
+            /** Format: uuid */
+            id: string;
+            description: string;
+            kind: string;
+            ownerRole: null | string;
+            required: boolean;
+            barrierRefs: string[];
+        };
+        RiskTemplateCreateCommand: {
+            /** Format: uuid */
+            id: string;
+            templateCode: string;
+            content: components["schemas"]["RiskTemplateContent"];
+        };
+        RiskTemplateDecisionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            decision: string;
+            /** Format: uuid */
+            actorId: string;
+            reason: string;
+            /** Format: date-time */
+            effectiveFrom: null | string;
+            /** Format: date-time */
+            decidedAt: string;
+        };
+        RiskTemplateDetailDto: {
+            /** Format: uuid */
+            id: string;
+            templateCode: string;
+            /** Format: int64 */
+            latestRevision: number;
+            /** Format: uint32 */
+            version: number;
+            revisions: components["schemas"]["RiskTemplateRevisionDto"][];
+            decisions: components["schemas"]["RiskTemplateDecisionDto"][];
+            suggestions: components["schemas"]["RiskTemplateSuggestionDto"][];
+            /** Format: int32 */
+            suggestionCount: number;
+            canRevise: boolean;
+            canSuggest: boolean;
+            sourceVersion: string;
+        };
+        RiskTemplateHazard: {
+            /** Format: uuid */
+            id: string;
+            step: null | string;
+            description: string;
+            consequences: string[];
+            defaultControls: components["schemas"]["RiskTemplateControl"][];
+            barrierRefs: string[];
+        };
+        RiskTemplateListItemDto: {
+            /** Format: uuid */
+            id: string;
+            templateCode: string;
+            title: null | string;
+            workType: null | string;
+            /** Format: int64 */
+            latestRevision: number;
+            latestStatus: string;
+            /** Format: int64 */
+            currentRevision: null | number;
+            /** Format: date-time */
+            currentEffectiveFrom: null | string;
+            /** Format: int32 */
+            suggestionCount: number;
+        };
+        RiskTemplatePageDto: {
+            items: components["schemas"]["RiskTemplateListItemDto"][];
+            /** Format: int32 */
+            offset: number;
+            /** Format: int32 */
+            limit: number;
+            hasMore: boolean;
+            canWrite: boolean;
+            canPublish: boolean;
+            workTypes: string[];
+        };
+        RiskTemplatePin: {
+            /** Format: uuid */
+            templateId: string;
+            /** Format: int64 */
+            revision: number;
+            hash: string;
+        };
+        RiskTemplateReviewCommand: {
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+            decision: string;
+            reason: string;
+            /** Format: date-time */
+            effectiveFrom?: null | string;
+        };
+        RiskTemplateReviseCommand: {
+            /** Format: int64 */
+            baseRevision: number;
+            /** Format: uint32 */
+            expectedVersion: number;
+            reason: string;
+        };
+        RiskTemplateRevisionDto: {
+            /** Format: uuid */
+            templateId: string;
+            templateCode: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            status: string;
+            effectiveState: string;
+            /** Format: date-time */
+            effectiveFrom: null | string;
+            content: components["schemas"]["RiskTemplateContent"];
+            hash: string;
+            blockers: string[];
+            /** Format: uuid */
+            publishedBy: null | string;
+            /** Format: date-time */
+            publishedAt: null | string;
+            /** Format: int64 */
+            supersededByRevision: null | number;
+            canEdit: boolean;
+            canSubmit: boolean;
+            canPublish: boolean;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            savedAt: string;
+            provenance: string;
+        };
+        RiskTemplateSubmitCommand: {
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+        };
+        RiskTemplateSuggestCommand: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            text: string;
+        };
+        RiskTemplateSuggestionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            text: string;
+            status: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: uuid */
+            reviewedBy: null | string;
+            reviewReason: null | string;
+            /** Format: date-time */
+            reviewedAt: null | string;
+            /** Format: uint32 */
+            version: number;
+            canReview: boolean;
+        };
+        RiskTemplateSuggestionReviewCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            decision: string;
+            reason: string;
+        };
+        RiskTemplateUpdateCommand: {
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            expectedVersion: number;
+            content: components["schemas"]["RiskTemplateContent"];
+        };
         RuleAuthorCommand: {
             /** Format: uint32 */
             expectedVersion: number;
@@ -13021,538 +13553,6 @@ export interface components {
             reference: string;
             tr: string;
             en: string;
-        };
-        RiskAcknowledgementDto: {
-            /** Format: uuid */
-            actorId: string;
-            /** Format: int64 */
-            revision: number;
-            choice: string;
-            reason: null | string;
-            /** Format: date-time */
-            recordedAt: string;
-        };
-        RiskApplicableTemplateDto: {
-            /** Format: uuid */
-            templateId: string;
-            templateCode: string;
-            /** Format: int64 */
-            revision: number;
-            title: null | string;
-            workType: null | string;
-            /** Format: date-time */
-            effectiveFrom: string;
-            hash: string;
-            /** Format: int32 */
-            hazardCount: number;
-            qualification: string;
-        };
-        RiskApplicableTemplatesDto: {
-            /** Format: uuid */
-            vesselId: string;
-            items: components["schemas"]["RiskApplicableTemplateDto"][];
-        };
-        RiskAssessmentAcknowledgeCommand: {
-            /** Format: int64 */
-            revision: number;
-            contentHash: string;
-            choice: string;
-            reason?: null | string;
-        };
-        RiskAssessmentAmendCommand: {
-            /** Format: uint32 */
-            expectedVersion: number;
-            reason: string;
-        };
-        RiskAssessmentContent: {
-            title: null | string;
-            operationContext: null | string;
-            workType: null | string;
-            workScope: null | string;
-            /** Format: uuid */
-            methodId: null | string;
-            hazards: components["schemas"]["RiskHazard"][];
-            stopWorkRequired: null | boolean;
-            stopWorkConditions: components["schemas"]["RiskStopCondition"][];
-            participants: components["schemas"]["RiskParticipant"][];
-        };
-        RiskAssessmentCreateCommand: {
-            /** Format: uuid */
-            id: string;
-            assessmentNo: string;
-            content: null | components["schemas"]["RiskAssessmentContent"];
-            links: components["schemas"]["RiskLinkRequest"][];
-            /** Format: uuid */
-            templateId?: null | string;
-            /** Format: int64 */
-            templateRevision?: null | number;
-        };
-        RiskAssessmentDto: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            vesselId: string;
-            assessmentNo: string;
-            /** Format: int64 */
-            revision: number;
-            /** Format: uint32 */
-            version: number;
-            state: string;
-            content: components["schemas"]["RiskAssessmentContent"];
-            links: components["schemas"]["RiskLinkDto"][];
-            template: null | components["schemas"]["RiskTemplatePin"];
-            method: null | components["schemas"]["RiskMethodSummaryDto"];
-            results: components["schemas"]["RiskHazardResultDto"][];
-            blockers: string[];
-            hash: string;
-            /** Format: int64 */
-            approvedRevision: null | number;
-            acknowledgementState: string;
-            acknowledgements: components["schemas"]["RiskAcknowledgementDto"][];
-            decisions: components["schemas"]["RiskDecisionDto"][];
-            revisions: components["schemas"]["RiskRevisionSummaryDto"][];
-            canEdit: boolean;
-            canSubmit: boolean;
-            canReview: boolean;
-            canAmend: boolean;
-            canAcknowledge: boolean;
-            provenance: string;
-            /** Format: date-time */
-            savedAt: string;
-            sourceVersion: string;
-        };
-        RiskAssessmentListItemDto: {
-            /** Format: uuid */
-            id: string;
-            assessmentNo: string;
-            title: null | string;
-            state: string;
-            /** Format: int64 */
-            revision: number;
-            stopWorkRequired: null | boolean;
-            /** Format: int64 */
-            approvedRevision: null | number;
-            /** Format: date-time */
-            savedAt: string;
-            provenance: string;
-        };
-        RiskAssessmentPageDto: {
-            items: components["schemas"]["RiskAssessmentListItemDto"][];
-            /** Format: int32 */
-            offset: number;
-            /** Format: int32 */
-            limit: number;
-            hasMore: boolean;
-            canWrite: boolean;
-        };
-        RiskAssessmentReviewCommand: {
-            /** Format: uint32 */
-            expectedVersion: number;
-            contentHash: string;
-            decision: string;
-            reason: string;
-        };
-        RiskAssessmentRevisionDto: {
-            /** Format: uuid */
-            assessmentId: string;
-            /** Format: uuid */
-            vesselId: string;
-            /** Format: int64 */
-            revision: number;
-            state: string;
-            reasonCode: string;
-            content: components["schemas"]["RiskAssessmentContent"];
-            links: components["schemas"]["RiskLinkPin"][];
-            template: null | components["schemas"]["RiskTemplatePin"];
-            /** Format: uuid */
-            methodId: null | string;
-            hash: string;
-            /** Format: uuid */
-            actorId: string;
-            /** Format: date-time */
-            savedAt: string;
-            provenance: string;
-        };
-        RiskAssessmentSubmitCommand: {
-            /** Format: uint32 */
-            expectedVersion: number;
-            contentHash: string;
-        };
-        RiskAssessmentUpdateCommand: {
-            /** Format: uint32 */
-            expectedVersion: number;
-            content: components["schemas"]["RiskAssessmentContent"];
-            links: components["schemas"]["RiskLinkRequest"][];
-        };
-        RiskCapabilitiesDto: {
-            /** Format: uuid */
-            vesselId: string;
-            canRead: boolean;
-            canWrite: boolean;
-            canApprove: boolean;
-            canAcknowledge: boolean;
-            methodConfigured: boolean;
-            publishedMethods: components["schemas"]["RiskMethodSummaryDto"][];
-            linkKinds: string[];
-            workTypes: string[];
-            sourceVersion: string;
-        };
-        RiskControl: {
-            /** Format: uuid */
-            id: string;
-            description: string;
-            kind: string;
-            owner: null | string;
-            required: boolean;
-            barrierRefs: string[];
-        };
-        RiskDecisionDto: {
-            /** Format: uuid */
-            id: string;
-            /** Format: int64 */
-            revision: number;
-            /** Format: int64 */
-            resultRevision: number;
-            decision: string;
-            /** Format: uuid */
-            actorId: string;
-            reason: string;
-            /** Format: date-time */
-            decidedAt: string;
-        };
-        RiskFailure: {
-            code: string;
-            missing: string[];
-            correlationId: string;
-        };
-        RiskHazard: {
-            /** Format: uuid */
-            id: string;
-            step: null | string;
-            description: string;
-            consequences: string[];
-            initial: components["schemas"]["RiskRating"];
-            controls: components["schemas"]["RiskControl"][];
-            barrierRefs: string[];
-            residual: components["schemas"]["RiskRating"];
-        };
-        RiskHazardResultDto: {
-            /** Format: uuid */
-            hazardId: string;
-            initial: components["schemas"]["RiskResult"];
-            residual: components["schemas"]["RiskResult"];
-        };
-        RiskLinkDto: {
-            kind: string;
-            /** Format: uuid */
-            id: string;
-            /** Format: int64 */
-            revision: number;
-            currency: string;
-        };
-        RiskLinkPin: {
-            kind: string;
-            /** Format: uuid */
-            id: string;
-            /** Format: int64 */
-            revision: number;
-        };
-        RiskLinkRequest: {
-            kind: string;
-            /** Format: uuid */
-            id: string;
-        };
-        RiskMatrixCell: {
-            likelihood: string;
-            severity: string;
-            result: string;
-            /** Format: int32 */
-            rank: number;
-        };
-        RiskMatrixCode: {
-            code: string;
-            label: string;
-        };
-        RiskMethodContent: {
-            code: string;
-            title: string;
-            likelihoods: components["schemas"]["RiskMatrixCode"][];
-            severities: components["schemas"]["RiskMatrixCode"][];
-            cells: components["schemas"]["RiskMatrixCell"][];
-            sourceRefs: string[];
-            changeReason: string;
-        };
-        RiskMethodCreateCommand: {
-            /** Format: uuid */
-            id: string;
-            content: components["schemas"]["RiskMethodContent"];
-        };
-        RiskMethodDto: {
-            /** Format: uuid */
-            id: string;
-            code: string;
-            /** Format: int64 */
-            revision: number;
-            /** Format: uint32 */
-            version: number;
-            status: string;
-            content: components["schemas"]["RiskMethodContent"];
-            hash: string;
-            /** Format: uuid */
-            actorId: string;
-            /** Format: date-time */
-            savedAt: string;
-            /** Format: uuid */
-            publishedBy: null | string;
-            /** Format: date-time */
-            publishedAt: null | string;
-            canPublish: boolean;
-        };
-        RiskMethodListDto: {
-            items: components["schemas"]["RiskMethodDto"][];
-            canWrite: boolean;
-            canPublish: boolean;
-        };
-        RiskMethodPublishCommand: {
-            /** Format: uint32 */
-            expectedVersion: number;
-            contentHash: string;
-            reason: string;
-        };
-        RiskMethodSummaryDto: {
-            /** Format: uuid */
-            id: string;
-            code: string;
-            /** Format: int64 */
-            revision: number;
-            status: string;
-            title: string;
-        };
-        RiskParticipant: {
-            /** Format: uuid */
-            actorId: string;
-            role: string;
-        };
-        RiskRating: {
-            likelihood: null | string;
-            severity: null | string;
-            reason: null | string;
-        };
-        RiskResult: {
-            state: string;
-            result: null | string;
-            /** Format: int32 */
-            rank: null | number;
-        };
-        RiskRevisionSummaryDto: {
-            /** Format: int64 */
-            revision: number;
-            state: string;
-            reasonCode: string;
-            hash: string;
-            /** Format: uuid */
-            actorId: string;
-            /** Format: date-time */
-            savedAt: string;
-        };
-        RiskStopCondition: {
-            /** Format: uuid */
-            id: string;
-            description: string;
-        };
-        RiskTemplateContent: {
-            title: null | string;
-            workType: null | string;
-            vesselKinds: string[];
-            requiredBarriers: string[];
-            hazards: components["schemas"]["RiskTemplateHazard"][];
-            sourceRefs: string[];
-            approvalOwner: null | string;
-            changeReason: null | string;
-        };
-        RiskTemplateControl: {
-            /** Format: uuid */
-            id: string;
-            description: string;
-            kind: string;
-            ownerRole: null | string;
-            required: boolean;
-            barrierRefs: string[];
-        };
-        RiskTemplateCreateCommand: {
-            /** Format: uuid */
-            id: string;
-            templateCode: string;
-            content: components["schemas"]["RiskTemplateContent"];
-        };
-        RiskTemplateDecisionDto: {
-            /** Format: uuid */
-            id: string;
-            /** Format: int64 */
-            revision: number;
-            decision: string;
-            /** Format: uuid */
-            actorId: string;
-            reason: string;
-            /** Format: date-time */
-            effectiveFrom: null | string;
-            /** Format: date-time */
-            decidedAt: string;
-        };
-        RiskTemplateDetailDto: {
-            /** Format: uuid */
-            id: string;
-            templateCode: string;
-            /** Format: int64 */
-            latestRevision: number;
-            /** Format: uint32 */
-            version: number;
-            revisions: components["schemas"]["RiskTemplateRevisionDto"][];
-            decisions: components["schemas"]["RiskTemplateDecisionDto"][];
-            suggestions: components["schemas"]["RiskTemplateSuggestionDto"][];
-            /** Format: int32 */
-            suggestionCount: number;
-            canRevise: boolean;
-            canSuggest: boolean;
-            sourceVersion: string;
-        };
-        RiskTemplateHazard: {
-            /** Format: uuid */
-            id: string;
-            step: null | string;
-            description: string;
-            consequences: string[];
-            defaultControls: components["schemas"]["RiskTemplateControl"][];
-            barrierRefs: string[];
-        };
-        RiskTemplateListItemDto: {
-            /** Format: uuid */
-            id: string;
-            templateCode: string;
-            title: null | string;
-            workType: null | string;
-            /** Format: int64 */
-            latestRevision: number;
-            latestStatus: string;
-            /** Format: int64 */
-            currentRevision: null | number;
-            /** Format: date-time */
-            currentEffectiveFrom: null | string;
-            /** Format: int32 */
-            suggestionCount: number;
-        };
-        RiskTemplatePageDto: {
-            items: components["schemas"]["RiskTemplateListItemDto"][];
-            /** Format: int32 */
-            offset: number;
-            /** Format: int32 */
-            limit: number;
-            hasMore: boolean;
-            canWrite: boolean;
-            canPublish: boolean;
-            workTypes: string[];
-        };
-        RiskTemplatePin: {
-            /** Format: uuid */
-            templateId: string;
-            /** Format: int64 */
-            revision: number;
-            hash: string;
-        };
-        RiskTemplateReviewCommand: {
-            /** Format: int64 */
-            revision: number;
-            /** Format: uint32 */
-            expectedVersion: number;
-            contentHash: string;
-            decision: string;
-            reason: string;
-            /** Format: date-time */
-            effectiveFrom?: null | string;
-        };
-        RiskTemplateReviseCommand: {
-            /** Format: int64 */
-            baseRevision: number;
-            /** Format: uint32 */
-            expectedVersion: number;
-            reason: string;
-        };
-        RiskTemplateRevisionDto: {
-            /** Format: uuid */
-            templateId: string;
-            templateCode: string;
-            /** Format: int64 */
-            revision: number;
-            /** Format: uint32 */
-            version: number;
-            status: string;
-            effectiveState: string;
-            /** Format: date-time */
-            effectiveFrom: null | string;
-            content: components["schemas"]["RiskTemplateContent"];
-            hash: string;
-            blockers: string[];
-            /** Format: uuid */
-            publishedBy: null | string;
-            /** Format: date-time */
-            publishedAt: null | string;
-            /** Format: int64 */
-            supersededByRevision: null | number;
-            canEdit: boolean;
-            canSubmit: boolean;
-            canPublish: boolean;
-            /** Format: uuid */
-            actorId: string;
-            /** Format: date-time */
-            savedAt: string;
-            provenance: string;
-        };
-        RiskTemplateSubmitCommand: {
-            /** Format: int64 */
-            revision: number;
-            /** Format: uint32 */
-            expectedVersion: number;
-            contentHash: string;
-        };
-        RiskTemplateSuggestCommand: {
-            /** Format: uuid */
-            id: string;
-            /** Format: int64 */
-            revision: number;
-            text: string;
-        };
-        RiskTemplateSuggestionDto: {
-            /** Format: uuid */
-            id: string;
-            /** Format: int64 */
-            revision: number;
-            text: string;
-            status: string;
-            /** Format: uuid */
-            actorId: string;
-            /** Format: date-time */
-            createdAt: string;
-            /** Format: uuid */
-            reviewedBy: null | string;
-            reviewReason: null | string;
-            /** Format: date-time */
-            reviewedAt: null | string;
-            /** Format: uint32 */
-            version: number;
-            canReview: boolean;
-        };
-        RiskTemplateSuggestionReviewCommand: {
-            /** Format: uint32 */
-            expectedVersion: number;
-            decision: string;
-            reason: string;
-        };
-        RiskTemplateUpdateCommand: {
-            /** Format: int64 */
-            revision: number;
-            /** Format: uint32 */
-            expectedVersion: number;
-            content: components["schemas"]["RiskTemplateContent"];
         };
     };
     responses: never;
@@ -22287,6 +22287,585 @@ export interface operations {
             };
         };
     };
+    RiskAssessmentList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskAssessmentPageDto"];
+                };
+            };
+        };
+    };
+    RiskAssessmentCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskAssessmentCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskAssessmentDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskFailure"];
+                };
+            };
+        };
+    };
+    RiskAssessmentCapabilities: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskCapabilitiesDto"];
+                };
+            };
+        };
+    };
+    RiskAssessmentRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskAssessmentDto"];
+                };
+            };
+        };
+    };
+    RiskAssessmentUpdate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskAssessmentUpdateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskAssessmentDto"];
+                };
+            };
+        };
+    };
+    RiskAssessmentRevisionRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                revision: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskAssessmentRevisionDto"];
+                };
+            };
+        };
+    };
+    RiskAssessmentSubmit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskAssessmentSubmitCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskAssessmentDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskFailure"];
+                };
+            };
+        };
+    };
+    RiskAssessmentReview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskAssessmentReviewCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskAssessmentDto"];
+                };
+            };
+        };
+    };
+    RiskAssessmentAmend: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskAssessmentAmendCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskAssessmentDto"];
+                };
+            };
+        };
+    };
+    RiskAssessmentAcknowledge: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskAssessmentAcknowledgeCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskAssessmentDto"];
+                };
+            };
+        };
+    };
+    RiskTemplateList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskTemplatePageDto"];
+                };
+            };
+        };
+    };
+    RiskTemplateCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskTemplateCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskTemplateDetailDto"];
+                };
+            };
+        };
+    };
+    RiskTemplateApplicable: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskApplicableTemplatesDto"];
+                };
+            };
+        };
+    };
+    RiskTemplateRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskTemplateDetailDto"];
+                };
+            };
+        };
+    };
+    RiskTemplateUpdate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskTemplateUpdateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskTemplateDetailDto"];
+                };
+            };
+        };
+    };
+    RiskTemplateSubmit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskTemplateSubmitCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskTemplateDetailDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskFailure"];
+                };
+            };
+        };
+    };
+    RiskTemplateReview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskTemplateReviewCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskTemplateDetailDto"];
+                };
+            };
+        };
+    };
+    RiskTemplateRevise: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskTemplateReviseCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskTemplateDetailDto"];
+                };
+            };
+        };
+    };
+    RiskTemplateSuggest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskTemplateSuggestCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskTemplateDetailDto"];
+                };
+            };
+        };
+    };
+    RiskTemplateSuggestionReview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                suggestionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskTemplateSuggestionReviewCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskTemplateDetailDto"];
+                };
+            };
+        };
+    };
+    RiskMethodList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskMethodListDto"];
+                };
+            };
+        };
+    };
+    RiskMethodCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskMethodCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskMethodDto"];
+                };
+            };
+        };
+    };
+    RiskMethodPublish: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskMethodPublishCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskMethodDto"];
+                };
+            };
+        };
+    };
     MaintenanceObservationRead: {
         parameters: {
             query?: never;
@@ -25139,585 +25718,6 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
-            };
-        };
-    };
-    RiskAssessmentList: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RiskAssessmentPageDto"];
-                };
-            };
-        };
-    };
-    RiskAssessmentCreate: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RiskAssessmentCreateCommand"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RiskAssessmentDto"];
-                };
-            };
-            /** @description Unprocessable Entity */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RiskFailure"];
-                };
-            };
-        };
-    };
-    RiskAssessmentCapabilities: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RiskCapabilitiesDto"];
-                };
-            };
-        };
-    };
-    RiskAssessmentRead: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RiskAssessmentDto"];
-                };
-            };
-        };
-    };
-    RiskAssessmentUpdate: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RiskAssessmentUpdateCommand"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RiskAssessmentDto"];
-                };
-            };
-        };
-    };
-    RiskAssessmentRevisionRead: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-                revision: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RiskAssessmentRevisionDto"];
-                };
-            };
-        };
-    };
-    RiskAssessmentSubmit: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RiskAssessmentSubmitCommand"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RiskAssessmentDto"];
-                };
-            };
-            /** @description Unprocessable Entity */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RiskFailure"];
-                };
-            };
-        };
-    };
-    RiskAssessmentReview: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RiskAssessmentReviewCommand"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RiskAssessmentDto"];
-                };
-            };
-        };
-    };
-    RiskAssessmentAmend: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RiskAssessmentAmendCommand"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RiskAssessmentDto"];
-                };
-            };
-        };
-    };
-    RiskAssessmentAcknowledge: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RiskAssessmentAcknowledgeCommand"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RiskAssessmentDto"];
-                };
-            };
-        };
-    };
-    RiskTemplateList: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RiskTemplatePageDto"];
-                };
-            };
-        };
-    };
-    RiskTemplateCreate: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RiskTemplateCreateCommand"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RiskTemplateDetailDto"];
-                };
-            };
-        };
-    };
-    RiskTemplateApplicable: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RiskApplicableTemplatesDto"];
-                };
-            };
-        };
-    };
-    RiskTemplateRead: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RiskTemplateDetailDto"];
-                };
-            };
-        };
-    };
-    RiskTemplateUpdate: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RiskTemplateUpdateCommand"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RiskTemplateDetailDto"];
-                };
-            };
-        };
-    };
-    RiskTemplateSubmit: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RiskTemplateSubmitCommand"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RiskTemplateDetailDto"];
-                };
-            };
-            /** @description Unprocessable Entity */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RiskFailure"];
-                };
-            };
-        };
-    };
-    RiskTemplateReview: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RiskTemplateReviewCommand"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RiskTemplateDetailDto"];
-                };
-            };
-        };
-    };
-    RiskTemplateRevise: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RiskTemplateReviseCommand"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RiskTemplateDetailDto"];
-                };
-            };
-        };
-    };
-    RiskTemplateSuggest: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RiskTemplateSuggestCommand"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RiskTemplateDetailDto"];
-                };
-            };
-        };
-    };
-    RiskTemplateSuggestionReview: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-                suggestionId: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RiskTemplateSuggestionReviewCommand"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RiskTemplateDetailDto"];
-                };
-            };
-        };
-    };
-    RiskMethodList: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RiskMethodListDto"];
-                };
-            };
-        };
-    };
-    RiskMethodCreate: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RiskMethodCreateCommand"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RiskMethodDto"];
-                };
-            };
-        };
-    };
-    RiskMethodPublish: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["RiskMethodPublishCommand"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["RiskMethodDto"];
-                };
             };
         };
     };

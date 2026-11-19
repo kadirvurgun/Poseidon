@@ -117,8 +117,12 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Single(await db.TugReadinessDecisions.Where(d => d.AssignmentId == proposal.Id).ToArrayAsync(Ct));
         Assert.Equal("Proposed", (await db.TugAssignmentProposals.SingleAsync(p => p.Id == proposal.Id, Ct)).State);
         var crew = (await c.GetFromJsonAsync<TugCrewReadinessView>($"/api/v1/tug-crew-readiness?vessel={Tug.Id}&assignment={proposal.Id}", Ct))!;
-        Assert.Equal("Unavailable", crew.EvaluatorState); Assert.NotEqual(TugReadinessEngine.Ready, crew.State);
-        Assert.Contains(crew.Checks, x => x.Reason == "TowageCompetence:CrewEligibilityEvaluatorUnavailable");
+        // S7 integration: the WP-A shared engine is wired through CrewEligibilityTugCompetenceSource.
+        // Synthetic crew has no verified credentials/competence, so nothing tug-specific can be PASS.
+        Assert.Equal("Observed", crew.EvaluatorState); Assert.Equal(CrewEligibilityTugCompetenceSource.SourceName, crew.EvaluatorSource);
+        Assert.NotEqual(TugReadinessEngine.Ready, crew.State);
+        Assert.Contains(crew.Checks, x => x.Category == "crew_competence" && x.Reason.StartsWith("TowageCompetence:", StringComparison.Ordinal) && x.Result is TugReadinessEngine.Unknown or TugReadinessEngine.Fail);
+        Assert.DoesNotContain(crew.Checks, x => x.Category == "crew_competence" && x.Result == TugReadinessEngine.Pass);
     }
 
     [Fact]
