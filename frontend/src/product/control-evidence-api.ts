@@ -13,7 +13,10 @@ export type GraphPin = { kind: Kind; id: string; revision: number; expectedVersi
 export type FilePin = { id: string; revision: number; checksum: string }
 export type Command = { expectedVersion: number; content: Content; requirements: RequirementPin[]; links: GraphPin[]; file: FilePin | null; reasonCode: 'INITIAL_AUTHORING' | 'AUTHORING_CORRECTION' | 'SUBMIT' | 'COMPLETE' }
 export type Row = { id: string; vesselId: string; kind: Kind; revision: number; version: number; content: Content; hash: string; lifecycle: 'DRAFT' | 'SUBMITTED' | 'COMPLETED'; completion: 'UNKNOWN' | 'COMPLETED'; verification: 'UNVERIFIED' | 'VERIFIED' | 'REVIEW_REQUIRED'; effectiveness: 'UNKNOWN'; timeState: 'SUPERSEDED' | 'DECLARED_NOT_YET_VALID' | 'DECLARED_EXPIRED' | 'DECLARED_STALE' | 'UNKNOWN'; evidenceExists: boolean; file: FilePin | null; requirements: RequirementPin[]; links: GraphPin[]; blockers: string[]; savedAt: string; asOf: string }
-export type Page = { items: Row[]; offset: number; hasMore: boolean; canWrite: boolean }
+// DEV-028 control head list: each listed control's 62.01 lifecycle state and effective published revision
+// (null when none is effective, e.g. never published or RETIRED). Null for evidence and version history pages.
+export type ListLifecycle = { id: string; state: ControlState; publishedRevision: number | null; successorPending: boolean }
+export type Page = { items: Row[]; offset: number; hasMore: boolean; canWrite: boolean; lifecycle?: ListLifecycle[] | null }
 type Obj = Record<string, unknown>
 const exact = (v: unknown, keys: string[]): v is Obj => !!v && typeof v === 'object' && !Array.isArray(v) && Object.keys(v).length === keys.length && keys.every(k => Object.hasOwn(v, k))
 const positive = (v: unknown): v is number => typeof v === 'number' && Number.isSafeInteger(v) && v > 0
@@ -55,10 +58,17 @@ export function decodeRow(v: unknown, vessel: string, kind: Kind): Row {
 const route = (kind: Kind) => kind === 'Control' ? 'controls' : 'evidence'
 export async function page(vessel: string, kind: Kind, offset: number, signal: AbortSignal, id?: string, asOf?: string): Promise<Page> {
   const v = await request<unknown>(`${route(kind)}${id ? `/${id}/versions` : ''}?vesselId=${vessel}&offset=${offset}${asOf ? `&asOf=${encodeURIComponent(asOf)}` : ''}`, signal)
-  if (!exact(v, ['items', 'offset', 'hasMore', 'canWrite']) || v.offset !== offset || typeof v.hasMore !== 'boolean' || typeof v.canWrite !== 'boolean' || !Array.isArray(v.items) || v.items.length > 25 || v.hasMore && v.items.length !== 25) return invalid()
+  // Like the extended orphan report, the lifecycle list view is optional; when present it is fully checked.
+  const listed = kind === 'Control' && !id && !!v && typeof v === 'object' && Object.hasOwn(v, 'lifecycle')
+  if (!exact(v, listed ? ['items', 'offset', 'hasMore', 'canWrite', 'lifecycle'] : ['items', 'offset', 'hasMore', 'canWrite']) || v.offset !== offset || typeof v.hasMore !== 'boolean' || typeof v.canWrite !== 'boolean' || !Array.isArray(v.items) || v.items.length > 25 || v.hasMore && v.items.length !== 25) return invalid()
   const items = v.items.map(x => decodeRow(x, vessel, kind))
   if (id && items.some(row => row.id !== id)) return invalid()
-  return { items, offset, hasMore: v.hasMore, canWrite: v.canWrite }
+  if (!listed) return { items, offset, hasMore: v.hasMore, canWrite: v.canWrite, lifecycle: null }
+  // One entry per listed control, in order; the pointer must agree with the state of the listed revision.
+  const lifecycle = v.lifecycle
+  if (!Array.isArray(lifecycle) || lifecycle.length !== items.length || !lifecycle.every((x, i) => exact(x, ['id', 'state', 'publishedRevision', 'successorPending']) && x.id === items[i].id &&
+    typeof x.state === 'string' && controlStates.includes(x.state) && pointer(x.state, items[i].revision, x.publishedRevision, x.successorPending))) return invalid()
+  return { items, offset, hasMore: v.hasMore, canWrite: v.canWrite, lifecycle: lifecycle as ListLifecycle[] }
 }
 export async function currentRecord(vessel: string, kind: Kind, id: string, signal: AbortSignal, initial?: Page): Promise<Row> {
   // Versions may expose an older visible revision with the live editing token.
@@ -181,17 +191,18 @@ export async function transition(vessel: string, id: string, frozen: { body: str
 }
 export type SupportingEvidence = { evidence: Row; pinnedControlRevision: number; pinCurrent: boolean }
 // controlRevision is the effective control revision (published while a successor is pending); latestRevision the candidate.
-export async function supportingEvidence(vessel: string, id: string, offset: number, signal: AbortSignal): Promise<{ controlRevision: number; latestRevision: number; successorPending: boolean; items: SupportingEvidence[]; hasMore: boolean }> {
+// A RETIRED control has no effective revision (62.01 paragraph:193): controlRevision is null and no pin is current.
+export async function supportingEvidence(vessel: string, id: string, offset: number, signal: AbortSignal): Promise<{ controlRevision: number | null; latestRevision: number; successorPending: boolean; items: SupportingEvidence[]; hasMore: boolean }> {
   const v = await request<unknown>(`controls/${id}/supporting-evidence?vesselId=${vessel}&offset=${offset}`, signal)
-  if (!exact(v, ['controlId', 'vesselId', 'controlRevision', 'latestRevision', 'successorPending', 'items', 'offset', 'hasMore']) || v.controlId !== id || v.vesselId !== vessel || !positive(v.controlRevision) ||
-    !positive(v.latestRevision) || v.controlRevision > v.latestRevision || v.successorPending !== (v.controlRevision !== v.latestRevision) || v.offset !== offset ||
+  if (!exact(v, ['controlId', 'vesselId', 'controlRevision', 'latestRevision', 'successorPending', 'items', 'offset', 'hasMore']) || v.controlId !== id || v.vesselId !== vessel ||
+    !positive(v.latestRevision) || (v.controlRevision === null ? v.successorPending !== false : !positive(v.controlRevision) || v.controlRevision > v.latestRevision || v.successorPending !== (v.controlRevision !== v.latestRevision)) || v.offset !== offset ||
     typeof v.hasMore !== 'boolean' || !Array.isArray(v.items) || v.items.length > 25) return invalid()
-  const controlRevision = v.controlRevision
+  const controlRevision = v.controlRevision as number | null
   const items = v.items.map(item => {
     if (!exact(item, ['evidence', 'pinnedControlRevision', 'pinCurrent']) || !positive(item.pinnedControlRevision) || typeof item.pinCurrent !== 'boolean' || item.pinCurrent !== (item.pinnedControlRevision === controlRevision)) return invalid()
     const evidence = decodeRow(item.evidence, vessel, 'Evidence')
     if (!evidence.links.some(link => link.kind === 'Control' && link.id === id && link.revision === item.pinnedControlRevision)) return invalid()
     return { evidence, pinnedControlRevision: item.pinnedControlRevision, pinCurrent: item.pinCurrent }
   })
-  return { controlRevision, latestRevision: v.latestRevision, successorPending: v.successorPending, items, hasMore: v.hasMore }
+  return { controlRevision, latestRevision: v.latestRevision, successorPending: v.successorPending as boolean, items, hasMore: v.hasMore }
 }

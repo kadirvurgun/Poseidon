@@ -25,7 +25,7 @@ public sealed partial class DirectoryWorkspaceTests
         return ApplicabilityEngine.Parse(json.RootElement.EnumerateArray().Single(r => r.GetProperty("ruleId").GetString() == id).GetRawText());
     }
     [Theory]
-    [InlineData("current")][InlineData("ocean")][InlineData("job-noop")][InlineData("plan-noop")][InlineData("source")][InlineData("verifier-role")][InlineData("expired")][InlineData("unverified-service")][InlineData("unmapped")]
+    [InlineData("current")][InlineData("ocean")][InlineData("job-noop")][InlineData("plan-noop")][InlineData("source")][InlineData("verifier-role")][InlineData("expired")][InlineData("unverified-service")][InlineData("unmapped")][InlineData("retired")]
     public async Task Operation_and_service_owning_commands_require_exact_current_relations_and_withdraw_on_changes(string change) {
         var root = Path.Combine(Path.GetTempPath(), "poseidon-operation-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(root);
         try {
@@ -42,7 +42,10 @@ public sealed partial class DirectoryWorkspaceTests
             var plan = await ChangePlan(c, job, null, new("Window", DateTimeOffset.UtcNow.AddMinutes(-1), DateTimeOffset.UtcNow.AddHours(1)));
             plan = await ChangePlan(c, job, plan, new("Assign", TugId: Tug.Id));
             var pin = new RequirementPin(rule.Current.RequirementId!.Value, rule.Current.RequirementRevision!.Value, rule.Current.SourceId!.Value, rule.Current.SourceRevision!.Value, rule.Current.Id, rule.Current.Revision);
-            var control = await CapacitySave(c, "controls", GraphCommand(content: new(Title: "FICTIONAL operation context", OwnerId: settings.Memberships[0].ActorId, OwnerRole: ReviewRole, Frequency: "FICTIONAL frequency", EvidencePolicy: "FICTIONAL evidence policy", VerificationPolicy: "FICTIONAL independent review", Critical: true)) with { Requirements = [pin] });
+            var controlCommand = GraphCommand(content: new(Title: "FICTIONAL operation context", OwnerId: settings.Memberships[0].ActorId, OwnerRole: ReviewRole, Frequency: "FICTIONAL frequency", EvidencePolicy: "FICTIONAL evidence policy", VerificationPolicy: "FICTIONAL independent review", Critical: true)) with { Requirements = [pin] };
+            var control = await CapacitySave(c, "controls", controlCommand);
+            // QA B2: the "retired" case binds the owning documents to a published control, which is retired below.
+            if (change == "retired") control = await PublishControl(c, host.Services, control, controlCommand, Tug.Id);
             var authorization = await OwningDocument(c, host.Services, control, pin, baseline.Id, new(ServiceAuthorization: new(job.Id, job.Revision, job.Version, plan.Revision, plan.Version, "AUTHORIZED_TUG_SERVICE", "FICTIONAL shore authorization; no actual issuance")), change != "unverified-service");
             var operation = await OwningDocument(c, host.Services, control, pin, baseline.Id, new(Operation: new(job.Id, job.Revision, job.Version, plan.Revision, plan.Version, change == "ocean" ? "SOLELY_LONG_DISTANCE_OCEAN_TOWAGE" : "CLOSE_QUARTERS_TOWAGE", authorization.Id, authorization.Revision)));
             CapacityRights(host.Services); await Token(c);
@@ -71,6 +74,7 @@ public sealed partial class DirectoryWorkspaceTests
                 using var changed = await Send(c, $"source-drafts/{source!.Current.Id}", new RegisterCommand(source.Version, source.Current.Content), update: true); Assert.Equal(HttpStatusCode.OK, changed.StatusCode);
             } else if (change == "verifier-role") settings.Memberships[0] = settings.Memberships[0] with { HumanAuthorities = [] };
             else if (change == "expired") clock.Offset = TimeSpan.FromHours(3);
+            else if (change == "retired") await RetireControl(c, host.Services, control.Id, Tug.Id); // 62.01 paragraph:193: no positive use
             var current = await c.GetFromJsonAsync<JsonElement>($"/api/v1/applicability/evaluations/{evaluation.Id}/current", Ct);
             Assert.Equal(change is "current" or "ocean" or "unverified-service" or "unmapped", current.GetProperty("current").GetBoolean());
             if (change is "job-noop" or "plan-noop" or "verifier-role" or "source") Assert.Contains(current.GetProperty("causes").EnumerateArray(), x => x.GetString() == "OWNING_INPUT_CHANGED");

@@ -169,12 +169,14 @@ public static class HumanReviewEndpoints
     private static bool RevisionQuery(HttpContext h, string key, out long revision) => long.TryParse(h.Request.Query[key], NumberStyles.None, CultureInfo.InvariantCulture, out revision) && revision is > 0 and <= 9007199254740991;
     // 62.01 §6: the control side compares with the effective published revision, which a pending
     // successor draft/review/approval does not replace; a never-published control uses its latest revision.
+    // A retired control has no effective revision (paragraph:193), so every pinned revision is not current.
     private static bool Superseded(ControlEvidenceHead evidence, ControlEvidenceHead control, long er, long cr) =>
-        evidence.Revision != er || ControlLifecyclePolicy.EffectiveRevision(control.PublishedRevision, control.Revision) != cr;
+        evidence.Revision != er || !ControlLifecyclePolicy.PositiveUse(control.ControlState, control.PublishedRevision, control.Revision, cr);
     private static async Task<HumanReviewDto> Dto(PoseidonDbContext db, HumanReviewEvent e, uint version, DateTimeOffset asOf, CancellationToken ct, FederationSettings settings, bool currentView = true) {
         var superseded = await db.ControlEvidenceRevisions.AnyAsync(x => x.VesselId == e.VesselId && x.SavedAt <= asOf &&
             x.Kind == "Evidence" && x.Id == e.EvidenceId && x.Revision > e.EvidenceRevision, ct)
             || await ControlEvidenceEndpoints.ControlRevisionSuperseded(db, e.VesselId, e.ControlId, e.ControlRevision, asOf, ct)
+            || await ControlEvidenceEndpoints.ControlRetired(db, e.VesselId, e.ControlId, asOf, ct)
             || await LineageChanged(db, e.VesselId, e.ControlId, e.ControlRevision, e.EvaluationId, asOf, ct, settings, currentView);
         if (e.VerificationId != null) superseded |= await db.HumanReviewEvents.AnyAsync(x => x.VesselId == e.VesselId && x.Id == e.VerificationId && x.Revision > e.VerificationRevision && x.SavedAt <= asOf, ct);
         if (e.DecisionJson != null) {
@@ -292,14 +294,16 @@ public static class HumanReviewEndpoints
         var content = JsonSerializer.Deserialize<ControlEvidenceContent>(ev.ContentJson, Json)!;
         var historicalSuperseded = await db.ControlEvidenceRevisions.AnyAsync(x => x.VesselId == vessel && x.SavedAt <= asOf &&
             x.Kind == "Evidence" && x.Id == evidence && x.Revision > er, ct) || await ControlEvidenceEndpoints.ControlRevisionSuperseded(db, vessel, control, cr, asOf, ct);
+        // 62.01 paragraph:193: a retired control has no positive use; its chain is never a recorded chain.
+        var controlRetired = await ControlEvidenceEndpoints.ControlRetired(db, vessel, control, asOf, ct);
         var currentEvents = await authorizedMetadata.Where(e => db.HumanReviewHeads.Any(head => head.VesselId == vessel && head.Id == e.Id && head.Revision == e.Revision))
             .OrderByDescending(e => e.SavedAt).ThenBy(e => e.Id).Take(64).ToArrayAsync(ct);
         var chainBlockers = new List<string>(evaluationCauses);
         if (pins.Length == 0) chainBlockers.Add("REQUIREMENT_LINK_MISSING");
         if (co.Lifecycle != "COMPLETED") chainBlockers.Add("CONTROL_COMPLETION_PENDING");
-        if (!currentEvents.Any(v => v.Kind == "Verification" && v.State == "VERIFIED" && v.ValidUntil > DateTimeOffset.UtcNow && v.EvaluationId == latestEvaluation?.Id)) chainBlockers.Add("VERIFICATION_PENDING_OR_STALE");
+        if (controlRetired || !currentEvents.Any(v => v.Kind == "Verification" && v.State == "VERIFIED" && v.ValidUntil > DateTimeOffset.UtcNow && v.EvaluationId == latestEvaluation?.Id)) chainBlockers.Add("VERIFICATION_PENDING_OR_STALE");
         if (!currentEvents.Any(d => d.Kind == "Decision" && d.State == "RECORDED" && d.EvaluationId == latestEvaluation?.Id)) chainBlockers.Add("DECISION_RECORDING_PENDING");
-        var recordedChain = evaluationCauses.Length == 0 && pins.Length > 0 && co.Lifecycle == "COMPLETED" && !historicalSuperseded &&
+        var recordedChain = evaluationCauses.Length == 0 && pins.Length > 0 && co.Lifecycle == "COMPLETED" && !historicalSuperseded && !controlRetired &&
             currentEvents.Any(v => v.Kind == "Verification" && v.State == "VERIFIED" && v.ValidUntil > DateTimeOffset.UtcNow && v.EvaluationId == latestEvaluation?.Id &&
                 currentEvents.Any(d => d.Kind == "Decision" && d.State == "RECORDED" && d.VerificationId == v.Id && d.VerificationRevision == v.Revision && d.EvaluationId == v.EvaluationId));
         var profileRevision = await db.RegulatoryDraftRevisions.Where(x => x.VesselId == vessel && x.SavedAt <= asOf)
@@ -413,7 +417,7 @@ public static class HumanReviewEndpoints
             return Results.Content(r.OutcomeJson, "application/json");
         }
         async Task<bool> RecordingChanged() =>
-            await db.ControlEvidenceHeads.AnyAsync(x => x.VesselId == vessel && (x.Kind == "Evidence" && x.Id == ev.Id && x.Revision != ev.Revision || x.Kind == "Control" && x.Id == co.Id && (x.PublishedRevision ?? x.Revision) != co.Revision), ct) ||
+            await db.ControlEvidenceHeads.AnyAsync(x => x.VesselId == vessel && (x.Kind == "Evidence" && x.Id == ev.Id && x.Revision != ev.Revision || x.Kind == "Control" && x.Id == co.Id && (x.ControlState == "RETIRED" || (x.PublishedRevision ?? x.Revision) != co.Revision)), ct) ||
             await LineageChanged(db, vessel, co.Id, co.Revision, cmd.EvaluationId, DateTimeOffset.UtcNow, ct, h.RequestServices.GetRequiredService<FederationSettings>()) ||
             await db.HumanReviewHeads.AnyAsync(x => x.VesselId == vessel && x.Id == cmd.VerificationId && x.Revision != cmd.VerificationRevision, ct);
         var replay = await Replay(); if (replay != null) return replay;

@@ -26,6 +26,26 @@ describe('CE strict consumer authored / NOT RUN', () => {
     vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => ({ available: true, reason: 'AUTHORITATIVE_APPLICABILITY_UNAVAILABLE', draftCriticalOrphans: [], offset: 0, hasMore: false }) })))
     await expect(orphans(vessel, 0, new AbortController().signal)).rejects.toThrow()
   })
+  // DEV-028 / QA B2: the control list carries the 62.01 state and effective revision; RETIRED has none.
+  it('decodes the control list lifecycle and rejects a retired or mismatched pointer', async () => {
+    const row = graphRow(); const listed = (lifecycle: unknown) => ({ items: [row], offset: 0, hasMore: false, canWrite: true, lifecycle })
+    const entry = (patch: Record<string, unknown> = {}) => ({ id: row.id, state: 'RETIRED', publishedRevision: null, successorPending: false, ...patch })
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => listed([entry()]) })))
+    expect((await page(vessel, 'Control', 0, new AbortController().signal)).lifecycle).toEqual([entry()])
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => listed([entry({ state: 'PUBLISHED', publishedRevision: 1 })]) })))
+    expect((await page(vessel, 'Control', 0, new AbortController().signal)).lifecycle?.[0].publishedRevision).toBe(1)
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => ({ items: [row], offset: 0, hasMore: false, canWrite: true }) })))
+    expect((await page(vessel, 'Control', 0, new AbortController().signal)).lifecycle).toBeNull()
+    for (const bad of [[entry({ publishedRevision: 1 })], [entry({ state: 'PUBLISHED' })], [entry({ id: vessel })], [], [entry(), entry()], [entry({ state: 'ACTIVE' })], [{ ...entry(), verification: 'VERIFIED' }]]) {
+      vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => listed(bad) })))
+      await expect(page(vessel, 'Control', 0, new AbortController().signal)).rejects.toThrow()
+    }
+    // Only the control head list carries it; evidence and version history pages never do.
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => ({ ...listed([entry()]), items: [{ ...row, kind: 'Evidence' }] }) })))
+    await expect(page(vessel, 'Evidence', 0, new AbortController().signal)).rejects.toThrow()
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => listed([entry()]) })))
+    await expect(page(vessel, 'Control', 0, new AbortController().signal, row.id)).rejects.toThrow()
+  })
   it('binds command outcome to resource, vessel and kind', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => graphRow() })))
     await expect(save(vessel, 'Control', vessel, { body: '{}', key: 'synthetic-key-0001' }, 'synthetic-csrf', new AbortController().signal)).rejects.toThrow()

@@ -12,7 +12,7 @@ const K = {
   unavailable: 'pairs.m_027dc262b7fbd095', supporting: 'pairs.m_cc38ff2f59dfb8aa', none: 'pairs.m_9437f74f16d45312', pinned: 'pairs.m_3544d26cbfe22570',
   effective: 'pairs.m_61901b95440b2e61', pending: 'pairs.m_5bfa5323a04a472d', noEffective: 'pairs.m_ae1a44f3c88cf989', supersedes: 'pairs.m_12e4b7ce9141120d'
 } as const
-const STATES: Record<service.ControlState, string> = { DRAFT: 'pairs.m_474c37ed25025393', IN_REVIEW: 'pairs.m_458e2b38d4c815f2', APPROVED: 'pairs.m_445ccc551acc5d3b', PUBLISHED: 'pairs.m_18307695a3cdd392', RETIRED: 'pairs.m_bc8a6e023d55eff5' }
+export const STATES: Record<service.ControlState, string> = { DRAFT: 'pairs.m_474c37ed25025393', IN_REVIEW: 'pairs.m_458e2b38d4c815f2', APPROVED: 'pairs.m_445ccc551acc5d3b', PUBLISHED: 'pairs.m_18307695a3cdd392', RETIRED: 'pairs.m_bc8a6e023d55eff5' }
 const REASONS: Record<service.LifecycleEvent['reasonCode'], string> = { SUBMIT_FOR_REVIEW: 'pairs.m_e8bfa7293d7befa7', RETURN_FOR_CORRECTION: 'pairs.m_889f6e7487cd555e', APPROVE: 'pairs.m_3c5062665dcad1de', PUBLISH: 'pairs.m_bf8498e5cb2f6ce1', RETIRE: 'pairs.m_e7b1434304021219', CONTENT_REVISED: 'pairs.m_a43e9e79ef0e42cd' }
 export const ORPHAN_REASONS: Record<service.OrphanReason, string> = { CRITICALITY_UNKNOWN: 'pairs.m_bd7660f8ea8e0811', REQUIREMENT_LINK_MISSING: 'pairs.m_69c8580208acc8c2', OWNER_MISSING: 'pairs.m_fe74d79deff90fe1' }
 export const FINDINGS = { heading: 'pairs.m_848a93989244a54a', unavailable: 'pairs.m_965193f060525feb' } as const

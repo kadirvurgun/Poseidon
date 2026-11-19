@@ -63,7 +63,14 @@ public static class AuditReadyEndpoints
         var pairs = readers.Select(g => (g.EvidenceId, g.ControlId)).Distinct().ToArray();
         var items = new List<AuditReadyChain>(); var unavailable = 0;
         foreach (var (evidence, control) in pairs.Take(MaxChains)) {
-            var edge = await db.ControlEvidenceEdges.AsNoTracking().Where(x => x.VesselId == vessel && x.Kind == "Evidence" && x.Id == evidence && x.TargetKind == "Control" && x.TargetId == control)
+            // 62.01 section 6: chain the effective published control revision (not a pending successor);
+            // a retired control has none (paragraph:193) and its chain is unavailable. A never-published
+            // control keeps the latest edge.
+            var head = await db.ControlEvidenceHeads.AsNoTracking().Where(x => x.VesselId == vessel && x.Kind == "Control" && x.Id == control)
+                .Select(x => new { x.ControlState, x.PublishedRevision }).SingleOrDefaultAsync(ct);
+            var edge = head == null || head.ControlState == "RETIRED" ? null : await db.ControlEvidenceEdges.AsNoTracking()
+                .Where(x => x.VesselId == vessel && x.Kind == "Evidence" && x.Id == evidence && x.TargetKind == "Control" && x.TargetId == control &&
+                    (head.PublishedRevision == null || x.TargetRevision == head.PublishedRevision))
                 .OrderByDescending(x => x.Revision).ThenByDescending(x => x.TargetRevision).FirstOrDefaultAsync(ct);
             var visible = edge != null &&
                 await HumanReviewEndpoints.Visible(db, vessel, a, true).AnyAsync(x => x.Kind == "Evidence" && x.Id == evidence && x.Revision == edge.Revision && x.SavedAt <= now, ct) &&

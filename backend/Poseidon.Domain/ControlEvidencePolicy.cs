@@ -133,7 +133,15 @@ public static class ControlLifecyclePolicy
     // The published revision a PUBLISH replaces, recorded on the audited event; null for a first publish.
     public static long? Supersedes(string reason, long? published, long candidate) =>
         reason == "PUBLISH" && published is { } prior && prior != candidate ? prior : null;
+    // 62.01 paragraph:193: RETIRE nulls the current pointer and "positive usage fails"; retirement is
+    // modelled explicitly by the stored RETIRED state, never inferred from a null pointer (a control
+    // that was never published also has a null pointer).
+    public static bool Retired(string? stored) => stored == "RETIRED";
     // Revision that reads, orphan findings, supporting evidence and verification gates treat as
     // current: the published revision while a successor is pending, otherwise the latest revision.
-    public static long EffectiveRevision(long? published, long latest) => published ?? latest;
+    // A retired control has no current revision (null): nothing may fall back to its last revision.
+    public static long? EffectiveRevision(string? stored, long? published, long latest) => Retired(stored) ? null : published ?? latest;
+    // Positive use (a current VERIFIED gate, supporting-evidence currency, obligation coverage) of an
+    // exact control revision: only the effective revision of a non-retired control qualifies.
+    public static bool PositiveUse(string? stored, long? published, long latest, long revision) => EffectiveRevision(stored, published, latest) == revision;
 }

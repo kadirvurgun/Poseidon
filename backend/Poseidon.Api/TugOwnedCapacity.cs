@@ -73,7 +73,8 @@ internal static class TugOwnedCapacityConsumer
             if (verification?.State != "VERIFIED" || verification.ValidUntil <= plan.PlannedEnd || verification.ValidUntil == null ||
                 !CurrentVerifier(settings, verification, now, plan.PlannedEnd.Value) || verification.EvaluationId == null ||
                 (await CurrentRegulatoryContext.Stale(db, verification.EvaluationId.Value, tug, now, ct, settings)).Length != 0 ||
-                !await db.ControlEvidenceHeads.AnyAsync(h => h.VesselId == tug && h.Kind == "Control" && h.Id == verification.ControlId && (h.PublishedRevision ?? h.Revision) == verification.ControlRevision, ct))
+                !await db.ControlEvidenceHeads.AnyAsync(h => h.VesselId == tug && h.Kind == "Control" && h.Id == verification.ControlId &&
+                    (h.ControlState == null || h.ControlState != "RETIRED") && (h.PublishedRevision ?? h.Revision) == verification.ControlRevision, ct)) // 62.01 paragraph:193: retired = no positive use
                 return Reject("Unverified", "CurrentIndependentVerificationRequired");
             var ep = await db.ControlEvidenceRequirements.AsNoTracking().Where(x => x.VesselId == tug && x.Kind == "Evidence" && x.Id == evidence.Id && x.Revision == evidence.Revision)
                 .Select(x => new RequirementPin(x.RequirementId, x.RequirementRevision, x.SourceId, x.SourceRevision, x.RuleId, x.RuleRevision)).ToArrayAsync(ct);
