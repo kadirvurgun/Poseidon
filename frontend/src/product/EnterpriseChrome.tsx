@@ -41,6 +41,7 @@ const labels: Record<string, {
     sources: { tr: sourceText("tr", "pairs.m_dfd9b78b64686784"), en: sourceText("en", "pairs.m_dfd9b78b64686784"), icon: FolderCheck, group: 'assurance' },
     requirements: { tr: sourceText("tr", "pairs.m_397eb5dca109db14"), en: sourceText("en", "pairs.m_397eb5dca109db14"), icon: ShieldCheck, group: 'assurance' },
     audit: { tr: sourceText("tr", "pairs.m_9f8662ba28b5b4fc"), en: sourceText("en", "pairs.m_9f8662ba28b5b4fc"), icon: Gauge, group: 'assurance' },
+    'audit-ready': { tr: sourceText("tr", "pairs.m_372c48ba7e84c124"), en: sourceText("en", "pairs.m_372c48ba7e84c124"), icon: ShieldCheck, group: 'assurance' },
     companies: { tr: sourceText("tr", "pairs.m_3ff4996c5348b429"), en: sourceText("en", "pairs.m_3ff4996c5348b429"), icon: Building2, group: 'workspace' },
     'system-health': { tr: sourceText("tr", "pairs.m_4e40e458d82d0a06"), en: sourceText("en", "pairs.m_4e40e458d82d0a06"), icon: Gauge, group: 'workspace' },
     'notification-escalation': { tr: sourceText("tr", "pairs.m_11fcfe7e5ea66ca5"), en: sourceText("en", "pairs.m_11fcfe7e5ea66ca5"), icon: ClipboardList, group: 'workspace' },

@@ -34,14 +34,15 @@ export const lensLabels: Record<string, readonly [
     'noon-report': [sourceText("tr", "pairs.m_ff485806c57476ca"), sourceText("en", "pairs.m_ff485806c57476ca")], 'deck-daily-log': [sourceText("tr", "pairs.m_75d4c27ced71efda"), sourceText("en", "pairs.m_75d4c27ced71efda")], 'engine-daily-log': [sourceText("tr", "pairs.m_21eb6ede9f2b37f9"), sourceText("en", "pairs.m_21eb6ede9f2b37f9")],
     today: [sourceText("tr", "pairs.m_14d5741b2e6e2585"), sourceText("en", "pairs.m_14d5741b2e6e2585")], fleet: [sourceText("tr", "pairs.m_624c9bbf6ccfa3dd"), sourceText("en", "pairs.m_624c9bbf6ccfa3dd")], companies: [sourceText("tr", "pairs.m_3ff4996c5348b429"), sourceText("en", "pairs.m_3ff4996c5348b429")], crew: [sourceText("tr", "pairs.m_9c7ff80bf1b60400"), sourceText("en", "pairs.m_9c7ff80bf1b60400")],
     equipment: [sourceText("tr", "pairs.m_77e9d3d4c2e4b44f"), sourceText("en", "pairs.m_77e9d3d4c2e4b44f")], maintenance: [sourceText("tr", "pairs.m_21f68c2e5c640595"), sourceText("en", "pairs.m_21f68c2e5c640595")], import: [sourceText("tr", "pairs.m_f1779f35acec39d7"), sourceText("en", "pairs.m_f1779f35acec39d7")],
-    audit: [sourceText("tr", "pairs.m_9f8662ba28b5b4fc"), sourceText("en", "pairs.m_9f8662ba28b5b4fc")], sources: [sourceText("tr", "pairs.m_d52797a6e362de20"), sourceText("en", "pairs.m_d52797a6e362de20")], requirements: [sourceText("tr", "pairs.m_d6ad4bb19c60b2b2"), sourceText("en", "pairs.m_d6ad4bb19c60b2b2")],
+    audit: [sourceText("tr", "pairs.m_9f8662ba28b5b4fc"), sourceText("en", "pairs.m_9f8662ba28b5b4fc")],
+    'audit-ready': [sourceText("tr", "pairs.m_372c48ba7e84c124"), sourceText("en", "pairs.m_372c48ba7e84c124")], sources: [sourceText("tr", "pairs.m_d52797a6e362de20"), sourceText("en", "pairs.m_d52797a6e362de20")], requirements: [sourceText("tr", "pairs.m_d6ad4bb19c60b2b2"), sourceText("en", "pairs.m_d6ad4bb19c60b2b2")],
     'tug-command': [sourceText("tr", "pairs.m_21739423fc15322f"), sourceText("en", "pairs.m_21739423fc15322f")], 'tug-job-board': [sourceText("tr", "pairs.m_326009e7c4fb72c6"), sourceText("en", "pairs.m_326009e7c4fb72c6")], 'tug-job-intake': [sourceText("tr", "pairs.m_967bfbc16e73959c"), sourceText("en", "pairs.m_967bfbc16e73959c")],
 };
 const root: Record<string, string> = { crew: 'crew-roster', equipment: 'equipment-hierarchy', maintenance: 'maintenance-plan', import: 'excel-migration' };
 export function lensHref(key: string, vessel: string | null) {
     if (!Object.hasOwn(lensLabels, key))
         return null;
-    if (['operational-downtime', 'work-order-center', 'defects', 'fuel-bunker-log', 'port-activity-sof', 'noon-report', 'deck-daily-log', 'engine-daily-log', 'certificate-command-center', 'renewal-workflow'].includes(key))
+    if (['audit-ready', 'operational-downtime', 'work-order-center', 'defects', 'fuel-bunker-log', 'port-activity-sof', 'noon-report', 'deck-daily-log', 'engine-daily-log', 'certificate-command-center', 'renewal-workflow'].includes(key))
         return vessel ? `/app/${key}/${vessel}` : `/app/${key}`;
     if (Object.hasOwn(root, key))
         return vessel ? `/app/${root[key]}/${vessel}` : null;
@@ -70,7 +71,7 @@ export function decodeLenses(value: unknown, tenant: string, actor: string, vess
         for (const item of row.items) {
             if (!object(item) || !closed(item, ['key', 'href', 'group']) || typeof item.key !== 'string' || !Object.hasOwn(lensLabels, item.key) || typeof item.href !== 'string' || items.some(x => x.key === item.key) ||
                 item.href !== lensHref(item.key, vessel) || (item.group !== 'daily' && item.group !== 'review') ||
-                item.group !== (['audit', 'sources', 'requirements', 'import', 'certificate-command-center', 'renewal-workflow'].includes(item.key) ? 'review' : 'daily') ||
+                item.group !== (['audit', 'audit-ready', 'sources', 'requirements', 'import', 'certificate-command-center', 'renewal-workflow'].includes(item.key) ? 'review' : 'daily') ||
                 (value.mode === 'Ship' && item.key.startsWith('tug-')) || (value.mode === 'Tug' && ['fuel-bunker-log', 'port-activity-sof', 'operational-downtime'].includes(item.key)))
                 invalid();
             items.push({ key: item.key, href: item.href as string, group: item.group });

@@ -37,7 +37,7 @@ public sealed record HumanTraceReader(Guid Id, Guid VesselId, Guid EvidenceId, G
     string[] Kinds, string[] DecisionTypes, DateTimeOffset ValidFrom, DateTimeOffset ValidUntil, bool IncludeUntypedDecisions = false);
 public sealed record AuditTraceEvent(Guid Id, long Revision, string Kind, string State, string CurrentState,
     DateTimeOffset SavedAt, DateTimeOffset? ValidUntil, Guid? EvaluationId, Guid? VerificationId, long? VerificationRevision,
-    Guid AuthorityId, Guid RoleId, string AuthorityHash, string ContextHash);
+    Guid AuthorityId, Guid RoleId, string AuthorityHash, string ContextHash, string? ReasonCode = null, string? AuthorityRole = null);
 
 public static class HumanReviewEndpoints
 {
@@ -87,7 +87,7 @@ public static class HumanReviewEndpoints
             g.Capability is "human.review.submit" or "human.verify" or "human.decide" && a.Permissions.Contains(g.Capability))
             .GroupBy(g => g.Id).Where(g => g.Count() == 1).Select(g => g.Single()).ToArray();
     }
-    private static IQueryable<ControlEvidenceRevision> Visible(PoseidonDbContext db, Guid vessel, TrustedActor actor, bool assignedTraceReader = false) => OperationEquipmentCommands.Visible(db, actor, db.ControlEvidenceRevisions.AsNoTracking(), assignedTraceReader).Where(r => r.VesselId == vessel &&
+    internal static IQueryable<ControlEvidenceRevision> Visible(PoseidonDbContext db, Guid vessel, TrustedActor actor, bool assignedTraceReader = false) => OperationEquipmentCommands.Visible(db, actor, db.ControlEvidenceRevisions.AsNoTracking(), assignedTraceReader).Where(r => r.VesselId == vessel &&
         (!db.TugCapabilityBindings.Any(b => b.VesselId == vessel && b.Id == r.Id && b.Revision == r.Revision && b.Kind == r.Kind) || actor.CanReadTug && actor.Permissions.Contains("equipment.read")) &&
         (actor.CanReadTug && actor.Permissions.Contains("equipment.read") || !db.ControlEvidenceEdges.Any(edge => edge.VesselId == vessel && edge.Kind == r.Kind && edge.Id == r.Id && edge.Revision == r.Revision &&
             db.TugCapabilityBindings.Any(b => b.VesselId == vessel && b.Kind == edge.TargetKind && b.Id == edge.TargetId && b.Revision == edge.TargetRevision))) &&
@@ -278,7 +278,7 @@ public static class HumanReviewEndpoints
                 var version = await db.HumanReviewHeads.Where(x => x.VesselId == vessel && x.Id == e.Id).Select(x => x.Version).SingleAsync(ct);
                 var state = await Dto(db, e, version, asOf, ct, h.RequestServices.GetRequiredService<FederationSettings>(), !historical);
                 auditItems.Add(new(e.Id, e.Revision, e.Kind, e.State, state.CurrentState, e.SavedAt, e.ValidUntil, e.EvaluationId,
-                    e.VerificationId, e.VerificationRevision, e.AuthorityId, e.RoleId, e.AuthorityHash, e.ContextHash));
+                    e.VerificationId, e.VerificationRevision, e.AuthorityId, e.RoleId, e.AuthorityHash, e.ContextHash, e.ReasonCode, state.Recording?.Policy.AuthorityRole));
             }
         }
         // Retained evaluations expose only their immutable lineage identifiers/hash.
@@ -355,6 +355,9 @@ public static class HumanReviewEndpoints
                         (g.Recording!.AuthorityRole == "DPA" || g.Recording.AuthorityRole == "Tug Master" && scopedVessel.Kind == VesselKind.Tug || g.Recording.AuthorityRole == "Master" && scopedVessel.Kind == VesselKind.Ship)));
         }
         var grant = Grant(); if (grant == null) return await Fail(h, 403, "human_authority_required");
+        // DEV-031: AI/automation/service principals and tenant-wide admins never create a final decision.
+        if (HumanDecisionAuthority.IsFinal(kind, capability) && HumanDecisionAuthority.FinalDecisionDenial(h.RequestServices.GetRequiredService<FederationSettings>().Memberships,
+            a, grant, scopedVessel.Kind, cmd.State, DateTimeOffset.UtcNow) != null) return await Fail(h, 403, "human_authority_required");
         var authorizedHash = AuthorityHash(grant, a);
         if (kind == "Decision" && cmd.State == "RECORDED") {
             if (cmd.Recording == null) return await Fail(h, 400, "decision_content_required");

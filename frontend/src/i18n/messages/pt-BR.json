@@ -546,6 +546,52 @@
         "SOURCE_REVIEW_REQUIRED": "Revisão da fonte necessária",
         "VESSEL_CHANGED": "Registro da embarcação alterado"
       }
+    },
+    "AuditReadyWorkspace_tsx_copy": {
+      "title": "Rastreabilidade pronta para auditoria",
+      "description": "Requisito → controle → evidência → verificação → decisão com estados, carimbos de data e hora e localizadores de fonte declarados. Uma cadeia registrada é um registro humano, não uma aprovação nem declaração de prontidão.",
+      "vessel": "Embarcação",
+      "chooseVessel": "Selecione uma embarcação",
+      "noVessel": "Selecione uma embarcação para listar as cadeias atribuídas a você.",
+      "loading": "Carregando…",
+      "offline": "Você está offline. Os dados exibidos podem estar desatualizados; conecte-se para atualizar.",
+      "hidden": "Pausado enquanto a página está oculta.",
+      "sessionError": "Não foi possível verificar sua sessão.",
+      "denied": "Você não tem autorização para esta visualização.",
+      "invalidRoute": "Este endereço não é uma rastreabilidade válida.",
+      "chainsTitle": "Cadeias atribuídas",
+      "chainsEmpty": "Nenhuma cadeia atribuída a você para esta embarcação.",
+      "chainsUnavailable": "Cadeias atribuídas indisponíveis no momento: {{count}}",
+      "chainsMore": "Há mais cadeias do que é possível exibir.",
+      "loadError": "Não foi possível carregar a rastreabilidade.",
+      "notFound": "Cadeia não encontrada ou não mais visível para você.",
+      "retry": "Tentar novamente",
+      "evidence": "Evidência",
+      "control": "Controle",
+      "requirement": "Requisito",
+      "source": "Fonte",
+      "verification": "Verificação",
+      "decision": "Decisão",
+      "state": "Estado",
+      "savedAt": "Registrado em",
+      "revision": "Revisão",
+      "hash": "Hash do conteúdo",
+      "locator": "Localizador da fonte (declarado, não verificado)",
+      "locatorMissing": "Localizador não informado",
+      "unavailable": "Indisponível",
+      "notRecorded": "Não registrado",
+      "reason": "Motivo",
+      "role": "Função de autoridade",
+      "contextHash": "Hash do contexto",
+      "validUntil": "Válido até",
+      "dispositionRecorded": "Cadeia registrada — apenas registro humano, não uma aprovação",
+      "dispositionReview": "Revisão necessária",
+      "blockers": "Itens em aberto",
+      "stale": "Desatualizado: uma entrada foi substituída ou expirou; revisão necessária.",
+      "stagesLabel": "Etapas da rastreabilidade",
+      "loadedAt": "Carregado em",
+      "sourceTitle": "Título declarado",
+      "details": "Detalhes"
     }
   },
   "pairs": {
@@ -3392,6 +3438,7 @@
     "m_61901b95440b2e61": "Revisão publicada vigente",
     "m_5bfa5323a04a472d": "Revisão sucessora pendente (não vigente até ser publicada)",
     "m_ae1a44f3c88cf989": "Nenhuma revisão publicada está vigente",
-    "m_12e4b7ce9141120d": "Substitui a revisão"
+    "m_12e4b7ce9141120d": "Substitui a revisão",
+    "m_372c48ba7e84c124": "Rastreabilidade pronta para auditoria"
   }
 }

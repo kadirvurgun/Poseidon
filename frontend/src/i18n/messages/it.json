@@ -546,6 +546,52 @@
         "SOURCE_REVIEW_REQUIRED": "Revisione della fonte richiesta",
         "VESSEL_CHANGED": "Scheda nave modificata"
       }
+    },
+    "AuditReadyWorkspace_tsx_copy": {
+      "title": "Tracciabilità pronta per l’audit",
+      "description": "Requisito → controllo → evidenza → verifica → decisione con stati, marcature temporali e riferimenti di fonte dichiarati. Una catena registrata è una registrazione umana, non un’approvazione né una dichiarazione di prontezza.",
+      "vessel": "Nave",
+      "chooseVessel": "Seleziona una nave",
+      "noVessel": "Seleziona una nave per elencare le catene assegnate a te.",
+      "loading": "Caricamento…",
+      "offline": "Sei offline. I dati mostrati potrebbero non essere aggiornati; riconnettiti per aggiornare.",
+      "hidden": "In pausa mentre la pagina è nascosta.",
+      "sessionError": "Impossibile verificare la sessione.",
+      "denied": "Non sei autorizzato per questa vista.",
+      "invalidRoute": "Questo indirizzo non è una tracciabilità valida.",
+      "chainsTitle": "Catene assegnate",
+      "chainsEmpty": "Nessuna catena assegnata a te per questa nave.",
+      "chainsUnavailable": "Catene assegnate attualmente non disponibili: {{count}}",
+      "chainsMore": "Esistono più catene di quante se ne possano mostrare.",
+      "loadError": "Impossibile caricare la tracciabilità.",
+      "notFound": "Catena non trovata o non più visibile.",
+      "retry": "Riprova",
+      "evidence": "Evidenza",
+      "control": "Controllo",
+      "requirement": "Requisito",
+      "source": "Fonte",
+      "verification": "Verifica",
+      "decision": "Decisione",
+      "state": "Stato",
+      "savedAt": "Registrato il",
+      "revision": "Revisione",
+      "hash": "Hash del contenuto",
+      "locator": "Riferimento della fonte (dichiarato, non verificato)",
+      "locatorMissing": "Riferimento non fornito",
+      "unavailable": "Non disponibile",
+      "notRecorded": "Non registrato",
+      "reason": "Motivo",
+      "role": "Ruolo di autorità",
+      "contextHash": "Hash del contesto",
+      "validUntil": "Valido fino al",
+      "dispositionRecorded": "Catena registrata — solo registrazione umana, non un’approvazione",
+      "dispositionReview": "Revisione necessaria",
+      "blockers": "Punti aperti",
+      "stale": "Non aggiornato: un input è stato sostituito o è scaduto; revisione necessaria.",
+      "stagesLabel": "Fasi della tracciabilità",
+      "loadedAt": "Caricato il",
+      "sourceTitle": "Titolo dichiarato",
+      "details": "Dettagli"
     }
   },
   "pairs": {
@@ -3392,6 +3438,7 @@
     "m_61901b95440b2e61": "Revisione pubblicata in vigore",
     "m_5bfa5323a04a472d": "Revisione successiva in sospeso (non in vigore fino alla pubblicazione)",
     "m_ae1a44f3c88cf989": "Nessuna revisione pubblicata è in vigore",
-    "m_12e4b7ce9141120d": "Sostituisce la revisione"
+    "m_12e4b7ce9141120d": "Sostituisce la revisione",
+    "m_372c48ba7e84c124": "Tracciabilità pronta per l’audit"
   }
 }

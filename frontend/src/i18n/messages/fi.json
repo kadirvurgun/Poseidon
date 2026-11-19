@@ -546,6 +546,52 @@
         "SOURCE_REVIEW_REQUIRED": "Lähteen tarkistus vaaditaan",
         "VESSEL_CHANGED": "Aluksen tietue muuttui"
       }
+    },
+    "AuditReadyWorkspace_tsx_copy": {
+      "title": "Auditointivalmis jäljitys",
+      "description": "Vaatimus → kontrolli → näyttö → todentaminen → päätös tiloineen, aikaleimoineen ja ilmoitettuine lähdeviitteineen. Tallennettu ketju on ihmisen kirjaus, ei hyväksyntä eikä valmiusilmoitus.",
+      "vessel": "Alus",
+      "chooseVessel": "Valitse alus",
+      "noVessel": "Valitse alus nähdäksesi sinulle osoitetut ketjut.",
+      "loading": "Ladataan…",
+      "offline": "Olet offline-tilassa. Näytetyt tiedot voivat olla vanhentuneita; päivitä yhdistämällä.",
+      "hidden": "Keskeytetty, kun sivu on piilossa.",
+      "sessionError": "Istuntoasi ei voitu vahvistaa.",
+      "denied": "Sinulla ei ole oikeutta tähän näkymään.",
+      "invalidRoute": "Tämä osoite ei ole kelvollinen jäljitys.",
+      "chainsTitle": "Osoitetut ketjut",
+      "chainsEmpty": "Tälle alukselle ei ole osoitettu sinulle ketjuja.",
+      "chainsUnavailable": "Tällä hetkellä saatavilla olemattomat osoitetut ketjut: {{count}}",
+      "chainsMore": "Ketjuja on enemmän kuin voidaan näyttää.",
+      "loadError": "Jäljitystä ei voitu ladata.",
+      "notFound": "Ketjua ei löytynyt tai se ei ole enää näkyvissä sinulle.",
+      "retry": "Yritä uudelleen",
+      "evidence": "Näyttö",
+      "control": "Kontrolli",
+      "requirement": "Vaatimus",
+      "source": "Lähde",
+      "verification": "Todentaminen",
+      "decision": "Päätös",
+      "state": "Tila",
+      "savedAt": "Kirjattu",
+      "revision": "Versio",
+      "hash": "Sisällön tiiviste",
+      "locator": "Lähdeviite (ilmoitettu, todentamaton)",
+      "locatorMissing": "Viitettä ei annettu",
+      "unavailable": "Ei saatavilla",
+      "notRecorded": "Ei kirjattu",
+      "reason": "Peruste",
+      "role": "Valtuusrooli",
+      "contextHash": "Kontekstin tiiviste",
+      "validUntil": "Voimassa asti",
+      "dispositionRecorded": "Tallennettu ketju — vain ihmisen kirjaus, ei hyväksyntä",
+      "dispositionReview": "Tarkastus vaaditaan",
+      "blockers": "Avoimet kohdat",
+      "stale": "Vanhentunut: syöte korvattiin tai vanheni; tarkastus vaaditaan.",
+      "stagesLabel": "Jäljityksen vaiheet",
+      "loadedAt": "Ladattu",
+      "sourceTitle": "Ilmoitettu otsikko",
+      "details": "Tiedot"
     }
   },
   "pairs": {
@@ -3392,6 +3438,7 @@
     "m_61901b95440b2e61": "Voimassa oleva julkaistu revisio",
     "m_5bfa5323a04a472d": "Odottava seuraajarevisio (ei voimassa ennen julkaisua)",
     "m_ae1a44f3c88cf989": "Mikään julkaistu revisio ei ole voimassa",
-    "m_12e4b7ce9141120d": "Korvaa revision"
+    "m_12e4b7ce9141120d": "Korvaa revision",
+    "m_372c48ba7e84c124": "Auditointivalmis jäljitys"
   }
 }

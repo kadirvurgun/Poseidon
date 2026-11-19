@@ -546,6 +546,52 @@
         "SOURCE_REVIEW_REQUIRED": "Revisión de la fuente requerida",
         "VESSEL_CHANGED": "Registro del buque cambiado"
       }
+    },
+    "AuditReadyWorkspace_tsx_copy": {
+      "title": "Trazabilidad lista para auditoría",
+      "description": "Requisito → control → evidencia → verificación → decisión con estados, marcas de tiempo y localizadores de fuente declarados. Una cadena registrada es un registro humano, no una aprobación ni una declaración de preparación.",
+      "vessel": "Buque",
+      "chooseVessel": "Seleccione un buque",
+      "noVessel": "Seleccione un buque para listar las cadenas asignadas a usted.",
+      "loading": "Cargando…",
+      "offline": "Sin conexión. Los datos mostrados pueden estar desactualizados; conéctese para actualizar.",
+      "hidden": "En pausa mientras la página está oculta.",
+      "sessionError": "No se pudo verificar su sesión.",
+      "denied": "No está autorizado para esta vista.",
+      "invalidRoute": "Esta dirección no es una trazabilidad válida.",
+      "chainsTitle": "Cadenas asignadas",
+      "chainsEmpty": "No tiene cadenas asignadas para este buque.",
+      "chainsUnavailable": "Cadenas asignadas no disponibles actualmente: {{count}}",
+      "chainsMore": "Hay más cadenas de las que se pueden mostrar.",
+      "loadError": "No se pudo cargar la trazabilidad.",
+      "notFound": "Cadena no encontrada o ya no visible para usted.",
+      "retry": "Reintentar",
+      "evidence": "Evidencia",
+      "control": "Control",
+      "requirement": "Requisito",
+      "source": "Fuente",
+      "verification": "Verificación",
+      "decision": "Decisión",
+      "state": "Estado",
+      "savedAt": "Registrado el",
+      "revision": "Revisión",
+      "hash": "Hash del contenido",
+      "locator": "Localizador de fuente (declarado, no verificado)",
+      "locatorMissing": "Localizador no indicado",
+      "unavailable": "No disponible",
+      "notRecorded": "No registrado",
+      "reason": "Motivo",
+      "role": "Rol de autoridad",
+      "contextHash": "Hash del contexto",
+      "validUntil": "Válido hasta",
+      "dispositionRecorded": "Cadena registrada: solo registro humano, no una aprobación",
+      "dispositionReview": "Revisión requerida",
+      "blockers": "Puntos abiertos",
+      "stale": "Desactualizado: una entrada fue sustituida o caducó; revisión requerida.",
+      "stagesLabel": "Etapas de la trazabilidad",
+      "loadedAt": "Cargado el",
+      "sourceTitle": "Título declarado",
+      "details": "Detalles"
     }
   },
   "pairs": {
@@ -3392,6 +3438,7 @@
     "m_61901b95440b2e61": "Revisión publicada vigente",
     "m_5bfa5323a04a472d": "Revisión sucesora pendiente (no vigente hasta su publicación)",
     "m_ae1a44f3c88cf989": "Ninguna revisión publicada está vigente",
-    "m_12e4b7ce9141120d": "Sustituye la revisión"
+    "m_12e4b7ce9141120d": "Sustituye la revisión",
+    "m_372c48ba7e84c124": "Trazabilidad lista para auditoría"
   }
 }

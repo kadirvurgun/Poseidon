@@ -546,6 +546,52 @@
         "SOURCE_REVIEW_REQUIRED": "Kaynak incelemesi gerekli",
         "VESSEL_CHANGED": "Gemi kaydı değişti"
       }
+    },
+    "AuditReadyWorkspace_tsx_copy": {
+      "title": "Denetime hazır iz",
+      "description": "Gereksinim → kontrol → kanıt → doğrulama → karar; durumlar, zaman damgaları ve beyan edilen kaynak konumlarıyla. Kaydedilmiş zincir bir insan kaydıdır; onay veya hazırlık beyanı değildir.",
+      "vessel": "Gemi",
+      "chooseVessel": "Gemi seçin",
+      "noVessel": "Size atanmış iz zincirlerini listelemek için bir gemi seçin.",
+      "loading": "Yükleniyor…",
+      "offline": "Çevrimdışısınız. Gösterilen veriler eski olabilir; yenilemek için bağlanın.",
+      "hidden": "Sayfa gizliyken duraklatıldı.",
+      "sessionError": "Oturumunuz doğrulanamadı.",
+      "denied": "Bu görünüm için yetkiniz yok.",
+      "invalidRoute": "Bu adres geçerli bir denetime hazır iz değil.",
+      "chainsTitle": "Atanmış zincirler",
+      "chainsEmpty": "Bu gemi için size atanmış iz zinciri yok.",
+      "chainsUnavailable": "Şu anda kullanılamayan atanmış zincirler: {{count}}",
+      "chainsMore": "Gösterilebilenden fazla zincir var.",
+      "loadError": "İz yüklenemedi.",
+      "notFound": "Zincir bulunamadı veya artık size görünür değil.",
+      "retry": "Yeniden dene",
+      "evidence": "Kanıt",
+      "control": "Kontrol",
+      "requirement": "Gereksinim",
+      "source": "Kaynak",
+      "verification": "Doğrulama",
+      "decision": "Karar",
+      "state": "Durum",
+      "savedAt": "Kayıt zamanı",
+      "revision": "Revizyon",
+      "hash": "İçerik özeti",
+      "locator": "Kaynak konumu (beyan, doğrulanmamış)",
+      "locatorMissing": "Konum belirtilmemiş",
+      "unavailable": "Kullanılamıyor",
+      "notRecorded": "Kaydedilmedi",
+      "reason": "Gerekçe",
+      "role": "Yetki rolü",
+      "contextHash": "Bağlam özeti",
+      "validUntil": "Geçerlilik sonu",
+      "dispositionRecorded": "Kaydedilmiş zincir — yalnızca insan kaydı, onay değildir",
+      "dispositionReview": "İnceleme gerekli",
+      "blockers": "Açık maddeler",
+      "stale": "Eski: bir girdi yenilendi veya süresi doldu; inceleme gerekli.",
+      "stagesLabel": "İz aşamaları",
+      "loadedAt": "Yüklenme zamanı",
+      "sourceTitle": "Beyan edilen başlık",
+      "details": "Ayrıntılar"
     }
   },
   "pairs": {
@@ -3392,6 +3438,7 @@
     "m_61901b95440b2e61": "Yürürlükteki yayımlı revizyon",
     "m_5bfa5323a04a472d": "Bekleyen halef revizyon (yayımlanana kadar yürürlükte değil)",
     "m_ae1a44f3c88cf989": "Yürürlükte yayımlı revizyon yok",
-    "m_12e4b7ce9141120d": "Yerini aldığı revizyon"
+    "m_12e4b7ce9141120d": "Yerini aldığı revizyon",
+    "m_372c48ba7e84c124": "Denetime hazır iz"
   }
 }

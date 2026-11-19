@@ -546,6 +546,52 @@
         "SOURCE_REVIEW_REQUIRED": "Source review required",
         "VESSEL_CHANGED": "Vessel record changed"
       }
+    },
+    "AuditReadyWorkspace_tsx_copy": {
+      "title": "Audit-ready trace",
+      "description": "Requirement → control → evidence → verification → decision with states, timestamps and declared source locators. A recorded chain is a human record, not an approval or readiness statement.",
+      "vessel": "Vessel",
+      "chooseVessel": "Select a vessel",
+      "noVessel": "Select a vessel to list the trace chains assigned to you.",
+      "loading": "Loading…",
+      "offline": "You are offline. Shown data may be stale; reconnect to refresh.",
+      "hidden": "Paused while the page is hidden.",
+      "sessionError": "Your session could not be verified.",
+      "denied": "You are not authorized for this view.",
+      "invalidRoute": "This address is not a valid audit-ready trace.",
+      "chainsTitle": "Assigned chains",
+      "chainsEmpty": "No trace chains are assigned to you for this vessel.",
+      "chainsUnavailable": "Assigned chains currently unavailable: {{count}}",
+      "chainsMore": "More chains exist than can be shown.",
+      "loadError": "The trace could not be loaded.",
+      "notFound": "Chain not found or no longer visible to you.",
+      "retry": "Retry",
+      "evidence": "Evidence",
+      "control": "Control",
+      "requirement": "Requirement",
+      "source": "Source",
+      "verification": "Verification",
+      "decision": "Decision",
+      "state": "State",
+      "savedAt": "Recorded at",
+      "revision": "Revision",
+      "hash": "Content hash",
+      "locator": "Source locator (declared, unverified)",
+      "locatorMissing": "Locator not provided",
+      "unavailable": "Unavailable",
+      "notRecorded": "Not recorded",
+      "reason": "Reason",
+      "role": "Authority role",
+      "contextHash": "Context hash",
+      "validUntil": "Valid until",
+      "dispositionRecorded": "Recorded chain — human record only, not an approval",
+      "dispositionReview": "Review required",
+      "blockers": "Open items",
+      "stale": "Stale: an input was superseded or expired; review required.",
+      "stagesLabel": "Trace stages",
+      "loadedAt": "Loaded at",
+      "sourceTitle": "Declared title",
+      "details": "Details"
     }
   },
   "pairs": {
@@ -3392,6 +3438,7 @@
     "m_61901b95440b2e61": "Effective published revision",
     "m_5bfa5323a04a472d": "Pending successor revision (not effective until it is published)",
     "m_ae1a44f3c88cf989": "No published revision is effective",
-    "m_12e4b7ce9141120d": "Supersedes revision"
+    "m_12e4b7ce9141120d": "Supersedes revision",
+    "m_372c48ba7e84c124": "Audit-ready trace"
   }
 }

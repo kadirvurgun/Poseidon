@@ -546,6 +546,52 @@
         "SOURCE_REVIEW_REQUIRED": "Vyžaduje sa kontrola zdroja",
         "VESSEL_CHANGED": "Záznam plavidla zmenený"
       }
+    },
+    "AuditReadyWorkspace_tsx_copy": {
+      "title": "Stopa pripravená na audit",
+      "description": "Požiadavka → kontrola → dôkaz → overenie → rozhodnutie so stavmi, časovými pečiatkami a deklarovanými odkazmi na zdroj. Zaznamenaný reťazec je ľudský záznam, nie schválenie ani vyhlásenie o pripravenosti.",
+      "vessel": "Plavidlo",
+      "chooseVessel": "Vyberte plavidlo",
+      "noVessel": "Vyberte plavidlo na zobrazenie reťazcov, ktoré vám boli pridelené.",
+      "loading": "Načítava sa…",
+      "offline": "Ste offline. Zobrazené údaje môžu byť zastarané; na obnovenie sa pripojte.",
+      "hidden": "Pozastavené, kým je stránka skrytá.",
+      "sessionError": "Vašu reláciu nebolo možné overiť.",
+      "denied": "Na toto zobrazenie nemáte oprávnenie.",
+      "invalidRoute": "Táto adresa nie je platná stopa pripravená na audit.",
+      "chainsTitle": "Pridelené reťazce",
+      "chainsEmpty": "Pre toto plavidlo vám nie sú pridelené žiadne reťazce.",
+      "chainsUnavailable": "Aktuálne nedostupné pridelené reťazce: {{count}}",
+      "chainsMore": "Existuje viac reťazcov, ako je možné zobraziť.",
+      "loadError": "Stopu nebolo možné načítať.",
+      "notFound": "Reťazec sa nenašiel alebo už pre vás nie je viditeľný.",
+      "retry": "Skúsiť znova",
+      "evidence": "Dôkaz",
+      "control": "Kontrola",
+      "requirement": "Požiadavka",
+      "source": "Zdroj",
+      "verification": "Overenie",
+      "decision": "Rozhodnutie",
+      "state": "Stav",
+      "savedAt": "Zaznamenané",
+      "revision": "Revízia",
+      "hash": "Hash obsahu",
+      "locator": "Odkaz na zdroj (deklarovaný, neoverený)",
+      "locatorMissing": "Odkaz neuvedený",
+      "unavailable": "Nedostupné",
+      "notRecorded": "Nezaznamenané",
+      "reason": "Dôvod",
+      "role": "Rola oprávnenia",
+      "contextHash": "Hash kontextu",
+      "validUntil": "Platné do",
+      "dispositionRecorded": "Zaznamenaný reťazec — iba ľudský záznam, nie schválenie",
+      "dispositionReview": "Vyžaduje kontrolu",
+      "blockers": "Otvorené body",
+      "stale": "Zastarané: vstup bol nahradený alebo vypršal; vyžaduje kontrolu.",
+      "stagesLabel": "Fázy stopy",
+      "loadedAt": "Načítané",
+      "sourceTitle": "Deklarovaný názov",
+      "details": "Podrobnosti"
     }
   },
   "pairs": {
@@ -3392,6 +3438,7 @@
     "m_61901b95440b2e61": "Platná publikovaná revízia",
     "m_5bfa5323a04a472d": "Čakajúca nasledujúca revízia (neplatí, kým nebude publikovaná)",
     "m_ae1a44f3c88cf989": "Žiadna publikovaná revízia neplatí",
-    "m_12e4b7ce9141120d": "Nahrádza revíziu"
+    "m_12e4b7ce9141120d": "Nahrádza revíziu",
+    "m_372c48ba7e84c124": "Stopa pripravená na audit"
   }
 }
