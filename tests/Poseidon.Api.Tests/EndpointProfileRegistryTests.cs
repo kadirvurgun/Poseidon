@@ -132,6 +132,24 @@ public sealed class EndpointProfileRegistryTests
         Assert.True(missing.Count == 0, string.Join("\n", missing));
         Assert.Equal(EndpointProfiles.Document.Endpoints.Length, operations);
     }
+
+    // P5803 QA note (19.11.2026): the real-host probe must grant every permission the server
+    // accepts, otherwise new commands stop at 403 permission_denied before CSRF/key checks and
+    // the probe reports a false green. Fails when the server allowlist grows without the probe.
+    [Fact]
+    public void Profile_probe_grants_every_server_accepted_permission()
+    {
+        var root = new DirectoryInfo(AppContext.BaseDirectory);
+        while (root != null && !File.Exists(Path.Combine(root.FullName, "Directory.Packages.props"))) root = root.Parent;
+        Assert.NotNull(root);
+        var source = File.ReadAllText(Path.Combine(root!.FullName, "backend", "Poseidon.Api", "FoundationIdentity.cs"));
+        var filter = Regex.Match(source, @"Permissions \?\? \[\]\)\.Where\(x => (?<body>x is .+?)\)\.Distinct\(\)");
+        Assert.True(filter.Success, "Server permission allowlist not found in FoundationIdentity.cs.");
+        var accepted = Regex.Matches(filter.Groups["body"].Value, "\"([a-z_.]+)\"").Select(m => m.Groups[1].Value).ToHashSet(StringComparer.Ordinal);
+        Assert.NotEmpty(accepted);
+        var missing = accepted.Except(DirectoryWorkspaceTests.ProfileProbePermissions, StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
+        Assert.True(missing.Length == 0, "Probe lacks server permissions: " + string.Join(", ", missing));
+    }
 }
 
 // P5803-AC-05/06: actual host, real PostgreSQL and antiforgery. Commands without the
@@ -221,7 +239,11 @@ public sealed partial class DirectoryWorkspaceTests
         }
     }
 
-    private static readonly string[] ProfileProbePermissions = ["applicability.evaluate", "applicability.read", "audit.read",
+    internal static readonly string[] ProfileProbePermissions = ["applicability.evaluate", "applicability.read", "audit.read",
+        "config.approve", "config.draft", "config.read", "config.reject", "config.resolve",
+        "hr.actual.record", "hr.assignment.approve", "hr.assignment.read", "hr.assignment.write", "hr.employment.approve",
+        "hr.employment.read", "hr.employment.write", "hr.legal_entity.identifier.read", "hr.legal_entity.read",
+        "hr.legal_entity.write", "hr.person.read", "hr.person.verify", "hr.person.write",
         "certificate.extract", "certificate.read", "certificate.renewal.owner", "certificate.renewal.write", "certificate.verify.record",
         "certificate.write", "control.owner.eligible", "control.read", "control.write", "crew.assessment.read", "crew.assignment.declare",
         "crew.catalog.govern", "crew.certificate.read", "crew.certificate.write", "crew.documents.read", "crew.documents.write",
