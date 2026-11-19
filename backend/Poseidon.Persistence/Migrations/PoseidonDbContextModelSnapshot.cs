@@ -7482,6 +7482,10 @@ namespace Poseidon.Persistence.Migrations
                     b.Property<long>("Revision")
                         .HasColumnType("bigint");
 
+                    b.Property<string>("CancelReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
                     b.Property<string>("ContentJson")
                         .IsRequired()
                         .HasColumnType("jsonb");

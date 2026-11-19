@@ -97,13 +97,23 @@ public static partial class TugEndpoints
             job.Status = transition.ToState; job.Revision = checked(job.Revision + 1); job.SavedAt = now;
             if (operation == TugJobCommand.Submit) job.SubmittedAt = now;
             else { job.CancelledAt = now; job.CancelReason = command.Reason; }
-            var snapshot = job.Snapshot(); db.TugJobRevisions.Add(snapshot); await db.SaveChangesAsync(ct);
+            // The submitted/cancelled body is the frozen content of the current draft revision, byte for byte.
+            var current = await db.TugJobRevisions.AsNoTracking().SingleAsync(r => r.JobId == id && r.VesselId == vessel && r.Revision == job.Revision - 1, ct);
+            var snapshot = job.Snapshot();
+            snapshot.ContentJson = current.ContentJson; snapshot.SourceVersion = current.SourceVersion; db.TugJobRevisions.Add(snapshot); await db.SaveChangesAsync(ct);
             db.CommandReceipts.Add(new() { TenantId = a.TenantId, ActorId = a.Id, Key = key, Action = action, Fingerprint = fingerprint,
                 ResourceId = job.Id, RegisterRevision = job.Revision, RegisterVersion = job.Version, CommittedAt = now });
             await db.SaveChangesAsync(ct); await tx.CommitAsync(ct); await ObserveLifecycle(h, "Success", job.Id);
             return Results.Ok(Dto(snapshot, job.Version, false));
-        } catch (Exception e) when (e is DbUpdateException || PostgresFailure.IsSerialization(e)) {
-            await tx.RollbackAsync(ct); return await LifecycleFail(h, 409, "version_conflict", id);
+        } catch (DbUpdateConcurrencyException) {
+            await tx.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear();
+            return await LifecycleFail(h, 409, "version_conflict", id);
+        } catch (Exception e) when (PostgresFailure.IsDatabase(e)) {
+            // Only serialization/deadlock (40001/40P01) and unique races (23505) are conflicts;
+            // any other database failure is an unavailable outcome, never a silent conflict.
+            await tx.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear();
+            var conflict = PostgresFailure.IsConflict(e);
+            return await LifecycleFail(h, conflict ? 409 : 503, conflict ? "version_conflict" : "service_unavailable", id);
         }
     }
 }

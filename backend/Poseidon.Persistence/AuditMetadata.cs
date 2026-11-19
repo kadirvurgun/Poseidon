@@ -421,9 +421,10 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             return new(lifecycleJob.VesselId, lifecycleJob.Id, "TugJob", priorRevision, lifecycleJob.Revision, Fields([.. jobFields]));
         }
         if (entry.Entity is TugJobRevision lifecycleRevision && entry.State == EntityState.Added && lifecycleRevision.JobState != Poseidon.Domain.TugJobLifecycle.Draft)
-            return new(lifecycleRevision.VesselId, lifecycleRevision.JobId, "TugJobRevision", null, lifecycleRevision.Revision, Fields(
+            return new(lifecycleRevision.VesselId, lifecycleRevision.JobId, "TugJobRevision", null, lifecycleRevision.Revision, Fields([
                 Field("ContentJson", null, null, "RevisionReference"), Field("JobState", null, Closed(lifecycleRevision.JobState, Poseidon.Domain.TugJobLifecycle.States)),
-                Field("Revision", null, Number(lifecycleRevision.Revision))));
+                Field("Revision", null, Number(lifecycleRevision.Revision)),
+                .. (lifecycleRevision.CancelReason == null ? Array.Empty<object>() : [Field("CancelReason", null, null, "ValuesWithheld")])]));
         if (entry.Entity is TechnicalOwner or TugOwner)
             return new(vessel, resource, "OwnerReference", null, null, Fields(Field("Binding", null, "OwnerReference")));
         if (entry.Entity is CrewPosition)

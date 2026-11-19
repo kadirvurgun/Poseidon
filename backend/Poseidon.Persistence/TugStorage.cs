@@ -47,13 +47,13 @@ public sealed class TugJob : ITenantEntity
         RequiredTugCount, SpecialRequirements, Priority, RequestOwner, Notes, RequestSource);
     public void Apply(TugRequestInputs x) {
         SourceVersion = TugRequestPolicy.SourceVersion; RequestSource = x.RequestSource; CustomerRef = x.CustomerRef; AssistedVessel = x.AssistedVessel; AssistedVesselImo = x.AssistedVesselImo;
-        JobType = x.JobType; RequestedStart = x.RequestedStart; RequestedEnd = x.RequestedEnd; OperationArea = x.OperationArea;
+        JobType = x.JobType; RequestedStart = TugRequestPolicy.StoragePrecision(x.RequestedStart); RequestedEnd = TugRequestPolicy.StoragePrecision(x.RequestedEnd); OperationArea = x.OperationArea;
         PickupPoint = x.PickupPoint; DestinationPoint = x.DestinationPoint; TugRequestPolicy.TryBp(x.RequiredBollardPull, out var bp);
         RequiredBollardPull = bp; RequiredTugCount = x.RequiredTugCount; SpecialRequirements = x.SpecialRequirements;
         Priority = x.Priority; RequestOwner = x.RequestOwner; Notes = x.Notes; SavedAt = DateTimeOffset.UtcNow;
     }
     public TugJobRevision Snapshot() => new() { TenantId = TenantId, VesselId = VesselId, JobId = Id, Revision = Revision,
-        JobNumber = JobNumber, SourceVersion = SourceVersion, ContentJson = JsonSerializer.Serialize(Inputs()), Provenance = Provenance, SavedAt = SavedAt, JobState = Status };
+        JobNumber = JobNumber, SourceVersion = SourceVersion, ContentJson = JsonSerializer.Serialize(Inputs()), Provenance = Provenance, SavedAt = SavedAt, JobState = Status, CancelReason = CancelReason };
 }
 public sealed class TugJobRevision : ITenantEntity
 {
@@ -67,6 +67,8 @@ public sealed class TugJobRevision : ITenantEntity
     public required string Provenance { get; set; }
     public DateTimeOffset SavedAt { get; set; }
     public string JobState { get; set; } = TugJobLifecycle.Draft;
+    // Immutable copy of the cancellation narrative; never copied into audit summaries.
+    public string? CancelReason { get; set; }
 }
 
 // Read adapter for actual controlled assignment observations. No assignment/dispatch writer
@@ -109,7 +111,7 @@ internal static class TugStorage
         });
         model.Entity<TugJobRevision>(b => {
             b.ToTable("JobRevisions", "tug", t => t.HasCheckConstraint("CK_TugJobRevision_State", "\"JobState\" IN ('Draft', 'Submitted', 'Cancelled')"));
-            b.Property(x => x.JobState).HasMaxLength(20).HasDefaultValue(TugJobLifecycle.Draft); b.HasKey(x => new { x.TenantId, x.VesselId, x.JobId, x.Revision });
+            b.Property(x => x.JobState).HasMaxLength(20).HasDefaultValue(TugJobLifecycle.Draft); b.Property(x => x.CancelReason).HasMaxLength(TugJobLifecycle.ReasonMax); b.HasKey(x => new { x.TenantId, x.VesselId, x.JobId, x.Revision });
             b.Property(x => x.JobNumber).HasMaxLength(40); b.Property(x => x.ContentJson).HasColumnType("jsonb");
             b.HasOne<TugJob>().WithMany().HasForeignKey(x => new { x.TenantId, x.VesselId, x.JobId })
                 .HasPrincipalKey(x => new { x.TenantId, x.VesselId, x.Id }).OnDelete(DeleteBehavior.Restrict);

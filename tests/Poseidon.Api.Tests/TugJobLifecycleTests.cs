@@ -80,6 +80,9 @@ public sealed partial class DirectoryWorkspaceTests
         await using var db = Db();
         var audit = await db.AuditEvents.Where(e => e.ResourceId == draft.Id).ToArrayAsync(Ct);
         Assert.DoesNotContain(audit, e => (e.ChangeSummary ?? "").Contains("withdrawn by customer"));
+        // The cancellation narrative is frozen on the immutable revision, not only on the mutable job row.
+        var frozen = await db.TugJobRevisions.SingleAsync(r => r.JobId == draft.Id && r.JobState == "Cancelled", Ct);
+        Assert.Equal("FICTIONAL withdrawn by customer", frozen.CancelReason);
         Assert.Contains(audit, e => (e.ChangeSummary ?? "").Contains("\"CancelReason\"") && e.ChangeSummary!.Contains("ValuesWithheld"));
     }
 

@@ -57,6 +57,14 @@ public sealed class TugJobLifecycleTests
     }
 
     [Fact]
+    public void Request_instants_are_canonicalized_to_postgres_microsecond_precision_without_rounding() {
+        var t = new DateTimeOffset(2026, 11, 20, 8, 0, 0, TimeSpan.Zero).AddTicks(1234569);
+        Assert.Equal(t.AddTicks(-9), TugRequestPolicy.StoragePrecision(t));
+        Assert.Equal(t.AddTicks(-9), TugRequestPolicy.StoragePrecision(t.AddTicks(-9)));
+        Assert.Null(TugRequestPolicy.StoragePrecision(null));
+    }
+
+    [Fact]
     public void Only_draft_accepts_field_edits() {
         Assert.True(TugJobLifecycle.Editable(TugJobLifecycle.Draft));
         Assert.False(TugJobLifecycle.Editable(TugJobLifecycle.Submitted)); Assert.False(TugJobLifecycle.Editable(TugJobLifecycle.Cancelled));
