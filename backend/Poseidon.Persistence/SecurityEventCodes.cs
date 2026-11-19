@@ -73,7 +73,7 @@ public static class SecurityEventCodes
         "trace_reader_required", "tug_capability_context_unavailable", "validation_failed", "verification_unavailable",
         "terminal_review", "source_admission_and_signature_unavailable", "pending_required",
         "invalid_reason", "invalid_state", "expiry_not_due", "supersession_not_proven", "freshness_review_required",
-        "version_conflict", "invalid_qualification_transition", "independent_reviewer_required",
+        "version_conflict", "sof_finalized", "sof_record_incomplete", "sof_references_not_acknowledged", "downtime_record_incomplete", "downtime_lifecycle_locked", "invalid_qualification_transition", "independent_reviewer_required",
         "incomplete_qualification", "acceptance_trigger_required", "impact_review_required",
         "outside_effective_dates", "superseding_rule_required", "hr_reference_incomplete", "hr_identifier_duplicate", "hr_role_overlap", "hr_employee_no_overlap", "hr_person_not_verified", "hr_legal_entity_inactive", "hr_employer_role_missing", "hr_employment_not_active", "hr_period_outside_employment", "hr_operator_path_missing", "hr_assignment_overlap", "hr_active_assignment_at_exit", "hr_actual_exists", "hr_event_conflict", "hr_employment_outside_legal_entity", "hr_employment_outside_employer_role", "last_admin", "membership_inactive",
         "legal_hold_active", "legal_hold_not_active", "retention_not_elapsed", "retention_unconfigured", "intake_not_released",

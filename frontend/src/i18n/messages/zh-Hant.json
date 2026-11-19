@@ -1,5 +1,53 @@
 {
   "copies": {
+    "ShipOpsLifecyclePanel_tsx_copy": {
+      "sofTitle": "Statement of Facts 定稿",
+      "sofIntro": "定稿是經指定的船長、大副或輪機長作出的明確人工行為。它記錄由誰、何時、職務與原因。它是內部的：不是簽署，也不是外部協議。",
+      "draft": "草稿",
+      "final": "定稿（內部）",
+      "signature": "未記錄簽署",
+      "amended": "定稿後已修改：需要重新審核並定稿。",
+      "missing": "缺少必填事實：{{fields}}",
+      "unresolved": "這些必填參照沒有可查詢的來源，因此航次維持未知。定稿前請逐項明確確認：",
+      "authority": "任命",
+      "finalize": "定稿 SOF",
+      "noAuthority": "此船沒有目前有效的定稿任命。",
+      "history": "生命週期歷史",
+      "loading": "正在載入…",
+      "unavailable": "您目前的存取權限無法使用。",
+      "retry": "重試",
+      "offline": "離線：生命週期命令需要目前的線上工作階段。",
+      "unknownOutcome": "結果未知：重試只會再傳送一次相同命令。",
+      "done": "命令已記錄。",
+      "failed": "命令未被接受：{{code}}",
+      "dtTitle": "停航審核與關閉",
+      "dtIntro": "提交、查核與關閉都是明確的人工行為。記錄內容的人絕不查核或關閉該內容。已查核關閉不等於安全放行。",
+      "state": "狀態",
+      "loh": "租金損失（Loss of Hire）候選",
+      "lohReview": "需要審核：僅為候選，不涉及權利或金額",
+      "lohUnknown": "未知（未申報開始時間）",
+      "evidence": "索賠證據（連結不等於查核）",
+      "noEvidence": "未連結索賠證據。",
+      "link": "連結證據",
+      "unlink": "移除",
+      "selectEvidence": "選擇證據",
+      "recorderNote": "此停航由您記錄：必須由另一位受任命人員查核並關閉。",
+      "states": {
+        "NOT_SUBMITTED": "未提交",
+        "OPEN": "開啟",
+        "IN_REVIEW": "審核中",
+        "VERIFIED": "已查核（人工）",
+        "CLOSED": "已關閉"
+      },
+      "actions": {
+        "SUBMIT_FOR_REVIEW": "提交審核",
+        "RETURN_FOR_CORRECTION": "退回更正",
+        "VERIFY": "查核",
+        "CLOSE": "關閉",
+        "LINK_CLAIM_EVIDENCE": "連結索賠證據",
+        "UNLINK_CLAIM_EVIDENCE": "移除索賠證據"
+      }
+    },
     "ShipOperationsLedgerPanel_tsx_copy": {
       "fuelTitle": "ROB 連續性審核",
       "portTitle": "Statement of Facts 時間軸",

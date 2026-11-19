@@ -71,16 +71,25 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             return new(work_orderReceipt.VesselId,work_orderReceipt.WorkOrderId,"WorkOrderReceipt",null,work_orderReceipt.Revision,Fields(Field("Binding",null,"CommittedResource")));
         if(entry.Entity is Downtime downtime)
             return new(downtime.VesselId,downtime.Id,"Downtime",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,downtime.Revision,
-                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(downtime.Revision)),Field("Binding",null,"OwnerReference")));
+                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(downtime.Revision)),Field("Binding",null,"OwnerReference"),
+                    Field("ClosureState",LifecycleState(entry,nameof(Downtime.ClosureState),true),LifecycleState(entry,nameof(Downtime.ClosureState),false)),Field("ClaimEvidence",null,null,"ValuesWithheld")));
         if(entry.Entity is DowntimeRevision downtimeRevision)
             return new(downtimeRevision.VesselId,downtimeRevision.DowntimeId,"DowntimeRevision",null,downtimeRevision.Revision,Fields(Field("Revision",null,Number(downtimeRevision.Revision)),Field("Binding",null,"OwnerReference")));
         if(entry.Entity is DowntimeReceipt downtimeReceipt)
             return new(downtimeReceipt.VesselId,downtimeReceipt.DowntimeId,"DowntimeReceipt",null,downtimeReceipt.Revision,Fields(Field("Binding",null,"CommittedResource")));
         if(entry.Entity is ShipOperation shipOperation)
             return new(shipOperation.VesselId,shipOperation.Id,"ShipOperation",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,shipOperation.Revision,
-                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(shipOperation.Revision)),Field("Binding",null,"OwnerReference")));
+                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(shipOperation.Revision)),Field("Binding",null,"OwnerReference"),
+                    Field("SofState",LifecycleState(entry,nameof(ShipOperation.SofState),true),LifecycleState(entry,nameof(ShipOperation.SofState),false))));
         if(entry.Entity is ShipOperationRevision shipRevision)
             return new(shipRevision.VesselId,shipRevision.RecordId,"ShipOperationRevision",null,shipRevision.Revision,Fields(Field("Revision",null,Number(shipRevision.Revision)),Field("Binding",null,"OwnerReference")));
+        // DEV-101/102 lifecycle: closed action/state/duty codes only; detail JSON withheld.
+        if(entry.Entity is ShipOpsLifecycleEvent opsLifecycle)
+            return new(opsLifecycle.VesselId,opsLifecycle.RecordId,"ShipOpsLifecycleEvent",opsLifecycle.FromRevision,opsLifecycle.ToRevision,Fields(
+                Field("Action",null,Closed(opsLifecycle.Action,["FINALIZE",..Poseidon.Domain.ShipOperationsLifecycle.DowntimeActions])),
+                Field("State",opsLifecycle.FromState==null?null:Closed(opsLifecycle.FromState,LifecycleStates),opsLifecycle.ToState==null?null:Closed(opsLifecycle.ToState,LifecycleStates)),
+                Field("Duty",null,opsLifecycle.Duty==null?null:Closed(opsLifecycle.Duty,Poseidon.Domain.ShipOperationsLifecycle.DowntimeDuties)),
+                Field("Detail",null,null,"ValuesWithheld"),Field("Revision",Number(opsLifecycle.FromRevision),Number(opsLifecycle.ToRevision))));
         if(entry.Entity is ShipOperationReceipt shipReceipt)
             return new(shipReceipt.VesselId,shipReceipt.RecordId,"ShipOperationReceipt",null,null,Fields(Field("Binding",null,"CommittedResource")));
         if(entry.Entity is VesselCertificate certificate)
@@ -618,6 +627,11 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         };
     }
 
+    private static readonly string[] LifecycleStates = ["DRAFT", "FINAL", "NOT_SUBMITTED", "OPEN", "IN_REVIEW", "VERIFIED", "CLOSED"];
+    private static string? LifecycleState(EntityEntry e, string property, bool before) {
+        var value = before ? (e.State == EntityState.Added ? null : e.Property(property).OriginalValue) : e.Property(property).CurrentValue;
+        return value is string text ? Closed(text, LifecycleStates) : null;
+    }
     private static string Closed(string value, params string[] allowed) => allowed.Contains(value, StringComparer.Ordinal)
         ? value : throw new InvalidOperationException("Invalid controlled audit state.");
 }
