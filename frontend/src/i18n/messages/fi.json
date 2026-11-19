@@ -11,6 +11,8 @@
       "retry": "Yritä uudelleen",
       "empty": "Ei vielä sijoitettuja kirjauksia.",
       "truncated": "Vain 100 uusinta kirjausta arvioidaan; tämän ikkunan ylittävä ketju alkaa tuntemattomana.",
+      "historyBoundary": "Arvioidun ikkunan ulkopuolella on vanhempaa historiaa: jatkuvuus edelliseen kirjaukseen ei ole tässä käytettävissä – se ei ole jatkuva eikä aukko.",
+      "tankBasis": "Jatkuvuus tarkistetaan ilmoitetun polttoainetyypin mukaan, koska säiliöviitettä ei ole; useamman säiliön aluksen aukko on puuttuvien säiliötietojen tarkistuskysymys, ei tietovirhe.",
       "unplaced": "Sijoittamattomat kirjaukset (päivä, polttoainetyyppi tai alku ilmoittamatta): {{count}}",
       "notDeclared": "Ei ilmoitettu",
       "balance": "Tase (ennen + vastaanotettu − kulutettu − jälkeen)",

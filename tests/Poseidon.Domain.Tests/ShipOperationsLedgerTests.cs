@@ -52,6 +52,37 @@ public sealed class ShipOperationsLedgerTests
     }
 
     [Fact]
+    public void Truncated_history_reports_boundary_unavailable_never_a_false_gap_or_false_continuity() {
+        // 150 continuous records; only the newest 100 are assessed.
+        var all = Enumerable.Range(0, 150).Select(i => Fuel(Guid.NewGuid(), Movement(new DateTimeOffset(2026, 1, 1, 0, 0, 0, TimeSpan.Zero).AddHours(i).ToString("yyyy-MM-ddTHH:mm:ssZ"),
+            (1000 - i).ToString(), "0", "1", (999 - i).ToString()))).ToArray();
+        var window = all.Skip(50).ToArray();
+        var truncated = ShipOperationsLedger.AssessFuel(window, historyTruncated: true);
+        Assert.Equal(100, truncated.Length);
+        Assert.Equal("UNKNOWN", truncated[0].Continuity.State); Assert.Equal("HISTORY_TRUNCATED", truncated[0].Continuity.Reason);
+        Assert.Null(truncated[0].Continuity.DifferenceMt); Assert.DoesNotContain("ROB_CONTINUITY_GAP", truncated[0].Flags);
+        Assert.Contains("HISTORY_TRUNCATED", truncated[0].Basis); Assert.Equal("UNKNOWN", truncated[0].ReviewState);
+        Assert.All(truncated.Skip(1), r => { Assert.Equal("NO_DISCREPANCY_DETECTED", r.Continuity.State); Assert.DoesNotContain("HISTORY_TRUNCATED", r.Basis); });
+        Assert.All(truncated, r => Assert.Contains("TANK_REFERENCE_UNAVAILABLE", r.Basis));
+        // The same boundary in a complete history is first-in-ledger, not truncated.
+        Assert.Equal("NO_PREVIOUS_RECORD_IN_WINDOW", ShipOperationsLedger.AssessFuel(all)[0].Continuity.Reason);
+        Assert.Equal("NO_DISCREPANCY_DETECTED", ShipOperationsLedger.AssessFuel(all)[50].Continuity.State);
+        Assert.Contains("HISTORY_TRUNCATED", ShipOperationsLedger.Qualifications(ShipOperationsLedger.FuelQualifications, true));
+        Assert.DoesNotContain("HISTORY_TRUNCATED", ShipOperationsLedger.Qualifications(ShipOperationsLedger.FuelQualifications, false));
+    }
+
+    [Fact]
+    public void Multi_tank_gap_is_flagged_for_review_with_explicit_missing_tank_basis() {
+        // Two tanks of one fuel type, interleaved: the aggregate chain shows a gap.
+        var result = ShipOperationsLedger.AssessFuel([
+            Fuel(Guid.NewGuid(), Movement("2026-01-01T00:00:00Z", "100", "0", "1", "99")),
+            Fuel(Guid.NewGuid(), Movement("2026-01-01T01:00:00Z", "50", "0", "1", "49"))]);
+        Assert.Equal("REVIEW_REQUIRED", result[1].Continuity.State); Assert.Contains("ROB_CONTINUITY_GAP", result[1].Flags);
+        Assert.Equal(["FUEL_TYPE_AGGREGATE", "TANK_REFERENCE_UNAVAILABLE"], result[1].Basis);
+        Assert.Contains("TANK_REFERENCE_UNAVAILABLE", ShipOperationsLedger.FuelQualifications);
+    }
+
+    [Fact]
     public void Missing_terms_stay_unknown_and_are_never_assumed_zero() {
         var record = Fuel(Guid.NewGuid(), Movement("2026-01-01T12:00:00Z", "120", null, "4.5", "115.5"));
         var balance = ShipOperationsLedger.Balance(record.Fields);

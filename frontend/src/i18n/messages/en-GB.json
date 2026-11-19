@@ -11,6 +11,8 @@
       "retry": "Retry",
       "empty": "No placed records yet.",
       "truncated": "Only the newest 100 records are assessed; a chain crossing this window starts as unknown.",
+      "historyBoundary": "Older history exists outside the assessed window: continuity with the previous record is unavailable here, not continuous and not a gap.",
+      "tankBasis": "Continuity is checked per declared fuel type because no tank reference is available; a gap on a multi-tank vessel is a review question about missing tank data, not a data error.",
       "unplaced": "Records not placed (date, fuel type or start not declared): {{count}}",
       "notDeclared": "Not declared",
       "balance": "Balance (before + received − consumed − after)",

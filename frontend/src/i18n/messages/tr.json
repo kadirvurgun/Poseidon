@@ -11,6 +11,8 @@
       "retry": "Yeniden dene",
       "empty": "Henüz yerleştirilmiş kayıt yok.",
       "truncated": "Yalnızca en yeni 100 kayıt değerlendirilir; bu pencereyi aşan zincir bilinmiyor olarak başlar.",
+      "historyBoundary": "Değerlendirilen pencerenin dışında daha eski geçmiş var: önceki kayıtla süreklilik burada kullanılamaz; sürekli de değildir, fark da değildir.",
+      "tankBasis": "Tank referansı bulunmadığından süreklilik beyan edilen yakıt türüne göre denetlenir; çok tanklı gemide görülen fark, veri hatası değil eksik tank verisi nedeniyle bir inceleme sorusudur.",
       "unplaced": "Yerleştirilemeyen kayıtlar (tarih, yakıt türü veya başlangıç beyan edilmedi): {{count}}",
       "notDeclared": "Beyan edilmedi",
       "balance": "Denge (önce + alınan − tüketilen − sonra)",

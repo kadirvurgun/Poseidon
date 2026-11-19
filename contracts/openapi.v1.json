@@ -24900,7 +24900,8 @@
           "balance",
           "continuity",
           "previousRecordId",
-          "flags"
+          "flags",
+          "basis"
         ],
         "type": "object",
         "properties": {
@@ -24925,6 +24926,12 @@
             "format": "uuid"
           },
           "flags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "basis": {
             "type": "array",
             "items": {
               "type": "string"

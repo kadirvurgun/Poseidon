@@ -11,6 +11,8 @@
       "retry": "Riprova",
       "empty": "Nessun record collocato finora.",
       "truncated": "Vengono valutati solo i 100 record più recenti; una catena oltre questa finestra inizia come sconosciuta.",
+      "historyBoundary": "Esiste uno storico più vecchio fuori dalla finestra valutata: la continuità con il record precedente qui non è disponibile, né continua né uno scarto.",
+      "tankBasis": "La continuità è verificata per tipo di combustibile dichiarato perché manca il riferimento della cisterna; uno scarto su una nave con più cisterne è una questione di revisione per dati di cisterna mancanti, non un errore dei dati.",
       "unplaced": "Record non collocati (data, tipo di combustibile o inizio non dichiarati): {{count}}",
       "notDeclared": "Non dichiarato",
       "balance": "Bilancio (prima + ricevuto − consumato − dopo)",

@@ -11,6 +11,8 @@
       "retry": "Tentar novamente",
       "empty": "Ainda não há registros posicionados.",
       "truncated": "Apenas os 100 registros mais recentes são avaliados; uma cadeia que cruza esta janela começa como desconhecida.",
+      "historyBoundary": "Há histórico mais antigo fora da janela avaliada: a continuidade com o registro anterior não está disponível aqui; não é contínua nem uma lacuna.",
+      "tankBasis": "A continuidade é verificada por tipo de combustível declarado porque não há referência de tanque; uma lacuna em navio com vários tanques é uma questão de revisão por falta de dados de tanque, não um erro de dados.",
       "unplaced": "Registros não posicionados (data, tipo de combustível ou início não declarados): {{count}}",
       "notDeclared": "Não declarado",
       "balance": "Balanço (antes + recebido − consumido − depois)",

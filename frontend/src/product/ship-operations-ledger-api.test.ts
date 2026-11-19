@@ -19,6 +19,21 @@ describe('T-OPS2-004 ROB continuity review aid contract', () => {
   })
 })
 
+describe('T-OPS2-004 truncated history boundary', () => {
+  const truncated = (assessment: Record<string, unknown>) => ({ ...fuelLedgerFixture(assessment), truncated: true, qualifications: [...fuelLedgerFixture().qualifications, 'HISTORY_TRUNCATED'] })
+  const boundary = { reviewState: 'UNKNOWN', continuity: { state: 'UNKNOWN', differenceMt: null, reason: 'HISTORY_TRUNCATED' }, flags: [], basis: ['FUEL_TYPE_AGGREGATE', 'TANK_REFERENCE_UNAVAILABLE', 'HISTORY_TRUNCATED'] }
+  it('accepts an UNKNOWN cut-off boundary only when the history is declared truncated', () => {
+    expect(decodeFuelLedger(truncated(boundary), shipOpsVessel).entries[0].assessment.continuity.reason).toBe('HISTORY_TRUNCATED')
+    expect(() => decodeFuelLedger(fuelLedgerFixture(boundary), shipOpsVessel)).toThrow()
+    expect(() => decodeFuelLedger({ ...fuelLedgerFixture(), truncated: true }, shipOpsVessel)).toThrow()
+  })
+  it('rejects a boundary presented as continuous or as a gap, and a dropped tank basis', () => {
+    expect(() => decodeFuelLedger(truncated({ ...boundary, reviewState: 'NO_DISCREPANCY_DETECTED', continuity: { state: 'NO_DISCREPANCY_DETECTED', differenceMt: '0', reason: 'HISTORY_TRUNCATED' } }), shipOpsVessel)).toThrow()
+    expect(() => decodeFuelLedger(truncated({ ...boundary, basis: ['FUEL_TYPE_AGGREGATE', 'TANK_REFERENCE_UNAVAILABLE'] }), shipOpsVessel)).toThrow()
+    expect(() => decodeFuelLedger(fuelLedgerFixture({ basis: ['FUEL_TYPE_AGGREGATE'] }), shipOpsVessel)).toThrow()
+  })
+})
+
 describe('T-OPS2-005 SOF timeline contract', () => {
   it('accepts exact tick durations and an open end only as UNKNOWN without a value', () => {
     expect(decodePortTimeline(portTimelineFixture(), shipOpsVessel).entries[0].assessment.durationTicks).toBe('36000000000')

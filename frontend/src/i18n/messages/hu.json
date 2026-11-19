@@ -11,6 +11,8 @@
       "retry": "Újra",
       "empty": "Még nincs elhelyezett bejegyzés.",
       "truncated": "Csak a legújabb 100 bejegyzés kerül értékelésre; az ablakon átnyúló lánc ismeretlenként indul.",
+      "historyBoundary": "Az értékelt ablakon kívül régebbi előzmény létezik: az előző bejegyzéssel való folytonosság itt nem érhető el – sem folytonos, sem hézag.",
+      "tankBasis": "A folytonosság a bejelentett üzemanyagtípusonként ellenőrizhető, mert nincs tartályhivatkozás; több tartályos hajón a hézag a hiányzó tartályadatok miatti felülvizsgálati kérdés, nem adathiba.",
       "unplaced": "El nem helyezett bejegyzések (dátum, üzemanyagtípus vagy kezdet nincs bejelentve): {{count}}",
       "notDeclared": "Nincs bejelentve",
       "balance": "Mérleg (előtte + átvett − fogyasztott − utána)",

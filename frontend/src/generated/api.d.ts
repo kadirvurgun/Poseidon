@@ -8569,6 +8569,7 @@ export interface components {
             /** Format: uuid */
             previousRecordId: null | string;
             flags: string[];
+            basis: string[];
         };
         FuelLedgerCheck: {
             state: string;

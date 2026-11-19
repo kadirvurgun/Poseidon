@@ -11,6 +11,8 @@
       "retry": "Réessayer",
       "empty": "Aucun enregistrement placé pour l’instant.",
       "truncated": "Seuls les 100 enregistrements les plus récents sont évalués ; une chaîne dépassant cette fenêtre commence comme inconnue.",
+      "historyBoundary": "Un historique plus ancien existe hors de la fenêtre évaluée : la continuité avec l’enregistrement précédent n’est pas disponible ici, ni continue ni en écart.",
+      "tankBasis": "La continuité est vérifiée par type de combustible déclaré, faute de référence de citerne ; un écart sur un navire à plusieurs citernes est une question de revue liée aux données de citerne manquantes, pas une erreur de données.",
       "unplaced": "Enregistrements non placés (date, type de combustible ou début non déclaré) : {{count}}",
       "notDeclared": "Non déclaré",
       "balance": "Bilan (avant + reçu − consommé − après)",

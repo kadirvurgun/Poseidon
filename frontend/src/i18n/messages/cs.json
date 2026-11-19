@@ -11,6 +11,8 @@
       "retry": "Zkusit znovu",
       "empty": "Zatím žádné zařazené záznamy.",
       "truncated": "Hodnotí se jen nejnovějších 100 záznamů; řetězec přesahující toto okno začíná jako neznámý.",
+      "historyBoundary": "Mimo hodnocené okno existuje starší historie: kontinuita s předchozím záznamem zde není dostupná – není ani souvislá, ani mezerou.",
+      "tankBasis": "Kontinuita se kontroluje podle deklarovaného druhu paliva, protože chybí odkaz na nádrž; mezera u lodi s více nádržemi je otázka ke kontrole kvůli chybějícím údajům o nádržích, nikoli chyba dat.",
       "unplaced": "Nezařazené záznamy (datum, druh paliva nebo začátek nedeklarován): {{count}}",
       "notDeclared": "Nedeklarováno",
       "balance": "Bilance (před + přijato − spotřebováno − po)",

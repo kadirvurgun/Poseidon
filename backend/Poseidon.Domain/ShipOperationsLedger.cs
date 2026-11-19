@@ -6,7 +6,7 @@ namespace Poseidon.Domain;
 // source's explicit "mt" unit; nothing is converted, rounded or tolerated.
 public sealed record FuelLedgerCheck(string State, string? DifferenceMt, string? Reason);
 public sealed record FuelLedgerAssessment(Guid RecordId, string ReviewState, FuelLedgerCheck Balance, FuelLedgerCheck Continuity,
-    Guid? PreviousRecordId, string[] Flags);
+    Guid? PreviousRecordId, string[] Flags, string[] Basis);
 public sealed record PortTimelineAssessment(Guid RecordId, string ReviewState, string DurationState, string? DurationTicks, string[] Flags);
 public sealed record LedgerInput(Guid Id, IReadOnlyDictionary<string, ShipOpsFact> Fields);
 
@@ -23,10 +23,18 @@ public static class ShipOperationsLedger
     // tank_id is an unresolved reference (DD row 2198), so continuity can only
     // be followed per declared fuel type, never per physical tank.
     public const string FuelGrouping = "FUEL_TYPE_ONLY_TANK_REFERENCE_UNAVAILABLE";
+    public const string TankReferenceUnavailable = "TANK_REFERENCE_UNAVAILABLE";
+    // An older record exists outside the assessed window: the boundary link is
+    // UNAVAILABLE, never a false "continuous" and never a false gap.
+    public const string HistoryTruncated = "HISTORY_TRUNCATED";
     public static readonly string[] FuelQualifications = ["DERIVED_REVIEW_AID_NOT_VERIFICATION", "NO_AUTOMATIC_CORRECTION",
-        "MISSING_TERM_NOT_ASSUMED_ZERO", "NO_TOLERANCE_APPROVED", "NO_COMPUTED_EMISSIONS", FuelGrouping];
+        "MISSING_TERM_NOT_ASSUMED_ZERO", "NO_TOLERANCE_APPROVED", "NO_COMPUTED_EMISSIONS", FuelGrouping, TankReferenceUnavailable];
     public static readonly string[] PortQualifications = ["DERIVED_REVIEW_AID_NOT_VERIFICATION", "SOF_SIGNATURE_NOT_RECORDED",
         "SOF_FINALIZATION_UNAVAILABLE", "OPEN_END_NOT_ASSUMED", "NOT_PORT_OPERATING_SYSTEM"];
+    public static string[] Qualifications(string[] basis, bool historyTruncated) => historyTruncated ? [.. basis, HistoryTruncated] : basis;
+    // Every continuity finding is a per-fuel-type aggregate: with no tank
+    // reference a multi-tank gap is a review question about missing tank data.
+    private static readonly string[] ContinuityBasis = ["FUEL_TYPE_AGGREGATE", TankReferenceUnavailable];
 
     private static string? Known(IReadOnlyDictionary<string, ShipOpsFact> fields, string key) =>
         fields.TryGetValue(key, out var fact) && fact.State == "Known" ? fact.Value : null;
@@ -50,7 +58,7 @@ public static class ShipOperationsLedger
     public static bool Placeable(IReadOnlyDictionary<string, ShipOpsFact> fields) =>
         Instant(fields, "record_date", out _) && Known(fields, "fuel_type") != null;
 
-    public static FuelLedgerAssessment[] AssessFuel(IEnumerable<LedgerInput> records) {
+    public static FuelLedgerAssessment[] AssessFuel(IEnumerable<LedgerInput> records, bool historyTruncated = false) {
         var placed = records.Where(r => Placeable(r.Fields)).Select(r => {
             Instant(r.Fields, "record_date", out var at); return (Record: r, At: at);
         }).OrderBy(r => r.At).ThenBy(r => r.Record.Id).ToArray();
@@ -63,7 +71,8 @@ public static class ShipOperationsLedger
             var balance = Balance(f);
             if (balance.State == ReviewRequired) flags.Add("ROB_BALANCE_MISMATCH");
             FuelLedgerCheck continuity; Guid? previous = null;
-            if (!last.TryGetValue(type, out var prior)) continuity = new(Unknown, null, "NO_PREVIOUS_RECORD_IN_WINDOW");
+            if (!last.TryGetValue(type, out var prior))
+                continuity = historyTruncated ? new(Unknown, null, HistoryTruncated) : new(Unknown, null, "NO_PREVIOUS_RECORD_IN_WINDOW");
             else {
                 previous = prior.Record.Id;
                 if (prior.At == at) { continuity = new(Unknown, null, "SAME_INSTANT_ORDER_AMBIGUOUS"); flags.Add("SAME_INSTANT_ORDER_AMBIGUOUS"); }
@@ -85,7 +94,8 @@ public static class ShipOperationsLedger
             if (Known(f, "delivery_discrepancy") is "ATTENTION" or "DISPUTED") flags.Add("DECLARED_DELIVERY_DISCREPANCY");
             foreach (var key in new[] { "quantity_received_mt", "quantity_consumed_mt", "rob_before_mt", "rob_after_mt" })
                 if (TryExact(Known(f, key), out var quantity) && quantity < 0) { flags.Add("NEGATIVE_DECLARED_QUANTITY"); break; }
-            result.Add(new(record.Id, Overall([balance.State, continuity.State], flags), balance, continuity, previous, flags.Distinct().ToArray()));
+            string[] basis = previous == null && historyTruncated ? [.. ContinuityBasis, HistoryTruncated] : ContinuityBasis;
+            result.Add(new(record.Id, Overall([balance.State, continuity.State], flags), balance, continuity, previous, flags.Distinct().ToArray(), basis));
         }
         return result.ToArray();
     }

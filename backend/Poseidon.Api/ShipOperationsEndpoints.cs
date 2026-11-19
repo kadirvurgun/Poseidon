@@ -133,20 +133,21 @@ public static class ShipOperationsEndpoints
         var actor=Actor(h);if(!CanRead(actor,kind))return await Fail(h,403,"permission_denied");var rights=Rights(actor!);
         if(!await Vessels(db,actor!,vessel).AnyAsync(h.RequestAborted))return await Fail(h,404,"resource_not_found");
         var canWrite=CanWrite(actor,kind,vessel);
-        // Newest window first, then chronological assessment inside it. A chain
-        // crossing the window edge starts UNKNOWN (no previous record in window).
+        // Newest window first, then chronological assessment inside it. One extra
+        // row proves older history exists: the boundary link is then reported as
+        // HISTORY_TRUNCATED / UNKNOWN, never as continuous and never as a gap.
         var rows=await db.ShipOperations.AsNoTracking().Where(r=>r.VesselId==vessel && r.Kind==kind).OrderByDescending(r=>r.OccurredAt??r.SavedAt).ThenBy(r=>r.Id)
             .Take(LedgerWindow+1).ToArrayAsync(h.RequestAborted);
         var records=rows.Take(LedgerWindow).Select(r=>Dto(r,true,canWrite)).ToArray();var truncated=rows.Length>LedgerWindow;
         var inputs=records.Select(r=>new LedgerInput(r.Id,r.Fields)).ToArray();var byId=records.ToDictionary(r=>r.Id);object result;
         if(kind=="Fuel") {
-            var assessed=ShipOperationsLedger.AssessFuel(inputs);var placed=assessed.Select(a=>a.RecordId).ToHashSet();
+            var assessed=ShipOperationsLedger.AssessFuel(inputs,truncated);var placed=assessed.Select(a=>a.RecordId).ToHashSet();
             result=new FuelLedgerDto(vessel,assessed.Select(a=>new FuelLedgerEntryDto(byId[a.RecordId],a)).ToArray(),records.Where(r=>!placed.Contains(r.Id)).ToArray(),
-                LedgerWindow,truncated,ShipOperationsLedger.Unit,ShipOperationsLedger.FuelGrouping,ShipOperationsLedger.FuelQualifications,ShipOperationsPolicy.SourceVersion);
+                LedgerWindow,truncated,ShipOperationsLedger.Unit,ShipOperationsLedger.FuelGrouping,ShipOperationsLedger.Qualifications(ShipOperationsLedger.FuelQualifications,truncated),ShipOperationsPolicy.SourceVersion);
         }else {
             var assessed=ShipOperationsLedger.AssessPort(inputs);var placed=assessed.Select(a=>a.RecordId).ToHashSet();
             result=new PortTimelineDto(vessel,assessed.Select(a=>new PortTimelineEntryDto(byId[a.RecordId],a)).ToArray(),records.Where(r=>!placed.Contains(r.Id)).ToArray(),
-                LedgerWindow,truncated,"tick",ShipOperationsLedger.PortQualifications,ShipOperationsPolicy.SourceVersion);
+                LedgerWindow,truncated,"tick",ShipOperationsLedger.Qualifications(ShipOperationsLedger.PortQualifications,truncated),ShipOperationsPolicy.SourceVersion);
         }
         if(!await Current(h,kind,vessel,rights,records))return await Fail(h,403,"permission_denied");await Audit(h,"Success",vessel);
         if(!await Current(h,kind,vessel,rights,records))return await Fail(h,403,"permission_denied");return Results.Ok(result);

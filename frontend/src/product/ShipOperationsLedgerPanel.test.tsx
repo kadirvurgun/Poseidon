@@ -32,6 +32,15 @@ describe('T-OPS2-004/005 ledger review aid panel', () => {
         expect(onOpen).toHaveBeenCalledWith(shipOpsRecordId);
         expect(fetch.mock.calls.every(([, init]) => !init?.method || init.method === 'GET')).toBe(true);
     });
+    it('marks a truncated history boundary as unavailable and states the missing tank basis', async () => {
+        const base = fuelLedgerFixture({ reviewState: 'UNKNOWN', continuity: { state: 'UNKNOWN', differenceMt: null, reason: 'HISTORY_TRUNCATED' }, flags: [], basis: ['FUEL_TYPE_AGGREGATE', 'TANK_REFERENCE_UNAVAILABLE', 'HISTORY_TRUNCATED'] });
+        transport({ ...base, truncated: true, qualifications: [...base.qualifications, 'HISTORY_TRUNCATED'] });
+        render(<ShipOperationsLedgerPanel kind="Fuel" vessel={shipOpsVessel} language="en" onOpen={vi.fn()}/>);
+        expect(await screen.findByText(/continuity with the previous record is unavailable here, not continuous and not a gap/)).toBeInTheDocument();
+        expect(screen.getByText(/Only the newest 100 records are assessed/)).toBeInTheDocument();
+        expect(screen.getByText(/missing tank data, not a data error/)).toBeInTheDocument();
+        expect(screen.queryByText(/-0.5 mt/)).toBeNull();
+    });
     it('shows the SOF timeline interval in exact minutes and states that no signature is recorded', async () => {
         transport(portTimelineFixture());
         render(<ShipOperationsLedgerPanel kind="Port" vessel={shipOpsVessel} language="en" onOpen={vi.fn()}/>);

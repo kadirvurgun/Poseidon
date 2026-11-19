@@ -40,12 +40,13 @@ export function ShipOperationsLedgerPanel({ kind, vessel, language, onOpen }: { 
                 : <>
                     {(current.fuel ?? current.port)!.truncated && <p role="note">{t.truncated}</p>}
                     {(current.fuel ?? current.port)!.unplaced.length > 0 && <p role="note">{t.unplaced.replace('{{count}}', String((current.fuel ?? current.port)!.unplaced.length))}</p>}
+                    {current.fuel && <p role="note">{t.tankBasis}</p>}
                     {current.fuel && (current.fuel.entries.length === 0 ? <p>{t.empty}</p> : <ol className="ship-operations-ledger">{current.fuel.entries.map(({ record, assessment }) => <li key={record.id}>
                         <p>{state(assessment.reviewState)} <time dateTime={known(record.fields, 'record_date') ?? undefined}>{known(record.fields, 'record_date')}</time> · {known(record.fields, 'fuel_type')} · {known(record.fields, 'record_type') ?? t.notDeclared}</p>
                         <dl className="ship-operations-summary-grid">
                             <div><dt>{t.balance}</dt><dd>{state(assessment.balance.state)} {assessment.balance.differenceMt !== null && <>{t.difference}: {assessment.balance.differenceMt} mt</>}{assessment.balance.reason && <> <code>{assessment.balance.reason}</code></>}</dd></div>
                             <div><dt>{t.continuity}</dt><dd>{state(assessment.continuity.state)} {assessment.continuity.differenceMt !== null && <>{t.difference}: {assessment.continuity.differenceMt} mt</>}{assessment.continuity.reason && <> <code>{assessment.continuity.reason}</code></>}</dd></div>
-                        </dl>{flags(assessment.flags)}<Button variant="outline" onClick={() => onOpen(record.id)}>{t.open}</Button></li>)}</ol>)}
+                        </dl>{assessment.basis.includes('HISTORY_TRUNCATED') && <p role="note">{t.historyBoundary}</p>}{flags(assessment.flags)}<Button variant="outline" onClick={() => onOpen(record.id)}>{t.open}</Button></li>)}</ol>)}
                     {current.port && (current.port.entries.length === 0 ? <p>{t.empty}</p> : <ol className="ship-operations-ledger">{current.port.entries.map(({ record, assessment }) => <li key={record.id}>
                         <p>{state(assessment.reviewState)} {known(record.fields, 'activity_type') ?? t.notDeclared} · <time dateTime={known(record.fields, 'event_start') ?? undefined}>{known(record.fields, 'event_start')}</time>{known(record.fields, 'event_end') && <> – <time dateTime={known(record.fields, 'event_end')!}>{known(record.fields, 'event_end')}</time></>}</p>
                         <dl className="ship-operations-summary-grid"><div><dt>{t.duration}</dt><dd>{assessment.durationState === 'KNOWN' ? t.minutes.replace('{{value}}', ticksToMinutes(assessment.durationTicks!)) : t.durationUnknown}</dd></div>

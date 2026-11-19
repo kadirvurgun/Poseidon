@@ -42,6 +42,22 @@ public sealed partial class DirectoryWorkspaceTests
     }
 
     [Fact]
+    public async Task ShipOps_fuel_ledger_over_window_reports_history_truncated_boundary_not_a_gap() {
+        await using var host=Host();using var client=Client(host);ShipOpsPermissions(host.Services);
+        var start=new DateTimeOffset(2026,1,1,0,0,0,TimeSpan.Zero);var ids=new List<Guid>();
+        for(var i=0;i<ShipOperationsEndpoints.LedgerWindow+1;i++) {
+            var command=new ShipOpsDraftCommand(Guid.NewGuid(),0,LedgerMovement(start.AddHours(i).ToString("yyyy-MM-ddTHH:mm:ssZ"),(1000-i).ToString(),"1",(999-i).ToString()),"INITIAL_AUTHORING");
+            using var saved=await ShipOpsSend(client,"Fuel",command);Assert.Equal(HttpStatusCode.OK,saved.StatusCode);ids.Add(command.Id);
+        }
+        var ledger=(await client.GetFromJsonAsync<FuelLedgerDto>(ShipOpsPath("Fuel",suffix:"/ledger"),Ct))!;
+        Assert.True(ledger.Truncated);Assert.Contains("HISTORY_TRUNCATED",ledger.Qualifications);Assert.Contains("TANK_REFERENCE_UNAVAILABLE",ledger.Qualifications);
+        Assert.Equal(ShipOperationsEndpoints.LedgerWindow,ledger.Entries.Length);Assert.DoesNotContain(ledger.Entries,e=>e.Record.Id==ids[0]);
+        var boundary=ledger.Entries[0].Assessment;Assert.Equal(ids[1],boundary.RecordId);
+        Assert.Equal("UNKNOWN",boundary.Continuity.State);Assert.Equal("HISTORY_TRUNCATED",boundary.Continuity.Reason);Assert.DoesNotContain("ROB_CONTINUITY_GAP",boundary.Flags);
+        Assert.All(ledger.Entries.Skip(1),e=>Assert.Equal("NO_DISCREPANCY_DETECTED",e.Assessment.Continuity.State));
+    }
+
+    [Fact]
     public async Task ShipOps_port_timeline_orders_events_with_exact_durations_and_no_fabricated_signature() {
         await using var host=Host();using var client=Client(host);ShipOpsPermissions(host.Services);
         var open=new ShipOpsDraftCommand(Guid.NewGuid(),0,new(){["event_start"]=new("Known","2026-01-01T12:00:00+02:00"),["activity_type"]=new("Known","Arrival")},"INITIAL_AUTHORING");

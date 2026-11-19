@@ -11,6 +11,8 @@
       "retry": "Reintentar",
       "empty": "Aún no hay registros ubicados.",
       "truncated": "Solo se evalúan los 100 registros más recientes; una cadena que cruza esta ventana empieza como desconocida.",
+      "historyBoundary": "Existe historial más antiguo fuera de la ventana evaluada: la continuidad con el registro anterior no está disponible aquí; no es continua ni una brecha.",
+      "tankBasis": "La continuidad se comprueba por tipo de combustible declarado porque no hay referencia de tanque; una brecha en un buque con varios tanques es una cuestión de revisión por falta de datos de tanque, no un error de datos.",
       "unplaced": "Registros no ubicados (fecha, tipo de combustible o inicio no declarados): {{count}}",
       "notDeclared": "No declarado",
       "balance": "Balance (antes + recibido − consumido − después)",
