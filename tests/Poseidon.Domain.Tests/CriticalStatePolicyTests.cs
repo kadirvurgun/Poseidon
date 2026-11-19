@@ -99,7 +99,11 @@ public sealed class CriticalStatePolicyTests
         // DEV024-DEC-02 (QA F3): UNKNOWN reveals a reason class, so it collapses into the
         // non-positive REVIEW_REQUIRED; it never becomes a positive state.
         Assert.Equal("REVIEW_REQUIRED", CriticalStatePolicy.Redact("UNKNOWN")); Assert.Equal("REVIEW_REQUIRED", CriticalStatePolicy.Redact("STALE"));
-        Assert.Equal("UNAVAILABLE", CriticalStatePolicy.Redact("UNAVAILABLE"));
+        // QA note 1: a full UNAVAILABLE alone is content-derived and collapses; only the owner
+        // service status yields the coarse UNAVAILABLE, for any full state.
+        Assert.Equal("REVIEW_REQUIRED", CriticalStatePolicy.Redact("UNAVAILABLE"));
+        foreach (var state in CriticalStatePolicy.States) Assert.Equal("UNAVAILABLE", CriticalStatePolicy.Redact(state, serviceUnavailable: true));
+        Assert.Throws<ArgumentOutOfRangeException>(() => CriticalStatePolicy.Redact("READY", serviceUnavailable: true));
         Assert.Equal(["REVIEW_REQUIRED", "UNAVAILABLE"], CriticalStatePolicy.RedactedStates);
         Assert.Equal("REVIEW_REQUIRED", CriticalStatePolicy.Redact("QUALIFIED_CURRENT_UNVERIFIED"));
         Assert.Throws<ArgumentOutOfRangeException>(() => CriticalStatePolicy.Redact("READY"));
