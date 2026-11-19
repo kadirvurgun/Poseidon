@@ -12,7 +12,7 @@ using Poseidon.Persistence;
 namespace Poseidon.Persistence.Migrations
 {
     [DbContext(typeof(PoseidonDbContext))]
-    [Migration("20261120A00000_S7WpaCrewEligibility")]
+    [Migration("20261120210000_S7WpaCrewEligibility")]
     partial class S7WpaCrewEligibility
     {
         /// <inheritdoc />
