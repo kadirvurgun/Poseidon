@@ -91,7 +91,7 @@ public sealed partial class DirectoryWorkspaceTests
     private async Task<MembershipDto> MembershipOf(HttpClient admin, Guid account) =>
         Assert.Single((await admin.GetFromJsonAsync<MembershipPageDto>("/api/v1/memberships?limit=100", Ct))!.Items, x => x.AccountId == account);
 
-    private async Task<string?> Code(HttpResponseMessage response) =>
+    private async Task<string?> MembershipCode(HttpResponseMessage response) =>
         (await response.Content.ReadFromJsonAsync<System.Text.Json.JsonElement>(Ct)).TryGetProperty("code", out var code) ? code.GetString() : null;
 
     private async Task<string?> FieldError(HttpResponseMessage response, string field) =>
@@ -162,7 +162,7 @@ public sealed partial class DirectoryWorkspaceTests
         var b = await MembershipOf(admin, memberB);
 
         using var stale = await Post(admin, $"memberships/{b.Id}/suspend", new { expectedVersion = b.Version + 1 });
-        Assert.Equal(HttpStatusCode.Conflict, stale.StatusCode); Assert.Equal("version_conflict", await Code(stale));
+        Assert.Equal(HttpStatusCode.Conflict, stale.StatusCode); Assert.Equal("version_conflict", await MembershipCode(stale));
         using var missingVersion = await Post(admin, $"memberships/{b.Id}/suspend", new { });
         Assert.Equal(HttpStatusCode.BadRequest, missingVersion.StatusCode);
         using var noKey = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/memberships/{b.Id}/suspend") { Content = JsonContent.Create(new { expectedVersion = b.Version }) };
@@ -177,7 +177,7 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(HttpStatusCode.OK, replay.StatusCode);
         Assert.Equal("true", Assert.Single(replay.Headers.GetValues("Idempotency-Replayed")));
         using var reused = await Post(admin, $"memberships/{b.Id}/revoke", new { expectedVersion = afterSuspend.Version }, key);
-        Assert.Equal(HttpStatusCode.Conflict, reused.StatusCode); Assert.Equal("idempotency_key_reused", await Code(reused));
+        Assert.Equal(HttpStatusCode.Conflict, reused.StatusCode); Assert.Equal("idempotency_key_reused", await MembershipCode(reused));
 
         // Existing session: the very next request is denied and the session observation is attributed.
         using var denied = await member.GetAsync("/api/v1/vessels", Ct);
@@ -206,7 +206,7 @@ public sealed partial class DirectoryWorkspaceTests
         using var newest = await Member(host, "member-b", afterRevoke.AccessRevision);
         Assert.Equal(HttpStatusCode.Unauthorized, (await newest.GetAsync("/api/v1/vessels", Ct)).StatusCode);
         using var terminal = await Post(admin, $"memberships/{b.Id}/resume", new { expectedVersion = afterRevoke.Version });
-        Assert.Equal(HttpStatusCode.Conflict, terminal.StatusCode); Assert.Equal("invalid_transition", await Code(terminal));
+        Assert.Equal(HttpStatusCode.Conflict, terminal.StatusCode); Assert.Equal("invalid_transition", await MembershipCode(terminal));
 
         await using var audit = Db();
         var events = await audit.AuditEvents.AsNoTracking().Where(e => e.ResourceId == b.Id && e.ResourceKind == "Membership").ToArrayAsync(Ct);
@@ -233,7 +233,7 @@ public sealed partial class DirectoryWorkspaceTests
         foreach (var segment in new[] { "suspend", "revoke" })
         {
             using var last = await Post(admin, $"memberships/{a.Id}/{segment}", new { expectedVersion = a.Version });
-            Assert.Equal(HttpStatusCode.Conflict, last.StatusCode); Assert.Equal("last_admin", await Code(last));
+            Assert.Equal(HttpStatusCode.Conflict, last.StatusCode); Assert.Equal("last_admin", await MembershipCode(last));
         }
         Assert.Equal("Active", (await MembershipOf(admin, actorId)).Status);
         // The general administrator cannot use the forced path; it is a separate exact permission.
@@ -284,7 +284,7 @@ public sealed partial class DirectoryWorkspaceTests
         using var administrative = await Post(admin, $"memberships/{b.Id}/delegations", Body(d.Id, ["membership.manage"]));
         Assert.Equal(HttpStatusCode.BadRequest, administrative.StatusCode);
         using var selfApproved = await Post(admin, $"memberships/{b.Id}/delegations", Body(a.Id, ["crew.read"]));
-        Assert.Equal(HttpStatusCode.Forbidden, selfApproved.StatusCode); Assert.Equal("separation_of_duties", await Code(selfApproved));
+        Assert.Equal(HttpStatusCode.Forbidden, selfApproved.StatusCode); Assert.Equal("separation_of_duties", await MembershipCode(selfApproved));
         using var tooLong = await Post(admin, $"memberships/{b.Id}/delegations", Body(d.Id, ["crew.read"], TimeSpan.FromDays(91)));
         Assert.Equal(HttpStatusCode.BadRequest, tooLong.StatusCode);
 
@@ -420,7 +420,7 @@ public sealed partial class DirectoryWorkspaceTests
         await using (var db = Db()) Assert.False(await db.TenantAccessRecoveries.AnyAsync(Ct)); // A remained an active admin.
         // Ordinary membership.manage cannot lift a security suspension.
         using var ordinary = await Post(admin, $"memberships/{c.Id}/resume", new { expectedVersion = suspendedC.Version });
-        Assert.Equal(HttpStatusCode.Forbidden, ordinary.StatusCode); Assert.Equal("permission_denied", await Code(ordinary));
+        Assert.Equal(HttpStatusCode.Forbidden, ordinary.StatusCode); Assert.Equal("permission_denied", await MembershipCode(ordinary));
         Assert.Equal("Suspended", (await MembershipOf(admin, adminC)).Status);
         using var lifted = await Post(security, $"memberships/{c.Id}/resume", new { expectedVersion = suspendedC.Version });
         Assert.Equal(HttpStatusCode.OK, lifted.StatusCode);
@@ -490,7 +490,7 @@ public sealed partial class DirectoryWorkspaceTests
         using var r1 = await first; using var r2 = await second;
         var statuses = new[] { r1.StatusCode, r2.StatusCode };
         // Each response body is a single-read stream: read each code exactly once.
-        var codes = new[] { await Code(r1), await Code(r2) };
+        var codes = new[] { await MembershipCode(r1), await MembershipCode(r2) };
         var observed = $"{(int)r1.StatusCode}:{codes[0]} / {(int)r2.StatusCode}:{codes[1]}";
         Assert.True(statuses.Count(x => x == HttpStatusCode.OK) == 1 && statuses.Count(x => x == HttpStatusCode.Conflict) == 1, observed);
         Assert.Contains(codes[r1.StatusCode == HttpStatusCode.Conflict ? 0 : 1], new[] { "conflict_changed", "last_admin" });
@@ -519,7 +519,7 @@ public sealed partial class DirectoryWorkspaceTests
         member.DefaultRequestHeaders.Add("X-Membership-Subject", "synthetic");
         using var read = await member.GetAsync("/api/v1/vessels", Ct);
         Assert.Equal(HttpStatusCode.ServiceUnavailable, read.StatusCode);
-        Assert.Equal("service_unavailable", await Code(read));
+        Assert.Equal("service_unavailable", await MembershipCode(read));
         using var session = await member.GetAsync("/api/v1/auth/session", Ct);
         Assert.Equal(HttpStatusCode.ServiceUnavailable, session.StatusCode); // No authenticated session fallback.
         using var command = await Post(member, "memberships/import", new { });
