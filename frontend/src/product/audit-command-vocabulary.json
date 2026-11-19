@@ -119,6 +119,7 @@
     "NoonDailyReviewRecord": "HUMAN_REVIEW_WORKFLOW",
     "DeckDailyReviewRecord": "HUMAN_REVIEW_WORKFLOW",
     "EngineDailyReviewRecord": "HUMAN_REVIEW_WORKFLOW",
+    "EngineDailyReferenceRecord": "PREPARATION_COMMAND",
     "VesselCertificateCreate": "PREPARATION_COMMAND",
     "VesselCertificateUpdate": "PREPARATION_COMMAND",
     "CertificateRenewalCreate": "PREPARATION_COMMAND",

@@ -119,6 +119,15 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if (entry.Entity is DailyReviewEvent reviewEvent)
             return new(reviewEvent.VesselId,reviewEvent.RecordId,"DailyReviewEvent",null,reviewEvent.Sequence,
                 Fields(Field("Revision",null,Number(reviewEvent.Sequence)),Field("Binding",null,"OwnerReference")));
+        if (entry.Entity is DailyEngineReferenceHead referenceHead)
+            return new(referenceHead.VesselId, referenceHead.RecordId, "DailyEngineReferenceHead", entry.State == EntityState.Added ? null : (long?)entry.Property("Sequence").OriginalValue,
+                referenceHead.Sequence, Fields(Field("Revision", entry.State == EntityState.Added ? null : Number((long)entry.Property("Sequence").OriginalValue!), Number(referenceHead.Sequence)),Field("Binding",null,"OwnerReference")));
+        if (entry.Entity is DailyEngineReferenceEvent referenceEvent)
+            return new(referenceEvent.VesselId,referenceEvent.RecordId,"DailyEngineReferenceEvent",null,referenceEvent.Sequence,
+                Fields(Field("Revision",null,Number(referenceEvent.Sequence)),Field("Binding",null,"OwnerReference"),
+                    Field("Operation",null,Closed(referenceEvent.Operation,"LINK","UNLINK")),Field("TargetKind",null,Closed(referenceEvent.TargetKind,"WorkOrder","Defect"))));
+        if (entry.Entity is DailyEngineReferenceReceipt referenceReceipt)
+            return new(referenceReceipt.VesselId,referenceReceipt.RecordId,"DailyEngineReferenceReceipt",null,null,Fields(Field("Binding",null,"CommittedResource")));
         if (entry.Entity is DailyReviewReceipt reviewReceipt)
             return new(reviewReceipt.VesselId,reviewReceipt.RecordId,"DailyReviewReceipt",null,null,Fields(Field("Binding",null,"CommittedResource")));
         if (entry.Entity is DailyOperation daily)

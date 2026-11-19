@@ -33,6 +33,7 @@ public static class SecurityEventCodes
         "ControlledDocument", "ControlledDocumentRead", "ControlledDocumentCommand", "ControlledDocumentReplay",
         "SyncOperationRead", "SyncConflictList",
         "ControlLifecycleRead", "ControlLifecycleCommand", "ControlLifecycleReplay", "ControlSupportingEvidenceRead", "HumanReviewRead",
+        "DailyEngineReferenceRead", "DailyEngineReferenceCommand",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static IReadOnlySet<string> Results { get; } = new string[]
     {

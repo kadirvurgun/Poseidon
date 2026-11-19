@@ -36,6 +36,8 @@ const enumFields: Record<string, readonly string[]> = {
   ReasonCode: ['INITIAL_AUTHORING', 'AUTHORING_CORRECTION', 'SYNTHETIC_INCOMPLETE_DRAFT', 'SUBMIT', 'COMPLETE',
     'REQUEST_REVIEW', 'HUMAN_VERIFIED', 'HUMAN_REJECTED', 'VALIDITY_ELAPSED', 'INPUT_SUPERSEDED', 'HUMAN_DECIDED'],
   ReviewStatus: ['NOT_REQUESTED', 'BLOCKED_SOURCE_ADMISSION'],
+  Operation: ['LINK', 'UNLINK'],
+  TargetKind: ['WorkOrder', 'Defect'],
 }
 const changeFields = new Set([...withheldFields, ...numericFields, ...guidFields, ...timeFields,
   ...Object.keys(enumFields), 'ContentJson', 'CommandName'])

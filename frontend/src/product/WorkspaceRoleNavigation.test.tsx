@@ -143,3 +143,30 @@ it('keeps only the owner-bound search shell while role navigation revalidates an
   expect(screen.queryByRole('link', { name: /FICTIONAL old role-search result/ })).not.toBeInTheDocument()
   expect(fetch).toHaveBeenCalledTimes(2)
 })
+
+// DEV-080 / T-TUG-001: the Tug-mode menu renders only server-projected items. Without the
+// cross-mode role the server omits Ship Mode screens; the decoder rejects ship-only items.
+describe('DEV-080 Tug mode navigation (authored; execution recorded in phase report)', () => {
+  const tugLens = (items: { key: string; href: string; group: 'daily' | 'review' }[]): Lenses => ({ ...result(), mode: 'Tug', lenses: [{ reference: role, tr: 'KURGUSAL römorkör', en: 'FICTIONAL tug lens', items }] })
+  it('hides Ship Mode screens in Tug mode unless the server includes them for a cross-mode role', async () => {
+    const user = userEvent.setup()
+    vi.mocked(loadLenses).mockResolvedValue(tugLens([{ key: 'tug-command', href: `/app/tug-command?vessel=${vessel}`, group: 'daily' }]))
+    const view = render(<WorkspaceRoleNavigation {...props} />)
+    await user.selectOptions(await screen.findByLabelText('Menu lens'), role)
+    expect(screen.getByRole('button', { name: 'Tug context' })).toBeVisible()
+    for (const name of ['Engine daily log', 'Deck daily log', 'Noon report']) expect(screen.queryByRole('button', { name })).not.toBeInTheDocument()
+    view.unmount()
+    vi.mocked(loadLenses).mockResolvedValue(tugLens([{ key: 'tug-command', href: `/app/tug-command?vessel=${vessel}`, group: 'daily' }, { key: 'engine-daily-log', href: `/app/engine-daily-log/${vessel}`, group: 'daily' }]))
+    render(<WorkspaceRoleNavigation {...props} />)
+    await user.selectOptions(await screen.findByLabelText('Menu lens'), role)
+    await user.click(screen.getByRole('button', { name: 'Engine daily log' }))
+    expect(props.onNavigate).toHaveBeenCalledWith(`/app/engine-daily-log/${vessel}`)
+  })
+  it('never accepts Ship-only operational screens in a Tug-mode server payload', async () => {
+    const { decodeLenses } = await vi.importActual<typeof import('./workspace-lens-api')>('./workspace-lens-api')
+    const payload = { tenantId: tenant, actorId: actor, vesselId: vessel, mode: 'Tug', state: 'Configured', version: 'synthetic-v1', canSearch: false,
+      lenses: [{ reference: role, tr: 'KURGUSAL', en: 'FICTIONAL', items: [{ key: 'fuel-bunker-log', href: `/app/fuel-bunker-log/${vessel}`, group: 'daily' }] }] }
+    expect(() => decodeLenses(payload, tenant, actor, vessel)).toThrow()
+    expect(() => decodeLenses({ ...payload, lenses: [{ ...payload.lenses[0], items: [{ key: 'tug-command', href: `/app/tug-command?vessel=${vessel}`, group: 'daily' }] }] }, tenant, actor, vessel)).not.toThrow()
+  })
+})

@@ -34,6 +34,9 @@ public static class DailyReferenceEndpoints
             var group = app.MapGroup("/api/v1/" + family.Route).RequireAuthorization("DirectoryRead");
             group.MapGet("/reference-options", (HttpContext h, PoseidonDbContext db) => Options(kind, h, db))
                 .WithName(kind + "DailyReferenceOptions").Produces<DailyReferenceOptionsDto>();
+            // GET engine-daily-logs/{id}/references is owned by DEV-099 (DailyEngineReferenceEndpoints:
+            // WO/defect lineage links); mapping it here too would be an ambiguous route and duplicate name.
+            if (kind == "Engine") continue;
             group.MapGet("/{id:guid}/references", (Guid id, HttpContext h, PoseidonDbContext db) => References(kind, id, h, db))
                 .WithName(kind + "DailyReferences").Produces<DailyReferencesDto>();
         }

@@ -14,11 +14,31 @@ export type TugInputs = {
 export type TugRequest = { id: string; vesselId: string; jobNumber: string; revision: number; version: number; inputs: TugInputs; provenance: string; savedAt: string; missing: string[]; replayed: boolean; sourceVersion: string }
 export type TugContext = {
   vessel: { id: string; code: string; name: string }; mode: 'Tug'; crossMode: boolean; roleReferences: string | null
+  roleLens: TugRoleLens; shipModeDestinations: { key: TugShipModeKey; href: string }[]
   tugTypeContext: { tenantId: string; vesselId: string; code: string; sourceReference: string; sourceRevision: number; observedAt: string } | null
   tugTypeOptions?: { code: string; tr: string; en: string }[]; tugTypePolicyVersion?: string | null; canWrite: boolean; owners: string[]; requestSources: string[]; jobTypes: string[]; priorities: string[]; tugType: string
   bollardPull: { value: string | null; version: number | null; provenance: string; freshness: string; observedAt: string | null; source: 'TugProfile' }
   equipment: { id: string; level: string; equipmentType: string | null; revision: number; provenance: string }[] | null
   equipmentCoverage: string; readiness: string; reason: string
+}
+export type TugShipModeKey = 'noon-report' | 'deck-daily-log' | 'engine-daily-log'
+export type TugRoleLabel = { reference: string; tr: string; en: string }
+export type TugRoleLens = { roleState: 'Configured' | 'Missing' | 'Unavailable'; roleCatalogVersion: string | null; roles: TugRoleLabel[]; lensState: 'Configured' | 'Missing' | 'Unavailable'; lensVersion: string | null; lenses: TugRoleLabel[] }
+const shipModeKeys: readonly TugShipModeKey[] = ['noon-report', 'deck-daily-log', 'engine-daily-log']
+// DEV-080: role/lens labels come only from the server's provisioned catalog; Missing/Unavailable stay explicit.
+function decodeRoleLens(value: unknown, roleReferences: unknown): TugRoleLens {
+  function fail(): never { throw new ApiError(502, 'invalid_tug_context') }
+  const states = ['Configured', 'Missing', 'Unavailable']
+  const labels = (rows: unknown) => Array.isArray(rows) && rows.length <= 64 && rows.every(row => exact(row, ['reference', 'tr', 'en']) && isGuid(row.reference) && contextText(row.tr) && contextText(row.en)) && new Set(rows.map(row => (row as TugRoleLabel).reference)).size === rows.length
+  if (!exact(value, ['roleState', 'roleCatalogVersion', 'roles', 'lensState', 'lensVersion', 'lenses']) || !states.includes(String(value.roleState)) || !states.includes(String(value.lensState)) ||
+    !labels(value.roles) || !labels(value.lenses) ||
+    (value.roleState === 'Configured' ? !contextText(value.roleCatalogVersion, 64) || (value.roles as unknown[]).length === 0 : value.roleCatalogVersion !== null || (value.roles as unknown[]).length !== 0) ||
+    (value.lensState === 'Configured' ? !contextText(value.lensVersion, 64) : value.lensVersion !== null || (value.lenses as unknown[]).length !== 0) ||
+    value.roleState === 'Missing' && roleReferences !== null ||
+    (value.lenses as TugRoleLabel[]).some(lens => !(value.roles as TugRoleLabel[]).some(role => role.reference === lens.reference))) fail()
+  if (value.roleState === 'Configured' && (typeof roleReferences !== 'string' || roleReferences.split(',').length !== (value.roles as unknown[]).length ||
+    (value.roles as TugRoleLabel[]).some(role => !roleReferences.toLowerCase().split(',').includes(role.reference.toLowerCase())))) fail()
+  return value as TugRoleLens
 }
 export type TugBoard = { items: { draftPlan?: Plan | null; planningEvidence?: PlanningEvidence | null; request: TugRequest; windowState: string; plannedTimeSource: string; assignedTugs: string[]; assignmentCoverage: string; availableBollardPull: string | null; readiness: string; conflict: string; declaredComparisons: { jobId: string; relation: string }[]; comparisonCoverage: string; blockingReasons: string[]; nextAction: string; detailHref: string }[]; hasMore: boolean }
 export const emptyTugInputs = (): TugInputs => ({ requestSource: null, customerRef: null, assistedVessel: null, assistedVesselImo: null, jobType: null, requestedStart: null, requestedEnd: null, operationArea: null, pickupPoint: null, destinationPoint: null, requiredBollardPull: null, requiredTugCount: null, specialRequirements: null, priority: null, requestOwner: null, notes: null })
@@ -49,7 +69,13 @@ export function decodeTugRequest(value: unknown, vessel: string, id?: string): T
 }
 export function decodeTugContext(value: unknown, vessel: string, tenant?: string): TugContext {
   function fail(): never { throw new ApiError(502, 'invalid_tug_context') }
-  if (!isGuid(vessel) || !exact(value, ['vessel', 'mode', 'crossMode', 'roleReferences', 'canWrite', 'owners', 'bollardPull', 'tugType', 'tugTypeContext', 'tugTypeOptions', 'tugTypePolicyVersion', 'equipment', 'equipmentCoverage', 'readiness', 'reason', 'jobTypes', 'priorities', 'requestSources']) || !exact(value.vessel, ['id', 'code', 'name']) || value.vessel.id !== vessel || !contextText(value.vessel.code) || !contextText(value.vessel.name) || value.mode !== 'Tug' || typeof value.crossMode !== 'boolean' || typeof value.canWrite !== 'boolean' || !(value.roleReferences === null || contextText(value.roleReferences, 4096)) || !Array.isArray(value.owners) || !value.owners.every(isGuid) || new Set(value.owners).size !== value.owners.length || value.readiness !== 'Unknown' || value.reason !== 'VerifiedMeasurementCertificateCrewAndAssignmentAdaptersUnavailable') fail()
+  if (!isGuid(vessel) || !exact(value, ['vessel', 'mode', 'crossMode', 'roleReferences', 'roleLens', 'shipModeDestinations', 'canWrite', 'owners', 'bollardPull', 'tugType', 'tugTypeContext', 'tugTypeOptions', 'tugTypePolicyVersion', 'equipment', 'equipmentCoverage', 'readiness', 'reason', 'jobTypes', 'priorities', 'requestSources']) || !exact(value.vessel, ['id', 'code', 'name']) || value.vessel.id !== vessel || !contextText(value.vessel.code) || !contextText(value.vessel.name) || value.mode !== 'Tug' || typeof value.crossMode !== 'boolean' || typeof value.canWrite !== 'boolean' || !(value.roleReferences === null || contextText(value.roleReferences, 4096)) || !Array.isArray(value.owners) || !value.owners.every(isGuid) || new Set(value.owners).size !== value.owners.length || value.readiness !== 'Unknown' || value.reason !== 'VerifiedMeasurementCertificateCrewAndAssignmentAdaptersUnavailable') fail()
+  decodeRoleLens(value.roleLens, value.roleReferences)
+  // Ship Mode screens are server-listed only for an explicit cross-mode role, never inferred here.
+  const ship = value.shipModeDestinations
+  if (!Array.isArray(ship) || ship.length > shipModeKeys.length || !value.crossMode && ship.length !== 0 ||
+    ship.some(row => !exact(row, ['key', 'href']) || !shipModeKeys.includes(row.key as TugShipModeKey) || row.href !== `/app/${String(row.key)}/${vessel}`) ||
+    new Set(ship.map(row => (row as { key: string }).key)).size !== ship.length) fail()
   const bp = value.bollardPull
   if (!exact(bp, ['value', 'version', 'provenance', 'source', 'observedAt', 'freshness']) || bp.source !== 'TugProfile' || bp.freshness !== 'Unknown' || bp.observedAt !== null || !(bp.value === null && bp.version === null && bp.provenance === 'Missing' || validDecimal(bp.value) && positive(bp.version) && Number(bp.version) <= 4294967295 && bp.provenance === 'LegacyMeasurementUnverified')) fail()
   if (!Array.isArray(value.tugTypeOptions) || value.tugTypeOptions.length > 128 || value.tugTypeOptions.some(option => !exact(option, ['code', 'tr', 'en']) || !contextText(option.code, 64) || !contextText(option.tr, 100) || !contextText(option.en, 100)) || new Set(value.tugTypeOptions.map(option => option.code)).size !== value.tugTypeOptions.length || !(value.tugTypePolicyVersion === null || contextText(value.tugTypePolicyVersion, 80))) fail()

@@ -175,6 +175,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapDailyOffline();
             endpoints.MapDailyReviews();
             endpoints.MapDailyReferences();
+            endpoints.MapDailyEngineReferences();
             endpoints.MapAuditHistory();
             endpoints.MapSecureFiles();
             endpoints.MapDocuments();
