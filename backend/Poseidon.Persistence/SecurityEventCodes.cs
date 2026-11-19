@@ -31,6 +31,7 @@ public static class SecurityEventCodes
         "WorkspaceSearch", "SystemHealthRead", "NotificationRead", "NotificationCommand", "ComplianceWorkspaceRead", "CriticalStateRead", "DailyOfflineRead", "DailyOfflineRequest", "DailyOperationsRead", "DailyOperationsCommand", "DailyReviewRead", "DailyReviewCommand", "ShipOperationsRead", "ShipOperationsCommand",
         "ParameterRead", "ParameterCommand", "HrRead", "HrCommand", "MembershipRead", "MembershipCommand", "SessionRevalidation",
         "ControlledDocument", "ControlledDocumentRead", "ControlledDocumentCommand", "ControlledDocumentReplay",
+        "SyncOperationRead",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static IReadOnlySet<string> Results { get; } = new string[]
     {

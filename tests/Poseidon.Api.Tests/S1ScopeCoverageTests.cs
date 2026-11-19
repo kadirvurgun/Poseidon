@@ -39,11 +39,11 @@ public sealed partial class DirectoryWorkspaceTests
         var observed = S1SecurityContract.ValidateEndpointInventory(endpoints);
         // S6 adds owning drafts, extraction and assigned Human assertion recording.
         // Historical native receipts remain unchanged; these are source denominators.
-        // PLAN-1511-5201 adds 14 audited HR commands; PLAN-1511-5401 adds 3; main S2 bundle adds 1 (legal entity, person master, employment, plan, actual; QA: role cancel); PLAN-1511-5202 adds 7 tenant-scoped membership/delegation lifecycle commands; PLAN-1511-5802 adds 11 controlled document/evidence custody commands.
-        Assert.Equal(151, observed.Count);
+        // PLAN-1511-5201 adds 14 audited HR commands; PLAN-1511-5401 adds 3; main S2 bundle adds 1 (legal entity, person master, employment, plan, actual; QA: role cancel); PLAN-1511-5202 adds 7 tenant-scoped membership/delegation lifecycle commands; PLAN-1511-5802 adds 11 controlled document/evidence custody commands; S4 WP-D adds 1 DEV-034 sync reconciliation observation (no business effect).
+        Assert.Equal(152, observed.Count);
         Assert.Equal(143, observed.Count(x => x.IsCritical));
         Assert.Equal(153, S1SecurityContract.CriticalOperationIds.Count);
-        Assert.Equal(8, observed.Count(x => !x.IsCritical));
+        Assert.Equal(9, observed.Count(x => !x.IsCritical));
         var extra = new RouteEndpoint(_ => Task.CompletedTask, RoutePatternFactory.Parse("/api/v1/unclassified-write"), 0,
             new EndpointMetadataCollection(new HttpMethodMetadata(["POST"]), new AuthorizeAttribute("DirectoryRead")), "unclassified");
         Assert.Throws<InvalidOperationException>(() => S1SecurityContract.ValidateEndpointInventory(endpoints.Append(extra)));

@@ -3360,6 +3360,8 @@
     "m_7c2c3c0f372d028d": "Filtrar menu",
     "m_4895cdb4b14ff26c": "Somente as telas que você está autorizado a abrir são pesquisadas.",
     "m_9e601b252c4fb4b3": "Nenhum item de menu autorizado corresponde a este filtro.",
-    "m_5af49f5d0c78416e": "Limpar filtro do menu"
+    "m_5af49f5d0c78416e": "Limpar filtro do menu",
+    "m_e9537921034aa833": "Aguardando que uma alteração anterior deste registro chegue ao servidor",
+    "m_4aff1a1251fdec46": "Não salvo: o servidor possui conteúdo diferente para esta chave de comando"
   }
 }

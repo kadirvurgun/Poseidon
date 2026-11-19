@@ -3360,6 +3360,8 @@
     "m_7c2c3c0f372d028d": "Menüde ara",
     "m_4895cdb4b14ff26c": "Yalnızca açmaya yetkili olduğunuz ekranlarda arar.",
     "m_9e601b252c4fb4b3": "Bu filtreyle eşleşen yetkili menü öğesi yok.",
-    "m_5af49f5d0c78416e": "Menü filtresini temizle"
+    "m_5af49f5d0c78416e": "Menü filtresini temizle",
+    "m_e9537921034aa833": "Bu kayıttaki önceki değişikliğin sunucuya ulaşması bekleniyor",
+    "m_4aff1a1251fdec46": "Kaydedilmedi: sunucuda bu komut anahtarı için farklı içerik var"
   }
 }

@@ -3360,6 +3360,8 @@
     "m_7c2c3c0f372d028d": "Menü filtern",
     "m_4895cdb4b14ff26c": "Es werden nur Bildschirme durchsucht, die Sie öffnen dürfen.",
     "m_9e601b252c4fb4b3": "Kein berechtigter Menüeintrag entspricht diesem Filter.",
-    "m_5af49f5d0c78416e": "Menüfilter löschen"
+    "m_5af49f5d0c78416e": "Menüfilter löschen",
+    "m_e9537921034aa833": "Wartet darauf, dass eine frühere Änderung dieses Datensatzes den Server erreicht",
+    "m_4aff1a1251fdec46": "Nicht gespeichert: Der Server enthält für diesen Befehlsschlüssel abweichende Inhalte"
   }
 }

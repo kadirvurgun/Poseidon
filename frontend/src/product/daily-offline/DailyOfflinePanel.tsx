@@ -9,6 +9,8 @@ import { ApiError } from '../api';
 import { dailyFields, type DailyFields, type DailyKind, type DailyValue } from '../daily-report-fields';
 import type { DailyRecord } from '../daily-operations-api';
 import { DailyOfflineApplication, dailyOfflineInventory, dailyOfflineLifecycle, discardDailyLostCaptures } from './daily-offline-application';
+import { replayGate, type SyncState } from '../sync-operations';
+import { SyncQueueNotice } from '../SyncQueueNotice';
 import { projectDailyQueue, type DailyPending, type DailyConflict, type DailyInventoryItem, type DailyOfflineContext } from './daily-offline-contract';
 import './daily-offline.css';
 type Props = {
@@ -37,6 +39,10 @@ export function DailyOfflinePanel({ vessel, kind, recordId, record, fields, enab
     } | null>(null);
     const privateState = useRef({ local, dirty, pending: false });
     const queue = useMemo(() => projectDailyQueue(captures, context), [captures, context]);
+    // DEV-034 reconnect reconciliation states; never persisted, never shown as saved.
+    const [syncStates, setSyncStates] = useState<ReadonlyMap<string, SyncState>>(new Map());
+    // DEV-033 ordered per resource (this daily record): only the oldest unresolved capture may be replayed.
+    const replayOrder = useMemo(() => replayGate(captures, recordId, syncStates), [captures, recordId, syncStates]);
     const [memoryHeld, setMemoryHeld] = useState(false);
     useLayoutEffect(() => { privateState.current = { local, dirty, pending: queue.pending > 0 }; }, [local, dirty, queue.pending]);
     useLayoutEffect(() => { callbacks.current = { onDirty, onSaving, onCommitted }; }, [onDirty, onSaving, onCommitted]);
@@ -58,6 +64,7 @@ export function DailyOfflinePanel({ vessel, kind, recordId, record, fields, enab
         setContext(null);
         setLocal({});
         setCaptures([]);
+        setSyncStates(new Map());
         setConflict(null);
         setBusy(false);
         setDirty(false);
@@ -148,9 +155,17 @@ export function DailyOfflinePanel({ vessel, kind, recordId, record, fields, enab
         setContext(null);
         setLocal({});
         setCaptures([]);
+        setSyncStates(new Map());
         setConflict(null);
         const value = await DailyOfflineApplication.authorize(kind, vessel, recordId, selected || null, signal);
         try {
+            let reconciled: ReadonlyMap<string, SyncState> = new Map();
+            if (navigator.onLine) {
+                // Lost replay responses are recovered from server receipts without re-sending.
+                // Failure is non-fatal: unproven captures simply remain pending.
+                try { reconciled = await value.reconcile(signal); }
+                catch (error) { if (signal.aborted) throw error; }
+            }
             const rows = await value.captures();
             if (!fresh(current, signal)) {
                 value.close();
@@ -166,6 +181,7 @@ export function DailyOfflinePanel({ vessel, kind, recordId, record, fields, enab
             app.current = value;
             setSelected(value.context.id);
             setCaptures(rows);
+            setSyncStates(reconciled);
             setContext(value.context);
             setActive(true);
             setDirty(!!same);
@@ -201,6 +217,7 @@ export function DailyOfflinePanel({ vessel, kind, recordId, record, fields, enab
         if (!fresh(current, signal))
             return;
         setCaptures(rows);
+        setSyncStates(previous => { const next = new Map(previous); next.delete(row.commandId); return next; });
         setRetained(false);
         setStatus('ready');
         if (outcome.result === 'MaterialConflict' && !projectDailyQueue(rows, value.context).resolved.has(row.commandId))
@@ -250,7 +267,7 @@ export function DailyOfflinePanel({ vessel, kind, recordId, record, fields, enab
             })}</div>
       <EnterpriseActions align="start"><Button disabled={locked} onClick={capture}>{localizedText(en, "pairs.m_c81cedc503a88202")}</Button></EnterpriseActions>
       <p role="status">{localizedText(en, "pairs.m_11b6f5fa3d06cbe1", { value0: queue.pending })}</p>
-      <ul className="daily-offline-queue">{captures.map((row, i) => <li key={row.commandId}><strong>{localizedText(en, "pairs.m_78fd146a51f0c965")} {i + 1}</strong><span>{queue.resolved.has(row.commandId) ? (localizedText(en, "pairs.m_f5f55139c8e905b3")) : row.outcome?.result === 'Committed' ? (localizedText(en, "pairs.m_cc0248a386633984")) : row.outcome?.result === 'ServerRetained' ? (localizedText(en, "pairs.m_b532c1458119b91d")) : row.outcome ? (localizedText(en, "pairs.m_555548196da154f7")) : (localizedText(en, "pairs.m_dfbae211988617ec"))}</span><EnterpriseActions align="start"><Button variant="outline" disabled={locked || !online} onClick={() => replay(row)}>{row.outcome ? (localizedText(en, "pairs.m_ce40179e4a307296")) : (localizedText(en, "pairs.m_7d7cc3db0f6a6ed5"))}</Button>{row.outcome?.result === 'MaterialConflict' && !queue.resolved.has(row.commandId) && <Button variant="outline" disabled={locked || !online} onClick={() => void run(async (signal, n) => {
+      <ul className="daily-offline-queue">{captures.map((row, i) => <li key={row.commandId}><strong>{localizedText(en, "pairs.m_78fd146a51f0c965")} {i + 1}</strong><span>{queue.resolved.has(row.commandId) ? (localizedText(en, "pairs.m_f5f55139c8e905b3")) : row.outcome?.result === 'Committed' ? (localizedText(en, "pairs.m_cc0248a386633984")) : row.outcome?.result === 'ServerRetained' ? (localizedText(en, "pairs.m_b532c1458119b91d")) : row.outcome ? (localizedText(en, "pairs.m_555548196da154f7")) : (localizedText(en, "pairs.m_dfbae211988617ec"))}</span><SyncQueueNotice state={replayOrder.get(row.commandId)?.state} en={en}/><EnterpriseActions align="start"><Button variant="outline" disabled={locked || !online || replayOrder.get(row.commandId)?.state === 'blocked' || replayOrder.get(row.commandId)?.state === 'rejected'} onClick={() => replay(row)}>{row.outcome ? (localizedText(en, "pairs.m_ce40179e4a307296")) : (localizedText(en, "pairs.m_7d7cc3db0f6a6ed5"))}</Button>{row.outcome?.result === 'MaterialConflict' && !queue.resolved.has(row.commandId) && <Button variant="outline" disabled={locked || !online} onClick={() => void run(async (signal, n) => {
                         const value = app.current;
                         if (!value?.active())
                             return;

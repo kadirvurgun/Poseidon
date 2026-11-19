@@ -3360,6 +3360,8 @@
     "m_7c2c3c0f372d028d": "Menü szűrése",
     "m_4895cdb4b14ff26c": "Csak azokban a képernyőkben keres, amelyek megnyitására jogosult.",
     "m_9e601b252c4fb4b3": "Egyetlen engedélyezett menüelem sem felel meg ennek a szűrőnek.",
-    "m_5af49f5d0c78416e": "Menüszűrő törlése"
+    "m_5af49f5d0c78416e": "Menüszűrő törlése",
+    "m_e9537921034aa833": "Várakozás, amíg a rekord egy korábbi módosítása eléri a szervert",
+    "m_4aff1a1251fdec46": "Nincs mentve: a szerveren ehhez a parancskulcshoz eltérő tartalom tartozik"
   }
 }

@@ -3,6 +3,7 @@ import { isGuid } from '../identifiers'
 import { base64, hash, vault, prepareOfflineShell, type KeySlot } from '../offline-application'
 import { openOfflineRecord, sealOfflineRecord } from '../offline-cipher'
 import { OfflineEncryptedRecordStore } from '../offline-record-store'
+import { maxSyncOperations, reconcileOperations, type SyncState } from '../sync-operations'
 import { offlineKeys as exact } from '../offline-capture-contract'
 import type { DailyKind, DailyFields } from '../daily-report-fields'
 import { badDailyOffline as bad, decodeDailyOfflineContext, decodeDailyCapture, decodeDailyOutcome, decodeDailyConflict, utc,
@@ -130,6 +131,28 @@ export class DailyOfflineApplication {
       { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': user.csrfToken, 'Idempotency-Key': stored.commandId, 'X-Offline-Hash': digest, 'X-Offline-Signature': signature }, body: stored.body }), this.context, decodeDailyCapture(JSON.parse(stored.body), this.context, stored.commandId))
     this.requireActive(); if (signal.aborted) throw new Error('response_withdrawn')
     await this.write(stored.commandId, stored.body, stored.revision, value); return value
+  }
+  // DEV-034 reconnect reconciliation: recover receipts for lost replay responses from the
+  // server's durable outcomes without re-signing or re-sending. Unproven captures stay pending.
+  async reconcile(signal: AbortSignal): Promise<ReadonlyMap<string, SyncState>> {
+    this.requireActive()
+    const pending = (await this.captures()).filter(row => !row.outcome).slice(0, maxSyncOperations)
+    const states = new Map<string, SyncState>()
+    if (pending.length === 0) return states
+    const domain = `Daily${this.context.kind}` as 'DailyNoon' | 'DailyDeck' | 'DailyEngine'
+    const refs = await Promise.all(pending.map(async row => ({ operationId: row.commandId, domain,
+      resourceId: this.context.recordId, payloadDigest: await hash(row.body) })))
+    const results = await reconcileOperations(this.context.vesselId, refs, signal)
+    this.requireActive(); if (signal.aborted) throw new Error('response_withdrawn')
+    for (const [index, item] of results.entries()) {
+      const row = pending[index]; states.set(row.commandId, item.state)
+      if (item.state !== 'Recorded') continue
+      const value = decodeDailyOutcome({ commandId: row.commandId, result: item.result, recordId: this.context.recordId, kind: this.context.kind,
+        baseVersion: item.baseVersion, serverVersion: item.serverVersion, revision: item.revision, parentCommandId: item.parentCommandId,
+        receivedAt: item.receivedAt }, this.context, decodeDailyCapture(JSON.parse(row.body), this.context, row.commandId))
+      await this.write(row.commandId, row.body, row.revision, value)
+    }
+    return states
   }
   async conflict(commandId: string, signal: AbortSignal) {
     this.requireActive(); if (!isGuid(commandId)) return bad()

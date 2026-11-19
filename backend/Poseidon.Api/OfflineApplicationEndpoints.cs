@@ -74,11 +74,15 @@ public static class OfflineApplicationEndpoints
     private static TrustedActor Actor(HttpContext h) => h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User)!;
     private static DateTimeOffset Now(HttpContext h) => h.RequestServices.GetRequiredService<TimeProvider>().GetUtcNow();
     // Ordinary command rights are required BEFORE inventory, receipt recovery, counts and conflict projections.
+    // Shared with the DEV-034 sync reconciliation: identical ordinary replay rights (vessel visibility checked separately).
+    internal static bool ReplayRights(TrustedActor? a, Guid vessel) => a != null && a.CanRead && a.HasWriteAttribution &&
+        a.Permissions.Contains("crew.read") && a.Permissions.Contains("crew.write") &&
+        (a.TenantWideManage || a.VesselGrants.Any(g => g.VesselId == vessel && g.CanEdit));
+    internal static bool EnrollmentCurrent(HttpContext h, OfflineEnrollment e) => Current(h, e, Now(h));
     private static async Task<CrewAssignment?> Owner(Guid vessel, Guid assignment, HttpContext h, PoseidonDbContext db)
     {
         var a = Actor(h);
-        if (!a.CanRead || !a.HasWriteAttribution || !a.Permissions.Contains("crew.read") || !a.Permissions.Contains("crew.write") ||
-            !(a.TenantWideManage || a.VesselGrants.Any(g => g.VesselId == vessel && g.CanEdit)) ||
+        if (!ReplayRights(a, vessel) ||
             !await a.Scope(db.Vessels).AnyAsync(v => v.Id == vessel, h.RequestAborted)) return null;
         return await db.CrewAssignments.SingleOrDefaultAsync(x => x.Id == assignment && x.VesselId == vessel, h.RequestAborted);
     }

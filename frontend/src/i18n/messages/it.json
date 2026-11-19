@@ -3360,6 +3360,8 @@
     "m_7c2c3c0f372d028d": "Filtra menu",
     "m_4895cdb4b14ff26c": "Vengono cercate solo le schermate che sei autorizzato ad aprire.",
     "m_9e601b252c4fb4b3": "Nessuna voce di menu autorizzata corrisponde a questo filtro.",
-    "m_5af49f5d0c78416e": "Cancella filtro menu"
+    "m_5af49f5d0c78416e": "Cancella filtro menu",
+    "m_e9537921034aa833": "In attesa che una modifica precedente di questo record raggiunga il server",
+    "m_4aff1a1251fdec46": "Non salvato: il server contiene un contenuto diverso per questa chiave di comando"
   }
 }

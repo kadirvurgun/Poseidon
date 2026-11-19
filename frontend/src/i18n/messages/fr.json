@@ -3360,6 +3360,8 @@
     "m_7c2c3c0f372d028d": "Filtrer le menu",
     "m_4895cdb4b14ff26c": "Seuls les écrans que vous êtes autorisé à ouvrir sont recherchés.",
     "m_9e601b252c4fb4b3": "Aucun élément de menu autorisé ne correspond à ce filtre.",
-    "m_5af49f5d0c78416e": "Effacer le filtre du menu"
+    "m_5af49f5d0c78416e": "Effacer le filtre du menu",
+    "m_e9537921034aa833": "En attente qu’une modification antérieure de cet enregistrement atteigne le serveur",
+    "m_4aff1a1251fdec46": "Non enregistré : le serveur détient un contenu différent pour cette clé de commande"
   }
 }
