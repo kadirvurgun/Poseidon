@@ -25,6 +25,13 @@ public static class WorkspaceLensPolicy
                 x.Key is "sources" or "requirements" or "audit" or "audit-ready" or "certificate-command-center" or "renewal-workflow" ? "review" : "daily")).ToList();
         if (!actor.CanRead || vessel == null) return items.ToArray();
         if (actor.Permissions.Contains("crew.read")) items.Add(new("crew", $"/app/crew-roster/{vessel}", "daily"));
+        // S7 WP-A screens: server menu authorization mirrors each endpoint's read permission.
+        if (actor.Permissions.Contains("crew.read") && actor.Permissions.Contains("crew.certificate.read") && actor.Permissions.Contains("crew.identity.read"))
+            items.Add(new("crew-certificates", $"/app/crew-certificates/{vessel}", "review"));
+        if (actor.Permissions.Contains("crew.read") && actor.Permissions.Contains("crew.competence.read"))
+            items.Add(new("crew-competence", $"/app/training-position-matrix/{vessel}", "review"));
+        if (actor.Permissions.Contains("crew.read") && actor.Permissions.Contains("crew.safe_manning.read"))
+            items.Add(new("safe-manning", $"/app/safe-manning/{vessel}", "review"));
         if (actor.Permissions.Contains("equipment.read")) items.Add(new("equipment", $"/app/equipment-hierarchy/{vessel}", "daily"));
         // The plans workspace loads equipment alongside plans, so both endpoints must be allowed.
         if (actor.Permissions.Contains("equipment.read") && actor.Permissions.Contains("maintenance.read"))
@@ -47,7 +54,7 @@ public static class WorkspaceLensPolicy
         var rows = catalog.GetSection("Mappings").GetChildren().Take(4097).ToArray();
         if (rows.Length > 4096) return Empty("Unavailable");
         var mappings = new Dictionary<Guid, (string[] Keys, string[] Modes)>();
-        string[] known = ["operational-downtime", "work-order-center", "defects", "today", "fleet", "companies", "crew", "equipment", "maintenance", "import", "audit", "audit-ready", "sources", "requirements", "tug-command", "tug-job-board", "tug-job-intake", "noon-report", "deck-daily-log", "engine-daily-log", "certificate-command-center", "renewal-workflow", "fuel-bunker-log", "port-activity-sof"];
+        string[] known = ["operational-downtime", "work-order-center", "defects", "today", "fleet", "companies", "crew", "crew-certificates", "crew-competence", "safe-manning", "equipment", "maintenance", "import", "audit", "audit-ready", "sources", "requirements", "tug-command", "tug-job-board", "tug-job-intake", "noon-report", "deck-daily-log", "engine-daily-log", "certificate-command-center", "renewal-workflow", "fuel-bunker-log", "port-activity-sof"];
         foreach (var row in rows) {
             if (!Guid.TryParse(row["TenantId"], out var tenant) || tenant != actor.TenantId) continue;
             var keys = row.GetSection("Keys").GetChildren().Select(x => x.Value ?? "").ToArray();

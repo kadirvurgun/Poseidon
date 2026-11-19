@@ -82,7 +82,7 @@ public static class CredentialEndpoints
             } else row.Revision = checked(row.Revision + 1);
             row.Capture(command.Metadata); row.Provenance = imported ? "ImportedDeclaredUnverified" : "UserDeclaredUnverified";
             db.CredentialRevisions.Add(new() { TenantId = a.TenantId, CredentialId = row.Id, VesselId = vessel,
-                Revision = row.Revision, SavedAt = DateTimeOffset.UtcNow, Provenance = row.Provenance });
+                Revision = row.Revision, SavedAt = DateTimeOffset.UtcNow, Provenance = row.Provenance, ActorId = a.Id });
             await db.SaveChangesAsync(ct);
             db.CommandReceipts.Add(new() { TenantId = a.TenantId, ActorId = a.Id, Key = key, Action = "CredentialSave", Fingerprint = fingerprint,
                 ResourceId = row.Id, RegisterRevision = row.Revision, RegisterVersion = row.Version, CommittedAt = DateTimeOffset.UtcNow });

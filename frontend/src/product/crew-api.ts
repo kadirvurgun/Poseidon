@@ -11,9 +11,14 @@ export type CrewRow = {
   privacyScope: string; sourceObservedAt: string | null; eligibilityState: string;
   workRestState: string; certificateState: string; competenceState: string; contactStatus: string; nationality: string | null; nationalityState: string;
   presenceState: 'Draft' | 'Unknown' | 'Stale' | 'OutsidePeriod' | 'PlannedDeclaration' | 'OnboardDeclaration'; presenceReason: string; positionState: string;
+  profileStatus?: CrewProfileStatus; profileStatusBasis?: string;
 }
+// DEV-047: derived from the declared, unverified presence only; never fitness or eligibility.
+export type CrewProfileStatus = 'ONBOARD' | 'PLANNED' | 'ENDED' | 'DRAFT' | 'REVIEW_REQUIRED'
+export const crewProfileStatuses: readonly CrewProfileStatus[] = ['ONBOARD', 'PLANNED', 'ENDED', 'DRAFT', 'REVIEW_REQUIRED']
+export type CrewRosterFilter = { q?: string; presence?: string; department?: string; status?: CrewProfileStatus; position?: string }
 export type CrewIdentityPolicy = { version: string; purpose: string; employeeNumberMode: string }
-export type CrewPage = { items: CrewRow[]; offset: number; hasMore: boolean; canWrite: boolean; canWriteIdentity: boolean; identityPolicy?: CrewIdentityPolicy | null; declarationPolicy?: { version: string; statuses: string[] } | null }
+export type CrewPage = { items: CrewRow[]; offset: number; hasMore: boolean; canWrite: boolean; canWriteIdentity: boolean; identityPolicy?: CrewIdentityPolicy | null; declarationPolicy?: { version: string; statuses: string[] } | null; matchCount?: number | null; filterTruncated?: boolean }
 export type CrewPosition = { id: string; code: string; rank: string | null; capacity: string | null; department: string | null; provenance: string }
 export type CrewProfile = { assignment: CrewRow; employmentState: string; fitnessState: string; identityStatus: string; contactStatus: string; healthStatus: string; personVersion: number | null; identityPolicy?: CrewIdentityPolicy | null; canConvertIdentity?: boolean; statusSpecification?: { state: 'DERIVATION_REQUIRES_SPECIFICATION'; field: 'crew-profile.status'; source: string; authority: 'SYSTEM_DERIVED;BA_DEFINITION_PENDING' } | null }
 export type CrewCommand = {
@@ -40,12 +45,16 @@ export function decodeCrewRow(v: unknown, vessel: string): CrewRow {
     !['incomplete_declaration', 'assignment_policy_unavailable', 'assignment_policy_changed', 'source_unrecognized', 'period_missing_or_invalid',
       'source_observation_missing_or_future', 'period_ended', 'unverified_planned_declaration', 'unverified_onboard_declaration', 'period_not_started', 'status_unrecognized'].includes(v.presenceReason as string) ||
     !['Unknown', 'Missing', 'PolicyUnavailable', 'Stale', 'DeclaredUnverified', 'Unavailable'].includes(v.positionState as string) ||
+    v.profileStatus !== undefined && !crewProfileStatuses.includes(v.profileStatus as CrewProfileStatus) ||
     v.privacyScope !== 'IdentityPermitted' && (v.fullName !== null || v.employeeNo !== null) ||
     v.positionState !== 'DeclaredUnverified' && (v.rank !== null || v.capacity !== null || v.department !== null)) throw invalid()
   return v as unknown as CrewRow
 }
-export const roster = async (vessel: string, offset: number, signal: AbortSignal): Promise<CrewPage> => {
-  const v = await request<unknown>(`${crewPath(vessel)}?offset=${offset}`, signal)
+export const roster = async (vessel: string, offset: number, signal: AbortSignal, filter?: CrewRosterFilter): Promise<CrewPage> => {
+  // DEV-047: search/filter run server-side; empty values are omitted, never sent blank.
+  const query = Object.entries(filter ?? {}).filter(([, value]) => typeof value === 'string' && value.trim() !== '')
+    .map(([key, value]) => `&${key}=${encodeURIComponent((value as string).trim())}`).join('')
+  const v = await request<unknown>(`${crewPath(vessel)}?offset=${offset}${query}`, signal)
   if (!obj(v) || !Array.isArray(v.items) || v.items.length > 25 || v.offset !== offset ||
     !['hasMore', 'canWrite', 'canWriteIdentity'].every(k => typeof v[k] === 'boolean')) throw invalid()
   v.items = v.items.map(r => decodeCrewRow(r, vessel))
@@ -89,12 +98,13 @@ export async function history(vessel: string, assignment: string, signal: AbortS
   }
   return { items: v.items as CrewHistoryRow[], offset, hasMore: v.hasMore }
 }
-export type CrewOwningInput = { field: string; state: 'Withheld' | 'Missing' | 'DeclaredUnverified' | 'Unavailable' | 'EvaluationUnavailable' | 'Unknown' | 'QualifiedEligible' | 'QualifiedIneligible'; ownerTask: string; reason: string }
+// S7 WP-A: eligibility_state is the advisory evaluator outcome; a rule fact alone is never positive.
+export type CrewOwningInput = { field: string; state: 'Withheld' | 'Missing' | 'DeclaredUnverified' | 'Unavailable' | 'EvaluationUnavailable' | 'ELIGIBLE' | 'ATTENTION' | 'NOT_ELIGIBLE' | 'REVIEW_REQUIRED'; ownerTask: string; reason: string }
 export async function owningInputs(vessel: string, assignment: string, signal: AbortSignal): Promise<CrewOwningInput[]> {
   const v = await request<unknown>(`${crewPath(vessel)}/${encodeURIComponent(assignment)}/owning-inputs`, signal)
   const expected = ['certificate_state', 'contact_status', 'competence_state', 'work_rest_state', 'eligibility_state', 'fitness_state']
   if (!obj(v) || v.assignmentId !== assignment || v.authority !== 'InputObservationOnly' || !Array.isArray(v.inputs) || v.inputs.length !== expected.length ||
-    v.inputs.some((r, i) => !obj(r) || r.field !== expected[i] || !['Withheld', 'Missing', 'DeclaredUnverified', 'Unavailable', 'EvaluationUnavailable', ...(r.field === 'eligibility_state' ? ['Unknown', 'QualifiedEligible', 'QualifiedIneligible'] : [])].includes(r.state as string) ||
+    v.inputs.some((r, i) => !obj(r) || r.field !== expected[i] || !['Withheld', 'Missing', 'DeclaredUnverified', 'Unavailable', 'EvaluationUnavailable', ...(r.field === 'eligibility_state' ? ['ELIGIBLE', 'ATTENTION', 'NOT_ELIGIBLE', 'REVIEW_REQUIRED'] : [])].includes(r.state as string) ||
       !text(r.ownerTask) || !text(r.reason))) throw invalid()
   return v.inputs as CrewOwningInput[]
 }

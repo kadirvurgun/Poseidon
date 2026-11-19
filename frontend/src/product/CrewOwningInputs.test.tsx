@@ -27,21 +27,21 @@ it('rejects a wrong-person/context observation without rendering a positive stat
 
 it('switches protected input labels to Italian without fetching again or changing the source assessment', async () => {
   const inputs = fields.map((field, i) => ({ field,
-    state: i === 0 ? 'DeclaredUnverified' : i === 1 ? 'Withheld' : i === 4 ? 'QualifiedIneligible' : 'EvaluationUnavailable',
+    state: i === 0 ? 'DeclaredUnverified' : i === 1 ? 'Withheld' : i === 4 ? 'NOT_ELIGIBLE' : 'EvaluationUnavailable',
     ownerTask: 'DEV-048', reason: 'synthetic-test',
   }))
   const fetcher = vi.fn().mockResolvedValue(response({ assignmentId: assignment, authority: 'InputObservationOnly', inputs }))
   vi.stubGlobal('fetch', fetcher)
   const { rerender } = render(<CrewOwningInputs vessel={vessel} assignment={assignment} language="en" />)
-  expect(await screen.findByText('Current source criteria not satisfied')).toBeVisible()
+  expect(await screen.findByText('Not eligible')).toBeVisible()
   await changeAppLanguage('it', false)
   rerender(<CrewOwningInputs vessel={vessel} assignment={assignment} language="it" />)
   expect(screen.getByText('Dati del certificato')).toBeVisible()
   expect(screen.getByText('Dichiarato, non verificato')).toBeVisible()
   expect(screen.getByText('Accesso nascosto')).toBeVisible()
-  expect(screen.getByText('Criteri attuali della fonte non soddisfatti')).toBeVisible()
+  expect(screen.getByText('Non idoneo')).toBeVisible()
   expect(screen.getAllByText('Valutazione qualificata non disponibile; rimane Sconosciuto')).toHaveLength(3)
-  expect(screen.queryByText('Current source criteria not satisfied')).not.toBeInTheDocument()
+  expect(screen.queryByText('Not eligible')).not.toBeInTheDocument()
   expect(fetcher).toHaveBeenCalledTimes(1)
-  expect(inputs[4].state).toBe('QualifiedIneligible')
+  expect(inputs[4].state).toBe('NOT_ELIGIBLE')
 })

@@ -239,7 +239,7 @@ public sealed partial class DirectoryWorkspaceTests
         }
     }
 
-    internal static readonly string[] ProfileProbePermissions = ["applicability.evaluate", "applicability.override.approve", "applicability.override.author", "applicability.override.revoke", "applicability.read", "audit.read",
+    internal static readonly string[] ProfileProbePermissions = ["crew.credential.verify", "crew.competence.read", "crew.competence.write", "crew.competence.assess", "crew.eligibility.read", "crew.safe_manning.read", "crew.safe_manning.decide", "applicability.evaluate", "applicability.override.approve", "applicability.override.author", "applicability.override.revoke", "applicability.read", "audit.read",
         "config.approve", "config.draft", "config.read", "config.reject", "config.resolve",
         "hr.actual.record", "hr.assignment.approve", "hr.assignment.read", "hr.assignment.write", "hr.employment.approve",
         "hr.employment.read", "hr.employment.write", "hr.legal_entity.identifier.read", "hr.legal_entity.read",

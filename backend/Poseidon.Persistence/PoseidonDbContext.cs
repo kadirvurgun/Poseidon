@@ -103,6 +103,11 @@ public sealed class PoseidonDbContext(
 
     public DbSet<Credential> Credentials => Set<Credential>();
     public DbSet<CredentialRevision> CredentialRevisions => Set<CredentialRevision>();
+    public DbSet<CrewCredentialAssertion> CrewCredentialAssertions => Set<CrewCredentialAssertion>();
+    public DbSet<CrewCompetenceRequirement> CrewCompetenceRequirements => Set<CrewCompetenceRequirement>();
+    public DbSet<CrewCompetenceRecord> CrewCompetenceRecords => Set<CrewCompetenceRecord>();
+    public DbSet<CrewCompetenceSignOff> CrewCompetenceSignOffs => Set<CrewCompetenceSignOff>();
+    public DbSet<CrewSafeManningDecision> CrewSafeManningDecisions => Set<CrewSafeManningDecision>();
     public DbSet<ImportBatch> ImportBatches => Set<ImportBatch>();
     public DbSet<ImportPreview> ImportPreviews => Set<ImportPreview>();
     public DbSet<ImportRowResult> ImportRowResults => Set<ImportRowResult>();
@@ -270,6 +275,12 @@ public sealed class PoseidonDbContext(
         ImportStorage.Configure(model);
         model.Entity<Credential>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<CredentialRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        CrewCompetenceStorage.Configure(model);
+        model.Entity<CrewCredentialAssertion>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<CrewCompetenceRequirement>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<CrewCompetenceRecord>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<CrewCompetenceSignOff>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<CrewSafeManningDecision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ImportBatch>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ImportPreview>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ImportRowResult>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -464,6 +475,8 @@ public sealed class PoseidonDbContext(
             CrewCatalogHead c => receipt.Action == "CrewCatalogSave" && c.VesselId == receipt.ResourceId && c.TenantId == receipt.TenantId,
             ImportBatch b => receipt.Action is "CrewImportLegacyConvert" or "ImportCommit" && b.Id == receipt.ResourceId && b.TenantId == receipt.TenantId,
             Credential c => receipt.Action == "CredentialSave" && c.Id == receipt.ResourceId && c.TenantId == receipt.TenantId,
+            CrewCompetenceRequirement r => receipt.Action == "CrewCompetenceRequirementSave" && r.Id == receipt.ResourceId && r.TenantId == receipt.TenantId,
+            CrewCompetenceRecord r => receipt.Action == "CrewCompetenceRecordSave" && r.Id == receipt.ResourceId && r.TenantId == receipt.TenantId,
             TugDraftPlan p => receipt.Action == "TugPlanSave" && p.JobId == receipt.ResourceId && p.TenantId == receipt.TenantId,
             TugJob j => receipt.Action is "TugSave" or "TugSubmit" or "TugCancel" && j.Id == receipt.ResourceId && j.TenantId == receipt.TenantId,
             Asset a => receipt.Action == "EquipmentSave" && a.Id == receipt.ResourceId && a.TenantId == receipt.TenantId,
@@ -525,6 +538,11 @@ public sealed class PoseidonDbContext(
         "CrewCatalogSave" => OwnedVessel(CrewCatalogHeads, x => x.TenantId == r.TenantId && x.VesselId == r.ResourceId, x => x.VesselId, asynchronous, ct),
         "CrewSave" => OwnedVessel(CrewAssignments, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
         "CredentialSave" => OwnedVessel(Credentials, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
+        "CrewCredentialAssertionRecord" => OwnedVessel(CrewCredentialAssertions, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
+        "CrewCompetenceRequirementSave" => OwnedVessel(CrewCompetenceRequirements, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
+        "CrewCompetenceRecordSave" => OwnedVessel(CrewCompetenceRecords, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
+        "CrewCompetenceSignOff" => OwnedVessel(CrewCompetenceSignOffs, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
+        "SafeManningDecisionRecord" => OwnedVessel(CrewSafeManningDecisions, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
         "ImportCommit" or "CrewImportLegacyConvert" => OwnedVessel(ImportBatches, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
         "EquipmentSave" => OwnedVessel(Assets, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
         "MaintenanceSave" => OwnedVessel(MaintenancePlans, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
@@ -768,6 +786,14 @@ public sealed class PoseidonDbContext(
             throw new InvalidOperationException("Register kind and history cannot be removed or reassigned.");
         if (changes.Any(e => e.Entity is ImportPreview or ImportRowResult or CredentialRevision && e.State != EntityState.Added))
             throw new InvalidOperationException("Import observations and credential history are immutable.");
+        if (changes.Any(e => e.Entity is CrewCredentialAssertion or CrewCompetenceSignOff or CrewSafeManningDecision && e.State != EntityState.Added))
+            throw new InvalidOperationException("Crew human assertions, sign-offs and Safe Manning decisions are immutable.");
+        if (changes.Any(e => e.Entity is CrewCompetenceRequirement && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            new[] { "VesselId", "PositionId", "RequirementType" }.Any(n => e.Property(n).IsModified))))
+            throw new InvalidOperationException("Competence requirement ownership is immutable; retire instead of deleting.");
+        if (changes.Any(e => e.Entity is CrewCompetenceRecord && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            new[] { "VesselId", "AssignmentId", "PersonId", "RequirementId", "Kind" }.Any(n => e.Property(n).IsModified))))
+            throw new InvalidOperationException("Competence record ownership and kind are immutable.");
         if (changes.Any(e => e.Entity is Credential && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
             new[] { "VesselId", "AssignmentId", "PersonId" }.Any(n => e.Property(n).IsModified))))
             throw new InvalidOperationException("Credential ownership is immutable.");
