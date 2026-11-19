@@ -1,7 +1,7 @@
 # Claude handoff
 
 STATUS: IN_PROGRESS
-Güncelleme: 2026-11-19 ~00:30 (interaktif oturum 5 saatlik kotanın %90'ında durdu; kilit kaldırıldı)
+Güncelleme: 2026-11-19 ~08:30 (07:41 zamanlanmış oturum)
 in_progress: 2026-11-19 07:41 zamanlanmış oturum (claude/loop)
 
 ## KOTA KURALI (zorunlu)
@@ -27,6 +27,12 @@ Main: #16 #17 #18 #20 #23 + **#36 S2 paketi** birleşik (`b1b02b4`). Açık teki
 | `fix/same-key-replay-race-followup-20261118` | Yarım iş commit'lendi (12 uçta aynı-anahtar replay) + main birleşimi → 250ead1. | **CI yeşil (push). Bağımsız QA PASS-WITH-NOTES** (kusur yok; N1: farklı yük + aynı anahtar geç-yarış testi yok). Entegrasyon dalına girer. |
 | #32 axe-core | Dokunulmadı. | Main birleşimi + CI. |
 | #25 58.03 | Dokunulmadı. | En son; yeni uçlara profil ekle. |
+
+### 19.11 07:41 oturumu — yapılanlar
+- 02:41 kilidi 5 saat dolmuştu (son commit 03:50) → bayat kabul edildi. Kota dosyası hâlâ 00:06'dan bayat (91%, reset geçmiş) → en fazla 2 alt-ajan. Docker `docker info` 20 sn timeout → PG yerelde DEFERRED.
+- `integration/bundle2-20261119` (ee65ff9, önceki oturumun alt-ajanı yerelde hazırlamış, push edilmemişti) yerelde doğrulandı: build 0 uyarı; Domain 876/876; API unit 250/250; Persistence unit 75/75; frontend lint + build PASS; vitest 1786/1795 — 9 hata yalnız `scripts/offline-shell-build.test.ts` (SubtleCrypto realm; yerel Node 22.15 ↔ CI Node 26.13, dosya main ile aynı → ortam, ürün kusuru değil). Push edildi, **PR #37** açıldı; CI koşuyor.
+- DEV-024 yeniden QA notları takibi: `fix/dev024-qa-notes-20261119` (39d5e77, taban bundle2, worktree `.runtime/worktrees/dev024-qa-notes`): (1) STATE_ONLY `UNAVAILABLE` yalnız freshness politika servis durumundan (sızıntı kapandı); (2) canlı grant fence 403 PG testi (yerelde DEFERRED); (3) 25 reason kodu × 17 dil etiket + kapsama vitest; (4) faz raporu. Yerel: build 0 uyarı, Domain 876/876, API unit 250/250, vitest hedefli 38/38, lint/typecheck PASS. Push edildi (PR yok; paket 3'e girer). Bağımsız QA alt-ajanı çalışıyor.
+- #28 / #30: durma limiti nedeniyle **dokunulmadı** (kullanıcı onayı yok).
 
 ### Entegrasyon paketi 2
 `integration/bundle2-20261119` = main + #29 + replay-race + #34 + #33 (hepsi CI yeşil + QA'lı); alt-ajan birleştirip tek PR açıyor (03:50'de başladı). #28 ve #30 durma limiti nedeniyle dışarıda — kullanıcı onayıyla push edilip CI yeşillenince paket 3'e.
