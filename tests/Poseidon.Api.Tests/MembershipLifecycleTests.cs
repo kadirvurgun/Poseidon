@@ -489,10 +489,11 @@ public sealed partial class DirectoryWorkspaceTests
         await hold.CommitAsync(Ct);
         using var r1 = await first; using var r2 = await second;
         var statuses = new[] { r1.StatusCode, r2.StatusCode };
-        var observed = $"{(int)r1.StatusCode}:{await Code(r1)} / {(int)r2.StatusCode}:{await Code(r2)}";
+        // Each response body is a single-read stream: read each code exactly once.
+        var codes = new[] { await Code(r1), await Code(r2) };
+        var observed = $"{(int)r1.StatusCode}:{codes[0]} / {(int)r2.StatusCode}:{codes[1]}";
         Assert.True(statuses.Count(x => x == HttpStatusCode.OK) == 1 && statuses.Count(x => x == HttpStatusCode.Conflict) == 1, observed);
-        var loser = r1.StatusCode == HttpStatusCode.Conflict ? r1 : r2;
-        Assert.Contains(await Code(loser), new[] { "conflict_changed", "last_admin" });
+        Assert.Contains(codes[r1.StatusCode == HttpStatusCode.Conflict ? 0 : 1], new[] { "conflict_changed", "last_admin" });
         await using var db = Db();
         var states = await db.AccountMemberships.AsNoTracking().Where(m => m.Id == a.Id || m.Id == c.Id).Select(m => m.Status).ToArrayAsync(Ct);
         Assert.Equal(1, states.Count(x => x == "Active")); Assert.Equal(1, states.Count(x => x == "Suspended"));
