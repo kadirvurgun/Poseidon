@@ -172,7 +172,7 @@ public sealed partial class DirectoryWorkspaceTests
     public async Task Notification_preference_duplicate_key_reaching_its_transaction_after_the_winner_committed_replays_instead_of_conflicting()
     {
         var window = new ReceiptLookupWindow("NotificationReceipts"); await using var host = NotificationHost(interceptor: window); using var c = Client(host); NotificationPermissions(host.Services); await Token(c);
-        var command = new NotificationPreferenceCommand(0, true); var key = Guid.NewGuid().ToString();
+        var command = new NotificationPreferenceCommand(0, true, null, null, null); var key = Guid.NewGuid().ToString();
         var (winner, late) = await SameKeyRace(window, () => Send(c, NotificationPath("/preference"), command, key, update: true));
         using (winner) using (late) await AssertExactReplay(winner, late, Ct);
         await using var db = Db(); Assert.Single(await db.NotificationPreferences.Where(x => x.ActorId == actorId).ToArrayAsync(Ct)); Assert.Single(await db.NotificationReceipts.Where(r => r.Key == key).ToArrayAsync(Ct));

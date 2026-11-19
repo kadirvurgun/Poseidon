@@ -23034,6 +23034,78 @@
           }
         }
       },
+      "HealthNotificationsDto": {
+        "required": [
+          "state",
+          "scope",
+          "openUnacknowledged",
+          "overdueEscalations",
+          "dispatch",
+          "lastCompletedAt",
+          "nextRunAt"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "openUnacknowledged": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "overdueEscalations": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "dispatch": {
+            "type": "string"
+          },
+          "lastCompletedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "nextRunAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "HealthServiceDto": {
+        "required": [
+          "state",
+          "startedAt",
+          "uptimeSeconds"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "startedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "uptimeSeconds": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          }
+        }
+      },
       "HealthSyncDto": {
         "required": [
           "state",
@@ -23064,6 +23136,13 @@
               "integer"
             ],
             "format": "int64"
+          },
+          "lastCommittedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
           }
         }
       },
@@ -26105,7 +26184,9 @@
           "delivery",
           "canManage",
           "canAcknowledge",
-          "canWritePreference"
+          "canWritePreference",
+          "quietHoursState",
+          "quietUntil"
         ],
         "type": "object",
         "properties": {
@@ -26136,13 +26217,26 @@
           },
           "canWritePreference": {
             "type": "boolean"
+          },
+          "quietHoursState": {
+            "type": "string"
+          },
+          "quietUntil": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
           }
         }
       },
       "NotificationPreferenceCommand": {
         "required": [
           "expectedVersion",
-          "mutedAdvisory"
+          "mutedAdvisory",
+          "quietStart",
+          "quietEnd",
+          "zoneId"
         ],
         "type": "object",
         "properties": {
@@ -26152,6 +26246,24 @@
           },
           "mutedAdvisory": {
             "type": "boolean"
+          },
+          "quietStart": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "quietEnd": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "zoneId": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
         "additionalProperties": false
@@ -26159,6 +26271,9 @@
       "NotificationPreferenceDto": {
         "required": [
           "mutedAdvisory",
+          "quietStart",
+          "quietEnd",
+          "zoneId",
           "revision",
           "version"
         ],
@@ -26166,6 +26281,24 @@
         "properties": {
           "mutedAdvisory": {
             "type": "boolean"
+          },
+          "quietStart": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "quietEnd": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "zoneId": {
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "revision": {
             "type": "integer",
@@ -29842,7 +29975,9 @@
           "audit",
           "sync",
           "files",
-          "freshness"
+          "freshness",
+          "service",
+          "notifications"
         ],
         "type": "object",
         "properties": {
@@ -29868,6 +30003,12 @@
           },
           "freshness": {
             "$ref": "#/components/schemas/HealthFreshnessDto"
+          },
+          "service": {
+            "$ref": "#/components/schemas/HealthServiceDto"
+          },
+          "notifications": {
+            "$ref": "#/components/schemas/HealthNotificationsDto"
           }
         }
       },

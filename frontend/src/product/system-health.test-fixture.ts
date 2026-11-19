@@ -4,6 +4,8 @@ export const healthVessel = '10000000-0000-4000-8000-000000000001'
 export const unobservedHealth = (): SystemHealth => ({ vesselId: healthVessel, readAt: '2026-11-04T12:00:00Z',
   api: { state: 'Unavailable', scope: 'TenantProcessSinceStart', requests: null, errors: null, averageLatencyMs: null },
   audit: { state: 'Unavailable', scope: 'TenantProcessSinceStart', persisted: null, unavailable: null, averageLatencyMs: null },
-  sync: { state: 'Observed', scope: 'SelectedVesselServerOutcomes', committed: 0, unresolvedConflicts: 0, localBacklog: null },
+  sync: { state: 'Observed', scope: 'SelectedVesselServerOutcomes', committed: 0, unresolvedConflicts: 0, localBacklog: null, lastCommittedAt: null },
   files: { state: 'ConfiguredUnprobed', adapter: 'LocalDevelopment', scanState: 'Unavailable' },
-  freshness: { state: 'Unavailable', scope: 'TenantProcessSinceStart', current: null, stale: null, future: null, unknown: null, unavailable: null } })
+  freshness: { state: 'Unavailable', scope: 'TenantProcessSinceStart', current: null, stale: null, future: null, unknown: null, unavailable: null },
+  service: { state: 'Observed', startedAt: '2026-11-04T11:00:00Z', uptimeSeconds: 3600 },
+  notifications: { state: 'Observed', scope: 'SelectedVesselDurable', openUnacknowledged: 0, overdueEscalations: 0, dispatch: 'NotObserved', lastCompletedAt: null, nextRunAt: null } })

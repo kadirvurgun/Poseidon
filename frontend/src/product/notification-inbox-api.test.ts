@@ -35,3 +35,24 @@ it('accepts the server source-unavailable projection without translating it into
   const unavailable = { ...notificationInbox(), items: [{ ...notificationInbox().items[0], state: 'SourceUnavailable' }] }
   expect(decodeInbox(unavailable, noticeVessel, 0).items[0].state).toBe('SourceUnavailable')
 })
+it('DEV-036 accepts complete quiet hours and an active quiet window only with its server end time', () => {
+  const preference = { ...notificationPreference(), quietStart: '22:00', quietEnd: '07:00', zoneId: 'Europe/Istanbul', revision: 1, version: 3 }
+  expect(decodePreference(preference)).toEqual(preference)
+  const quiet = { ...notificationInbox(), quietHoursState: 'Active' as const, quietUntil: '2026-11-20T04:00:00Z' }
+  expect(decodeInbox(quiet, noticeVessel, 0)).toEqual(quiet)
+})
+it.each([
+  { quietStart: '22:00', quietEnd: null, zoneId: 'Europe/Istanbul' },
+  { quietStart: '22:00', quietEnd: '22:00', zoneId: 'Europe/Istanbul' },
+  { quietStart: '24:00', quietEnd: '07:00', zoneId: 'Europe/Istanbul' },
+  { quietStart: '22:00', quietEnd: '07:00', zoneId: 'Turkey Standard Time' },
+])('rejects partial, equal, malformed or non-IANA quiet hours %#', fields => {
+  expect(() => decodePreference({ ...notificationPreference(), ...fields })).toThrow()
+})
+it.each([
+  { quietHoursState: 'Active', quietUntil: null },
+  { quietHoursState: 'Inactive', quietUntil: '2026-11-20T04:00:00Z' },
+  { quietHoursState: 'Suppressed', quietUntil: null },
+])('rejects contradictory quiet-window projections %#', fields => {
+  expect(() => decodeInbox({ ...notificationInbox(), ...fields }, noticeVessel, 0)).toThrow()
+})
