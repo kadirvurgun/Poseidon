@@ -127,6 +127,9 @@ public static class DailyOfflineEndpoints
         db.DailyOfflineOutcomes.Where(o=>o.ActorId==e.ActorId && o.EnrollmentId==e.Id && o.VesselId==e.VesselId && o.Kind==e.Kind && o.RecordId==e.RecordId);
     private static bool Matches(HttpContext h,DailyOfflineEnrollment e,DailyOfflinePolicy? p,DateTimeOffset now)=>p!=null && e.RevokedAt==null && now<e.RetainUntil &&
         Actor(h) is {} actor && actor.Id==e.ActorId && actor.TenantId==e.TenantId && e.AuthorityDigest==DailyOperationsEndpoints.Rights(actor) && e.PolicyVersion==p.Version && e.PolicyDigest==p.Fingerprint() && e.SourceVersion==p.SourceVersion && e.SchemaHash==p.SchemaHash();
+    // DEV-034 sync reconciliation: receipt disclosure requires the same current policy/authority binding as replay recovery.
+    internal static bool EnrollmentCurrent(HttpContext h,DailyOfflineEnrollment e)=>Matches(h,e,Policy(h,e.Kind,e.VesselId),Now(h));
+    internal static bool ShipVisible(TrustedActor a,Vessel v)=>v.Kind==VesselKind.Ship || a.Permissions.Contains("mode.cross");
     private static SortedDictionary<string,DailyValue> Select(DailyOfflinePolicy p,IReadOnlyDictionary<string,DailyValue> fields)=>
         new(p.Fields.ToDictionary(f=>f.Key,f=>fields.GetValueOrDefault(f.Key)??new DailyValue("Missing",null)),StringComparer.Ordinal);
     private static bool Fields(DailyOfflinePolicy p,Dictionary<string,DailyValue>? fields,out SortedDictionary<string,DailyValue> normalized) {

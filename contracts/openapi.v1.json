@@ -1622,6 +1622,37 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/sync/operations": {
+      "post": {
+        "tags": [
+          "SyncOperationEndpoints"
+        ],
+        "operationId": "SyncOperationReconcile",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SyncOperationsQuery"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncOperationsResultDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-OBSERVATION-COMMAND-1"
+      }
+    },
     "/api/v1/vessels/{vessel}/crew/{assignment}/current-assignment": {
       "get": {
         "tags": [
@@ -29661,6 +29692,148 @@
         },
         "additionalProperties": false
       },
+      "SyncOperationOutcomeDto": {
+        "required": [
+          "operationId",
+          "domain",
+          "resourceId",
+          "state",
+          "result",
+          "baseVersion",
+          "serverVersion",
+          "revision",
+          "parentCommandId",
+          "receivedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "operationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "resourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "result": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "baseVersion": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          },
+          "serverVersion": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          },
+          "revision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "parentCommandId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "receivedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "SyncOperationReferenceDto": {
+        "required": [
+          "operationId",
+          "domain",
+          "resourceId",
+          "payloadDigest"
+        ],
+        "type": "object",
+        "properties": {
+          "operationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "domain": {
+            "type": "string"
+          },
+          "resourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "payloadDigest": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SyncOperationsQuery": {
+        "required": [
+          "vesselId",
+          "operations"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "operations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SyncOperationReferenceDto"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "SyncOperationsResultDto": {
+        "required": [
+          "vesselId",
+          "serverTime",
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "serverTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SyncOperationOutcomeDto"
+            }
+          }
+        }
+      },
       "SystemHealthDto": {
         "required": [
           "vesselId",
@@ -32267,6 +32440,9 @@
     },
     {
       "name": "CrewOwningInputEndpoints"
+    },
+    {
+      "name": "SyncOperationEndpoints"
     },
     {
       "name": "CrewAssignmentSelectionEndpoints"

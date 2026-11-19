@@ -586,6 +586,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/sync/operations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SyncOperationReconcile"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/vessels/{vessel}/crew/{assignment}/current-assignment": {
         parameters: {
             query?: never;
@@ -9570,6 +9586,45 @@ export interface components {
             /** Format: date */
             expiresOn?: null | string;
         };
+        SyncOperationOutcomeDto: {
+            /** Format: uuid */
+            operationId: string;
+            domain: string;
+            /** Format: uuid */
+            resourceId: string;
+            state: string;
+            result: null | string;
+            /** Format: uint32 */
+            baseVersion: null | number;
+            /** Format: uint32 */
+            serverVersion: null | number;
+            /** Format: int64 */
+            revision: null | number;
+            /** Format: uuid */
+            parentCommandId: null | string;
+            /** Format: date-time */
+            receivedAt: null | string;
+        };
+        SyncOperationReferenceDto: {
+            /** Format: uuid */
+            operationId: string;
+            domain: string;
+            /** Format: uuid */
+            resourceId: string;
+            payloadDigest: string;
+        };
+        SyncOperationsQuery: {
+            /** Format: uuid */
+            vesselId: string;
+            operations: components["schemas"]["SyncOperationReferenceDto"][];
+        };
+        SyncOperationsResultDto: {
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: date-time */
+            serverTime: string;
+            items: components["schemas"]["SyncOperationOutcomeDto"][];
+        };
         SystemHealthDto: {
             /** Format: uuid */
             vesselId: string;
@@ -11718,6 +11773,30 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    SyncOperationReconcile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SyncOperationsQuery"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SyncOperationsResultDto"];
+                };
             };
         };
     };
