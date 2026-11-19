@@ -39,6 +39,8 @@ export function vesselContextHref(path: string, vessel: string, kind: 'Ship' | '
         return `/app/system-health?vessel=${id}`;
     if (path === '/app/notification-escalation')
         return `/app/notification-escalation?vessel=${id}`;
+    if (path === '/app/offline-conflict-center')
+        return `/app/offline-conflict-center?vessel=${id}`;
     if (/^\/app\/today(?:\/|$)/.test(path))
         return `/app/today/${id}`;
     if (/^\/app\/operational-downtime(?:\/|$)/.test(path))

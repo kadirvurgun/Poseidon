@@ -36,6 +36,10 @@ public static class SyncConflictCenterEndpoints
     internal static bool CrewReadable(TrustedActor a) => a.CanRead && a.Permissions.Contains("crew.read");
     internal static bool TugReadable(TrustedActor a) => a.CanReadTug;
     internal static bool DailyReadable(TrustedActor a, string kind) => DailyOperationsEndpoints.CanRead(a, kind);
+    // Navigation (DEV-022 pattern): the destination is projected only when the list endpoint can return
+    // at least one source for this actor, i.e. the same CanRead gate plus one currently readable source.
+    internal static bool CanOpen(TrustedActor a) => a.CanRead &&
+        (CrewReadable(a) || TugReadable(a) || DailyOperationsPolicy.Kinds.Any(k => DailyReadable(a, k)));
 
     // Closed query: exactly one vesselId (canonical "D" GUID) and an optional bounded offset. Any other
     // member (for example a forged actorId/tenantId) is rejected instead of ignored.
