@@ -145,7 +145,7 @@ public sealed class EndpointProfileRegistryTests
         var source = File.ReadAllText(Path.Combine(root!.FullName, "backend", "Poseidon.Api", "FoundationIdentity.cs"));
         var filter = Regex.Match(source, @"[Pp]ermissions \?\? \[\]\)\.Where\(x => (?<body>x is .+?)\)\.Distinct\(\)");
         Assert.True(filter.Success, "Server permission allowlist not found in FoundationIdentity.cs.");
-        var accepted = Regex.Matches(filter.Groups["body"].Value, "\"([a-z_.]+)\"").Select(m => m.Groups[1].Value).ToHashSet(StringComparer.Ordinal);
+        var accepted = Regex.Matches(filter.Groups["body"].Value, "\"([a-z0-9_.]+)\"").Select(m => m.Groups[1].Value).ToHashSet(StringComparer.Ordinal);
         Assert.NotEmpty(accepted);
         var missing = accepted.Except(DirectoryWorkspaceTests.ProfileProbePermissions, StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
         Assert.True(missing.Length == 0, "Probe lacks server permissions: " + string.Join(", ", missing));

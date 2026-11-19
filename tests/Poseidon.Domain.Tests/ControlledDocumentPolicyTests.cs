@@ -73,8 +73,8 @@ public sealed class ControlledDocumentPolicyTests
         Assert.Equal("UNCONFIGURED", ControlledDocumentPolicy.Retention("POLICY-1", null, Today));
         Assert.Equal("RETAINING", ControlledDocumentPolicy.Retention("POLICY-1", Today.AddDays(1), Today));
         Assert.Equal("ELIGIBLE", ControlledDocumentPolicy.Retention("POLICY-1", Today, Today));
-        Assert.Equal("retention_unconfigured", ControlledDocumentPolicy.DisposalRequestBlocker(false, null, null, Today, "NONE", "end of retention"));
-        Assert.Equal("retention_not_elapsed", ControlledDocumentPolicy.DisposalRequestBlocker(false, "POLICY-1", Today.AddDays(1), Today, "NONE", "end of retention"));
+        Assert.Equal("retention_unconfigured", ControlledDocumentPolicy.DisposalRequestBlocker(false, null, null, Today, "NONE", "end of retention", false));
+        Assert.Equal("retention_not_elapsed", ControlledDocumentPolicy.DisposalRequestBlocker(false, "POLICY-1", Today.AddDays(1), Today, "NONE", "end of retention", false));
         Assert.Equal("invalid_request", ControlledDocumentPolicy.RetentionBlocker("NONE", "bad ref with spaces", Today, Today));
         Assert.Equal("document_disposal_pending", ControlledDocumentPolicy.RetentionBlocker("REQUESTED", "POLICY-1", Today, Today));
     }
@@ -82,18 +82,18 @@ public sealed class ControlledDocumentPolicyTests
     [Fact]
     public void Legal_hold_blocks_disposal_request_and_approval_even_after_retention_elapsed()
     {
-        Assert.Equal("legal_hold_active", ControlledDocumentPolicy.DisposalRequestBlocker(true, "POLICY-1", Today.AddDays(-1), Today, "NONE", "end of retention"));
-        Assert.Null(ControlledDocumentPolicy.DisposalRequestBlocker(false, "POLICY-1", Today.AddDays(-1), Today, "NONE", "end of retention"));
+        Assert.Equal("legal_hold_active", ControlledDocumentPolicy.DisposalRequestBlocker(true, "POLICY-1", Today.AddDays(-1), Today, "NONE", "end of retention", false));
+        Assert.Null(ControlledDocumentPolicy.DisposalRequestBlocker(false, "POLICY-1", Today.AddDays(-1), Today, "NONE", "end of retention", false));
         // Hold placed between request and approval still blocks the approval.
-        Assert.Equal("legal_hold_active", ControlledDocumentPolicy.DisposalApproveBlocker(true, "POLICY-1", Today.AddDays(-1), Today, "REQUESTED", Other, Registrar, "approve"));
+        Assert.Equal("legal_hold_active", ControlledDocumentPolicy.DisposalApproveBlocker(true, "POLICY-1", Today.AddDays(-1), Today, "REQUESTED", Other, Registrar, "approve", false));
     }
 
     [Fact]
     public void Disposal_approval_and_hold_release_need_a_different_actor()
     {
-        Assert.Equal("separation_of_duties", ControlledDocumentPolicy.DisposalApproveBlocker(false, "POLICY-1", Today.AddDays(-1), Today, "REQUESTED", Other, Other, "approve"));
-        Assert.Null(ControlledDocumentPolicy.DisposalApproveBlocker(false, "POLICY-1", Today.AddDays(-1), Today, "REQUESTED", Other, Registrar, "approve"));
-        Assert.Equal("invalid_state", ControlledDocumentPolicy.DisposalApproveBlocker(false, "POLICY-1", Today.AddDays(-1), Today, "NONE", null, Registrar, "approve"));
+        Assert.Equal("separation_of_duties", ControlledDocumentPolicy.DisposalApproveBlocker(false, "POLICY-1", Today.AddDays(-1), Today, "REQUESTED", Other, Other, "approve", false));
+        Assert.Null(ControlledDocumentPolicy.DisposalApproveBlocker(false, "POLICY-1", Today.AddDays(-1), Today, "REQUESTED", Other, Registrar, "approve", false));
+        Assert.Equal("invalid_state", ControlledDocumentPolicy.DisposalApproveBlocker(false, "POLICY-1", Today.AddDays(-1), Today, "NONE", null, Registrar, "approve", false));
         Assert.Equal("separation_of_duties", ControlledDocumentPolicy.ReleaseHoldBlocker(true, Other, Other, "case closed"));
         Assert.Null(ControlledDocumentPolicy.ReleaseHoldBlocker(true, Other, Registrar, "case closed"));
         Assert.Equal("legal_hold_not_active", ControlledDocumentPolicy.ReleaseHoldBlocker(false, Other, Registrar, "case closed"));

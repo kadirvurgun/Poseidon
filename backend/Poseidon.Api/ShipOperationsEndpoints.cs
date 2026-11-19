@@ -151,7 +151,13 @@ public static class ShipOperationsEndpoints
         ShipOpsRecordDto[] previous=existing==null?[]:[Dto(existing,true,true)];
         var originJson=command.Origin==null?null:JsonSerializer.Serialize(command.Origin,Json);
         var unchangedOrigin=existing!=null && existing.Version==command.ExpectedVersion && existing.OriginJson==originJson;
-        if(!await Current(h,kind,vessel,rights,previous,true,command.Origin,!unchangedOrigin))return await Replay()??await Fail(h,403,"linked_resource_unavailable");
+        // A competing edit can commit between the head read above and this fence. That head move
+        // makes the command stale: answer version_conflict (rights rechecked) instead of 403.
+        async Task<IResult?> Superseded() {
+            var head=existing==null?null:await db.ShipOperations.AsNoTracking().SingleOrDefaultAsync(r=>r.Id==command.Id && r.VesselId==vessel && r.Kind==kind,ct);
+            return head==null || head.Version==existing!.Version || !await Current(h,kind,vessel,rights,[],true)?null:await Fail(h,409,"version_conflict");
+        }
+        if(!await Current(h,kind,vessel,rights,previous,true,command.Origin,!unchangedOrigin))return await Replay()??await Superseded()??await Fail(h,403,"linked_resource_unavailable");
         await Audit(h,"Attempted",command.Id);IDbContextTransaction? tx=null;string? outcome=null;
         try {
             tx=await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable,ct);var now=h.RequestServices.GetRequiredService<TimeProvider>().GetUtcNow();
