@@ -19,6 +19,7 @@ import { CertificateWorkspace } from './product/CertificateWorkspace';
 import { DefectWorkspace } from './product/DefectWorkspace';
 import { WorkOrderWorkspace } from './product/WorkOrderWorkspace';
 import { DowntimeWorkspace } from './product/DowntimeWorkspace';
+import { AuditReadyWorkspace } from './product/AuditReadyWorkspace';
 import { AppearanceControls } from './theme/AppearanceControls';
 type Connection = 'loading' | 'available' | 'error';
 const content = localizedCopy("App_tsx_content");
@@ -29,6 +30,8 @@ export function App() {
         return <CertificateWorkspace />;
     if (/^\/app\/(noon-report|deck-daily-log|engine-daily-log)(?:\/|$)/.test(window.location.pathname))
         return <DailyReportWorkspace />;
+    if (/^\/app\/audit-ready(?:\/|$)/.test(window.location.pathname))
+        return <AuditReadyWorkspace />;
     if (window.location.pathname === '/app/system-health')
         return <SystemHealthWorkspace />;
     if (window.location.pathname === '/app/notification-escalation')

@@ -546,6 +546,52 @@
         "SOURCE_REVIEW_REQUIRED": "Revue de la source requise",
         "VESSEL_CHANGED": "Fiche du navire modifiée"
       }
+    },
+    "AuditReadyWorkspace_tsx_copy": {
+      "title": "Traçabilité prête pour l’audit",
+      "description": "Exigence → contrôle → preuve → vérification → décision avec états, horodatages et références de source déclarées. Une chaîne enregistrée est un enregistrement humain, pas une approbation ni une déclaration de conformité.",
+      "vessel": "Navire",
+      "chooseVessel": "Sélectionnez un navire",
+      "noVessel": "Sélectionnez un navire pour lister les chaînes qui vous sont attribuées.",
+      "loading": "Chargement…",
+      "offline": "Vous êtes hors ligne. Les données affichées peuvent être obsolètes ; reconnectez-vous pour actualiser.",
+      "hidden": "En pause tant que la page est masquée.",
+      "sessionError": "Votre session n’a pas pu être vérifiée.",
+      "denied": "Vous n’êtes pas autorisé pour cette vue.",
+      "invalidRoute": "Cette adresse n’est pas une traçabilité valide.",
+      "chainsTitle": "Chaînes attribuées",
+      "chainsEmpty": "Aucune chaîne ne vous est attribuée pour ce navire.",
+      "chainsUnavailable": "Chaînes attribuées actuellement indisponibles : {{count}}",
+      "chainsMore": "Il existe plus de chaînes que l’on ne peut en afficher.",
+      "loadError": "La traçabilité n’a pas pu être chargée.",
+      "notFound": "Chaîne introuvable ou plus visible pour vous.",
+      "retry": "Réessayer",
+      "evidence": "Preuve",
+      "control": "Contrôle",
+      "requirement": "Exigence",
+      "source": "Source",
+      "verification": "Vérification",
+      "decision": "Décision",
+      "state": "État",
+      "savedAt": "Enregistré le",
+      "revision": "Révision",
+      "hash": "Empreinte du contenu",
+      "locator": "Référence de source (déclarée, non vérifiée)",
+      "locatorMissing": "Référence non fournie",
+      "unavailable": "Indisponible",
+      "notRecorded": "Non enregistré",
+      "reason": "Motif",
+      "role": "Rôle d’autorité",
+      "contextHash": "Empreinte du contexte",
+      "validUntil": "Valable jusqu’au",
+      "dispositionRecorded": "Chaîne enregistrée — enregistrement humain uniquement, pas une approbation",
+      "dispositionReview": "Revue requise",
+      "blockers": "Points ouverts",
+      "stale": "Obsolète : une entrée a été remplacée ou a expiré ; revue requise.",
+      "stagesLabel": "Étapes de traçabilité",
+      "loadedAt": "Chargé le",
+      "sourceTitle": "Titre déclaré",
+      "details": "Détails"
     }
   },
   "pairs": {
@@ -3360,6 +3406,7 @@
     "m_7c2c3c0f372d028d": "Filtrer le menu",
     "m_4895cdb4b14ff26c": "Seuls les écrans que vous êtes autorisé à ouvrir sont recherchés.",
     "m_9e601b252c4fb4b3": "Aucun élément de menu autorisé ne correspond à ce filtre.",
-    "m_5af49f5d0c78416e": "Effacer le filtre du menu"
+    "m_5af49f5d0c78416e": "Effacer le filtre du menu",
+    "m_372c48ba7e84c124": "Traçabilité prête pour l’audit"
   }
 }

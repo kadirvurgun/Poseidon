@@ -546,6 +546,52 @@
         "SOURCE_REVIEW_REQUIRED": "需要来源审查",
         "VESSEL_CHANGED": "船舶记录已变更"
       }
+    },
+    "AuditReadyWorkspace_tsx_copy": {
+      "title": "审计就绪追溯",
+      "description": "要求 → 控制 → 证据 → 验证 → 决定，含状态、时间戳和声明的来源定位。已记录的链是人工记录，不是批准或就绪声明。",
+      "vessel": "船舶",
+      "chooseVessel": "选择船舶",
+      "noVessel": "选择船舶以列出分配给您的追溯链。",
+      "loading": "正在加载…",
+      "offline": "您已离线。显示的数据可能已过时；请连接后刷新。",
+      "hidden": "页面隐藏时已暂停。",
+      "sessionError": "无法验证您的会话。",
+      "denied": "您无权访问此视图。",
+      "invalidRoute": "此地址不是有效的审计就绪追溯。",
+      "chainsTitle": "已分配的链",
+      "chainsEmpty": "此船舶没有分配给您的追溯链。",
+      "chainsUnavailable": "当前不可用的已分配链：{{count}}",
+      "chainsMore": "链的数量超过可显示的数量。",
+      "loadError": "无法加载追溯。",
+      "notFound": "未找到该链或您已无法查看。",
+      "retry": "重试",
+      "evidence": "证据",
+      "control": "控制",
+      "requirement": "要求",
+      "source": "来源",
+      "verification": "验证",
+      "decision": "决定",
+      "state": "状态",
+      "savedAt": "记录时间",
+      "revision": "修订",
+      "hash": "内容哈希",
+      "locator": "来源定位（声明，未验证）",
+      "locatorMissing": "未提供定位",
+      "unavailable": "不可用",
+      "notRecorded": "未记录",
+      "reason": "理由",
+      "role": "授权角色",
+      "contextHash": "上下文哈希",
+      "validUntil": "有效期至",
+      "dispositionRecorded": "已记录的链 — 仅为人工记录，不是批准",
+      "dispositionReview": "需要审查",
+      "blockers": "未结事项",
+      "stale": "已过时：某项输入已被替代或已过期；需要审查。",
+      "stagesLabel": "追溯阶段",
+      "loadedAt": "加载时间",
+      "sourceTitle": "声明的标题",
+      "details": "详情"
     }
   },
   "pairs": {
@@ -3360,6 +3406,7 @@
     "m_7c2c3c0f372d028d": "筛选菜单",
     "m_4895cdb4b14ff26c": "仅搜索您有权打开的页面。",
     "m_9e601b252c4fb4b3": "没有与此筛选条件匹配的授权菜单项。",
-    "m_5af49f5d0c78416e": "清除菜单筛选"
+    "m_5af49f5d0c78416e": "清除菜单筛选",
+    "m_372c48ba7e84c124": "审计就绪追溯"
   }
 }

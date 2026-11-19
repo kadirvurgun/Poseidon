@@ -546,6 +546,52 @@
         "SOURCE_REVIEW_REQUIRED": "Forrásellenőrzés szükséges",
         "VESSEL_CHANGED": "A hajó rekordja megváltozott"
       }
+    },
+    "AuditReadyWorkspace_tsx_copy": {
+      "title": "Auditra kész nyomkövetés",
+      "description": "Követelmény → kontroll → bizonyíték → ellenőrzés → döntés állapotokkal, időbélyegekkel és bejelentett forráshivatkozásokkal. A rögzített lánc emberi feljegyzés, nem jóváhagyás vagy készenléti nyilatkozat.",
+      "vessel": "Hajó",
+      "chooseVessel": "Válasszon hajót",
+      "noVessel": "Válasszon hajót az Önhöz rendelt láncok listázásához.",
+      "loading": "Betöltés…",
+      "offline": "Offline állapotban van. A megjelenített adatok elavultak lehetnek; frissítéshez csatlakozzon.",
+      "hidden": "Szüneteltetve, amíg az oldal rejtett.",
+      "sessionError": "A munkamenet nem ellenőrizhető.",
+      "denied": "Nincs jogosultsága ehhez a nézethez.",
+      "invalidRoute": "Ez a cím nem érvényes nyomkövetés.",
+      "chainsTitle": "Hozzárendelt láncok",
+      "chainsEmpty": "Ehhez a hajóhoz nincs Önhöz rendelt lánc.",
+      "chainsUnavailable": "Jelenleg nem elérhető hozzárendelt láncok: {{count}}",
+      "chainsMore": "Több lánc van, mint amennyi megjeleníthető.",
+      "loadError": "A nyomkövetés nem tölthető be.",
+      "notFound": "A lánc nem található, vagy már nem látható Önnek.",
+      "retry": "Újra",
+      "evidence": "Bizonyíték",
+      "control": "Kontroll",
+      "requirement": "Követelmény",
+      "source": "Forrás",
+      "verification": "Ellenőrzés",
+      "decision": "Döntés",
+      "state": "Állapot",
+      "savedAt": "Rögzítve",
+      "revision": "Változat",
+      "hash": "Tartalom-ujjlenyomat",
+      "locator": "Forráshivatkozás (bejelentett, nem ellenőrzött)",
+      "locatorMissing": "Hivatkozás nincs megadva",
+      "unavailable": "Nem elérhető",
+      "notRecorded": "Nincs rögzítve",
+      "reason": "Indok",
+      "role": "Jogosultsági szerep",
+      "contextHash": "Kontextus-ujjlenyomat",
+      "validUntil": "Érvényes eddig",
+      "dispositionRecorded": "Rögzített lánc — csak emberi feljegyzés, nem jóváhagyás",
+      "dispositionReview": "Felülvizsgálat szükséges",
+      "blockers": "Nyitott tételek",
+      "stale": "Elavult: egy bemenet lecserélődött vagy lejárt; felülvizsgálat szükséges.",
+      "stagesLabel": "Nyomkövetési szakaszok",
+      "loadedAt": "Betöltve",
+      "sourceTitle": "Bejelentett cím",
+      "details": "Részletek"
     }
   },
   "pairs": {
@@ -3360,6 +3406,7 @@
     "m_7c2c3c0f372d028d": "Menü szűrése",
     "m_4895cdb4b14ff26c": "Csak azokban a képernyőkben keres, amelyek megnyitására jogosult.",
     "m_9e601b252c4fb4b3": "Egyetlen engedélyezett menüelem sem felel meg ennek a szűrőnek.",
-    "m_5af49f5d0c78416e": "Menüszűrő törlése"
+    "m_5af49f5d0c78416e": "Menüszűrő törlése",
+    "m_372c48ba7e84c124": "Auditra kész nyomkövetés"
   }
 }

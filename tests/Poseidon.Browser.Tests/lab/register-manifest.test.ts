@@ -35,6 +35,7 @@ const declaredFamilies = [
   ['../register-specs/technical-cases.ts', 'technicalCases'],
   ['../register-specs/crew-cases.ts', 'crewCases'],
   ['../register-specs/audit-cases.ts', 'auditCases'],
+  ['../register-specs/audit-ready-cases.ts', 'auditReadyCases'],
   ['../register-specs/file-cases.ts', 'fileCases'],
 ] as const
 type Entry = { name: string; run: unknown; restricted: boolean; account?: 'lab-crew-boundary' }

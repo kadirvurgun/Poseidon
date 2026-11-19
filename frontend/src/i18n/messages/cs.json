@@ -546,6 +546,52 @@
         "SOURCE_REVIEW_REQUIRED": "Vyžadována kontrola zdroje",
         "VESSEL_CHANGED": "Záznam plavidla změněn"
       }
+    },
+    "AuditReadyWorkspace_tsx_copy": {
+      "title": "Stopa připravená k auditu",
+      "description": "Požadavek → kontrola → důkaz → ověření → rozhodnutí se stavy, časovými razítky a deklarovanými odkazy na zdroj. Zaznamenaný řetězec je lidský záznam, nikoli schválení ani prohlášení o připravenosti.",
+      "vessel": "Plavidlo",
+      "chooseVessel": "Vyberte plavidlo",
+      "noVessel": "Vyberte plavidlo pro zobrazení řetězců, které vám byly přiděleny.",
+      "loading": "Načítání…",
+      "offline": "Jste offline. Zobrazená data mohou být zastaralá; pro obnovení se připojte.",
+      "hidden": "Pozastaveno, dokud je stránka skrytá.",
+      "sessionError": "Vaši relaci nelze ověřit.",
+      "denied": "Pro toto zobrazení nemáte oprávnění.",
+      "invalidRoute": "Tato adresa není platná stopa připravená k auditu.",
+      "chainsTitle": "Přidělené řetězce",
+      "chainsEmpty": "Pro toto plavidlo vám nejsou přiděleny žádné řetězce.",
+      "chainsUnavailable": "Aktuálně nedostupné přidělené řetězce: {{count}}",
+      "chainsMore": "Existuje více řetězců, než lze zobrazit.",
+      "loadError": "Stopu nelze načíst.",
+      "notFound": "Řetězec nenalezen nebo již pro vás není viditelný.",
+      "retry": "Zkusit znovu",
+      "evidence": "Důkaz",
+      "control": "Kontrola",
+      "requirement": "Požadavek",
+      "source": "Zdroj",
+      "verification": "Ověření",
+      "decision": "Rozhodnutí",
+      "state": "Stav",
+      "savedAt": "Zaznamenáno",
+      "revision": "Revize",
+      "hash": "Hash obsahu",
+      "locator": "Odkaz na zdroj (deklarovaný, neověřený)",
+      "locatorMissing": "Odkaz neuveden",
+      "unavailable": "Nedostupné",
+      "notRecorded": "Nezaznamenáno",
+      "reason": "Důvod",
+      "role": "Role oprávnění",
+      "contextHash": "Hash kontextu",
+      "validUntil": "Platné do",
+      "dispositionRecorded": "Zaznamenaný řetězec — pouze lidský záznam, nikoli schválení",
+      "dispositionReview": "Vyžaduje kontrolu",
+      "blockers": "Otevřené body",
+      "stale": "Zastaralé: vstup byl nahrazen nebo vypršel; vyžaduje kontrolu.",
+      "stagesLabel": "Fáze stopy",
+      "loadedAt": "Načteno",
+      "sourceTitle": "Deklarovaný název",
+      "details": "Podrobnosti"
     }
   },
   "pairs": {
@@ -3360,6 +3406,7 @@
     "m_7c2c3c0f372d028d": "Filtrovat nabídku",
     "m_4895cdb4b14ff26c": "Prohledávají se pouze obrazovky, které máte oprávnění otevřít.",
     "m_9e601b252c4fb4b3": "Tomuto filtru neodpovídá žádná oprávněná položka nabídky.",
-    "m_5af49f5d0c78416e": "Vymazat filtr nabídky"
+    "m_5af49f5d0c78416e": "Vymazat filtr nabídky",
+    "m_372c48ba7e84c124": "Stopa připravená k auditu"
   }
 }
