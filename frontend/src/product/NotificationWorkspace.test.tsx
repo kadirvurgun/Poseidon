@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { NotificationInbox } from './NotificationWorkspace'
@@ -78,4 +78,42 @@ it('shows unavailable source as unresolved recorded history without acknowledgem
   expect(screen.queryByText('Source changed')).not.toBeInTheDocument()
   expect(screen.getByRole('button', { name: 'Acknowledge' })).toBeDisabled()
   expect(service.sendNoticeCommand).not.toHaveBeenCalled()
+})
+
+it('DEV-036 saves complete quiet hours with the exact expected version and blocks partial settings before sending', async () => {
+  vi.mocked(service.loadPreference).mockResolvedValue({ ...notificationPreference(), revision: 1, version: 5 })
+  vi.mocked(service.sendNoticeCommand).mockResolvedValue({ ...notificationPreference(), quietStart: '22:00', quietEnd: '07:00', zoneId: 'Europe/Istanbul', revision: 2, version: 6 })
+  const user = userEvent.setup(); render(<NotificationInbox {...props()} />)
+  fireEvent.change(await screen.findByLabelText('Quiet hours start'), { target: { value: '22:00' } })
+  expect(screen.getByRole('alert')).toHaveTextContent('start must differ from the end')
+  expect(screen.getByRole('button', { name: 'Save advisory preference' })).toBeDisabled()
+  fireEvent.change(screen.getByLabelText('Quiet hours end'), { target: { value: '07:00' } })
+  await user.type(screen.getByLabelText('Time zone (IANA, e.g. Europe/Istanbul)'), 'Europe/Istanbul')
+  expect(screen.queryByText(/start must differ from the end/)).not.toBeInTheDocument()
+  expect(screen.getByText(/Mandatory and critical notices are always shown immediately/)).toBeVisible()
+  await user.click(screen.getByRole('button', { name: 'Save advisory preference' }))
+  await waitFor(() => expect(service.sendNoticeCommand).toHaveBeenCalledTimes(1))
+  const command = vi.mocked(service.sendNoticeCommand).mock.calls[0][1]
+  expect(command.kind).toBe('preference')
+  expect(JSON.parse(command.body)).toEqual({ expectedVersion: 5, mutedAdvisory: false, quietStart: '22:00', quietEnd: '07:00', zoneId: 'Europe/Istanbul' })
+})
+it('DEV-036 clears quiet hours as an explicit all-null setting', async () => {
+  vi.mocked(service.loadPreference).mockResolvedValue({ ...notificationPreference(), quietStart: '22:00', quietEnd: '07:00', zoneId: 'Europe/Istanbul', revision: 1, version: 5 })
+  const user = userEvent.setup(); render(<NotificationInbox {...props()} />)
+  await user.click(await screen.findByRole('button', { name: 'Clear quiet hours' }))
+  await user.click(screen.getByRole('button', { name: 'Save advisory preference' }))
+  await waitFor(() => expect(service.sendNoticeCommand).toHaveBeenCalledTimes(1))
+  expect(JSON.parse(vi.mocked(service.sendNoticeCommand).mock.calls[0][1].body)).toEqual({ expectedVersion: 5, mutedAdvisory: false, quietStart: null, quietEnd: null, zoneId: null })
+})
+it('DEV-036 shows the server quiet window while the mandatory notice stays visible and actionable', async () => {
+  vi.mocked(service.loadInbox).mockResolvedValue({ ...notificationInbox(), quietHoursState: 'Active', quietUntil: '2026-11-20T04:00:00Z' })
+  render(<NotificationInbox {...props()} />)
+  expect(await screen.findByText(/Optional notices raised during this period are deferred until/)).toHaveTextContent('2026-11-20T04:00:00Z')
+  expect(screen.getByText('Critical')).toBeVisible()
+  expect(screen.getByRole('button', { name: 'Acknowledge' })).toBeEnabled()
+})
+it('DEV-036 states that unapplied quiet hours show every notice rather than hiding any', async () => {
+  vi.mocked(service.loadInbox).mockResolvedValue({ ...notificationInbox(), quietHoursState: 'Unavailable', quietUntil: null })
+  render(<NotificationInbox {...props()} />)
+  expect(await screen.findByText(/could not be applied, so all notices are shown/)).toBeVisible()
 })

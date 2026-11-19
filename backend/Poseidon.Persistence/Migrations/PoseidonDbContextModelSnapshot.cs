@@ -6130,9 +6130,12 @@ namespace Poseidon.Persistence.Migrations
             modelBuilder.Entity("Poseidon.Persistence.NotificationPreference", b => {
                 b.Property<Guid>("TenantId").HasColumnType("uuid"); b.Property<Guid>("VesselId").HasColumnType("uuid");
                 b.Property<Guid>("ActorId").HasColumnType("uuid"); b.Property<bool>("MutedAdvisory").HasColumnType("boolean");
+                b.Property<TimeOnly?>("QuietStart").HasColumnType("time without time zone"); b.Property<TimeOnly?>("QuietEnd").HasColumnType("time without time zone");
+                b.Property<string>("QuietZoneId").HasMaxLength(64).HasColumnType("character varying(64)");
                 b.Property<long>("Revision").HasColumnType("bigint");
                 b.Property<uint>("Version").IsConcurrencyToken().ValueGeneratedOnAddOrUpdate().HasColumnType("xid").HasColumnName("xmin");
-                b.HasKey("TenantId", "VesselId", "ActorId"); b.ToTable("NotificationPreferences", "engagement");
+                b.HasKey("TenantId", "VesselId", "ActorId"); b.ToTable("NotificationPreferences", "engagement", t => t.HasCheckConstraint("CK_NotificationPreference_QuietHours",
+                    "(\"QuietStart\" IS NULL AND \"QuietEnd\" IS NULL AND \"QuietZoneId\" IS NULL) OR (\"QuietStart\" IS NOT NULL AND \"QuietEnd\" IS NOT NULL AND \"QuietZoneId\" IS NOT NULL AND \"QuietStart\" <> \"QuietEnd\")"));
                 b.HasOne("Poseidon.Persistence.Vessel", null).WithMany().HasForeignKey("TenantId", "VesselId")
                     .HasConstraintName("FK_NotificationPreference_Vessel").OnDelete(DeleteBehavior.Restrict).IsRequired();
             });

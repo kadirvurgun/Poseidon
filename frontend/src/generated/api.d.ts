@@ -7801,6 +7801,26 @@ export interface components {
             /** Format: int64 */
             unavailable: null | number;
         };
+        HealthNotificationsDto: {
+            state: string;
+            scope: string;
+            /** Format: int64 */
+            openUnacknowledged: number;
+            /** Format: int64 */
+            overdueEscalations: number;
+            dispatch: string;
+            /** Format: date-time */
+            lastCompletedAt: null | string;
+            /** Format: date-time */
+            nextRunAt: null | string;
+        };
+        HealthServiceDto: {
+            state: string;
+            /** Format: date-time */
+            startedAt: null | string;
+            /** Format: int64 */
+            uptimeSeconds: null | number;
+        };
         HealthSyncDto: {
             state: string;
             scope: string;
@@ -7810,6 +7830,8 @@ export interface components {
             unresolvedConflicts: number;
             /** Format: int64 */
             localBacklog: null | number;
+            /** Format: date-time */
+            lastCommittedAt?: null | string;
         };
         HrActualEventCommand: {
             kind: null | string;
@@ -8635,14 +8657,23 @@ export interface components {
             canManage: boolean;
             canAcknowledge: boolean;
             canWritePreference: boolean;
+            quietHoursState: string;
+            /** Format: date-time */
+            quietUntil: null | string;
         };
         NotificationPreferenceCommand: {
             /** Format: uint32 */
             expectedVersion: number;
             mutedAdvisory: boolean;
+            quietStart: null | string;
+            quietEnd: null | string;
+            zoneId: null | string;
         };
         NotificationPreferenceDto: {
             mutedAdvisory: boolean;
+            quietStart: null | string;
+            quietEnd: null | string;
+            zoneId: null | string;
             /** Format: int64 */
             revision: number;
             /** Format: uint32 */
@@ -9580,6 +9611,8 @@ export interface components {
             sync: components["schemas"]["HealthSyncDto"];
             files: components["schemas"]["HealthFilesDto"];
             freshness: components["schemas"]["HealthFreshnessDto"];
+            service: components["schemas"]["HealthServiceDto"];
+            notifications: components["schemas"]["HealthNotificationsDto"];
         };
         SystemStatus: {
             service: string;

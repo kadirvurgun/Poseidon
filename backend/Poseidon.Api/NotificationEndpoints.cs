@@ -23,14 +23,18 @@ public sealed record NotificationDto(Guid Id, Guid VesselId, Guid SourceId, long
     string PolicyVersion, string SourceState, string Severity, bool Mandatory, Guid RecipientRoleId, Guid? EscalationRoleId,
     DateOnly? DueDate, DateTimeOffset CreatedAt, DateTimeOffset? EscalateAt, string State, long Revision, uint Version,
     string Provenance = "ConfiguredUnverified");
+// QuietHoursState: NotConfigured | Inactive | Active | Unavailable. Active defers only optional
+// notices raised inside the window until QuietUntil; mandatory/Critical routes are always returned.
 public sealed record NotificationInboxDto(NotificationDto[] Items, int Offset, bool HasMore, string PolicyState, string Delivery,
-    bool CanManage, bool CanAcknowledge, bool CanWritePreference);
-public sealed record NotificationPreferenceDto(bool MutedAdvisory, long Revision, uint Version, bool MandatoryRouteMutable = false);
+    bool CanManage, bool CanAcknowledge, bool CanWritePreference, string QuietHoursState, DateTimeOffset? QuietUntil);
+public sealed record NotificationPreferenceDto(bool MutedAdvisory, string? QuietStart, string? QuietEnd, string? ZoneId,
+    long Revision, uint Version, bool MandatoryRouteMutable = false);
 public sealed record NotificationSavedDto(Guid Id, long Revision, uint Version, string State);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record NotificationAckCommand([property: JsonRequired] uint ExpectedVersion);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
-public sealed record NotificationPreferenceCommand([property: JsonRequired] uint ExpectedVersion, [property: JsonRequired] bool MutedAdvisory);
+public sealed record NotificationPreferenceCommand([property: JsonRequired] uint ExpectedVersion, [property: JsonRequired] bool MutedAdvisory,
+    [property: JsonRequired] string? QuietStart, [property: JsonRequired] string? QuietEnd, [property: JsonRequired] string? ZoneId);
 
 public static class NotificationEndpoints
 {
@@ -112,14 +116,28 @@ public static class NotificationEndpoints
         group.MapPut("/preference", (HttpContext h, PoseidonDbContext db) => Command(null, h, db))
             .WithName("NotificationPreference").Accepts<NotificationPreferenceCommand>("application/json").Produces<NotificationPreferenceDto>();
     }
+    private static string? Clock(TimeOnly? value) => value?.ToString("HH:mm", CultureInfo.InvariantCulture);
+    // Server clock and the recipient's own stored zone decide the window; client time is never trusted.
+    internal static (string State, QuietWindow? Window) Quiet(NotificationPreference? p, DateTimeOffset now)
+    {
+        if (p?.QuietStart is not { } start || p.QuietEnd is not { } end || p.QuietZoneId is not { } zoneId) return ("NotConfigured", null);
+        // Unresolvable zone data fails open to immediate visibility rather than hiding notices.
+        if (NotificationQuietHours.Zone(zoneId) is not { } zone || start == end) return ("Unavailable", null);
+        var window = NotificationQuietHours.Active(new(start, end, zoneId), zone, now);
+        return (window == null ? "Inactive" : "Active", window);
+    }
     private static async Task<IResult> Inbox(HttpContext h, PoseidonDbContext db, NotificationSettings settings)
     {
         var a = Actor(h); var ct = h.RequestAborted;
         if (!CanRead(a)) return await Fail(h, 403, "permission_denied");
         if (!Query(h, true, out var vessel, out var offset)) return await Fail(h, 400, "invalid_query");
         if (!await Scope(db, a, vessel, ct)) return await Fail(h, 404, "resource_not_found");
-        var muted = await db.NotificationPreferences.Where(p => p.VesselId == vessel && p.ActorId == a.Id).Select(p => p.MutedAdvisory).SingleOrDefaultAsync(ct);
+        var preference = await db.NotificationPreferences.AsNoTracking().SingleOrDefaultAsync(p => p.VesselId == vessel && p.ActorId == a.Id, ct);
+        var muted = preference?.MutedAdvisory ?? false;
+        var (quietState, window) = Quiet(preference, h.RequestServices.GetRequiredService<TimeProvider>().GetUtcNow());
+        var quiet = window != null; var quietFrom = window?.StartsAt ?? DateTimeOffset.UnixEpoch;
         var rows = await Visible(db, a, vessel).AsNoTracking().Where(n => !muted || n.Mandatory || n.Severity == "Critical")
+            .Where(n => !quiet || n.Mandatory || n.Severity == "Critical" || n.CreatedAt < quietFrom)
             .OrderByDescending(n => n.CreatedAt).ThenBy(n => n.Id).Skip(offset).Take(26).ToArrayAsync(ct);
         var confirmed = await ConfirmedSources(h, db, vessel, rows.Take(25).ToArray());
         if (!Current(h, a)) return await Fail(h, 403, "permission_denied");
@@ -127,7 +145,8 @@ public static class NotificationEndpoints
         if (!Current(h, a)) return await Fail(h, 403, "permission_denied");
         return Results.Ok(new NotificationInboxDto(rows.Take(25).Select(n => Dto(n, confirmed.Contains(n.Id))).ToArray(), offset, rows.Length > 25,
             settings.For(a.TenantId, vessel) is { Length: > 0 } ? "ConfiguredUnverified" : "Unavailable", "InAppOnly",
-            Manage(a, vessel), a.Permissions.Contains("notification.acknowledge"), a.Permissions.Contains("notification.preference.write")));
+            Manage(a, vessel), a.Permissions.Contains("notification.acknowledge"), a.Permissions.Contains("notification.preference.write"),
+            quietState, window?.EndsAt));
     }
     private static async Task<IResult> History(Guid id, HttpContext h, PoseidonDbContext db)
     {
@@ -151,7 +170,7 @@ public static class NotificationEndpoints
         if (!Current(h, a)) return await Fail(h, 403, "permission_denied");
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "NotificationRead", "Success", resourceId: vessel);
         if (!Current(h, a)) return await Fail(h, 403, "permission_denied");
-        return Results.Ok(new NotificationPreferenceDto(p?.MutedAdvisory ?? false, p?.Revision ?? 0, p?.Version ?? 0));
+        return Results.Ok(new NotificationPreferenceDto(p?.MutedAdvisory ?? false, Clock(p?.QuietStart), Clock(p?.QuietEnd), p?.QuietZoneId, p?.Revision ?? 0, p?.Version ?? 0));
     }
     private static NotificationEvent Event(Notification n, string kind, Guid? actor, DateTimeOffset now) => new() {
         TenantId = n.TenantId, VesselId = n.VesselId, Id = Guid.NewGuid(), NotificationId = n.Id,
@@ -196,7 +215,7 @@ public static class NotificationEndpoints
         catch (AntiforgeryValidationException) { return await Fail(h, 403, "csrf_invalid"); }
         var keys = h.Request.Headers["Idempotency-Key"]; var key = keys.Count == 1 ? keys[0] : null;
         if (key == null || key.Length is < 16 or > 80 || key.Any(c => !char.IsAsciiLetterOrDigit(c) && c != '-')) return await Fail(h, 400, "invalid_idempotency_key");
-        uint expected; bool muted = false; string body;
+        uint expected; bool muted = false; QuietHours? quiet = null; string body;
         try {
             if (!h.Request.HasJsonContentType()) throw new JsonException();
             using var buffer = new MemoryStream(); await SecureFilePolicy.CopyAsync(h.Request.Body, buffer, 2048, ct);
@@ -205,7 +224,10 @@ public static class NotificationEndpoints
             ApplicabilityEngine.RejectDuplicateKeys(document.RootElement);
             body = document.RootElement.GetRawText();
             if (id != null) expected = (document.RootElement.Deserialize<NotificationAckCommand>(Json) ?? throw new JsonException()).ExpectedVersion;
-            else { var preference = document.RootElement.Deserialize<NotificationPreferenceCommand>(Json) ?? throw new JsonException(); expected = preference.ExpectedVersion; muted = preference.MutedAdvisory; }
+            else {
+                var preference = document.RootElement.Deserialize<NotificationPreferenceCommand>(Json) ?? throw new JsonException(); expected = preference.ExpectedVersion; muted = preference.MutedAdvisory;
+                if (NotificationQuietHours.Validate(preference.QuietStart, preference.QuietEnd, preference.ZoneId, out quiet) is { } rejected) return await Fail(h, 422, rejected);
+            }
         } catch (Exception e) when (e is JsonException or InvalidDataException) { return await Fail(h, 400, "invalid_request"); }
         var action = id == null ? "Preference" : "Acknowledge";
         var fingerprint = RegisterStorage.Hash(JsonSerializer.Serialize(new { vessel, id, action, body }, Json));
@@ -236,8 +258,9 @@ public static class NotificationEndpoints
                 if ((p?.Version ?? 0) != expected) return await Replay() ?? await Fail(h, 409, "version_conflict");
                 if (p == null) { p = new() { TenantId = a.TenantId, VesselId = vessel, ActorId = a.Id }; db.NotificationPreferences.Add(p); }
                 else { p.Revision++; db.Entry(p).Property(x => x.MutedAdvisory).IsModified = true; }
-                p.MutedAdvisory = muted; await db.SaveChangesAsync(ct);
-                result = new NotificationPreferenceDto(p.MutedAdvisory, p.Revision, p.Version);
+                p.MutedAdvisory = muted; p.QuietStart = quiet?.Start; p.QuietEnd = quiet?.End; p.QuietZoneId = quiet?.ZoneId;
+                await db.SaveChangesAsync(ct);
+                result = new NotificationPreferenceDto(p.MutedAdvisory, Clock(p.QuietStart), Clock(p.QuietEnd), p.QuietZoneId, p.Revision, p.Version);
             }
             var outcome = JsonSerializer.Serialize(result, Json);
             db.NotificationReceipts.Add(new() { TenantId = a.TenantId, VesselId = vessel, ActorId = a.Id, Key = key, Action = action,

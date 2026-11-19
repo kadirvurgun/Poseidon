@@ -70,3 +70,30 @@ it('does not issue health or session reads for a URL carrying unsupported tenant
   expect(screen.getByRole('alert')).toHaveTextContent('Health context URL is invalid.')
   expect(api.session).not.toHaveBeenCalled(); expect(loadSystemHealth).not.toHaveBeenCalled()
 })
+it('DEV-037 shows real notification job, last-sync and liveness observations with abandoned runs named, not green', async () => {
+  vi.mocked(loadSystemHealth).mockResolvedValue({ ...unobservedHealth(),
+    sync: { ...unobservedHealth().sync, committed: 4, lastCommittedAt: '2026-11-04T11:58:00Z' },
+    notifications: { state: 'Observed', scope: 'SelectedVesselDurable', openUnacknowledged: 3, overdueEscalations: 1, dispatch: 'LeaseExpired', lastCompletedAt: '2026-11-04T11:00:00Z', nextRunAt: null } })
+  const user = userEvent.setup(); render(<SystemHealthWorkspace />); await user.click(screen.getByRole('button', { name: 'EN' }))
+  const jobs = (await screen.findByRole('heading', { name: 'Notification jobs' })).parentElement!
+  expect(within(jobs).getByText('Open, unacknowledged').nextElementSibling).toHaveTextContent('3')
+  expect(within(jobs).getByText('Escalations past due').nextElementSibling).toHaveTextContent('1')
+  expect(within(jobs).getByText('Evaluation job').nextElementSibling).toHaveTextContent('Run abandoned (lease expired)')
+  expect(within(jobs).getByText('Next scheduled run').nextElementSibling).toHaveTextContent('Not observed')
+  expect(within(jobs).getByText(/not proof of delivery or of any safety decision/)).toBeVisible()
+  expect(screen.getByText('Last committed sync').nextElementSibling).toHaveTextContent('2026-11-04T11:58:00Z')
+  const liveness = screen.getByRole('heading', { name: 'Service liveness' }).parentElement!
+  expect(within(liveness).getByText('Uptime (seconds)').nextElementSibling).toHaveTextContent('3,600')
+  expect(screen.queryByText(/^healthy$|^ready$|^ok$/i)).not.toBeInTheDocument()
+})
+it('DEV-037 marks a snapshot whose server read time is two minutes old as stale and a current one as not stale', async () => {
+  vi.mocked(loadSystemHealth).mockResolvedValueOnce({ ...unobservedHealth(), readAt: new Date(Date.now() - 180000).toISOString() })
+  const user = userEvent.setup(); const view = render(<SystemHealthWorkspace />); await user.click(screen.getByRole('button', { name: 'EN' }))
+  expect(await screen.findByText(/older than two minutes/)).toBeVisible()
+  expect(screen.getByRole('region', { name: 'Authorized service observations' })).toBeVisible()
+  view.unmount()
+  vi.mocked(loadSystemHealth).mockResolvedValueOnce({ ...unobservedHealth(), readAt: new Date().toISOString() })
+  render(<SystemHealthWorkspace />); await user.click(screen.getByRole('button', { name: 'EN' }))
+  await screen.findByRole('region', { name: 'Authorized service observations' })
+  expect(screen.queryByText(/older than two minutes/)).not.toBeInTheDocument()
+})

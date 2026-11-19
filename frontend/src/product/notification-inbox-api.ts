@@ -3,18 +3,23 @@ import { isGuid } from './identifiers'
 import { calendar, timestamp } from './date-validation'
 
 export type Notice = { id: string; vesselId: string; sourceId: string; sourceRevision: number; ruleKey: string; policyVersion: string; sourceState: 'Due' | 'ReviewRequired'; severity: 'Info' | 'Warning' | 'Critical'; mandatory: boolean; recipientRoleId: string; escalationRoleId: string | null; dueDate: string | null; createdAt: string; escalateAt: string | null; state: 'Open' | 'Acknowledged' | 'Escalated' | 'SourceChanged' | 'SourceUnavailable'; revision: number; version: number; provenance: 'ConfiguredUnverified' }
-export type Inbox = { items: Notice[]; offset: number; hasMore: boolean; policyState: 'ConfiguredUnverified' | 'Unavailable'; delivery: 'InAppOnly'; canManage: boolean; canAcknowledge: boolean; canWritePreference: boolean }
-export type NoticePreference = { mutedAdvisory: boolean; revision: number; version: number; mandatoryRouteMutable: false }
+export type Inbox = { items: Notice[]; offset: number; hasMore: boolean; policyState: 'ConfiguredUnverified' | 'Unavailable'; delivery: 'InAppOnly'; canManage: boolean; canAcknowledge: boolean; canWritePreference: boolean; quietHoursState: QuietHoursState; quietUntil: string | null }
+export type QuietHoursState = 'NotConfigured' | 'Inactive' | 'Active' | 'Unavailable'
+// 58.01 PL-035/PL-036: all three null means no quiet hours. Mandatory routes ignore them server-side.
+export type NoticePreference = { mutedAdvisory: boolean; quietStart: string | null; quietEnd: string | null; zoneId: string | null; revision: number; version: number; mandatoryRouteMutable: false }
 export type NoticeCommand = { kind: 'acknowledge' | 'preference'; id: string | null; key: string; body: string }
 const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v)
 const exact = (v: unknown, keys: string[]): v is Record<string, unknown> => object(v) && Object.keys(v).length === keys.length && keys.every(k => Object.hasOwn(v, k))
 const integer = (v: unknown, min = 0, max = Number.MAX_SAFE_INTEGER) => typeof v === 'number' && Number.isSafeInteger(v) && v >= min && v <= max
 const one = (v: unknown, choices: string[]) => typeof v === 'string' && choices.includes(v)
 const text = (v: unknown, max: number) => typeof v === 'string' && v.length > 0 && v.length <= max && v.trim() === v && !/\p{Cc}/u.test(v)
+const clock = (v: unknown) => typeof v === 'string' && /^([01]\d|2[0-3]):[0-5]\d$/.test(v)
+export const validQuietHours = (start: unknown, end: unknown, zone: unknown) => start === null && end === null && zone === null ||
+  clock(start) && clock(end) && start !== end && typeof zone === 'string' && /^[A-Za-z0-9/_+-]{1,64}$/.test(zone)
 function invalid(): never { throw new ApiError(502, 'invalid_notification_contract') }
 const fields = ['id', 'vesselId', 'sourceId', 'sourceRevision', 'ruleKey', 'policyVersion', 'sourceState', 'severity', 'mandatory', 'recipientRoleId', 'escalationRoleId', 'dueDate', 'createdAt', 'escalateAt', 'state', 'revision', 'version', 'provenance']
 export function decodeInbox(value: unknown, vessel: string, offset: number): Inbox {
-  if (!isGuid(vessel) || !integer(offset, 0, 100000) || !exact(value, ['items', 'offset', 'hasMore', 'policyState', 'delivery', 'canManage', 'canAcknowledge', 'canWritePreference']) || value.offset !== offset || typeof value.hasMore !== 'boolean' || value.delivery !== 'InAppOnly' || !one(value.policyState, ['ConfiguredUnverified', 'Unavailable']) || !['canManage', 'canAcknowledge', 'canWritePreference'].every(k => typeof value[k] === 'boolean') || !Array.isArray(value.items) || value.items.length > 25 || value.hasMore && value.items.length !== 25) invalid()
+  if (!isGuid(vessel) || !integer(offset, 0, 100000) || !exact(value, ['items', 'offset', 'hasMore', 'policyState', 'delivery', 'canManage', 'canAcknowledge', 'canWritePreference', 'quietHoursState', 'quietUntil']) || !one(value.quietHoursState, ['NotConfigured', 'Inactive', 'Active', 'Unavailable']) || (value.quietHoursState === 'Active' ? !timestamp(value.quietUntil) : value.quietUntil !== null) || value.offset !== offset || typeof value.hasMore !== 'boolean' || value.delivery !== 'InAppOnly' || !one(value.policyState, ['ConfiguredUnverified', 'Unavailable']) || !['canManage', 'canAcknowledge', 'canWritePreference'].every(k => typeof value[k] === 'boolean') || !Array.isArray(value.items) || value.items.length > 25 || value.hasMore && value.items.length !== 25) invalid()
   for (const row of value.items) {
     if (!exact(row, fields) || !isGuid(row.id) || row.vesselId !== vessel || !isGuid(row.sourceId) || !integer(row.sourceRevision, 1) || !text(row.ruleKey, 64) || !text(row.policyVersion, 80) || !one(row.sourceState, ['Due', 'ReviewRequired']) || !one(row.severity, ['Info', 'Warning', 'Critical']) || typeof row.mandatory !== 'boolean' || row.severity === 'Critical' && !row.mandatory || !isGuid(row.recipientRoleId) || !(row.escalationRoleId === null || isGuid(row.escalationRoleId)) || !(row.dueDate === null || typeof row.dueDate === 'string' && calendar(row.dueDate)) || !timestamp(row.createdAt) || !(row.escalateAt === null || timestamp(row.escalateAt)) || !one(row.state, ['Open', 'Acknowledged', 'Escalated', 'SourceChanged', 'SourceUnavailable']) || !integer(row.revision, 1) || !integer(row.version, 1, 4294967295) || row.provenance !== 'ConfiguredUnverified') invalid()
   }
@@ -22,7 +27,7 @@ export function decodeInbox(value: unknown, vessel: string, offset: number): Inb
   return value as Inbox
 }
 export function decodePreference(value: unknown): NoticePreference {
-  if (!exact(value, ['mutedAdvisory', 'revision', 'version', 'mandatoryRouteMutable']) || typeof value.mutedAdvisory !== 'boolean' || !integer(value.revision) || !integer(value.version, 0, 4294967295) || value.mandatoryRouteMutable !== false || (value.revision === 0) !== (value.version === 0)) invalid()
+  if (!exact(value, ['mutedAdvisory', 'quietStart', 'quietEnd', 'zoneId', 'revision', 'version', 'mandatoryRouteMutable']) || typeof value.mutedAdvisory !== 'boolean' || !validQuietHours(value.quietStart, value.quietEnd, value.zoneId) || !integer(value.revision) || !integer(value.version, 0, 4294967295) || value.mandatoryRouteMutable !== false || (value.revision === 0) !== (value.version === 0)) invalid()
   return value as NoticePreference
 }
 const root = (vessel: string) => { if (!isGuid(vessel)) throw new ApiError(400, 'invalid_context'); return `notification-escalation` }

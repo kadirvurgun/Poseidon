@@ -89,6 +89,9 @@ export function NotificationWorkspace() {
       {pending && <DraftConfirmation language={language} onStay={() => setPending(null)} onDiscard={() => { const action = pending; setDirty(false); setPending(null); action(); }}/>}
     </main></div>;
 }
+type PreferenceDraft = { mutedAdvisory: boolean; quietStart: string; quietEnd: string; zoneId: string };
+const draftOf = (p: notifications.NoticePreference): PreferenceDraft => ({ mutedAdvisory: p.mutedAdvisory, quietStart: p.quietStart ?? '', quietEnd: p.quietEnd ?? '', zoneId: p.zoneId ?? '' });
+const quietBody = (d: PreferenceDraft) => ({ quietStart: d.quietStart || null, quietEnd: d.quietEnd || null, zoneId: d.zoneId.trim() || null });
 export function NotificationInbox({ vessel, session, authorized, epoch, language, onDirty, onSaving, onNavigate }: {
     vessel: string;
     session: api.Session;
@@ -99,7 +102,7 @@ export function NotificationInbox({ vessel, session, authorized, epoch, language
     onSaving: (v: boolean) => void;
     onNavigate: (href: string) => void;
 }) {
-    const en = language === 'en', [offset, setOffset] = useState(0), [reload, setReload] = useState(0), [change, setChange] = useState<boolean | null>(null);
+    const en = language === 'en', [offset, setOffset] = useState(0), [reload, setReload] = useState(0), [change, setChange] = useState<PreferenceDraft | null>(null);
     const [result, setResult] = useState<{
         scope: string;
         inbox?: notifications.Inbox;
@@ -163,6 +166,9 @@ export function NotificationInbox({ vessel, session, authorized, epoch, language
     }
     const locked = !authorized || busy || !!attempt || commandError === 409 || !session.csrfToken;
     const inbox = current?.inbox, preference = current?.preference;
+    const draft = change ?? (preference ? draftOf(preference) : null), quiet = draft ? quietBody(draft) : null;
+    const quietValid = !!quiet && notifications.validQuietHours(quiet.quietStart, quiet.quietEnd, quiet.zoneId);
+    const edit = (patch: Partial<PreferenceDraft>) => { if (draft) setChange({ ...draft, ...patch }); };
     const severity = { Info: localizedText(en, "pairs.m_1497414cb5959109"), Warning: localizedText(en, "pairs.m_e2d1559eef7ddc20"), Critical: localizedText(en, "pairs.m_3d7537ab29315925") };
     const state = { Open: localizedText(en, "pairs.m_3efd64823614f01e"), Acknowledged: localizedText(en, "pairs.m_a3b9cb4288889c3b"), Escalated: localizedText(en, "pairs.m_f70310439afd4b6e"), SourceChanged: localizedText(en, "pairs.m_f363ebff78cea9e7"), SourceUnavailable: localizedText(en, "pairs.m_d5c931dd594ef91d") };
     if (!authorized)
@@ -174,7 +180,17 @@ export function NotificationInbox({ vessel, session, authorized, epoch, language
     {!current ? <p role="status">{localizedText(en, "pairs.m_fb172e5c5b4e8988")}</p> : current.error !== undefined ? <p role="alert">{localizedText(en, "pairs.m_2fd2a1f745b26e66")}</p> : inbox && <>
       <p role="status">{inbox.policyState === 'Unavailable' ? (localizedText(en, "pairs.m_48822cdb104871ee")) : (localizedText(en, "pairs.m_adb97419abaedda3"))}</p>
       <p>{localizedText(en, "pairs.m_b55a33dfaabb7c5c")}</p>
-      {inbox.canWritePreference && preference && <div className="notification-preference"><label><input type="checkbox" checked={change ?? preference.mutedAdvisory} disabled={locked} onChange={event => setChange(event.target.checked)}/>{localizedText(en, "pairs.m_253b72c9ca68f37a")}</label><EnterpriseActions aria-label={localizedText(en, "pairs.m_d37818d311530a3b")}><Button variant="outline" disabled={locked || change === null} onClick={() => setChange(null)}>{localizedText(en, "pairs.m_2f7be743664c7d31")}</Button><Button disabled={locked || change === null} onClick={() => void send({ kind: 'preference', id: null, key: crypto.randomUUID(), body: JSON.stringify({ expectedVersion: preference.version, mutedAdvisory: change }) })}>{localizedText(en, "pairs.m_d46d7dd8c23b921c")}</Button></EnterpriseActions></div>}
+      {inbox.quietHoursState === 'Active' && inbox.quietUntil && <p role="status">{localizedText(language, "pairs.m_2f4d83155f7c42a7")} <time dateTime={inbox.quietUntil}>{inbox.quietUntil}</time></p>}
+      {inbox.quietHoursState === 'Unavailable' && <p role="status">{localizedText(language, "pairs.m_5b78e13ebb8c7346")}</p>}
+      {inbox.canWritePreference && preference && draft && quiet && <div className="notification-preference"><label><input type="checkbox" checked={draft.mutedAdvisory} disabled={locked} onChange={event => edit({ mutedAdvisory: event.target.checked })}/>{localizedText(en, "pairs.m_253b72c9ca68f37a")}</label>
+        <fieldset disabled={locked}><legend>{localizedText(language, "pairs.m_5ea1b7af3ea2ff01")}</legend><p>{localizedText(language, "pairs.m_2208220f163640d9")}</p>
+          <label>{localizedText(language, "pairs.m_f74d7e41a7291d9d")}<input type="time" step={60} value={draft.quietStart} onChange={event => edit({ quietStart: event.target.value })}/></label>
+          <label>{localizedText(language, "pairs.m_7faa546571a9cb31")}<input type="time" step={60} value={draft.quietEnd} onChange={event => edit({ quietEnd: event.target.value })}/></label>
+          <label>{localizedText(language, "pairs.m_880837192a68b924")}<input type="text" inputMode="text" autoComplete="off" spellCheck={false} maxLength={64} value={draft.zoneId} onChange={event => edit({ zoneId: event.target.value })}/></label>
+          <Button type="button" variant="outline" disabled={!draft.quietStart && !draft.quietEnd && !draft.zoneId} onClick={() => edit({ quietStart: '', quietEnd: '', zoneId: '' })}>{localizedText(language, "pairs.m_05d0483c7b921a12")}</Button>
+          {!quietValid && <p role="alert">{localizedText(language, "pairs.m_1ab9446bd94c5893")}</p>}
+        </fieldset>
+        <EnterpriseActions aria-label={localizedText(en, "pairs.m_d37818d311530a3b")}><Button variant="outline" disabled={locked || change === null} onClick={() => setChange(null)}>{localizedText(en, "pairs.m_2f7be743664c7d31")}</Button><Button disabled={locked || change === null || !quietValid} onClick={() => void send({ kind: 'preference', id: null, key: crypto.randomUUID(), body: JSON.stringify({ expectedVersion: preference.version, mutedAdvisory: draft.mutedAdvisory, ...quiet }) })}>{localizedText(en, "pairs.m_d46d7dd8c23b921c")}</Button></EnterpriseActions></div>}
       {!inbox.items.length && <p>{localizedText(en, "pairs.m_819dbcf4e4a13f34")}</p>}
       <ul className="notification-list">{inbox.items.map(row => <li key={row.id}><header><h2>{row.state === 'SourceUnavailable' ? (localizedText(en, "pairs.m_2d8ddbb7f5ac9582")) : row.state === 'SourceChanged' ? (localizedText(en, "pairs.m_3aa219f276007785")) : row.sourceState === 'Due' ? (localizedText(en, "pairs.m_0d1771e46060227a")) : (localizedText(en, "pairs.m_73270dda09c4b3d1"))}</h2><Badge tone={row.severity === 'Critical' ? 'danger' : row.severity === 'Warning' ? 'warning' : 'info'}>{severity[row.severity]}</Badge><Badge tone={row.state === 'SourceUnavailable' ? 'warning' : undefined}>{state[row.state]}</Badge></header><details><summary>{localizedText(en, "pairs.m_c9e2758d37f18098")}</summary><p><code>{row.ruleKey}</code> · {row.policyVersion}</p></details><dl><div><dt>{localizedText(en, "pairs.m_b4f1fa82036ef943")}</dt><dd>{row.sourceId} / {row.sourceRevision}</dd></div><div><dt>{localizedText(en, "pairs.m_0320b67d378f439d")}</dt><dd>{row.dueDate ?? (localizedText(en, "pairs.m_a5a7675bd7000dbd"))}</dd></div><div><dt>{localizedText(en, "pairs.m_715ff08122f31c54")}</dt><dd><time dateTime={row.createdAt}>{row.createdAt}</time></dd></div></dl>{row.state === 'SourceUnavailable' && <p role="status">{localizedText(en, "pairs.m_a7e3db96511147bb")}</p>}{row.mandatory && <p>{localizedText(en, "pairs.m_3c434b6124a9f388")}</p>}<EnterpriseActions align="start" aria-label={localizedText(en, "pairs.m_7057c8120005393a")}><Button variant="outline" asChild><a href={`/app/maintenance-plan/${vessel}?id=${row.sourceId}`} onClick={event => { event.preventDefault(); onNavigate(`/app/maintenance-plan/${vessel}?id=${row.sourceId}`); }}>{localizedText(en, "pairs.m_acae4f614bfa637f")}</a></Button>{inbox.canAcknowledge && <Button disabled={locked || change !== null || !['Open', 'Escalated'].includes(row.state)} onClick={() => void send({ kind: 'acknowledge', id: row.id, key: crypto.randomUUID(), body: JSON.stringify({ expectedVersion: row.version }) })}>{localizedText(en, "pairs.m_db571ded695c47a7")}</Button>}</EnterpriseActions></li>)}</ul>
       <EnterprisePagination label={localizedText(en, "pairs.m_bdf4af093f5b863b")} previous={localizedText(en, "pairs.m_fbe33d41fe33d8be")} next={localizedText(en, "pairs.m_fcdb36e24e04d473")} previousDisabled={locked || change !== null || !offset} nextDisabled={locked || change !== null || !inbox.hasMore || offset >= 100000} onPrevious={() => setOffset(n => Math.max(0, n - 25))} onNext={() => setOffset(n => n + 25)}/>
