@@ -34,17 +34,11 @@ public sealed record Membership(string Issuer, string Subject, Guid ActorId, Gui
     public RegulatoryAuthority[] RegulatoryAuthorities { get; set; } = [];
     public HumanTraceReader[] HumanTraceReaders { get; set; } = [];
     public CrewCatalogAuthority[] CrewCatalogAuthorities { get; set; } = [];
-    // DEV-101 SOF finalization / DEV-102 downtime review appointments (vessel-scoped duty).
-    public ShipOperationsAuthority[] ShipOperationsAuthorities { get; set; } = [];
     // ConfigurationBinder must use property binding. Constructor binding can silently
     // omit an array member whose optional collection is an explicit empty JSON array.
     public Membership() : this("", "", Guid.Empty, Guid.Empty, []) { }
 }
 public sealed record VesselGrant(Guid VesselId, bool CanEdit = false);
-// Server-provisioned appointment for one vessel and one lifecycle scope. Never
-// request-bound or inferred from an IdP role name, crew list or administrator.
-public sealed record ShipOperationsAuthority(Guid Id, Guid VesselId, string Scope, Guid RoleId, string Duty,
-    string AppointmentSource, DateTimeOffset ValidFrom, DateTimeOffset ValidUntil);
 public sealed record TrustedActor(Guid Id, Guid TenantId, string[] Permissions, bool TenantWideRead, bool TenantWideManage, VesselGrant[] VesselGrants)
 {
     public string? RoleContext { get; init; }

@@ -1,53 +1,5 @@
 {
   "copies": {
-    "ShipOpsLifecyclePanel_tsx_copy": {
-      "sofTitle": "Finalisation du Statement of Facts",
-      "sofIntro": "La finalisation est un acte humain explicite d’un capitaine, second capitaine ou chef mécanicien désigné. Elle enregistre qui, quand, la fonction et le motif. Elle est interne : ni signature ni accord externe.",
-      "draft": "BROUILLON",
-      "final": "FINAL (interne)",
-      "signature": "Signature non enregistrée",
-      "amended": "Modifié après FINAL : une nouvelle revue et finalisation sont requises.",
-      "missing": "Faits obligatoires manquants : {{fields}}",
-      "unresolved": "Aucune source de référence n’existe pour ces références obligatoires ; le voyage reste INCONNU. Confirmez chacune explicitement pour finaliser :",
-      "authority": "Désignation",
-      "finalize": "Finaliser le SOF",
-      "noAuthority": "Aucune désignation de finalisation en cours pour ce navire.",
-      "history": "Historique du cycle de vie",
-      "loading": "Chargement…",
-      "unavailable": "Indisponible pour votre accès actuel.",
-      "retry": "Réessayer",
-      "offline": "Hors ligne : les commandes de cycle de vie nécessitent une session en ligne actuelle.",
-      "unknownOutcome": "Résultat inconnu : réessayer renvoie une seule fois la même commande.",
-      "done": "Commande enregistrée.",
-      "failed": "Commande refusée : {{code}}",
-      "dtTitle": "Revue et clôture de l’indisponibilité",
-      "dtIntro": "La soumission, la vérification et la clôture sont des actes humains explicites. Qui a saisi le contenu ne le vérifie ni ne le clôture jamais. Une clôture vérifiée n’est pas une libération de sécurité.",
-      "state": "État",
-      "loh": "Candidat Loss of Hire",
-      "lohReview": "Revue requise : candidat uniquement, sans droit ni montant",
-      "lohUnknown": "Inconnu (aucun début déclaré)",
-      "evidence": "Preuves de réclamation (un lien n’est pas une vérification)",
-      "noEvidence": "Aucune preuve de réclamation liée.",
-      "link": "Lier une preuve",
-      "unlink": "Retirer",
-      "selectEvidence": "Choisir une preuve",
-      "recorderNote": "Vous avez saisi cette indisponibilité : une autre personne désignée doit la vérifier et la clôturer.",
-      "states": {
-        "NOT_SUBMITTED": "Non soumis",
-        "OPEN": "Ouvert",
-        "IN_REVIEW": "En revue",
-        "VERIFIED": "Vérifié (humain)",
-        "CLOSED": "Clôturé"
-      },
-      "actions": {
-        "SUBMIT_FOR_REVIEW": "Soumettre à la revue",
-        "RETURN_FOR_CORRECTION": "Renvoyer pour correction",
-        "VERIFY": "Vérifier",
-        "CLOSE": "Clôturer",
-        "LINK_CLAIM_EVIDENCE": "Lier une preuve de réclamation",
-        "UNLINK_CLAIM_EVIDENCE": "Retirer la preuve de réclamation"
-      }
-    },
     "ShipOperationsLedgerPanel_tsx_copy": {
       "fuelTitle": "Contrôle de continuité ROB",
       "portTitle": "Chronologie du Statement of Facts",

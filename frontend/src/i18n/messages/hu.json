@@ -1,53 +1,5 @@
 {
   "copies": {
-    "ShipOpsLifecyclePanel_tsx_copy": {
-      "sofTitle": "Statement of Facts véglegesítése",
-      "sofIntro": "A véglegesítés egy kijelölt kapitány, első tiszt vagy gépüzemvezető kifejezett emberi cselekménye. Rögzíti, ki, mikor, milyen beosztásban és miért. Belső: nem aláírás és nem külső megállapodás.",
-      "draft": "PISZKOZAT",
-      "final": "VÉGLEGES (belső)",
-      "signature": "Aláírás nincs rögzítve",
-      "amended": "VÉGLEGES után módosítva: új felülvizsgálat és véglegesítés szükséges.",
-      "missing": "Hiányzó kötelező adatok: {{fields}}",
-      "unresolved": "Ezekhez a kötelező hivatkozásokhoz nincs keresési forrás; az út ISMERETLEN marad. A véglegesítéshez mindegyiket kifejezetten igazolja:",
-      "authority": "Kijelölés",
-      "finalize": "SOF véglegesítése",
-      "noAuthority": "Ehhez a hajóhoz nincs érvényes véglegesítési kijelölés.",
-      "history": "Életciklus-előzmények",
-      "loading": "Betöltés…",
-      "unavailable": "A jelenlegi hozzáférésével nem érhető el.",
-      "retry": "Újra",
-      "offline": "Offline: az életciklus-parancsokhoz aktuális online munkamenet kell.",
-      "unknownOutcome": "Ismeretlen eredmény: az újrapróbálás egyszer elküldi ugyanazt a parancsot.",
-      "done": "Parancs rögzítve.",
-      "failed": "A parancs nem lett elfogadva: {{code}}",
-      "dtTitle": "Állásidő felülvizsgálata és lezárása",
-      "dtIntro": "A beküldés, az ellenőrzés és a lezárás kifejezett emberi cselekmények. Aki a tartalmat rögzítette, soha nem ellenőrzi és nem zárja le. Az ellenőrzött lezárás nem biztonsági engedély.",
-      "state": "Állapot",
-      "loh": "Loss of Hire jelölt",
-      "lohReview": "Felülvizsgálat szükséges: csak jelölt, jogosultság és összeg nélkül",
-      "lohUnknown": "Ismeretlen (nincs bejelentett kezdet)",
-      "evidence": "Igénybizonyítékok (a kapcsolás nem ellenőrzés)",
-      "noEvidence": "Nincs kapcsolt igénybizonyíték.",
-      "link": "Bizonyíték kapcsolása",
-      "unlink": "Eltávolítás",
-      "selectEvidence": "Bizonyíték kiválasztása",
-      "recorderNote": "Ön rögzítette ezt az állásidőt: egy másik kijelölt személynek kell ellenőriznie és lezárnia.",
-      "states": {
-        "NOT_SUBMITTED": "Nincs beküldve",
-        "OPEN": "Nyitott",
-        "IN_REVIEW": "Felülvizsgálat alatt",
-        "VERIFIED": "Ellenőrizve (ember)",
-        "CLOSED": "Lezárva"
-      },
-      "actions": {
-        "SUBMIT_FOR_REVIEW": "Beküldés felülvizsgálatra",
-        "RETURN_FOR_CORRECTION": "Visszaküldés javításra",
-        "VERIFY": "Ellenőrzés",
-        "CLOSE": "Lezárás",
-        "LINK_CLAIM_EVIDENCE": "Igénybizonyíték kapcsolása",
-        "UNLINK_CLAIM_EVIDENCE": "Igénybizonyíték eltávolítása"
-      }
-    },
     "ShipOperationsLedgerPanel_tsx_copy": {
       "fuelTitle": "ROB-folytonossági ellenőrzés",
       "portTitle": "Statement of Facts idővonal",

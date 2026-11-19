@@ -21,10 +21,6 @@ public sealed class ShipOperation : ITenantEntity
     public DateTimeOffset SavedAt {get;set;}
     public DateTimeOffset? OccurredAt {get;set;}
     public DateTimeOffset? EndedAt {get;set;}
-    // DEV-101: server-owned SOF state of the current revision (Port only) and
-    // the last human-finalized revision; never caller-set.
-    public string? SofState {get;set;}
-    public long? FinalRevision {get;set;}
 }
 public sealed class ShipOperationRevision : ITenantEntity
 {
@@ -43,8 +39,6 @@ public sealed class ShipOperationRevision : ITenantEntity
     public DateTimeOffset SavedAt {get;set;}
     public DateTimeOffset? OccurredAt {get;set;}
     public DateTimeOffset? EndedAt {get;set;}
-    public string? SofState {get;set;}
-    public long? FinalRevision {get;set;}
 }
 public sealed class ShipOperationReceipt : ITenantEntity
 {
@@ -63,18 +57,18 @@ internal static class ShipOperationsStorage
 {
     internal static void Configure(ModelBuilder model) {
         model.Entity<ShipOperation>(b=> {
-            b.ToTable("ShipOperations","operations",t=>t.HasCheckConstraint("CK_ShipOperation_State","\"Kind\" IN ('Fuel','Port') AND \"Revision\">0 AND \"Provenance\" IN ('UserDeclaredUnverified','SyntheticUnverified') AND (\"SofState\" IS NULL OR \"Kind\"='Port' AND \"SofState\" IN ('DRAFT','FINAL')) AND (\"FinalRevision\" IS NULL OR \"FinalRevision\">0 AND \"FinalRevision\"<=\"Revision\")"));
+            b.ToTable("ShipOperations","operations",t=>t.HasCheckConstraint("CK_ShipOperation_State","\"Kind\" IN ('Fuel','Port') AND \"Revision\">0 AND \"Provenance\" IN ('UserDeclaredUnverified','SyntheticUnverified')"));
             b.HasKey(r=>new{r.TenantId,r.Id});b.HasAlternateKey(r=>new{r.TenantId,r.VesselId,r.Kind,r.Id});b.Property(r=>r.Version).IsRowVersion();
             b.HasOne<Vessel>().WithMany().HasForeignKey(r=>new{r.TenantId,r.VesselId}).OnDelete(DeleteBehavior.Restrict);
-            b.HasIndex(r=>new{r.TenantId,r.VesselId,r.Kind,r.OccurredAt,r.Id});b.Property(r=>r.Kind).HasMaxLength(8);b.Property(r=>r.SofState).HasMaxLength(8);b.Property(r=>r.SourceVersion).HasMaxLength(160);
+            b.HasIndex(r=>new{r.TenantId,r.VesselId,r.Kind,r.OccurredAt,r.Id});b.Property(r=>r.Kind).HasMaxLength(8);b.Property(r=>r.SourceVersion).HasMaxLength(160);
             b.Property(r=>r.Hash).HasMaxLength(64);b.Property(r=>r.Provenance).HasMaxLength(32);b.Property(r=>r.FieldsJson).HasColumnType("text");b.Property(r=>r.OriginJson).HasColumnType("text");
         });
         model.Entity<ShipOperationRevision>(b=> {
-            b.ToTable("ShipOperationRevisions","operations",t=>t.HasCheckConstraint("CK_ShipOperationRevision_State","\"Revision\">0 AND \"RecordVersion\">0 AND \"Provenance\" IN ('UserDeclaredUnverified','SyntheticUnverified') AND (\"SofState\" IS NULL OR \"SofState\" IN ('DRAFT','FINAL')) AND (\"FinalRevision\" IS NULL OR \"FinalRevision\">0 AND \"FinalRevision\"<=\"Revision\")"));
+            b.ToTable("ShipOperationRevisions","operations",t=>t.HasCheckConstraint("CK_ShipOperationRevision_State","\"Revision\">0 AND \"RecordVersion\">0 AND \"Provenance\" IN ('UserDeclaredUnverified','SyntheticUnverified')"));
             b.HasKey(r=>new{r.TenantId,r.RecordId,r.Revision});
             b.HasOne<ShipOperation>().WithMany().HasForeignKey(r=>new{r.TenantId,r.VesselId,r.Kind,r.RecordId}).HasPrincipalKey(r=>new{r.TenantId,r.VesselId,r.Kind,r.Id})
                 .HasConstraintName("FK_ShipOperationRevision_Head").OnDelete(DeleteBehavior.Restrict);
-            b.HasIndex(r=>new{r.TenantId,r.VesselId,r.Kind,r.RecordId});b.Property(r=>r.Kind).HasMaxLength(8);b.Property(r=>r.SofState).HasMaxLength(8);b.Property(r=>r.SourceVersion).HasMaxLength(160);
+            b.HasIndex(r=>new{r.TenantId,r.VesselId,r.Kind,r.RecordId});b.Property(r=>r.Kind).HasMaxLength(8);b.Property(r=>r.SourceVersion).HasMaxLength(160);
             b.Property(r=>r.Hash).HasMaxLength(64);b.Property(r=>r.Provenance).HasMaxLength(32);b.Property(r=>r.FieldsJson).HasColumnType("text");b.Property(r=>r.OriginJson).HasColumnType("text");
         });
         model.Entity<ShipOperationReceipt>(b=> {

@@ -3803,38 +3803,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/port-activity-sof/{id}/finalization": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["PortSofFinalization"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/port-activity-sof/{id}/finalize": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["PortSofFinalize"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/port-activity-sof/{id}": {
         parameters: {
             query?: never;
@@ -5580,22 +5548,6 @@ export interface paths {
         get: operations["DowntimeHistory"];
         put?: never;
         post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/v1/operational-downtime/{id}/lifecycle": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: operations["DowntimeLifecycle"];
-        put?: never;
-        post: operations["DowntimeLifecycleCommand"];
         delete?: never;
         options?: never;
         head?: never;
@@ -8347,19 +8299,6 @@ export interface components {
             sourceVersion: string;
             origin: null | components["schemas"]["DowntimeOriginPin"];
         };
-        DowntimeEvidenceOptionDto: {
-            /** Format: uuid */
-            id: string;
-            /** Format: int64 */
-            revision: number;
-            label: string;
-        };
-        DowntimeEvidencePin: {
-            /** Format: uuid */
-            id: string;
-            /** Format: int64 */
-            revision: number;
-        };
         DowntimeFact: {
             state: string;
             value: null | string;
@@ -8389,61 +8328,6 @@ export interface components {
             elapsedTicks: null | string;
             unit: string;
             qualification: string;
-        };
-        DowntimeLifecycleCommand: {
-            /** Format: uint32 */
-            expectedVersion: number;
-            action: string;
-            reasonCode: string;
-            /** Format: uuid */
-            authorityId?: null | string;
-            evidence?: null | components["schemas"]["DowntimeEvidencePin"];
-        };
-        DowntimeLifecycleDto: {
-            state: string;
-            claimEvidence: components["schemas"]["DowntimeEvidencePin"][];
-            lossOfHireCandidate: string;
-            allowedActions: string[];
-        };
-        DowntimeLifecycleEventDto: {
-            /** Format: uuid */
-            id: string;
-            /** Format: int64 */
-            fromRevision: number;
-            /** Format: int64 */
-            toRevision: number;
-            action: string;
-            fromState: null | string;
-            toState: null | string;
-            /** Format: uuid */
-            actorId: string;
-            /** Format: uuid */
-            roleId: null | string;
-            duty: null | string;
-            reasonCode: string;
-            evidence: null | components["schemas"]["DowntimeEvidencePin"];
-            /** Format: date-time */
-            savedAt: string;
-        };
-        DowntimeLifecycleViewDto: {
-            /** Format: uuid */
-            recordId: string;
-            /** Format: uuid */
-            vesselId: string;
-            /** Format: int64 */
-            revision: number;
-            /** Format: uint32 */
-            version: number;
-            state: string;
-            lossOfHireCandidate: string;
-            claimEvidence: components["schemas"]["DowntimeEvidencePin"][];
-            allowedActions: string[];
-            authorities: components["schemas"]["ShipOpsAuthorityDto"][];
-            actorIsRecorder: boolean;
-            missingRequired: string[];
-            evidenceOptions: components["schemas"]["DowntimeEvidenceOptionDto"][];
-            events: components["schemas"]["DowntimeLifecycleEventDto"][];
-            qualifications: string[];
         };
         DowntimeOfflineDto: {
             supported: boolean;
@@ -8515,7 +8399,6 @@ export interface components {
             currentRevision: boolean;
             canEdit: boolean;
             engineeringInterval: components["schemas"]["DowntimeIntervalObservation"];
-            lifecycle?: null | components["schemas"]["DowntimeLifecycleDto"];
         };
         DraftObservation: {
             /** Format: int32 */
@@ -10176,52 +10059,6 @@ export interface components {
             blockers: string[];
             href: string;
         };
-        PortSofFinalizationDto: {
-            /** Format: uuid */
-            recordId: string;
-            /** Format: uuid */
-            vesselId: string;
-            /** Format: int64 */
-            revision: number;
-            /** Format: uint32 */
-            version: number;
-            sofState: string;
-            /** Format: int64 */
-            finalRevision: null | number;
-            canFinalize: boolean;
-            authorities: components["schemas"]["ShipOpsAuthorityDto"][];
-            missingRequired: string[];
-            unresolvedReferences: string[];
-            events: components["schemas"]["PortSofFinalizationEventDto"][];
-            qualifications: string[];
-        };
-        PortSofFinalizationEventDto: {
-            /** Format: uuid */
-            id: string;
-            /** Format: int64 */
-            fromRevision: number;
-            /** Format: int64 */
-            toRevision: number;
-            /** Format: uuid */
-            actorId: string;
-            /** Format: uuid */
-            roleId: null | string;
-            duty: null | string;
-            reasonCode: string;
-            acknowledgedUnresolved: string[];
-            signatureState: string;
-            recordHash: string;
-            /** Format: date-time */
-            savedAt: string;
-        };
-        PortSofFinalizeCommand: {
-            /** Format: uint32 */
-            expectedVersion: number;
-            /** Format: uuid */
-            authorityId: string;
-            reasonCode: string;
-            acknowledgedUnresolved: string[];
-        };
         PortTimelineAssessment: {
             /** Format: uuid */
             recordId: string;
@@ -10718,13 +10555,6 @@ export interface components {
             version: number;
             hash: string;
             sourceVersion: string;
-        };
-        ShipOpsAuthorityDto: {
-            /** Format: uuid */
-            id: string;
-            /** Format: uuid */
-            roleId: string;
-            duty: string;
         };
         ShipOpsCapabilitiesDto: {
             /** Format: uuid */
@@ -16715,54 +16545,6 @@ export interface operations {
             };
         };
     };
-    PortSofFinalization: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PortSofFinalizationDto"];
-                };
-            };
-        };
-    };
-    PortSofFinalize: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PortSofFinalizeCommand"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ShipOpsRecordDto"];
-                };
-            };
-        };
-    };
     PortShipOpsRead: {
         parameters: {
             query?: never;
@@ -19889,54 +19671,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DowntimeHistoryDto"];
-                };
-            };
-        };
-    };
-    DowntimeLifecycle: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DowntimeLifecycleViewDto"];
-                };
-            };
-        };
-    };
-    DowntimeLifecycleCommand: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["DowntimeLifecycleCommand"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DowntimeRecordDto"];
                 };
             };
         };

@@ -14,7 +14,6 @@ import { readShipOpsLocation, shipOpsLocationPath, useShipOpsLocation, type Ship
 import { ShipOperationsFields } from './ShipOperationsFields';
 import { ShipOperationOriginView } from './ShipOperationOriginView';
 import { ShipOperationsLedgerPanel } from './ShipOperationsLedgerPanel';
-import { SofFinalizationPanel } from './ShipOpsLifecyclePanel';
 import { ShipOpsRecordHistory, ShipOpsRecordList, ShipOpsRecordSummary } from './ShipOperationsRecordView';
 import { useWorkspaceRevalidation } from './use-workspace-revalidation';
 import { unsavedState, useUnsavedChangesSource } from './unsaved-changes';
@@ -258,7 +257,6 @@ function ShipOpsSurface({ route, language, onLanguage, onNavigate, onCanonical, 
             <ShipOperationsFields kind={route.kind} fields={editor.fields} schema={current.caps.schema} language={language} disabled={!editable} errors={{ ...failure?.errors, ...fieldErrors }} onChange={change}/>
             <EnterpriseActions layout="form" aria-label={localizedText(en, "pairs.m_ffd4d19cd64aed61")}><Button variant="outline" disabled={busy || !!frozen} onClick={readCurrent}>{localizedText(en, "pairs.m_71be3ecd3d59de10")}</Button>{current.caps.canWrite && <Button type="submit" disabled={busy || denied || conflict || !frozen && (!editable || originBlocked)}>{frozen ? (localizedText(en, "pairs.m_42c1d428a22ca926")) : busy ? (localizedText(en, "pairs.m_5b598bccc6931d54")) : (localizedText(en, "pairs.m_1057f80f39b6b640"))}</Button>}</EnterpriseActions>
           </form>
-          {editor.record && route.kind === 'Port' && route.vessel && <SofFinalizationPanel vessel={route.vessel} id={editor.record.id} revision={editor.record.revision} language={language} disabled={busy || !!frozen || editor.dirty} onCommitted={readCurrent} onSaving={onSaving}/>}
           {editor.record && <EnterpriseActions align="start" aria-label={localizedText(en, "pairs.m_6abad8c133e1acac")}><Button variant="outline" disabled={busy || !!frozen} onClick={readCurrent}>{localizedText(en, "pairs.m_391249d8f314090a")}</Button></EnterpriseActions>}
           {current.history && <ShipOpsRecordHistory value={current.history} language={language} offset={historyOffset} disabled={busy || !!frozen || editor.dirty} onOffset={setHistoryOffset}/>}
         </section>

@@ -61,7 +61,7 @@ export function decodePortTimeline(input: unknown, vessel: string): PortTimeline
   const entries = (value.entries as unknown[]).map(entry => {
     if (!exact(entry, ['record', 'assessment']) || !exact(entry.assessment, ['recordId', 'reviewState', 'durationState', 'durationTicks', 'flags'])) fail()
     const record = decodeShipOpsRecord(entry.record, vessel, 'Port'), a = entry.assessment
-    if (a.recordId !== record.id || !codes(a.flags) || !['DRAFT', 'FINAL'].includes(record.fields.sof_state.value as string)) fail()
+    if (a.recordId !== record.id || !codes(a.flags) || record.fields.sof_state.value !== 'DRAFT') fail()
     if (a.durationState === 'KNOWN' ? typeof a.durationTicks !== 'string' || !/^[0-9]{1,20}$/.test(a.durationTicks) : a.durationState !== 'UNKNOWN' || a.durationTicks !== null) fail()
     if (a.reviewState !== (a.flags.length ? 'REVIEW_REQUIRED' : 'NO_DISCREPANCY_DETECTED')) fail()
     return { record, assessment: a as unknown as PortTimelineAssessment }

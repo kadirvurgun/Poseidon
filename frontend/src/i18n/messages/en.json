@@ -1,53 +1,5 @@
 {
   "copies": {
-    "ShipOpsLifecyclePanel_tsx_copy": {
-      "sofTitle": "Statement of Facts finalization",
-      "sofIntro": "Finalization is an explicit human act by an appointed Master, Chief Officer or Chief Engineer. It records who finalized, when, the duty and the reason. It is internal: not a signature and not an external agreement.",
-      "draft": "DRAFT",
-      "final": "FINAL (internal)",
-      "signature": "Signature not recorded",
-      "amended": "Amended after FINAL: a new review and finalization are required.",
-      "missing": "Required facts missing: {{fields}}",
-      "unresolved": "No owning lookup exists for these required references, so the voyage stays UNKNOWN. Acknowledge each one explicitly to finalize:",
-      "authority": "Appointment",
-      "finalize": "Finalize SOF",
-      "noAuthority": "No current finalization appointment for this vessel.",
-      "history": "Lifecycle history",
-      "loading": "Loading…",
-      "unavailable": "Unavailable for your current access.",
-      "retry": "Retry",
-      "offline": "Offline: lifecycle commands need a current online session.",
-      "unknownOutcome": "Outcome unknown: retry sends the same command once.",
-      "done": "Command recorded.",
-      "failed": "Command not accepted: {{code}}",
-      "dtTitle": "Downtime review and closure",
-      "dtIntro": "Submission, verification and closure are explicit human acts. Whoever recorded the content never verifies or closes it. Verified closure is not a safety release.",
-      "state": "State",
-      "loh": "Loss of Hire candidate",
-      "lohReview": "Review required: candidate only, no entitlement or amount",
-      "lohUnknown": "Unknown (no declared start)",
-      "evidence": "Claim evidence (a link is not verification)",
-      "noEvidence": "No claim evidence linked.",
-      "link": "Link evidence",
-      "unlink": "Remove",
-      "selectEvidence": "Select evidence",
-      "recorderNote": "You recorded this downtime: another appointed person must verify and close it.",
-      "states": {
-        "NOT_SUBMITTED": "Not submitted",
-        "OPEN": "Open",
-        "IN_REVIEW": "In review",
-        "VERIFIED": "Verified (human)",
-        "CLOSED": "Closed"
-      },
-      "actions": {
-        "SUBMIT_FOR_REVIEW": "Submit for review",
-        "RETURN_FOR_CORRECTION": "Return for correction",
-        "VERIFY": "Verify",
-        "CLOSE": "Close",
-        "LINK_CLAIM_EVIDENCE": "Link claim evidence",
-        "UNLINK_CLAIM_EVIDENCE": "Remove claim evidence"
-      }
-    },
     "ShipOperationsLedgerPanel_tsx_copy": {
       "fuelTitle": "ROB continuity review",
       "portTitle": "Statement of Facts timeline",

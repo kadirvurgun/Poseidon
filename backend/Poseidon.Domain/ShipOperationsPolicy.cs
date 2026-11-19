@@ -86,15 +86,14 @@ public static class ShipOperationsPolicy
             !DateTimeOffset.TryParse(value,CultureInfo.InvariantCulture,DateTimeStyles.None,out var parsed))return false;
         instant=parsed.ToUniversalTime();return true;
     }
-    public static SortedDictionary<string,ShipOpsFact> ReadFields(string kind,Guid vessel,string json,string? sofState=null) {
+    public static SortedDictionary<string,ShipOpsFact> ReadFields(string kind,Guid vessel,string json) {
         if(vessel==Guid.Empty)throw new InvalidDataException("ship_operations_scope_unavailable");
         SortedDictionary<string,ShipOpsFact>? input;
         try{input=JsonSerializer.Deserialize<SortedDictionary<string,ShipOpsFact>>(json,Json);}catch(JsonException){throw new InvalidDataException("ship_operations_fields_unavailable");}
         if(!TryNormalize(kind,input,out var fields,out _))throw new InvalidDataException("ship_operations_fields_unavailable");
         if(kind=="Fuel") {
             fields["vessel_id"]=new("Known",vessel.ToString("D"));fields["compliance_state"]=new("Known","REVIEW_REQUIRED");fields["verification_state"]=new("Known","PENDING");
-        // sof_state is server-owned: FINAL only from a recorded human finalization revision.
-        }else fields["sof_state"]=new("Known",sofState==ShipOperationsLifecycle.SofFinal?"FINAL":"DRAFT");
+        }else fields["sof_state"]=new("Known","DRAFT");
         return fields;
     }
     public static string[] Blockers(string kind,IReadOnlyDictionary<string,ShipOpsFact> fields)=>Schema(kind).Where(f=>!f.ReadOnly)

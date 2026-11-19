@@ -25,7 +25,7 @@ public sealed record PortTimelineDto(Guid VesselId,PortTimelineEntryDto[] Entrie
 public sealed record ShipOpsDraftCommand([property:JsonRequired] Guid Id,[property:JsonRequired] uint ExpectedVersion,
     [property:JsonRequired] Dictionary<string,ShipOpsFact> Fields,[property:JsonRequired] string ReasonCode,ShipOperationOriginPin? Origin=null);
 
-public static partial class ShipOperationsEndpoints
+public static class ShipOperationsEndpoints
 {
     internal static readonly JsonSerializerOptions Json=new(JsonSerializerDefaults.Web){PropertyNameCaseInsensitive=false,MaxDepth=8,UnmappedMemberHandling=JsonUnmappedMemberHandling.Disallow};
     private static readonly ShipOpsOfflineDto Offline=new(false,"UNAVAILABLE","ShipOpsDraft");
@@ -35,7 +35,7 @@ public static partial class ShipOperationsEndpoints
             group.MapGet("",(HttpContext h,PoseidonDbContext db)=>Read(kind,null,false,false,h,db)).WithName(kind+"ShipOpsList").Produces<ShipOpsPageDto>();
             group.MapGet("/capabilities",(HttpContext h,PoseidonDbContext db)=>Read(kind,null,false,true,h,db)).WithName(kind+"ShipOpsCapabilities").Produces<ShipOpsCapabilitiesDto>();
             if(kind=="Fuel")group.MapGet("/ledger",(HttpContext h,PoseidonDbContext db)=>Ledger(kind,h,db)).WithName("FuelShipOpsLedger").Produces<FuelLedgerDto>();
-            else {group.MapGet("/timeline",(HttpContext h,PoseidonDbContext db)=>Ledger(kind,h,db)).WithName("PortShipOpsTimeline").Produces<PortTimelineDto>();MapSofFinalization(group);}
+            else group.MapGet("/timeline",(HttpContext h,PoseidonDbContext db)=>Ledger(kind,h,db)).WithName("PortShipOpsTimeline").Produces<PortTimelineDto>();
             group.MapGet("/{id:guid}",(Guid id,HttpContext h,PoseidonDbContext db)=>Read(kind,id,false,false,h,db)).WithName(kind+"ShipOpsRead").Produces<ShipOpsRecordDto>();
             group.MapGet("/{id:guid}/history",(Guid id,HttpContext h,PoseidonDbContext db)=>Read(kind,id,true,false,h,db)).WithName(kind+"ShipOpsHistory").Produces<ShipOpsHistoryDto>();
             group.MapPost("",(HttpContext h,PoseidonDbContext db)=>Save(kind,null,h,db)).WithName(kind+"ShipOpsCreate").Accepts<ShipOpsDraftCommand>("application/json").Produces<ShipOpsRecordDto>();
@@ -57,11 +57,10 @@ public static partial class ShipOperationsEndpoints
     private static Task Audit(HttpContext h,string result,Guid? id=null)=>h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h,
         h.Request.Method=="GET"?"ShipOperationsRead":"ShipOperationsCommand",result,resourceId:id);
     private static async Task<IResult> Fail(HttpContext h,int status,string code){await Audit(h,code);return Results.Json(new{code},statusCode:status);}
-    internal static ShipOpsRecordDto Dto(ShipOperation row,bool current,bool canWrite)=>Dto(row.Id,row.VesselId,row.Kind,row.Revision,row.Version,row.FieldsJson,row.OriginJson,row.Provenance,row.SavedAt,row.Hash,row.SourceVersion,current,canWrite,row.SofState,row.FinalRevision);
-    private static ShipOpsRecordDto Dto(ShipOperationRevision row,bool current,bool canWrite)=>Dto(row.RecordId,row.VesselId,row.Kind,row.Revision,checked((uint)row.RecordVersion),row.FieldsJson,row.OriginJson,row.Provenance,row.SavedAt,row.Hash,row.SourceVersion,current,canWrite,row.SofState,row.FinalRevision);
-    private static ShipOpsRecordDto Dto(Guid id,Guid vessel,string kind,long revision,uint version,string json,string? originJson,string provenance,DateTimeOffset saved,string hash,string source,bool current,bool canWrite,string? sofState,long? finalRevision) {
-        var fields=ShipOperationsPolicy.ReadFields(kind,vessel,json,sofState);var blockers=ShipOperationsPolicy.Blockers(kind,fields);
-        if(kind=="Port")blockers=ShipOperationsLifecycle.SofBlockers(blockers,sofState,finalRevision);
+    internal static ShipOpsRecordDto Dto(ShipOperation row,bool current,bool canWrite)=>Dto(row.Id,row.VesselId,row.Kind,row.Revision,row.Version,row.FieldsJson,row.OriginJson,row.Provenance,row.SavedAt,row.Hash,row.SourceVersion,current,canWrite);
+    private static ShipOpsRecordDto Dto(ShipOperationRevision row,bool current,bool canWrite)=>Dto(row.RecordId,row.VesselId,row.Kind,row.Revision,checked((uint)row.RecordVersion),row.FieldsJson,row.OriginJson,row.Provenance,row.SavedAt,row.Hash,row.SourceVersion,current,canWrite);
+    private static ShipOpsRecordDto Dto(Guid id,Guid vessel,string kind,long revision,uint version,string json,string? originJson,string provenance,DateTimeOffset saved,string hash,string source,bool current,bool canWrite) {
+        var fields=ShipOperationsPolicy.ReadFields(kind,vessel,json);var blockers=ShipOperationsPolicy.Blockers(kind,fields);
         if(source!=ShipOperationsPolicy.SourceVersion)blockers=[..blockers,"SOURCE_VERSION_CHANGED"];
         return new(id,vessel,kind,revision,version,fields,"DRAFT",provenance,saved,hash,source,blockers,current,current && canWrite,
             originJson==null?null:JsonSerializer.Deserialize<ShipOperationOriginPin>(originJson,Json));
@@ -165,8 +164,7 @@ public static partial class ShipOperationsEndpoints
             if(!h.Request.HasJsonContentType())throw new JsonException();using var buffer=new MemoryStream();await SecureFilePolicy.CopyAsync(h.Request.Body,buffer,65536,ct);
             using var document=JsonDocument.Parse(buffer.ToArray(),new(){MaxDepth=8});ApplicabilityEngine.RejectDuplicateKeys(document.RootElement);command=document.RootElement.Deserialize<ShipOpsDraftCommand>(Json)??throw new JsonException();
             if(command.Id==Guid.Empty || routeId!=null && routeId!=command.Id || routeId==null && command.ExpectedVersion!=0 || routeId!=null && command.ExpectedVersion==0 ||
-                command.ReasonCode is not("INITIAL_AUTHORING" or "AUTHORING_CORRECTION" or ShipOperationsLifecycle.PostFinalAmendment) ||
-                command.ReasonCode==ShipOperationsLifecycle.PostFinalAmendment && (kind!="Port" || routeId==null))throw new JsonException();
+                command.ReasonCode is not("INITIAL_AUTHORING" or "AUTHORING_CORRECTION"))throw new JsonException();
             if(command.Origin!=null && (!DailyOperationOriginReader.Valid(command.Origin) || kind=="Port" && command.Origin.Kind!="Noon"))return await Fail(h,400,"linked_resource_unavailable");
             if(!ShipOperationsPolicy.TryNormalize(kind,command.Fields,out fields,out var error))return await Fail(h,400,error=="lookup_source_unavailable"?"linked_resource_unavailable":"invalid_request");
         }catch(Exception ex)when(ex is JsonException or InvalidDataException){return await Fail(h,400,"invalid_request");}

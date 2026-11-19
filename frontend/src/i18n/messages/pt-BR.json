@@ -1,53 +1,5 @@
 {
   "copies": {
-    "ShipOpsLifecyclePanel_tsx_copy": {
-      "sofTitle": "Finalização do Statement of Facts",
-      "sofIntro": "A finalização é um ato humano explícito de comandante, imediato ou chefe de máquinas designado. Registra quem, quando, a função e o motivo. É interna: não é assinatura nem acordo externo.",
-      "draft": "RASCUNHO",
-      "final": "FINAL (interno)",
-      "signature": "Assinatura não registrada",
-      "amended": "Alterado após FINAL: nova revisão e finalização são necessárias.",
-      "missing": "Fatos obrigatórios ausentes: {{fields}}",
-      "unresolved": "Não existe fonte de consulta para estas referências obrigatórias; a viagem fica DESCONHECIDA. Confirme cada uma explicitamente para finalizar:",
-      "authority": "Designação",
-      "finalize": "Finalizar SOF",
-      "noAuthority": "Nenhuma designação de finalização vigente para este navio.",
-      "history": "Histórico do ciclo de vida",
-      "loading": "Carregando…",
-      "unavailable": "Indisponível para seu acesso atual.",
-      "retry": "Tentar novamente",
-      "offline": "Offline: comandos do ciclo de vida exigem uma sessão online atual.",
-      "unknownOutcome": "Resultado desconhecido: tentar novamente envia o mesmo comando uma vez.",
-      "done": "Comando registrado.",
-      "failed": "Comando não aceito: {{code}}",
-      "dtTitle": "Revisão e encerramento da parada",
-      "dtIntro": "Envio, verificação e encerramento são atos humanos explícitos. Quem registrou o conteúdo nunca o verifica nem encerra. Encerramento verificado não é liberação de segurança.",
-      "state": "Estado",
-      "loh": "Candidato a Loss of Hire",
-      "lohReview": "Revisão necessária: apenas candidato, sem direito nem valor",
-      "lohUnknown": "Desconhecido (sem início declarado)",
-      "evidence": "Evidências da reclamação (um vínculo não é verificação)",
-      "noEvidence": "Nenhuma evidência de reclamação vinculada.",
-      "link": "Vincular evidência",
-      "unlink": "Remover",
-      "selectEvidence": "Selecionar evidência",
-      "recorderNote": "Você registrou esta parada: outra pessoa designada deve verificá-la e encerrá-la.",
-      "states": {
-        "NOT_SUBMITTED": "Não enviado",
-        "OPEN": "Aberto",
-        "IN_REVIEW": "Em revisão",
-        "VERIFIED": "Verificado (humano)",
-        "CLOSED": "Encerrado"
-      },
-      "actions": {
-        "SUBMIT_FOR_REVIEW": "Enviar para revisão",
-        "RETURN_FOR_CORRECTION": "Devolver para correção",
-        "VERIFY": "Verificar",
-        "CLOSE": "Encerrar",
-        "LINK_CLAIM_EVIDENCE": "Vincular evidência de reclamação",
-        "UNLINK_CLAIM_EVIDENCE": "Remover evidência de reclamação"
-      }
-    },
     "ShipOperationsLedgerPanel_tsx_copy": {
       "fuelTitle": "Revisão de continuidade de ROB",
       "portTitle": "Linha do tempo do Statement of Facts",

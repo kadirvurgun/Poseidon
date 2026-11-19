@@ -19,10 +19,6 @@ public sealed class Downtime : ITenantEntity
     public string Provenance {get;set;}="UserDeclaredUnverified";
     public Guid ActorId {get;set;}
     public DateTimeOffset SavedAt {get;set;}
-    // DEV-102 human command lifecycle (null = declared draft not submitted) and
-    // exact claim-evidence pins. Neither is a financial or safety decision.
-    public string? ClosureState {get;set;}
-    public string? ClaimEvidenceJson {get;set;}
 }
 public sealed class DowntimeRevision : ITenantEntity
 {
@@ -38,8 +34,6 @@ public sealed class DowntimeRevision : ITenantEntity
     public string Provenance {get;set;}="UserDeclaredUnverified";
     public Guid ActorId {get;set;}
     public DateTimeOffset SavedAt {get;set;}
-    public string? ClosureState {get;set;}
-    public string? ClaimEvidenceJson {get;set;}
 }
 public sealed class DowntimeReceipt : ITenantEntity
 {
@@ -58,22 +52,20 @@ internal static class DowntimeStorage
 {
     internal static void Configure(ModelBuilder model) {
         model.Entity<Downtime>(b=> {
-            b.ToTable("Downtimes","operations",t=>t.HasCheckConstraint("CK_Downtime_Draft","\"Revision\">0 AND \"Provenance\" IN ('UserDeclaredUnverified','SyntheticUnverified') AND (\"ClosureState\" IS NULL OR \"ClosureState\" IN ('OPEN','IN_REVIEW','VERIFIED','CLOSED'))"));
+            b.ToTable("Downtimes","operations",t=>t.HasCheckConstraint("CK_Downtime_Draft","\"Revision\">0 AND \"Provenance\" IN ('UserDeclaredUnverified','SyntheticUnverified')"));
             b.HasKey(r=>new{r.TenantId,r.Id});b.HasAlternateKey(r=>new{r.TenantId,r.VesselId,r.Id});b.Property(r=>r.Version).IsRowVersion();
             b.HasOne<Vessel>().WithMany().HasForeignKey(r=>new{r.TenantId,r.VesselId}).OnDelete(DeleteBehavior.Restrict);
             b.HasIndex(r=>new{r.TenantId,r.VesselId,r.SavedAt,r.Id});b.Property(r=>r.FieldsJson).HasColumnType("text");b.Property(r=>r.SourceVersion).HasMaxLength(192);
             b.Property(r=>r.Hash).HasMaxLength(64);b.Property(r=>r.OriginJson).HasColumnType("text");b.Property(r=>r.Provenance).HasMaxLength(32);
-            b.Property(r=>r.ClosureState).HasMaxLength(16);b.Property(r=>r.ClaimEvidenceJson).HasColumnType("text");
         });
         model.Entity<DowntimeRevision>(b=> {
-            b.ToTable("DowntimeRevisions","operations",t=>t.HasCheckConstraint("CK_DowntimeRevision_Draft","\"Revision\">0 AND \"RecordVersion\">0 AND \"Provenance\" IN ('UserDeclaredUnverified','SyntheticUnverified') AND (\"ClosureState\" IS NULL OR \"ClosureState\" IN ('OPEN','IN_REVIEW','VERIFIED','CLOSED'))"));
+            b.ToTable("DowntimeRevisions","operations",t=>t.HasCheckConstraint("CK_DowntimeRevision_Draft","\"Revision\">0 AND \"RecordVersion\">0 AND \"Provenance\" IN ('UserDeclaredUnverified','SyntheticUnverified')"));
             b.HasKey(r=>new{r.TenantId,r.DowntimeId,r.Revision});
             b.HasAlternateKey(r=>new{r.TenantId,r.DowntimeId,r.Revision,r.RecordVersion}).HasName("AK_DowntimeRevision_Version");
             b.HasOne<Downtime>().WithMany().HasForeignKey(r=>new{r.TenantId,r.VesselId,r.DowntimeId}).HasPrincipalKey(r=>new{r.TenantId,r.VesselId,r.Id})
                 .HasConstraintName("FK_DowntimeRevision_Head").OnDelete(DeleteBehavior.Restrict);
             b.Property(r=>r.FieldsJson).HasColumnType("text");b.Property(r=>r.SourceVersion).HasMaxLength(192);
             b.Property(r=>r.Hash).HasMaxLength(64);b.Property(r=>r.OriginJson).HasColumnType("text");b.Property(r=>r.Provenance).HasMaxLength(32);
-            b.Property(r=>r.ClosureState).HasMaxLength(16);b.Property(r=>r.ClaimEvidenceJson).HasColumnType("text");
         });
         model.Entity<DowntimeReceipt>(b=> {
             b.ToTable("DowntimeReceipts","operations",t=>t.HasCheckConstraint("CK_DowntimeReceipt_Version","\"Revision\">0 AND \"RecordVersion\">0"));b.HasKey(r=>new{r.TenantId,r.ActorId,r.Key});

@@ -22,20 +22,16 @@ internal static class ShipOperationsWriter
         if(row!=null && (row.VesselId!=vessel || row.Kind!=kind))return new(null,404,"resource_not_found");
         if(row!=null && row.Version!=command.ExpectedVersion)return new(null,409,"version_conflict");
         if(row!=null && row.SourceVersion!=ShipOperationsPolicy.SourceVersion)return new(null,409,"source_contract_changed");
-        // 60.01 T63: a FINAL SOF revision stays immutable. A later correction is a
-        // new explicit amendment revision returned to DRAFT for a new review.
-        if(row!=null && row.SofState==ShipOperationsLifecycle.SofFinal && command.ReasonCode!=ShipOperationsLifecycle.PostFinalAmendment)return new(null,409,"sof_finalized");
-        if(command.ReasonCode==ShipOperationsLifecycle.PostFinalAmendment && row?.SofState!=ShipOperationsLifecycle.SofFinal)return new(null,400,"invalid_request");
         if(row==null){row=new(){TenantId=actor.TenantId,VesselId=vessel,Id=command.Id,Kind=kind};db.ShipOperations.Add(row);}else row.Revision++;
         var origin=command.Origin==null?null:JsonSerializer.Serialize(command.Origin,ShipOperationsEndpoints.Json);
         row.FieldsJson=JsonSerializer.Serialize(fields,ShipOperationsEndpoints.Json);row.OriginJson=origin;
         row.SourceVersion=ShipOperationsPolicy.SourceVersion;row.Hash=RegisterStorage.Hash(JsonSerializer.Serialize(new{kind,vessel,row.Id,row.Revision,fields,command.Origin,sourceVersion=row.SourceVersion},ShipOperationsEndpoints.Json));
-        row.Provenance="UserDeclaredUnverified";row.ActorId=actor.Id;row.SavedAt=now;row.SofState=kind=="Port"?ShipOperationsLifecycle.SofDraft:null;
+        row.Provenance="UserDeclaredUnverified";row.ActorId=actor.Id;row.SavedAt=now;
         row.OccurredAt=Instant(kind=="Fuel"?"record_date":"event_start");row.EndedAt=kind=="Port"?Instant("event_end"):null;
         DateTimeOffset? Instant(string key)=>fields.TryGetValue(key,out var fact) && fact.State=="Known" && ShipOperationsPolicy.TryInstant(fact.Value,out var value)?value:null;
         await db.SaveChangesAsync(ct);
         db.ShipOperationRevisions.Add(new(){TenantId=row.TenantId,VesselId=row.VesselId,RecordId=row.Id,Kind=row.Kind,Revision=row.Revision,RecordVersion=row.Version,
-            FieldsJson=row.FieldsJson,OriginJson=row.OriginJson,SourceVersion=row.SourceVersion,Hash=row.Hash,Provenance=row.Provenance,ActorId=row.ActorId,SavedAt=row.SavedAt,OccurredAt=row.OccurredAt,EndedAt=row.EndedAt,SofState=row.SofState,FinalRevision=row.FinalRevision});
+            FieldsJson=row.FieldsJson,OriginJson=row.OriginJson,SourceVersion=row.SourceVersion,Hash=row.Hash,Provenance=row.Provenance,ActorId=row.ActorId,SavedAt=row.SavedAt,OccurredAt=row.OccurredAt,EndedAt=row.EndedAt});
         await db.SaveChangesAsync(ct);return new(ShipOperationsEndpoints.Dto(row,false,false));
     }
 }

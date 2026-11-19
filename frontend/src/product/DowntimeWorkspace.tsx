@@ -11,7 +11,6 @@ import { emptyDowntimeFields, downtimeMutableSchema, type DowntimeFields } from 
 import { downtimeApi, downtimeInputErrors, freezeDowntimeCommand, type DowntimeAttempt, type DowntimeOriginContext, type DowntimeOriginPin, type DowntimeCapabilities, type DowntimeHistory, type DowntimePage, type DowntimeRecord } from './downtime-api';
 import { readDowntimeLocation, downtimeLocationPath, useDowntimeLocation, type DowntimeLocation, type DowntimeOriginSelector } from './downtime-location';
 import { DowntimeFieldsForm } from './DowntimeFieldsForm';
-import { DowntimeLifecyclePanel } from './ShipOpsLifecyclePanel';
 import { DowntimeOriginAside, DowntimeRecordHistory, DowntimeRecordList, DowntimeSourceSummary } from './DowntimeRecordView';
 import { useWorkspaceRevalidation } from './use-workspace-revalidation';
 import { unsavedState, useUnsavedChangesSource } from './unsaved-changes';
@@ -274,7 +273,6 @@ function DowntimeSurface({ route, language, onLanguage, onNavigate, onCanonical,
             <EnterpriseActions layout="form" aria-label={localizedText(en, "pairs.m_0df778d42a2dbb08")}><Button variant="outline" disabled={busy || !!frozen} onClick={readCurrent}>{localizedText(en, "pairs.m_71be3ecd3d59de10")}</Button>{current.caps.canWrite && <Button type="submit" disabled={busy || denied || conflict || !frozen && (!editable || originBlocked)}>{frozen ? (localizedText(en, "pairs.m_f2a18780a5713d10")) : busy ? (localizedText(en, "pairs.m_5b598bccc6931d54")) : (localizedText(en, "pairs.m_8ca7b135ec822147"))}</Button>}</EnterpriseActions>
             <DowntimeFieldsForm fields={editor.fields} schema={current.caps.schema} language={language} disabled={!editable} errors={{ ...failure?.errors, ...fieldErrors }} onChange={change}/>
           </form>
-          {editor.record && route.vessel && <DowntimeLifecyclePanel vessel={route.vessel} id={editor.record.id} revision={editor.record.revision} language={language} disabled={busy || !!frozen || editor.dirty} onCommitted={readCurrent} onSaving={onSaving}/>}
           {editor.record && <EnterpriseActions align="start" aria-label={localizedText(en, "pairs.m_f7ac2028e377b6fd")}><Button variant="outline" disabled={busy || !!frozen} onClick={readCurrent}>{localizedText(en, "pairs.m_83229ffef92bbe4e")}</Button></EnterpriseActions>}
           {current.history && <DowntimeRecordHistory value={current.history} offset={historyOffset} disabled={busy || !!frozen || editor.dirty} language={language} onOffset={setHistoryOffset}/>}
         </section>

@@ -42,7 +42,6 @@ public sealed class PoseidonDbContext(
     public DbSet<Downtime> Downtimes => Set<Downtime>();
     public DbSet<DowntimeRevision> DowntimeRevisions => Set<DowntimeRevision>();
     public DbSet<DowntimeReceipt> DowntimeReceipts => Set<DowntimeReceipt>();
-    public DbSet<ShipOpsLifecycleEvent> ShipOpsLifecycleEvents => Set<ShipOpsLifecycleEvent>();
     public DbSet<WorkOrder> WorkOrders => Set<WorkOrder>();
     public DbSet<WorkOrderRevision> WorkOrderRevisions => Set<WorkOrderRevision>();
     public DbSet<WorkOrderReceipt> WorkOrderReceipts => Set<WorkOrderReceipt>();
@@ -308,8 +307,6 @@ public sealed class PoseidonDbContext(
         model.Entity<Downtime>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         model.Entity<DowntimeRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         model.Entity<DowntimeReceipt>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
-        ShipOpsLifecycleStorage.Configure(model);
-        model.Entity<ShipOpsLifecycleEvent>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         WorkOrderStorage.Configure(model);
         model.Entity<WorkOrder>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         model.Entity<WorkOrderRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
@@ -611,18 +608,16 @@ public sealed class PoseidonDbContext(
             (e.Properties.Any(p=>p.IsModified && p.Metadata.Name is not("FieldsJson" or "PlanId" or "PlanRevision" or "PlanVersion" or "PlanHash" or "PlanSourceVersion" or "SourceVersion" or "Hash" or "Provenance" or "ActorId" or "SavedAt" or "Revision")) ||
                 (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue!+1))))
             throw new InvalidOperationException("WorkOrder ownership is immutable; append one revision.");
-        if(changes.Any(e=>e.Entity is ShipOpsLifecycleEvent && e.State!=EntityState.Added))
-            throw new InvalidOperationException("Ship operations lifecycle events are immutable.");
         if(changes.Any(e=>e.Entity is DowntimeRevision or DowntimeReceipt && e.State!=EntityState.Added))
             throw new InvalidOperationException("Downtime history and outcomes are immutable.");
         if(changes.Any(e=>e.Entity is Downtime && (e.State==EntityState.Deleted || e.State==EntityState.Modified &&
-            (e.Properties.Any(p=>p.IsModified && p.Metadata.Name is not("FieldsJson" or "OriginJson" or "StartedAt" or "SourceVersion" or "Hash" or "Provenance" or "ActorId" or "SavedAt" or "Revision" or "ClosureState" or "ClaimEvidenceJson")) ||
+            (e.Properties.Any(p=>p.IsModified && p.Metadata.Name is not("FieldsJson" or "OriginJson" or "StartedAt" or "SourceVersion" or "Hash" or "Provenance" or "ActorId" or "SavedAt" or "Revision")) ||
                 (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue!+1))))
             throw new InvalidOperationException("Downtime ownership is immutable; append one revision.");
         if(changes.Any(e=>e.Entity is ShipOperationRevision or ShipOperationReceipt && e.State!=EntityState.Added))
             throw new InvalidOperationException("Ship operation history and outcomes are immutable.");
         if(changes.Any(e=>e.Entity is ShipOperation && (e.State==EntityState.Deleted || e.State==EntityState.Modified &&
-            (e.Properties.Any(p=>p.IsModified && p.Metadata.Name is not("FieldsJson" or "OriginJson" or "SourceVersion" or "Hash" or "Provenance" or "ActorId" or "SavedAt" or "OccurredAt" or "EndedAt" or "Revision" or "SofState" or "FinalRevision")) ||
+            (e.Properties.Any(p=>p.IsModified && p.Metadata.Name is not("FieldsJson" or "OriginJson" or "SourceVersion" or "Hash" or "Provenance" or "ActorId" or "SavedAt" or "OccurredAt" or "EndedAt" or "Revision")) ||
                 (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue!+1))))
             throw new InvalidOperationException("Ship operation ownership is immutable; append one revision.");
         if (changes.Any(e => e.Entity is DailyOperationRevision or DailyOperationReceipt && e.State != EntityState.Added))
