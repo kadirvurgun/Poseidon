@@ -76,7 +76,8 @@ public static class CertificateExtractionEndpoints
         try {
             var raw=await h.RequestServices.GetRequiredService<CertificateExtractionProvider>().Extract(policy,bytes,source.File.Mime,source.File.Checksum,ct);
             candidates=CertificateExtractionPolicy.Project(raw,source.File.Checksum,policy.ModelVersion!,policy.PromptVersion!,policy.LowConfidenceThreshold!.Value,vessel.ToString("D"),source.Binding.PersonId?.ToString("D"));
-        }catch(CertificateExtractionUnavailableException){return await Fail(h,503,"source_contract_changed",id);}
+        }catch(CertificateOcrCapabilityUnavailableException){return await Fail(h,503,"ocr_capability_unavailable",id);}
+        catch(CertificateExtractionUnavailableException){return await Fail(h,503,"source_contract_changed",id);}
         finally{CryptographicOperations.ZeroMemory(bytes);}
         if(!PolicyCurrent(h,policy,vessel,scope) || !await CertificateExtractionAccess.Current(h,source.Binding,purpose))return await Fail(h,403,"permission_denied",id);
         await Audit(h,"Success",id);

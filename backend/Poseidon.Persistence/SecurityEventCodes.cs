@@ -48,7 +48,7 @@ public static class SecurityEventCodes
         "decision_type_gate_unavailable", "duplicate_code", "duplicate_lineage", "enrollment_limit",
         "evaluation_lineage_unavailable", "evaluation_unavailable", "example_rule_not_admissible", "field_policy_denied",
         "file_attempt_conflict", "file_attempt_frozen", "file_bytes_unavailable", "file_capability_invalid",
-        "file_integrity_unavailable", "file_quarantined_or_unknown", "file_settings_unavailable", "file_type_or_size_invalid",
+        "file_integrity_unavailable", "ocr_capability_unavailable", "file_quarantined_or_unknown", "file_settings_unavailable", "file_type_or_size_invalid",
         "file_upload_not_accepted",
         "historical_outcome_unavailable", "human_acknowledgment_required", "human_authority_required", "human_catalog_authority_required",
         "idempotency_key_reused", "immutable_context", "immutable_file_reference", "immutable_position_conflict",
