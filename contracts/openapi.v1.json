@@ -1042,6 +1042,42 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/audit-ready/chains": {
+      "get": {
+        "tags": [
+          "AuditReadyEndpoints"
+        ],
+        "operationId": "GetAuditReadyChains",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditReadyChains"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
     "/api/v1/poseidon-today": {
       "get": {
         "tags": [
@@ -4182,6 +4218,130 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/requirements": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "ListRequirements",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageDtoOfRequirementDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/requirements/{id}": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "GetRequirement",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequirementDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
     "/api/v1/rules/capabilities": {
       "get": {
         "tags": [
@@ -5315,6 +5475,93 @@
         "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
+    "/api/v1/controls/{id}/lifecycle": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ControlLifecycleCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ControlLifecycleOutcome"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/controls/{id}/supporting-evidence": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
     "/api/v1/vessels/{id}/compliance-onboarding": {
       "get": {
         "tags": [
@@ -5471,6 +5718,17 @@
           }
         },
         "x-poseidon-profile": "NATIVE-COMMAND-1"
+      },
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
     "/api/v1/verifications/{id}/events": {
@@ -5583,6 +5841,30 @@
           }
         },
         "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/verifications/{id}": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
     "/api/v1/notification-escalation": {
@@ -15416,6 +15698,161 @@
           }
         }
       },
+      "AuditReadyChain": {
+        "required": [
+          "evidenceId",
+          "evidenceRevision",
+          "controlId",
+          "controlRevision",
+          "sources"
+        ],
+        "type": "object",
+        "properties": {
+          "evidenceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "evidenceRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "controlId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "controlRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditReadySource"
+            }
+          }
+        }
+      },
+      "AuditReadyChains": {
+        "required": [
+          "vesselId",
+          "asOf",
+          "items",
+          "unavailable",
+          "hasMore"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "asOf": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditReadyChain"
+            }
+          },
+          "unavailable": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AuditReadySource": {
+        "required": [
+          "sourceId",
+          "sourceRevision",
+          "requirementId",
+          "requirementRevision",
+          "ruleId",
+          "ruleRevision",
+          "availability",
+          "locatorState",
+          "locator",
+          "titleState",
+          "title",
+          "provenance",
+          "sourceHash",
+          "sourceSavedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "sourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "requirementId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "requirementRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "ruleId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "ruleRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "availability": {
+            "type": "string"
+          },
+          "locatorState": {
+            "type": "string"
+          },
+          "locator": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleState": {
+            "type": "string"
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "sourceHash": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sourceSavedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
       "AuditRecordDto": {
         "required": [
           "id",
@@ -18274,6 +18711,137 @@
           "checkedAt": {
             "type": "string",
             "format": "date-time"
+          }
+        }
+      },
+      "ControlLifecycleCommand": {
+        "required": [
+          "expectedVersion",
+          "revision",
+          "reasonCode",
+          "rationale"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ControlLifecycleEventDto": {
+        "required": [
+          "sequence",
+          "controlRevision",
+          "fromState",
+          "toState",
+          "reasonCode",
+          "supersedesRevision",
+          "actorId",
+          "rationale",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "controlRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "fromState": {
+            "type": "string"
+          },
+          "toState": {
+            "type": "string"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "supersedesRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "rationale": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ControlLifecycleOutcome": {
+        "required": [
+          "id",
+          "vesselId",
+          "revision",
+          "version",
+          "state",
+          "publishedRevision",
+          "successorPending",
+          "effectiveness",
+          "event"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "state": {
+            "type": "string"
+          },
+          "publishedRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "successorPending": {
+            "type": "boolean"
+          },
+          "effectiveness": {
+            "type": "string"
+          },
+          "event": {
+            "$ref": "#/components/schemas/ControlLifecycleEventDto"
           }
         }
       },
@@ -27022,6 +27590,34 @@
           }
         }
       },
+      "PageDtoOfRequirementDto": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RequirementDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
       "PageDtoOfSearchItemDto": {
         "required": [
           "items",
@@ -28776,6 +29372,76 @@
           }
         }
       },
+      "RequirementDto": {
+        "required": [
+          "id",
+          "revision",
+          "version",
+          "lifecycle",
+          "lifecycleBasis",
+          "savedAt",
+          "provenance",
+          "hash",
+          "content",
+          "sourceId",
+          "sourceRevision",
+          "qualifications"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "lifecycle": {
+            "type": "string"
+          },
+          "lifecycleBasis": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "content": {
+            "$ref": "#/components/schemas/RegisterContent"
+          },
+          "sourceId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "sourceRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "qualifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RequirementQualificationDto"
+            }
+          }
+        }
+      },
       "RequirementPin": {
         "required": [
           "requirementId",
@@ -28817,6 +29483,50 @@
           }
         },
         "additionalProperties": false
+      },
+      "RequirementQualificationDto": {
+        "required": [
+          "ruleId",
+          "ruleRevision",
+          "qualificationRevision",
+          "requirementRevision",
+          "state",
+          "lifecycle",
+          "current",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "ruleId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "ruleRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "qualificationRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "requirementRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "lifecycle": {
+            "type": "string"
+          },
+          "current": {
+            "type": "boolean"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
       },
       "RuleAuthorCommand": {
         "required": [
@@ -32246,6 +32956,9 @@
     },
     {
       "name": "HumanReviewEndpoints"
+    },
+    {
+      "name": "AuditReadyEndpoints"
     },
     {
       "name": "MetricEndpoints"

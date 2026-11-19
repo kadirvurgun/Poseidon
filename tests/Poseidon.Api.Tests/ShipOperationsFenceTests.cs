@@ -26,7 +26,7 @@ public sealed partial class DirectoryWorkspaceTests
             """);
         var pending=reader.GetAsync(ShipOpsPath("Port",row.Id),Ct);HttpResponseMessage? response=null;
         try {
-            await WaitForComplianceAuditLock(key);
+            await WaitForComplianceAuditLock(key,pending);
             if(change=="head")Assert.Equal(HttpStatusCode.OK,(await ShipOpsSend(writer,"Port",command with{ExpectedVersion=row.Version,ReasonCode="AUTHORING_CORRECTION"},update:true)).StatusCode);
             else{var settings=host.Services.GetRequiredService<FederationSettings>();var m=settings.Memberships[0];settings.Memberships[0]=m with{Permissions=m.Permissions.Where(p=>p!="operations.port.read").ToArray()};}
             await using(var release=new NpgsqlCommand("SELECT pg_advisory_unlock(@key)",blocker)){release.Parameters.AddWithValue("key",key);await release.ExecuteNonQueryAsync(Ct);}
@@ -52,7 +52,7 @@ public sealed partial class DirectoryWorkspaceTests
             """);
         var pending=ShipOpsSend(client,"Fuel",command,commandKey);HttpResponseMessage? response=null;
         try {
-            await WaitForComplianceAuditLock(key);settings.Memberships[0]=member with{Permissions=member.Permissions.Where(p=>p!="operations.fuel.write").ToArray()};
+            await WaitForComplianceAuditLock(key,pending);settings.Memberships[0]=member with{Permissions=member.Permissions.Where(p=>p!="operations.fuel.write").ToArray()};
             await using(var release=new NpgsqlCommand("SELECT pg_advisory_unlock(@key)",blocker)){release.Parameters.AddWithValue("key",key);await release.ExecuteNonQueryAsync(Ct);}
             response=await pending.WaitAsync(TimeSpan.FromSeconds(30),Ct);Assert.Equal(HttpStatusCode.ServiceUnavailable,response.StatusCode);
             var body=await response.Content.ReadAsStringAsync(Ct);Assert.Contains("command_outcome_withheld",body);Assert.DoesNotContain("FICTIONAL",body);Assert.DoesNotContain("fields",body);

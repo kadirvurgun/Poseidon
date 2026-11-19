@@ -155,7 +155,9 @@ public static class ShipOperationsEndpoints
         // makes the command stale: answer version_conflict (rights rechecked) instead of 403.
         async Task<IResult?> Superseded() {
             var head=existing==null?null:await db.ShipOperations.AsNoTracking().SingleOrDefaultAsync(r=>r.Id==command.Id && r.VesselId==vessel && r.Kind==kind,ct);
-            return head==null || head.Version==existing!.Version || !await Current(h,kind,vessel,rights,[],true)?null:await Fail(h,409,"version_conflict");
+            // 409 only when the actor still holds every right a successful update needs: pin the new head
+            // and re-fence its linked origin and the proposed origin, otherwise fall through to 403.
+            return head==null || head.Version==existing!.Version || !await Current(h,kind,vessel,rights,[Dto(head,true,true)],true,command.Origin,!unchangedOrigin)?null:await Fail(h,409,"version_conflict");
         }
         if(!await Current(h,kind,vessel,rights,previous,true,command.Origin,!unchangedOrigin))return await Replay()??await Superseded()??await Fail(h,403,"linked_resource_unavailable");
         await Audit(h,"Attempted",command.Id);IDbContextTransaction? tx=null;string? outcome=null;

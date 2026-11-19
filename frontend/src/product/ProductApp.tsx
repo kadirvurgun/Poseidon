@@ -22,6 +22,7 @@ import { RegulatoryRegister } from './RegulatoryRegister';
 import { enterpriseFocusTargets } from './enterprise-focus';
 import { EnterprisePageHeader, EnterprisePagination, EnterpriseSectionHeader, EnterpriseToolbar } from './EnterprisePatterns';
 import { unsavedState, useUnsavedChangesSource } from './unsaved-changes';
+import { purgeQualificationRecovery } from './use-qualification-recovery';
 const copy = localizedCopy("ProductApp_tsx_copy");
 type State<T> = {
     state: 'loading';
@@ -187,6 +188,9 @@ export function ProductApp() {
         let active = true;
         const timeout = setTimeout(() => { controller.abort(); }, 10000);
         api.session(controller.signal).then(data => { if (active) {
+            // S3 gate B1: a tab's UNKNOWN qualification envelopes never outlive their owner.
+            // Any other (or no) authenticated tenant/actor removes every other owner's record.
+            purgeQualificationRecovery(data.authenticated && data.tenantId && data.actorId ? `${data.tenantId.toLowerCase()}/${data.actorId.toLowerCase()}` : null);
             setIdentity({ state: 'ok', data });
             if (window.location.pathname === '/app' && data.canRead && !data.canReadCompanies)
                 move({ tab: 'fleet', selected: null, profile: false }, true);
@@ -238,6 +242,8 @@ export function ProductApp() {
         if (!user)
             return;
         // A normal form navigation follows the IdP logout redirect; the CSRF token stays in memory/DOM.
+        // Sign-out ends the owner's session, so no per-tab private command envelope survives it.
+        purgeQualificationRecovery(null);
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = '/api/v1/auth/logout';

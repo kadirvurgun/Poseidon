@@ -38,3 +38,18 @@ No database schema, migration, fixture entity, route, payload shape, public DTO 
 - Recorded events, context hashes, business audit rows and review receipts remain unchanged by these reads/denials. Final denied access produces the existing trusted security audit observation.
 
 All tests, build, typecheck, contract generation, PostgreSQL interleaving execution, browser journeys, source gates and independent QA are **DEFERRED / NOT RUN** for the larger S3 bundle. Only source retrieval/manual review and `git diff --check` formatting inspection were performed. The coordinator will update the AST graph once on the combined S3 tree. No new passing count or canonical S3 completion is claimed. Remaining requirements include actual bundle verification of all seven criteria on the integrated backend/UI commit, independent target-commit review and required publication checks; real legal/expert/lookup/permit/pilot decisions remain external qualified-human gates.
+
+## S3-WPA (19.11.2026): DEV-027 per-predicate acceptance crosswalk
+
+Source: 18.01 Backlog row 28 (`G28`): "Flag/type/GT/build/cargo/trading context predicate'leri versioned; result APPLICABLE/NOT_APPLICABLE/REVIEW_REQUIRED + reason döner." Golden data: [applicability.predicate-cases.v1.json](../../contracts/golden/applicability.predicate-cases.v1.json) (57 FICTIONAL cases; not real vessel facts or an approved catalog). The controlled 09.04 fixture `applicability.sample-rules.json` stays hash-pinned and unchanged.
+
+| Predicate | Input field (09.02) / scope | Operators covered | APPLICABLE / NOT_APPLICABLE boundaries | REVIEW_REQUIRED reasons | Tests |
+|---|---|---|---|---|---|
+| Flag | `vessel.flag`; scope `flags` | IN, NOT_IN, scope IN | TR vs PA; ordinal case (`tr` ≠ `TR`) | Unknown, Missing, Stale, Unverified, NotYetObserved; scope Missing | `PRED-FLAG-*`; Domain `ApplicabilityPredicateGoldenTests.cs:33,54,78`; API `ApplicabilityProfileUnknownTests.cs:39` |
+| Type | `vessel.type`; scope `vesselTypes` | IN, NOT_IN, NE, scope IN | TUG vs BULK_CARRIER; scope exclusion | as above | `PRED-TYPE-*`; same tests |
+| GT | `vessel.gt` (exact decimal string) | GTE, LT | 500 inclusive GTE / exclusive LT; 499.9999999999 / 500.0000000001; known zero | as above + InvalidValue (`about 500`) | `PRED-GT-*`; same tests; existing `ApplicabilityEngineTests` exact-decimal theory |
+| Build date | `vessel.buildDate` | DATE_GTE, DATE_LT | 2009-07-01 inclusive / exclusive; 2009-06-30 | as above + InvalidValue (2009-02-30) | `PRED-BUILD-*`; same tests |
+| Cargo | `cargo.type`, `cargo.packagedDangerousGoods` | IN, NOT_IN, IS_TRUE, IS_FALSE | CHEMICAL vs CONTAINER; known false is a value | as above + FALSE AND UNKNOWN keeps blocker | `PRED-CARGO-*`; same tests |
+| Trading area | `vessel.tradingArea` | EQ, IN, NOT | UNRESTRICTED vs HARBOUR; NOT(IN) | as above + NOT(UNKNOWN) stays UNKNOWN | `PRED-AREA-*`; same tests |
+
+Versioning: each rule revision is immutable (`RuleRevisions`), retained evaluations pin rule revision/hash and the profile revision (existing `LifecycleApplicabilityTests.Simulation_is_nonmutating_and_changed_profile_and_rule_produce_distinct_snapshots`). DEV-020 dependency: an unknown/missing/declared-only profile fact yields REVIEW_REQUIRED with the leaf reason code (`Unknown`/`Missing`/`Unverified`) through the real resolver and simulate endpoint, never NOT_APPLICABLE; no engine change was needed (no Unknown→false path found). Domain tests executed locally; API/PostgreSQL case DEFERRED to CI.

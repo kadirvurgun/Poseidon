@@ -28,6 +28,7 @@ import { technicalCases } from './technical-cases.ts';
 import { crewCases } from './crew-cases.ts';
 import { fileCases } from './file-cases.ts';
 import { auditCases } from './audit-cases.ts';
+import { auditReadyCases } from './audit-ready-cases.ts';
 import { expect, type Page } from '@playwright/test';
 async function openRequirements(page: Page) {
     const menu = page.getByRole('button', { name: 'Menu', exact: true });
@@ -167,6 +168,7 @@ export const registerCases = [
     ...technicalCases,
     ...crewCases,
     ...auditCases,
+    ...auditReadyCases,
     ...fileCases,
     { name: 'draft-citation', run: draftCitation, restricted: false },
     { name: 'response-loss-conflict', run: responseLossConflict, restricted: false },

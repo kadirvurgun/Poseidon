@@ -8,6 +8,8 @@ beforeEach(async () => {
   window.history.replaceState(null, '', '/')
   // A test is a fresh browser page; production keeps this preference on navigation.
   window.localStorage.removeItem(localeStorageKey)
+  // A fresh page is also a fresh tab: no retained per-tab command envelopes.
+  window.sessionStorage.clear()
   await changeAppLanguage('tr', false)
 })
 
