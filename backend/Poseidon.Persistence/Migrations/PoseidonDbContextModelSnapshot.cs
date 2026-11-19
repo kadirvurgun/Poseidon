@@ -532,6 +532,10 @@ namespace Poseidon.Persistence.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("ControlState")
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
                     b.Property<long>("Revision")
                         .HasColumnType("bigint");
 
@@ -546,6 +550,67 @@ namespace Poseidon.Persistence.Migrations
                     b.ToTable("ControlEvidenceHeads", "core", t =>
                         {
                             t.HasCheckConstraint("CK_ControlEvidenceHeads", "\"Kind\" IN ('Control','Evidence') AND \"Revision\" > 0");
+
+                            t.HasCheckConstraint("CK_ControlEvidenceHeads_ControlState", "(\"Kind\" = 'Control' AND \"ControlState\" IN ('DRAFT','IN_REVIEW','APPROVED','PUBLISHED','RETIRED')) OR (\"Kind\" = 'Evidence' AND \"ControlState\" IS NULL)");
+                        });
+                });
+            modelBuilder.Entity("Poseidon.Persistence.ControlStateEvent", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ControlId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Revision")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ControlKind")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<long>("ControlRevision")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("FromState")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<string>("Rationale")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("ReasonCode")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("RoleContext")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("SavedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ToState")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.HasKey("TenantId", "VesselId", "ControlId", "Revision");
+
+                    b.HasIndex("TenantId", "VesselId", "ControlKind", "ControlId", "ControlRevision");
+
+                    b.ToTable("ControlStateEvents", "core", t =>
+                        {
+                            t.HasCheckConstraint("CK_ControlStateEvents", "\"ControlKind\" = 'Control' AND \"Revision\" > 0 AND \"ControlRevision\" > 0 AND \"FromState\" IN ('DRAFT','IN_REVIEW','APPROVED','PUBLISHED') AND \"ToState\" IN ('DRAFT','IN_REVIEW','APPROVED','PUBLISHED','RETIRED') AND ((\"ReasonCode\" = 'SUBMIT_FOR_REVIEW' AND \"FromState\" = 'DRAFT' AND \"ToState\" = 'IN_REVIEW') OR (\"ReasonCode\" = 'RETURN_FOR_CORRECTION' AND \"FromState\" = 'IN_REVIEW' AND \"ToState\" = 'DRAFT') OR (\"ReasonCode\" = 'APPROVE' AND \"FromState\" = 'IN_REVIEW' AND \"ToState\" = 'APPROVED') OR (\"ReasonCode\" = 'PUBLISH' AND \"FromState\" = 'APPROVED' AND \"ToState\" = 'PUBLISHED') OR (\"ReasonCode\" = 'RETIRE' AND \"FromState\" = 'PUBLISHED' AND \"ToState\" = 'RETIRED') OR (\"ReasonCode\" = 'CONTENT_REVISED' AND \"FromState\" IN ('IN_REVIEW','APPROVED','PUBLISHED') AND \"ToState\" = 'DRAFT'))");
                         });
                 });
 
@@ -5043,6 +5108,20 @@ namespace Poseidon.Persistence.Migrations
                     b.HasOne("Poseidon.Persistence.Vessel", null)
                         .WithMany()
                         .HasForeignKey("TenantId", "VesselId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+            modelBuilder.Entity("Poseidon.Persistence.ControlStateEvent", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.ControlEvidenceHead", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId", "ControlKind", "ControlId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Poseidon.Persistence.ControlEvidenceRevision", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId", "ControlKind", "ControlId", "ControlRevision")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

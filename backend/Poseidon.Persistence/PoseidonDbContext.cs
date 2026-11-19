@@ -147,6 +147,7 @@ public sealed class PoseidonDbContext(
     public DbSet<ControlEvidenceRequirement> ControlEvidenceRequirements => Set<ControlEvidenceRequirement>();
     public DbSet<ControlEvidenceEdge> ControlEvidenceEdges => Set<ControlEvidenceEdge>();
     public DbSet<ControlEvidenceReceipt> ControlEvidenceReceipts => Set<ControlEvidenceReceipt>();
+    public DbSet<ControlStateEvent> ControlStateEvents => Set<ControlStateEvent>();
 
     public DbSet<CrewCatalogHead> CrewCatalogHeads => Set<CrewCatalogHead>();
     public DbSet<CrewCatalogEvent> CrewCatalogEvents => Set<CrewCatalogEvent>();
@@ -239,6 +240,7 @@ public sealed class PoseidonDbContext(
         model.Entity<ControlEvidenceRequirement>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ControlEvidenceEdge>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ControlEvidenceReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ControlStateEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         ApplicabilityStorage.Configure(model);
         model.Entity<RuleDraft>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<RuleRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -640,10 +642,16 @@ public sealed class PoseidonDbContext(
             throw new InvalidOperationException("Human review history is immutable.");
         if (changes.Any(e => e.Entity is HumanReviewHead && (e.State == EntityState.Deleted || e.State == EntityState.Modified && e.Properties.Any(p => p.IsModified && p.Metadata.Name != "Revision"))))
             throw new InvalidOperationException("Human review scope is immutable.");
-        if (changes.Any(e => e.Entity is ControlEvidenceRevision or ControlEvidenceRequirement or ControlEvidenceEdge or ControlEvidenceReceipt or TugCapabilityBinding or OperationEquipmentBinding or EvaluationOwningReference or EvaluationUpstreamReference or MsmdRoleBinding && e.State != EntityState.Added))
+        if (changes.Any(e => e.Entity is ControlEvidenceRevision or ControlEvidenceRequirement or ControlEvidenceEdge or ControlEvidenceReceipt or ControlStateEvent or TugCapabilityBinding or OperationEquipmentBinding or EvaluationOwningReference or EvaluationUpstreamReference or MsmdRoleBinding && e.State != EntityState.Added))
             throw new InvalidOperationException("Control/evidence lineage is immutable.");
-        if (changes.Any(e => e.Entity is ControlEvidenceHead && (e.State == EntityState.Deleted || e.State == EntityState.Modified && e.Properties.Any(p => p.IsModified && p.Metadata.Name != "Revision"))))
+        if (changes.Any(e => e.Entity is ControlEvidenceHead head && (e.State == EntityState.Deleted || e.State == EntityState.Modified && e.Properties.Any(p => p.IsModified &&
+            !(p.Metadata.Name == "Revision" || p.Metadata.Name == "ControlState" && head.Kind == "Control")))))
             throw new InvalidOperationException("Control/evidence ownership is immutable.");
+        // DEV-028: a control lifecycle change is never silent; it carries its exact append-only event.
+        if (changes.Any(e => e.Entity is ControlEvidenceHead head && e.State == EntityState.Modified && e.Property(nameof(ControlEvidenceHead.ControlState)).IsModified &&
+            !changes.Any(x => x.State == EntityState.Added && x.Entity is ControlStateEvent ev && ev.TenantId == head.TenantId && ev.VesselId == head.VesselId && ev.ControlId == head.Id &&
+                ev.ToState == head.ControlState && ev.FromState == (string?)e.Property(nameof(ControlEvidenceHead.ControlState)).OriginalValue)))
+            throw new InvalidOperationException("Control lifecycle change requires its event.");
         if (changes.Any(e => e.Entity is RuleRevision or ApplicabilityEvaluation or EvaluationRule or ApplicabilityReceipt && e.State != EntityState.Added))
             throw new InvalidOperationException("Applicability lineage is immutable.");
         if (changes.Any(e => e.Entity is RuleDraft && e.State == EntityState.Deleted))

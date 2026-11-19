@@ -10,6 +10,27 @@ public sealed class ControlEvidenceHead : ITenantEntity
     public Guid Id { get; set; }
     public long Revision { get; set; }
     public uint Version { get; set; }
+    // DEV-028 definition lifecycle (Control only; null for Evidence). Mutable head state,
+    // guarded by xmin; every change appends a ControlStateEvent in the same transaction.
+    public string? ControlState { get; set; }
+}
+// Append-only DEV-028 lifecycle history. Revision is the per-control event sequence; the
+// exact control revision it binds is ControlRevision. Rationale is private (never audited).
+public sealed class ControlStateEvent : ITenantEntity
+{
+    public Guid TenantId { get; set; }
+    public Guid VesselId { get; set; }
+    public string ControlKind { get; set; } = "Control";
+    public Guid ControlId { get; set; }
+    public long Revision { get; set; }
+    public long ControlRevision { get; set; }
+    public required string FromState { get; set; }
+    public required string ToState { get; set; }
+    public required string ReasonCode { get; set; }
+    public string? Rationale { get; set; }
+    public Guid ActorId { get; set; }
+    public string? RoleContext { get; set; }
+    public DateTimeOffset SavedAt { get; set; }
 }
 public sealed class ControlEvidenceRevision : ITenantEntity
 {
@@ -74,13 +95,34 @@ public sealed class ControlEvidenceReceipt : ITenantEntity
 }
 public static class ControlEvidenceStorage
 {
+    internal const string StateConstraint = "(\"Kind\" = 'Control' AND \"ControlState\" IN ('DRAFT','IN_REVIEW','APPROVED','PUBLISHED','RETIRED')) OR (\"Kind\" = 'Evidence' AND \"ControlState\" IS NULL)";
+    internal const string EventConstraint = "\"ControlKind\" = 'Control' AND \"Revision\" > 0 AND \"ControlRevision\" > 0 AND " +
+        "\"FromState\" IN ('DRAFT','IN_REVIEW','APPROVED','PUBLISHED') AND \"ToState\" IN ('DRAFT','IN_REVIEW','APPROVED','PUBLISHED','RETIRED') AND " +
+        "((\"ReasonCode\" = 'SUBMIT_FOR_REVIEW' AND \"FromState\" = 'DRAFT' AND \"ToState\" = 'IN_REVIEW') OR " +
+        "(\"ReasonCode\" = 'RETURN_FOR_CORRECTION' AND \"FromState\" = 'IN_REVIEW' AND \"ToState\" = 'DRAFT') OR " +
+        "(\"ReasonCode\" = 'APPROVE' AND \"FromState\" = 'IN_REVIEW' AND \"ToState\" = 'APPROVED') OR " +
+        "(\"ReasonCode\" = 'PUBLISH' AND \"FromState\" = 'APPROVED' AND \"ToState\" = 'PUBLISHED') OR " +
+        "(\"ReasonCode\" = 'RETIRE' AND \"FromState\" = 'PUBLISHED' AND \"ToState\" = 'RETIRED') OR " +
+        "(\"ReasonCode\" = 'CONTENT_REVISED' AND \"FromState\" IN ('IN_REVIEW','APPROVED','PUBLISHED') AND \"ToState\" = 'DRAFT'))";
     internal static void Configure(ModelBuilder model)
     {
         model.Entity<StoredFile>().HasAlternateKey(x => new { x.TenantId, x.VesselId, x.Id, x.Revision, x.Checksum }).HasName("AK_StoredFiles_Evidence");
         model.Entity<ControlEvidenceHead>(b => {
             b.HasKey(x => new { x.TenantId, x.VesselId, x.Kind, x.Id }); b.Property(x => x.Kind).HasMaxLength(16); b.Property(x => x.Version).IsRowVersion();
             b.HasOne<Vessel>().WithMany().HasForeignKey(x => new { x.TenantId, x.VesselId }).OnDelete(DeleteBehavior.Restrict);
-            b.ToTable("ControlEvidenceHeads", t => t.HasCheckConstraint("CK_ControlEvidenceHeads", "\"Kind\" IN ('Control','Evidence') AND \"Revision\" > 0"));
+            b.Property(x => x.ControlState).HasMaxLength(16);
+            b.ToTable("ControlEvidenceHeads", t => {
+                t.HasCheckConstraint("CK_ControlEvidenceHeads", "\"Kind\" IN ('Control','Evidence') AND \"Revision\" > 0");
+                t.HasCheckConstraint("CK_ControlEvidenceHeads_ControlState", StateConstraint);
+            });
+        });
+        model.Entity<ControlStateEvent>(b => {
+            b.HasKey(x => new { x.TenantId, x.VesselId, x.ControlId, x.Revision });
+            b.Property(x => x.ControlKind).HasMaxLength(16); b.Property(x => x.FromState).HasMaxLength(16); b.Property(x => x.ToState).HasMaxLength(16);
+            b.Property(x => x.ReasonCode).HasMaxLength(32); b.Property(x => x.Rationale).HasMaxLength(2000);
+            b.HasOne<ControlEvidenceHead>().WithMany().HasForeignKey(x => new { x.TenantId, x.VesselId, Kind = x.ControlKind, Id = x.ControlId }).OnDelete(DeleteBehavior.Restrict);
+            b.HasOne<ControlEvidenceRevision>().WithMany().HasForeignKey(x => new { x.TenantId, x.VesselId, Kind = x.ControlKind, Id = x.ControlId, Revision = x.ControlRevision }).OnDelete(DeleteBehavior.Restrict);
+            b.ToTable("ControlStateEvents", t => t.HasCheckConstraint("CK_ControlStateEvents", EventConstraint));
         });
         model.Entity<ControlEvidenceRevision>(b => {
             b.HasKey(x => new { x.TenantId, x.VesselId, x.Kind, x.Id, x.Revision }); b.Property(x => x.Kind).HasMaxLength(16); b.Property(x => x.Checksum).HasMaxLength(64);

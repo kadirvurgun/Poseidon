@@ -63,8 +63,57 @@ public static class ControlEvidencePolicy
         reasons.Add("VERIFICATION_NOT_PERFORMED");
         return reasons.ToArray();
     }
+    // DEV-028 orphan finding for one current, non-retired control. Unknown criticality is
+    // reported (never treated as non-critical); a declared non-critical control is not an orphan.
+    public static string[] OrphanReasons(bool? critical, bool requirementLinked, bool ownerDeclared)
+    {
+        if (critical == false || requirementLinked && ownerDeclared) return [];
+        var reasons = new List<string>();
+        if (critical == null) reasons.Add("CRITICALITY_UNKNOWN");
+        if (!requirementLinked) reasons.Add("REQUIREMENT_LINK_MISSING");
+        if (!ownerDeclared) reasons.Add("OWNER_MISSING");
+        return reasons.ToArray();
+    }
     // Dates are retained declarations, never an invented qualified freshness policy.
     public static string TimeState(ControlEvidenceContent c, DateTimeOffset asOf, bool superseded) => superseded ? "SUPERSEDED" :
         c.ValidFrom > asOf ? "DECLARED_NOT_YET_VALID" : c.ValidUntil < asOf ? "DECLARED_EXPIRED" :
         c.FreshUntil < asOf ? "DECLARED_STALE" : "UNKNOWN";
+}
+
+// DEV-028 / 18.01 Backlog row 29 "state", using the implementation lifecycle of
+// 62.01 §6 (paragraph:174-199): DRAFT → IN_REVIEW → APPROVED → PUBLISHED → RETIRED,
+// IN_REVIEW → DRAFT on return. APPROVED is a technical implementation approval, never an
+// official plan/legal approval, verification, completion or effectiveness. A content
+// revision returns a reviewed/approved/published control to DRAFT ("prior approval is not
+// current"); RETIRED is terminal and accepts no further revision.
+public static class ControlLifecyclePolicy
+{
+    public static readonly string[] States = ["DRAFT", "IN_REVIEW", "APPROVED", "PUBLISHED", "RETIRED"];
+    public static readonly string[] CommandReasons = ["SUBMIT_FOR_REVIEW", "RETURN_FOR_CORRECTION", "APPROVE", "PUBLISH", "RETIRE"];
+    public const string ContentRevised = "CONTENT_REVISED";
+    public static string? Next(string reason) => reason switch {
+        "SUBMIT_FOR_REVIEW" => "IN_REVIEW", "RETURN_FOR_CORRECTION" => "DRAFT", "APPROVE" => "APPROVED",
+        "PUBLISH" => "PUBLISHED", "RETIRE" => "RETIRED", _ => null };
+    // recordReady: the exact current revision passed the submission blockers (SUBMITTED/COMPLETED).
+    // reviewer: holds control.approve. independent: differs from the review submitter and revision author.
+    // qualified: all required qualified source/policy gates resolve for the exact revision.
+    public static string? Transition(string prior, string reason, bool recordReady, bool reviewer, bool independent, bool qualified)
+    {
+        if (!States.Contains(prior)) return "invalid_state";
+        var next = Next(reason);
+        if (next == null) return "invalid_reason";
+        if (prior == "RETIRED") return "control_retired";
+        var allowed = (prior, next) is ("DRAFT", "IN_REVIEW") or ("IN_REVIEW", "DRAFT") or ("IN_REVIEW", "APPROVED") or ("APPROVED", "PUBLISHED") or ("PUBLISHED", "RETIRED");
+        if (!allowed) return "invalid_transition";
+        if (next == "IN_REVIEW") return recordReady ? null : "control_record_incomplete";
+        if (!reviewer) return "control_reviewer_required";
+        if (next is "DRAFT" or "APPROVED" && !independent) return "separation_of_duties";
+        if (next == "APPROVED" && !recordReady) return "control_record_incomplete";
+        if (next == "APPROVED" && !qualified) return "qualified_source_required";
+        return null;
+    }
+    // A new content/submit/complete revision of a reviewed, approved or published control
+    // returns it to DRAFT; a RETIRED control accepts no revision (caller returns 409).
+    public static bool RevisionResets(string prior) => prior is "IN_REVIEW" or "APPROVED" or "PUBLISHED";
+    public static bool AcceptsRevision(string prior) => prior != "RETIRED";
 }

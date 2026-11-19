@@ -433,6 +433,21 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                 new { field = "State", before = (string?)null, after = review.State, evidence = "Allowlisted" }
             }));
         }
+        // DEV-028: closed lifecycle codes and revisions only; the private rationale is never copied.
+        if (entry.Entity is ControlStateEvent cs) {
+            if (cs.ReasonCode is not ("SUBMIT_FOR_REVIEW" or "RETURN_FOR_CORRECTION" or "APPROVE" or "PUBLISH" or "RETIRE" or "CONTENT_REVISED") ||
+                cs.FromState is not ("DRAFT" or "IN_REVIEW" or "APPROVED" or "PUBLISHED") || cs.ToState is not ("DRAFT" or "IN_REVIEW" or "APPROVED" or "PUBLISHED" or "RETIRED"))
+                throw new InvalidOperationException("Invalid control lifecycle metadata.");
+            return new(cs.VesselId, cs.ControlId, "ControlState", null, cs.Revision, Fields(Field("ReasonCode", null, cs.ReasonCode),
+                Field("FromState", null, cs.FromState), Field("ToState", null, cs.ToState), Field("ControlRevision", null, Number(cs.ControlRevision)), Field("Binding", null, "OwnerReference")));
+        }
+        if (entry.Entity is ControlEvidenceHead stateHead && entry.State == EntityState.Modified && entry.Property(nameof(ControlEvidenceHead.ControlState)).IsModified) {
+            static string LifecycleState(object? value) => value is "DRAFT" or "IN_REVIEW" or "APPROVED" or "PUBLISHED" or "RETIRED" ? (string)value : throw new InvalidOperationException("Invalid control lifecycle metadata.");
+            var priorRevision = (long)entry.Property(nameof(ControlEvidenceHead.Revision)).OriginalValue!;
+            return new(stateHead.VesselId, stateHead.Id, "Control", priorRevision, stateHead.Revision, Fields(
+                Field("Revision", Number(priorRevision), Number(stateHead.Revision)),
+                Field("ControlState", LifecycleState(entry.Property(nameof(ControlEvidenceHead.ControlState)).OriginalValue), LifecycleState(stateHead.ControlState))));
+        }
         if (entry.Entity is ControlEvidenceRevision ce) {
             if (ce.Lifecycle is not ("DRAFT" or "SUBMITTED" or "COMPLETED") || ce.ReasonCode is not ("INITIAL_AUTHORING" or "AUTHORING_CORRECTION" or "SYNTHETIC_INCOMPLETE_DRAFT" or "SUBMIT" or "COMPLETE")) throw new InvalidOperationException("Invalid control/evidence change metadata.");
             return new(vessel, resource, ce.Kind, null, ce.Revision, JsonSerializer.Serialize(new[] {

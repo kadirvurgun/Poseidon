@@ -245,7 +245,7 @@ public sealed partial class DirectoryWorkspaceTests
         "hr.employment.read", "hr.employment.write", "hr.legal_entity.identifier.read", "hr.legal_entity.read",
         "hr.legal_entity.write", "hr.person.read", "hr.person.verify", "hr.person.write",
         "certificate.extract", "certificate.read", "certificate.renewal.owner", "certificate.renewal.write", "certificate.verify.record",
-        "certificate.write", "control.owner.eligible", "control.read", "control.write", "crew.assessment.read", "crew.assignment.declare",
+        "certificate.write", "control.approve", "control.owner.eligible", "control.read", "control.write", "crew.assessment.read", "crew.assignment.declare",
         "crew.catalog.govern", "crew.certificate.read", "crew.certificate.write", "crew.documents.read", "crew.documents.write",
         "crew.history.read", "crew.identity.convert", "crew.identity.read", "crew.identity.write", "crew.position.write",
         "crew.profile.contact.read", "crew.profile.contact.write", "crew.profile.employment.read", "crew.profile.employment.write",
