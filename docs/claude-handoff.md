@@ -37,6 +37,11 @@ Main: #16 #17 #18 #20 #23 #36 + **#37 paket 2** birleşik (`2995f70`, 19.11 ~08:
 - DEV-024 takip dalı CI yeşil (39d5e77, yeni PG fence testi dahil). Bağımsız QA **PASS-WITH-NOTES** (engelleyici yok; not: pozitif etiket koruması yalnız `en`'i tarıyor; TR ifade → 1eaacac'te düzeltildi).
 - `integration/bundle3-20261119` = main + DEV-024 takip + #32 (f39793a, çakışmasız). Yerel: build 0 uyarı, Domain 876/876, API unit 250/250, lint/build PASS, vitest product+i18n 1704/1704. **PR #38** açıldı; CI ve #32 bağımsız QA sürüyor.
 
+### 19.11 11:15 etkileşimli oturum
+- Statusline kırıktı: `.tools/node/node-v26.13.0` silinmişti → settings.json `C:/Program Files/nodejs/node.exe`'ye çevrildi (bu yüzden usage.json 00:06'dan beri bayattı). 07:41 oturumu öldürülmüş (0xC000013A), bayat `run.lock` silindi; `poseidon-continue.ps1` artık kilit PID'si canlı değilse kilidi bayat sayıyor.
+- #38 CI 8/8 yeşil (f39793a); #32 QA sonucu kaybolmuştu → bağımsız QA yeniden başlatıldı.
+- Kullanıcı "kaldığın yerden devam et" dedi → #28 (2a55677) ve #30 (c4367d4) teşhisli düzeltmeleri **tek push** ile gönderildi; CI bekleniyor. Yine kırmızıysa dur ve raporla.
+
 ### Entegrasyon paketi 2
 `integration/bundle2-20261119` = main + #29 + replay-race + #34 + #33 (hepsi CI yeşil + QA'lı); alt-ajan birleştirip tek PR açıyor (03:50'de başladı). #28 ve #30 durma limiti nedeniyle dışarıda — kullanıcı onayıyla push edilip CI yeşillenince paket 3'e.
 
