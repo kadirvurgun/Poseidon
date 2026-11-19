@@ -3439,6 +3439,11 @@
     "m_5bfa5323a04a472d": "Odottava seuraajarevisio (ei voimassa ennen julkaisua)",
     "m_ae1a44f3c88cf989": "Mikään julkaistu revisio ei ole voimassa",
     "m_12e4b7ce9141120d": "Korvaa revision",
-    "m_372c48ba7e84c124": "Auditointivalmis jäljitys"
+    "m_372c48ba7e84c124": "Auditointivalmis jäljitys",
+    "m_401a5953741e7377": "Alkuperäistä lähdetiedostoa ei säilytetä tässä selaimessa. Valitse sama tiedosto uudelleen yrittääksesi täsmälleen alkuperäistä yritystä uudelleen.",
+    "m_2adab3886ca18b5e": "Valittu tiedosto ei vastaa alkuperäistä yritystä. Yritys pysyy lukittuna.",
+    "m_6eb8ee576dacf887": "Aiempi epävarma yritys vanheni tässä selaimessa. Tarkista historia ennen uutta lähetystä.",
+    "m_dbbdcf309e8f24c3": "Sidotut säännöt kirjaavat eri elinkaaritiloja. Näytetty arvo on ohjelmiston etusijajärjestys; asiantuntijan tarkistus tarvitaan.",
+    "m_d6eb29d9d9dfbe8b": "Sidottuja sääntöjä on enemmän kuin tämä näkymä voi sisältää; elinkaarta ei johdeta osittaisesta joukosta."
   }
 }

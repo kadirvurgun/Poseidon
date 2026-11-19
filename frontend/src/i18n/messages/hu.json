@@ -3439,6 +3439,11 @@
     "m_5bfa5323a04a472d": "Függőben lévő utódváltozat (közzétételig nem hatályos)",
     "m_ae1a44f3c88cf989": "Nincs hatályos közzétett változat",
     "m_12e4b7ce9141120d": "Felváltja a változatot",
-    "m_372c48ba7e84c124": "Auditra kész nyomkövetés"
+    "m_372c48ba7e84c124": "Auditra kész nyomkövetés",
+    "m_401a5953741e7377": "Az eredeti forrásfájlt ez a böngésző nem tárolja. Az eredeti kísérlet pontos megismétléséhez válassza ki újra ugyanazt a fájlt.",
+    "m_2adab3886ca18b5e": "A kiválasztott fájl nem egyezik az eredeti kísérlettel. A kísérlet zárolva marad.",
+    "m_6eb8ee576dacf887": "Egy korábbi bizonytalan kísérlet lejárt ebben a böngészőben. Újbóli beküldés előtt ellenőrizze az előzményeket.",
+    "m_dbbdcf309e8f24c3": "A kapcsolt szabályok eltérő életciklus-állapotokat rögzítenek. A megjelenített érték szoftveres elsőbbség; szakértői felülvizsgálat szükséges.",
+    "m_d6eb29d9d9dfbe8b": "Több szabály van kapcsolva, mint amennyit ez a nézet kezel; részleges halmazból nem származtatunk életciklust."
   }
 }

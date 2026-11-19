@@ -3439,6 +3439,11 @@
     "m_5bfa5323a04a472d": "Ausstehende Nachfolgerevision (erst nach Veröffentlichung wirksam)",
     "m_ae1a44f3c88cf989": "Keine veröffentlichte Revision ist wirksam",
     "m_12e4b7ce9141120d": "Ersetzt Revision",
-    "m_372c48ba7e84c124": "Prüfbereite Nachverfolgung"
+    "m_372c48ba7e84c124": "Prüfbereite Nachverfolgung",
+    "m_401a5953741e7377": "Die ursprüngliche Quelldatei wird in diesem Browser nicht gespeichert. Wählen Sie dieselbe Datei erneut aus, um den genauen ursprünglichen Versuch zu wiederholen.",
+    "m_2adab3886ca18b5e": "Die ausgewählte Datei stimmt nicht mit dem ursprünglichen Versuch überein. Der Versuch bleibt gesperrt.",
+    "m_6eb8ee576dacf887": "Ein früherer ungewisser Versuch ist in diesem Browser abgelaufen. Prüfen Sie den Verlauf, bevor Sie erneut senden.",
+    "m_dbbdcf309e8f24c3": "Gebundene Regeln erfassen unterschiedliche Lebenszykluszustände. Der angezeigte Wert ist eine Software-Rangfolge; eine Expertenprüfung ist erforderlich.",
+    "m_d6eb29d9d9dfbe8b": "Es sind mehr Regeln gebunden, als diese Ansicht aufnehmen kann; aus einer Teilmenge wird kein Lebenszyklus abgeleitet."
   }
 }

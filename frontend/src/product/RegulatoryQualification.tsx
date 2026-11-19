@@ -20,7 +20,7 @@ type Props = {
     onSaving: (v: boolean) => void;
 };
 export function RegulatoryQualification({ rule, ruleRevision, vessel, language, offline, onDirty, onSaving }: Props) {
-    const { data, content, profile, historyRows, historyMore, dirty, busy, error, attempt, notice, locked, current, canShow, available, canRetry, state, until, chooseState, chooseUntil, edit, send, capture, transition, source, discard, recheck, more } =
+    const { data, content, profile, historyRows, historyMore, dirty, busy, error, attempt, notice, locked, current, canShow, available, canRetry, withheld, sourceMismatch, expired, resupply, state, until, chooseState, chooseUntil, edit, send, capture, transition, source, discard, recheck, more } =
         useQualificationRecovery({ rule, ruleRevision, vessel, offline, onDirty, onSaving });
     const control = content.control;
     const controlEdit = (patch: Partial<api.ControlPolicy>) => edit({ control: { ownerRole: content.ownerRole, frequency: null, evidencePolicy: null, verificationPolicy: null, maxAgeHours: null, requireFile: null, requireAcknowledgment: null, acknowledgmentRole: null, requiredVerificationMechanism: null, verificationMechanismSourceLocator: null, sourceLocator: null, ...control, ...patch } });
@@ -33,6 +33,9 @@ export function RegulatoryQualification({ rule, ruleRevision, vessel, language, 
     {error === 401 && <a href={loginHref()} target="_blank" rel="noopener noreferrer">{localizedText(language, 'pairs.m_e3f876bc9c438b22')}</a>}
     {notice && <p role="status">{localizedText(language, 'pairs.m_d11768bdd33352e6')}</p>}
     {attempt?.unknown && <p role="status">{localizedText(language, 'pairs.m_62930366e47b200e')}</p>}
+    {withheld && <label>{localizedText(language, 'pairs.m_401a5953741e7377')}<input type="file" disabled={busy || !available} onChange={e => void resupply(e.target.files?.[0])}/></label>}
+    {sourceMismatch && <p role="alert">{localizedText(language, 'pairs.m_2adab3886ca18b5e')}</p>}
+    {expired && <p role="status">{localizedText(language, 'pairs.m_6eb8ee576dacf887')}</p>}
     {canShow && <>
     {data?.items.length === 0 && <p>{localizedText(language, "pairs.m_6865d2343faf7ae9")}</p>}
     {current && current.ruleRevision !== ruleRevision && <p role="alert">{localizedText(language, "pairs.m_f2f67f1fe95584ab")}</p>}

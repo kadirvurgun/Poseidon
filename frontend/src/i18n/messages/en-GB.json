@@ -3439,6 +3439,11 @@
     "m_5bfa5323a04a472d": "Pending successor revision (not effective until it is published)",
     "m_ae1a44f3c88cf989": "No published revision is effective",
     "m_12e4b7ce9141120d": "Supersedes revision",
-    "m_372c48ba7e84c124": "Audit-ready trace"
+    "m_372c48ba7e84c124": "Audit-ready trace",
+    "m_401a5953741e7377": "The original source file is not kept in this browser. Select the same file again to retry the exact original attempt.",
+    "m_2adab3886ca18b5e": "The selected file does not match the original attempt. The attempt stays locked.",
+    "m_6eb8ee576dacf887": "An earlier uncertain attempt expired in this browser. Check the history before submitting again.",
+    "m_dbbdcf309e8f24c3": "Bound rules record different lifecycle states. The shown value is a software precedence; expert review is required.",
+    "m_d6eb29d9d9dfbe8b": "More rules are bound than this view can carry; no lifecycle is derived from a partial set."
   }
 }

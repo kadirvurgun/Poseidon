@@ -3439,6 +3439,11 @@
     "m_5bfa5323a04a472d": "Revisione successiva in sospeso (non in vigore fino alla pubblicazione)",
     "m_ae1a44f3c88cf989": "Nessuna revisione pubblicata è in vigore",
     "m_12e4b7ce9141120d": "Sostituisce la revisione",
-    "m_372c48ba7e84c124": "Tracciabilità pronta per l’audit"
+    "m_372c48ba7e84c124": "Tracciabilità pronta per l’audit",
+    "m_401a5953741e7377": "Il file sorgente originale non è conservato in questo browser. Selezionare di nuovo lo stesso file per ripetere esattamente il tentativo originale.",
+    "m_2adab3886ca18b5e": "Il file selezionato non corrisponde al tentativo originale. Il tentativo resta bloccato.",
+    "m_6eb8ee576dacf887": "Un precedente tentativo incerto è scaduto in questo browser. Controllare la cronologia prima di inviare di nuovo.",
+    "m_dbbdcf309e8f24c3": "Le regole collegate registrano stati del ciclo di vita diversi. Il valore mostrato è una precedenza software; è richiesta la revisione di un esperto.",
+    "m_d6eb29d9d9dfbe8b": "Sono collegate più regole di quante questa vista ne possa contenere; nessun ciclo di vita viene derivato da un insieme parziale."
   }
 }
