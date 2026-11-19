@@ -978,7 +978,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
     "/api/v1/vessel-compliance-passport": {
@@ -1182,7 +1183,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
     "/api/v1/metrics/scalar": {
@@ -1234,7 +1236,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
     "/api/v1/system-health": {
@@ -2358,7 +2361,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
     "/api/v1/vessels/{id}/regulatory-profile/fields/{field}/history": {
@@ -2428,7 +2432,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
     "/api/v1/vessels/{id}/regulatory-profile/field-sources": {
@@ -2540,7 +2545,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-STORED-OUTCOME-1"
       }
     },
     "/api/v1/source-drafts": {
@@ -10806,7 +10812,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
     "/api/v1/effective-parameters": {
@@ -10863,7 +10870,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
     "/api/v1/parameter-changes/{id}": {
@@ -10921,7 +10929,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
     "/api/v1/parameter-changes": {
@@ -11026,7 +11035,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-STORED-OUTCOME-1"
       }
     },
     "/api/v1/parameter-changes/{id}/commands/approve": {
@@ -11140,7 +11150,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-STORED-OUTCOME-1"
       }
     },
     "/api/v1/parameter-changes/{id}/commands/reject": {
@@ -11254,7 +11265,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-STORED-OUTCOME-1"
       }
     },
     "/api/v1/hr/legal-entities": {
@@ -11301,7 +11313,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
     "/api/v1/hr/legal-entities/{id}": {
@@ -11358,7 +11371,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
       },
       "put": {
         "tags": [
@@ -11470,7 +11484,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
     "/api/v1/hr/legal-entities/{id}/field-revisions": {
@@ -11527,7 +11542,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
     "/api/v1/hr/people/{id}": {
@@ -11584,7 +11600,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
       },
       "put": {
         "tags": [
@@ -11696,7 +11713,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
     "/api/v1/hr/people/{id}/field-revisions": {
@@ -11753,7 +11771,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
     "/api/v1/hr/employments": {
@@ -11815,7 +11834,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
       },
       "post": {
         "tags": [
@@ -11918,7 +11938,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
     "/api/v1/hr/employments/{id}": {
@@ -11975,7 +11996,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
     "/api/v1/hr/assignments": {
@@ -12044,7 +12066,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
       },
       "post": {
         "tags": [
@@ -12147,7 +12170,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
     "/api/v1/hr/assignments/{id}": {
@@ -12204,7 +12228,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
     "/api/v1/hr/legal-entities/{id}/status": {
@@ -12318,7 +12343,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
     "/api/v1/hr/legal-entities/{id}/identifiers": {
@@ -12432,7 +12458,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
     "/api/v1/hr/legal-entities/{id}/identifiers/{identifierId}/retire": {
@@ -12555,7 +12582,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
     "/api/v1/hr/legal-entities/{id}/roles": {
@@ -12669,7 +12697,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
     "/api/v1/hr/legal-entities/{id}/roles/{roleId}/end": {
@@ -12792,7 +12821,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
     "/api/v1/hr/legal-entities/{id}/roles/{roleId}/cancel": {
@@ -12915,7 +12945,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
     "/api/v1/hr/people/{id}/verify": {
@@ -13029,7 +13060,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
     "/api/v1/hr/employments/{id}/status": {
@@ -13143,7 +13175,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
     "/api/v1/hr/assignments/{id}/status": {
@@ -13257,7 +13290,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
     "/api/v1/hr/assignments/{id}/actual-events": {
@@ -13371,7 +13405,8 @@
           "503": {
             "description": "Service Unavailable"
           }
-        }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     }
   },
