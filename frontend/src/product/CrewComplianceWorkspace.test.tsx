@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { changeAppLanguage } from '../i18n'
 import { cleanup, render, screen } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { CrewCompetencePanel, CrewComplianceWorkspace } from './CrewComplianceWorkspace'
 import { credentialTone, decodeEligibility, decodeRegister, decodeSafeManning, eligibilityTone } from './crew-compliance-api'
 
@@ -76,5 +77,35 @@ describe('crew compliance screens', () => {
     vi.stubGlobal('fetch', vi.fn(() => Promise.resolve(response({ code: 'permission_denied' }, 403))))
     render(<CrewCompetencePanel vessel={vessel} assignment={assignment} language="en"/>)
     expect(await screen.findByText('Not available for your current access.')).toBeVisible()
+  })
+})
+
+// DEV-050 acceptance rule (SOLAS V/14, IMO A.1047(27), STCW Art. VIII) in the decision form.
+describe('safe manning decision form', () => {
+  const session = { authenticated: true, actorId: assignment, tenantId: vessel, csrfToken: 'csrf' }
+  const decide = (overrides: Record<string, unknown>) => ({ ...manning(), canDecide: true, authorities: [{ id: credential, roleId: position, duty: 'Master' }],
+    decisions: ['MANNING_ACCEPTED', 'MANNING_NOT_ACCEPTED', 'MANNING_HOLD'], posts: ['MASTER', 'CHIEF_ENGINEER', 'OFFICER', 'ENGINEER_OFFICER', 'RATING', 'OTHER'], ...overrides })
+  it('asks for one onboard acknowledgement per review reason before accepting REVIEW_REQUIRED', async () => {
+    vi.stubGlobal('fetch', vi.fn((url: string) => Promise.resolve(response(String(url).includes('auth/session') ? session
+      : decide({ reviewReasonCodes: ['MSMD_SOURCE_QUALIFIED_MSMD_REQUIRED', 'WORK_REST_SOURCE_UNAVAILABLE'], dispensationMembers: [], evidenceOptions: [] })))))
+    render(<CrewComplianceWorkspace view="safe-manning" vessel={vessel}/>)
+    const select = await screen.findByLabelText('Record Safe Manning decision')
+    await userEvent.selectOptions(select, 'MANNING_ACCEPTED')
+    expect(screen.getByRole('group', { name: 'Per-reason acknowledgement' })).toBeVisible()
+    expect(screen.getByLabelText('Per-reason acknowledgement: WORK_REST_SOURCE_UNAVAILABLE')).toBeRequired()
+    expect(screen.getByLabelText('Per-reason acknowledgement: MSMD_SOURCE_QUALIFIED_MSMD_REQUIRED')).toBeRequired()
+    await userEvent.selectOptions(select, 'MANNING_HOLD')
+    expect(screen.queryByRole('group', { name: 'Per-reason acknowledgement' })).not.toBeInTheDocument()
+  })
+  it('asks for an Administration dispensation per not-eligible member and states the force-majeure rule', async () => {
+    const notEligible = { ...manning().evaluation, state: 'NOT_ELIGIBLE', reasons: [], members: [{ ...member('NOT_ELIGIBLE', [{ code: 'CREDENTIAL_EXPIRED', dimension: 'CREDENTIAL', severity: 'NOT_ELIGIBLE', requirementId: null, sourceId: null }]) }] }
+    vi.stubGlobal('fetch', vi.fn((url: string) => Promise.resolve(response(String(url).includes('auth/session') ? session
+      : decide({ evaluation: notEligible, reviewReasonCodes: [], dispensationMembers: [{ assignmentId: assignment, positionId: position }], evidenceOptions: [] })))))
+    render(<CrewComplianceWorkspace view="safe-manning" vessel={vessel}/>)
+    await userEvent.selectOptions(await screen.findByLabelText('Record Safe Manning decision'), 'MANNING_ACCEPTED')
+    expect(screen.getByRole('group', { name: 'Flag Administration dispensation' })).toBeVisible()
+    expect(screen.getByText('No readable evidence or controlled document is available to link.')).toBeVisible()
+    expect(screen.getByLabelText('Force majeure declared (required for master or chief engineer)')).not.toBeChecked()
+    expect(screen.getByText(/only in force majeure and for the shortest period/)).toBeVisible()
   })
 })

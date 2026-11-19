@@ -261,3 +261,79 @@ public static class SafeManningPolicy
         return (CrewEligibilityPolicy.Aggregate(reasons.Select(r => r.Severity)), reasons.ToArray(), coverage);
     }
 }
+
+// DEV-050 Safe Manning acceptance rule (SOLAS V/14 and IMO A.1047(27): the flag
+// Administration issues the MSMD and the ship must be manned accordingly; STCW Art. VIII:
+// only the Administration may issue a dispensation, in exceptional necessity, to a person
+// certificated for the post immediately below, never for master/chief engineer except force
+// majeure). The system only records and links the human-supplied facts; it never verifies a
+// dispensation, and continuing crewing difficulty is never a ground it can accept.
+public sealed record ManningReviewAcknowledgement(string ReasonCode, string Statement);
+public sealed record ManningDispensation(string EvidenceKind, Guid EvidenceId, long EvidenceRevision, Guid AssignmentId, Guid PositionId, string Post,
+    DateOnly ValidFrom, DateOnly ValidTo, bool HoldsCertificateForPostImmediatelyBelow, bool ForceMajeureDeclared);
+
+public static class SafeManningDecisionPolicy
+{
+    public const string Accepted = "MANNING_ACCEPTED", NotAccepted = "MANNING_NOT_ACCEPTED", Hold = "MANNING_HOLD";
+    public const string DispensationRequired = "manning_dispensation_required", AcknowledgementRequired = "manning_review_acknowledgement_required";
+    public static readonly string[] EvidenceKinds = ["EVIDENCE", "CONTROLLED_DOCUMENT"];
+    // Closed post codes; MASTER and CHIEF_ENGINEER need an explicit force-majeure declaration.
+    public static readonly string[] Posts = ["MASTER", "CHIEF_ENGINEER", "OFFICER", "ENGINEER_OFFICER", "RATING", "OTHER"];
+    public static readonly string[] CommandPosts = ["MASTER", "CHIEF_ENGINEER"];
+    public const int MaxStatement = 500;
+
+    // Distinct REVIEW_REQUIRED reason codes of the pinned evaluation (vessel and member level).
+    public static string[] ReviewReasonCodes(SafeManningEvaluation evaluation) =>
+        evaluation.Reasons.Concat(evaluation.Members.SelectMany(m => m.Reasons)).Where(r => r.Severity == CrewEligibilityStates.ReviewRequired)
+            .Select(r => r.Code).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
+    // Assignments with a known negative that only an Administration dispensation can cover.
+    public static CrewEligibilityResult[] NotEligibleMembers(SafeManningEvaluation evaluation) =>
+        evaluation.Members.Where(m => m.State == CrewEligibilityStates.NotEligible).ToArray();
+
+    public static bool CommandPost(string post, string? positionText) => CommandPosts.Contains(post, StringComparer.Ordinal) ||
+        positionText != null && (positionText.Contains("MASTER", StringComparison.OrdinalIgnoreCase) ||
+            positionText.Contains("CHIEF ENGINEER", StringComparison.OrdinalIgnoreCase) || positionText.Contains("CHIEF_ENGINEER", StringComparison.OrdinalIgnoreCase));
+
+    public static bool ValidStatement(string? value) => value is { Length: > 0 and <= MaxStatement } && !string.IsNullOrWhiteSpace(value) &&
+        !value.Any(c => char.IsControl(c) && c is not ('\r' or '\n' or '\t'));
+
+    // Returns null when the decision may be recorded, otherwise the refusal code. positionText
+    // maps a position id to its declared rank/code text (used to catch master/chief posts).
+    public static string? Refusal(SafeManningEvaluation evaluation, string decision, ManningReviewAcknowledgement[] acknowledgements,
+        ManningDispensation[] dispensations, Func<Guid, string?> positionText)
+    {
+        if (decision is NotAccepted or Hold) return acknowledgements.Length == 0 && dispensations.Length == 0 ? null : "validation_failed";
+        if (decision != Accepted) return "validation_failed";
+        if (evaluation.State is CrewEligibilityStates.Eligible or CrewEligibilityStates.Attention)
+            return acknowledgements.Length == 0 && dispensations.Length == 0 ? null : "validation_failed";
+        // Every review reason needs its own non-empty "verified onboard" statement; no blanket,
+        // duplicate or unknown acknowledgement is accepted.
+        var review = ReviewReasonCodes(evaluation);
+        if (acknowledgements.Any(a => !ValidStatement(a.Statement)) || acknowledgements.Select(a => a.ReasonCode).Distinct(StringComparer.Ordinal).Count() != acknowledgements.Length ||
+            acknowledgements.Any(a => !review.Contains(a.ReasonCode, StringComparer.Ordinal)) || review.Any(code => !acknowledgements.Any(a => a.ReasonCode == code)))
+            return AcknowledgementRequired;
+        if (evaluation.State == CrewEligibilityStates.ReviewRequired) return dispensations.Length == 0 ? null : "validation_failed";
+        if (evaluation.State != CrewEligibilityStates.NotEligible) return "validation_failed";
+        var negative = NotEligibleMembers(evaluation);
+        var covered = new HashSet<Guid>();
+        foreach (var d in dispensations) {
+            var member = negative.SingleOrDefault(m => m.AssignmentId == d.AssignmentId);
+            if (member == null || member.PositionId != d.PositionId || !covered.Add(d.AssignmentId) || !EvidenceKinds.Contains(d.EvidenceKind) ||
+                d.EvidenceId == Guid.Empty || d.EvidenceRevision < 1 || !Posts.Contains(d.Post, StringComparer.Ordinal) ||
+                d.ValidFrom > evaluation.Window.From || d.ValidTo < evaluation.Window.To || !d.HoldsCertificateForPostImmediatelyBelow ||
+                CommandPost(d.Post, positionText(d.PositionId)) && !d.ForceMajeureDeclared) return DispensationRequired;
+        }
+        if (negative.Any(m => !covered.Contains(m.AssignmentId))) return DispensationRequired;
+        // Vessel-level negatives (MSMD role count) are covered only if the dispensed members
+        // complete the count; a missing person can never be dispensed into existence.
+        foreach (var reason in evaluation.Reasons.Where(r => r.Severity == CrewEligibilityStates.NotEligible)) {
+            if (reason.Code != "MSMD_ROLE_COUNT_NOT_MET" || evaluation.Roles.Length == 0) return DispensationRequired;
+            var roles = evaluation.Roles.Select(r => new MsmdRoleRequirement(r.PositionId, r.Required, "PINNED_EVALUATION")).ToArray();
+            var candidates = evaluation.Members.Where(m => m.PositionId != null).Select(m => new ManningCandidate(m.PositionId!.Value, m.AssignmentId,
+                covered.Contains(m.AssignmentId) || m.State is CrewEligibilityStates.Eligible or CrewEligibilityStates.Attention ? true
+                    : m.State == CrewEligibilityStates.NotEligible ? false : null)).ToArray();
+            if (CrewJobCoveragePolicy.Observe(roles, candidates).State == "Blocked") return DispensationRequired;
+        }
+        return null;
+    }
+}

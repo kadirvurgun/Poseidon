@@ -111,13 +111,20 @@ public sealed class CrewSafeManningDecision : ITenantEntity
     public string AuthorityHash { get; set; } = "";
     public string Rationale { get; set; } = "";
     public DateTimeOffset SavedAt { get; set; }
+    // SOLAS V/14, A.1047(27), STCW Art. VIII: per-reason "verified onboard" acknowledgements
+    // and flag-Administration dispensation links supplied by the human. Recorded and linked
+    // only; never a verification claim. Free text stays out of audit projections.
+    public string AcknowledgementsJson { get; set; } = "[]";
+    public string DispensationsJson { get; set; } = "[]";
+    public int AcknowledgementCount { get; set; }
+    public int DispensationCount { get; set; }
 }
 
 public static class CrewCompetenceStorage
 {
     public static readonly string[] AssertionStates = ["Verified", "Not Verified", "Suspicious", "Suspended / Revoked"];
     public static readonly string[] SignOffOutcomes = ["CONFIRMED", "NOT_CONFIRMED"];
-    public static readonly string[] Decisions = ["MANNING_ACCEPTED", "MANNING_NOT_ACCEPTED"];
+    public static readonly string[] Decisions = ["MANNING_ACCEPTED", "MANNING_NOT_ACCEPTED", "MANNING_HOLD"];
     public static readonly string[] RequirementStatuses = ["ACTIVE", "RETIRED"];
     public static readonly string[] CredentialDuties = ["Crewing", "DPA", "Master"];
     public static readonly string[] AssessmentDuties = ["Assessor", "Master", "ChiefOfficer", "ChiefEngineer"];
@@ -176,13 +183,16 @@ public static class CrewCompetenceStorage
         model.Entity<CrewSafeManningDecision>(b => {
             b.ToTable("SafeManningDecisions", "crew", t => t.HasCheckConstraint("CK_CrewSafeManningDecision_Values",
                 In("Decision", Decisions) + " AND " + In("Duty", DecisionDuties) + " AND " + In("EvaluationState", Poseidon.Domain.CrewEligibilityStates.All) +
-                " AND \"Sequence\">0 AND \"WindowTo\">=\"WindowFrom\""));
+                " AND \"Sequence\">0 AND \"WindowTo\">=\"WindowFrom\" AND \"AcknowledgementCount\">=0 AND \"DispensationCount\">=0" +
+                " AND (\"Decision\"='MANNING_ACCEPTED' OR \"AcknowledgementCount\"=0 AND \"DispensationCount\"=0)"));
             b.HasKey(x => new { x.TenantId, x.Id });
             b.HasIndex(x => new { x.TenantId, x.VesselId, x.Sequence }).IsUnique();
             b.HasOne<Vessel>().WithMany().HasForeignKey(x => new { x.TenantId, x.VesselId }).OnDelete(DeleteBehavior.Restrict);
             b.Property(x => x.Decision).HasMaxLength(32); b.Property(x => x.EvaluationState).HasMaxLength(32);
             b.Property(x => x.EvaluationHash).HasMaxLength(64); b.Property(x => x.Duty).HasMaxLength(32);
             b.Property(x => x.AuthorityHash).HasMaxLength(64); b.Property(x => x.Rationale).HasMaxLength(2000);
+            b.Property(x => x.AcknowledgementsJson).HasColumnType("text").HasDefaultValue("[]");
+            b.Property(x => x.DispensationsJson).HasColumnType("text").HasDefaultValue("[]");
         });
     }
 }

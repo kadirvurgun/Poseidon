@@ -143,11 +143,22 @@ function Matrix({ t, vessel }: { t: Copy; vessel: string }) {
 }
 
 // ---- DEV-050 advisory Safe Manning evaluation + human decision ----
+type DispensationDraft = { evidence: string; post: string; validFrom: string; validTo: string; below: boolean; forceMajeure: boolean };
+const emptyDispensation = (w: { from: string; to: string }): DispensationDraft => ({ evidence: '', post: '', validFrom: w.from, validTo: w.to, below: false, forceMajeure: false });
+// The server re-checks every field; the form only carries the human-supplied record and link.
+function toDispensation(assignmentId: string, positionId: string, d: DispensationDraft) {
+    const [evidenceKind = '', evidenceId = '', revision = '0'] = d.evidence.split('|');
+    return { evidenceKind, evidenceId, evidenceRevision: Number(revision), assignmentId, positionId, post: d.post, validFrom: d.validFrom, validTo: d.validTo,
+        holdsCertificateForPostImmediatelyBelow: d.below, forceMajeureDeclared: d.forceMajeure };
+}
 function SafeManning({ t, vessel }: { t: Copy; vessel: string }) {
     const [from, setFrom] = useState(today()), [to, setTo] = useState(today()), [applied, setApplied] = useState({ from: today(), to: today() });
     const view = useLoad(signal => api.evaluate(vessel, applied.from, applied.to, signal), `${vessel}/${applied.from}/${applied.to}`);
     const command = useCommand(() => view.reload());
     const [authority, setAuthority] = useState(''), [decision, setDecision] = useState(''), [rationale, setRationale] = useState('');
+    // SOLAS V/14, A.1047(27), STCW Art. VIII: per-reason acknowledgements and Administration dispensations.
+    const [acks, setAcks] = useState<Record<string, string>>({});
+    const [dispensations, setDispensations] = useState<Record<string, DispensationDraft>>({});
     return <>
         <form className="crew-compliance-window" onSubmit={e => { e.preventDefault(); setApplied({ from, to }); }}>
             <label>{t.from}<input type="date" required value={from} onChange={e => setFrom(e.target.value)}/></label>
@@ -164,12 +175,30 @@ function SafeManning({ t, vessel }: { t: Copy; vessel: string }) {
                 <tbody>{v.evaluation.members.map(m => <tr key={m.assignmentId}><td><a href={`/app/crew-roster/${vessel}/crew-profile/${m.assignmentId}`}>{m.assignmentId.slice(0, 8)}</a></td>
                     <td><Badge tone={eligibilityTone(m.state)}>{label(t, 'state_', m.state)}</Badge></td><td>{m.reasons.map(r => r.code).join(', ')}</td></tr>)}</tbody></table>}
             {v.latestDecision && <p role="status">{t.latestDecision}: {label(t, 'dec_', v.latestDecision.decision)} · {v.latestDecision.duty} · {v.latestDecision.savedAt.slice(0, 10)} · {label(t, 'state_', v.latestDecision.evaluationState)}</p>}
-            {v.canDecide ? <form onSubmit={e => { e.preventDefault(); void command.run({ from: applied.from, to: applied.to, evaluationHash: v.evaluation.hash, expectedSequence: v.sequence,
-                authorityId: authority, decision, rationale }, (body, csrf, key, signal) => api.recordDecision(vessel, body, csrf, key, signal)); }}>
+            {v.canDecide ? <form onSubmit={e => { e.preventDefault(); const accepting = decision === 'MANNING_ACCEPTED' && v.evaluation.state !== 'ELIGIBLE' && v.evaluation.state !== 'ATTENTION';
+                void command.run({ from: applied.from, to: applied.to, evaluationHash: v.evaluation.hash, expectedSequence: v.sequence, authorityId: authority, decision, rationale,
+                    acknowledgements: accepting ? (v.reviewReasonCodes ?? []).map(code => ({ reasonCode: code, statement: acks[code] ?? '' })) : null,
+                    dispensations: accepting && v.evaluation.state === 'NOT_ELIGIBLE' ? (v.dispensationMembers ?? []).map(m => toDispensation(m.assignmentId, m.positionId ?? '', dispensations[m.assignmentId] ?? emptyDispensation(applied))) : null },
+                    (body, csrf, key, signal) => api.recordDecision(vessel, body, csrf, key, signal)); }}>
                 <h3>{t.decision}</h3>
+                <ul className="crew-compliance-rules" aria-label={t.rulesTitle}><li>{t.ruleMsmd}</li><li>{t.ruleDispensation}</li><li>{t.ruleCommand}</li></ul>
                 <label>{t.authority}<select required value={authority} onChange={e => setAuthority(e.target.value)}><option value="">—</option>{v.authorities.map(a => <option key={a.id} value={a.id}>{a.duty}</option>)}</select></label>
                 <label>{t.decision}<select required value={decision} onChange={e => setDecision(e.target.value)}><option value="">—</option>{v.decisions.map(d => <option key={d} value={d}>{label(t, 'dec_', d)}</option>)}</select></label>
                 <label>{t.rationale}<textarea required maxLength={2000} value={rationale} onChange={e => setRationale(e.target.value)}/></label>
+                {decision === 'MANNING_ACCEPTED' && v.evaluation.state !== 'ELIGIBLE' && v.evaluation.state !== 'ATTENTION' && (v.reviewReasonCodes ?? []).length > 0 &&
+                    <fieldset><legend>{t.acknowledgeTitle}</legend><p>{t.acknowledgeNote}</p>{(v.reviewReasonCodes ?? []).map(code => <label key={code}><code>{code}</code>
+                        <textarea required maxLength={500} aria-label={`${t.acknowledgeTitle}: ${code}`} value={acks[code] ?? ''} onChange={e => setAcks({ ...acks, [code]: e.target.value })}/></label>)}</fieldset>}
+                {decision === 'MANNING_ACCEPTED' && v.evaluation.state === 'NOT_ELIGIBLE' && <fieldset><legend>{t.dispensationTitle}</legend><p>{t.dispensationNote}</p>
+                    {(v.evidenceOptions ?? []).length === 0 && <p role="alert">{t.noDispensationEvidence}</p>}
+                    {(v.dispensationMembers ?? []).map(m => { const d = dispensations[m.assignmentId] ?? emptyDispensation(applied); const set = (patch: Partial<DispensationDraft>) => setDispensations({ ...dispensations, [m.assignmentId]: { ...d, ...patch } });
+                        return <div key={m.assignmentId} className="crew-compliance-dispensation"><p><code>{m.assignmentId.slice(0, 8)}</code></p>
+                            <label>{t.dispensationEvidence}<select required value={d.evidence} onChange={e => set({ evidence: e.target.value })}><option value="">—</option>
+                                {(v.evidenceOptions ?? []).map(o => <option key={`${o.kind}|${o.id}|${o.revision}`} value={`${o.kind}|${o.id}|${o.revision}`}>{o.label}</option>)}</select></label>
+                            <label>{t.post}<select required value={d.post} onChange={e => set({ post: e.target.value })}><option value="">—</option>{(v.posts ?? []).map(x => <option key={x} value={x}>{label(t, 'post_', x)}</option>)}</select></label>
+                            <label>{t.from}<input type="date" required value={d.validFrom} onChange={e => set({ validFrom: e.target.value })}/></label>
+                            <label>{t.to}<input type="date" required value={d.validTo} onChange={e => set({ validTo: e.target.value })}/></label>
+                            <label><input type="checkbox" checked={d.below} onChange={e => set({ below: e.target.checked })}/>{t.holdsBelow}</label>
+                            <label><input type="checkbox" checked={d.forceMajeure} onChange={e => set({ forceMajeure: e.target.checked })}/>{t.forceMajeure}</label></div>; })}</fieldset>}
                 <Button type="submit" disabled={command.busy || !authority || !decision || !rationale.trim()}>{t.decision}</Button>
             </form> : <p role="status">{t.noAuthority}</p>}
             <CommandStatus t={t} command={command}/>

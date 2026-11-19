@@ -1248,7 +1248,27 @@
       "ps_PLANNED": "Planlı (beyan)",
       "ps_ENDED": "Sona erdi",
       "ps_DRAFT": "Taslak",
-      "ps_REVIEW_REQUIRED": "İnceleme gerekli"
+      "ps_REVIEW_REQUIRED": "İnceleme gerekli",
+      "rulesTitle": "Kabul kuralları",
+      "ruleMsmd": "SOLAS V/14 ve IMO A.1047(27): MSMD'yi bayrak İdaresi düzenler ve gemi buna göre donatılmalıdır.",
+      "ruleDispensation": "STCW Madde VIII: muafiyeti yalnızca İdare, istisnai zorunlulukta ve bir alt görevin belgesine sahip kişiye verebilir. Süregelen personel temin güçlüğü gerekçe değildir.",
+      "ruleCommand": "Kaptan veya başmühendis için muafiyet yalnızca mücbir sebepte ve en kısa süre için mümkündür.",
+      "acknowledgeTitle": "Gerekçe başına teyit",
+      "acknowledgeNote": "Her açık inceleme gerekçesi için gemide neyin doğrulandığını belirten ayrı bir açıklama gerekir. Toplu teyit reddedilir.",
+      "dispensationTitle": "Bayrak İdaresi muafiyeti",
+      "dispensationNote": "Uygun olmayan her mürettebat için İdarenin muafiyet kaydını bağlayın. Sistem bunu kaydeder ve bağlar; doğrulamaz.",
+      "noDispensationEvidence": "Bağlanabilecek okunabilir kanıt veya kontrollü belge yok.",
+      "dispensationEvidence": "Muafiyet kaydı",
+      "post": "Kapsanan görev",
+      "holdsBelow": "Kişi bir alt görevin belgesine sahiptir",
+      "forceMajeure": "Mücbir sebep beyan edildi (kaptan veya başmühendis için zorunlu)",
+      "dec_MANNING_HOLD": "Donatım beklemede",
+      "post_MASTER": "Kaptan",
+      "post_CHIEF_ENGINEER": "Başmühendis",
+      "post_OFFICER": "Zabit",
+      "post_ENGINEER_OFFICER": "Makine zabiti",
+      "post_RATING": "Tayfa",
+      "post_OTHER": "Diğer"
     }
   },
   "pairs": {

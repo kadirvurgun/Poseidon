@@ -46,11 +46,15 @@ public sealed record CrewCompetenceView(Guid VesselId, Guid AssignmentId, Guid? 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record SafeManningDecisionCommand([property: JsonRequired] DateOnly From, [property: JsonRequired] DateOnly To,
     [property: JsonRequired] string EvaluationHash, [property: JsonRequired] long ExpectedSequence, [property: JsonRequired] Guid AuthorityId,
-    [property: JsonRequired] string Decision, [property: JsonRequired] string Rationale);
+    [property: JsonRequired] string Decision, [property: JsonRequired] string Rationale,
+    ManningReviewAcknowledgement[]? Acknowledgements = null, ManningDispensation[]? Dispensations = null);
 public sealed record SafeManningDecisionDto(Guid Id, long Sequence, string Decision, string EvaluationState, string EvaluationHash, DateOnly WindowFrom,
-    DateOnly WindowTo, Guid ActorId, Guid RoleId, string Duty, DateTimeOffset SavedAt);
+    DateOnly WindowTo, Guid ActorId, Guid RoleId, string Duty, DateTimeOffset SavedAt, string[]? AcknowledgedReasonCodes = null, ManningDispensation[]? Dispensations = null);
+public sealed record ManningDispensationMember(Guid AssignmentId, Guid? PositionId);
+public sealed record ManningEvidenceOption(string Kind, Guid Id, long Revision, string Label);
 public sealed record SafeManningView(SafeManningEvaluation Evaluation, CrewAuthorityDto[] Authorities, bool CanDecide, long Sequence,
-    SafeManningDecisionDto? LatestDecision, string[] Decisions);
+    SafeManningDecisionDto? LatestDecision, string[] Decisions, string[]? ReviewReasonCodes = null, ManningDispensationMember[]? DispensationMembers = null,
+    ManningEvidenceOption[]? EvidenceOptions = null, string[]? Posts = null, string[]? Rules = null);
 public sealed record SafeManningDecisionPage(SafeManningDecisionDto[] Items, int Offset, bool HasMore);
 public sealed record CrewCommandOutcome(Guid Id, long Revision, uint Version, bool Replayed);
 
@@ -415,7 +419,35 @@ public static class CrewComplianceEndpoints
 
     // ---- DEV-050: advisory Safe Manning evaluation and the human decision record ----
     private static SafeManningDecisionDto DecisionDto(CrewSafeManningDecision d) => new(d.Id, d.Sequence, d.Decision, d.EvaluationState, d.EvaluationHash,
-        d.WindowFrom, d.WindowTo, d.ActorId, d.RoleId, d.Duty, d.SavedAt);
+        d.WindowFrom, d.WindowTo, d.ActorId, d.RoleId, d.Duty, d.SavedAt,
+        (JsonSerializer.Deserialize<ManningReviewAcknowledgement[]>(d.AcknowledgementsJson, Json) ?? []).Select(a => a.ReasonCode).ToArray(),
+        JsonSerializer.Deserialize<ManningDispensation[]>(d.DispensationsJson, Json) ?? []);
+    private static readonly string[] ManningRules = ["SOLAS_V_14_MSMD_ISSUED_BY_FLAG_ADMINISTRATION", "A_1047_27_MANNED_ACCORDING_TO_MSMD",
+        "STCW_ART_VIII_DISPENSATION_ONLY_BY_ADMINISTRATION", "NOT_ELIGIBLE_ACCEPTANCE_REQUIRES_DISPENSATION_RECORD", "REVIEW_REQUIRED_ACCEPTANCE_REQUIRES_PER_REASON_ACKNOWLEDGEMENT",
+        "MASTER_CHIEF_ENGINEER_DISPENSATION_ONLY_FORCE_MAJEURE", "CREWING_DIFFICULTY_IS_NOT_A_GROUND", "DISPENSATION_LINK_IS_NOT_VERIFICATION"];
+    private static async Task<ManningEvidenceOption[]> EvidenceOptions(PoseidonDbContext db, TrustedActor actor, Guid vessel, CancellationToken ct)
+    {
+        var options = new List<ManningEvidenceOption>();
+        if (ControlEvidenceEndpoints.Read(actor))
+            options.AddRange((await OperationEquipmentCommands.Visible(db, actor, db.ControlEvidenceRevisions.AsNoTracking()).Where(r => r.VesselId == vessel && r.Kind == "Evidence" &&
+                    db.ControlEvidenceHeads.Any(x => x.VesselId == r.VesselId && x.Kind == r.Kind && x.Id == r.Id && x.Revision == r.Revision))
+                .OrderByDescending(r => r.SavedAt).ThenBy(r => r.Id).Take(25).Select(r => new { r.Id, r.Revision, r.Lifecycle }).ToArrayAsync(ct))
+                .Select(r => new ManningEvidenceOption("EVIDENCE", r.Id, r.Revision, r.Lifecycle + " r" + r.Revision)));
+        if (ControlledDocumentEndpoints.CanReadDocuments(actor))
+            options.AddRange((await db.ControlledDocuments.AsNoTracking().Where(d => d.VesselId == vessel && d.CurrentRevision != null && d.DisposalState == "NONE")
+                .OrderBy(d => d.Code).Take(25).Select(d => new { d.Id, d.Code, Revision = d.CurrentRevision!.Value }).ToArrayAsync(ct))
+                .Select(d => new ManningEvidenceOption("CONTROLLED_DOCUMENT", d.Id, d.Revision, d.Code + " r" + d.Revision)));
+        return options.ToArray();
+    }
+    // The pinned dispensation document must exist at the exact revision and be readable now.
+    private static async Task<bool> EvidenceReadable(PoseidonDbContext db, TrustedActor actor, Guid vessel, ManningDispensation d, CancellationToken ct) => d.EvidenceKind switch {
+        "EVIDENCE" => ControlEvidenceEndpoints.Read(actor) && await OperationEquipmentCommands.Visible(db, actor, db.ControlEvidenceRevisions.AsNoTracking())
+            .AnyAsync(r => r.VesselId == vessel && r.Kind == "Evidence" && r.Id == d.EvidenceId && r.Revision == d.EvidenceRevision, ct),
+        "CONTROLLED_DOCUMENT" => ControlledDocumentEndpoints.CanReadDocuments(actor) &&
+            await db.ControlledDocuments.AsNoTracking().AnyAsync(x => x.VesselId == vessel && x.Id == d.EvidenceId && x.DisposalState == "NONE", ct) &&
+            await db.ControlledDocumentRevisions.AsNoTracking().AnyAsync(r => r.VesselId == vessel && r.DocumentId == d.EvidenceId && r.Revision == d.EvidenceRevision, ct),
+        _ => false
+    };
 
     private static async Task<IResult> Evaluate(Guid vessel, HttpContext h, PoseidonDbContext db)
     {
@@ -428,8 +460,11 @@ public static class CrewComplianceEndpoints
         var latest = await db.CrewSafeManningDecisions.AsNoTracking().Where(d => d.VesselId == vessel).OrderByDescending(d => d.Sequence).FirstOrDefaultAsync(ct);
         var authorities = ManningDecide(actor) ? CrewAuthorityResolver.Resolve(Settings(h), actor, vessel, CrewAuthorityResolver.SafeManningDecision, Now(h)) : [];
         await Audit(h, "SafeManningRead", "Success", vessel);
+        var evidence = authorities.Length > 0 && evaluation.State == CrewEligibilityStates.NotEligible ? await EvidenceOptions(db, actor!, vessel, ct) : [];
         return Results.Ok(new SafeManningView(evaluation, CrewAuthorityResolver.Dto(authorities), authorities.Length > 0, latest?.Sequence ?? 0,
-            latest == null ? null : DecisionDto(latest), CrewCompetenceStorage.Decisions));
+            latest == null ? null : DecisionDto(latest), CrewCompetenceStorage.Decisions, SafeManningDecisionPolicy.ReviewReasonCodes(evaluation),
+            SafeManningDecisionPolicy.NotEligibleMembers(evaluation).Select(m => new ManningDispensationMember(m.AssignmentId, m.PositionId)).ToArray(),
+            evidence, SafeManningDecisionPolicy.Posts, ManningRules));
     }
 
     private static async Task<IResult> Decisions(Guid vessel, HttpContext h, PoseidonDbContext db)
@@ -447,7 +482,9 @@ public static class CrewComplianceEndpoints
     private static Task<IResult> RecordDecision(Guid vessel, HttpContext h, PoseidonDbContext db) =>
         Command<SafeManningDecisionCommand>(h, db, "SafeManningCommand", "SafeManningDecisionRecord", vessel, ManningDecide, new { },
             c => new CrewEligibilityWindow(c.From, c.To).Valid && c.EvaluationHash is { Length: 64 } && c.EvaluationHash.All(char.IsAsciiHexDigit) &&
-                c.ExpectedSequence >= 0 && c.AuthorityId != Guid.Empty && CrewCompetenceStorage.Decisions.Contains(c.Decision) && Text(c.Rationale, 2000, true),
+                c.ExpectedSequence >= 0 && c.AuthorityId != Guid.Empty && CrewCompetenceStorage.Decisions.Contains(c.Decision) && Text(c.Rationale, 2000, true) &&
+                (c.Acknowledgements?.Length ?? 0) <= 64 && (c.Dispensations?.Length ?? 0) <= 64 &&
+                (c.Acknowledgements ?? []).All(a => a != null && a.ReasonCode != null && Code(a.ReasonCode, 64)) && (c.Dispensations ?? []).All(d => d != null && d.Post != null && d.EvidenceKind != null),
             async (actor, command) => {
                 var ct = h.RequestAborted; const string audit = "SafeManningCommand"; var now = Now(h);
                 var grant = CrewAuthorityResolver.Resolve(Settings(h), actor, vessel, CrewAuthorityResolver.SafeManningDecision, now).SingleOrDefault(g => g.Id == command.AuthorityId);
@@ -458,10 +495,24 @@ public static class CrewComplianceEndpoints
                 if (!string.Equals(evaluation.Hash, command.EvaluationHash, StringComparison.OrdinalIgnoreCase)) return new(await Fail(h, audit, 409, "evaluation_stale"));
                 var sequence = await db.CrewSafeManningDecisions.Where(d => d.VesselId == vessel).MaxAsync(d => (long?)d.Sequence, ct) ?? 0;
                 if (sequence != command.ExpectedSequence) return new(await Fail(h, audit, 409, "version_conflict"));
+                // SOLAS V/14 + A.1047(27) + STCW Art. VIII: NOT_ELIGIBLE needs a linked flag-Administration
+                // dispensation per negative; REVIEW_REQUIRED needs a per-reason onboard acknowledgement.
+                ManningReviewAcknowledgement[] acknowledgements = command.Acknowledgements ?? [];
+                ManningDispensation[] dispensations = command.Dispensations ?? [];
+                var positionIds = dispensations.Select(d => d.PositionId).Distinct().ToArray();
+                var positionText = (await db.CrewPositions.AsNoTracking().Where(p => p.VesselId == vessel && positionIds.Contains(p.Id)).ToArrayAsync(ct))
+                    .ToDictionary(p => p.Id, p => string.Join(' ', new[] { p.Code, p.Rank, p.Capacity }.Where(x => x != null)));
+                var refusal = SafeManningDecisionPolicy.Refusal(evaluation, command.Decision, acknowledgements, dispensations, id => positionText.GetValueOrDefault(id));
+                if (refusal == "validation_failed") return new(await Fail(h, audit, 400, "validation_failed"));
+                if (refusal != null) return new(await Fail(h, audit, 422, refusal));
+                foreach (var dispensation in dispensations)
+                    if (!await EvidenceReadable(db, actor, vessel, dispensation, ct)) return new(await Fail(h, audit, 422, SafeManningDecisionPolicy.DispensationRequired));
                 var row = new CrewSafeManningDecision { TenantId = actor.TenantId, Id = Guid.NewGuid(), VesselId = vessel, Sequence = sequence + 1, Decision = command.Decision,
                     EvaluationState = evaluation.State, EvaluationHash = evaluation.Hash, WindowFrom = command.From, WindowTo = command.To, ActorId = actor.Id,
                     RoleId = grant.RoleId, AuthorityId = grant.Id, Duty = grant.Duty, AuthorityHash = CrewAuthorityResolver.Hash(grant, actor),
-                    Rationale = command.Rationale, SavedAt = now };
+                    Rationale = command.Rationale, SavedAt = now, AcknowledgementCount = acknowledgements.Length, DispensationCount = dispensations.Length,
+                    AcknowledgementsJson = JsonSerializer.Serialize(acknowledgements.OrderBy(a => a.ReasonCode, StringComparer.Ordinal), Json),
+                    DispensationsJson = JsonSerializer.Serialize(dispensations.OrderBy(d => d.AssignmentId), Json) };
                 db.CrewSafeManningDecisions.Add(row);
                 await db.SaveChangesAsync(ct);
                 return new(null, row.Id, row.Sequence, 0);

@@ -155,7 +155,9 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if(entry.Entity is CrewSafeManningDecision manningDecision)
             return new(manningDecision.VesselId,manningDecision.Id,"CrewSafeManningDecision",null,manningDecision.Sequence,Fields(
                 Field("Decision",null,Closed(manningDecision.Decision,CrewCompetenceStorage.Decisions)),Field("Duty",null,Closed(manningDecision.Duty,CrewCompetenceStorage.DecisionDuties)),
-                Field("EvaluationState",null,Closed(manningDecision.EvaluationState,Poseidon.Domain.CrewEligibilityStates.All)),Field("Rationale",null,null,"ValuesWithheld"),Field("Binding",null,"RecordedHumanDecision")));
+                Field("EvaluationState",null,Closed(manningDecision.EvaluationState,Poseidon.Domain.CrewEligibilityStates.All)),Field("Rationale",null,null,"ValuesWithheld"),
+                Field("Acknowledgements",null,Number(manningDecision.AcknowledgementCount)),Field("Dispensations",null,Number(manningDecision.DispensationCount)),
+                Field("AcknowledgementText",null,null,"ValuesWithheld"),Field("Binding",null,"RecordedHumanDecision")));
         if(entry.Entity is CertificateCommandReceipt certificateReceipt)
             return new(certificateReceipt.VesselId,certificateReceipt.ResourceId,"CertificateReceipt",null,null,Fields(Field("Binding",null,"CommittedResource")));
         if (entry.Entity is DailyOfflineEnrollment dailyEnrollment)

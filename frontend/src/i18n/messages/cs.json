@@ -1248,7 +1248,27 @@
       "ps_PLANNED": "Plánováno (deklarováno)",
       "ps_ENDED": "Ukončeno",
       "ps_DRAFT": "Koncept",
-      "ps_REVIEW_REQUIRED": "Vyžaduje kontrolu"
+      "ps_REVIEW_REQUIRED": "Vyžaduje kontrolu",
+      "rulesTitle": "Pravidla přijetí",
+      "ruleMsmd": "SOLAS V/14 a IMO A.1047(27): doklad o minimálním bezpečném obsazení vydává vlajková Administrativa a loď musí být podle něj obsazena.",
+      "ruleDispensation": "STCW článek VIII: výjimku smí vydat pouze Administrativa, jen ve výjimečné nutnosti a jen osobě s osvědčením pro bezprostředně nižší funkci. Trvalé potíže s obsazením nejsou důvodem.",
+      "ruleCommand": "Výjimka pro kapitána nebo prvního strojního důstojníka je přípustná jen při vyšší moci a na nejkratší dobu.",
+      "acknowledgeTitle": "Potvrzení pro každý důvod",
+      "acknowledgeNote": "Každý otevřený důvod kontroly vyžaduje vlastní prohlášení, co bylo ověřeno na palubě. Hromadné potvrzení se odmítá.",
+      "dispensationTitle": "Výjimka vlajkové Administrativy",
+      "dispensationNote": "Pro každého nezpůsobilého člena posádky připojte záznam o výjimce Administrativy. Systém ho zaznamená a propojí; neověřuje ho.",
+      "noDispensationEvidence": "Není k dispozici čitelný doklad ani řízený dokument k propojení.",
+      "dispensationEvidence": "Záznam o výjimce",
+      "post": "Krytá funkce",
+      "holdsBelow": "Osoba má osvědčení pro bezprostředně nižší funkci",
+      "forceMajeure": "Prohlášena vyšší moc (povinné pro kapitána nebo prvního strojního důstojníka)",
+      "dec_MANNING_HOLD": "Obsazení pozastaveno",
+      "post_MASTER": "Kapitán",
+      "post_CHIEF_ENGINEER": "První strojní důstojník",
+      "post_OFFICER": "Důstojník",
+      "post_ENGINEER_OFFICER": "Strojní důstojník",
+      "post_RATING": "Lodník",
+      "post_OTHER": "Jiné"
     }
   },
   "pairs": {

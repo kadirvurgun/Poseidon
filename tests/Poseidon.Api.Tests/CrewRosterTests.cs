@@ -39,7 +39,14 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal("Unknown", page.Items[0].EligibilityState); Assert.Equal("Unknown", page.Items[0].CertificateState);
         var profile = (await client.GetFromJsonAsync<CrewProfile>($"/api/v1/{CrewUrl}/{SeedVessel.Id}", Ct))!;
         Assert.Equal("Withheld", profile.HealthStatus); Assert.Equal("Withheld", profile.ContactStatus);
-        var bad = await client.GetAsync("/api/v1/" + CrewUrl + "?q=FICTIONAL", Ct);
+        // DEV-047: q is a server-side filter now; without identity access it can never match or
+        // echo personal text, and an unknown query key is still rejected.
+        var search = await client.GetAsync("/api/v1/" + CrewUrl + "?q=FICTIONAL", Ct);
+        Assert.Equal(HttpStatusCode.OK, search.StatusCode);
+        var found = (await search.Content.ReadFromJsonAsync<CrewPage>(Ct))!;
+        Assert.All(found.Items, r => Assert.Null(r.FullName)); Assert.Null(found.Filter!.Q);
+        Assert.DoesNotContain("FICTIONAL", await search.Content.ReadAsStringAsync(Ct));
+        var bad = await client.GetAsync("/api/v1/" + CrewUrl + "?name=FICTIONAL", Ct);
         Assert.Equal(HttpStatusCode.BadRequest, bad.StatusCode);
         Assert.DoesNotContain("FICTIONAL", await bad.Content.ReadAsStringAsync(Ct));
     }

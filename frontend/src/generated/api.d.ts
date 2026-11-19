@@ -10358,6 +10358,42 @@ export interface components {
             /** Format: date-time */
             observationAssessedAt?: null | string;
         };
+        ManningDispensation: {
+            evidenceKind: string;
+            /** Format: uuid */
+            evidenceId: string;
+            /** Format: int64 */
+            evidenceRevision: number;
+            /** Format: uuid */
+            assignmentId: string;
+            /** Format: uuid */
+            positionId: string;
+            post: string;
+            /** Format: date */
+            validFrom: string;
+            /** Format: date */
+            validTo: string;
+            holdsCertificateForPostImmediatelyBelow: boolean;
+            forceMajeureDeclared: boolean;
+        };
+        ManningDispensationMember: {
+            /** Format: uuid */
+            assignmentId: string;
+            /** Format: uuid */
+            positionId: null | string;
+        };
+        ManningEvidenceOption: {
+            kind: string;
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            label: string;
+        };
+        ManningReviewAcknowledgement: {
+            reasonCode: string;
+            statement: string;
+        };
         ManningRoleCoverage: {
             /** Format: uuid */
             positionId: string;
@@ -12208,6 +12244,8 @@ export interface components {
             authorityId: string;
             decision: string;
             rationale: string;
+            acknowledgements?: null | components["schemas"]["ManningReviewAcknowledgement"][];
+            dispensations?: null | components["schemas"]["ManningDispensation"][];
         };
         SafeManningDecisionDto: {
             /** Format: uuid */
@@ -12228,6 +12266,8 @@ export interface components {
             duty: string;
             /** Format: date-time */
             savedAt: string;
+            acknowledgedReasonCodes?: null | string[];
+            dispensations?: null | components["schemas"]["ManningDispensation"][];
         };
         SafeManningDecisionPage: {
             items: components["schemas"]["SafeManningDecisionDto"][];
@@ -12263,6 +12303,11 @@ export interface components {
             sequence: number;
             latestDecision: null | components["schemas"]["SafeManningDecisionDto"];
             decisions: string[];
+            reviewReasonCodes?: null | string[];
+            dispensationMembers?: null | components["schemas"]["ManningDispensationMember"][];
+            evidenceOptions?: null | components["schemas"]["ManningEvidenceOption"][];
+            posts?: null | string[];
+            rules?: null | string[];
         };
         SaveRegulatoryDraft: {
             /** Format: uint32 */

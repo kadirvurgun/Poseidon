@@ -1248,7 +1248,27 @@
       "ps_PLANNED": "Planejado (declarado)",
       "ps_ENDED": "Encerrado",
       "ps_DRAFT": "Rascunho",
-      "ps_REVIEW_REQUIRED": "Revisão necessária"
+      "ps_REVIEW_REQUIRED": "Revisão necessária",
+      "rulesTitle": "Regras de aceitação",
+      "ruleMsmd": "SOLAS V/14 e IMO A.1047(27): a Administração de bandeira emite o documento de tripulação mínima e o navio deve ser tripulado de acordo.",
+      "ruleDispensation": "STCW artigo VIII: somente a Administração pode conceder dispensa, em necessidade excepcional, a uma pessoa habilitada para a função imediatamente inferior. Dificuldade contínua de tripulação não é motivo.",
+      "ruleCommand": "Dispensa para comandante ou chefe de máquinas só é admitida por força maior e pelo menor prazo.",
+      "acknowledgeTitle": "Confirmação por motivo",
+      "acknowledgeNote": "Cada motivo de revisão aberto exige sua própria declaração do que foi verificado a bordo. Confirmação genérica é recusada.",
+      "dispensationTitle": "Dispensa da Administração de bandeira",
+      "dispensationNote": "Vincule o registro de dispensa da Administração para cada tripulante não apto. O sistema registra e vincula; não verifica.",
+      "noDispensationEvidence": "Não há evidência ou documento controlado legível para vincular.",
+      "dispensationEvidence": "Registro de dispensa",
+      "post": "Função coberta",
+      "holdsBelow": "A pessoa possui o certificado da função imediatamente inferior",
+      "forceMajeure": "Força maior declarada (obrigatória para comandante ou chefe de máquinas)",
+      "dec_MANNING_HOLD": "Tripulação em espera",
+      "post_MASTER": "Comandante",
+      "post_CHIEF_ENGINEER": "Chefe de máquinas",
+      "post_OFFICER": "Oficial",
+      "post_ENGINEER_OFFICER": "Oficial de máquinas",
+      "post_RATING": "Subalterno",
+      "post_OTHER": "Outro"
     }
   },
   "pairs": {

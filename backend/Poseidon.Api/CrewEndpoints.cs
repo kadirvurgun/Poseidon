@@ -125,7 +125,8 @@ public static class CrewEndpoints
         var declaration = policy.Configured && a.Permissions.Contains("crew.assignment.declare") && Write(a, vessel)
             ? new CrewDeclarationPolicyDto(policy.Version, new[] { "Draft" }.Concat(policy.EffectiveStatuses).Concat(policy.PlannedStatuses).Distinct().ToArray()) : null;
         return Results.Ok(new CrewPage(rows.Take(25).ToArray(), offset, rows.Length > 25, Write(a, vessel), IdentityPolicy(h, true) != null, declaration, IdentityPolicy(h, true),
-            filter, matches, truncated));
+            // The search text is never echoed: it may itself be personal data.
+            filter == null ? null : filter with { Q = null }, matches, truncated));
     }
     private const int FilterWindow = 1000;
     private static bool Filter(HttpContext h, out CrewRosterFilter? filter)

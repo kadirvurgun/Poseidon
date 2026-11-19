@@ -1248,7 +1248,27 @@
       "ps_PLANNED": "Suunniteltu (ilmoitettu)",
       "ps_ENDED": "Päättynyt",
       "ps_DRAFT": "Luonnos",
-      "ps_REVIEW_REQUIRED": "Tarkistus tarvitaan"
+      "ps_REVIEW_REQUIRED": "Tarkistus tarvitaan",
+      "rulesTitle": "Hyväksymissäännöt",
+      "ruleMsmd": "SOLAS V/14 ja IMO A.1047(27): lippuvaltion hallinto myöntää miehitystodistuksen, ja alus on miehitettävä sen mukaisesti.",
+      "ruleDispensation": "STCW VIII artikla: vain hallinto voi myöntää erivapauden, vain poikkeuksellisessa tarpeessa ja vain henkilölle, jolla on välittömästi alemman toimen pätevyyskirja. Jatkuva miehitysvaikeus ei ole peruste.",
+      "ruleCommand": "Päällikön tai konepäällikön erivapaus on sallittu vain ylivoimaisen esteen vuoksi ja lyhimmäksi ajaksi.",
+      "acknowledgeTitle": "Syykohtainen vahvistus",
+      "acknowledgeNote": "Jokainen avoin tarkistussyy tarvitsee oman selvityksen siitä, mitä aluksella todennettiin. Yleisvahvistus hylätään.",
+      "dispensationTitle": "Lippuvaltion hallinnon erivapaus",
+      "dispensationNote": "Liitä hallinnon erivapaustietue jokaiselle kelpaamattomalle miehistön jäsenelle. Järjestelmä kirjaa ja linkittää sen; se ei tarkasta sitä.",
+      "noDispensationEvidence": "Linkitettävää luettavaa näyttöä tai ohjattua asiakirjaa ei ole.",
+      "dispensationEvidence": "Erivapaustietue",
+      "post": "Katettu toimi",
+      "holdsBelow": "Henkilöllä on välittömästi alemman toimen pätevyyskirja",
+      "forceMajeure": "Ylivoimainen este ilmoitettu (pakollinen päällikölle tai konepäällikölle)",
+      "dec_MANNING_HOLD": "Miehitys pidossa",
+      "post_MASTER": "Päällikkö",
+      "post_CHIEF_ENGINEER": "Konepäällikkö",
+      "post_OFFICER": "Perämies",
+      "post_ENGINEER_OFFICER": "Konemestari",
+      "post_RATING": "Miehistön jäsen",
+      "post_OTHER": "Muu"
     }
   },
   "pairs": {

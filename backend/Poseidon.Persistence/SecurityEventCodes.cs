@@ -99,7 +99,7 @@ public static class SecurityEventCodes
         "renewal_state_locked", "certificate_already_superseded",
         "risk_record_incomplete", "method_matrix_incomplete", "template_not_effective", "risk_acknowledgement_exists",
         "checklist_items_mismatch", "na_not_authorized", "port_call_unavailable", "template_unavailable", "verification_rejected",
-        "credential_document_required", "competence_requirement_unavailable", "evaluation_window_invalid",
+        "credential_document_required", "competence_requirement_unavailable", "evaluation_window_invalid", "manning_dispensation_required", "manning_review_acknowledgement_required",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static bool Allows(string action, string result) => Actions.Contains(action) && Results.Contains(result);
 }

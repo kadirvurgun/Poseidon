@@ -1248,7 +1248,27 @@
       "ps_PLANNED": "Tervezett (bejelentve)",
       "ps_ENDED": "Befejezve",
       "ps_DRAFT": "Vázlat",
-      "ps_REVIEW_REQUIRED": "Felülvizsgálat szükséges"
+      "ps_REVIEW_REQUIRED": "Felülvizsgálat szükséges",
+      "rulesTitle": "Elfogadási szabályok",
+      "ruleMsmd": "SOLAS V/14 és IMO A.1047(27): a minimális biztonságos személyzeti okmányt a lobogó szerinti Hatóság adja ki, és a hajót ennek megfelelően kell személyzettel ellátni.",
+      "ruleDispensation": "STCW VIII. cikk: felmentést csak a Hatóság adhat, csak kivételes szükség esetén, és csak a közvetlenül alacsonyabb beosztásra képesített személynek. A tartós személyzeti nehézség nem indok.",
+      "ruleCommand": "Kapitányi vagy gépüzemvezetői beosztásra felmentés csak vis maior esetén és a legrövidebb időre adható.",
+      "acknowledgeTitle": "Okonkénti megerősítés",
+      "acknowledgeNote": "Minden nyitott felülvizsgálati okhoz külön nyilatkozat kell arról, mit ellenőriztek a fedélzeten. Az összevont megerősítést elutasítjuk.",
+      "dispensationTitle": "Lobogó szerinti Hatóság felmentése",
+      "dispensationNote": "Minden nem alkalmas személyzeti taghoz kapcsolja a Hatóság felmentési rekordját. A rendszer rögzíti és kapcsolja, de nem ellenőrzi.",
+      "noDispensationEvidence": "Nincs kapcsolható olvasható bizonyíték vagy szabályozott dokumentum.",
+      "dispensationEvidence": "Felmentési rekord",
+      "post": "Lefedett beosztás",
+      "holdsBelow": "A személy rendelkezik a közvetlenül alacsonyabb beosztás bizonyítványával",
+      "forceMajeure": "Vis maior bejelentve (kapitány vagy gépüzemvezető esetén kötelező)",
+      "dec_MANNING_HOLD": "Személyzeti döntés felfüggesztve",
+      "post_MASTER": "Kapitány",
+      "post_CHIEF_ENGINEER": "Gépüzemvezető",
+      "post_OFFICER": "Tiszt",
+      "post_ENGINEER_OFFICER": "Géptiszt",
+      "post_RATING": "Matróz",
+      "post_OTHER": "Egyéb"
     }
   },
   "pairs": {

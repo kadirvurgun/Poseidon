@@ -31022,6 +31022,119 @@
           }
         }
       },
+      "ManningDispensation": {
+        "required": [
+          "evidenceKind",
+          "evidenceId",
+          "evidenceRevision",
+          "assignmentId",
+          "positionId",
+          "post",
+          "validFrom",
+          "validTo",
+          "holdsCertificateForPostImmediatelyBelow",
+          "forceMajeureDeclared"
+        ],
+        "type": "object",
+        "properties": {
+          "evidenceKind": {
+            "type": "string"
+          },
+          "evidenceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "evidenceRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "assignmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "positionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "post": {
+            "type": "string"
+          },
+          "validFrom": {
+            "type": "string",
+            "format": "date"
+          },
+          "validTo": {
+            "type": "string",
+            "format": "date"
+          },
+          "holdsCertificateForPostImmediatelyBelow": {
+            "type": "boolean"
+          },
+          "forceMajeureDeclared": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ManningDispensationMember": {
+        "required": [
+          "assignmentId",
+          "positionId"
+        ],
+        "type": "object",
+        "properties": {
+          "assignmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "positionId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
+      },
+      "ManningEvidenceOption": {
+        "required": [
+          "kind",
+          "id",
+          "revision",
+          "label"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "label": {
+            "type": "string"
+          }
+        }
+      },
+      "ManningReviewAcknowledgement": {
+        "required": [
+          "reasonCode",
+          "statement"
+        ],
+        "type": "object",
+        "properties": {
+          "reasonCode": {
+            "type": "string"
+          },
+          "statement": {
+            "type": "string"
+          }
+        }
+      },
       "ManningRoleCoverage": {
         "required": [
           "positionId",
@@ -37995,6 +38108,24 @@
           },
           "rationale": {
             "type": "string"
+          },
+          "acknowledgements": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ManningReviewAcknowledgement"
+            }
+          },
+          "dispensations": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ManningDispensation"
+            }
           }
         },
         "additionalProperties": false
@@ -38054,6 +38185,24 @@
           "savedAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "acknowledgedReasonCodes": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "dispensations": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ManningDispensation"
+            }
           }
         }
       },
@@ -38200,6 +38349,51 @@
           },
           "decisions": {
             "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reviewReasonCodes": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "dispensationMembers": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ManningDispensationMember"
+            }
+          },
+          "evidenceOptions": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ManningEvidenceOption"
+            }
+          },
+          "posts": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "rules": {
+            "type": [
+              "null",
+              "array"
+            ],
             "items": {
               "type": "string"
             }

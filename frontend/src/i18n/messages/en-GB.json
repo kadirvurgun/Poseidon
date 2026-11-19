@@ -1248,7 +1248,27 @@
       "ps_PLANNED": "Planned (declared)",
       "ps_ENDED": "Ended",
       "ps_DRAFT": "Draft",
-      "ps_REVIEW_REQUIRED": "Review required"
+      "ps_REVIEW_REQUIRED": "Review required",
+      "rulesTitle": "Acceptance rules",
+      "ruleMsmd": "SOLAS V/14 and IMO A.1047(27): the flag Administration issues the MSMD and the ship must be manned accordingly.",
+      "ruleDispensation": "STCW Article VIII: only the Administration may issue a dispensation, in exceptional necessity, to a person certificated for the post immediately below. Continuing crewing difficulty is not a ground.",
+      "ruleCommand": "A dispensation for master or chief engineer is allowed only in force majeure and for the shortest period.",
+      "acknowledgeTitle": "Per-reason acknowledgement",
+      "acknowledgeNote": "Each open review reason needs its own statement of what was verified onboard. A blanket acknowledgement is refused.",
+      "dispensationTitle": "Flag Administration dispensation",
+      "dispensationNote": "Link the Administration's dispensation record for each not-eligible crew member. The system records and links it; it does not verify it.",
+      "noDispensationEvidence": "No readable evidence or controlled document is available to link.",
+      "dispensationEvidence": "Dispensation record",
+      "post": "Post covered",
+      "holdsBelow": "The person holds the certificate for the post immediately below",
+      "forceMajeure": "Force majeure declared (required for master or chief engineer)",
+      "dec_MANNING_HOLD": "Manning on hold",
+      "post_MASTER": "Master",
+      "post_CHIEF_ENGINEER": "Chief engineer",
+      "post_OFFICER": "Officer",
+      "post_ENGINEER_OFFICER": "Engineer officer",
+      "post_RATING": "Rating",
+      "post_OTHER": "Other"
     }
   },
   "pairs": {

@@ -1248,7 +1248,27 @@
       "ps_PLANNED": "Prévu (déclaré)",
       "ps_ENDED": "Terminé",
       "ps_DRAFT": "Brouillon",
-      "ps_REVIEW_REQUIRED": "Revue requise"
+      "ps_REVIEW_REQUIRED": "Revue requise",
+      "rulesTitle": "Règles d'acceptation",
+      "ruleMsmd": "SOLAS V/14 et OMI A.1047(27) : l'Administration du pavillon délivre le document d'effectif minimal et le navire doit être armé en conséquence.",
+      "ruleDispensation": "STCW article VIII : seule l'Administration peut accorder une dispense, en cas de nécessité exceptionnelle, à une personne brevetée pour la fonction immédiatement inférieure. Une difficulté persistante de recrutement n'est pas un motif.",
+      "ruleCommand": "Une dispense pour capitaine ou chef mécanicien n'est admise qu'en cas de force majeure et pour la durée la plus courte.",
+      "acknowledgeTitle": "Confirmation par motif",
+      "acknowledgeNote": "Chaque motif de revue ouvert exige une déclaration propre de ce qui a été vérifié à bord. Une confirmation globale est refusée.",
+      "dispensationTitle": "Dispense de l'Administration du pavillon",
+      "dispensationNote": "Liez l'enregistrement de dispense de l'Administration pour chaque membre d'équipage non éligible. Le système l'enregistre et le lie ; il ne le vérifie pas.",
+      "noDispensationEvidence": "Aucune preuve ni document maîtrisé lisible à lier.",
+      "dispensationEvidence": "Enregistrement de dispense",
+      "post": "Fonction couverte",
+      "holdsBelow": "La personne détient le brevet de la fonction immédiatement inférieure",
+      "forceMajeure": "Force majeure déclarée (requise pour capitaine ou chef mécanicien)",
+      "dec_MANNING_HOLD": "Effectif en attente",
+      "post_MASTER": "Capitaine",
+      "post_CHIEF_ENGINEER": "Chef mécanicien",
+      "post_OFFICER": "Officier",
+      "post_ENGINEER_OFFICER": "Officier mécanicien",
+      "post_RATING": "Matelot",
+      "post_OTHER": "Autre"
     }
   },
   "pairs": {

@@ -2825,6 +2825,15 @@ namespace Poseidon.Persistence.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
+                    b.Property<int>("AcknowledgementCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("AcknowledgementsJson")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
+                        .HasDefaultValue("[]");
+
                     b.Property<Guid>("ActorId")
                         .HasColumnType("uuid");
 
@@ -2840,6 +2849,15 @@ namespace Poseidon.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)");
+
+                    b.Property<int>("DispensationCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("DispensationsJson")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
+                        .HasDefaultValue("[]");
 
                     b.Property<string>("Duty")
                         .IsRequired()
@@ -2886,7 +2904,7 @@ namespace Poseidon.Persistence.Migrations
 
                     b.ToTable("SafeManningDecisions", "crew", t =>
                         {
-                            t.HasCheckConstraint("CK_CrewSafeManningDecision_Values", "\"Decision\" IN ('MANNING_ACCEPTED','MANNING_NOT_ACCEPTED') AND \"Duty\" IN ('Master','DPA') AND \"EvaluationState\" IN ('ELIGIBLE','ATTENTION','NOT_ELIGIBLE','REVIEW_REQUIRED') AND \"Sequence\">0 AND \"WindowTo\">=\"WindowFrom\"");
+                            t.HasCheckConstraint("CK_CrewSafeManningDecision_Values", "\"Decision\" IN ('MANNING_ACCEPTED','MANNING_NOT_ACCEPTED','MANNING_HOLD') AND \"Duty\" IN ('Master','DPA') AND \"EvaluationState\" IN ('ELIGIBLE','ATTENTION','NOT_ELIGIBLE','REVIEW_REQUIRED') AND \"Sequence\">0 AND \"WindowTo\">=\"WindowFrom\" AND \"AcknowledgementCount\">=0 AND \"DispensationCount\">=0 AND (\"Decision\"='MANNING_ACCEPTED' OR \"AcknowledgementCount\"=0 AND \"DispensationCount\"=0)");
                         });
                 });
 

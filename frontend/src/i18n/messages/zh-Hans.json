@@ -1248,7 +1248,27 @@
       "ps_PLANNED": "计划（申报）",
       "ps_ENDED": "已结束",
       "ps_DRAFT": "草稿",
-      "ps_REVIEW_REQUIRED": "需要审核"
+      "ps_REVIEW_REQUIRED": "需要审核",
+      "rulesTitle": "接受规则",
+      "ruleMsmd": "SOLAS V/14 和 IMO A.1047(27)：最低安全配员文件由船旗国主管机关签发，船舶必须按其配员。",
+      "ruleDispensation": "STCW 第 VIII 条：只有主管机关可签发特免证明，仅限特殊必要情况，且只能给予持有低一级职务证书的人员。持续的配员困难不是理由。",
+      "ruleCommand": "船长或轮机长的特免仅在不可抗力情况下且以最短期限允许。",
+      "acknowledgeTitle": "逐项原因确认",
+      "acknowledgeNote": "每个未决审核原因都需要单独说明在船上核实了什么。不接受笼统确认。",
+      "dispensationTitle": "船旗国主管机关特免",
+      "dispensationNote": "为每名不符合的船员关联主管机关的特免记录。系统仅记录并关联，不进行核验。",
+      "noDispensationEvidence": "没有可关联的可读证据或受控文件。",
+      "dispensationEvidence": "特免记录",
+      "post": "所涵盖职务",
+      "holdsBelow": "该人员持有低一级职务的证书",
+      "forceMajeure": "已声明不可抗力（船长或轮机长必需）",
+      "dec_MANNING_HOLD": "配员暂缓",
+      "post_MASTER": "船长",
+      "post_CHIEF_ENGINEER": "轮机长",
+      "post_OFFICER": "高级船员",
+      "post_ENGINEER_OFFICER": "轮机员",
+      "post_RATING": "普通船员",
+      "post_OTHER": "其他"
     }
   },
   "pairs": {

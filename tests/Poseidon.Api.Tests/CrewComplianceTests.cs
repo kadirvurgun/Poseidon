@@ -162,4 +162,72 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Empty(await check.CrewCredentialAssertions.ToArrayAsync(Ct)); Assert.Empty(await check.CrewCompetenceSignOffs.ToArrayAsync(Ct));
         Assert.Empty(await check.CrewSafeManningDecisions.ToArrayAsync(Ct)); Assert.Empty(await check.CrewCompetenceRecords.ToArrayAsync(Ct));
     }
+
+    // DEV-050 acceptance rule (SOLAS V/14, IMO A.1047(27), STCW Art. VIII). AUTHORED; PG execution DEFERRED.
+    private async Task<SafeManningView> ManningView(HttpClient client) =>
+        (await client.GetFromJsonAsync<SafeManningView>($"/api/v1/vessels/{SeedVessel.Id}/safe-manning/evaluate?from={Today}&to={Today}", Ct))!;
+    private SafeManningDecisionCommand Accept(SafeManningView view, Guid authority) => new(DateOnly.Parse(Today), DateOnly.Parse(Today), view.Evaluation.Hash,
+        view.Sequence, authority, "MANNING_ACCEPTED", "FICTIONAL master rationale");
+
+    [Fact]
+    [Trait("Requirement", "DEV-050")]
+    public async Task Review_required_acceptance_needs_every_reason_acknowledged_and_stores_them()
+    {
+        await using var host = Host(crewRead: true, crewWrite: true); using var client = Client(host);
+        var grant = CrewGrant("SafeManningDecision", "Master"); CrewCompliancePermissions(host.Services, grant); await Token(client);
+        var view = await ManningView(client); Assert.Equal(CrewEligibilityStates.ReviewRequired, view.Evaluation.State);
+        var codes = view.ReviewReasonCodes!; Assert.NotEmpty(codes);
+        var path = $"vessels/{SeedVessel.Id}/safe-manning/decisions";
+        using var none = await Send(client, path, Accept(view, grant.Id)); Assert.Equal((HttpStatusCode)422, none.StatusCode);
+        Assert.Contains("manning_review_acknowledgement_required", await none.Content.ReadAsStringAsync(Ct));
+        if (codes.Length > 1) {
+            using var partial = await Send(client, path, Accept(view, grant.Id) with { Acknowledgements = [new(codes[0], "Verified onboard: FICTIONAL")] });
+            Assert.Equal((HttpStatusCode)422, partial.StatusCode);
+        }
+        using var blanket = await Send(client, path, Accept(view, grant.Id) with { Acknowledgements = [new("ALL", "all reviewed")] });
+        Assert.Equal((HttpStatusCode)422, blanket.StatusCode);
+        var all = codes.Select(c => new ManningReviewAcknowledgement(c, "Verified onboard: FICTIONAL check for " + c)).ToArray();
+        using var accepted = await Send(client, path, Accept(view, grant.Id) with { Acknowledgements = all }); Assert.Equal(HttpStatusCode.OK, accepted.StatusCode);
+        await using var db = Db(); var row = await db.CrewSafeManningDecisions.SingleAsync(d => d.VesselId == SeedVessel.Id, Ct);
+        Assert.Equal(codes.Length, row.AcknowledgementCount); Assert.Equal("MANNING_ACCEPTED", row.Decision);
+        var audit = JsonSerializer.Serialize(await db.AuditEvents.Where(e => e.ResourceId == row.Id).ToArrayAsync(Ct));
+        Assert.DoesNotContain("Verified onboard", audit);
+        Assert.Contains(await db.Set<SecurityEvent>().Where(e => e.Action == "SafeManningCommand").Select(e => e.Result).ToArrayAsync(Ct), r => r == "manning_review_acknowledgement_required");
+    }
+
+    [Fact]
+    [Trait("Requirement", "DEV-050")]
+    public async Task Not_eligible_acceptance_needs_an_administration_dispensation_and_master_posts_need_force_majeure()
+    {
+        await using var host = Host(crewRead: true, crewWrite: true, manage: true); using var client = Client(host);
+        GraphPermissionsForTest(host.Services); await Token(client);
+        var (evidence, _) = await ReviewInputs(client);
+        var grant = CrewGrant("SafeManningDecision", "Master");
+        var settings = host.Services.GetRequiredService<FederationSettings>(); var m = settings.Memberships[0];
+        settings.Memberships[0] = m with { Permissions = [.. m.Permissions, "crew.read", "crew.write", "human.review.read"] };
+        CrewCompliancePermissions(host.Services, grant); await Token(client);
+        // A mandatory certificate with no credential makes the seed assignment NOT_ELIGIBLE.
+        Assert.Equal(HttpStatusCode.OK, (await Send(client, CrewBase + "/competence-matrix", new CrewCompetenceRequirementCommand(Guid.NewGuid(), null, SeedVessel.Id,
+            CrewRequirementTypes.Certificate, "FICTIONAL-COC", true, null, null, null, null, null, "ACTIVE"))).StatusCode);
+        var view = await ManningView(client); Assert.Equal(CrewEligibilityStates.NotEligible, view.Evaluation.State);
+        var member = Assert.Single(view.DispensationMembers!);
+        var acks = view.ReviewReasonCodes!.Select(c => new ManningReviewAcknowledgement(c, "Verified onboard: FICTIONAL")).ToArray();
+        var path = $"vessels/{SeedVessel.Id}/safe-manning/decisions";
+        using var bare = await Send(client, path, Accept(view, grant.Id) with { Acknowledgements = acks });
+        Assert.Equal((HttpStatusCode)422, bare.StatusCode); Assert.Contains("manning_dispensation_required", await bare.Content.ReadAsStringAsync(Ct));
+        var window = DateOnly.Parse(Today);
+        var dispensation = new ManningDispensation("EVIDENCE", evidence.Id, evidence.Revision, member.AssignmentId, member.PositionId!.Value, "OFFICER",
+            window, window, true, false);
+        using var master = await Send(client, path, Accept(view, grant.Id) with { Acknowledgements = acks, Dispensations = [dispensation with { Post = "MASTER" }] });
+        Assert.Equal((HttpStatusCode)422, master.StatusCode);
+        using var unknown = await Send(client, path, Accept(view, grant.Id) with { Acknowledgements = acks, Dispensations = [dispensation with { EvidenceId = Guid.NewGuid() }] });
+        Assert.Equal((HttpStatusCode)422, unknown.StatusCode);
+        using var accepted = await Send(client, path, Accept(view, grant.Id) with { Acknowledgements = acks, Dispensations = [dispensation] });
+        Assert.Equal(HttpStatusCode.OK, accepted.StatusCode);
+        await using var db = Db(); var row = await db.CrewSafeManningDecisions.SingleAsync(d => d.VesselId == SeedVessel.Id, Ct);
+        Assert.Equal(1, row.DispensationCount); Assert.Equal(CrewEligibilityStates.NotEligible, row.EvaluationState);
+        // MANNING_NOT_ACCEPTED / hold stays recordable with only a reason.
+        var next = await ManningView(client);
+        using var hold = await Send(client, path, Accept(next, grant.Id) with { Decision = "MANNING_HOLD" }); Assert.Equal(HttpStatusCode.OK, hold.StatusCode);
+    }
 }

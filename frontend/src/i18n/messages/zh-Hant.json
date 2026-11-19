@@ -1248,7 +1248,27 @@
       "ps_PLANNED": "計畫（申報）",
       "ps_ENDED": "已結束",
       "ps_DRAFT": "草稿",
-      "ps_REVIEW_REQUIRED": "需要審查"
+      "ps_REVIEW_REQUIRED": "需要審查",
+      "rulesTitle": "接受規則",
+      "ruleMsmd": "SOLAS V/14 與 IMO A.1047(27)：最低安全配員文件由船旗國主管機關核發，船舶必須依其配員。",
+      "ruleDispensation": "STCW 第 VIII 條：只有主管機關可核發特免證明，僅限特殊必要情況，且只能給予持有低一級職務證書的人員。持續的配員困難不是理由。",
+      "ruleCommand": "船長或輪機長的特免僅在不可抗力情況下且以最短期限允許。",
+      "acknowledgeTitle": "逐項原因確認",
+      "acknowledgeNote": "每個未決審查原因都需要單獨說明在船上核實了什麼。不接受籠統確認。",
+      "dispensationTitle": "船旗國主管機關特免",
+      "dispensationNote": "為每名不符合的船員連結主管機關的特免記錄。系統僅記錄並連結，不進行核驗。",
+      "noDispensationEvidence": "沒有可連結的可讀證據或受控文件。",
+      "dispensationEvidence": "特免記錄",
+      "post": "所涵蓋職務",
+      "holdsBelow": "該人員持有低一級職務的證書",
+      "forceMajeure": "已聲明不可抗力（船長或輪機長必需）",
+      "dec_MANNING_HOLD": "配員暫緩",
+      "post_MASTER": "船長",
+      "post_CHIEF_ENGINEER": "輪機長",
+      "post_OFFICER": "甲級船員",
+      "post_ENGINEER_OFFICER": "輪機員",
+      "post_RATING": "普通船員",
+      "post_OTHER": "其他"
     }
   },
   "pairs": {

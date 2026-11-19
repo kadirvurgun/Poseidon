@@ -44,7 +44,7 @@ public sealed class CrewPrivacyRegressionTests
         typeof(SafeManningEvaluation), typeof(ManningRoleCoverage), typeof(SafeManningView), typeof(SafeManningDecisionDto), typeof(CrewCertificateRegisterRow),
         typeof(CrewCertificateRegister), typeof(CrewCredentialAssertionDto), typeof(CrewCredentialVerificationView), typeof(CrewCompetenceRecordDto),
         typeof(CrewCompetenceSignOffDto), typeof(CrewCompetenceView), typeof(CrewCompetenceMatrix), typeof(CrewCompetenceRequirementDto), typeof(CrewAuthorityDto),
-        typeof(CrewCommandOutcome), typeof(SafeManningDecisionPage)]);
+        typeof(CrewCommandOutcome), typeof(SafeManningDecisionPage), typeof(ManningDispensation), typeof(ManningDispensationMember), typeof(ManningEvidenceOption)]);
 
     [Theory]
     [MemberData(nameof(Contracts))]
@@ -62,7 +62,7 @@ public sealed class CrewPrivacyRegressionTests
         foreach (var result in new[] { "Attempted", "Success", "permission_denied", "resource_not_found", "invalid_query", "csrf_invalid", "invalid_idempotency_key",
                      "invalid_request", "validation_failed", "idempotency_key_reused", "version_conflict", "service_unavailable", "human_authority_required",
                      "separation_of_duties", "credential_document_required", "competence_requirement_unavailable", "evaluation_stale",
-                     "evaluation_window_invalid", "linked_resource_unavailable" })
+                     "evaluation_window_invalid", "linked_resource_unavailable", "manning_dispensation_required", "manning_review_acknowledgement_required" })
             Assert.Contains(result, SecurityEventCodes.Results);
     }
 

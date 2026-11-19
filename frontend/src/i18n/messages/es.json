@@ -1248,7 +1248,27 @@
       "ps_PLANNED": "Previsto (declarado)",
       "ps_ENDED": "Finalizado",
       "ps_DRAFT": "Borrador",
-      "ps_REVIEW_REQUIRED": "Requiere revisión"
+      "ps_REVIEW_REQUIRED": "Requiere revisión",
+      "rulesTitle": "Reglas de aceptación",
+      "ruleMsmd": "SOLAS V/14 y OMI A.1047(27): la Administración de bandera expide el documento de dotación mínima y el buque debe dotarse en consecuencia.",
+      "ruleDispensation": "STCW artículo VIII: solo la Administración puede conceder una dispensa, en caso de necesidad excepcional, a una persona titulada para el cargo inmediatamente inferior. Una dificultad persistente de dotación no es motivo.",
+      "ruleCommand": "Una dispensa para capitán o jefe de máquinas solo se admite por fuerza mayor y por el plazo más breve.",
+      "acknowledgeTitle": "Confirmación por motivo",
+      "acknowledgeNote": "Cada motivo de revisión abierto requiere su propia declaración de lo verificado a bordo. Se rechaza una confirmación global.",
+      "dispensationTitle": "Dispensa de la Administración de bandera",
+      "dispensationNote": "Vincule el registro de dispensa de la Administración para cada tripulante no apto. El sistema lo registra y vincula; no lo verifica.",
+      "noDispensationEvidence": "No hay evidencia ni documento controlado legible para vincular.",
+      "dispensationEvidence": "Registro de dispensa",
+      "post": "Cargo cubierto",
+      "holdsBelow": "La persona posee el título del cargo inmediatamente inferior",
+      "forceMajeure": "Fuerza mayor declarada (obligatoria para capitán o jefe de máquinas)",
+      "dec_MANNING_HOLD": "Dotación en espera",
+      "post_MASTER": "Capitán",
+      "post_CHIEF_ENGINEER": "Jefe de máquinas",
+      "post_OFFICER": "Oficial",
+      "post_ENGINEER_OFFICER": "Oficial de máquinas",
+      "post_RATING": "Subalterno",
+      "post_OTHER": "Otro"
     }
   },
   "pairs": {

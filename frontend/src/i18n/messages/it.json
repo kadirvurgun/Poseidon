@@ -1248,7 +1248,27 @@
       "ps_PLANNED": "Pianificato (dichiarato)",
       "ps_ENDED": "Terminato",
       "ps_DRAFT": "Bozza",
-      "ps_REVIEW_REQUIRED": "Revisione richiesta"
+      "ps_REVIEW_REQUIRED": "Revisione richiesta",
+      "rulesTitle": "Regole di accettazione",
+      "ruleMsmd": "SOLAS V/14 e IMO A.1047(27): l'Amministrazione di bandiera rilascia la tabella minima di sicurezza e la nave deve essere armata di conseguenza.",
+      "ruleDispensation": "STCW articolo VIII: solo l'Amministrazione può rilasciare una deroga, in caso di necessità eccezionale, a una persona abilitata per la funzione immediatamente inferiore. La difficoltà persistente di reperire equipaggio non è un motivo.",
+      "ruleCommand": "Una deroga per comandante o direttore di macchina è ammessa solo per forza maggiore e per il periodo più breve.",
+      "acknowledgeTitle": "Conferma per motivo",
+      "acknowledgeNote": "Ogni motivo di revisione aperto richiede una propria dichiarazione di quanto verificato a bordo. Una conferma cumulativa è rifiutata.",
+      "dispensationTitle": "Deroga dell'Amministrazione di bandiera",
+      "dispensationNote": "Collega il record di deroga dell'Amministrazione per ogni membro dell'equipaggio non idoneo. Il sistema lo registra e lo collega; non lo verifica.",
+      "noDispensationEvidence": "Nessuna evidenza o documento controllato leggibile da collegare.",
+      "dispensationEvidence": "Record di deroga",
+      "post": "Funzione coperta",
+      "holdsBelow": "La persona possiede il titolo della funzione immediatamente inferiore",
+      "forceMajeure": "Forza maggiore dichiarata (obbligatoria per comandante o direttore di macchina)",
+      "dec_MANNING_HOLD": "Equipaggio in sospeso",
+      "post_MASTER": "Comandante",
+      "post_CHIEF_ENGINEER": "Direttore di macchina",
+      "post_OFFICER": "Ufficiale",
+      "post_ENGINEER_OFFICER": "Ufficiale di macchina",
+      "post_RATING": "Comune",
+      "post_OTHER": "Altro"
     }
   },
   "pairs": {

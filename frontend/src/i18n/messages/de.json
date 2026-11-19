@@ -1248,7 +1248,27 @@
       "ps_PLANNED": "Geplant (erklärt)",
       "ps_ENDED": "Beendet",
       "ps_DRAFT": "Entwurf",
-      "ps_REVIEW_REQUIRED": "Prüfung erforderlich"
+      "ps_REVIEW_REQUIRED": "Prüfung erforderlich",
+      "rulesTitle": "Annahmeregeln",
+      "ruleMsmd": "SOLAS V/14 und IMO A.1047(27): Die Flaggenverwaltung stellt das MSMD aus, und das Schiff muss entsprechend besetzt sein.",
+      "ruleDispensation": "STCW Artikel VIII: Nur die Verwaltung darf eine Ausnahmegenehmigung erteilen, nur in außergewöhnlicher Notlage und nur an eine Person mit Befähigung für die unmittelbar darunterliegende Position. Anhaltende Besetzungsschwierigkeiten sind kein Grund.",
+      "ruleCommand": "Eine Ausnahmegenehmigung für Kapitän oder Leiter der Maschinenanlage ist nur bei höherer Gewalt und für die kürzeste Zeit zulässig.",
+      "acknowledgeTitle": "Bestätigung je Grund",
+      "acknowledgeNote": "Jeder offene Prüfgrund braucht eine eigene Aussage, was an Bord geprüft wurde. Eine Pauschalbestätigung wird abgelehnt.",
+      "dispensationTitle": "Ausnahmegenehmigung der Flaggenverwaltung",
+      "dispensationNote": "Verknüpfen Sie für jedes nicht geeignete Besatzungsmitglied den Ausnahmegenehmigungs-Eintrag der Verwaltung. Das System erfasst und verknüpft ihn; es prüft ihn nicht.",
+      "noDispensationEvidence": "Kein lesbarer Nachweis oder gelenktes Dokument zum Verknüpfen vorhanden.",
+      "dispensationEvidence": "Ausnahmegenehmigung",
+      "post": "Abgedeckte Position",
+      "holdsBelow": "Die Person hat die Befähigung für die unmittelbar darunterliegende Position",
+      "forceMajeure": "Höhere Gewalt erklärt (für Kapitän oder Leiter der Maschinenanlage erforderlich)",
+      "dec_MANNING_HOLD": "Besatzung zurückgestellt",
+      "post_MASTER": "Kapitän",
+      "post_CHIEF_ENGINEER": "Leiter der Maschinenanlage",
+      "post_OFFICER": "Offizier",
+      "post_ENGINEER_OFFICER": "Technischer Offizier",
+      "post_RATING": "Schiffsmann",
+      "post_OTHER": "Sonstige"
     }
   },
   "pairs": {
