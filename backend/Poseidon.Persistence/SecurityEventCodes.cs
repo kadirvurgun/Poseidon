@@ -39,7 +39,7 @@ public static class SecurityEventCodes
     public static IReadOnlySet<string> Results { get; } = new string[]
     {
         "Attempted", "Authorized", "Denied", "Failed", "asset_context_stale", "plan_context_stale", "origin_context_stale",
-        "Invalid", "NotFound", "SetupRequired", "Success",
+        "Invalid", "NotFound", "SetupRequired", "Success", "Unavailable",
         "Unauthenticated", "acknowledgment_role_required", "assignment_policy_denied", "attestation_authority_changed",
         "attestation_policy_mismatch", "authoritative_evaluation_unavailable", "catalog_authority_changed", "catalog_version_reused",
         "catalog_incomplete", "invalid_transition", "command_outcome_withheld",
