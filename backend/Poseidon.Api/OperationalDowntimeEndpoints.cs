@@ -11,7 +11,7 @@ using Poseidon.Persistence;
 namespace Poseidon.Api;
 
 public sealed record DowntimeRecordDto(Guid Id,Guid VesselId,long Revision,uint Version,SortedDictionary<string,DowntimeFact> Fields,DowntimeOriginPin? Origin,
-    string SourceVersion,string Hash,string Provenance,DateTimeOffset SavedAt,string State,string Qualification,string[] Blockers,bool CurrentRevision,bool CanEdit,DowntimeIntervalObservation EngineeringInterval);
+    string SourceVersion,string Hash,string Provenance,DateTimeOffset SavedAt,string State,string Qualification,string[] Blockers,bool CurrentRevision,bool CanEdit,DowntimeIntervalObservation EngineeringInterval,DowntimeLifecycleDto? Lifecycle=null);
 public sealed record DowntimeOfflineDto(bool Supported,string State);
 public sealed record DowntimeCapabilitiesDto(Guid VesselId,bool CanRead,bool CanWrite,bool CanVerify,bool CanClose,bool CanFinalize,string[] OriginKinds,
     DowntimeFieldDefinition[] Schema,string SourceVersion,DowntimeOfflineDto Offline);
@@ -21,7 +21,7 @@ public sealed record DowntimeHistoryDto(DowntimeRecordDto[] Items,int Offset,int
 public sealed record DowntimeDraftCommand([property:JsonRequired] Guid Id,[property:JsonRequired] uint ExpectedVersion,
     [property:JsonRequired] Dictionary<string,DowntimeFact> Fields,[property:JsonRequired] string SourceVersion,[property:JsonRequired] DowntimeOriginPin? Origin=null);
 
-public static class OperationalDowntimeEndpoints
+public static partial class OperationalDowntimeEndpoints
 {
     internal static readonly JsonSerializerOptions Json=new(JsonSerializerDefaults.Web){PropertyNameCaseInsensitive=false,MaxDepth=8,UnmappedMemberHandling=JsonUnmappedMemberHandling.Disallow};
     public static void MapOperationalDowntime(this IEndpointRouteBuilder app) {
@@ -32,6 +32,7 @@ public static class OperationalDowntimeEndpoints
         group.MapGet("/{id:guid}/history",(Guid id,HttpContext h,PoseidonDbContext db)=>Read(id,true,false,h,db)).WithName("DowntimeHistory").Produces<DowntimeHistoryDto>();
         group.MapPost("",(HttpContext h,PoseidonDbContext db)=>Save(null,h,db)).WithName("DowntimeCreate").Accepts<DowntimeDraftCommand>("application/json").Produces<DowntimeRecordDto>();
         group.MapPut("/{id:guid}",(Guid id,HttpContext h,PoseidonDbContext db)=>Save(id,h,db)).WithName("DowntimeUpdate").Accepts<DowntimeDraftCommand>("application/json").Produces<DowntimeRecordDto>();
+        MapLifecycle(group);
     }
     private static TrustedActor? Actor(HttpContext h)=>h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User);
     internal static bool CanRead(TrustedActor? a)=>a?.CanRead==true && a.CanSeeShip && a.Permissions.Contains("operations.downtime.read");
@@ -48,12 +49,21 @@ public static class OperationalDowntimeEndpoints
     private static async Task<IResult> Fail(HttpContext h,int status,string code){await Audit(h,code);return Results.Json(new{code},statusCode:status);}
     private static DowntimeOriginPin? Origin(string? json)=>json==null?null:JsonSerializer.Deserialize<DowntimeOriginPin>(json,Json)??throw new InvalidDataException("downtime_origin_unavailable");
     internal static DowntimeRecordDto Dto(Downtime row,bool current,bool canWrite,DateTimeOffset now)=>Dto(row.Id,row.VesselId,row.Revision,row.Version,row.FieldsJson,
-        Origin(row.OriginJson),row.SourceVersion,row.Hash,row.Provenance,row.SavedAt,current,canWrite,now);
+        Origin(row.OriginJson),row.SourceVersion,row.Hash,row.Provenance,row.SavedAt,current,canWrite,now,row.ClosureState,row.ClaimEvidenceJson);
     private static DowntimeRecordDto Dto(DowntimeRevision row,bool current,bool canWrite,DateTimeOffset now)=>Dto(row.DowntimeId,row.VesselId,row.Revision,checked((uint)row.RecordVersion),row.FieldsJson,
-        Origin(row.OriginJson),row.SourceVersion,row.Hash,row.Provenance,row.SavedAt,current,canWrite,now);
-    private static DowntimeRecordDto Dto(Guid id,Guid vessel,long revision,uint version,string json,DowntimeOriginPin? origin,string source,string hash,string provenance,DateTimeOffset saved,bool current,bool canWrite,DateTimeOffset now) {
-        var fields=DowntimePolicy.ReadFields(vessel,json);var blockers=DowntimePolicy.Blockers(fields);if(source!=DowntimePolicy.SourceVersion)blockers=[..blockers,"SOURCE_VERSION_CHANGED"];
-        return new(id,vessel,revision,version,fields,origin,source,hash,provenance,saved,"DRAFT","REVIEW_REQUIRED",blockers,current,current && canWrite,DowntimePolicy.ObserveInterval(fields));
+        Origin(row.OriginJson),row.SourceVersion,row.Hash,row.Provenance,row.SavedAt,current,canWrite,now,row.ClosureState,row.ClaimEvidenceJson);
+    internal static DowntimeEvidencePin[] Evidence(string? json)=>json==null?[]:JsonSerializer.Deserialize<DowntimeEvidencePin[]>(json,Json)??throw new InvalidDataException("downtime_evidence_unavailable");
+    private static DowntimeRecordDto Dto(Guid id,Guid vessel,long revision,uint version,string json,DowntimeOriginPin? origin,string source,string hash,string provenance,DateTimeOffset saved,bool current,bool canWrite,DateTimeOffset now,
+        string? closure,string? evidenceJson) {
+        var fields=DowntimePolicy.ReadFields(vessel,json);var evidence=Evidence(evidenceJson);var candidate=ShipOperationsLifecycle.LossOfHireCandidate(fields);
+        // Server-owned overlays: a computed claim candidate (never YES/NO) and the
+        // explicit human lifecycle state; no implicit OPEN/VERIFIED/CLOSED default.
+        fields["loss_of_hire_flag"]=candidate=="REVIEW_REQUIRED"?new("Known","REVIEW_REQUIRED"):new("Unknown",null);
+        fields["closure_state"]=closure is ShipOperationsLifecycle.Open or ShipOperationsLifecycle.Verified or ShipOperationsLifecycle.Closed?new("Known",closure):new("Unknown",null);
+        var blockers=ShipOperationsLifecycle.DowntimeBlockers(DowntimePolicy.Blockers(fields),closure,evidence.Length,candidate);if(source!=DowntimePolicy.SourceVersion)blockers=[..blockers,"SOURCE_VERSION_CHANGED"];
+        var editable=ShipOperationsLifecycle.Editable(closure);
+        return new(id,vessel,revision,version,fields,origin,source,hash,provenance,saved,"DRAFT","REVIEW_REQUIRED",blockers,current,current && canWrite && editable,DowntimePolicy.ObserveInterval(fields),
+            new(ShipOperationsLifecycle.State(closure),evidence,candidate,current?ShipOperationsLifecycle.Allowed(closure):[]));
     }
     private sealed record HeadPin(Guid Id,long Revision,uint Version,string? OriginJson);
     private sealed class ReplaceParameter(ParameterExpression from,ParameterExpression to):ExpressionVisitor {

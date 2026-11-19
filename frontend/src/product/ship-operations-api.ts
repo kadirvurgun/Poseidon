@@ -42,8 +42,9 @@ function facts(value: unknown, kind: ShipOpsKind, vessel: string, readonly: bool
     } else if (!(fact.state === 'Missing' || fact.state === 'Unknown') || fact.value !== null) return false
   }
   if (readonly) {
-    const required = kind === 'Fuel' ? { vessel_id: vessel, compliance_state: 'REVIEW_REQUIRED', verification_state: 'PENDING' } : { sof_state: 'DRAFT' }
-    for (const [key, expected] of Object.entries(required)) { const fact = value[key]; if (!object(fact) || fact.state !== 'Known' || fact.value !== expected) return false }
+    // sof_state is server-owned: DRAFT, or FINAL only from a recorded human finalization revision.
+    const required: Record<string, readonly string[]> = kind === 'Fuel' ? { vessel_id: [vessel], compliance_state: ['REVIEW_REQUIRED'], verification_state: ['PENDING'] } : { sof_state: ['DRAFT', 'FINAL'] }
+    for (const [key, expected] of Object.entries(required)) { const fact = value[key]; if (!object(fact) || fact.state !== 'Known' || !expected.includes(fact.value as string)) return false }
   }
   return kind !== 'Port' || eventOrder(value as ShipOpsFields)
 }
@@ -85,7 +86,7 @@ export function freezeShipOpsCommand(kind: ShipOpsKind, vessel: string, id: stri
   if (!isGuid(id) || !isGuid(vessel) || owner.split('/').length !== 2 || !owner.split('/').every(isGuid) || !facts(fields, kind, vessel, false) || record && (record.id !== id || record.vesselId !== vessel || record.kind !== kind || !record.currentRevision || !record.canEdit)) throw new ApiError(400, 'invalid_draft_input')
   if (origin) decodeShipOpsOrigin(origin, kind)
   const expectedVersion = record?.version ?? 0
-  return { owner, id, vessel, kind, key: crypto.randomUUID(), expectedVersion, body: JSON.stringify({ id, expectedVersion, fields, reasonCode: record ? 'AUTHORING_CORRECTION' : 'INITIAL_AUTHORING', origin }) }
+  return { owner, id, vessel, kind, key: crypto.randomUUID(), expectedVersion, body: JSON.stringify({ id, expectedVersion, fields, reasonCode: !record ? 'INITIAL_AUTHORING' : record.fields.sof_state?.value === 'FINAL' ? 'POST_FINAL_AMENDMENT' : 'AUTHORING_CORRECTION', origin }) }
 }
 export const shipOperationsApi = {
   capabilities: async (kind: ShipOpsKind, vessel: string, signal: AbortSignal) => { resource(kind, vessel); return decodeShipOpsCapabilities(await request<unknown>((kind === 'Fuel' ? 'fuel-bunker-logs' : 'port-activity-sof') + '/capabilities?vesselId=' + vessel, signal), vessel, kind) },
