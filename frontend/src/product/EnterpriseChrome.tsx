@@ -32,6 +32,8 @@ const labels: Record<string, {
     'port-activity-sof': { tr: sourceText("tr", "pairs.m_13875df296e09add"), en: sourceText("en", "pairs.m_13875df296e09add"), icon: Anchor, group: 'operations' },
     'certificate-command-center': { tr: sourceText("tr", "pairs.m_49dd4df69d1c0e57"), en: sourceText("en", "pairs.m_49dd4df69d1c0e57"), icon: FileCheck2, group: 'assurance' },
     'renewal-workflow': { tr: sourceText("tr", "pairs.m_0e4b1a01b223bd75"), en: sourceText("en", "pairs.m_0e4b1a01b223bd75"), icon: ClipboardList, group: 'assurance' },
+    'pre-survey-checklist': { tr: sourceText("tr", "pairs.m_5e7a1c0d2b4f9a01"), en: sourceText("en", "pairs.m_5e7a1c0d2b4f9a01"), icon: ClipboardList, group: 'assurance' },
+    'survey-planner': { tr: sourceText("tr", "pairs.m_5e7a1c0d2b4f9a02"), en: sourceText("en", "pairs.m_5e7a1c0d2b4f9a02"), icon: FileCheck2, group: 'assurance' },
     'noon-report': { tr: sourceText("tr", "pairs.m_ff485806c57476ca"), en: sourceText("en", "pairs.m_ff485806c57476ca"), icon: ClipboardList, group: 'operations' },
     'deck-daily-log': { tr: sourceText("tr", "pairs.m_75d4c27ced71efda"), en: sourceText("en", "pairs.m_75d4c27ced71efda"), icon: Ship, group: 'operations' },
     'engine-daily-log': { tr: sourceText("tr", "pairs.m_21eb6ede9f2b37f9"), en: sourceText("en", "pairs.m_21eb6ede9f2b37f9"), icon: Wrench, group: 'operations' },

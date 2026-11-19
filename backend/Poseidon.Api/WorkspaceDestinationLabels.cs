@@ -27,6 +27,8 @@ internal static class WorkspaceDestinationLabels
         ["risk-template-library"] = ["Risk şablon kütüphanesi", "Risk template library"],
         ["certificate-command-center"] = ["Sertifika merkezi", "Certificate center"],
         ["renewal-workflow"] = ["Sertifika yenileme", "Certificate renewal"],
+        ["pre-survey-checklist"] = ["Sörvey öncesi kontrol listesi", "Pre-survey checklist"],
+        ["survey-planner"] = ["Sörvey planlayıcı", "Survey planner"],
         ["tug-command"] = ["Römorkör operasyonları", "Tug operations", "Römorkör merkezi", "Tug command"],
         ["tug-job-board"] = ["Römorkör iş panosu", "Tug job board", "İş panosu", "Job board"],
         ["tug-job-intake"] = ["Römorkör iş kaydı", "Tug job intake", "İş talebi", "Job intake"],

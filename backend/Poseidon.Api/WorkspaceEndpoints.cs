@@ -26,7 +26,9 @@ public static class WorkspaceEndpoints
         if (RiskAssessmentEndpoints.CanRead(actor)) destinations = [.. destinations, new("risk-assessment", "/app/risk-assessment")];
         if (RiskTemplateEndpoints.CanRead(actor)) destinations = [.. destinations, new("risk-template-library", "/app/risk-template-library")];
         if (CertificateReader.Read(actor)) destinations = [.. destinations,
-            new("certificate-command-center", "/app/certificate-command-center"), new("renewal-workflow", "/app/renewal-workflow")];
+            new("certificate-command-center", "/app/certificate-command-center"), new("renewal-workflow", "/app/renewal-workflow"),
+            // DEV-104/DEV-112: same server read authority as their endpoints (certificate.read).
+            new("pre-survey-checklist", "/app/pre-survey-checklist"), new("survey-planner", "/app/survey-planner")];
         if (actor.CanReadTug) destinations = [.. destinations, new("tug-command", "/app/tug-command"), new("tug-job-board", "/app/tug-job-board"), new("tug-job-intake", "/app/tug-job-intake")];
         if (actor.CanSeeShip) {
             if (ShipOperationsEndpoints.CanRead(actor,"Fuel")) destinations = [.. destinations,new("fuel-bunker-log","/app/fuel-bunker-log")];

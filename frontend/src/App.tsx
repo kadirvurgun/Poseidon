@@ -23,6 +23,7 @@ import { DowntimeWorkspace } from './product/DowntimeWorkspace';
 import { RiskAssessmentWorkspace } from './product/RiskAssessmentWorkspace';
 import { RiskTemplateLibraryWorkspace } from './product/RiskTemplateLibraryWorkspace';
 import { AuditReadyWorkspace } from './product/AuditReadyWorkspace';
+import { SurveyWorkspace } from './product/SurveyWorkspace';
 import { AppearanceControls } from './theme/AppearanceControls';
 type Connection = 'loading' | 'available' | 'error';
 const content = localizedCopy("App_tsx_content");
@@ -31,6 +32,8 @@ export function App() {
         return <ShipOperationsWorkspace />;
     if (/^\/app\/(certificate-command-center|renewal-workflow)(?:\/|$)/.test(window.location.pathname))
         return <CertificateWorkspace />;
+    if (/^\/app\/(pre-survey-checklist|survey-planner)(?:\/|$)/.test(window.location.pathname))
+        return <SurveyWorkspace />;
     if (/^\/app\/(noon-report|deck-daily-log|engine-daily-log)(?:\/|$)/.test(window.location.pathname))
         return <DailyReportWorkspace />;
     if (/^\/app\/audit-ready(?:\/|$)/.test(window.location.pathname))

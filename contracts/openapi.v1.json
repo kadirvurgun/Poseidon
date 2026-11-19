@@ -1354,6 +1354,27 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/survey-planner": {
+      "get": {
+        "tags": [
+          "SurveyPlannerEndpoints"
+        ],
+        "operationId": "SurveyPlannerCalendar",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SurveyPlannerDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
     "/api/v1/vessels/{vessel}/certificates/{id}/extractions": {
       "post": {
         "tags": [
@@ -7178,6 +7199,244 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CertificateRenewalDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/pre-survey-checklists": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "PreSurveyChecklists",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreSurveyPageDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "PreSurveyChecklistCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreSurveyCreateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreSurveyChecklistDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/pre-survey-checklists/capabilities": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "PreSurveyCapabilities",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreSurveyCapabilitiesDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/pre-survey-checklists/port-calls": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "PreSurveyPortCalls",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreSurveyPortCallPageDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/pre-survey-checklists/{id}": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "PreSurveyChecklistRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreSurveyChecklistDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "PreSurveyChecklistUpdate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreSurveyUpdateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreSurveyChecklistDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/pre-survey-checklists/{id}/history": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "PreSurveyChecklistHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreSurveyPageDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/pre-survey-checklists/{id}/verifications": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "PreSurveyChecklistVerify",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreSurveyVerifyCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreSurveyChecklistDto"
                 }
               }
             }
@@ -31406,6 +31665,771 @@
           }
         }
       },
+      "PreSurveyCapabilitiesDto": {
+        "required": [
+          "vesselId",
+          "canWrite",
+          "canVerify",
+          "ownerOptions",
+          "templates",
+          "canReadPortCalls",
+          "sourceVersion",
+          "answers",
+          "rejectReasons",
+          "qualification"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "canVerify": {
+            "type": "boolean"
+          },
+          "ownerOptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RenewalOwnerDto"
+            }
+          },
+          "templates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PreSurveyTemplateDto"
+            }
+          },
+          "canReadPortCalls": {
+            "type": "boolean"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "answers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rejectReasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "qualification": {
+            "type": "string"
+          }
+        }
+      },
+      "PreSurveyChecklistDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "certificateId",
+          "certificateRevision",
+          "certificateVersion",
+          "revision",
+          "version",
+          "templateCode",
+          "templateRevision",
+          "templateStatus",
+          "surveyType",
+          "plan",
+          "items",
+          "readiness",
+          "window",
+          "voyageFit",
+          "portCall",
+          "transition",
+          "sourceVersion",
+          "hash",
+          "savedAt",
+          "provenance",
+          "currentRevision",
+          "canEdit",
+          "canVerify",
+          "qualification"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "certificateId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "certificateRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "certificateVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "templateCode": {
+            "type": "string"
+          },
+          "templateRevision": {
+            "type": "string"
+          },
+          "templateStatus": {
+            "type": "string"
+          },
+          "surveyType": {
+            "type": "string"
+          },
+          "plan": {
+            "$ref": "#/components/schemas/PreSurveyPlan"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PreSurveyItemDto"
+            }
+          },
+          "readiness": {
+            "$ref": "#/components/schemas/PreSurveyReadiness"
+          },
+          "window": {
+            "$ref": "#/components/schemas/SurveyWindowDto"
+          },
+          "voyageFit": {
+            "$ref": "#/components/schemas/SurveyFitDto"
+          },
+          "portCall": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PreSurveyPortCallDto"
+              }
+            ]
+          },
+          "transition": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "currentRevision": {
+            "type": "boolean"
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canVerify": {
+            "type": "boolean"
+          },
+          "qualification": {
+            "type": "string"
+          },
+          "voyageReference": {
+            "type": "string",
+            "default": "UNKNOWN_NO_VOYAGE_MODULE"
+          }
+        }
+      },
+      "PreSurveyCreateCommand": {
+        "required": [
+          "id",
+          "expectedVersion",
+          "certificateId",
+          "certificateRevision",
+          "certificateVersion",
+          "templateCode",
+          "plan"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "certificateId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "certificateRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "certificateVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "templateCode": {
+            "type": "string"
+          },
+          "plan": {
+            "$ref": "#/components/schemas/PreSurveyPlan"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PreSurveyItemDto": {
+        "required": [
+          "itemId",
+          "itemCode",
+          "critical",
+          "required",
+          "evidenceRequired",
+          "allowNotApplicable",
+          "ownerRoleId",
+          "dueDate",
+          "answer",
+          "evidence",
+          "finding",
+          "comment",
+          "itemHash",
+          "verificationState",
+          "verifiedAt",
+          "verificationReason",
+          "answeredByCurrentActor",
+          "verifiedByCurrentActor",
+          "blockers"
+        ],
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "itemCode": {
+            "type": "string"
+          },
+          "critical": {
+            "type": "boolean"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "evidenceRequired": {
+            "type": "boolean"
+          },
+          "allowNotApplicable": {
+            "type": "boolean"
+          },
+          "ownerRoleId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "dueDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "answer": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CertificateFilePin"
+            }
+          },
+          "finding": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "itemHash": {
+            "type": "string"
+          },
+          "verificationState": {
+            "type": "string"
+          },
+          "verifiedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "verificationReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "answeredByCurrentActor": {
+            "type": "boolean"
+          },
+          "verifiedByCurrentActor": {
+            "type": "boolean"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "PreSurveyItemInput": {
+        "required": [
+          "itemId",
+          "ownerRoleId",
+          "dueDate",
+          "answer",
+          "evidence"
+        ],
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "ownerRoleId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "dueDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "answer": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CertificateFilePin"
+            }
+          },
+          "finding": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "PreSurveyPageDto": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PreSurveyChecklistDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PreSurveyPlan": {
+        "type": "object",
+        "properties": {
+          "plannedStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "plannedEnd": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "portCallId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "portCallRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "locationText": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "PreSurveyPortCallDto": {
+        "required": [
+          "id",
+          "revision",
+          "reference",
+          "from",
+          "to"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "reference": {
+            "type": "string"
+          },
+          "from": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "to": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "qualification": {
+            "type": "string",
+            "default": "PORT_CALL_DRAFT_UNVERIFIED_PORT_IDENTITY_UNRESOLVED"
+          }
+        }
+      },
+      "PreSurveyPortCallOptionDto": {
+        "required": [
+          "id",
+          "revision",
+          "from",
+          "to",
+          "label"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "from": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "to": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "label": {
+            "type": "string"
+          },
+          "qualification": {
+            "type": "string",
+            "default": "PORT_CALL_DRAFT_UNVERIFIED_PORT_IDENTITY_UNRESOLVED"
+          }
+        }
+      },
+      "PreSurveyPortCallPageDto": {
+        "required": [
+          "items",
+          "truncated"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PreSurveyPortCallOptionDto"
+            }
+          },
+          "truncated": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PreSurveyReadiness": {
+        "required": [
+          "state",
+          "qualification",
+          "blockers",
+          "criticalUnresolved",
+          "requiredUnresolved",
+          "verified",
+          "total"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "qualification": {
+            "type": "string"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "criticalUnresolved": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requiredUnresolved": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "verified": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "PreSurveyTemplateDto": {
+        "required": [
+          "code",
+          "revision",
+          "surveyType",
+          "status",
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "string"
+          },
+          "surveyType": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PreSurveyTemplateItem"
+            }
+          }
+        }
+      },
+      "PreSurveyTemplateItem": {
+        "required": [
+          "itemCode",
+          "critical",
+          "required",
+          "evidenceRequired",
+          "allowNotApplicable"
+        ],
+        "type": "object",
+        "properties": {
+          "itemCode": {
+            "type": "string"
+          },
+          "critical": {
+            "type": "boolean"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "evidenceRequired": {
+            "type": "boolean"
+          },
+          "allowNotApplicable": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PreSurveyUpdateCommand": {
+        "required": [
+          "id",
+          "expectedVersion",
+          "expectedRevision",
+          "certificateRevision",
+          "certificateVersion",
+          "plan",
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "certificateRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "certificateVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "plan": {
+            "$ref": "#/components/schemas/PreSurveyPlan"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PreSurveyItemInput"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "PreSurveyVerificationDecision": {
+        "required": [
+          "itemId",
+          "expectedItemHash",
+          "decision"
+        ],
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedItemHash": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "reasonCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "PreSurveyVerifyCommand": {
+        "required": [
+          "id",
+          "expectedVersion",
+          "expectedRevision",
+          "decisions"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "decisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PreSurveyVerificationDecision"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
       "ProblemDetails": {
         "type": "object",
         "properties": {
@@ -33645,6 +34669,361 @@
           }
         },
         "additionalProperties": false
+      },
+      "SurveyFitDto": {
+        "required": [
+          "state",
+          "reasons",
+          "basis"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "basis": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "SurveyPlannerChecklistDto": {
+        "required": [
+          "id",
+          "revision",
+          "readiness",
+          "criticalUnresolved",
+          "requiredUnresolved",
+          "plannedStart",
+          "plannedEnd",
+          "portCallReference",
+          "href"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "readiness": {
+            "type": "string"
+          },
+          "criticalUnresolved": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requiredUnresolved": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "plannedStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "plannedEnd": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "portCallReference": {
+            "type": "string"
+          },
+          "href": {
+            "type": "string"
+          }
+        }
+      },
+      "SurveyPlannerCountsDto": {
+        "required": [
+          "windowUnknown",
+          "windowUpcoming",
+          "windowOpen",
+          "windowOverdue",
+          "fitConditional",
+          "fitNotFit",
+          "fitUnknown",
+          "checklistBlocked",
+          "checklistMissing"
+        ],
+        "type": "object",
+        "properties": {
+          "windowUnknown": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "windowUpcoming": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "windowOpen": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "windowOverdue": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fitConditional": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fitNotFit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fitUnknown": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "checklistBlocked": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "checklistMissing": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "SurveyPlannerDto": {
+        "required": [
+          "from",
+          "to",
+          "referenceDate",
+          "items",
+          "truncated",
+          "vesselsTruncated",
+          "counts",
+          "qualification",
+          "fitStates",
+          "sourceVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "referenceDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SurveyPlannerRowDto"
+            }
+          },
+          "truncated": {
+            "type": "boolean"
+          },
+          "vesselsTruncated": {
+            "type": "boolean"
+          },
+          "counts": {
+            "$ref": "#/components/schemas/SurveyPlannerCountsDto"
+          },
+          "qualification": {
+            "type": "string"
+          },
+          "fitStates": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sourceVersion": {
+            "type": "string"
+          }
+        }
+      },
+      "SurveyPlannerRowDto": {
+        "required": [
+          "vesselId",
+          "vesselCode",
+          "vesselName",
+          "vesselKind",
+          "certificateId",
+          "certificateRevision",
+          "certificateVersion",
+          "certificateType",
+          "certificateNumber",
+          "issuer",
+          "declaredFlag",
+          "regulatoryBasis",
+          "expiryDate",
+          "window",
+          "fit",
+          "checklist",
+          "coordination",
+          "href"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselCode": {
+            "type": "string"
+          },
+          "vesselName": {
+            "type": "string"
+          },
+          "vesselKind": {
+            "type": "string"
+          },
+          "certificateId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "certificateRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "certificateVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "certificateType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "certificateNumber": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "issuer": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "declaredFlag": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "regulatoryBasis": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "expiryDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "window": {
+            "$ref": "#/components/schemas/SurveyWindowDto"
+          },
+          "fit": {
+            "$ref": "#/components/schemas/SurveyFitDto"
+          },
+          "checklist": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/SurveyPlannerChecklistDto"
+              }
+            ]
+          },
+          "coordination": {
+            "type": "string"
+          },
+          "href": {
+            "type": "string"
+          }
+        }
+      },
+      "SurveyWindowDto": {
+        "required": [
+          "state",
+          "start",
+          "end",
+          "daysToOpen",
+          "daysToClose",
+          "daysOverdue",
+          "qualifiers"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "start": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "end": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "daysToOpen": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "daysToClose": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "daysOverdue": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "qualifiers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
       },
       "SyncConflictItemDto": {
         "required": [
@@ -38604,6 +39983,9 @@
     },
     {
       "name": "CertificateEndpoints"
+    },
+    {
+      "name": "SurveyPlannerEndpoints"
     },
     {
       "name": "CertificateExtractionEndpoints"

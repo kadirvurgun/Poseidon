@@ -21,8 +21,8 @@ public static class WorkspaceLensPolicy
                 (actor.TenantWideManage || vessel != null && actor.VesselGrants.Any(g => g.VesselId == vessel && g.CanEdit)))
             .Select(x => new WorkspaceLensItem(x.Key,
                 x.Key.StartsWith("tug-", StringComparison.Ordinal) && vessel != null ? x.Href + "?vessel=" + vessel :
-                x.Key is "audit-ready" or "operational-downtime" or "risk-assessment" or "work-order-center" or "defects" or "today" or "noon-report" or "deck-daily-log" or "engine-daily-log" or "fuel-bunker-log" or "port-activity-sof" or "certificate-command-center" or "renewal-workflow" && vessel != null ? x.Href + "/" + vessel : x.Href,
-                x.Key is "sources" or "requirements" or "audit" or "audit-ready" or "certificate-command-center" or "renewal-workflow" or "risk-template-library" ? "review" : "daily")).ToList();
+                x.Key is "audit-ready" or "operational-downtime" or "risk-assessment" or "work-order-center" or "defects" or "today" or "noon-report" or "deck-daily-log" or "engine-daily-log" or "fuel-bunker-log" or "port-activity-sof" or "certificate-command-center" or "renewal-workflow" or "pre-survey-checklist" && vessel != null ? x.Href + "/" + vessel : x.Href,
+                x.Key is "sources" or "requirements" or "audit" or "audit-ready" or "certificate-command-center" or "renewal-workflow" or "risk-template-library" or "pre-survey-checklist" or "survey-planner" ? "review" : "daily")).ToList();
         if (!actor.CanRead || vessel == null) return items.ToArray();
         if (actor.Permissions.Contains("crew.read")) items.Add(new("crew", $"/app/crew-roster/{vessel}", "daily"));
         if (actor.Permissions.Contains("equipment.read")) items.Add(new("equipment", $"/app/equipment-hierarchy/{vessel}", "daily"));
@@ -47,7 +47,7 @@ public static class WorkspaceLensPolicy
         var rows = catalog.GetSection("Mappings").GetChildren().Take(4097).ToArray();
         if (rows.Length > 4096) return Empty("Unavailable");
         var mappings = new Dictionary<Guid, (string[] Keys, string[] Modes)>();
-        string[] known = ["operational-downtime", "risk-assessment", "risk-template-library", "work-order-center", "defects", "today", "fleet", "companies", "crew", "equipment", "maintenance", "import", "audit", "audit-ready", "sources", "requirements", "tug-command", "tug-job-board", "tug-job-intake", "noon-report", "deck-daily-log", "engine-daily-log", "certificate-command-center", "renewal-workflow", "fuel-bunker-log", "port-activity-sof"];
+        string[] known = ["operational-downtime", "risk-assessment", "risk-template-library", "work-order-center", "defects", "today", "fleet", "companies", "crew", "equipment", "maintenance", "import", "audit", "audit-ready", "sources", "requirements", "tug-command", "tug-job-board", "tug-job-intake", "noon-report", "deck-daily-log", "engine-daily-log", "certificate-command-center", "renewal-workflow", "pre-survey-checklist", "survey-planner", "fuel-bunker-log", "port-activity-sof"];
         foreach (var row in rows) {
             if (!Guid.TryParse(row["TenantId"], out var tenant) || tenant != actor.TenantId) continue;
             var keys = row.GetSection("Keys").GetChildren().Select(x => x.Value ?? "").ToArray();

@@ -490,6 +490,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/survey-planner": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SurveyPlannerCalendar"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/vessels/{vessel}/certificates/{id}/extractions": {
         parameters: {
             query?: never;
@@ -3637,6 +3653,102 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["CertificateRenewalTransition"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pre-survey-checklists": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PreSurveyChecklists"];
+        put?: never;
+        post: operations["PreSurveyChecklistCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pre-survey-checklists/capabilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PreSurveyCapabilities"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pre-survey-checklists/port-calls": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PreSurveyPortCalls"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pre-survey-checklists/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PreSurveyChecklistRead"];
+        put: operations["PreSurveyChecklistUpdate"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pre-survey-checklists/{id}/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PreSurveyChecklistHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pre-survey-checklists/{id}/verifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["PreSurveyChecklistVerify"];
         delete?: never;
         options?: never;
         head?: never;
@@ -10380,6 +10492,214 @@ export interface components {
             children: components["schemas"]["PredicateReason"][];
             reviewRequired: boolean;
         };
+        PreSurveyCapabilitiesDto: {
+            /** Format: uuid */
+            vesselId: string;
+            canWrite: boolean;
+            canVerify: boolean;
+            ownerOptions: components["schemas"]["RenewalOwnerDto"][];
+            templates: components["schemas"]["PreSurveyTemplateDto"][];
+            canReadPortCalls: boolean;
+            sourceVersion: string;
+            answers: string[];
+            rejectReasons: string[];
+            qualification: string;
+        };
+        PreSurveyChecklistDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: uuid */
+            certificateId: string;
+            /** Format: int64 */
+            certificateRevision: number;
+            /** Format: uint32 */
+            certificateVersion: number;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            templateCode: string;
+            templateRevision: string;
+            templateStatus: string;
+            surveyType: string;
+            plan: components["schemas"]["PreSurveyPlan"];
+            items: components["schemas"]["PreSurveyItemDto"][];
+            readiness: components["schemas"]["PreSurveyReadiness"];
+            window: components["schemas"]["SurveyWindowDto"];
+            voyageFit: components["schemas"]["SurveyFitDto"];
+            portCall: null | components["schemas"]["PreSurveyPortCallDto"];
+            transition: string;
+            sourceVersion: string;
+            hash: string;
+            /** Format: date-time */
+            savedAt: string;
+            provenance: string;
+            currentRevision: boolean;
+            canEdit: boolean;
+            canVerify: boolean;
+            qualification: string;
+            /** @default UNKNOWN_NO_VOYAGE_MODULE */
+            voyageReference: string;
+        };
+        PreSurveyCreateCommand: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uint32 */
+            expectedVersion: number;
+            /** Format: uuid */
+            certificateId: string;
+            /** Format: int64 */
+            certificateRevision: number;
+            /** Format: uint32 */
+            certificateVersion: number;
+            templateCode: string;
+            plan: components["schemas"]["PreSurveyPlan"];
+        };
+        PreSurveyItemDto: {
+            /** Format: uuid */
+            itemId: string;
+            itemCode: string;
+            critical: boolean;
+            required: boolean;
+            evidenceRequired: boolean;
+            allowNotApplicable: boolean;
+            /** Format: uuid */
+            ownerRoleId: null | string;
+            /** Format: date */
+            dueDate: null | string;
+            answer: string;
+            evidence: components["schemas"]["CertificateFilePin"][];
+            finding: null | string;
+            comment: null | string;
+            itemHash: string;
+            verificationState: string;
+            /** Format: date-time */
+            verifiedAt: null | string;
+            verificationReason: null | string;
+            answeredByCurrentActor: boolean;
+            verifiedByCurrentActor: boolean;
+            blockers: string[];
+        };
+        PreSurveyItemInput: {
+            /** Format: uuid */
+            itemId: string;
+            /** Format: uuid */
+            ownerRoleId: null | string;
+            /** Format: date */
+            dueDate: null | string;
+            answer: string;
+            evidence: components["schemas"]["CertificateFilePin"][];
+            finding?: null | string;
+            comment?: null | string;
+        };
+        PreSurveyPageDto: {
+            items: components["schemas"]["PreSurveyChecklistDto"][];
+            /** Format: int32 */
+            offset: number;
+            /** Format: int32 */
+            limit: number;
+            hasMore: boolean;
+        };
+        PreSurveyPlan: {
+            /** Format: date */
+            plannedStart?: null | string;
+            /** Format: date */
+            plannedEnd?: null | string;
+            /** Format: uuid */
+            portCallId?: null | string;
+            /** Format: int64 */
+            portCallRevision?: null | number;
+            locationText?: null | string;
+        };
+        PreSurveyPortCallDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            reference: string;
+            /** Format: date */
+            from: null | string;
+            /** Format: date */
+            to: null | string;
+            /** @default PORT_CALL_DRAFT_UNVERIFIED_PORT_IDENTITY_UNRESOLVED */
+            qualification: string;
+        };
+        PreSurveyPortCallOptionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: date */
+            from: null | string;
+            /** Format: date */
+            to: null | string;
+            label: string;
+            /** @default PORT_CALL_DRAFT_UNVERIFIED_PORT_IDENTITY_UNRESOLVED */
+            qualification: string;
+        };
+        PreSurveyPortCallPageDto: {
+            items: components["schemas"]["PreSurveyPortCallOptionDto"][];
+            truncated: boolean;
+        };
+        PreSurveyReadiness: {
+            state: string;
+            qualification: string;
+            blockers: string[];
+            /** Format: int32 */
+            criticalUnresolved: number;
+            /** Format: int32 */
+            requiredUnresolved: number;
+            /** Format: int32 */
+            verified: number;
+            /** Format: int32 */
+            total: number;
+        };
+        PreSurveyTemplateDto: {
+            code: string;
+            revision: string;
+            surveyType: string;
+            status: string;
+            items: components["schemas"]["PreSurveyTemplateItem"][];
+        };
+        PreSurveyTemplateItem: {
+            itemCode: string;
+            critical: boolean;
+            required: boolean;
+            evidenceRequired: boolean;
+            allowNotApplicable: boolean;
+        };
+        PreSurveyUpdateCommand: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uint32 */
+            expectedVersion: number;
+            /** Format: int64 */
+            expectedRevision: number;
+            /** Format: int64 */
+            certificateRevision: number;
+            /** Format: uint32 */
+            certificateVersion: number;
+            plan: components["schemas"]["PreSurveyPlan"];
+            items: components["schemas"]["PreSurveyItemInput"][];
+        };
+        PreSurveyVerificationDecision: {
+            /** Format: uuid */
+            itemId: string;
+            expectedItemHash: string;
+            decision: string;
+            reasonCode?: null | string;
+        };
+        PreSurveyVerifyCommand: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uint32 */
+            expectedVersion: number;
+            /** Format: int64 */
+            expectedRevision: number;
+            decisions: components["schemas"]["PreSurveyVerificationDecision"][];
+        };
         ProblemDetails: {
             type?: null | string;
             title?: null | string;
@@ -10945,6 +11265,102 @@ export interface components {
             checksum: null | string;
             /** Format: date */
             expiresOn?: null | string;
+        };
+        SurveyFitDto: {
+            state: string;
+            reasons: string[];
+            basis: string[];
+        };
+        SurveyPlannerChecklistDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            readiness: string;
+            /** Format: int32 */
+            criticalUnresolved: number;
+            /** Format: int32 */
+            requiredUnresolved: number;
+            /** Format: date */
+            plannedStart: null | string;
+            /** Format: date */
+            plannedEnd: null | string;
+            portCallReference: string;
+            href: string;
+        };
+        SurveyPlannerCountsDto: {
+            /** Format: int32 */
+            windowUnknown: number;
+            /** Format: int32 */
+            windowUpcoming: number;
+            /** Format: int32 */
+            windowOpen: number;
+            /** Format: int32 */
+            windowOverdue: number;
+            /** Format: int32 */
+            fitConditional: number;
+            /** Format: int32 */
+            fitNotFit: number;
+            /** Format: int32 */
+            fitUnknown: number;
+            /** Format: int32 */
+            checklistBlocked: number;
+            /** Format: int32 */
+            checklistMissing: number;
+        };
+        SurveyPlannerDto: {
+            /** Format: date */
+            from: string;
+            /** Format: date */
+            to: string;
+            /** Format: date */
+            referenceDate: string;
+            items: components["schemas"]["SurveyPlannerRowDto"][];
+            truncated: boolean;
+            vesselsTruncated: boolean;
+            counts: components["schemas"]["SurveyPlannerCountsDto"];
+            qualification: string;
+            fitStates: string[];
+            sourceVersion: string;
+        };
+        SurveyPlannerRowDto: {
+            /** Format: uuid */
+            vesselId: string;
+            vesselCode: string;
+            vesselName: string;
+            vesselKind: string;
+            /** Format: uuid */
+            certificateId: string;
+            /** Format: int64 */
+            certificateRevision: number;
+            /** Format: uint32 */
+            certificateVersion: number;
+            certificateType: null | string;
+            certificateNumber: null | string;
+            issuer: null | string;
+            declaredFlag: null | string;
+            regulatoryBasis: null | string;
+            /** Format: date */
+            expiryDate: null | string;
+            window: components["schemas"]["SurveyWindowDto"];
+            fit: components["schemas"]["SurveyFitDto"];
+            checklist: null | components["schemas"]["SurveyPlannerChecklistDto"];
+            coordination: string;
+            href: string;
+        };
+        SurveyWindowDto: {
+            state: string;
+            /** Format: date */
+            start: null | string;
+            /** Format: date */
+            end: null | string;
+            /** Format: int32 */
+            daysToOpen: null | number;
+            /** Format: int32 */
+            daysToClose: null | number;
+            /** Format: int32 */
+            daysOverdue: null | number;
+            qualifiers: string[];
         };
         SyncConflictItemDto: {
             source: string;
@@ -13602,6 +14018,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CertificateCapabilitiesDto"];
+                };
+            };
+        };
+    };
+    SurveyPlannerCalendar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SurveyPlannerDto"];
                 };
             };
         };
@@ -17052,6 +17488,186 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CertificateRenewalDto"];
+                };
+            };
+        };
+    };
+    PreSurveyChecklists: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreSurveyPageDto"];
+                };
+            };
+        };
+    };
+    PreSurveyChecklistCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PreSurveyCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreSurveyChecklistDto"];
+                };
+            };
+        };
+    };
+    PreSurveyCapabilities: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreSurveyCapabilitiesDto"];
+                };
+            };
+        };
+    };
+    PreSurveyPortCalls: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreSurveyPortCallPageDto"];
+                };
+            };
+        };
+    };
+    PreSurveyChecklistRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreSurveyChecklistDto"];
+                };
+            };
+        };
+    };
+    PreSurveyChecklistUpdate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PreSurveyUpdateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreSurveyChecklistDto"];
+                };
+            };
+        };
+    };
+    PreSurveyChecklistHistory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreSurveyPageDto"];
+                };
+            };
+        };
+    };
+    PreSurveyChecklistVerify: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PreSurveyVerifyCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreSurveyChecklistDto"];
                 };
             };
         };

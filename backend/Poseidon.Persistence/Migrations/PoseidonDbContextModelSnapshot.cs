@@ -6257,6 +6257,180 @@ namespace Poseidon.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Poseidon.Persistence.PreSurveyChecklist", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CertificateId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Revision")
+                        .HasColumnType("bigint");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "VesselId", "CertificateId")
+                        .HasDatabaseName("IX_PreSurveyChecklist_Certificate");
+
+                    b.ToTable("PreSurveyChecklists", "assurance", t =>
+                        {
+                            t.HasCheckConstraint("CK_PreSurveyChecklist_Revision", "\"Revision\" > 0");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.PreSurveyChecklistRevision", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ChecklistId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Revision")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CertificateId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("CertificateRevision")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("CertificateVersion")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("ContentJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Hash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateOnly?>("PlannedEnd")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("PlannedStart")
+                        .HasColumnType("date");
+
+                    b.Property<Guid?>("PortCallId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long?>("PortCallRevision")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Provenance")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("Readiness")
+                        .IsRequired()
+                        .HasMaxLength(48)
+                        .HasColumnType("character varying(48)");
+
+                    b.Property<long>("RecordVersion")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("SavedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SourceVersion")
+                        .IsRequired()
+                        .HasMaxLength(192)
+                        .HasColumnType("character varying(192)");
+
+                    b.Property<string>("TemplateCode")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("Transition")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "ChecklistId", "Revision");
+
+                    b.HasIndex("TenantId", "VesselId", "ChecklistId")
+                        .HasDatabaseName("IX_PreSurveyRevision_Head");
+
+                    b.HasIndex("TenantId", "VesselId", "CertificateId", "CertificateRevision")
+                        .HasDatabaseName("IX_PreSurveyRevision_Certificate");
+
+                    b.ToTable("PreSurveyChecklistRevisions", "assurance", t =>
+                        {
+                            t.HasCheckConstraint("CK_PreSurveyRevision_Binding", "\"Revision\" > 0 AND \"RecordVersion\" > 0 AND \"CertificateRevision\" > 0 AND \"CertificateVersion\" > 0 AND ((\"PortCallId\" IS NULL AND \"PortCallRevision\" IS NULL) OR (\"PortCallId\" IS NOT NULL AND \"PortCallRevision\" > 0)) AND (\"PlannedStart\" IS NULL OR \"PlannedEnd\" IS NULL OR \"PlannedEnd\" >= \"PlannedStart\")");
+
+                            t.HasCheckConstraint("CK_PreSurveyRevision_State", "\"Transition\" IN ('CREATE','UPDATE','VERIFY') AND \"Readiness\" IN ('BLOCKED','INCOMPLETE','PREPARED_PENDING_HUMAN_CONFIRMATION') AND \"Provenance\" IN ('UserDeclaredUnverified','SyntheticUnverified')");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.PreSurveyReceipt", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Key")
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<Guid>("ChecklistId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Fingerprint")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("OutcomeJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("SavedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "ActorId", "Key");
+
+                    b.HasIndex("TenantId", "VesselId", "ChecklistId")
+                        .HasDatabaseName("IX_PreSurveyReceipt_Checklist");
+
+                    b.ToTable("PreSurveyReceipts", "assurance", t =>
+                        {
+                            t.HasCheckConstraint("CK_PreSurveyReceipt_Action", "\"Action\" IN ('PreSurveySave','PreSurveyVerify')");
+                        });
+                });
+
             modelBuilder.Entity("Poseidon.Persistence.RegisterDraft", b =>
                 {
                     b.Property<Guid>("TenantId")
@@ -10453,6 +10627,47 @@ namespace Poseidon.Persistence.Migrations
                         .HasForeignKey("TenantId", "PersonId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.PreSurveyChecklist", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.VesselCertificate", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId", "CertificateId")
+                        .HasPrincipalKey("TenantId", "VesselId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_PreSurveyChecklist_Certificate");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.PreSurveyChecklistRevision", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.PreSurveyChecklist", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId", "ChecklistId")
+                        .HasPrincipalKey("TenantId", "VesselId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_PreSurveyRevision_Head");
+
+                    b.HasOne("Poseidon.Persistence.VesselCertificateRevision", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId", "CertificateId", "CertificateRevision")
+                        .HasPrincipalKey("TenantId", "VesselId", "CertificateId", "Revision")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_PreSurveyRevision_Certificate");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.PreSurveyReceipt", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.PreSurveyChecklist", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId", "ChecklistId")
+                        .HasPrincipalKey("TenantId", "VesselId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_PreSurveyReceipt_Checklist");
                 });
 
             modelBuilder.Entity("Poseidon.Persistence.RegisterDraft", b =>

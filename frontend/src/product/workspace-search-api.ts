@@ -13,6 +13,7 @@ const destinations: Readonly<Record<string, string>> = {
   defects: '/app/defects',
   'fuel-bunker-log': '/app/fuel-bunker-log', 'port-activity-sof': '/app/port-activity-sof',
   'certificate-command-center': '/app/certificate-command-center', 'renewal-workflow': '/app/renewal-workflow',
+  'pre-survey-checklist': '/app/pre-survey-checklist', 'survey-planner': '/app/survey-planner',
   'noon-report': '/app/noon-report', 'deck-daily-log': '/app/deck-daily-log', 'engine-daily-log': '/app/engine-daily-log',
   today: '/app/today', companies: '/app/companies', fleet: '/app/fleet',
   sources: '/app/sources', requirements: '/app/requirements', audit: '/app/audit', 'audit-ready': '/app/audit-ready',
@@ -27,7 +28,7 @@ export const isSeparateWorkspaceDestination = (href: string) =>
   href === '/app/risk-assessment' || /^\/app\/risk-assessment\/[0-9a-f-]{36}$/.test(href) || href === '/app/risk-template-library' ||
   href === '/app/work-order-center' || /^\/app\/work-order-center\/[0-9a-f-]{36}$/.test(href) ||
   href === '/app/defects' || /^\/app\/defects\/[0-9a-f-]{36}$/.test(href) ||
-  href === '/app/fuel-bunker-log' || href === '/app/port-activity-sof' || /^\/app\/(fuel-bunker-log|port-activity-sof)\/[0-9a-f-]{36}$/.test(href) || href === '/app/certificate-command-center' || href === '/app/renewal-workflow' || /^\/app\/(certificate-command-center|renewal-workflow)\/[0-9a-f-]{36}$/.test(href) || href === '/app/noon-report' || href === '/app/deck-daily-log' || href === '/app/engine-daily-log' || /^\/app\/(noon-report|deck-daily-log|engine-daily-log)\/[0-9a-f-]{36}$/.test(href) || href === '/app/tug-command' || href === '/app/tug-job-board' || href === '/app/tug-job-intake' || href === '/app/system-health' || href === '/app/notification-escalation' || href === '/app/offline-conflict-center'
+  href === '/app/fuel-bunker-log' || href === '/app/port-activity-sof' || /^\/app\/(fuel-bunker-log|port-activity-sof)\/[0-9a-f-]{36}$/.test(href) || href === '/app/certificate-command-center' || href === '/app/renewal-workflow' || /^\/app\/(certificate-command-center|renewal-workflow)\/[0-9a-f-]{36}$/.test(href) || href === '/app/pre-survey-checklist' || href === '/app/survey-planner' || /^\/app\/pre-survey-checklist\/[0-9a-f-]{36}$/.test(href) || href === '/app/noon-report' || href === '/app/deck-daily-log' || href === '/app/engine-daily-log' || /^\/app\/(noon-report|deck-daily-log|engine-daily-log)\/[0-9a-f-]{36}$/.test(href) || href === '/app/tug-command' || href === '/app/tug-job-board' || href === '/app/tug-job-intake' || href === '/app/system-health' || href === '/app/notification-escalation' || href === '/app/offline-conflict-center'
 const object = (value: unknown): value is Record<string, unknown> =>
   value !== null && typeof value === 'object' && !Array.isArray(value)
 const exact = (value: Record<string, unknown>, keys: string[]) =>
