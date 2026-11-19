@@ -183,7 +183,7 @@
         "responseReplay": "STORED_OUTCOME_UNDER_CURRENT_RIGHTS",
         "conflictStatus": 409,
         "conflictCode": "idempotency_key_reused",
-        "lostReplyRetry": "Same key and same canonical body returns the outcome stored in the durable receipt (Idempotency-Replayed: true) after scope and permission are re-evaluated for the current actor; no second business effect. A key bound to another actor, route or payload is 409 idempotency_key_reused.",
+        "lostReplyRetry": "Same key and same canonical body returns the outcome stored in the durable receipt (Idempotency-Replayed: true) after scope and permission are re-evaluated for the current actor; no second business effect. A key reused for another route, action or payload is 409 idempotency_key_reused. Key binding differs per member: parameter commands bind the key tenant-wide, so reuse by another actor is also 409 idempotency_key_reused; DeclareProfileFieldSource and membership commands (including import) bind the key per actor, so another actor presenting the same key runs as an independent command with its own receipt and never receives the first actor's stored outcome.",
         "afterResponseWindowRetry": "No response-cache expiry: the durable command receipt is retained, so a retry at any later time replays the receipt instead of re-executing. Receipt retention/tombstone policy is not yet approved (58.03 paragraph:255)."
       },
       "concurrency": {
@@ -211,7 +211,7 @@
         "NO_COMMON_COMMAND_STATUS_ENDPOINT",
         "NO_202_IN_FLIGHT_COMMAND_STATUS"
       ],
-      "summary": "Authenticated, S1-classified, audited command. Antiforgery and a single Idempotency-Key are required before any business effect; existing aggregates require a body expected version/revision fence (native CAS, stale 409 version_conflict); first create is exempt. A replay returns the stored receipt outcome (not a fresh re-read) only after current authorization is re-evaluated. Parameter command keys are tenant-unique. Every response no-store."
+      "summary": "Authenticated, S1-classified, audited command. Antiforgery and a single Idempotency-Key are required before any business effect; existing aggregates require a body expected version/revision fence (native CAS, stale 409 version_conflict); first create is exempt. A replay returns the stored receipt outcome (not a fresh re-read) only after current authorization is re-evaluated. Idempotency keys are tenant-unique for parameter commands and actor-scoped for DeclareProfileFieldSource and membership commands; in both cases another actor never receives a stored outcome. Every response no-store."
     },
     {
       "profileId": "NATIVE-COMMAND-IF-MATCH-1",
@@ -256,7 +256,7 @@
         "NO_COMMON_COMMAND_STATUS_ENDPOINT",
         "NO_202_IN_FLIGHT_COMMAND_STATUS"
       ],
-      "summary": "PLAN-1511-5802 controlled document/evidence custody command. Authenticated, S1-classified, audited; antiforgery and a single UUID Idempotency-Key are required before any business effect. Existing documents require If-Match with the opaque native xmin ETag (missing 428 precondition_required, stale 412 version_conflict); document creation is exempt. SERIALIZABLE unit of work; a replay returns the stored receipt outcome only after current actor, vessel scope and permission are re-evaluated. Every response no-store."
+      "summary": "PLAN-1511-5802 controlled document/evidence custody command. Authenticated, S1-classified, audited; antiforgery and a single UUID Idempotency-Key are required before any business effect. Existing documents require If-Match with the opaque native xmin ETag (missing 428 precondition_required, stale 412 version_conflict); document creation is exempt. SERIALIZABLE unit of work: a serialization or deadlock failure (40001/40P01) that is not answered by a stored receipt replay returns 409 version_conflict (retry with the same Idempotency-Key and If-Match), distinct from the stale If-Match 412; a database state-rule rejection is 409 invalid_state. A replay returns the stored receipt outcome only after current actor, vessel scope and permission are re-evaluated. Every response no-store."
     },
     {
       "profileId": "NATIVE-OFFLINE-1",

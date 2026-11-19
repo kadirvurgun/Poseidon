@@ -67,7 +67,7 @@ async function mockShell(page: Page) {
     });
 }
 
-async function open(page: Page, locale = 'en', mode: 'light' | 'dark' = 'light') {
+async function open(page: Page, locale = 'en', mode: 'light' | 'dark' = 'light', route: string = `/app/today/${vessel.id}`) {
     await page.addInitScript(([value, appearance]) => {
         localStorage.setItem('poseidon.locale', value);
         localStorage.setItem('poseidon.appearance.v2', JSON.stringify({ v: 2, mode: appearance, palette: 'emerald' }));
@@ -75,13 +75,22 @@ async function open(page: Page, locale = 'en', mode: 'light' | 'dark' = 'light')
     // Animations would let axe sample mid-transition colours; the reduced-motion surface is covered elsewhere.
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await mockShell(page);
-    await page.goto(`/app/today/${vessel.id}`);
+    await page.goto(route);
     await expect(page.locator('html')).toHaveAttribute('lang', locale);
-    await expect(page.locator('.workspace-global-context .context-live')).toContainText(vessel.code);
+    if (route.endsWith('/' + vessel.id))
+        await expect(page.locator('.workspace-global-context .context-live')).toContainText(vessel.code);
+    else
+        // Fleet list and the no-vessel Today chooser both render the synthetic vessel row once loaded.
+        await expect(page.locator('#product-main')).toContainText(vessel.code);
 }
 
 async function expectNoViolations(page: Page, state: string) {
     const results = await new AxeBuilder({ page }).withTags(wcagTags).analyze();
+    // "incomplete" = axe could not decide (e.g. contrast over gradients); recorded for manual review, never a pass or a failure.
+    if (results.incomplete.length > 0)
+        await test.info().attach(`axe-incomplete-${state.replace(/[^a-z0-9]+/gi, '-')}.json`, { contentType: 'application/json',
+            body: JSON.stringify(results.incomplete.map(v => ({ id: v.id, impact: v.impact, help: v.help,
+                nodes: v.nodes.slice(0, 5).map(n => ({ target: n.target.join(' '), summary: n.failureSummary })) })), null, 2) });
     const summary = results.violations.map(v => ({ id: v.id, impact: v.impact, help: v.help,
         nodes: v.nodes.slice(0, 5).map(n => ({ target: n.target.join(' '), summary: n.failureSummary })) }));
     expect(summary, `axe WCAG A/AA violations in ${state}`).toEqual([]);
@@ -119,6 +128,28 @@ test.describe('DEV-025 axe-core WCAG gate', () => {
         await page.getByRole('button', { name: 'Customize…' }).click();
         await expect(page.getByRole('dialog', { name: 'Theme builder' })).toBeVisible();
         await expectNoViolations(page, 'theme builder open');
+    });
+
+    test('fleet list', async ({ page }) => {
+        await page.setViewportSize({ width: 1280, height: 800 });
+        await open(page, 'en', 'light', '/app/fleet');
+        await expectNoViolations(page, 'fleet list');
+    });
+
+    test('Today with no vessel selected', async ({ page }) => {
+        await page.setViewportSize({ width: 1280, height: 800 });
+        await open(page, 'en', 'light', '/app/today');
+        await expect(page.locator('.workspace-global-context .context-live')).not.toContainText(vessel.code);
+        await expectNoViolations(page, 'no vessel selected');
+    });
+
+    test('workspace search dialog open', async ({ page }) => {
+        await page.setViewportSize({ width: 1280, height: 800 });
+        await open(page);
+        await page.getByRole('button', { name: 'Search workspace', exact: true }).first().click();
+        const dialog = page.getByRole('dialog', { name: 'Search workspace', exact: true });
+        await expect(dialog).toBeVisible();
+        await expectNoViolations(page, 'search dialog open');
     });
 
     test('dark mode shell', async ({ page }) => {

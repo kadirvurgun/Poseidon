@@ -107,7 +107,7 @@ describe('DEV-052/053 authored product behavior (mock UI only; execution deferre
         await userEvent.type(screen.getByLabelText('Equipment name'), 'FICTIONAL mobile retained');
         await userEvent.click(screen.getByRole('button', { name: 'Menu' }));
         const navigation = screen.getByRole('dialog', { name: 'POSEIDON' });
-        await userEvent.click(within(navigation).getByRole('link', { name: 'POSEIDON' }));
+        await userEvent.click(within(navigation).getByRole('link', { name: /^POSEIDON\b/ }));
         const confirmation = await screen.findByRole('dialog', { name: 'Unsaved changes' });
         expect(document.getElementById('technical-main')?.inert).toBe(false);
         expect(screen.queryByRole('dialog', { name: 'POSEIDON' })).not.toBeInTheDocument();
