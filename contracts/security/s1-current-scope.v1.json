@@ -30,11 +30,14 @@
     "TenantPerson",
     "Unresolved"
   ],
-  "mutationRouteTemplates": 115,
-  "criticalRouteTemplates": 107,
-  "criticalOperations": 117,
+  "mutationRouteTemplates": 133,
+  "criticalRouteTemplates": 125,
+  "criticalOperations": 135,
   "scopeMeaning": "Current exposed HTTP command surface, including aliases. Counts are authoring definitions until actual EndpointDataSource drift and real audit observations pass the phase gate. Technical codes describe accepted commands, never human justification or safety authority.",
   "operations": [
+    { "operationId": "ProposeParameterChange", "method": "POST", "routePattern": "/api/v1/parameter-changes", "family": "Parameter", "scope": "Tenant", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "ParameterCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "ApproveParameterChange", "method": "POST", "routePattern": "/api/v1/parameter-changes/{id:guid}/commands/approve", "family": "Parameter", "scope": "Tenant", "kind": "CriticalWrite", "reasonCode": "HUMAN_REVIEW_WORKFLOW", "denialAction": "ParameterCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "RejectParameterChange", "method": "POST", "routePattern": "/api/v1/parameter-changes/{id:guid}/commands/reject", "family": "Parameter", "scope": "Tenant", "kind": "CriticalWrite", "reasonCode": "HUMAN_REVIEW_WORKFLOW", "denialAction": "ParameterCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "DefectCreate", "method": "POST", "routePattern": "/api/v1/defects", "family": "Defect", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DefectCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "DefectUpdate", "method": "PUT", "routePattern": "/api/v1/defects/{id:guid}", "family": "Defect", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DefectCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "DowntimeCreate", "method": "POST", "routePattern": "/api/v1/operational-downtime", "family": "Downtime", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DowntimeCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
@@ -45,6 +48,7 @@
     { "operationId": "FuelShipOpsUpdate", "method": "PUT", "routePattern": "/api/v1/fuel-bunker-logs/{id:guid}", "family": "ShipOperations", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "ShipOperationsCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "PortShipOpsCreate", "method": "POST", "routePattern": "/api/v1/port-activity-sof", "family": "ShipOperations", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "ShipOperationsCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "PortShipOpsUpdate", "method": "PUT", "routePattern": "/api/v1/port-activity-sof/{id:guid}", "family": "ShipOperations", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "ShipOperationsCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "DeclareProfileFieldSource", "method": "POST", "routePattern": "/api/v1/vessels/{id:guid}/regulatory-profile/field-sources", "family": "Profile", "scope": "Vessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "ProfileSave", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     {"operationId": "CertificateAssertionRecord", "method": "POST", "routePattern": "/api/v1/vessels/{vessel:guid}/certificates/{id:guid}/verification-assertions", "family": "CertificateAssertion", "scope": "Vessel", "kind": "CriticalWrite", "reasonCode": "HUMAN_REVIEW_WORKFLOW", "denialAction": "CertificateCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"]},
     {"operationId": "CertificateExtract", "method": "POST", "routePattern": "/api/v1/vessels/{vessel:guid}/certificates/{id:guid}/extractions", "family": "CertificateExtraction", "scope": "Vessel", "kind": "SecurityObservation", "reasonCode": null, "denialAction": "CertificateExtraction", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"]},
     {"operationId": "CredentialExtract", "method": "POST", "routePattern": "/api/v1/vessels/{vessel:guid}/crew/{assignment:guid}/certificates/{id:guid}/extractions", "family": "CertificateExtraction", "scope": "Vessel", "kind": "SecurityObservation", "reasonCode": null, "denialAction": "CertificateExtraction", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"]},
@@ -1543,6 +1547,244 @@
       "kind": "CriticalWrite",
       "reasonCode": "PREPARATION_COMMAND",
       "denialAction": "NotificationCommand",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "HrUpdateLegalEntity",
+      "method": "PUT",
+      "routePattern": "/api/v1/hr/legal-entities/{id:guid}",
+      "family": "Hr",
+      "scope": "Tenant",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "HrCommand",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "HrChangeLegalEntityStatus",
+      "method": "POST",
+      "routePattern": "/api/v1/hr/legal-entities/{id:guid}/status",
+      "family": "Hr",
+      "scope": "Tenant",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "HrCommand",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "HrAddLegalEntityIdentifier",
+      "method": "POST",
+      "routePattern": "/api/v1/hr/legal-entities/{id:guid}/identifiers",
+      "family": "Hr",
+      "scope": "Tenant",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "HrCommand",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "HrRetireLegalEntityIdentifier",
+      "method": "POST",
+      "routePattern": "/api/v1/hr/legal-entities/{id:guid}/identifiers/{identifierId:guid}/retire",
+      "family": "Hr",
+      "scope": "Tenant",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "HrCommand",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "HrAddLegalEntityRole",
+      "method": "POST",
+      "routePattern": "/api/v1/hr/legal-entities/{id:guid}/roles",
+      "family": "Hr",
+      "scope": "Tenant",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "HrCommand",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "HrEndLegalEntityRole",
+      "method": "POST",
+      "routePattern": "/api/v1/hr/legal-entities/{id:guid}/roles/{roleId:guid}/end",
+      "family": "Hr",
+      "scope": "Tenant",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "HrCommand",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "HrCancelLegalEntityRole",
+      "method": "POST",
+      "routePattern": "/api/v1/hr/legal-entities/{id:guid}/roles/{roleId:guid}/cancel",
+      "family": "Hr",
+      "scope": "Tenant",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "HrCommand",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "HrUpdatePerson",
+      "method": "PUT",
+      "routePattern": "/api/v1/hr/people/{id:guid}",
+      "family": "Hr",
+      "scope": "TenantPerson",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "HrCommand",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "HrVerifyPerson",
+      "method": "POST",
+      "routePattern": "/api/v1/hr/people/{id:guid}/verify",
+      "family": "Hr",
+      "scope": "TenantPerson",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "HrCommand",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "HrCreateEmployment",
+      "method": "POST",
+      "routePattern": "/api/v1/hr/employments",
+      "family": "Hr",
+      "scope": "TenantPerson",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "HrCommand",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "HrChangeEmploymentStatus",
+      "method": "POST",
+      "routePattern": "/api/v1/hr/employments/{id:guid}/status",
+      "family": "Hr",
+      "scope": "TenantPerson",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "HrCommand",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "HrCreateAssignment",
+      "method": "POST",
+      "routePattern": "/api/v1/hr/assignments",
+      "family": "Hr",
+      "scope": "TenantPerson",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "HrCommand",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "HrChangeAssignmentStatus",
+      "method": "POST",
+      "routePattern": "/api/v1/hr/assignments/{id:guid}/status",
+      "family": "Hr",
+      "scope": "TenantPerson",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "HrCommand",
+      "variants": [],
+      "traceIds": [
+        "T-S1-002",
+        "T-S1-003",
+        "T-S1-004",
+        "T-S1-007"
+      ]
+    },
+    {
+      "operationId": "HrRecordActualEvent",
+      "method": "POST",
+      "routePattern": "/api/v1/hr/assignments/{id:guid}/actual-events",
+      "family": "Hr",
+      "scope": "TenantPerson",
+      "kind": "CriticalWrite",
+      "reasonCode": "PREPARATION_COMMAND",
+      "denialAction": "HrCommand",
       "variants": [],
       "traceIds": [
         "T-S1-002",

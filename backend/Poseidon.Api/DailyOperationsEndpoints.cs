@@ -163,7 +163,7 @@ public static class DailyOperationsEndpoints
             tx=await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable,ct);
             var now=h.RequestServices.GetRequiredService<TimeProvider>().GetUtcNow();
             var applied=await DailyOperationsWriter.Apply(db,a!.Id,vessel,kind,command,routeId==null,now,ct);
-            if(applied.Record==null) return await Fail(h,applied.Status,applied.Code!);
+            if(applied.Record==null) return (applied.Status==409?await Replay():null)??await Fail(h,applied.Status,applied.Code!);
             var outcome=JsonSerializer.Serialize(applied.Record,Json);
             db.DailyOperationReceipts.Add(new(){TenantId=a.TenantId,VesselId=vessel,ActorId=a.Id,Key=key,RecordId=command.Id,Kind=kind,Fingerprint=fingerprint,OutcomeJson=outcome,SavedAt=now});
             await db.SaveChangesAsync(ct);

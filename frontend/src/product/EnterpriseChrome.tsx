@@ -2,7 +2,7 @@ import { LanguageSelector } from "../components/LanguageSelector";
 import { presentationLabel } from '../i18n/labels';
 import { localizedLabel, localizedText, sourceText } from "../i18n/messages";
 import { type Locale as AppLocale } from "../i18n";
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Anchor, ArrowLeft, ArrowUpRight, Building2, ChevronRight, ClipboardList, FileCheck2, FolderCheck, Gauge, LayoutDashboard, Menu, Search, ShieldCheck, Ship, Users, Wrench, Upload, Waves, X } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
@@ -75,6 +75,23 @@ export function EnterpriseChrome({ session, vessel = null, language, onLanguageC
     // selecting a role lens never grants it or hides it from an assigned operator.
     const menuItems = currentLens ? [...currentLens.items, ...navigation.destinations.filter(item => ['system-health', 'notification-escalation'].includes(item.key) && !currentLens.items.some(lens => lens.key === item.key))] : navigation.destinations;
     const menuButton = useRef<HTMLButtonElement>(null);
+    const header = useRef<HTMLElement>(null);
+    // DEV-025 / 65.03 paragraph 90 + UX-013: scroll padding equals the real sticky bar height, so a
+    // focused field is never hidden under it; a non-sticky bar (short viewport / zoom) needs none.
+    useLayoutEffect(() => {
+        const node = header.current, root = document.documentElement;
+        if (!node)
+            return;
+        const update = () => {
+            const sticky = getComputedStyle(node).position === 'sticky';
+            root.style.setProperty('--shell-sticky-offset', sticky ? `${Math.ceil(node.getBoundingClientRect().height)}px` : '0px');
+        };
+        update();
+        const observer = typeof ResizeObserver === 'function' ? new ResizeObserver(update) : null;
+        observer?.observe(node);
+        window.addEventListener('resize', update);
+        return () => { observer?.disconnect(); window.removeEventListener('resize', update); root.style.removeProperty('--shell-sticky-offset'); };
+    }, []);
     const drawer = controlledDrawer ?? localDrawer;
     const setDrawer = (open: boolean) => { setLocalDrawer(open); onDrawerChange?.(open); };
     const searchOpen = searchOwner !== null && searchOwner.owner === session && !!session?.authenticated && session.canRead;
@@ -148,20 +165,20 @@ export function EnterpriseChrome({ session, vessel = null, language, onLanguageC
         .find(item => { const target = item.href.split('?')[0]; return path === target || path.startsWith(target + '/'); })?.key;
     return <>
     <a className="skip-link" href={`#${mainId}`}>{localizedText(en, "pairs.m_c5380d7bc08b74cb")}</a>
-    <header className="product-header enterprise-topbar" inert={drawer}>
+    <header ref={header} className="product-header enterprise-topbar" inert={drawer}>
       <Button ref={menuButton} variant="ghost" size="icon" className="workspace-menu" aria-expanded={drawer} aria-controls="workspace-navigation" aria-label={localizedText(en, "pairs.m_489a9d5d52c1f266")} onClick={() => setDrawer(!drawer)}><Menu /></Button>
       <div className="enterprise-breadcrumb">{vessel && <Button variant="ghost" size="icon-sm" asChild><a href={`/app/fleet/${vessel}`} aria-label={localizedText(en, "pairs.m_09d51047be4de855")} onClick={event => { event.preventDefault(); move(`/app/fleet/${vessel}`); }}><ArrowLeft aria-hidden="true"/></a></Button>}<span>POSEIDON</span><ChevronRight aria-hidden="true"/><strong>{title}</strong></div>
       <div className="enterprise-topbar-actions">
         <AppearanceControls language={language} />
-        {navigation.canSearch && <Button variant="outline" className="enterprise-search-trigger" aria-label={localizedText(en, "pairs.m_a959c1a640f4b9b6")} onClick={() => { if (session)
-        setSearchOwner({ owner: session }); }}><Search /><span>{localizedText(en, "pairs.m_a959c1a640f4b9b6")}</span><kbd>⌘ / Ctrl K</kbd></Button>}
+        {navigation.canSearch && <Button variant="outline" className="enterprise-search-trigger" aria-keyshortcuts="Control+K Meta+K" aria-label={localizedText(en, "pairs.m_a959c1a640f4b9b6")} onClick={() => { if (session)
+        setSearchOwner({ owner: session }); }}><Search /><span>{localizedText(en, "pairs.m_a959c1a640f4b9b6")}</span><kbd aria-hidden="true" data-shortcut="⌘ / Ctrl K" /></Button>}
         <LanguageSelector locale={language} onChange={onLanguageChange} />
       </div>
       <WorkspaceContextBar session={session} vessel={vessel} language={language} onNavigate={move}/>
     </header>
     {drawer && <button type="button" className="enterprise-nav-overlay" aria-label={localizedText(en, "pairs.m_7cf3ab76311a388d")} onClick={() => setDrawer(false)}/>}
     <nav id="workspace-navigation" className={`product-nav enterprise-sidebar ${drawer ? 'is-open' : ''}`} aria-label="POSEIDON" role={drawer ? 'dialog' : undefined} aria-modal={drawer ? true : undefined}>
-      <div className="enterprise-brand-row"><a className="enterprise-brand" href="/app" aria-label="POSEIDON" onClick={event => { event.preventDefault(); move('/app'); }}><span className="enterprise-brand-mark"><Waves aria-hidden="true"/></span><span>POSEIDON<small>{presentationLabel(language, 'maritimeOperations')}</small></span></a>{drawer && <Button variant="ghost" size="icon" aria-label={localizedText(en, "pairs.m_99627faa6a096fa8")} onClick={() => setDrawer(false)}><X /></Button>}</div>
+      <div className="enterprise-brand-row"><a className="enterprise-brand" href="/app" onClick={event => { event.preventDefault(); move('/app'); }}><span className="enterprise-brand-mark"><Waves aria-hidden="true"/></span><span>POSEIDON<small aria-hidden="true">{presentationLabel(language, 'maritimeOperations')}</small></span></a>{drawer && <Button variant="ghost" size="icon" aria-label={localizedText(en, "pairs.m_99627faa6a096fa8")} onClick={() => setDrawer(false)}><X /></Button>}</div>
       <div className="enterprise-nav-scroll">
         <details className="enterprise-role-settings"><summary>{localizedText(en, "pairs.m_10b48db6980a8159")}</summary><WorkspaceRoleNavigation session={session} vessel={vessel} language={language} onNavigate={move} embedded primary scopeEpoch={navigation.epoch} onProjection={projectLens}/></details>
         <EnterpriseSidebarNav key={`${session?.tenantId}:${session?.actorId}:${vessel}`} items={menuItems.flatMap(item => {

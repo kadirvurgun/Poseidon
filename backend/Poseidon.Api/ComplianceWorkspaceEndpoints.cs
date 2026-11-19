@@ -60,7 +60,7 @@ public static class ComplianceWorkspaceEndpoints
     private static TrustedActor Actor(HttpContext h) => h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User)!;
     // Same live-response principle as the S3 private trace fence. Compare values,
     // not membership/array identity: a reordered equivalent reload is harmless.
-    private static string AccessHash(TrustedActor actor) => RegisterStorage.Hash(JsonSerializer.Serialize(new {
+    internal static string AccessHash(TrustedActor actor) => RegisterStorage.Hash(JsonSerializer.Serialize(new {
         actor.Id, actor.TenantId, actor.TenantWideRead, actor.TenantWideManage, actor.RoleContext,
         permissions = actor.Permissions.Order(StringComparer.Ordinal),
         vessels = actor.VesselGrants.OrderBy(g => g.VesselId).ThenBy(g => g.CanEdit)
@@ -156,7 +156,7 @@ public static class ComplianceWorkspaceEndpoints
         if (!await ResponseCurrent(h, access, false, id, dto.ProfileRevision, null, null)) return await Fail(h, 403, "permission_denied");
         return Results.Ok(dto);
     }
-    private static async Task<ComplianceApplicabilityDto> Review(Guid vessel, TrustedActor actor, HttpContext h,
+    internal static async Task<ComplianceApplicabilityDto> Review(Guid vessel, TrustedActor actor, HttpContext h,
         PoseidonDbContext db, DateTimeOffset now) {
         var href = $"/app/fleet/{vessel:D}/passport#applicability";
         var row = await OperationEquipmentCommands.Evaluations(db, actor)

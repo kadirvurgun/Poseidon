@@ -340,6 +340,17 @@ public static class ImportEndpoints
     }
     internal static string SafeCode(string code) => code is "required" or "invalid_format" or "duplicate" or "conflict" or "unresolved_reference" or "unsupported_value" or "domain_validation" ? code : "unknown";
 
+    // PLAN-1511-5402: re-resolve the live membership inside the batch transaction before commit.
+    private static async Task<bool> BatchAccessHolds(HttpContext h, PoseidonDbContext db, TrustedActor actor, Guid vessel, string category,
+        ExactAccessRequest? access, ExactAccessDecision? decision) {
+        var live = h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User);
+        if (live == null || live.Id != actor.Id || live.TenantId != actor.TenantId || !live.CanRead || !live.Permissions.Contains("import.read") ||
+            !live.HasWriteAttribution || !live.Permissions.Contains("import.write")) return false;
+        if (category == "vessel")
+            return access != null && decision != null && await ExactActionAccess.VesselWriteHoldsBeforeCommit(h, db, decision, access, actor);
+        return await live.Scope(db.Vessels.AsNoTracking()).AnyAsync(x => x.Id == vessel, h.RequestAborted);
+    }
+
     private static async Task<IResult> Commit(Guid vessel, Guid batch, HttpContext h, PoseidonDbContext db) {
         var failure = await Gate(h, db, vessel, true); if (failure != null) return failure;
         var b = await Load(vessel, batch, h, db, true); if (b == null) return await Fail(h, 404, "resource_not_found");
@@ -393,6 +404,13 @@ public static class ImportEndpoints
                 return Results.Ok(new ImportCommittedDto(batch, "Committed", b.RowCount, p.Id, true));
             }
             if (b.State == "Committed") return await Fail(h, 409, "version_conflict");
+            ExactAccessRequest? batchAccess = null; ExactAccessDecision? batchDecision = null;
+            if (b.Category == "vessel") {
+                // The vessel row write is the migrated vessel.directory.update action; its decision is
+                // revalidated again for the whole batch right before the outer commit.
+                batchAccess = new(ExactActionCatalog.VesselDirectoryUpdate, ExactActionCatalog.PurposeDirectoryMaintenance, a.TenantId, vessel);
+                batchDecision = ExactActionAccess.Evaluate(a, batchAccess);
+            }
             var current = await Validate(b, table, mapping.Mapping, h, db);
             if (current.Any(r => r.Outcome != "valid")) return await Fail(h, 409, "version_conflict");
             foreach (var (cells, i) in table.Rows.Select((r, i) => (r, i))) {
@@ -426,13 +444,22 @@ public static class ImportEndpoints
                     }
                 }
                 if (result is not IStatusCodeHttpResult { StatusCode: >= 200 and < 300 }) {
-                    await tx.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear(); return await Fail(h, 409, "version_conflict");
+                    await tx.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear();
+                    // PLAN-1511-5402: a row whose exact action was revoked at commit-time revalidation
+                    // rolls back the whole batch as an authorization failure, not a version conflict.
+                    return ExactActionAccess.RevokedBeforeCommit(h) ? await Fail(h, 403, "permission_denied") : await Fail(h, 409, "version_conflict");
                 }
             }
             b.State = "Committed"; b.CommittedAt = DateTimeOffset.UtcNow; b.CommittedPreviewId = p.Id;
             db.CommandReceipts.Add(new() { TenantId = a.TenantId, ActorId = a.Id, Key = originalKey.ToString(), Action = "ImportCommit", Fingerprint = fingerprint,
                 ResourceId = batch, RegisterRevision = b.Revision, CommittedAt = b.CommittedAt.Value });
-            await db.SaveChangesAsync(h.RequestAborted); await tx.CommitAsync(h.RequestAborted);
+            await db.SaveChangesAsync(h.RequestAborted);
+            // Commit-time revalidation (54.02 A03-007 step 8) for the whole batch, immediately before commit:
+            // live identity, import write gate and vessel scope; vessel batches also re-check the exact action.
+            if (!await BatchAccessHolds(h, db, a, vessel, b.Category, batchAccess, batchDecision)) {
+                await tx.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear(); return await Fail(h, 403, "permission_denied");
+            }
+            await tx.CommitAsync(h.RequestAborted);
             return Results.Ok(new ImportCommittedDto(batch, "Committed", b.RowCount, p.Id, false));
         } catch (Exception e) when (e is DbUpdateException || PostgresFailure.IsSerialization(e)) {
             await tx.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear(); return await Fail(h, 409, "version_conflict");

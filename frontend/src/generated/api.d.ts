@@ -228,6 +228,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/vessels/{id}/critical-states": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Critical-state explanations for one vessel: owning source and revision, reason codes, server-computed freshness and blockers with resolution types. Never a ready, verified or compliant outcome. Readers without the owning detail authority receive STATE_ONLY entries without source details; components without a state capability are omitted. */
+        get: operations["GetCriticalStates"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/vessel-compliance-passport": {
         parameters: {
             query?: never;
@@ -367,6 +384,40 @@ export interface paths {
             cookie?: never;
         };
         get: operations["GetTodayWhy"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/metrics/definitions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** 55.01 metric registry entries the actor may view. Definition only; no formula designer or export. */
+        get: operations["ListMetricDefinitions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/metrics/scalar": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Evaluates one registered scalar over records the actor can currently read. SUPPRESSED, UNKNOWN and UNAVAILABLE carry no value; zero is never substituted for a missing source. */
+        get: operations["GetMetricScalar"];
         put?: never;
         post?: never;
         delete?: never;
@@ -724,6 +775,56 @@ export interface paths {
         get: operations["GetRegulatoryHistory"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{id}/regulatory-profile/fields": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Per-field value version, declared provenance and computed freshness. Declared sources are never verification; without an approved freshness policy every field is UNKNOWN with a reason. */
+        get: operations["GetProfileFields"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{id}/regulatory-profile/fields/{field}/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetProfileFieldHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{id}/regulatory-profile/field-sources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Appends one declared (unverified) source for the exact current field value version. Trusted vessel edit grant, CSRF and Idempotency-Key required; expectedValueRevision and expectedSequence are compare-and-set fences. */
+        post: operations["DeclareProfileFieldSource"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4843,6 +4944,427 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/parameter-definitions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description config.read. Registered 54.01 CFG3 definition subset with source locators; the source declares 354 definitions. Registration is not owner adapter admission. */
+        get: operations["ListParameterDefinitions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/effective-parameters": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description config.resolve. Query key, scopeKind TENANT|COMPANY|VESSEL, scopeId (COMPANY/VESSEL), applicability (base64url canonical JSON object), mode CURRENT|HISTORICAL, effectiveAt+knownAt (HISTORICAL only). Reports status RESOLVED|UNCONFIGURED|AMBIGUOUS|BLOCKED|UNKNOWN with source scope and version; never fabricates a value. */
+        get: operations["ResolveEffectiveParameter"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parameter-changes/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description config.read. Immutable revision and decision lineage of one parameter root; version is the CAS token for decisions. */
+        get: operations["GetParameterChange"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parameter-changes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description config.draft. Proposes one typed value revision (IN_REVIEW). expectedVersion 0 creates the root. Owner fields, invariants, aliases and family references are rejected with 422. No approval, schedule or activation. */
+        post: operations["ProposeParameterChange"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parameter-changes/{id}/commands/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description config.approve. Independent approver only (maker != checker). The selection is append-only and effective no earlier than the decision. */
+        post: operations["ApproveParameterChange"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/parameter-changes/{id}/commands/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description config.reject. Independent reviewer only; REJECTED is terminal and never selectable. */
+        post: operations["RejectParameterChange"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/legal-entities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List legal entities (the single company master) */
+        get: operations["HrListLegalEntities"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/legal-entities/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["HrGetLegalEntity"];
+        /** @description Audited HR command. Requires tenant-wide HR permission, a trusted role, antiforgery and a 16-80 character Idempotency-Key. Mutations of existing records require expectedVersion (409 on conflict). Replay returns the fresh authorized representation. */
+        put: operations["HrUpdateLegalEntity"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/legal-entities/{id}/field-revisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["HrGetLegalEntityFieldRevisions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/people/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["HrGetPerson"];
+        /** @description Audited HR command. Requires tenant-wide HR permission, a trusted role, antiforgery and a 16-80 character Idempotency-Key. Mutations of existing records require expectedVersion (409 on conflict). Replay returns the fresh authorized representation. */
+        put: operations["HrUpdatePerson"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/people/{id}/field-revisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["HrGetPersonFieldRevisions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/employments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["HrListEmployments"];
+        put?: never;
+        /** @description Audited HR command. Requires tenant-wide HR permission, a trusted role, antiforgery and a 16-80 character Idempotency-Key. Mutations of existing records require expectedVersion (409 on conflict). Replay returns the fresh authorized representation. */
+        post: operations["HrCreateEmployment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/employments/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["HrGetEmployment"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/assignments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["HrListAssignments"];
+        put?: never;
+        /** @description Audited HR command. Requires tenant-wide HR permission, a trusted role, antiforgery and a 16-80 character Idempotency-Key. Mutations of existing records require expectedVersion (409 on conflict). Replay returns the fresh authorized representation. */
+        post: operations["HrCreateAssignment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/assignments/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["HrGetAssignment"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/legal-entities/{id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Audited HR command. Requires tenant-wide HR permission, a trusted role, antiforgery and a 16-80 character Idempotency-Key. Mutations of existing records require expectedVersion (409 on conflict). Replay returns the fresh authorized representation. */
+        post: operations["HrChangeLegalEntityStatus"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/legal-entities/{id}/identifiers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Audited HR command. Requires tenant-wide HR permission, a trusted role, antiforgery and a 16-80 character Idempotency-Key. Mutations of existing records require expectedVersion (409 on conflict). Replay returns the fresh authorized representation. */
+        post: operations["HrAddLegalEntityIdentifier"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/legal-entities/{id}/identifiers/{identifierId}/retire": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Audited HR command. Requires tenant-wide HR permission, a trusted role, antiforgery and a 16-80 character Idempotency-Key. Mutations of existing records require expectedVersion (409 on conflict). Replay returns the fresh authorized representation. */
+        post: operations["HrRetireLegalEntityIdentifier"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/legal-entities/{id}/roles": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Audited HR command. Requires tenant-wide HR permission, a trusted role, antiforgery and a 16-80 character Idempotency-Key. Mutations of existing records require expectedVersion (409 on conflict). Replay returns the fresh authorized representation. */
+        post: operations["HrAddLegalEntityRole"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/legal-entities/{id}/roles/{roleId}/end": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Audited HR command. Requires tenant-wide HR permission, a trusted role, antiforgery and a 16-80 character Idempotency-Key. Mutations of existing records require expectedVersion (409 on conflict). Replay returns the fresh authorized representation. */
+        post: operations["HrEndLegalEntityRole"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/legal-entities/{id}/roles/{roleId}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Audited HR command. Requires tenant-wide HR permission, a trusted role, antiforgery and a 16-80 character Idempotency-Key. Mutations of existing records require expectedVersion (409 on conflict). Replay returns the fresh authorized representation. */
+        post: operations["HrCancelLegalEntityRole"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/people/{id}/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Audited HR command. Requires tenant-wide HR permission, a trusted role, antiforgery and a 16-80 character Idempotency-Key. Mutations of existing records require expectedVersion (409 on conflict). Replay returns the fresh authorized representation. */
+        post: operations["HrVerifyPerson"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/employments/{id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Audited HR command. Requires tenant-wide HR permission, a trusted role, antiforgery and a 16-80 character Idempotency-Key. Mutations of existing records require expectedVersion (409 on conflict). Replay returns the fresh authorized representation. */
+        post: operations["HrChangeEmploymentStatus"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/assignments/{id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Audited HR command. Requires tenant-wide HR permission, a trusted role, antiforgery and a 16-80 character Idempotency-Key. Mutations of existing records require expectedVersion (409 on conflict). Replay returns the fresh authorized representation. */
+        post: operations["HrChangeAssignmentStatus"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hr/assignments/{id}/actual-events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description Audited HR command. Requires tenant-wide HR permission, a trusted role, antiforgery and a 16-80 character Idempotency-Key. Mutations of existing records require expectedVersion (409 on conflict). Replay returns the fresh authorized representation. */
+        post: operations["HrRecordActualEvent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -5817,6 +6339,52 @@ export interface components {
             /** @default SYSTEM_DERIVED;BA_DEFINITION_PENDING */
             authority: string;
         };
+        CriticalStateBlocker: {
+            fieldPath: string;
+            reasonCode: string;
+            resolutionType: string;
+        };
+        CriticalStateExplanation: {
+            key: string;
+            /** Format: uuid */
+            subjectId: string;
+            state: string;
+            disclosure: string;
+            /** Format: date-time */
+            asOf: string;
+            verification?: null | string;
+            source?: null | components["schemas"]["CriticalStateSource"];
+            reasonCodes?: null | string[];
+            freshness?: null | components["schemas"]["CriticalStateFreshness"];
+            blockers?: null | components["schemas"]["CriticalStateBlocker"][];
+            href?: null | string;
+        };
+        CriticalStateFreshness: {
+            state: string;
+            reasonCode: string;
+            /** Format: date-time */
+            observedAt: null | string;
+            /** Format: date-time */
+            checkedAt: string;
+        };
+        CriticalStatesDto: {
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: date-time */
+            readAt: string;
+            scope: string;
+            states: components["schemas"]["CriticalStateExplanation"][];
+        };
+        CriticalStateSource: {
+            kind: string;
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: null | number;
+            /** Format: date-time */
+            recordedAt: null | string;
+            provenance: string;
+        };
         DailyCapabilitiesDto: {
             /** Format: uuid */
             vesselId: string;
@@ -6049,6 +6617,13 @@ export interface components {
             state: string;
             value: null | string;
         };
+        DecideParameterChange: {
+            /** Format: uint32 */
+            expectedVersion: null | number;
+            /** Format: uuid */
+            revisionId: null | string;
+            reason: null | string;
+        };
         DecisionRecording: {
             decisionType: string;
             subjectType: string;
@@ -6065,6 +6640,16 @@ export interface components {
         };
         DeclaredCredentialDateOrder: number;
         DeclaredDateRelation: number;
+        DeclareProfileFieldSource: {
+            fieldPath: null | string;
+            /** Format: int64 */
+            expectedValueRevision: null | number;
+            /** Format: int64 */
+            expectedSequence: null | number;
+            sourceKind: null | string;
+            reference: null | components["schemas"]["TextInput"];
+            observedAt: null | components["schemas"]["TextInput"];
+        };
         DefectAssetContextDto: {
             /** Format: uuid */
             vesselId: string;
@@ -6338,6 +6923,40 @@ export interface components {
             unknown: number;
             reason: string;
         };
+        EffectiveParameterDto: {
+            requestedKey: string;
+            key: string;
+            aliasOf: null | string;
+            /** Format: int32 */
+            definitionVersion: number;
+            mode: string;
+            /** Format: date-time */
+            effectiveAt: string;
+            /** Format: date-time */
+            knownAt: string;
+            scopeKind: string;
+            /** Format: uuid */
+            scopeId: string;
+            status: string;
+            valueClass: string;
+            value: null | components["schemas"]["JsonElement"];
+            valueMode: null | string;
+            /** Format: uuid */
+            sourceRevisionId: null | string;
+            sourceScope: null | string;
+            /** Format: uuid */
+            sourceScopeId: null | string;
+            /** Format: int64 */
+            sourceVersion: null | number;
+            /** Format: date-time */
+            selectedFrom: null | string;
+            contentHash: null | string;
+            fallbackUsed: boolean;
+            ownerVerification: string;
+            positiveUseAllowed: boolean;
+            reasonCodes: string[];
+            applicabilityHash: string;
+        };
         EquipmentCommand: {
             /** Format: uuid */
             id: string;
@@ -6455,6 +7074,37 @@ export interface components {
             /** Format: date-time */
             validUntil: string;
         };
+        FieldFreshness: {
+            state: string;
+            reasonCode: string;
+            /** Format: date-time */
+            observedAt: null | string;
+            /** Format: date-time */
+            checkedAt: string;
+            /** Format: int64 */
+            ageSeconds: null | number;
+        };
+        FieldSourceDto: {
+            /** Format: int64 */
+            sequence: number;
+            /** Format: int64 */
+            valueRevision: number;
+            sourceKind: string;
+            reference: components["schemas"]["TextInput"];
+            observedAt: components["schemas"]["TextInput"];
+            /** Format: uuid */
+            declaredBy: string;
+            /** Format: uuid */
+            stewardCompanyId: string;
+            /** Format: date-time */
+            recordedAt: string;
+            provenance: string;
+            verificationState: string;
+        };
+        FieldValueDto: {
+            state: string;
+            value: null | string;
+        };
         FileDto: {
             /** Format: uuid */
             id: string;
@@ -6480,6 +7130,26 @@ export interface components {
             /** Format: int64 */
             maxBytes: number;
             allowedTypes: string[];
+        };
+        FreshnessPolicyDto: {
+            status: string;
+            policyRef: null | string;
+        };
+        FreshnessSummary: {
+            state: string;
+            reasonCode: string;
+            /** Format: date-time */
+            oldestObservedAt: null | string;
+            /** Format: date-time */
+            checkedAt: string;
+            /** Format: int32 */
+            fresh: number;
+            /** Format: int32 */
+            stale: number;
+            /** Format: int32 */
+            unknown: number;
+            /** Format: int32 */
+            unavailable: number;
         };
         GraphPin: {
             kind: string;
@@ -6538,6 +7208,301 @@ export interface components {
             unresolvedConflicts: number;
             /** Format: int64 */
             localBacklog: null | number;
+        };
+        HrActualEventCommand: {
+            kind: null | string;
+            /** Format: date-time */
+            occurredAt: null | string;
+            originZoneId: null | string;
+            origin: null | string;
+            sourceSystem: null | string;
+            sourceEventId: null | string;
+        };
+        HrActualEventDto: {
+            /** Format: uuid */
+            id: string;
+            kind: string;
+            /** Format: date-time */
+            occurredAt: string;
+            originZoneId: string;
+            origin: string;
+            quality: string;
+            disposition: string;
+            /** Format: date-time */
+            recordedAt: string;
+        };
+        HrActualSessionDto: {
+            /** Format: date-time */
+            actualFrom: string;
+            /** Format: date-time */
+            actualTo: null | string;
+        };
+        HrAssignmentActualDto: {
+            status: string;
+            /** Format: date-time */
+            actualFrom: null | string;
+            /** Format: date-time */
+            actualTo: null | string;
+            /** Format: int32 */
+            pendingReconciliation: number;
+            sessions: components["schemas"]["HrActualSessionDto"][];
+            events: components["schemas"]["HrActualEventDto"][];
+        };
+        HrAssignmentCreateCommand: {
+            /** Format: uuid */
+            employmentId: null | string;
+            kind: null | string;
+            /** Format: uuid */
+            vesselId: null | string;
+            /** Format: uuid */
+            positionId: null | string;
+            /** Format: date-time */
+            plannedFrom: null | string;
+            /** Format: date-time */
+            plannedTo: null | string;
+            plannedZoneId: null | string;
+        };
+        HrAssignmentDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            employmentId: string;
+            /** Format: uuid */
+            personId: string;
+            /** Format: uuid */
+            legalEntityId: string;
+            kind: string;
+            /** Format: uuid */
+            vesselId: null | string;
+            /** Format: uuid */
+            positionId: null | string;
+            plan: components["schemas"]["HrAssignmentPlanDto"];
+            actual: components["schemas"]["HrAssignmentActualDto"];
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            stateChanges?: null | components["schemas"]["HrStateChangeDto"][];
+        };
+        HrAssignmentPlanDto: {
+            /** Format: date-time */
+            plannedFrom: string;
+            /** Format: date-time */
+            plannedTo: string;
+            plannedZoneId: string;
+            state: string;
+            /** Format: date-time */
+            plannedAt: string;
+            /** Format: date-time */
+            approvedAt: null | string;
+        };
+        HrEmploymentCreateCommand: {
+            /** Format: uuid */
+            personId: null | string;
+            /** Format: uuid */
+            legalEntityId: null | string;
+            employeeNo: null | string;
+            employmentType: null | string;
+            /** Format: date-time */
+            startAt: null | string;
+            /** Format: date-time */
+            endAt: null | string;
+        };
+        HrEmploymentDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            personId: string;
+            /** Format: uuid */
+            legalEntityId: string;
+            employeeNo: string;
+            employmentType: string;
+            /** Format: date-time */
+            startAt: string;
+            /** Format: date-time */
+            endAt: null | string;
+            state: string;
+            /** Format: date-time */
+            activatedAt: null | string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            stateChanges?: null | components["schemas"]["HrStateChangeDto"][];
+        };
+        HrFieldRevisionDto: {
+            /** Format: int64 */
+            revision: number;
+            field: string;
+            value: null | string;
+            sourceKind: string;
+            sourceRef: null | string;
+            reason: null | string;
+            actorId: string;
+            /** Format: date-time */
+            recordedAt: string;
+        };
+        HrIdentifierAddCommand: {
+            type: null | string;
+            issuer: null | string;
+            value: null | string;
+            sourceKind: null | string;
+            sourceRef: null | string;
+        };
+        HrLegalEntityDto: {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            name: string;
+            legalName: null | string;
+            countryCode: null | string;
+            hrTimeZone: null | string;
+            baseLocale: null | string;
+            status: string;
+            /** Format: date-time */
+            effectiveFrom: null | string;
+            /** Format: date-time */
+            effectiveTo: null | string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            missingForActivation: string[];
+            identifiers: components["schemas"]["HrLegalEntityIdentifierDto"][];
+            roles: components["schemas"]["HrLegalEntityRoleDto"][];
+            canEdit: boolean;
+            stateChanges?: null | components["schemas"]["HrStateChangeDto"][];
+        };
+        HrLegalEntityIdentifierDto: {
+            /** Format: uuid */
+            id: string;
+            type: string;
+            issuer: string;
+            value: null | string;
+            maskedValue: string;
+            sourceKind: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            retiredAt: null | string;
+            /** Format: uint32 */
+            version: number;
+        };
+        HrLegalEntityRoleDto: {
+            /** Format: uuid */
+            id: string;
+            role: string;
+            /** Format: uuid */
+            vesselId: null | string;
+            /** Format: date-time */
+            effectiveFrom: string;
+            /** Format: date-time */
+            effectiveTo: null | string;
+            verificationState: string;
+            state: string;
+            sourceKind: string;
+            /** Format: uint32 */
+            version: number;
+        };
+        HrLegalEntitySummaryDto: {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            name: string;
+            legalName: null | string;
+            countryCode: null | string;
+            hrTimeZone: null | string;
+            status: string;
+            /** Format: uint32 */
+            version: number;
+        };
+        HrLegalEntityUpdateCommand: {
+            /** Format: uint32 */
+            expectedVersion: null | number;
+            legalName: null | string;
+            countryCode: null | string;
+            hrTimeZone: null | string;
+            baseLocale: null | string;
+            /** Format: date-time */
+            effectiveFrom: null | string;
+            /** Format: date-time */
+            effectiveTo: null | string;
+            sourceKind: null | string;
+            sourceRef: null | string;
+            reason?: null | string;
+        };
+        HrListDtoOfHrAssignmentDto: {
+            items: components["schemas"]["HrAssignmentDto"][];
+            truncated: boolean;
+        };
+        HrListDtoOfHrEmploymentDto: {
+            items: components["schemas"]["HrEmploymentDto"][];
+            truncated: boolean;
+        };
+        HrListDtoOfHrFieldRevisionDto: {
+            items: components["schemas"]["HrFieldRevisionDto"][];
+            truncated: boolean;
+        };
+        HrListDtoOfHrLegalEntitySummaryDto: {
+            items: components["schemas"]["HrLegalEntitySummaryDto"][];
+            truncated: boolean;
+        };
+        HrPersonDto: {
+            /** Format: uuid */
+            id: string;
+            personType: string;
+            masterState: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            canEdit: boolean;
+            canVerify: boolean;
+        };
+        HrPersonUpdateCommand: {
+            /** Format: uint32 */
+            expectedVersion: null | number;
+            personType: null | string;
+            sourceKind: null | string;
+            sourceRef: null | string;
+            reason?: null | string;
+        };
+        HrRetireCommand: {
+            /** Format: uint32 */
+            expectedVersion: null | number;
+            reason: null | string;
+            /** Format: date-time */
+            effectiveTo?: null | string;
+        };
+        HrRoleAddCommand: {
+            role: null | string;
+            /** Format: uuid */
+            vesselId: null | string;
+            /** Format: date-time */
+            effectiveFrom: null | string;
+            /** Format: date-time */
+            effectiveTo: null | string;
+            sourceKind: null | string;
+            sourceRef: null | string;
+        };
+        HrStateChangeDto: {
+            subjectKind: string;
+            /** Format: uuid */
+            subjectId: string;
+            fromState: string;
+            toState: string;
+            reason: string;
+            actorId: string;
+            /** Format: date-time */
+            recordedAt: string;
+        };
+        HrStatusCommand: {
+            /** Format: uint32 */
+            expectedVersion: null | number;
+            targetState: null | string;
+            reason: null | string;
+            /** Format: date-time */
+            endAt?: null | string;
         };
         HumanRecordingPolicy: {
             decisionType: string;
@@ -6896,6 +7861,65 @@ export interface components {
             state: string;
             reason: string;
         };
+        MetricCatalogDto: {
+            contractVersion: string;
+            items: components["schemas"]["MetricDefinitionDto"][];
+        };
+        MetricDefinitionDto: {
+            id: string;
+            /** Format: int32 */
+            version: number;
+            ownerModule: string;
+            label: string;
+            unitCode: string;
+            sourceProjectionId: string;
+            aggregation: string;
+            /** Format: int32 */
+            minCohort: number;
+            freshnessRule: string;
+            requiredPermissions: string[];
+            allowedActions: string[];
+            scopes: string[];
+            basis: string;
+            source: string;
+        };
+        MetricScalarDto: {
+            metricId: string;
+            /** Format: int32 */
+            definitionVersion: number;
+            ownerModule: string;
+            state: string;
+            value: null | string;
+            unitCode: string;
+            quality: string;
+            /** Format: date-time */
+            asOf: string;
+            sourceProjectionId: string;
+            /** Format: date-time */
+            sourceWatermark: null | string;
+            scope: components["schemas"]["MetricScopeDto"];
+            /** Format: int32 */
+            unknownCount: number;
+            reasons: string[];
+            basis: string;
+            freshnessRule: string;
+            source: string;
+        };
+        MetricScopeDto: {
+            kind: string;
+            /** Format: uuid */
+            vesselId: null | string;
+            /** Format: int32 */
+            expectedSources: number;
+            /** Format: int32 */
+            readSources: number;
+            /** Format: int32 */
+            withheldSources: number;
+            /** Format: int32 */
+            unreadableSources: number;
+            /** Format: int32 */
+            notCollectedSources: number;
+        };
         MsmdReference: {
             documentReference?: null | string;
             issuerReference?: null | string;
@@ -7193,6 +8217,14 @@ export interface components {
             limit: number;
             hasMore: boolean;
         };
+        PageDtoOfProfileFieldVersionDto: {
+            items: components["schemas"]["ProfileFieldVersionDto"][];
+            /** Format: int32 */
+            offset: number;
+            /** Format: int32 */
+            limit: number;
+            hasMore: boolean;
+        };
         PageDtoOfRegisterDto: {
             items: components["schemas"]["RegisterDto"][];
             /** Format: int32 */
@@ -7241,6 +8273,113 @@ export interface components {
             limit: number;
             hasMore: boolean;
         };
+        ParameterChangeDto: {
+            /** Format: uuid */
+            id: string;
+            key: string;
+            scopeKind: string;
+            /** Format: uuid */
+            scopeId: string;
+            applicability: components["schemas"]["JsonElement"];
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            /** Format: uuid */
+            pendingRevisionId: null | string;
+            revisions: components["schemas"]["ParameterRevisionDto"][];
+        };
+        ParameterCommandDto: {
+            /** Format: uuid */
+            changeId: string;
+            /** Format: uuid */
+            revisionId: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            state: string;
+            /** Format: date-time */
+            selectedFrom: null | string;
+            replayed: boolean;
+        };
+        ParameterDecisionDto: {
+            /** Format: uuid */
+            id: string;
+            outcome: string;
+            /** Format: uuid */
+            deciderId: string;
+            /** Format: date-time */
+            decidedAt: string;
+            /** Format: date-time */
+            selectedFrom: null | string;
+            reason: string;
+        };
+        ParameterDefinitionDto: {
+            key: string;
+            /** Format: int32 */
+            definitionVersion: number;
+            ownerDomain: string;
+            classification: string;
+            valueClass: string;
+            risk: null | string;
+            type: components["schemas"]["ParameterTypeDto"];
+            allowedScopes: string[];
+            requiredSelectors: string[];
+            fallback: string;
+            approvedProductDefault: null | string;
+            productDefaultDeploymentAccepted: boolean;
+            aliasTarget: null | string;
+            writable: boolean;
+            ownerVerification: string;
+            sensitivity: string;
+            sourceLocator: string;
+            runtimeStatus: string;
+        };
+        ParameterDefinitionListDto: {
+            items: components["schemas"]["ParameterDefinitionDto"][];
+            /** Format: int32 */
+            sourceDefinitionCount: number;
+            /** Format: int32 */
+            registeredCount: number;
+            source: components["schemas"]["ParameterSourceDto"];
+        };
+        ParameterRevisionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            sequence: number;
+            /** Format: int32 */
+            definitionVersion: number;
+            valueMode: string;
+            value: null | components["schemas"]["JsonElement"];
+            /** Format: date-time */
+            effectiveFrom: string;
+            /** Format: date-time */
+            effectiveTo: null | string;
+            reason: string;
+            /** Format: uuid */
+            authorId: string;
+            /** Format: date-time */
+            authoredAt: string;
+            provenance: string;
+            contentHash: string;
+            state: string;
+            decision: null | components["schemas"]["ParameterDecisionDto"];
+        };
+        ParameterSourceDto: {
+            path: string;
+            sha256: string;
+        };
+        ParameterTypeDto: {
+            type: string;
+            nullable: boolean;
+            /** Format: int64 */
+            minimum: null | number;
+            /** Format: int64 */
+            maximum: null | number;
+            unit: null | string;
+        };
         PredicateReason: {
             path: string;
             truth: components["schemas"]["RuleTruth"];
@@ -7257,6 +8396,81 @@ export interface components {
             status?: null | number;
             detail?: null | string;
             instance?: null | string;
+        };
+        ProfileFieldDto: {
+            fieldPath: string;
+            kind: string;
+            unit: null | string;
+            value: components["schemas"]["FieldValueDto"];
+            /** Format: int64 */
+            valueRevision: null | number;
+            /** Format: int64 */
+            latestSequence: number;
+            source: null | components["schemas"]["FieldSourceDto"];
+            priorValueSource: null | components["schemas"]["FieldSourceDto"];
+            freshness: components["schemas"]["FieldFreshness"];
+            verificationState: string;
+        };
+        ProfileFieldsDto: {
+            /** Format: uuid */
+            tenantId: string;
+            /** Format: uuid */
+            vesselId: string;
+            owner: components["schemas"]["ProfileOwnerDto"];
+            /** Format: int64 */
+            profileRevision: number;
+            /** Format: date-time */
+            profileSavedAt: null | string;
+            /** Format: date-time */
+            checkedAt: string;
+            policy: components["schemas"]["FreshnessPolicyDto"];
+            summary: components["schemas"]["FreshnessSummary"];
+            fields: components["schemas"]["ProfileFieldDto"][];
+            canDeclare: boolean;
+        };
+        ProfileFieldSourceOutcomeDto: {
+            /** Format: uuid */
+            tenantId: string;
+            /** Format: uuid */
+            vesselId: string;
+            fieldPath: string;
+            source: components["schemas"]["FieldSourceDto"];
+        };
+        ProfileFieldVersionDto: {
+            /** Format: int64 */
+            valueRevision: number;
+            /** Format: date-time */
+            recordedAt: string;
+            profileProvenance: string;
+            value: components["schemas"]["FieldValueDto"];
+            sources: components["schemas"]["FieldSourceDto"][];
+            moreSources: boolean;
+        };
+        ProfileOwnerDto: {
+            /** Format: uuid */
+            legalEntityId: string;
+            binding: string;
+            registeredOwnerState: string;
+        };
+        ProposeParameterChange: {
+            /** Format: uint32 */
+            expectedVersion: null | number;
+            key: null | string;
+            /** Format: int32 */
+            definitionVersion: null | number;
+            scopeKind: null | string;
+            /** Format: uuid */
+            scopeId: null | string;
+            applicability: null | {
+                [key: string]: string;
+            };
+            valueMode: null | string;
+            value: null | components["schemas"]["JsonElement"];
+            /** Format: date-time */
+            effectiveFrom: null | string;
+            /** Format: date-time */
+            effectiveTo: null | string;
+            reason: null | string;
         };
         QualificationCommand: {
             /** Format: uint32 */
@@ -7745,6 +8959,17 @@ export interface components {
             owner: null | string;
             nextAction: string;
             href: string;
+            sourceRef: components["schemas"]["TodayCardSourceDto"];
+        };
+        TodayCardSourceDto: {
+            owner: string;
+            kind: string;
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: null | number;
+            /** Format: date-time */
+            savedAt: null | string;
         };
         TodayCoverageDto: {
             source: string;
@@ -7756,6 +8981,7 @@ export interface components {
             readAt: string;
             coverage: components["schemas"]["TodayCoverageDto"][];
             cards: components["schemas"]["PageDtoOfTodayCardDto"];
+            viewState: string;
         };
         TodayMaintenanceEvidenceDto: {
             /** Format: uuid */
@@ -9189,6 +10415,13 @@ export interface operations {
                     "application/json": components["schemas"]["WorkspaceDto"];
                 };
             };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
             /** @description Unauthorized */
             401: {
                 headers: {
@@ -9250,6 +10483,65 @@ export interface operations {
             };
             /** @description Forbidden */
             403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GetCriticalStates: {
+        parameters: {
+            query?: {
+                key?: string;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CriticalStatesDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -9362,6 +10654,112 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TodayWhyDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ListMetricDefinitions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MetricCatalogDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GetMetricScalar: {
+        parameters: {
+            query?: {
+                metricId?: string;
+                vesselId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MetricScalarDto"];
                 };
             };
             /** @description Bad Request */
@@ -10164,6 +11562,205 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GetProfileFields: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProfileFieldsDto"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GetProfileFieldHistory: {
+        parameters: {
+            query?: {
+                offset?: number;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                id: string;
+                field: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PageDtoOfProfileFieldVersionDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    DeclareProfileFieldSource: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string;
+                "X-CSRF-TOKEN"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeclareProfileFieldSource"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProfileFieldSourceOutcomeDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
             };
             /** @description Service Unavailable */
             503: {
@@ -14880,6 +16477,2153 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["TugRequestDto"];
                 };
+            };
+        };
+    };
+    ListParameterDefinitions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ParameterDefinitionListDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ResolveEffectiveParameter: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EffectiveParameterDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GetParameterChange: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ParameterChangeDto"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ProposeParameterChange: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-CSRF-TOKEN": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProposeParameterChange"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ParameterCommandDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ApproveParameterChange: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-CSRF-TOKEN": string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DecideParameterChange"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ParameterCommandDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    RejectParameterChange: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-CSRF-TOKEN": string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DecideParameterChange"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ParameterCommandDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    HrListLegalEntities: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HrListDtoOfHrLegalEntitySummaryDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    HrGetLegalEntity: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HrLegalEntityDto"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    HrUpdateLegalEntity: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-CSRF-TOKEN": string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HrLegalEntityUpdateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HrLegalEntityDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    HrGetLegalEntityFieldRevisions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HrListDtoOfHrFieldRevisionDto"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    HrGetPerson: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HrPersonDto"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    HrUpdatePerson: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-CSRF-TOKEN": string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HrPersonUpdateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HrPersonDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    HrGetPersonFieldRevisions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HrListDtoOfHrFieldRevisionDto"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    HrListEmployments: {
+        parameters: {
+            query?: {
+                personId?: string;
+                legalEntityId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HrListDtoOfHrEmploymentDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    HrCreateEmployment: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-CSRF-TOKEN": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HrEmploymentCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HrEmploymentDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    HrGetEmployment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HrEmploymentDto"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    HrListAssignments: {
+        parameters: {
+            query?: {
+                personId?: string;
+                employmentId?: string;
+                vesselId?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HrListDtoOfHrAssignmentDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    HrCreateAssignment: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-CSRF-TOKEN": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HrAssignmentCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HrAssignmentDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    HrGetAssignment: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HrAssignmentDto"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    HrChangeLegalEntityStatus: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-CSRF-TOKEN": string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HrStatusCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HrLegalEntityDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    HrAddLegalEntityIdentifier: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-CSRF-TOKEN": string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HrIdentifierAddCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HrLegalEntityIdentifierDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    HrRetireLegalEntityIdentifier: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-CSRF-TOKEN": string;
+            };
+            path: {
+                id: string;
+                identifierId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HrRetireCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HrLegalEntityIdentifierDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    HrAddLegalEntityRole: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-CSRF-TOKEN": string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HrRoleAddCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HrLegalEntityRoleDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    HrEndLegalEntityRole: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-CSRF-TOKEN": string;
+            };
+            path: {
+                id: string;
+                roleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HrRetireCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HrLegalEntityRoleDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    HrCancelLegalEntityRole: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-CSRF-TOKEN": string;
+            };
+            path: {
+                id: string;
+                roleId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HrRetireCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HrLegalEntityRoleDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    HrVerifyPerson: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-CSRF-TOKEN": string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HrStatusCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HrPersonDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    HrChangeEmploymentStatus: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-CSRF-TOKEN": string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HrStatusCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HrEmploymentDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    HrChangeAssignmentStatus: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-CSRF-TOKEN": string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HrStatusCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HrAssignmentDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    HrRecordActualEvent: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+                "X-CSRF-TOKEN": string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HrActualEventCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HrAssignmentDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

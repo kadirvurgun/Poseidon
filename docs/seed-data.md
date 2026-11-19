@@ -1,3 +1,7 @@
+## S2-DEV020-01 — profile field provenance fixture (optional)
+
+`VesselProfileFieldSourceFixtures.AddMissingAsync` is an explicit administrative fixture, not wired into normal startup/seed import (normal seed and audit totals unchanged). For each vessel whose profile is still the untouched synthetic import revision 1 and has no field sources, it adds one `imo` declaration: `SyntheticUnverified`, source kind `UNKNOWN`, reference and observation `Unknown`, value state copied from the draft (Missing), declarer empty GUID (allowed only for synthetic rows by the DB trigger). Operator-edited profiles and existing provenance are skipped; a second run adds nothing. It never seeds a declared, verified or fresh source, a policy or a credential. Real-PostgreSQL idempotency/preservation test: `VesselProfileFieldSourcePersistenceTests`.
+
 ## RULE-COMPLIANCE-INPUTS-01 — AUTHORED / NOT RUN
 
 Optional administrative `ComplianceInputFixtures.AddMissingAsync` adds only incomplete fictional ClassPack, Msmd and CrewRoleAssessment Evidence/head/binding records. It is not startup data or normal seed activation. Add-missing behavior preserves operator revisions and ordinary receipts. It supplies no files, class pack, role/count values, observed outcome, source qualification, authority, verification, approval or credential. MSMD role and upstream/evaluation references arise from ordinary commands only. Migration, reseed/operator-preservation and composite-FK/rollback test sources are authored; none executed. Normal seed evidence/totals remain historical until the combined gate.
@@ -210,3 +214,8 @@ REGULATORY-CHAIN-BUNDLE-01. [Task](tasks/human-decision-trace-01.md).
 ## S2-FLEET-CATALOG-DRAFT-01 — 18.11.2026, AUTHORED / NOT RUN
 
 FleetCatalogDraftFixtures.AddMissingAsync yalnız explicit administrative context ve caller-owned audited SaveChanges ile iki tenant için boş FICTIONAL/SyntheticUnverified katalog draftı/history ekleyebilir. Pending/persisted tekrarlar atlanır; operator revizyonu korunur. Normal SeedImporter/startup çağrısına bağlanmadı; önceki normal seed/audit sayımları değiştirilmedi. Member, accepted katalog/source/schema, vessel type ataması, approval veya legal/operational karar seed edilmez. PostgreSQL fixture/operator-preservation/tenant/immutability testleri yazıldı; koşulmadı. Migration snapshot/designer ve gerçek apply birleşik kapıda uzlaştırılacak.
+
+
+## PLAN-1511-5201-01 — 18.11.2026, normal seed'e bağlandı
+
+`HrFixtures.AddMissingAsync` normal `SeedImporter` içinde `CrewFixtures` sonrasında çalışır ve yalnız eksik deterministik kayıtları ekler (operatör düzenlemeleri yeniden yazılmaz): her sentetik şirket için `Other / SYNTHETIC-FIXTURE` tanımlayıcısı ve `Employer` rolü (`Synthetic`, `Unverified`); her sentetik gemi için o geminin sentetik Person kaydına (Person.Id = Vessel.Id) bağlı `Draft` employment (`SYN-<gemi kodu>`) ve `Planned` gemi ataması. Tüzel kişiler incomplete `Draft` kalır (legal name/ülke/saat dilimi seed edilmez). Doğrulanmış kişi, aktif employment, onaylı atama, fiilî olay, operator/sahip rolü, gerçek sicil numarası veya kişi verisi seed edilmez. Tekrar import satır/audit sayısını değiştirmez (`HrPersistenceTests.Seed_is_idempotent_unverified_and_contains_no_approved_or_actual_records`). [Görev](tasks/plan-1511-5201-01.md).

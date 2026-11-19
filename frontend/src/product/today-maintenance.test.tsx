@@ -10,12 +10,13 @@ const planId = '20000000-0000-0000-0000-000000000001'
 const now = '2026-11-02T00:00:00Z'
 const vessel = { id: vesselId, companyId: assetId, code: 'SYNTHETIC', name: 'FICTIONAL tug', kind: 'Tug', version: 1, canEdit: true }
 const card = { key: `maintenance-plan:${planId}`, priority: 'Review', source: 'MaintenancePlan', reason: 'MaintenanceReviewRequired',
-  owner: null, nextAction: 'ReviewMaintenancePlan', href: `/app/maintenance-plan/${vesselId}?id=${planId}` }
+  owner: null, nextAction: 'ReviewMaintenancePlan', href: `/app/maintenance-plan/${vesselId}?id=${planId}`,
+  sourceRef: { owner: 'PMS', kind: 'MaintenancePlan', id: planId, revision: 2, savedAt: now } }
 const draft = { key: 'regulatory-draft', priority: 'Advisory', source: 'RegulatoryDraft', reason: 'DraftUnverified', owner: null,
-  nextAction: 'ReviewDraft', href: `/app/fleet/${vesselId}/profile` }
+  nextAction: 'ReviewDraft', href: `/app/fleet/${vesselId}/profile`, sourceRef: { owner: 'REGULATORY', kind: 'RegulatoryDraft', id: vesselId, revision: 1, savedAt: now } }
 const page = { vessel, readAt: now, coverage: ['RegulatoryDraft', 'OperationalTasks', 'SafetyDecisions', 'Permits', 'EvidenceVerification', 'TechnicalMaintenance', 'TugPlanning']
   .map((source, i) => ({ source, status: i === 0 || i === 5 ? 'Available' : 'Unavailable' })),
-cards: { items: [card, draft], offset: 0, limit: 25, hasMore: false } }
+cards: { items: [card, draft], offset: 0, limit: 25, hasMore: false }, viewState: 'Partial' }
 const why = { vesselId, cardKey: card.key, rule: 'TW-MAINTENANCE-01', reason: card.reason, inputs: null, readAt: now, savedAt: now,
   sourceObservedAt: null, freshness: 'Unverified', provenance: 'UserDeclaredUnverified', blockers: ['PlanningDraftNotVerified'],
   owner: null, nextAction: card.nextAction, href: card.href,
@@ -79,7 +80,7 @@ it('ignores an aborted late explanation from a different card in the same vessel
 it('pages a complete mixed-source feed and clears the prior card explanation before reading the next page', async () => {
   const first = { ...page, cards: { items: Array.from({ length: 25 }, (_, i) => {
     const id = `20000000-0000-0000-0000-${String(i + 1).padStart(12, '0')}`
-    return { ...card, key: `maintenance-plan:${id}`, href: `/app/maintenance-plan/${vesselId}?id=${id}` }
+    return { ...card, key: `maintenance-plan:${id}`, href: `/app/maintenance-plan/${vesselId}?id=${id}`, sourceRef: { ...card.sourceRef, id } }
   }), offset: 0, limit: 25, hasMore: true } }
   const last = { ...page, cards: { items: [draft], offset: 25, limit: 25, hasMore: false } }
   const fetcher = vi.fn(async (url: string) => response(url.includes('why-engine') ? why : new URL(url, 'https://example.invalid').searchParams.get('offset') === '25' ? last : first))

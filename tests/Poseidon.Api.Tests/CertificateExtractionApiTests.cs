@@ -40,8 +40,8 @@ public sealed partial class DirectoryWorkspaceTests
         PrivacyReference="FICTIONAL synthetic data",RetentionReference="FICTIONAL fixture lifetime",ConfidenceReference="FICTIONAL review threshold",PersonalProcessingReference="FICTIONAL masked crew fixture only",
         SourceVersion=CertificateExtractionPolicy.SourceVersion,ModelVersion="synthetic-model-v1",PromptVersion="synthetic-prompt-v1",LowConfidenceThreshold=0.8m,TimeoutSeconds=30,ReviewSeconds=60,MaxBytes=4096,MaxResponseBytes=4096,
         Scopes=[new(SeedVessel.TenantId,actorId,SeedVessel.Id,"Vessel"),new(SeedVessel.TenantId,actorId,SeedVessel.Id,"Crew")]};
-    private WebApplicationFactory<Program> ExtractionHost(string root,int scanner,CertificateExtractionSettings policy,ExtractionPeer peer,bool crew=false) =>
-        (crew?PersonFileHost(root,scanner):FileHost(root,scanner)).WithWebHostBuilder(b=>b.ConfigureServices(s=>{
+    private WebApplicationFactory<Program> ExtractionHost(string root,int scanner,CertificateExtractionSettings policy,ExtractionPeer peer,bool crew=false,Microsoft.EntityFrameworkCore.Diagnostics.DbCommandInterceptor? interceptor=null) =>
+        (crew?PersonFileHost(root,scanner):FileHost(root,scanner,interceptor)).WithWebHostBuilder(b=>b.ConfigureServices(s=>{
             s.AddSingleton(policy);s.AddSingleton(sp=>new CertificateExtractionProvider(peer,sp.GetRequiredService<IHostEnvironment>()));
         }));
     private void ExtractionPermissions(IServiceProvider services,bool crew=false) {

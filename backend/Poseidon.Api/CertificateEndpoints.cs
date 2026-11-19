@@ -125,7 +125,7 @@ public static class CertificateEndpoints
         try {
             tx=await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable,h.RequestAborted);
             var result=await CertificateWriter.Apply(db,actor,vessel,command,routeId==null,Now(h),h.RequestAborted);
-            if(result.Record==null)return await Fail(h,result.Status,result.Code!);
+            if(result.Record==null)return (result.Status==409?await Replay():null)??await Fail(h,result.Status,result.Code!);
             savedRecord=result.Record;outcome=JsonSerializer.Serialize(savedRecord,CertificateReader.Json);
             db.CertificateCommandReceipts.Add(new(){TenantId=actor.TenantId,VesselId=vessel,ActorId=actor.Id,Key=key,ResourceId=command.Id,CertificateId=command.Id,
                 Action="CertificateSave",Fingerprint=fingerprint,OutcomeJson=outcome,SavedAt=Now(h)});await db.SaveChangesAsync(h.RequestAborted);

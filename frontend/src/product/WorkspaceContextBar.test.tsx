@@ -46,7 +46,7 @@ describe('shared current workspace context', () => {
   it('shows actual company, vessel, mode and configured role labels in TR/EN without exposing IDs or credentials', async () => {
     const view = render(<WorkspaceContextBar session={session} vessel={vessel} language="en" />)
     expect(await screen.findByText(/FICTIONAL local role/)).toBeVisible()
-    expect(screen.getByText(/FICTIONAL-OLD/)).toBeVisible()
+    expect(screen.getByText(/FICTIONAL-OLD · Synthetic vessel/)).toBeVisible()
     expect(screen.getByText(/FICTIONAL old company/)).toBeVisible()
     expect(screen.getByText('Vessel mode: Ship')).toBeVisible()
     expect(screen.getByText('FICTIONAL workspace')).toBeVisible()
@@ -60,12 +60,12 @@ describe('shared current workspace context', () => {
     const view = render(<WorkspaceContextBar session={session} vessel={vessel} language="en" />)
     view.rerender(<WorkspaceContextBar session={session} vessel={second} language="en" />)
     await act(async () => { next.resolve(context(second)); await next.promise })
-    expect(await screen.findByText(/FICTIONAL-NEW/)).toBeVisible()
+    expect(await screen.findByText(/FICTIONAL-NEW · Synthetic vessel/)).toBeVisible()
     expect(screen.getByText(/FICTIONAL new company/)).toBeVisible()
     await act(async () => { old.resolve(context()); await old.promise })
     expect(screen.queryByText(/FICTIONAL-OLD/)).not.toBeInTheDocument()
     expect(screen.queryByText(/FICTIONAL old company/)).not.toBeInTheDocument()
-    expect(screen.getByText(/FICTIONAL-NEW/)).toBeVisible()
+    expect(screen.getByText(/FICTIONAL-NEW · Synthetic vessel/)).toBeVisible()
   })
   it('hides previous role data immediately when actor changes within the same tenant', async () => {
     const next = deferred<WorkspaceContext>(); const view = render(<WorkspaceContextBar session={session} vessel={vessel} language="en" />)
@@ -156,7 +156,7 @@ describe('shared current workspace context', () => {
     vi.mocked(loadWorkspaceContext).mockResolvedValue({ ...context(), company: null })
     render(<WorkspaceContextBar session={session} vessel={vessel} language="en" />)
     expect((await screen.findByText('Unavailable')).parentElement).toHaveTextContent('Company context: Unavailable')
-    expect(screen.getByText(/FICTIONAL-OLD/)).toBeVisible()
+    expect(screen.getByText(/FICTIONAL-OLD · Synthetic vessel/)).toBeVisible()
     expect(screen.queryByText(/FICTIONAL old company/)).not.toBeInTheDocument()
   })
   it('marks disconnected context as potentially stale without claiming sync completion or readiness', async () => {

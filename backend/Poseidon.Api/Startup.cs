@@ -20,6 +20,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddCertificateExtraction(configuration);
         services.AddSingleton(configuration.GetSection("TugPlanning").Get<TugPlanningPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<TimeProvider>(TimeProvider.System);
+        services.AddSingleton<IProfileFreshnessPolicySource, UnconfiguredProfileFreshnessPolicy>();
         services.AddSingleton(configuration.GetSection("Notifications").Get<NotificationSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddScoped<NotificationEngine>();
         services.AddSingleton(configuration.GetSection("DailyOffline").Get<DailyOfflineSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
@@ -147,6 +148,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         {
             endpoints.MapFoundation();
             endpoints.MapRegulatoryDrafts();
+            endpoints.MapVesselProfileFields();
+            endpoints.MapCriticalStates();
             endpoints.MapRegulatoryRegister();
             endpoints.MapLifecycleApplicability();
             endpoints.MapRegulatoryQualifications();
@@ -154,6 +157,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapComplianceWorkspaces();
             endpoints.MapHumanReviews();
             endpoints.MapToday();
+            endpoints.MapMetrics();
             endpoints.MapSystemHealth();
             endpoints.MapNotifications();
             endpoints.MapDailyOperations();
@@ -184,6 +188,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapDowntimeOrigins();
             endpoints.MapMaintenanceObservations();
             endpoints.MapTug();
+            endpoints.MapParameters();
+            endpoints.MapHr();
             endpoints.MapGet("/health/live", () => Results.Text("alive"))
                 .WithName("GetLiveness")
                 .WithSummary("Process liveness only; does not indicate database or operational readiness.");

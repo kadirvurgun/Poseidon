@@ -43,6 +43,8 @@ public sealed class DirectoryAuthorizationResultHandler : IAuthorizationMiddlewa
         {
             "GetRegulatoryDraft" => "ProfileRead",
             "GetRegulatoryHistory" => "ProfileHistory",
+            "GetProfileFields" => "ProfileRead",
+            "GetProfileFieldHistory" => "ProfileHistory",
             "ListCompanies" or "GetCompany" => "CompaniesRead",
             "ListVessels" or "GetVessel" => "VesselsRead",
             "GetWorkspace" => "WorkspaceRead",
@@ -59,6 +61,9 @@ public sealed class DirectoryAuthorizationResultHandler : IAuthorizationMiddlewa
             "CrewPositions" => "CrewPositions",
             "GetToday" => "TodayRead",
             "GetTodayWhy" => "TodayWhyRead",
+            "GetCriticalStates" => "CriticalStateRead",
+            "ListMetricDefinitions" => "MetricCatalogRead",
+            "GetMetricScalar" => "MetricScalarRead",
             _ => null
         };
         if (!result.Succeeded && todayAction != null)

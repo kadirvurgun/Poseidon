@@ -13,8 +13,8 @@ const roles = [
     { reference: masterRole, tr: 'KURGUSAL kaptan', en: 'FICTIONAL Master' },
     { reference: engineerRole, tr: 'KURGUSAL başmühendis', en: 'FICTIONAL Engineer' },
 ];
-async function mockShell(page: Page) {
-    const control = { denyTarget: false, wrongTenant: false, targetContextReads: 0, targetTodayReads: 0, writes: 0 };
+async function mockShell(page: Page, options: { search?: boolean } = {}) {
+    const control = { denyTarget: false, wrongTenant: false, targetContextReads: 0, targetTodayReads: 0, writes: 0, searches: [] as URLSearchParams[] };
     await page.route('**/api/v1/**', async (route) => {
         const request = route.request(), url = new URL(request.url()), path = url.pathname;
         if (request.method() !== 'GET') {
@@ -29,7 +29,20 @@ async function mockShell(page: Page) {
         }
         if (path === '/api/v1/workspace') {
             await route.fulfill({ json: { destinations: [{ key: 'fleet', href: '/app/fleet' }, { key: 'today', href: '/app/today' }],
-                    canSearch: false, canWriteRegulatory: false } });
+                    canSearch: options.search === true, canWriteRegulatory: false } });
+            return;
+        }
+        if (path === '/api/v1/workspace/search') {
+            // Synthetic stand-in for the server: only the two authorized destinations and the granted vessel exist.
+            control.searches.push(url.searchParams);
+            // Mirrors the server: destinations match by route key OR TR/EN display label (Turkish-aware fold).
+            const fold = (value: string) => value.replace(/[İIı]/g, 'i').toLowerCase().normalize('NFD').replace(/\p{M}/gu, '').trim();
+            const q = fold(url.searchParams.get('q') ?? '');
+            const labels: Record<string, string[]> = { today: ['Bugün', 'Today'], fleet: ['Filo', 'Fleet'] };
+            const items = [{ key: 'today', href: '/app/today', label: 'today', kind: 'Destination' }, { key: 'fleet', href: '/app/fleet', label: 'fleet', kind: 'Destination' },
+                { key: vessels[0].id, href: '/app/fleet/' + vessels[0].id, label: vessels[0].code + ' · ' + vessels[0].name, kind: 'Ship' }]
+                .filter(item => [item.kind === 'Destination' ? item.key : item.label, ...(labels[item.key] ?? [])].some(text => fold(text).includes(q)));
+            await route.fulfill({ json: { items, offset: 0, limit: 25, hasMore: false } });
             return;
         }
         if (path.startsWith('/api/v1/workspace/context')) {
@@ -74,7 +87,9 @@ async function mockShell(page: Page) {
                     coverage: ['RegulatoryDraft', 'OperationalTasks', 'SafetyDecisions', 'Permits', 'EvidenceVerification', 'TechnicalMaintenance', 'TugPlanning']
                         .map((source, i) => ({ source, status: i === 0 ? 'Missing' : 'Unavailable' })),
                     cards: { items: [{ key: 'regulatory-draft', priority: 'Advisory', source: 'RegulatoryDraft', reason: 'DraftAbsent', owner: null,
-                                nextAction: 'ReviewDraft', href: `/app/fleet/${vessel.id}/profile` }], offset: 0, limit: 25, hasMore: false } } });
+                                nextAction: 'ReviewDraft', href: `/app/fleet/${vessel.id}/profile`,
+                                sourceRef: { owner: 'REGULATORY', kind: 'RegulatoryDraft', id: vessel.id, revision: null, savedAt: null } }], offset: 0, limit: 25, hasMore: false },
+                    viewState: 'Partial' } });
             return;
         }
         await route.fulfill({ status: 404, json: { code: 'unconfigured_synthetic_read' } });
@@ -227,4 +242,65 @@ test('existing vessel form actions align and remain keyboard accessible without 
     // Entire transport is synthetic; retain both viewport renders for visual
     // inspection at the bundle gate without capturing IdP or real-person data.
     await page.screenshot({ path: testInfo.outputPath('vessel-form-actions.png'), fullPage: true });
+});
+test('DEV-022 role menu filter and authorized search never name, count or match hidden entries', async ({ page }) => {
+    const control = await mockShell(page, { search: true });
+    await page.goto(`/app/today/${vessels[0].id}`);
+    await page.getByRole("combobox", { name: /^(Dil seçin|Choose language)$/ }).selectOption("en");
+    const trigger = page.getByRole('button', { name: 'Menu', exact: true });
+    if (await trigger.isVisible())
+        await trigger.click();
+    const navigation = page.getByRole('navigation', { name: 'POSEIDON', exact: true })
+        .or(page.getByRole('dialog', { name: 'POSEIDON', exact: true }));
+    const filter = navigation.getByRole('searchbox', { name: 'Filter menu', exact: true });
+    await expect(filter).toBeVisible();
+    await filter.fill('fle');
+    await expect(navigation.getByRole('button', { name: 'Fleet', exact: true })).toBeVisible();
+    await expect(navigation.getByRole('button', { name: 'Today', exact: true })).toHaveCount(0);
+    // A destination the server did not project (audit) cannot be found by label or key.
+    await filter.fill('audit');
+    await expect(navigation.getByRole('status').filter({ hasText: 'No authorized menu item matches this filter.' })).toBeVisible();
+    await expect(navigation.locator('.enterprise-sidebar-nav')).not.toContainText(/\d/);
+    await filter.press('Escape');
+    await expect(filter).toHaveValue('');
+    await expect(navigation.getByRole('button', { name: 'Today', exact: true })).toBeVisible();
+    if (await trigger.isVisible()) {
+        await page.keyboard.press('Escape');
+        await expect(trigger).toBeFocused();
+    }
+    await page.getByRole('button', { name: 'Search workspace', exact: true }).first().click();
+    const dialog = page.getByRole('dialog', { name: 'Search workspace', exact: true });
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole('searchbox').fill('audit');
+    await dialog.getByRole('button', { name: 'Search', exact: true }).click();
+    await expect(dialog.getByText('No records found.')).toBeVisible();
+    await expect(dialog.getByRole('link')).toHaveCount(0);
+    // A hidden destination's display label is no different from a miss.
+    await dialog.getByRole('searchbox').fill('Action history');
+    await dialog.getByRole('button', { name: 'Search', exact: true }).click();
+    await expect(dialog.getByText('No records found.')).toBeVisible();
+    await expect(dialog.getByRole('link')).toHaveCount(0);
+    // An authorized destination is found by its TR label and shown with its localized label.
+    await dialog.getByRole('searchbox').fill('FİLO');
+    await dialog.getByRole('button', { name: 'Search', exact: true }).click();
+    await expect(dialog.getByRole('link', { name: 'Fleet', exact: true })).toBeVisible();
+    await expect(dialog.getByRole('link')).toHaveCount(1);
+    await dialog.getByRole('searchbox').fill('syn-a');
+    await dialog.getByRole('button', { name: 'Search', exact: true }).click();
+    await expect(dialog.getByRole('link', { name: /SYN-A · FICTIONAL Alpha/ })).toBeVisible();
+    await expect(dialog.getByRole('link', { name: /FICTIONAL Beta/ })).toHaveCount(0);
+    // The browser sends no tenant, vessel, role or mode selector; scope is the server's.
+    expect(control.searches.length).toBeGreaterThanOrEqual(2);
+    for (const params of control.searches)
+        expect([...params.keys()].sort()).toEqual(['limit', 'offset', 'q']);
+    expect(control.writes).toBe(0);
+});
+test('DEV022-AC-11 a direct URL to an unprojected audit screen shows neither its name nor data', async ({ page }) => {
+    const control = await mockShell(page);
+    await page.goto('/app/audit');
+    await page.getByRole("combobox", { name: /^(Dil seçin|Choose language)$/ }).selectOption("en");
+    await expect(page.getByRole('alert').filter({ hasText: 'Audit permission is required.' })).toBeVisible();
+    await expect(page.getByText('Action history', { exact: true })).toHaveCount(0);
+    await expect(page.locator('[data-navigation-key="audit"]')).toHaveCount(0);
+    expect(control.writes).toBe(0);
 });

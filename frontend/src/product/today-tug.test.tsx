@@ -10,13 +10,14 @@ const planId = '30000000-0000-0000-0000-000000000001'
 const now = '2026-11-02T00:00:00Z'
 const vessel = { id: vesselId, companyId: planId, code: 'SYN-TT', name: 'FICTIONAL tug', kind: 'Tug', version: 1, canEdit: true }
 const draft = { key: 'regulatory-draft', priority: 'Advisory', source: 'RegulatoryDraft', reason: 'DraftAbsent',
-  owner: null, nextAction: 'ReviewDraft', href: `/app/fleet/${vesselId}/profile` }
+  owner: null, nextAction: 'ReviewDraft', href: `/app/fleet/${vesselId}/profile`, sourceRef: { owner: 'REGULATORY', kind: 'RegulatoryDraft', id: vesselId, revision: null, savedAt: null } }
 const card = { key: `tug-job:${jobId}`, priority: 'Review', source: 'TugJob', reason: 'TugPlanMissing',
-  owner: null, nextAction: 'ReviewTugJob', href: `/app/tug-job-detail/${jobId}?vessel=${vesselId}` }
+  owner: null, nextAction: 'ReviewTugJob', href: `/app/tug-job-detail/${jobId}?vessel=${vesselId}`,
+  sourceRef: { owner: 'TUG', kind: 'TugJob', id: jobId, revision: 1, savedAt: now } }
 const page = { vessel, readAt: now,
   coverage: ['RegulatoryDraft', 'OperationalTasks', 'SafetyDecisions', 'Permits', 'EvidenceVerification', 'TechnicalMaintenance', 'TugPlanning']
     .map((source, i) => ({ source, status: i === 0 ? 'Missing' : i === 6 ? 'Available' : 'Unavailable' })),
-  cards: { items: [card, draft], offset: 0, limit: 25, hasMore: false } }
+  cards: { items: [card, draft], offset: 0, limit: 25, hasMore: false }, viewState: 'Partial' }
 const why = { vesselId, cardKey: card.key, rule: 'TW-TUG-01', reason: card.reason, inputs: null, readAt: now, savedAt: now,
   sourceObservedAt: null, freshness: 'Unverified', provenance: 'UserDeclaredUnverified',
   blockers: ['DraftPlanningNotOperationalApproval', 'OwningReadinessCoverageIncomplete', 'MasterDecisionRequired'],

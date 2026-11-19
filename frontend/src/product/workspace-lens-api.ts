@@ -50,8 +50,11 @@ export function lensHref(key: string, vessel: string | null) {
 const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 const text = (v: unknown, max: number): v is string => typeof v === 'string' && v.length > 0 && v.length <= max && v.trim() === v && !/\p{Cc}/u.test(v);
 function invalid(): never { throw new ApiError(502, 'invalid_navigation'); }
+const lensesKeys = ['tenantId', 'actorId', 'vesselId', 'mode', 'state', 'version', 'lenses', 'canSearch'];
+const closed = (v: Record<string, unknown>, keys: string[]) => Object.keys(v).length === keys.length && keys.every(k => Object.hasOwn(v, k));
 export function decodeLenses(value: unknown, tenant: string, actor: string, vessel: string | null): Lenses {
-    if (!isGuid(tenant) || !isGuid(actor) || vessel !== null && !isGuid(vessel) || !object(value) ||
+    // DEV-022: closed shapes at every level; a hidden count or denied-item list is rejected, never ignored.
+    if (!isGuid(tenant) || !isGuid(actor) || vessel !== null && !isGuid(vessel) || !object(value) || !closed(value, lensesKeys) ||
         value.tenantId !== tenant || value.actorId !== actor || value.vesselId !== vessel ||
         typeof value.mode !== 'string' || !['Fleet', 'Ship', 'Tug'].includes(value.mode) || (vessel === null) !== (value.mode === 'Fleet') ||
         typeof value.state !== 'string' || !['Configured', 'Missing', 'Unavailable'].includes(value.state) || typeof value.canSearch !== 'boolean' ||
@@ -60,12 +63,12 @@ export function decodeLenses(value: unknown, tenant: string, actor: string, vess
         invalid();
     const lenses: Lens[] = [];
     for (const row of value.lenses) {
-        if (!object(row) || !isGuid(row.reference) || lenses.some(x => x.reference === String(row.reference).toLowerCase()) ||
+        if (!object(row) || !closed(row, ['reference', 'tr', 'en', 'items']) || !isGuid(row.reference) || lenses.some(x => x.reference === String(row.reference).toLowerCase()) ||
             !text(row.tr, 200) || !text(row.en, 200) || !Array.isArray(row.items) || row.items.length > 20)
             invalid();
         const items: LensItem[] = [];
         for (const item of row.items) {
-            if (!object(item) || typeof item.key !== 'string' || !Object.hasOwn(lensLabels, item.key) || typeof item.href !== 'string' || items.some(x => x.key === item.key) ||
+            if (!object(item) || !closed(item, ['key', 'href', 'group']) || typeof item.key !== 'string' || !Object.hasOwn(lensLabels, item.key) || typeof item.href !== 'string' || items.some(x => x.key === item.key) ||
                 item.href !== lensHref(item.key, vessel) || (item.group !== 'daily' && item.group !== 'review') ||
                 item.group !== (['audit', 'sources', 'requirements', 'import', 'certificate-command-center', 'renewal-workflow'].includes(item.key) ? 'review' : 'daily') ||
                 (value.mode === 'Ship' && item.key.startsWith('tug-')) || (value.mode === 'Tug' && ['fuel-bunker-log', 'port-activity-sof', 'operational-downtime'].includes(item.key)))

@@ -15,9 +15,16 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         var scopeKind = metadata.VesselId is { } vessel && vessel != Guid.Empty ? "Vessel" : entry.Entity switch
         {
             Person or CrewIdentityRevision or CrewPersonalProfile or CrewPersonalProfileRevision => "TenantPerson",
+            PersonFieldRevision or Employment or HrAssignment or HrActualEvent => "TenantPerson",
+            LegalEntityFieldRevision or LegalEntityIdentifier or LegalEntityRole => "Tenant",
+            HrStateChange s when s.SubjectKind is "Employment" or "PlannedAssignment" => "TenantPerson",
+            HrStateChange => "Tenant",
+            CommandReceipt r when r.Action is "HrPersonUpdate" or "HrPersonVerify" or "HrEmploymentCreate" or "HrEmploymentStatus" or "HrAssignmentCreate" or "HrAssignmentStatus" or "HrActualEventRecord" => "TenantPerson",
+            CommandReceipt r when r.Action is "HrLegalEntityUpdate" or "HrLegalEntityStatus" or "HrIdentifierAdd" or "HrIdentifierRetire" or "HrRoleAdd" or "HrRoleEnd" or "HrRoleCancel" => "Tenant",
             CommandReceipt r when r.Action is "CrewPersonSave" or "CrewIdentityConvert" or "CrewProfileSave" or "CrewPhotoSave" => "TenantPerson",
             Tenant or Company or RegisterDraft or RegisterRevision or RuleDraft or RuleRevision or FleetCatalogDraft or FleetCatalogDraftRevision or
-                RegulatoryQualificationHead or RegulatoryQualificationEvent or RegulatoryQualificationReceipt => "Tenant",
+                RegulatoryQualificationHead or RegulatoryQualificationEvent or RegulatoryQualificationReceipt or
+                ParameterRoot or ParameterRevision or ParameterDecision or ParameterCommandReceipt => "Tenant",
             CommandReceipt r when r.Action is "CompanyCreate" or "CompanyUpdate" or "SourceDraftSave" or "RequirementDraftSave" => "Tenant",
             ApplicabilityReceipt r when r.Action is "author" or "review" => "Tenant",
             _ => "Unresolved"
@@ -143,6 +150,40 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                     Field("Binding", entry.State == EntityState.Added ? null : "OwnerReference", "OwnerReference")));
         if (entry.Entity is NotificationReceipt notificationReceipt)
             return new(notificationReceipt.VesselId, notificationReceipt.ResourceId, "NotificationReceipt", null, null,
+                Fields(Field("Binding", null, "CommittedResource")));
+        // PLAN-1511-5401: catalog key and closed states only; values, selectors and reasons are withheld.
+        if (entry.Entity is ParameterRoot parameterRoot)
+            return new(null, parameterRoot.Id, "ParameterRoot", entry.State == EntityState.Added ? null : (long?)entry.Property(nameof(parameterRoot.Revision)).OriginalValue,
+                parameterRoot.Revision, Fields(Field("Revision", entry.State == EntityState.Added ? null : Number((long)entry.Property(nameof(parameterRoot.Revision)).OriginalValue!), Number(parameterRoot.Revision)),
+                    Field("Key", null, Closed(parameterRoot.Key, ParameterRegistry.Definitions.Select(d => d.Key).ToArray())),
+                    Field("SecurityScope", null, Closed(parameterRoot.ScopeKind, "TENANT", "COMPANY", "VESSEL")),
+                    Field("PendingChange", entry.State == EntityState.Added ? null : entry.Property(nameof(parameterRoot.PendingRevisionId)).OriginalValue == null ? "None" : "Present",
+                        parameterRoot.PendingRevisionId == null ? "None" : "Present"),
+                    Field("Selector", null, null, "ValuesWithheld")));
+        if (entry.Entity is ParameterRevision parameterRevision)
+            return new(null, parameterRevision.RootId, "ParameterRevision", null, parameterRevision.Sequence,
+                Fields(Field("State", null, "IN_REVIEW"), Field("Key", null, Closed(parameterRevision.Key, ParameterRegistry.Definitions.Select(d => d.Key).ToArray())),
+                    Field("ValueMode", null, Closed(parameterRevision.ValueMode, "VALUE", "INHERIT")),
+                    Field("Provenance", null, Closed(parameterRevision.Provenance, "DeclaredUnverified", "SyntheticUnverified")),
+                    Field("Value", null, null, "ValuesWithheld"), Field("Reason", null, null, "ValuesWithheld")));
+        if (entry.Entity is ParameterDecision parameterDecision)
+            return new(null, parameterDecision.RootId, "ParameterDecision", null, parameterDecision.Sequence,
+                Fields(Field("Decision", null, Closed(parameterDecision.Outcome, "APPROVED", "REJECTED")),
+                    Field("RevisionId", null, parameterDecision.RevisionId.ToString("D")), Field("Reason", null, null, "ValuesWithheld")));
+        if (entry.Entity is ParameterCommandReceipt parameterReceipt)
+            return new(null, parameterReceipt.RootId, "ParameterCommandReceipt", null, parameterReceipt.RootRevision,
+                Fields(Field("Binding", null, "CommittedResource")));
+        if (HrProjection(entry) is { } hr) return hr;
+        // Never copy the declared reference text, value or observation time into audit.
+        if (entry.Entity is VesselProfileFieldSource fieldSource)
+            return new(fieldSource.VesselId, fieldSource.VesselId, "VesselProfileFieldSource", null, fieldSource.Sequence,
+                Fields(Field("FieldPath", null, Closed(fieldSource.FieldPath, [.. VesselProfileFieldPolicy.Paths])),
+                    Field("SourceKind", null, Closed(fieldSource.SourceKind, [.. VesselProfileFieldPolicy.SourceKinds])),
+                    Field("ValueRevision", null, Number(fieldSource.ValueRevision)), Field("Sequence", null, Number(fieldSource.Sequence)),
+                    Field("Provenance", null, Closed(fieldSource.Provenance, "DeclaredUnverified", "SyntheticUnverified")),
+                    Field("Binding", null, "OwnerReference")));
+        if (entry.Entity is VesselProfileFieldSourceReceipt fieldReceipt)
+            return new(fieldReceipt.VesselId, fieldReceipt.VesselId, "VesselProfileFieldSourceReceipt", null, fieldReceipt.Sequence,
                 Fields(Field("Binding", null, "CommittedResource")));
         if (entry.Entity is FleetCatalogDraft fleetCatalogHead)
             return new(null, fleetCatalogHead.Id, "FleetCatalogDraft", entry.State == EntityState.Added ? null : (long?)entry.Property(nameof(fleetCatalogHead.Revision)).OriginalValue,
@@ -344,6 +385,60 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                 evidence = AuditValuePolicy.Evidence(name) });
         }
         return new(vessel, resource, kind, before, after, JsonSerializer.Serialize(fields));
+    }
+
+    // PLAN-1511-5201: closed HR audit summaries. Names, legal names, registration values, employee numbers,
+    // source references and reasons are never copied into audit summaries.
+    // HR-owned legal-entity columns on the single company master (LEAD-5601-D01); values are never copied.
+    private static readonly string[] HrCompanyValueFields = [nameof(Company.LegalName), nameof(Company.CountryCode), nameof(Company.HrTimeZone),
+        nameof(Company.BaseLocale), nameof(Company.EffectiveFrom), nameof(Company.EffectiveTo)];
+    private static readonly string[] HrCompanyFields = [.. HrCompanyValueFields, nameof(Company.LegalEntityStatus), nameof(Company.LegalEntityRevision)];
+
+    private static AuditMetadata? HrProjection(EntityEntry entry)
+    {
+        static object State(EntityEntry e, string property, params string[] allowed) => Field(property,
+            e.State == EntityState.Added ? null : Closed((string)e.Property(property).OriginalValue!, allowed), Closed((string)e.Property(property).CurrentValue!, allowed));
+        static string Flag(bool value) => value ? "True" : "False";
+        return entry.Entity switch
+        {
+            LegalEntityFieldRevision r => new(null, r.LegalEntityId, "LegalEntityFieldRevision", null, r.Revision, Fields(
+                Field("Field", null, Closed(r.Field, "LegalName", "CountryCode", "HrTimeZone", "BaseLocale", "EffectiveFrom", "EffectiveTo", "LegalEntityStatus")),
+                Field("SourceKind", null, Closed(r.SourceKind, Poseidon.Domain.HrSourcePolicy.SourceKinds)), Field("Value", null, null, "ValuesWithheld"),
+                Field("Reason", null, null, "ValuesWithheld"))),
+            PersonFieldRevision r => new(null, r.PersonId, "PersonFieldRevision", null, r.Revision, Fields(
+                Field("Field", null, Closed(r.Field, "PersonType", "MasterState")),
+                Field("SourceKind", null, Closed(r.SourceKind, Poseidon.Domain.HrSourcePolicy.SourceKinds)), Field("Value", null, null, "ValuesWithheld"),
+                Field("Reason", null, null, "ValuesWithheld"))),
+            // An HR legal-entity edit proves itself by its LegalEntityRevision and the original/committed company xmin.
+            Company c when entry.State == EntityState.Modified && HrCompanyFields.Any(f => entry.Property(f).IsModified) => new(null, c.Id, "LegalEntity",
+                (long?)entry.Property(nameof(Company.LegalEntityRevision)).OriginalValue, c.LegalEntityRevision, Fields([
+                    Field("Revision", Number((long)entry.Property(nameof(Company.LegalEntityRevision)).OriginalValue!), Number(c.LegalEntityRevision)),
+                    State(entry, nameof(Company.LegalEntityStatus), Poseidon.Domain.HrLegalEntityPolicy.Statuses),
+                    .. HrCompanyValueFields.Where(f => entry.Property(f).IsModified).Select(f => Field(f, null, null, "ValuesWithheld"))])),
+            // Identifier and role rows are their own command resource: the committed receipt carries their post-save xmin
+            // and a status change carries the original xmin as BeforeVersion; the owning legal entity stays a closed scope.
+            LegalEntityIdentifier i => new(null, i.Id, "LegalEntityIdentifier", null, null, Fields(
+                Field("Type", null, Closed(i.Type, Poseidon.Domain.HrIdentifierPolicy.Types)), Field("Value", null, null, "ValuesWithheld"),
+                Field("Retired", entry.State == EntityState.Added ? null : Flag(entry.Property("RetiredAt").OriginalValue != null), Flag(i.RetiredAt != null)))),
+            LegalEntityRole r => new(null, r.Id, "LegalEntityRole", null, null, Fields(
+                Field("Role", null, Closed(r.Role, Poseidon.Domain.HrRolePolicy.Roles)), Field("VesselId", null, r.VesselId?.ToString("D")),
+                Field("Ended", entry.State == EntityState.Added ? null : Flag(entry.Property("EffectiveTo").OriginalValue != null), Flag(r.EffectiveTo != null)),
+                State(entry, "State", Poseidon.Domain.HrRolePolicy.States))),
+            HrStateChange s => new(null, s.LegalEntityId, "HrStateChange", null, null, Fields(
+                Field("SubjectKind", null, Closed(s.SubjectKind, Poseidon.Domain.HrStateChangePolicy.SubjectKinds)), Field("SubjectId", null, s.SubjectId.ToString("D")),
+                Field("State", Closed(s.FromState, Poseidon.Domain.HrStateChangePolicy.States), Closed(s.ToState, Poseidon.Domain.HrStateChangePolicy.States)),
+                Field("Reason", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
+            Employment e => new(null, e.Id, "Employment", entry.State == EntityState.Added ? null : (long?)entry.Property("Revision").OriginalValue, e.Revision, Fields(
+                State(entry, "State", Poseidon.Domain.HrEmploymentPolicy.States), Field("LegalEntityId", null, e.LegalEntityId.ToString("D")),
+                Field("EmployeeNo", null, null, "ValuesWithheld"))),
+            HrAssignment a => new(a.VesselId, a.Id, "HrAssignment", entry.State == EntityState.Added ? null : (long?)entry.Property("Revision").OriginalValue, a.Revision, Fields(
+                State(entry, "State", Poseidon.Domain.HrAssignmentPolicy.States), Field("Kind", null, Closed(a.Kind, Poseidon.Domain.HrAssignmentPolicy.Kinds)),
+                Field("Plan", null, "PlannedOnly"))),
+            HrActualEvent v => new(null, v.AssignmentId, "HrActualEvent", null, null, Fields(
+                Field("Kind", null, Closed(v.Kind, Poseidon.Domain.HrActualTimeline.Kinds)), Field("Disposition", null, Closed(v.Disposition, "Accepted", "PendingReconciliation")),
+                Field("Quality", null, Closed(v.Quality, "Valid", "Suspect")), Field("Binding", null, "OwnerReference"))),
+            _ => null
+        };
     }
 
     private static string Closed(string value, params string[] allowed) => allowed.Contains(value, StringComparer.Ordinal)

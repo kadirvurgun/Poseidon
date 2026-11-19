@@ -139,11 +139,11 @@ public static class OperationalDowntimeEndpoints
         var existing=routeId==null?null:await db.Downtimes.AsNoTracking().SingleOrDefaultAsync(r=>r.Id==command.Id && r.VesselId==vessel,ct);
         if(routeId!=null && existing==null)return await Fail(h,404,"resource_not_found");DowntimeRecordDto[] previous=existing==null?[]:[Dto(existing,true,true,Now(h))];
         var unchangedOrigin=existing!=null && existing.Version==command.ExpectedVersion && Origin(existing.OriginJson)==command.Origin;
-        if(!await Current(h,vessel,rights,previous,true,command.Origin,!unchangedOrigin))return await Fail(h,403,"linked_resource_unavailable");
+        if(!await Current(h,vessel,rights,previous,true,command.Origin,!unchangedOrigin))return await Replay()??await Fail(h,403,"linked_resource_unavailable");
         await Audit(h,"Attempted",command.Id);IDbContextTransaction? tx=null;string? outcome=null;
         try {
             tx=await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable,ct);var now=Now(h);
-            var applied=await DowntimeWriter.Apply(db,actor,vessel,command,routeId==null,now,ct);if(applied.Record==null)return await Fail(h,applied.Status,applied.Code!);
+            var applied=await DowntimeWriter.Apply(db,actor,vessel,command,routeId==null,now,ct);if(applied.Record==null)return (applied.Status==409?await Replay():null)??await Fail(h,applied.Status,applied.Code!);
             outcome=JsonSerializer.Serialize(applied.Record,Json);db.DowntimeReceipts.Add(new(){TenantId=actor.TenantId,VesselId=vessel,ActorId=actor.Id,Key=key,DowntimeId=command.Id,Revision=applied.Record.Revision,
                 RecordVersion=applied.Record.Version,Fingerprint=fingerprint,OutcomeJson=outcome,SavedAt=now});await db.SaveChangesAsync(ct);
             if(!await Current(h,vessel,rights,previous,true,command.Origin,!unchangedOrigin))return await Fail(h,403,"permission_denied");await tx.CommitAsync(ct);

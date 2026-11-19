@@ -30,6 +30,25 @@ test('profile exact decimal save and malformed background history recovery retai
         }
         else if (url.includes('/files?'))
             body = { items: [], offset: 0, hasMore: false, available: true, canWrite: false, maxBytes: 1048576, allowedTypes: ['image/png'] };
+        // DEV-024: no critical state is visible to this synthetic reader (empty, never a positive state),
+        // so the only alert on the page is the profile history failure under test.
+        else if (new URL(url).pathname.endsWith('/critical-states'))
+            body = { vesselId: vessel.id, readAt: '2026-01-01T00:00:00Z', scope: 'VISIBLE_ONLY', states: [] };
+        // DEV-020 field provenance endpoints are routed before the generic profile/history
+        // branches. Synthetic, unconfigured policy, no declared sources and no positive state.
+        else if (new URL(url).pathname.endsWith('/regulatory-profile/fields')) {
+            const checkedAt = '2026-01-01T00:00:00Z';
+            body = { tenantId: profile.tenantId, vesselId: vessel.id,
+                owner: { legalEntityId: vessel.companyId, binding: 'LEGACY_COMPANY_BINDING', registeredOwnerState: 'NOT_ESTABLISHED' },
+                profileRevision: profile.revision, profileSavedAt: profile.savedAt, checkedAt, policy: { status: 'UNCONFIGURED', policyRef: null },
+                summary: { state: 'UNKNOWN', reasonCode: 'FIELDS_UNKNOWN', oldestObservedAt: null, checkedAt, fresh: 0, stale: 0, unknown: 1, unavailable: 0 },
+                fields: [{ fieldPath: 'imo', kind: 'text', unit: null, value: { state: 'Missing', value: null }, valueRevision: 1, latestSequence: 0,
+                    source: null, priorValueSource: null, freshness: { state: 'UNKNOWN', reasonCode: 'VALUE_NOT_RECORDED', observedAt: null, checkedAt, ageSeconds: null },
+                    verificationState: 'NOT_VERIFIED' }],
+                canDeclare: false };
+        }
+        else if (url.includes('/regulatory-profile/fields/'))
+            body = { items: [], offset: Number(new URL(url).searchParams.get('offset') ?? 0), limit: 25, hasMore: false };
         else if (url.includes('/history?')) {
             if (++histories === 1) {
                 await held;
