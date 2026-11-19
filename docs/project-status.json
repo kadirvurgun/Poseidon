@@ -15592,5 +15592,37 @@
     "accepted": false,
     "accepted_story_points_added": 0,
     "report": "docs/phases/S3-WPA-20261119.md"
+  },
+  "s3_bundle_integration_20261119": {
+    "branch": "integration/s3-bundle-20261119",
+    "base": "55d5e1f",
+    "merged": {
+      "wpa": "0c4b6a7",
+      "wpb": "fa7a510",
+      "wpc": "67f2469"
+    },
+    "state": "AUTHORED_LOCALLY_INTEGRATED_NOT_ACCEPTED",
+    "conflicts": "17 i18n catalogs (key union, identical key sets); OpenAPI re-export from Release host byte-identical; api.d.ts regeneration unchanged",
+    "executed": {
+      "release_build_warnings": 0,
+      "has_pending_model_changes": "none",
+      "domain": "1052/1052",
+      "api_unit": "301/301",
+      "persistence_unit": "83/83",
+      "endpoint_profiles": "15/15",
+      "python": "589/591 (2 Windows ACL tests failed under concurrent load; file passes alone 24/24)",
+      "frontend_lint": "exit0",
+      "typecheck": "exit0",
+      "vitest": "1843/1852 (9 failures only scripts/offline-shell-build.test.ts, known Node 22 local-only)",
+      "i18n": "81/81"
+    },
+    "deferred": [
+      "Api/Persistence Integration (PostgreSQL)",
+      "Playwright",
+      "CI",
+      "independent QA"
+    ],
+    "accepted": false,
+    "accepted_story_points_added": 0
   }
 }

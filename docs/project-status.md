@@ -1,5 +1,9 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
+## S3 paket entegrasyonu — WP-A/WP-B/WP-C (19.11.2026)
+
+`integration/s3-bundle-20261119` (taban `55d5e1f`): WP-A `0c4b6a7`, WP-B `fa7a510`, WP-C `67f2469` yerel olarak birleştirildi; yalnız 17 i18n kataloğu çakıştı (anahtar birleşimi, tüm dillerde aynı anahtar kümesi). OpenAPI Release host'tan yeniden dışa aktarıldı (değişiklik yok). Yerel: build 0 uyarı, bekleyen model değişikliği yok, domain 1052/1052, API unit 301/301, persistence unit 83/83, endpoint profile 15/15, python 589/591 (2 Windows ACL testi yük altında; dosya tek başına 24/24), vitest 1843/1852 (yalnız Node 22'de bilinen `offline-shell-build.test.ts`). PG integration, Playwright, CI, bağımsız QA **DEFERRED**. S3 paketleri yazıldı; S3 **kabul edilmedi**, accepted SP +0.
+
 ## S3-WPA — DEV-026/DEV-027 kabul boşlukları (19.11.2026)
 
 `/api/v1/requirements` okuma projeksiyonu (yaşam döngüsü qualification head'den türetilir, saklanmaz), sessiz üzerine yazma/409 testleri, UNKNOWN qualification zarfının reload'da korunması, requirement ekranında lifecycle görünürlüğü, DEV-027 altı predicate golden seti (57 vaka) ve DEV-020 UNKNOWN→REVIEW_REQUIRED testleri. Yerel: build 0 uyarı, domain 1016/1016, persistence unit 83/83, API unit 276/276, endpoint profile 15/15, python 37/37, frontend typecheck/lint/ilgili vitest 87/87. PG integration (16 yeni vaka), CI, QA **DEFERRED**; accepted SP +0. Dal `feature/s3-wpa-requirement-applicability-20261119`. [Rapor](phases/S3-WPA-20261119.md).
