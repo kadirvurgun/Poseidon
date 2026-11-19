@@ -152,6 +152,18 @@ describe('DEV-028/029 strict decoders', () => {
     await expect(supportingEvidence(vessel, control, 0, new AbortController().signal)).rejects.toThrow()
   })
 
+  // QA B2 / 62.01 paragraph:193: a retired control has no effective revision, so no supporting pin is current.
+  it('accepts a retired control without an effective revision and never a current pin against it', async () => {
+    const retired = { controlId: control, vesselId: vessel, controlRevision: null, latestRevision: 2, successorPending: false, items: [{ evidence: evidenceRow('UNKNOWN', 2), pinnedControlRevision: 2, pinCurrent: false }], offset: 0, hasMore: false }
+    vi.stubGlobal('fetch', vi.fn(async () => ok(retired)))
+    const value = await supportingEvidence(vessel, control, 0, new AbortController().signal)
+    expect(value.controlRevision).toBeNull(); expect(value.items[0].pinCurrent).toBe(false)
+    for (const patch of [{ successorPending: true }, { items: [{ ...retired.items[0], pinCurrent: true }] }, { controlRevision: 0 }]) {
+      vi.stubGlobal('fetch', vi.fn(async () => ok({ ...retired, ...patch })))
+      await expect(supportingEvidence(vessel, control, 0, new AbortController().signal)).rejects.toThrow()
+    }
+  })
+
   it('binds a transition outcome to the sent reason and revision', async () => {
     const body = JSON.stringify({ expectedVersion: 7, revision: 2, reasonCode: 'PUBLISH', rationale: 'FICTIONAL' })
     vi.stubGlobal('fetch', vi.fn(async () => ok({ id: control, vesselId: vessel, revision: 2, version: 8, state: 'RETIRED', publishedRevision: null, successorPending: false, effectiveness: 'UNKNOWN', event: { sequence: 3, controlRevision: 2, fromState: 'PUBLISHED', toState: 'RETIRED', reasonCode: 'RETIRE', supersedesRevision: null, actorId: actor, rationale: null, savedAt: '2026-11-19T00:00:01Z' } })))

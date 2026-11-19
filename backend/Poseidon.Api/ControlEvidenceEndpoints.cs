@@ -37,6 +37,8 @@ public sealed record ControlLifecycleOutcome(Guid Id, Guid VesselId, long Revisi
     string Effectiveness, ControlLifecycleEventDto Event);
 public sealed record SupportingEvidenceItem(ControlEvidenceDto Evidence, long PinnedControlRevision, bool PinCurrent);
 public sealed record ControlOrphanItem(Guid Id, long Revision, string ControlState, bool SuccessorPending, string[] Reasons);
+// GET /controls list: 62.01 lifecycle state of the listed (latest) revision and the effective published revision.
+public sealed record ControlListLifecycle(Guid Id, string State, long? PublishedRevision, bool SuccessorPending);
 
 public static class ControlEvidenceEndpoints
 {
@@ -45,9 +47,16 @@ public static class ControlEvidenceEndpoints
     internal static IQueryable<ControlEvidenceRevision> CurrentVisible(PoseidonDbContext db, Guid vessel, TrustedActor actor) =>
         Visible(db, vessel, actor).Where(r => db.ControlEvidenceHeads.Any(h => h.VesselId == vessel && h.Kind == r.Kind && h.Id == r.Id && h.Revision == r.Revision));
     // 62.01 section 6 effective revision: the published revision while a successor candidate is pending,
-    // otherwise the latest revision (evidence, never-published and retired controls).
+    // otherwise the latest revision (evidence and never-published controls). A retired control has no
+    // effective revision (paragraph:193): its null pointer never falls back to the retired revision.
     internal static IQueryable<ControlEvidenceRevision> EffectiveVisible(PoseidonDbContext db, Guid vessel, TrustedActor actor) =>
-        Visible(db, vessel, actor).Where(r => db.ControlEvidenceHeads.Any(h => h.VesselId == vessel && h.Kind == r.Kind && h.Id == r.Id && (h.PublishedRevision ?? h.Revision) == r.Revision));
+        Visible(db, vessel, actor).Where(r => db.ControlEvidenceHeads.Any(h => h.VesselId == vessel && h.Kind == r.Kind && h.Id == r.Id &&
+            (h.ControlState == null || h.ControlState != "RETIRED") && (h.PublishedRevision ?? h.Revision) == r.Revision));
+    // 62.01 paragraph:193 "positive usage fails": a control retired at or before asOf gives no positive use
+    // (no current VERIFIED state, no current supporting evidence, no obligation coverage). Retirement is
+    // read from the append-only RETIRE event, so historical reads before it keep their own state.
+    internal static Task<bool> ControlRetired(PoseidonDbContext db, Guid vessel, Guid control, DateTimeOffset asOf, CancellationToken ct) =>
+        db.ControlStateEvents.AsNoTracking().AnyAsync(e => e.VesselId == vessel && e.ControlId == control && e.ReasonCode == "RETIRE" && e.SavedAt <= asOf, ct);
     // A published control revision is superseded only by a later PUBLISH (never by a pending
     // successor draft/review/approval); any other control revision by any later revision.
     internal static async Task<bool> ControlRevisionSuperseded(PoseidonDbContext db, Guid vessel, Guid control, long revision, DateTimeOffset asOf, CancellationToken ct)
@@ -147,7 +156,9 @@ public static class ControlEvidenceEndpoints
             visibleEvidence.Any(visible => visible.Kind == "Evidence" && visible.Id == e.EvidenceId && visible.Revision == e.EvidenceRevision) &&
             !db.HumanReviewEvents.Any(later => later.VesselId == e.VesselId && later.Id == e.Id && later.Revision > e.Revision && later.SavedAt <= asOf))
             .OrderByDescending(e => e.SavedAt).ThenBy(e => e.Id).FirstOrDefaultAsync(ct);
-        var verificationState = verification?.State == "VERIFIED" ? verification.ValidUntil > asOf && !superseded && qualified.Blockers.Length == 0 ? "VERIFIED" : "REVIEW_REQUIRED" : "UNVERIFIED";
+        // A retired control (this control, or the control an evidence verification binds) is never VERIFIED.
+        var retired = verification?.State == "VERIFIED" && await ControlRetired(db, r.VesselId, verification.ControlId, asOf, ct);
+        var verificationState = verification?.State == "VERIFIED" ? verification.ValidUntil > asOf && !superseded && !retired && qualified.Blockers.Length == 0 ? "VERIFIED" : "REVIEW_REQUIRED" : "UNVERIFIED";
         if (OperationEquipmentInputs.Present(content) && verificationState == "VERIFIED" &&
             (!OperationEquipmentContext.CurrentVerifier(settings, verification!, OperationEquipmentInputs.Kind(content), asOf) ||
                 !await OperationEquipmentCommands.VerificationAllowed(db, settings, content, requirements.Select(x => new RequirementPin(x.RequirementId, x.RequirementRevision, x.SourceId, x.SourceRevision, x.RuleId, x.RuleRevision)).ToArray(), verification!.RoleId, asOf, ct))) verificationState = "REVIEW_REQUIRED";
@@ -175,7 +186,22 @@ public static class ControlEvidenceEndpoints
             items.Add(await Dto(db, r, head.Version, asOf, ct, a, h.RequestServices.GetRequiredService<FederationSettings>()));
         }
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "ControlEvidenceRead", "Success", resourceId: vessel);
-        return Results.Ok(new { items, offset, hasMore = rows.Length > 25, canWrite = Write(a, kind, vessel) });
+        if (kind != "Control" || id != null) return Results.Ok(new { items, offset, hasMore = rows.Length > 25, canWrite = Write(a, kind, vessel) });
+        // DEV-028 list view: each listed control's 62.01 lifecycle state and effective published revision
+        // as of the read, from the append-only events (a RETIRED control shows RETIRED and no effective revision).
+        var lifecycle = new List<ControlListLifecycle>();
+        foreach (var item in items) lifecycle.Add(await ListLifecycle(db, vessel, item.Id, item.Revision, asOf, ct));
+        return Results.Ok(new { items, offset, hasMore = rows.Length > 25, canWrite = Write(a, kind, vessel), lifecycle });
+    }
+    // As-of projection from the append-only events: the state is the last event's target (none = DRAFT);
+    // the effective revision is the last PUBLISH, and none once the control is RETIRED.
+    private static async Task<ControlListLifecycle> ListLifecycle(PoseidonDbContext db, Guid vessel, Guid id, long revision, DateTimeOffset asOf, CancellationToken ct)
+    {
+        var events = db.ControlStateEvents.AsNoTracking().Where(e => e.VesselId == vessel && e.ControlId == id && e.SavedAt <= asOf);
+        var state = ControlLifecyclePolicy.State(await events.OrderByDescending(e => e.Revision).Select(e => e.ToState).FirstOrDefaultAsync(ct));
+        var published = ControlLifecyclePolicy.Retired(state) ? null :
+            await events.Where(e => e.ReasonCode == "PUBLISH").OrderByDescending(e => e.Revision).Select(e => (long?)e.ControlRevision).FirstOrDefaultAsync(ct);
+        return new(id, state, published, published != null && published != revision);
     }
     private static async Task<IResult> Orphans(HttpContext h, PoseidonDbContext db)
     {
@@ -198,8 +224,11 @@ public static class ControlEvidenceEndpoints
             eligible.All(id => result.Results.Any(r => r.RuleId == id && r.Prediction.Authoritative && r.Prediction.Result is "APPLICABLE" or "NOT_APPLICABLE"));
         var missing = new List<object>();
         if (available) foreach (var obligation in result!.Results.Where(r => r.Prediction.Result == "APPLICABLE" && eligible.Contains(r.RuleId))) {
+            // Coverage needs the effective revision of a non-retired control: retirement does not remove the
+            // obligation (62.01 paragraph:193), so an obligation covered only by a retired control is uncovered.
             if (!await db.ControlEvidenceRequirements.AnyAsync(p => p.VesselId == vessel && p.Kind == "Control" && p.RuleId == obligation.RuleId && p.RuleRevision == obligation.Revision &&
-                db.ControlEvidenceHeads.Any(head => head.VesselId == vessel && head.Kind == p.Kind && head.Id == p.Id && head.Revision == p.Revision), h.RequestAborted))
+                db.ControlEvidenceHeads.Any(head => head.VesselId == vessel && head.Kind == p.Kind && head.Id == p.Id && (head.ControlState == null || head.ControlState != "RETIRED") &&
+                    (head.PublishedRevision ?? head.Revision) == p.Revision), h.RequestAborted))
                 missing.Add(new { obligation.RuleId, ruleRevision = obligation.Revision, obligation.RequirementId, obligation.RequirementRevision });
         }
         // DEV-028: every effective, non-retired control declared critical or of UNKNOWN criticality
@@ -398,7 +427,8 @@ public static class ControlEvidenceEndpoints
         if (!await Scope(db, a, vessel, ct)) return await Fail(h, 404, "resource_not_found");
         if (!await CurrentVisible(db, vessel, a).AnyAsync(r => r.Kind == "Control" && r.Id == id, ct)) return await Fail(h, 404, "resource_not_found");
         var control = await db.ControlEvidenceHeads.AsNoTracking().SingleAsync(x => x.VesselId == vessel && x.Kind == "Control" && x.Id == id, ct);
-        var effective = ControlLifecyclePolicy.EffectiveRevision(control.PublishedRevision, control.Revision);
+        // Null for a retired control: no pin is current and the response says no revision is effective.
+        var effective = ControlLifecyclePolicy.EffectiveRevision(control.ControlState, control.PublishedRevision, control.Revision);
         var rows = await CurrentVisible(db, vessel, a).Where(r => r.Kind == "Evidence" && db.ControlEvidenceEdges.Any(e => e.VesselId == vessel && e.Kind == "Evidence" &&
                 e.Id == r.Id && e.Revision == r.Revision && e.TargetKind == "Control" && e.TargetId == id))
             .OrderBy(r => r.Id).Skip(offset).Take(26).ToArrayAsync(ct);

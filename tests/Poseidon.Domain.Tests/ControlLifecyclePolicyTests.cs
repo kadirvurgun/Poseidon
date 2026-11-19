@@ -87,7 +87,7 @@ public sealed class ControlLifecyclePolicyTests
             Assert.Equal(3L, ControlLifecyclePolicy.EffectiveAfter(reason, 3, 5));
             Assert.Null(ControlLifecyclePolicy.Supersedes(reason, 3, 5));
         }
-        Assert.Equal(3L, ControlLifecyclePolicy.EffectiveRevision(3, 5));
+        Assert.Equal(3L, ControlLifecyclePolicy.EffectiveRevision("APPROVED", 3, 5));
         // Publishing the successor supersedes the previous published revision; retire clears the pointer.
         Assert.Equal(5L, ControlLifecyclePolicy.EffectiveAfter("PUBLISH", 3, 5));
         Assert.Equal(3L, ControlLifecyclePolicy.Supersedes("PUBLISH", 3, 5));
@@ -95,7 +95,29 @@ public sealed class ControlLifecyclePolicyTests
         // A first publication supersedes nothing; a never-published control uses its latest revision.
         Assert.Null(ControlLifecyclePolicy.Supersedes("PUBLISH", null, 2));
         Assert.Equal(2L, ControlLifecyclePolicy.EffectiveAfter("PUBLISH", null, 2));
-        Assert.Equal(4L, ControlLifecyclePolicy.EffectiveRevision(null, 4));
+        Assert.Equal(4L, ControlLifecyclePolicy.EffectiveRevision(null, null, 4));
+    }
+
+    // 62.01 paragraph:193 (QA B2): after RETIRE the pointer is null, but the control must not fall back to
+    // its last (retired) revision. No revision of a retired control has positive use; a never-published
+    // control (also a null pointer) keeps using its latest revision.
+    [Theory]
+    [InlineData(4L)]
+    [InlineData(5L)]
+    [InlineData(1L)]
+    public void A_retired_control_has_no_effective_revision_and_no_positive_use(long revision)
+    {
+        Assert.True(ControlLifecyclePolicy.Retired("RETIRED"));
+        Assert.False(ControlLifecyclePolicy.Retired(null));
+        Assert.Null(ControlLifecyclePolicy.EffectiveRevision("RETIRED", null, 5));
+        Assert.False(ControlLifecyclePolicy.PositiveUse("RETIRED", null, 5, revision));
+        // Retired with the pointer cleared by RETIRE, also when a successor was pending (published 4, latest 5).
+        Assert.Null(ControlLifecyclePolicy.EffectiveRevision("RETIRED", ControlLifecyclePolicy.EffectiveAfter("RETIRE", 4, 5), 5));
+        // Not retired: the same null pointer means "never published" and the latest revision is used.
+        Assert.Equal(revision == 5, ControlLifecyclePolicy.PositiveUse(null, null, 5, revision));
+        Assert.Equal(revision == 5, ControlLifecyclePolicy.PositiveUse("DRAFT", null, 5, revision));
+        // A pending successor: only the published revision has positive use.
+        Assert.Equal(revision == 4, ControlLifecyclePolicy.PositiveUse("IN_REVIEW", 4, 5, revision));
     }
 
     // Schema-only lifecycle column: a stored NULL (no lifecycle event yet) derives DRAFT, never another state.

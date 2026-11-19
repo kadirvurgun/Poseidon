@@ -123,7 +123,7 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(before, await verify.AuditEvents.CountAsync(Ct)); Assert.False(await verify.ControlEvidenceReceipts.AnyAsync(x => x.Key == key, Ct));
     }
     [Theory]
-    [InlineData("current")][InlineData("profile-noop")][InlineData("equipment")][InlineData("authority")][InlineData("source")][InlineData("expired-test")][InlineData("mode")]
+    [InlineData("current")][InlineData("profile-noop")][InlineData("equipment")][InlineData("authority")][InlineData("source")][InlineData("expired-test")][InlineData("mode")][InlineData("retired")]
     public async Task Qualified_commands_produce_current_exact_capacity_and_current_context_changes_withdraw_it(string change) {
         var root = Path.Combine(Path.GetTempPath(), "poseidon-tug-capacity-" + Guid.NewGuid().ToString("N")); Directory.CreateDirectory(root);
         try {
@@ -136,8 +136,11 @@ public sealed partial class DirectoryWorkspaceTests
             // Keep planning assignment eligibility exact to the current synthetic actor.
             var settings = host.Services.GetRequiredService<FederationSettings>(); policy.Scopes = [new(Tug.TenantId, settings.Memberships[0].ActorId, Tug.Id, [Tug.Id])];
             var pin = new RequirementPin(rule.Current.RequirementId!.Value, rule.Current.RequirementRevision!.Value, rule.Current.SourceId!.Value, rule.Current.SourceRevision!.Value, rule.Current.Id, rule.Current.Revision);
-            var co = await CapacitySave(c, "controls", GraphCommand(content: new(Title: "FICTIONAL capability control", OwnerId: settings.Memberships[0].ActorId, OwnerRole: ReviewRole,
-                Frequency: "FICTIONAL frequency", EvidencePolicy: "FICTIONAL evidence policy", VerificationPolicy: "FICTIONAL independent review", Critical: true)) with { Requirements = [pin] });
+            var coCommand = GraphCommand(content: new(Title: "FICTIONAL capability control", OwnerId: settings.Memberships[0].ActorId, OwnerRole: ReviewRole,
+                Frequency: "FICTIONAL frequency", EvidencePolicy: "FICTIONAL evidence policy", VerificationPolicy: "FICTIONAL independent review", Critical: true)) with { Requirements = [pin] };
+            var co = await CapacitySave(c, "controls", coCommand);
+            // QA B2: the "retired" case verifies against a published control, which is retired below.
+            if (change == "retired") co = await PublishControl(c, host.Services, co, coCommand, Tug.Id);
             var now = DateTimeOffset.UtcNow;
             uint profileVersion; Asset asset;
             await using (var read = Db()) { profileVersion = (await read.TugProfiles.AsNoTracking().SingleAsync(x => x.VesselId == Tug.Id, Ct)).Version; asset = await read.Assets.AsNoTracking().FirstAsync(x => x.VesselId == Tug.Id, Ct); }
@@ -180,6 +183,9 @@ public sealed partial class DirectoryWorkspaceTests
                 Assert.Equal(HttpStatusCode.OK, updated.StatusCode);
             } else if (change == "mode") {
                 settings.Memberships[0] = settings.Memberships[0] with { Permissions = settings.Memberships[0].Permissions.Where(x => x != "mode.tug").ToArray() };
+            } else if (change == "retired") {
+                // 62.01 paragraph:193: the existing VERIFIED evidence no longer qualifies once its control is retired.
+                await RetireControl(c, host.Services, co.Id, Tug.Id);
             }
             using var after = await c.GetAsync("/api/v1/" + PlanningUrl(job.Id), Ct);
             if (change == "mode") Assert.Equal(HttpStatusCode.Forbidden, after.StatusCode);

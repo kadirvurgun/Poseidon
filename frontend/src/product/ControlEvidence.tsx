@@ -19,7 +19,7 @@ import type { FileRecord } from './file-api';
 import { HumanDecisionTrace } from './HumanDecisionTrace';
 import { VesselFiles } from './VesselFiles';
 import { DraftConfirmation } from './DraftConfirmation';
-import { ControlLifecycle, FINDINGS, ORPHAN_REASONS } from './ControlLifecycle';
+import { ControlLifecycle, FINDINGS, ORPHAN_REASONS, STATES as CONTROL_STATES } from './ControlLifecycle';
 import { timestamp } from './date-validation';
 type Props = {
     owner?: string | null;
@@ -260,7 +260,7 @@ function Editor({ vessel, kind, language, csrf, offline, onDirty, onSaving, isTu
     {!rows && error === null && <p role="status">{localizedText(language, "pairs.m_06330283a810bdf9")}</p>}
     {!recovery.canShow && !frozen && <Button disabled>{localizedText(language, 'pairs.m_bd59c5fb1d6040b0')}</Button>}
     {recovery.canShow && <>
-    {rows && <><p>{rows.canWrite ? localizedText(language, "pairs.m_508cd3efef2ef29d") : localizedText(language, "pairs.m_4ac4ea608f5308ee")}</p>{rows.items.length === 0 && <p>{localizedText(language, "pairs.m_9d2d926f131471ce")}</p>}<ul className="regulatory-register-list">{rows.items.map(r => <li key={r.id}><Button variant="outline" disabled={dirty || recovery.dirty || !!frozen || !!recovery.confirmed || uploadDirty || busy || reviewDirty || reviewBusy} onClick={() => choose(r)}>{r.content.title ?? r.id} · {r.revision}</Button> · {timeLabel(r.timeState)}</li>)}</ul>{pages(offset, rows.hasMore, setOffset, localizedText(language, "pairs.m_8b6433d45192da49"))}</>}
+    {rows && <><p>{rows.canWrite ? localizedText(language, "pairs.m_508cd3efef2ef29d") : localizedText(language, "pairs.m_4ac4ea608f5308ee")}</p>{rows.items.length === 0 && <p>{localizedText(language, "pairs.m_9d2d926f131471ce")}</p>}<ul className="regulatory-register-list">{rows.items.map(r => <li key={r.id}><Button variant="outline" disabled={dirty || recovery.dirty || !!frozen || !!recovery.confirmed || uploadDirty || busy || reviewDirty || reviewBusy} onClick={() => choose(r)}>{r.content.title ?? r.id} · {r.revision}</Button> · {timeLabel(r.timeState)}{(() => { const state = rows.lifecycle?.find(l => l.id === r.id); return state ? <> · <span data-control-state={state.state} data-effective-revision={state.publishedRevision ?? ''}>{localizedText(language, CONTROL_STATES[state.state])}</span></> : null; })()}</li>)}</ul>{pages(offset, rows.hasMore, setOffset, localizedText(language, "pairs.m_8b6433d45192da49"))}</>}
     <Button variant="outline" disabled={dirty || recovery.dirty || !!frozen || !!recovery.confirmed || uploadDirty || busy || reviewDirty || reviewBusy} onClick={() => choose(null)}>{localizedText(language, "pairs.m_ced646267c9def5d")}</Button>
     {kind === 'Evidence' && selected && <Button disabled={locked || dirty || recovery.dirty || uploadDirty} onClick={() => { if (!recovery.edit()) return; const old = selected; setSelected(null); setContent(service.blank()); setFile(null); setRequirements(old.requirements); setLinks([{ kind: 'Evidence', id: old.id, revision: old.revision, expectedVersion: old.version }]); setDirty(true); }}>{localizedText(language, "pairs.m_adf4f3cf079a1f1f")}</Button>}
     <form onChangeCapture={e => { if (!recovery.edit()) { e.preventDefault(); e.stopPropagation(); } }} onSubmit={e => { e.preventDefault(); save(); }}>
