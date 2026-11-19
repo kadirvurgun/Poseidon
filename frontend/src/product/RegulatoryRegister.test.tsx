@@ -184,6 +184,8 @@ describe('REG-SOURCE-DRAFT-01 authored component/transport tests; mocked transpo
   const projection = { id, revision: 2, version: 19, lifecycle: 'DRAFT', lifecycleBasis: 'NO_QUALIFIED_RULE', savedAt: '2026-11-01T00:00:00Z', provenance: 'DeclaredUnverified',
     hash: 'C'.repeat(64), content: blankContent(), sourceId: source, sourceRevision: 1,
     qualifications: [{ ruleId: rule, ruleRevision: 1, qualificationRevision: 2, requirementRevision: 1, state: 'IN_FORCE', lifecycle: 'IN_FORCE', current: false, savedAt: '2026-10-01T00:00:00Z' }] }
+  const mixed = [{ ...projection.qualifications[0], requirementRevision: 2, current: true },
+    { ...projection.qualifications[0], ruleId: '10000000-0000-0000-0000-000000000004', requirementRevision: 2, state: 'DRAFT', lifecycle: 'DRAFT', current: true }]
   it('shows the new requirement revision as a draft while the prior in-force revision stays visible', async () => {
     const requirement = { ...draft, current: { ...draft.current, kind: 'Requirement', revision: 2, sourceId: source, sourceRevision: 1 } }
     const fetch = vi.fn((url: string) => Promise.resolve(response(url.includes('/requirements/') ? projection : url.includes('source-drafts') ? page([]) : url.includes('history') ? page([requirement.current]) : requirement)))
@@ -206,5 +208,24 @@ describe('REG-SOURCE-DRAFT-01 authored component/transport tests; mocked transpo
     { ...projection, qualifications: [{ ...projection.qualifications[0], current: true }] },
     { ...projection, qualifications: [{ ...projection.qualifications[0], state: 'UNKNOWN' }] },
     { ...projection, extra: true },
+    // MIXED needs at least two distinct current lifecycle terms and a derived value.
+    { ...projection, lifecycle: 'IN_FORCE', lifecycleBasis: 'MIXED_QUALIFICATION_STATES', qualifications: [{ ...projection.qualifications[0], requirementRevision: 2, current: true }] },
+    { ...projection, lifecycle: 'UNAVAILABLE', lifecycleBasis: 'MIXED_QUALIFICATION_STATES', qualifications: mixed },
+    // RECORDED cannot hide disagreeing rules.
+    { ...projection, lifecycle: 'IN_FORCE', lifecycleBasis: 'RECORDED_QUALIFICATION', qualifications: mixed },
+    // LIMIT is UNAVAILABLE and carries no partial rule set.
+    { ...projection, lifecycle: 'IN_FORCE', lifecycleBasis: 'QUALIFICATION_LIMIT_EXCEEDED', qualifications: [] },
+    { ...projection, lifecycle: 'UNAVAILABLE', lifecycleBasis: 'QUALIFICATION_LIMIT_EXCEEDED' },
   ])('rejects lifecycle projections the server contract cannot produce', value => { expect(() => decodeRequirement(value)).toThrow('Request failed (502)') })
+  it.each([
+    ['MIXED_QUALIFICATION_STATES', 'IN_FORCE', () => mixed, 'Bound rules record different lifecycle states. The shown value is a software precedence; expert review is required.'],
+    ['QUALIFICATION_LIMIT_EXCEEDED', 'UNAVAILABLE', () => [], 'More rules are bound than this view can carry; no lifecycle is derived from a partial set.'],
+  ] as const)('shows the %s review basis next to the lifecycle', async (lifecycleBasis, lifecycle, qualifications, note) => {
+    const requirement = { ...draft, current: { ...draft.current, kind: 'Requirement', revision: 2, sourceId: source, sourceRevision: 1 } }
+    const value = { ...projection, lifecycle, lifecycleBasis, qualifications: qualifications() }
+    expect(decodeRequirement(value).lifecycleBasis).toBe(lifecycleBasis)
+    const fetch = vi.fn((url: string) => Promise.resolve(response(url.includes('/requirements/') ? value : url.includes('source-drafts') ? page([]) : url.includes('history') ? page([requirement.current]) : requirement)))
+    vi.stubGlobal('fetch', fetch); render(<RegulatoryRegister {...props()} kind="requirements" />)
+    expect(await screen.findByText(note)).toBeVisible()
+  })
 })

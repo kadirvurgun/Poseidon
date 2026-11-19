@@ -154,4 +154,45 @@ public sealed partial class DirectoryWorkspaceTests
         using var anonymous = Client(host, false); using var unauthenticated = await anonymous.GetAsync("/api/v1/requirements", Ct);
         Assert.Equal(HttpStatusCode.Unauthorized, unauthenticated.StatusCode);
     }
+
+    // S3 gate (non-blocking WPA finding): mixed rule states keep the derived value but publish
+    // the MIXED review basis; the multi-rule aggregation has no source and is an open expert decision.
+    [Fact]
+    public async Task Mixed_bound_rule_states_publish_the_mixed_review_basis_alongside_the_derived_value()
+    {
+        await using var host = ApplicabilityHost(); using var client = Client(host); await Token(client);
+        var requirement = RegulatoryRegisterFixtures.RequirementId(seed.Tenants[0].Id);
+        var first = await FictionalBoundRule(client); var second = await FictionalBoundRule(client);
+        await QualifyFictional(first.Current.Id, first.Current.Revision, "IN_FORCE");
+        await QualifyFictional(second.Current.Id, second.Current.Revision, "DRAFT");
+        var read = (await client.GetFromJsonAsync<RequirementDto>($"/api/v1/requirements/{requirement}", Ct))!;
+        Assert.Equal(("IN_FORCE", "MIXED_QUALIFICATION_STATES"), (read.Lifecycle, read.LifecycleBasis));
+        Assert.Equal(2, read.Qualifications.Count(x => x.Current));
+        await QualifyFictional(second.Current.Id, second.Current.Revision, "IN_FORCE");
+        read = (await client.GetFromJsonAsync<RequirementDto>($"/api/v1/requirements/{requirement}", Ct))!;
+        Assert.Equal(("IN_FORCE", "RECORDED_QUALIFICATION"), (read.Lifecycle, read.LifecycleBasis));
+    }
+
+    // S3 gate (non-blocking WPA finding): RequirementEndpoints previously took a global
+    // Take(ids.Length*100), which could silently drop bound rules. Over the per-requirement
+    // limit the projection is explicitly UNAVAILABLE/QUALIFICATION_LIMIT_EXCEEDED, never partial.
+    [Fact]
+    public async Task More_bound_rules_than_the_projection_limit_are_reported_unavailable_instead_of_truncated()
+    {
+        await using var host = ApplicabilityHost(); using var client = Client(host); await Token(client);
+        var requirement = RegulatoryRegisterFixtures.RequirementId(seed.Tenants[0].Id);
+        var rules = new List<RuleDraftDto>();
+        for (var i = 0; i < 101; i++) rules.Add(await FictionalBoundRule(client));
+        foreach (var rule in rules.Take(100)) await QualifyFictional(rule.Current.Id, rule.Current.Revision, "IN_FORCE");
+        // Exactly at the limit every bound rule is carried and the value is derived.
+        var read = (await client.GetFromJsonAsync<RequirementDto>($"/api/v1/requirements/{requirement}", Ct))!;
+        Assert.Equal(("IN_FORCE", "RECORDED_QUALIFICATION"), (read.Lifecycle, read.LifecycleBasis));
+        Assert.Equal(100, read.Qualifications.Length);
+        await QualifyFictional(rules[^1].Current.Id, rules[^1].Current.Revision, "IN_FORCE");
+        read = (await client.GetFromJsonAsync<RequirementDto>($"/api/v1/requirements/{requirement}", Ct))!;
+        Assert.Equal(("UNAVAILABLE", "QUALIFICATION_LIMIT_EXCEEDED"), (read.Lifecycle, read.LifecycleBasis));
+        Assert.Empty(read.Qualifications);
+        var listed = Assert.Single((await client.GetFromJsonAsync<PageDto<RequirementDto>>("/api/v1/requirements?limit=100", Ct))!.Items, x => x.Id == requirement);
+        Assert.Equal(("UNAVAILABLE", "QUALIFICATION_LIMIT_EXCEEDED"), (listed.Lifecycle, listed.LifecycleBasis));
+    }
 }

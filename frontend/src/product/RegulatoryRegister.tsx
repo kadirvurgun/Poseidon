@@ -250,6 +250,8 @@ function RegisterContext({ kind, id, language, csrf, canWrite, offline, onDirty,
         {draft && <p>{draft.current.id} · DRAFT · {localizedText(language, "pairs.m_5cf7feeda047e695")} {draft.current.revision} · {localizedText(language, "pairs.m_99bf579926929ccb")}: {draft.current.savedAt}</p>}
         {kind === 'requirements' && id && <section className="requirement-lifecycle" aria-label={localizedText(language, "pairs.m_d07a98f15fab786c")}>
           <p role="status">{localizedText(language, "pairs.m_d07a98f15fab786c")}: {requirement === null ? localizedText(language, "pairs.m_c9914bd9caad7a7f") : requirement === 'unavailable' ? lifecycleLabel('UNAVAILABLE') : <>{lifecycleLabel(requirement.lifecycle)} · {localizedText(language, "pairs.m_5cf7feeda047e695")} {requirement.revision}</>}</p>
+          {requirement !== null && requirement !== 'unavailable' && requirement.lifecycleBasis === 'MIXED_QUALIFICATION_STATES' && <p role="note">{localizedText(language, "pairs.m_dbbdcf309e8f24c3")}</p>}
+          {requirement !== null && requirement !== 'unavailable' && requirement.lifecycleBasis === 'QUALIFICATION_LIMIT_EXCEEDED' && <p role="note">{localizedText(language, "pairs.m_d6eb29d9d9dfbe8b")}</p>}
           {requirement !== null && requirement !== 'unavailable' && requirement.qualifications.length > 0 && <ul>{requirement.qualifications.map(q => <li key={`${q.ruleId}/${q.qualificationRevision}`}>{lifecycleLabel(q.lifecycle)} · {localizedText(language, "pairs.m_5cf7feeda047e695")} {q.requirementRevision} · {q.ruleId} / {q.ruleRevision} · {q.savedAt}</li>)}</ul>}
         </section>}
         <fieldset disabled={locked}><legend>{presentationLabel(language, 'registerFields')}</legend>

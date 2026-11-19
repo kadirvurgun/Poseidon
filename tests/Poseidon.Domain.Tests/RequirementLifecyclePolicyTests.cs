@@ -31,9 +31,29 @@ public sealed class RequirementLifecyclePolicyTests
     [InlineData("FUTURE", new[] { "FUTURE_EFFECTIVE", "ADOPTED", "SUPERSEDED" })]
     [InlineData("ADOPTED", new[] { "AWAITING", "IN_REVIEW" })]
     [InlineData("DRAFT", new[] { "IN_REVIEW", "SUPERSEDED" })]
+    public void Mixed_rule_states_keep_the_derived_value_but_carry_the_mixed_review_basis(string expected, string[] states) =>
+        Assert.Equal((expected, "MIXED_QUALIFICATION_STATES"), RequirementLifecyclePolicy.Derive(states));
+
+    [Theory]
     [InlineData("SUPERSEDED", new[] { "SUPERSEDED", "SUPERSEDED" })]
-    public void Strongest_current_state_wins_and_superseded_needs_every_rule_superseded(string expected, string[] states) =>
+    [InlineData("IN_FORCE", new[] { "IN_FORCE", "IN_FORCE" })]
+    // Distinct stored states that map to one lifecycle term are not mixed.
+    [InlineData("ADOPTED", new[] { "ADOPTED", "AWAITING" })]
+    [InlineData("DRAFT", new[] { "DRAFT" })]
+    public void Agreeing_rule_states_are_a_plain_recorded_qualification(string expected, string[] states) =>
         Assert.Equal((expected, "RECORDED_QUALIFICATION"), RequirementLifecyclePolicy.Derive(states));
+
+    [Fact]
+    public void An_unrecognized_state_still_poisons_a_mixed_aggregate() =>
+        Assert.Equal(("UNAVAILABLE", "UNRECOGNIZED_QUALIFICATION_STATE"), RequirementLifecyclePolicy.Derive(["IN_FORCE", "DRAFT", "LEGACY_STATE"]));
+
+    [Fact]
+    public void A_truncated_rule_set_is_unavailable_with_an_explicit_basis() =>
+        Assert.Equal(("UNAVAILABLE", "QUALIFICATION_LIMIT_EXCEEDED"), RequirementLifecyclePolicy.LimitExceeded());
+
+    [Fact]
+    public void Published_bases_are_the_complete_closed_vocabulary() =>
+        Assert.Equal(new[] { "NO_QUALIFIED_RULE", "RECORDED_QUALIFICATION", "UNRECOGNIZED_QUALIFICATION_STATE", "MIXED_QUALIFICATION_STATES", "QUALIFICATION_LIMIT_EXCEEDED" }, RequirementLifecyclePolicy.Bases);
 
     [Fact]
     public void An_unrecognized_state_poisons_the_aggregate_instead_of_defaulting() =>

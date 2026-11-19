@@ -12,7 +12,9 @@ type Schemas = components['schemas']
 export const lifecycles = ['DRAFT', 'ADOPTED', 'FUTURE', 'IN_FORCE', 'SUPERSEDED', 'UNAVAILABLE'] as const
 export type RequirementLifecycle = typeof lifecycles[number]
 const states = ['DRAFT', 'IN_REVIEW', 'ADOPTED', 'AWAITING', 'FUTURE_EFFECTIVE', 'IN_FORCE', 'SUPERSEDED'] as const
-const bases = ['NO_QUALIFIED_RULE', 'RECORDED_QUALIFICATION', 'UNRECOGNIZED_QUALIFICATION_STATE'] as const
+// MIXED: bound rules disagree (derived value is a software precedence, expert review required).
+// LIMIT: more bound rules than one projection carries; UNAVAILABLE, never a partial derivation.
+const bases = ['NO_QUALIFIED_RULE', 'RECORDED_QUALIFICATION', 'UNRECOGNIZED_QUALIFICATION_STATE', 'MIXED_QUALIFICATION_STATES', 'QUALIFICATION_LIMIT_EXCEEDED'] as const
 export type RequirementQualification = Omit<Schemas['RequirementQualificationDto'], 'state' | 'lifecycle'> & { state: typeof states[number]; lifecycle: RequirementLifecycle }
 export type Requirement = Omit<Schemas['RequirementDto'], 'lifecycle' | 'lifecycleBasis' | 'content' | 'qualifications'> & { lifecycle: RequirementLifecycle; lifecycleBasis: typeof bases[number]; content: RegisterContent; qualifications: RequirementQualification[] }
 const positive = (v: unknown) => typeof v === 'number' && Number.isSafeInteger(v) && v > 0
@@ -36,9 +38,11 @@ export function decodeRequirement(value: unknown): Requirement {
     !Array.isArray(value.qualifications) || value.qualifications.length > 100) return invalid()
   const qualifications = (value.qualifications as unknown[]).map(decodeQualification)
   // No current recorded qualification can only ever be a draft; a basis/lifecycle mismatch is not repaired here.
-  const current = qualifications.filter(q => q.current)
+  const current = qualifications.filter(q => q.current), terms = new Set(current.map(q => q.lifecycle)).size
   if (value.lifecycleBasis === 'NO_QUALIFIED_RULE' && (value.lifecycle !== 'DRAFT' || current.length > 0) ||
-    value.lifecycleBasis === 'RECORDED_QUALIFICATION' && (current.length === 0 || value.lifecycle === 'UNAVAILABLE') ||
+    value.lifecycleBasis === 'RECORDED_QUALIFICATION' && (current.length === 0 || value.lifecycle === 'UNAVAILABLE' || terms !== 1) ||
+    value.lifecycleBasis === 'MIXED_QUALIFICATION_STATES' && (terms < 2 || value.lifecycle === 'UNAVAILABLE') ||
+    value.lifecycleBasis === 'QUALIFICATION_LIMIT_EXCEEDED' && (value.lifecycle !== 'UNAVAILABLE' || qualifications.length > 0) ||
     value.lifecycleBasis === 'UNRECOGNIZED_QUALIFICATION_STATE' && value.lifecycle !== 'UNAVAILABLE' ||
     current.some(q => q.requirementRevision !== value.revision)) return invalid()
   return { ...(value as Requirement), qualifications }
