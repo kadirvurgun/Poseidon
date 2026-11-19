@@ -147,9 +147,12 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                 Fields(Field("Binding", null, "CommittedResource")));
         // PLAN-1511-5202: identity values (issuer/subject), permission lists and actor-supplied
         // text never enter audit summaries; only closed lifecycle codes and revisions do.
+        // Immutable owner-bound rows (account, grant/scope snapshots) and the zero-revision membership/delegation/recovery
+        // creations carry the closed Binding=OwnerReference marker; a later lifecycle change keeps it as its before value.
+        string? OwnerBinding() => entry.State == EntityState.Added ? null : "OwnerReference";
         if (entry.Entity is UserAccount account)
             return new(null, account.Id, "Account", null, null, Fields(Field("IdentityLink", null, null, "ValuesWithheld"),
-                Field("Source", null, Closed(account.Source, "ConfigurationImport", "SyntheticUnverified"))));
+                Field("Source", null, Closed(account.Source, "ConfigurationImport", "SyntheticUnverified")), Field("Binding", null, "OwnerReference")));
         if (entry.Entity is AccountMembership membership)
         {
             string? Prior(string name) => entry.State == EntityState.Added ? null : entry.Property(name).OriginalValue?.ToString();
@@ -158,11 +161,11 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                     Field("Status", Prior(nameof(membership.Status)) is { } s ? Closed(s, "Active", "Suspended", "Revoked") : null, Closed(membership.Status, "Active", "Suspended", "Revoked")),
                     Field("StatusReason", null, Closed(membership.StatusReason, "ConfigurationImport", "SyntheticFixture", "AdministrativeSuspension", "AdministrativeResume", "AdministrativeRevocation", "SecuritySuspension", "SecurityResume")),
                     Field("AccessRevision", Prior(nameof(membership.AccessRevision)), Number(membership.AccessRevision)),
-                    Field("AccountId", null, membership.AccountId.ToString("D"))));
+                    Field("AccountId", null, membership.AccountId.ToString("D")), Field("Binding", OwnerBinding(), "OwnerReference")));
         }
         if (entry.Entity is AccountMembershipVesselGrant grant)
             return new(grant.VesselId, grant.MembershipId, "MembershipVesselGrant", null, null,
-                Fields(Field("CanEdit", null, grant.CanEdit ? "true" : "false")));
+                Fields(Field("CanEdit", null, grant.CanEdit ? "true" : "false"), Field("Binding", null, "OwnerReference")));
         if (entry.Entity is MembershipDelegation delegation)
             return new(null, delegation.Id, "Delegation", null, null, Fields(
                 Field("Status", entry.State == EntityState.Added ? null : "Active", Closed(delegation.Status, "Active", "Revoked")),
@@ -171,19 +174,21 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                 Field("Permissions", null, null, "ValuesWithheld"),
                 Field("ReasonCode", null, Closed(delegation.ReasonCode, "PlannedAbsence", "UnplannedAbsence", "WorkloadCover", "Handover", "LegacyUnscoped")),
                 Field("CompanyId", null, delegation.CompanyId?.ToString("D")),
-                Field("RevocationReason", null, delegation.RevocationReason is { } r ? Closed(r, "AdministrativeRevocation", "MembershipSuspended", "MembershipRevoked") : null)));
+                Field("RevocationReason", null, delegation.RevocationReason is { } r ? Closed(r, "AdministrativeRevocation", "MembershipSuspended", "MembershipRevoked") : null),
+                Field("Binding", OwnerBinding(), "OwnerReference")));
         if (entry.Entity is DelegationVesselScope scope)
             return new(scope.VesselId, scope.DelegationId, "DelegationVesselScope", null, null,
-                Fields(Field("CanEdit", null, scope.CanEdit ? "true" : "false")));
+                Fields(Field("CanEdit", null, scope.CanEdit ? "true" : "false"), Field("Binding", null, "OwnerReference")));
         if (entry.Entity is TenantAccessRecovery recovery)
             return new(null, recovery.MembershipId, "AccessRecovery", null, null,
                 Fields(Field("State", entry.State == EntityState.Added ? null : "RECOVERY_REQUIRED", recovery.ResolvedAt == null ? "RECOVERY_REQUIRED" : "RESOLVED"),
                     Field("Cause", null, Closed(recovery.Cause, "SecuritySuspension")),
-                    Field("Resolution", null, recovery.Resolution is { } resolution ? Closed(resolution, "SecuritySuspensionResumed") : null)));
+                    Field("Resolution", null, recovery.Resolution is { } resolution ? Closed(resolution, "SecuritySuspensionResumed") : null),
+                    Field("Binding", OwnerBinding(), "OwnerReference")));
         if (entry.Entity is MembershipCommandReceipt membershipReceipt)
             return new(null, membershipReceipt.ResourceId, "MembershipCommandReceipt", null, null,
                 Fields(Field("Action", null, Closed(membershipReceipt.Action, "MembershipImport", "MembershipSuspend", "MembershipResume", "MembershipRevoke",
-                    "MembershipSecuritySuspend", "DelegationCreate", "DelegationRevoke"))));
+                    "MembershipSecuritySuspend", "DelegationCreate", "DelegationRevoke")), Field("Binding", null, "CommittedResource")));
         // Never copy the declared reference text, value or observation time into audit.
         if (entry.Entity is VesselProfileFieldSource fieldSource)
             return new(fieldSource.VesselId, fieldSource.VesselId, "VesselProfileFieldSource", null, fieldSource.Sequence,
