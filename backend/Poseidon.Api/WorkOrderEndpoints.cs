@@ -139,7 +139,13 @@ public static class WorkOrderEndpoints
         var existing=routeId==null?null:await db.WorkOrders.AsNoTracking().SingleOrDefaultAsync(r=>r.Id==command.Id && r.VesselId==vessel,ct);
         if(routeId!=null && existing==null)return await Fail(h,404,"resource_not_found");WorkOrderRecordDto[] previous=existing==null?[]:[Dto(existing,true,true,Now(h))];
         var unchangedPlan=existing!=null && Plan(existing.PlanId,existing.PlanRevision,existing.PlanVersion,existing.PlanHash,existing.PlanSourceVersion)==command.Plan;
-        if(!await Current(h,vessel,rights,previous,true,command.Plan,!unchangedPlan))return await Replay()??await Fail(h,403,"linked_resource_unavailable");
+        // A competing edit can commit between the head read above and this fence. That head move
+        // makes the command stale: answer version_conflict (rights rechecked) instead of 403.
+        async Task<IResult?> Superseded() {
+            var head=existing==null?null:await db.WorkOrders.AsNoTracking().SingleOrDefaultAsync(r=>r.Id==command.Id && r.VesselId==vessel,ct);
+            return head==null || head.Version==existing!.Version || !await Current(h,vessel,rights,[],true)?null:await Fail(h,409,"version_conflict");
+        }
+        if(!await Current(h,vessel,rights,previous,true,command.Plan,!unchangedPlan))return await Replay()??await Superseded()??await Fail(h,403,"linked_resource_unavailable");
         await Audit(h,"Attempted",command.Id);IDbContextTransaction? tx=null;string? outcome=null;
         try {
             tx=await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable,ct);var now=Now(h);
