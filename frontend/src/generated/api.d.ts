@@ -554,6 +554,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/noon-reports/reviewed-summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["NoonReviewedSummary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/vessels/{vessel}/crew/{assignment}/personal-files": {
         parameters: {
             query?: never;
@@ -3877,6 +3893,102 @@ export interface paths {
         get: operations["EngineDailyReviews"];
         put?: never;
         post: operations["EngineDailyReviewRecord"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/noon-reports/reference-options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["NoonDailyReferenceOptions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/noon-reports/{id}/references": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["NoonDailyReferences"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/deck-daily-logs/reference-options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["DeckDailyReferenceOptions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/deck-daily-logs/{id}/references": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["DeckDailyReferences"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/engine-daily-logs/reference-options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["EngineDailyReferenceOptions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/engine-daily-logs/{id}/references": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["EngineDailyReferences"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -7396,6 +7508,49 @@ export interface components {
             reviewedAt: null | string;
             blockers: string[];
         };
+        DailyReferenceDto: {
+            field: string;
+            state: string;
+            source: null | string;
+            /** Format: uuid */
+            id: null | string;
+            /** Format: int64 */
+            revision: null | number;
+            /** Format: int64 */
+            currentRevision: null | number;
+            qualification: string;
+        };
+        DailyReferenceOptionDto: {
+            token: string;
+            source: string;
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            label: string;
+            qualification: string;
+        };
+        DailyReferenceOptionsDto: {
+            /** Format: uuid */
+            vesselId: string;
+            kind: string;
+            field: string;
+            available: boolean;
+            items: components["schemas"]["DailyReferenceOptionDto"][];
+            hasMore: boolean;
+        };
+        DailyReferencesDto: {
+            /** Format: uuid */
+            recordId: string;
+            /** Format: uuid */
+            vesselId: string;
+            kind: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            items: components["schemas"]["DailyReferenceDto"][];
+        };
         DailyReviewCapabilitiesDto: {
             /** Format: uuid */
             recordId: string;
@@ -8921,6 +9076,46 @@ export interface components {
         NavigationDto: {
             key: string;
             href: string;
+        };
+        NoonSummaryFieldDto: {
+            key: string;
+            type: string;
+            unit: null | string;
+            /** Format: int32 */
+            sourceRow: number;
+            value: components["schemas"]["DailyValue"];
+        };
+        NoonSummaryItemDto: {
+            /** Format: uuid */
+            recordId: string;
+            state: string;
+            consumable: boolean;
+            reviewedPin: null | components["schemas"]["ShipOperationOriginPin"];
+            /** Format: int64 */
+            headRevision: number;
+            reviewedIsCurrent: boolean;
+            /** Format: uuid */
+            reviewEventId: null | string;
+            /** Format: date-time */
+            reviewedAt: null | string;
+            provenance: string;
+            fields: components["schemas"]["NoonSummaryFieldDto"][];
+            references: components["schemas"]["DailyReferenceDto"][];
+            href: string;
+            qualifications: string[];
+        };
+        NoonSummaryPageDto: {
+            /** Format: uuid */
+            vesselId: string;
+            items: components["schemas"]["NoonSummaryItemDto"][];
+            /** Format: int32 */
+            offset: number;
+            /** Format: int32 */
+            limit: number;
+            hasMore: boolean;
+            consumers: string[];
+            emissionsBasis: string;
+            sourceVersion: string;
         };
         NotificationAckCommand: {
             /** Format: uint32 */
@@ -12173,6 +12368,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DailyOperationOriginDto"];
+                };
+            };
+        };
+    };
+    NoonReviewedSummary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NoonSummaryPageDto"];
                 };
             };
         };
@@ -16025,6 +16240,132 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DailyReviewDto"];
+                };
+            };
+        };
+    };
+    NoonDailyReferenceOptions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyReferenceOptionsDto"];
+                };
+            };
+        };
+    };
+    NoonDailyReferences: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyReferencesDto"];
+                };
+            };
+        };
+    };
+    DeckDailyReferenceOptions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyReferenceOptionsDto"];
+                };
+            };
+        };
+    };
+    DeckDailyReferences: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyReferencesDto"];
+                };
+            };
+        };
+    };
+    EngineDailyReferenceOptions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyReferenceOptionsDto"];
+                };
+            };
+        };
+    };
+    EngineDailyReferences: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyReferencesDto"];
                 };
             };
         };

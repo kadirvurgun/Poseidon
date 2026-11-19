@@ -3554,6 +3554,8 @@
     "m_2adab3886ca18b5e": "O arquivo selecionado não corresponde à tentativa original. A tentativa permanece bloqueada.",
     "m_6eb8ee576dacf887": "Uma tentativa incerta anterior expirou neste navegador. Verifique o histórico antes de enviar novamente.",
     "m_dbbdcf309e8f24c3": "As regras vinculadas registram estados de ciclo de vida diferentes. O valor exibido é uma precedência de software; é necessária revisão especializada.",
-    "m_d6eb29d9d9dfbe8b": "Há mais regras vinculadas do que esta visualização comporta; nenhum ciclo de vida é derivado de um conjunto parcial."
+    "m_d6eb29d9d9dfbe8b": "Há mais regras vinculadas do que esta visualização comporta; nenhum ciclo de vida é derivado de um conjunto parcial.",
+    "m_5e0d7a1c3b9f2e41": "Apenas vínculo ao registro proprietário; vincular não é verificar.",
+    "m_8c2f6b0e4a7d1395": "Nenhum registro proprietário atual disponível. Mantenha Ausente ou Desconhecido."
   }
 }

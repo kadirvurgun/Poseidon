@@ -3554,6 +3554,8 @@
     "m_2adab3886ca18b5e": "Valittu tiedosto ei vastaa alkuperäistä yritystä. Yritys pysyy lukittuna.",
     "m_6eb8ee576dacf887": "Aiempi epävarma yritys vanheni tässä selaimessa. Tarkista historia ennen uutta lähetystä.",
     "m_dbbdcf309e8f24c3": "Sidotut säännöt kirjaavat eri elinkaaritiloja. Näytetty arvo on ohjelmiston etusijajärjestys; asiantuntijan tarkistus tarvitaan.",
-    "m_d6eb29d9d9dfbe8b": "Sidottuja sääntöjä on enemmän kuin tämä näkymä voi sisältää; elinkaarta ei johdeta osittaisesta joukosta."
+    "m_d6eb29d9d9dfbe8b": "Sidottuja sääntöjä on enemmän kuin tämä näkymä voi sisältää; elinkaarta ei johdeta osittaisesta joukosta.",
+    "m_5e0d7a1c3b9f2e41": "Vain linkki omistavaan tietueeseen; linkitys ei ole varmennus.",
+    "m_8c2f6b0e4a7d1395": "Nykyistä omistavaa tietuetta ei ole saatavilla. Säilytä Puuttuu tai Tuntematon."
   }
 }

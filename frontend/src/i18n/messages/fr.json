@@ -3554,6 +3554,8 @@
     "m_2adab3886ca18b5e": "Le fichier sélectionné ne correspond pas à la tentative d’origine. La tentative reste verrouillée.",
     "m_6eb8ee576dacf887": "Une tentative incertaine antérieure a expiré dans ce navigateur. Vérifiez l’historique avant de soumettre à nouveau.",
     "m_dbbdcf309e8f24c3": "Les règles liées enregistrent des états de cycle de vie différents. La valeur affichée est une priorité logicielle ; un examen d’expert est requis.",
-    "m_d6eb29d9d9dfbe8b": "Plus de règles sont liées que cette vue ne peut en contenir ; aucun cycle de vie n’est dérivé d’un ensemble partiel."
+    "m_d6eb29d9d9dfbe8b": "Plus de règles sont liées que cette vue ne peut en contenir ; aucun cycle de vie n’est dérivé d’un ensemble partiel.",
+    "m_5e0d7a1c3b9f2e41": "Lien vers l’enregistrement propriétaire uniquement ; un lien n’est pas une vérification.",
+    "m_8c2f6b0e4a7d1395": "Aucun enregistrement propriétaire actuel disponible. Conserver Manquant ou Inconnu."
   }
 }

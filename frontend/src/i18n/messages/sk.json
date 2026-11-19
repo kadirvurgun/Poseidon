@@ -3554,6 +3554,8 @@
     "m_2adab3886ca18b5e": "Vybraný súbor nezodpovedá pôvodnému pokusu. Pokus zostáva uzamknutý.",
     "m_6eb8ee576dacf887": "Skorší neistý pokus v tomto prehliadači vypršal. Pred ďalším odoslaním skontrolujte históriu.",
     "m_dbbdcf309e8f24c3": "Naviazané pravidlá zaznamenávajú rôzne stavy životného cyklu. Zobrazená hodnota je softvérová priorita; vyžaduje sa odborná kontrola.",
-    "m_d6eb29d9d9dfbe8b": "Je naviazaných viac pravidiel, než toto zobrazenie pojme; z neúplnej množiny sa životný cyklus neodvodzuje."
+    "m_d6eb29d9d9dfbe8b": "Je naviazaných viac pravidiel, než toto zobrazenie pojme; z neúplnej množiny sa životný cyklus neodvodzuje.",
+    "m_5e0d7a1c3b9f2e41": "Iba odkaz na vlastnícky záznam; prepojenie nie je overenie.",
+    "m_8c2f6b0e4a7d1395": "Nie je k dispozícii žiadny aktuálny vlastnícky záznam. Ponechajte Chýba alebo Neznáme."
   }
 }
