@@ -2,6 +2,7 @@
 
 STATUS: IN_PROGRESS
 Güncelleme: 2026-11-19 ~00:30 (interaktif oturum 5 saatlik kotanın %90'ında durdu; kilit kaldırıldı)
+in_progress: 2026-11-19 02:41 zamanlanmış oturum (claude/loop)
 
 ## KOTA KURALI (zorunlu)
 Her büyük adımdan önce `C:\Users\avurgun\.claude-poseidon\statusline\cache\usage.json` oku (`fiveHourPct`, `resetsAt`). `fiveHourPct >= 97` ise yeni iş başlatma, durumu bu dosyaya yaz, commit et ve çık. `>= 90` ise yeni alt-ajan başlatma, yalnız mevcut işi bitir. Alt-ajanları aynı anda en fazla 3 tut.
