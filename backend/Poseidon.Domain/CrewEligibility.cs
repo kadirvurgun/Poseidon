@@ -231,6 +231,7 @@ public sealed record SafeManningEvaluation(Guid VesselId, string State, CrewElig
 public static class SafeManningPolicy
 {
     public const string MsmdCurrent = "CURRENT";
+    public const string MemberNotEligible = "MEMBER_NOT_ELIGIBLE";
     public static readonly string[] Qualifications = [.. CrewEligibilityPolicy.Qualifications, "MSMD_MINIMUM_ROLE_COUNT_ONLY", "MASTER_OR_DPA_DECISION_REQUIRED"];
 
     public static (string State, CrewEligibilityReason[] Reasons, ManningRoleCoverage[] Roles) Evaluate(string msmdState, MsmdRoleRequirement[]? roles, CrewEligibilityResult[] members)
@@ -258,7 +259,12 @@ public static class SafeManningPolicy
                 reasons.Add(new("MEMBER_ATTENTION", "CREW", CrewEligibilityStates.Attention));
         }
         if (members.Length == 0) reasons.Add(new("NO_CREW_ASSIGNMENT_IN_WINDOW", "CREW", CrewEligibilityStates.ReviewRequired));
-        return (CrewEligibilityPolicy.Aggregate(reasons.Select(r => r.Severity)), reasons.ToArray(), coverage);
+        // A known-negative crew member is a vessel-level negative even when the MSMD source is
+        // unavailable or the position is not MSMD-counted; it can never hide behind REVIEW_REQUIRED.
+        if (members.Any(m => m.State == CrewEligibilityStates.NotEligible)) reasons.Add(new(MemberNotEligible, "CREW", CrewEligibilityStates.NotEligible));
+        // Member review/attention states also bound the vessel state (their reasons stay on the member).
+        var severities = reasons.Select(r => r.Severity).Concat(members.Select(m => m.State == CrewEligibilityStates.Eligible ? "INFO" : m.State));
+        return (CrewEligibilityPolicy.Aggregate(severities), reasons.ToArray(), coverage);
     }
 }
 
@@ -327,6 +333,7 @@ public static class SafeManningDecisionPolicy
         // Vessel-level negatives (MSMD role count) are covered only if the dispensed members
         // complete the count; a missing person can never be dispensed into existence.
         foreach (var reason in evaluation.Reasons.Where(r => r.Severity == CrewEligibilityStates.NotEligible)) {
+            if (reason.Code == SafeManningPolicy.MemberNotEligible) continue; // covered per member above
             if (reason.Code != "MSMD_ROLE_COUNT_NOT_MET" || evaluation.Roles.Length == 0) return DispensationRequired;
             var roles = evaluation.Roles.Select(r => new MsmdRoleRequirement(r.PositionId, r.Required, "PINNED_EVALUATION")).ToArray();
             var candidates = evaluation.Members.Where(m => m.PositionId != null).Select(m => new ManningCandidate(m.PositionId!.Value, m.AssignmentId,

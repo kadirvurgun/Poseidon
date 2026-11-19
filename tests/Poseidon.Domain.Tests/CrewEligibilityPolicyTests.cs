@@ -186,6 +186,19 @@ public sealed class CrewEligibilityPolicyTests
     }
 
     [Fact]
+    public void Not_eligible_member_makes_the_vessel_not_eligible_even_without_a_current_msmd()
+    {
+        var (state, reasons, _) = SafeManningPolicy.Evaluate("SOURCE_QUALIFIED_MSMD_REQUIRED", null,
+            [Member(CrewEligibilityStates.NotEligible), Member(CrewEligibilityStates.ReviewRequired)]);
+        Assert.Equal(CrewEligibilityStates.NotEligible, state);
+        Assert.Contains(reasons, r => r.Code == SafeManningPolicy.MemberNotEligible && r.Severity == CrewEligibilityStates.NotEligible);
+        // A review-required member bounds a current, count-met MSMD to REVIEW_REQUIRED as well.
+        MsmdRoleRequirement[] msmd = [new(Position, 1, "FICTIONAL/msmd")];
+        Assert.Equal(CrewEligibilityStates.ReviewRequired, SafeManningPolicy.Evaluate(SafeManningPolicy.MsmdCurrent, msmd,
+            [Member(CrewEligibilityStates.Eligible), new(Guid.NewGuid(), Guid.NewGuid(), CrewEligibilityStates.ReviewRequired, [], [], [])]).State);
+    }
+
+    [Fact]
     public void Safe_manning_with_no_crew_is_review_required()
     {
         Assert.Equal(CrewEligibilityStates.ReviewRequired, SafeManningPolicy.Evaluate("SOURCE_ACCESS_REQUIRED", null, []).State);

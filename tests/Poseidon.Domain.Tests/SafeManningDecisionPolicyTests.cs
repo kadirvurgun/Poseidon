@@ -75,6 +75,15 @@ public sealed class SafeManningDecisionPolicyTests
     }
 
     [Fact]
+    public void Member_not_eligible_vessel_reason_is_covered_only_by_the_member_dispensation()
+    {
+        var reason = new CrewEligibilityReason(SafeManningPolicy.MemberNotEligible, "CREW", CrewEligibilityStates.NotEligible);
+        var e = Evaluation(CrewEligibilityStates.NotEligible, [reason], Member(Assignment, CrewEligibilityStates.NotEligible, Expired));
+        Assert.Equal(SafeManningDecisionPolicy.DispensationRequired, Refusal(e, Accept));
+        Assert.Null(Refusal(e, Accept, dispensations: [Dispensation()]));
+    }
+
+    [Fact]
     public void Review_required_acceptance_needs_one_acknowledgement_per_reason()
     {
         var other = new CrewEligibilityReason("CREDENTIAL_UNVERIFIED", "CREDENTIAL", CrewEligibilityStates.ReviewRequired);
