@@ -6,6 +6,7 @@ import { editorCopy } from './editor-copy';
 import type { Language } from './editor-copy';
 import { Button } from '../components/ui/button';
 import { EnterpriseActions, EnterpriseField, EnterpriseFormGrid } from './EnterprisePatterns';
+import { LegalEntitySummary } from './LegalEntitySummary';
 import { FormErrorSummary } from '../components/a11y/FormErrorSummary';
 export type EditorTarget = {
     instanceKey?: string;
@@ -153,5 +154,6 @@ export function DirectoryEditor({ target, language, csrf, onDirty, onSaving, onC
       {failure && <div role="alert"><p>{errorText}</p>{failure.correlationId && <p>{t.reference}: <code>{failure.correlationId}</code></p>}{failure.code === 'version_conflict' && <Button variant="outline" onClick={onReload}>{t.reload}</Button>}</div>}
       <EnterpriseActions layout="form" aria-label={localizedText(language, "pairs.m_ae1f2ff34e96c6a8")}><Button variant="outline" disabled={saving} onClick={onCancel}>{t.cancel}</Button><Button type="submit" disabled={saving || failure?.code === 'version_conflict'}>{saving ? t.saving : uncertain ? t.retry : t.save}</Button></EnterpriseActions>
     </form>
+    {target.resource === 'companies' && initial && <LegalEntitySummary companyId={initial.id} language={language}/>}
   </section>;
 }

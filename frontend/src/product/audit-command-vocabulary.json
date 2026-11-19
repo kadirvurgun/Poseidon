@@ -121,7 +121,21 @@
     "PortShipOpsUpdate": "PREPARATION_COMMAND",
     "ProposeParameterChange": "PREPARATION_COMMAND",
     "ApproveParameterChange": "HUMAN_REVIEW_WORKFLOW",
-    "RejectParameterChange": "HUMAN_REVIEW_WORKFLOW"
+    "RejectParameterChange": "HUMAN_REVIEW_WORKFLOW",
+    "HrUpdateLegalEntity": "PREPARATION_COMMAND",
+    "HrChangeLegalEntityStatus": "PREPARATION_COMMAND",
+    "HrAddLegalEntityIdentifier": "PREPARATION_COMMAND",
+    "HrRetireLegalEntityIdentifier": "PREPARATION_COMMAND",
+    "HrAddLegalEntityRole": "PREPARATION_COMMAND",
+    "HrEndLegalEntityRole": "PREPARATION_COMMAND",
+    "HrCancelLegalEntityRole": "PREPARATION_COMMAND",
+    "HrUpdatePerson": "PREPARATION_COMMAND",
+    "HrVerifyPerson": "PREPARATION_COMMAND",
+    "HrCreateEmployment": "PREPARATION_COMMAND",
+    "HrChangeEmploymentStatus": "PREPARATION_COMMAND",
+    "HrCreateAssignment": "PREPARATION_COMMAND",
+    "HrChangeAssignmentStatus": "PREPARATION_COMMAND",
+    "HrRecordActualEvent": "PREPARATION_COMMAND"
   },
   "reasonCodes": [
     "PREPARATION_COMMAND",

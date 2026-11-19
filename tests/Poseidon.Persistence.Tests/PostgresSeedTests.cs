@@ -61,7 +61,8 @@ public sealed class PostgresSeedTests : IAsyncLifetime
             Assert.All(await db.DocumentVersions.ToArrayAsync(TestContext.Current.CancellationToken), x => { Assert.Equal("DraftUnverified", x.Status); Assert.Equal("SyntheticUnverified", x.Provenance); });
             Assert.All(await db.FileStages.ToArrayAsync(TestContext.Current.CancellationToken), x => { Assert.Equal("SyntheticUnverified", x.State); Assert.Equal(0, x.ExpectedLength); });
             Assert.Empty(await db.StoredFiles.ToArrayAsync(TestContext.Current.CancellationToken));
-            Assert.Equal(103, await db.AuditEvents.CountAsync(TestContext.Current.CancellationToken));
+            // PLAN-1511-5201 synthetic HR fixture adds 10 seed rows (2 identifiers, 2 employer roles, 3 draft employments, 3 planned assignments).
+            Assert.Equal(113, await db.AuditEvents.CountAsync(TestContext.Current.CancellationToken));
             Assert.All(await db.AuditEvents.ToListAsync(TestContext.Current.CancellationToken), e => Assert.Equal("system:seed-import", e.ActorId));
         }
         await using (var db = Tenant(data.Tenants[0].Id))
@@ -74,7 +75,7 @@ public sealed class PostgresSeedTests : IAsyncLifetime
         await using (var db = Admin())
         {
             Assert.Equal(3, await db.Vessels.CountAsync(TestContext.Current.CancellationToken));
-            Assert.Equal(104, await db.AuditEvents.CountAsync(TestContext.Current.CancellationToken));
+            Assert.Equal(114, await db.AuditEvents.CountAsync(TestContext.Current.CancellationToken));
             Assert.Contains(await db.Vessels.ToListAsync(TestContext.Current.CancellationToken), v => v.Name == "Operator edited name");
             var audit = Assert.Single(await db.AuditEvents.Where(e => e.ActorId == "test-user").ToListAsync(TestContext.Current.CancellationToken));
             Assert.Equal("Modified", audit.Action);
@@ -132,7 +133,7 @@ public sealed class PostgresSeedTests : IAsyncLifetime
         }
         await using var verify = Admin();
         Assert.Equal(3, await verify.Vessels.CountAsync(TestContext.Current.CancellationToken));
-        Assert.Equal(103, await verify.AuditEvents.CountAsync(TestContext.Current.CancellationToken));
+        Assert.Equal(113, await verify.AuditEvents.CountAsync(TestContext.Current.CancellationToken));
     }
 
     [Fact]
@@ -154,7 +155,7 @@ public sealed class PostgresSeedTests : IAsyncLifetime
         }));
         await using var verify = Admin();
         Assert.Equal(3, await verify.Vessels.CountAsync(TestContext.Current.CancellationToken));
-        Assert.Equal(103, await verify.AuditEvents.CountAsync(TestContext.Current.CancellationToken));
+        Assert.Equal(113, await verify.AuditEvents.CountAsync(TestContext.Current.CancellationToken));
     }
 
     [Fact]
@@ -188,7 +189,7 @@ public sealed class PostgresSeedTests : IAsyncLifetime
         }
         await using var verify = Admin();
         Assert.Equal(4, await verify.Vessels.CountAsync(TestContext.Current.CancellationToken));
-        Assert.Equal(104, await verify.AuditEvents.CountAsync(TestContext.Current.CancellationToken));
+        Assert.Equal(114, await verify.AuditEvents.CountAsync(TestContext.Current.CancellationToken));
         Assert.Single(await verify.AuditEvents.Where(e => e.ActorId == "test-user").ToListAsync(TestContext.Current.CancellationToken));
     }
 
@@ -208,7 +209,7 @@ public sealed class PostgresSeedTests : IAsyncLifetime
         await Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => stale.SaveChangesAsync(TestContext.Current.CancellationToken));
         await using var verify = Admin();
         Assert.Equal("Accepted change", (await verify.Vessels.SingleAsync(v => v.Id == id, TestContext.Current.CancellationToken)).Name);
-        Assert.Equal(104, await verify.AuditEvents.CountAsync(TestContext.Current.CancellationToken));
+        Assert.Equal(114, await verify.AuditEvents.CountAsync(TestContext.Current.CancellationToken));
     }
 
     [Fact]
