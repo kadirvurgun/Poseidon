@@ -298,3 +298,62 @@ it('reports a current source-file read failure without a mutation or uncertain c
   expect(screen.queryByText('Outcome uncertain. The exact original attempt is locked until retry.')).not.toBeInTheDocument()
   expect(screen.getByRole('button', { name: 'Save qualification draft' })).toBeEnabled()
 })
+
+// S3-WPA / DEV-026 open QOR finding: a hard reload previously destroyed the in-memory
+// UNKNOWN envelope. Mocked transport only; real browser reload journey DEFERRED.
+const storedKey = (rule: string) => `poseidon.qualification.unknown.v1:${rule}`
+it('retains the UNKNOWN envelope across a hard reload and retries only the exact original attempt', async () => {
+  const h = setup(), successful = h.sent.getMockImplementation()!
+  h.sent.mockImplementationOnce(async () => { throw new Error('synthetic response lost') })
+  const first = render(<RegulatoryQualification {...h.props} />)
+  fireEvent.change(await screen.findByLabelText('Publisher'), { target: { value: 'FICTIONAL-reload-publisher' } })
+  save(); await unknown()
+  const original = h.sent.mock.calls[0][1]
+  first.unmount() // Hard reload: every React state, ref and closure is gone.
+  const stored = JSON.parse(window.sessionStorage.getItem(storedKey(h.row.ruleId))!) as Record<string, unknown>
+  expect(Object.keys(stored).sort()).toEqual(['action', 'body', 'context', 'key', 'nextRevision', 'owner', 'rule', 'unknown', 'version'])
+  expect(stored.unknown).toBe(true); expect(JSON.stringify(stored)).not.toContain(h.props.csrf)
+  const reloaded = render(<RegulatoryQualification {...h.props} />)
+  await unknown()
+  expect(await screen.findByLabelText('Publisher')).toBeDisabled()
+  expect(screen.getByLabelText('Publisher')).toHaveValue('FICTIONAL-reload-publisher')
+  expect(screen.getByRole('button', { name: 'Discard local changes and reload' })).toBeDisabled()
+  expect(h.props.onSaving).toHaveBeenLastCalledWith(true)
+  expect(h.sent).toHaveBeenCalledTimes(1) // Nothing is resent implicitly on reload.
+  h.sent.mockImplementation(successful)
+  retry()
+  await screen.findByText('Human record saved. No operational release follows.')
+  expect(h.sent).toHaveBeenCalledTimes(2)
+  expect(h.sent.mock.calls[1][1].body).toBe(original.body); expect(h.sent.mock.calls[1][1].key).toBe(original.key)
+  expect(window.sessionStorage.getItem(storedKey(h.row.ruleId))).toBeNull()
+  reloaded.unmount()
+})
+
+it('does not expose or replay a reloaded UNKNOWN envelope for a different authenticated owner', async () => {
+  const h = setup()
+  h.sent.mockImplementationOnce(async () => { throw new Error('synthetic response lost') })
+  const first = render(<RegulatoryQualification {...h.props} />)
+  fireEvent.change(await screen.findByLabelText('Publisher'), { target: { value: 'FICTIONAL-private-publisher' } })
+  save(); await unknown(); first.unmount()
+  h.state.owner = `${other}/${h.row.actorId}`
+  const reloaded = render(<RegulatoryQualification {...h.props} />)
+  await screen.findByRole('alert')
+  await waitFor(() => expect(window.sessionStorage.getItem(storedKey(h.row.ruleId))).toBeNull())
+  expect(screen.queryByDisplayValue('FICTIONAL-private-publisher')).not.toBeInTheDocument()
+  expect(screen.getByRole('button', { name: 'Retry exact qualification command' })).toBeDisabled()
+  expect(h.sent).toHaveBeenCalledTimes(1)
+  reloaded.unmount()
+})
+
+it.each([
+  '{not json', JSON.stringify({ unknown: true }),
+  JSON.stringify({ owner: 'x', context: 'c', version: 0, rule: 'other-rule', action: 'events', body: '{}', key: crypto.randomUUID(), unknown: true, nextRevision: 1 }),
+])('discards a malformed stored envelope instead of inventing an attempt: %s', async raw => {
+  const h = setup()
+  window.sessionStorage.setItem(storedKey(h.row.ruleId), raw)
+  const view = render(<RegulatoryQualification {...h.props} />)
+  expect(await screen.findByLabelText('Publisher')).toBeEnabled()
+  expect(screen.queryByText('Outcome uncertain. The exact original attempt is locked until retry.')).not.toBeInTheDocument()
+  expect(window.sessionStorage.getItem(storedKey(h.row.ruleId))).toBeNull()
+  view.unmount()
+})

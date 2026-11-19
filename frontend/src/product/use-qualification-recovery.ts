@@ -15,24 +15,63 @@ type Props = {
   onDirty: (value: boolean) => void; onSaving: (value: boolean) => void
 }
 
+// S3-WPA / DEV-026 open finding QOR reload: an UNKNOWN-outcome envelope (exact body +
+// original Idempotency-Key, never CSRF or credentials) survives a hard reload in this
+// tab's sessionStorage, so the same original attempt can only be explicitly retried and is
+// never silently dropped, discarded or replaced by a new command. It is removed only on a
+// confirmed/definite outcome or when a different authenticated owner is observed.
+const storagePrefix = 'poseidon.qualification.unknown.v1:'
+const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+function storage(): Storage | null { try { return window.sessionStorage } catch { return null } }
+export function persistUnknown(value: QualificationAttempt) {
+  if (!value.unknown) return
+  try { storage()?.setItem(storagePrefix + value.rule, JSON.stringify(value)) } catch { /* Quota/denied: the in-memory envelope still locks the attempt. */ }
+}
+export function forgetUnknown(rule: string) { try { storage()?.removeItem(storagePrefix + rule) } catch { /* Unavailable storage holds nothing. */ } }
+export function restoreUnknown(rule: string, context: string): QualificationAttempt | null {
+  let raw: string | null
+  try { raw = storage()?.getItem(storagePrefix + rule) ?? null } catch { return null }
+  if (!raw) return null
+  try {
+    const v = JSON.parse(raw) as Record<string, unknown>
+    const keys = ['owner', 'context', 'version', 'rule', 'action', 'body', 'key', 'unknown', 'nextRevision']
+    if (!v || typeof v !== 'object' || Array.isArray(v) || Object.keys(v).length !== keys.length || keys.some(k => !Object.hasOwn(v, k)) ||
+      typeof v.owner !== 'string' || !v.owner || v.rule !== rule || typeof v.context !== 'string' || v.unknown !== true ||
+      (v.action !== 'events' && v.action !== 'fact-attestations') || typeof v.body !== 'string' || typeof v.key !== 'string' || !uuid.test(v.key) ||
+      typeof v.version !== 'number' || !Number.isSafeInteger(v.version) || v.version < 0 || typeof v.nextRevision !== 'number' || !Number.isSafeInteger(v.nextRevision) || v.nextRevision < 1) {
+      forgetUnknown(rule); return null
+    }
+    const body = JSON.parse(v.body) as unknown
+    if (!body || typeof body !== 'object' || Array.isArray(body)) { forgetUnknown(rule); return null }
+    // Another rule revision/vessel context keeps the stored envelope; it is simply not this view's attempt.
+    return v.context === context ? v as unknown as QualificationAttempt : null
+  } catch { forgetUnknown(rule); return null }
+}
+const restoredContent = (value: QualificationAttempt | null): api.Content | null => {
+  if (!value || value.action !== 'events') return null
+  const body = JSON.parse(value.body) as { content?: unknown }
+  return body.content && typeof body.content === 'object' && !Array.isArray(body.content) ? body.content as api.Content : null
+}
+
 // The envelope belongs to one actual session and source context. Source reads
 // may restore access but never prove whether an earlier unknown write committed.
 export function useQualificationRecovery({ rule, ruleRevision, vessel, offline, onDirty, onSaving }: Props) {
   const epoch = useWorkspaceRevalidation(), [reload, setReload] = useState(0)
   const available = !offline && navigator.onLine && document.visibilityState !== 'hidden'
   const context = `${rule}:${ruleRevision}:${vessel}`, scope = `${context}:${epoch}:${reload}:${available}`
-  const [data, setData] = useState<api.Page | null>(null), [content, setContent] = useState(api.blank)
+  const [restored] = useState(() => restoreUnknown(rule, context))
+  const [data, setData] = useState<api.Page | null>(null), [content, setContent] = useState(() => restoredContent(restored) ?? api.blank())
   const [state, setState] = useState('ADOPTED'), [until, setUntil] = useState('')
   const [profile, setProfile] = useState<Profile | null>(null)
   const [historyRows, setHistoryRows] = useState<api.Qualification[]>([]), [historyMore, setHistoryMore] = useState(false)
   const [trusted, setTrusted] = useState<{ scope: string; owner: string } | null>(null)
   const [observed, setObserved] = useState<{ scope: string; owner: string } | null>(null)
   const [binding, setBinding] = useState<Binding | null>(null), [dirty, setDirty] = useState(false)
-  const [attempt, setAttempt] = useState<QualificationAttempt | null>(null)
+  const [attempt, setAttempt] = useState<QualificationAttempt | null>(restored)
   const [confirmed, setConfirmed] = useState<Confirmation | null>(null), [notice, setNotice] = useState<Binding | null>(null)
   const [busy, setBusy] = useState(false), [error, setError] = useState<number | null>(null), [conflict, setConflict] = useState(false)
   const mounted = useRef(false), running = useRef(false), live = useRef('')
-  const writer = useRef<AbortController | null>(null), frozen = useRef<QualificationAttempt | null>(null)
+  const writer = useRef<AbortController | null>(null), frozen = useRef<QualificationAttempt | null>(restored)
   const sourceEpoch = useRef(0)
   const draft = useRef<Binding | null>(null), receipt = useRef<Confirmation | null>(null)
   const callbacks = useRef({ onDirty, onSaving })
@@ -54,7 +93,12 @@ export function useQualificationRecovery({ rule, ruleRevision, vessel, offline, 
   // envelope or an inaccessible private draft must not be discarded by leaving
   // this component, even while its own explicit recovery controls remain usable.
   useEffect(() => { onSaving(busy || !!attempt || !!binding && !canShow) }, [busy, attempt, binding, canShow, onSaving])
-  const keep = (value: QualificationAttempt | null) => { frozen.current = value; setAttempt(value) }
+  const keep = (value: QualificationAttempt | null) => {
+    const prior = frozen.current
+    frozen.current = value; setAttempt(value)
+    if (value?.unknown) persistUnknown(value)
+    else if (!value && prior) forgetUnknown(prior.rule)
+  }
   const bind = (value: Binding | null) => { draft.current = value; setBinding(value) }
   const confirm = useCallback((value: Confirmation | null) => { receipt.current = value; setConfirmed(value) }, [])
   const valid = useCallback((captured: string, signal: AbortSignal) => mounted.current && !signal.aborted && live.current === captured, [])
@@ -65,6 +109,8 @@ export function useQualificationRecovery({ rule, ruleRevision, vessel, offline, 
     const user = await api.loadSession(signal)
     if (!valid(captured, signal)) throw new ApiError(0, 'obsolete_qualification_scope')
     setObserved({ scope: captured, owner: user.owner })
+    // A different authenticated owner must not keep another actor's private envelope at rest.
+    if (frozen.current && frozen.current.owner !== user.owner) forgetUnknown(frozen.current.rule)
     if (expected && (expected.owner !== user.owner || expected.context !== context)) throw new ApiError(403, 'qualification_owner_changed')
     return user
   }, [context, valid])
