@@ -62,7 +62,7 @@ public sealed class ApiRequestTelemetry(RequestDelegate next)
         if (route.Contains("/crew", StringComparison.Ordinal) || route.Contains("/certificates", StringComparison.Ordinal)) return "crew";
         if (route.Contains("/tug-", StringComparison.Ordinal)) return "tug";
         if (route.Contains("/equipment", StringComparison.Ordinal) || route.Contains("/maintenance", StringComparison.Ordinal)) return "technical";
-        if (route.Contains("/source-drafts", StringComparison.Ordinal) || route.Contains("/requirement-drafts", StringComparison.Ordinal) || route.Contains("/regulatory", StringComparison.Ordinal)) return "regulatory";
+        if (route.Contains("/source-drafts", StringComparison.Ordinal) || route.Contains("/requirement-drafts", StringComparison.Ordinal) || route.Contains("/requirements", StringComparison.Ordinal) || route.Contains("/regulatory", StringComparison.Ordinal)) return "regulatory";
         if (route.Contains("/offline", StringComparison.Ordinal)) return "offline";
         if (route.Contains("/imports", StringComparison.Ordinal)) return "integration";
         if (route.Contains("/files", StringComparison.Ordinal) || route.Contains("/documents", StringComparison.Ordinal)) return "files";

@@ -23,7 +23,7 @@ public static class SecurityEventCodes
         "Logout", "MaintenanceObservation", "MaintenanceObservationCapture", "MaintenanceObservationRead",
         "MaintenanceObservationRevoke", "MaintenanceRead", "MaintenanceSave", "OfflineConflictRead",
         "OfflineHistory", "OfflineInventory", "OfflineRequest", "ProfileHistory",
-        "ProfileRead", "ProfileSave", "RegisterHistory", "RegisterList",
+        "ProfileRead", "ProfileSave", "RegisterHistory", "RegisterList", "RequirementList", "RequirementRead",
         "RegisterRead", "RegisterSave", "RegulatoryQualification", "RegulatoryQualificationRead",
         "RegulatorySourceBytesRead", "RuleCapabilities", "RulesRead", "Session",
         "TodayRead", "TodayWhyRead", "MetricCatalogRead", "MetricScalarRead", "TugRead", "TugSave",
@@ -32,6 +32,7 @@ public static class SecurityEventCodes
         "ParameterRead", "ParameterCommand", "HrRead", "HrCommand", "MembershipRead", "MembershipCommand", "SessionRevalidation",
         "ControlledDocument", "ControlledDocumentRead", "ControlledDocumentCommand", "ControlledDocumentReplay",
         "SyncOperationRead",
+        "ControlLifecycleRead", "ControlLifecycleCommand", "ControlLifecycleReplay", "ControlSupportingEvidenceRead", "HumanReviewRead",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static IReadOnlySet<string> Results { get; } = new string[]
     {
@@ -79,6 +80,7 @@ public static class SecurityEventCodes
         "owner_field_not_writable", "invariant_not_writable", "alias_read_only", "family_not_writable", "type_mismatch", "out_of_range",
         "unresolved_reference", "scope_not_allowed", "selector_invalid", "definition_version_mismatch", "effective_from_in_past",
         "pending_change_exists", "ambiguous_selection", "synthetic_not_approvable",
+        "control_retired", "control_record_incomplete", "control_reviewer_required", "control_revision_conflict",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static bool Allows(string action, string result) => Actions.Contains(action) && Results.Contains(result);
 }

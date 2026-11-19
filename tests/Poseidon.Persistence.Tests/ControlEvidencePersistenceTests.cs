@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Poseidon.Domain;
 using Poseidon.Persistence.Seeding;
 using Testcontainers.PostgreSql;
 using Xunit;
@@ -73,4 +74,61 @@ public sealed class ControlEvidencePersistenceTests : IAsyncLifetime
         await using (var tx = await db.Database.BeginTransactionAsync(Ct)) { head.Revision++; db.ControlEvidenceRevisions.Add(Revision(head)); await db.SaveChangesAsync(Ct); await tx.RollbackAsync(Ct); }
         await using var verify = Db(); Assert.Equal(1, (await verify.ControlEvidenceHeads.SingleAsync(x => x.Id == head.Id, Ct)).Revision); Assert.Equal(before, await verify.AuditEvents.CountAsync(Ct));
     }
+
+    // DEV-028: lifecycle state is server-guarded; every change carries its append-only event.
+    private static ControlStateEvent StateEvent(ControlEvidenceHead h, string from, string to, string reason) => new() { TenantId = h.TenantId, VesselId = h.VesselId, ControlId = h.Id,
+        Revision = 1, ControlRevision = h.Revision, FromState = from, ToState = to, ReasonCode = reason, Rationale = "FICTIONAL private rationale", ActorId = Guid.NewGuid(), SavedAt = DateTimeOffset.UtcNow };
+    [Fact]
+    [Trait("Requirement", "DEV-028")]
+    public async Task Seeded_controls_start_draft_and_state_change_requires_its_exact_event() {
+        await using var db = Db();
+        // Schema-only lifecycle: a control with no lifecycle event stores NULL and derives DRAFT.
+        Assert.All(await db.ControlEvidenceHeads.Where(x => x.Kind == "Control").ToArrayAsync(Ct), x => { Assert.Null(x.ControlState); Assert.Equal("DRAFT", ControlLifecyclePolicy.State(x.ControlState)); });
+        Assert.All(await db.ControlEvidenceHeads.Where(x => x.Kind == "Evidence").ToArrayAsync(Ct), x => Assert.Null(x.ControlState));
+        Assert.Empty(await db.ControlStateEvents.ToArrayAsync(Ct));
+        var head = await db.ControlEvidenceHeads.FirstAsync(x => x.Kind == "Control", Ct);
+        head.ControlState = "IN_REVIEW";
+        await Assert.ThrowsAsync<InvalidOperationException>(() => db.SaveChangesAsync(Ct));
+        db.Add(StateEvent(head, "DRAFT", "APPROVED", "SUBMIT_FOR_REVIEW"));
+        await Assert.ThrowsAsync<InvalidOperationException>(() => db.SaveChangesAsync(Ct));
+        db.ChangeTracker.Clear();
+        head = await db.ControlEvidenceHeads.FirstAsync(x => x.Kind == "Control", Ct);
+        head.ControlState = "IN_REVIEW"; db.Add(StateEvent(head, "DRAFT", "IN_REVIEW", "SUBMIT_FOR_REVIEW"));
+        await db.SaveChangesAsync(Ct);
+        await using var verify = Db();
+        Assert.Equal("IN_REVIEW", (await verify.ControlEvidenceHeads.SingleAsync(x => x.Id == head.Id && x.Kind == "Control", Ct)).ControlState);
+        var audit = Assert.Single(await verify.AuditEvents.Where(a => a.EntityType == nameof(ControlStateEvent) && a.ResourceId == head.Id).ToArrayAsync(Ct));
+        Assert.DoesNotContain("FICTIONAL private rationale", audit.ChangeSummary);
+    }
+    [Fact]
+    [Trait("Requirement", "DEV-028")]
+    public async Task Database_rejects_evidence_lifecycle_invalid_transition_and_event_mutation() {
+        await using var db = Db();
+        var evidence = await db.ControlEvidenceHeads.FirstAsync(x => x.Kind == "Evidence", Ct);
+        // Check constraint and closed event grammar hold even below the context guard.
+        await Assert.ThrowsAsync<Npgsql.PostgresException>(() => Sql(db, $"UPDATE core.\"ControlEvidenceHeads\" SET \"ControlState\" = 'DRAFT' WHERE \"Id\" = '{evidence.Id}' AND \"Kind\" = 'Evidence'"));
+        var control = await db.ControlEvidenceHeads.FirstAsync(x => x.Kind == "Control", Ct);
+        await Assert.ThrowsAsync<Npgsql.PostgresException>(() => Sql(db, $"UPDATE core.\"ControlEvidenceHeads\" SET \"ControlState\" = 'ACTIVE' WHERE \"Id\" = '{control.Id}' AND \"Kind\" = 'Control'"));
+        // 62.01 section 6 current pointer: PUBLISHED needs the pointer on its own revision; no pointer on evidence,
+        // on a retired control, on a control with no lifecycle state, or beyond the latest revision.
+        foreach (var statement in new[] {
+            $"UPDATE core.\"ControlEvidenceHeads\" SET \"ControlState\" = 'PUBLISHED' WHERE \"Id\" = '{control.Id}' AND \"Kind\" = 'Control'",
+            $"UPDATE core.\"ControlEvidenceHeads\" SET \"PublishedRevision\" = 1 WHERE \"Id\" = '{evidence.Id}' AND \"Kind\" = 'Evidence'",
+            $"UPDATE core.\"ControlEvidenceHeads\" SET \"PublishedRevision\" = 1 WHERE \"Id\" = '{control.Id}' AND \"Kind\" = 'Control'",
+            $"UPDATE core.\"ControlEvidenceHeads\" SET \"ControlState\" = 'RETIRED', \"PublishedRevision\" = 1 WHERE \"Id\" = '{control.Id}' AND \"Kind\" = 'Control'",
+            $"UPDATE core.\"ControlEvidenceHeads\" SET \"ControlState\" = 'DRAFT', \"PublishedRevision\" = \"Revision\" + 1 WHERE \"Id\" = '{control.Id}' AND \"Kind\" = 'Control'" })
+            await Assert.ThrowsAsync<Npgsql.PostgresException>(() => Sql(db, statement));
+        control.ControlState = "IN_REVIEW"; db.Add(StateEvent(control, "DRAFT", "IN_REVIEW", "SUBMIT_FOR_REVIEW")); await db.SaveChangesAsync(Ct);
+        var stored = await db.ControlStateEvents.SingleAsync(Ct); stored.Rationale = "forged";
+        await Assert.ThrowsAsync<InvalidOperationException>(() => db.SaveChangesAsync(Ct)); db.ChangeTracker.Clear();
+        foreach (var statement in new[] { "UPDATE core.\"ControlStateEvents\" SET \"ToState\" = 'RETIRED'", "DELETE FROM core.\"ControlStateEvents\"", "TRUNCATE core.\"ControlStateEvents\"" })
+            await Assert.ThrowsAsync<Npgsql.PostgresException>(() => Sql(db, statement));
+        await using var import = Import(); await SeedImporter.ImportAsync(import, SeedValidationTests.Demo(), Ct);
+        Assert.Equal("IN_REVIEW", (await import.ControlEvidenceHeads.SingleAsync(x => x.Id == control.Id && x.Kind == "Control", Ct)).ControlState);
+        Assert.Single(await import.ControlStateEvents.ToArrayAsync(Ct));
+    }
+#pragma warning disable EF1002
+    // Closed test-owned statements only; deliberate constraint/trigger probes.
+    private Task<int> Sql(PoseidonDbContext db, string statement) => db.Database.ExecuteSqlRawAsync(statement, Ct);
+#pragma warning restore EF1002
 }

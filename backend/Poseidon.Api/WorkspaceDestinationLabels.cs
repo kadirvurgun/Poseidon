@@ -16,6 +16,7 @@ internal static class WorkspaceDestinationLabels
         ["companies"] = ["Şirketler", "Companies"],
         ["fleet"] = ["Filo", "Fleet"],
         ["audit"] = ["İşlem geçmişi", "Action history"],
+        ["audit-ready"] = ["Denetime hazır iz", "Audit-ready trace"],
         ["system-health"] = ["Sistem sağlığı", "System health"],
         ["notification-escalation"] = ["Bildirimler", "Notifications"],
         ["offline-conflict-center"] = ["Önemli çakışma merkezi", "Material conflict center"],

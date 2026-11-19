@@ -14,6 +14,8 @@ public static class WorkspaceEndpoints
     {
         if (!actor.CanRead) return [];
         NavigationDto[] destinations = actor.CanReadAudit ? [.. BaseDestinations(actor), new NavigationDto("audit", "/app/audit")] : BaseDestinations(actor);
+        // DEV-032: audit-ready trace only for an audit reader with the human trace capability.
+        if (AuditReadyEndpoints.CanRead(actor)) destinations = [.. destinations, new("audit-ready", "/app/audit-ready")];
         if (SystemHealthEndpoints.Permitted(actor)) destinations = [.. destinations, new("system-health", "/app/system-health")];
         if (NotificationEndpoints.CanRead(actor)) destinations = [.. destinations, new("notification-escalation", "/app/notification-escalation")];
         if (SyncConflictCenterEndpoints.CanOpen(actor)) destinations = [.. destinations, new("offline-conflict-center", "/app/offline-conflict-center")];

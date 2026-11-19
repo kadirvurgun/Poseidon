@@ -11,6 +11,7 @@ import { LifecycleApplicability } from './LifecycleApplicability';
 import { ControlEvidence } from './ControlEvidence';
 import { DraftConfirmation } from './DraftConfirmation';
 import * as service from './register-api';
+import { readRequirement, type Requirement, type RequirementLifecycle } from './requirement-api';
 import type { Draft, FieldKey, RegisterKind, RegisterPage, Revision } from './register-api';
 const labels: Record<FieldKey, [
     string,
@@ -94,6 +95,8 @@ function RegisterContext({ kind, id, language, csrf, canWrite, offline, onDirty,
     const [attempt, setAttempt] = useState(0);
     const [creating, setCreating] = useState(false);
     const [conflict, setConflict] = useState(false);
+    // DEV-026: server-derived lifecycle; a failed read shows Unavailable, never an assumed Draft.
+    const [requirement, setRequirement] = useState<Requirement | 'unavailable' | null>(null);
     const editor = !!id || creating;
     const retained = useRef(false);
     useEffect(() => { retained.current = dirty || !!frozen; }, [dirty, frozen]);
@@ -168,6 +171,23 @@ function RegisterContext({ kind, id, language, csrf, canWrite, offline, onDirty,
         });
         return () => { active = false; c.abort(); clearTimeout(timer); };
     }, [sourceId, sourceVersionOffset, sourceAttempt, offline]);
+    useEffect(() => {
+        if (kind !== 'requirements' || !id || offline)
+            return;
+        const c = new AbortController();
+        let active = true;
+        const timer = setTimeout(() => c.abort(), 10000);
+        readRequirement(id, c.signal).then(r => {
+            if (active)
+                setRequirement(r);
+        }).catch(() => {
+            if (active)
+                setRequirement('unavailable');
+        });
+        return () => { active = false; c.abort(); clearTimeout(timer); };
+    }, [kind, id, historyAttempt, offline]);
+    const lifecycleLabel = (value: RequirementLifecycle) => localizedText(language, ({ DRAFT: 'pairs.m_6f7b0af9992cd6bf', ADOPTED: 'pairs.m_273d3f4a33b570b2', FUTURE: 'pairs.m_3c0a0a26b887c8ad',
+        IN_FORCE: 'pairs.m_a4f326ab525f2a2f', SUPERSEDED: 'pairs.m_61ecb1880ed2d354', UNAVAILABLE: 'pairs.m_49138f2831bf4262' } as const)[value]);
     // Reconnection refreshes list/history only; dirty editor values and frozen commands stay in memory.
     const denied = error === 401 || error === 403 || error === 404;
     const locked = saving || !!frozen || conflict || denied || !editable;
@@ -228,6 +248,12 @@ function RegisterContext({ kind, id, language, csrf, canWrite, offline, onDirty,
     </> : <>
       {id && !draft ? error === null && <p role="status">{localizedText(language, "pairs.m_c9914bd9caad7a7f")}</p> : <form onSubmit={e => { e.preventDefault(); void save(); }}>
         {draft && <p>{draft.current.id} · DRAFT · {localizedText(language, "pairs.m_5cf7feeda047e695")} {draft.current.revision} · {localizedText(language, "pairs.m_99bf579926929ccb")}: {draft.current.savedAt}</p>}
+        {kind === 'requirements' && id && <section className="requirement-lifecycle" aria-label={localizedText(language, "pairs.m_d07a98f15fab786c")}>
+          <p role="status">{localizedText(language, "pairs.m_d07a98f15fab786c")}: {requirement === null ? localizedText(language, "pairs.m_c9914bd9caad7a7f") : requirement === 'unavailable' ? lifecycleLabel('UNAVAILABLE') : <>{lifecycleLabel(requirement.lifecycle)} · {localizedText(language, "pairs.m_5cf7feeda047e695")} {requirement.revision}</>}</p>
+          {requirement !== null && requirement !== 'unavailable' && requirement.lifecycleBasis === 'MIXED_QUALIFICATION_STATES' && <p role="note">{localizedText(language, "pairs.m_dbbdcf309e8f24c3")}</p>}
+          {requirement !== null && requirement !== 'unavailable' && requirement.lifecycleBasis === 'QUALIFICATION_LIMIT_EXCEEDED' && <p role="note">{localizedText(language, "pairs.m_d6eb29d9d9dfbe8b")}</p>}
+          {requirement !== null && requirement !== 'unavailable' && requirement.qualifications.length > 0 && <ul>{requirement.qualifications.map(q => <li key={`${q.ruleId}/${q.qualificationRevision}`}>{lifecycleLabel(q.lifecycle)} · {localizedText(language, "pairs.m_5cf7feeda047e695")} {q.requirementRevision} · {q.ruleId} / {q.ruleRevision} · {q.savedAt}</li>)}</ul>}
+        </section>}
         <fieldset disabled={locked}><legend>{presentationLabel(language, 'registerFields')}</legend>
           {(Object.keys(service.fieldBounds) as FieldKey[]).filter(key => kind === 'sources' ? key !== 'instrument' : !['title', 'authority', 'locator'].includes(key)).map(key => <div className="profile-field" key={key}>
             <label htmlFor={`reg-${key}-state`}>{localizedTuple(labels[key], language, 0)} · {localizedText(language, "pairs.m_ac8b056f75c10eff")}</label><select id={`reg-${key}-state`} value={content[key].state} onChange={e => { const state = e.target.value as 'Missing' | 'Unknown' | 'Known'; setContent(v => ({ ...v, [key]: { state, value: state === 'Known' ? '' : null } })); setDirty(true); }}>
