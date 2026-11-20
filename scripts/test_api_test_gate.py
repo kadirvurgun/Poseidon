@@ -25,6 +25,16 @@ class ApiTestGateTests(unittest.TestCase):
         self.assertNotIn('private', json.dumps(result))
         self.assertNotIn('secret', json.dumps(result))
 
+    def test_every_gate_scope_excludes_opt_in_performance_measurement(self):
+        # DEV-067: Category=Performance runs only through scripts/perf_baseline.py.
+        with patch.object(gate, 'root_tool', return_value='dotnet'):
+            for scope in ('unit', 'integration', 'all'):
+                args = gate.command(scope)
+                pairs = list(zip(args, args[1:]))
+                self.assertIn(('--filter-not-trait', 'Category=Performance'), pairs, scope)
+                self.assertNotIn(('--filter-trait', 'Category=Performance'), pairs, scope)
+            self.assertIn(('--filter-trait', 'Category=Integration'), list(zip(gate.command('integration'), gate.command('integration')[1:])))
+
     def execute(self, output, exit_code=0, discovery=None):
         results = [subprocess.CompletedProcess([], 0, self.discovery if discovery is None else discovery),
                    subprocess.CompletedProcess([], exit_code, output)]
