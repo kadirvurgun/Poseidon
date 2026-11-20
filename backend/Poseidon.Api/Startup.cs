@@ -40,6 +40,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddSingleton<ISafetyEventBlockerSource, SafetyEventBlockerSource>();
         // S10 WP-A DEV-065: read-only data trust contract for readiness consumers.
         services.AddSingleton<IDataTrustSignalSource, DataTrustSignalSource>();
+        // S10 WP-C DEV-066: absent operator configuration leaves certificate renewal offline drafts unavailable.
+        services.AddSingleton(configuration.GetSection("CertificateRenewalOffline").Get<CertificateRenewalOfflineSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<ISpareGapSource, SpareGapReader>();
         services.AddSingleton(configuration.GetSection("NotificationScheduler").Get<NotificationSchedulerSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<NotificationServiceContexts>();
@@ -239,6 +241,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapAuditPacks();
             endpoints.MapDataTrust();
             endpoints.MapIndustryAssurance();
+            endpoints.MapCertificateRenewalOffline(); // S10 WP-C DEV-066
             endpoints.MapDefectLifecycle();
             endpoints.MapServiceReports();
             endpoints.MapVoiceEventDrafts();

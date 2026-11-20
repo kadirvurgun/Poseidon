@@ -569,7 +569,8 @@
         "tugPlan": "Tug plan",
         "dailyRecord": "Daily record",
         "workOrderEvidence": "Work order evidence",
-        "tugOperations": "Tug operations"
+        "tugOperations": "Tug operations",
+        "certificateRenewal": "Certificate renewal draft"
       },
       "sourceStates": {
         "Included": "included",
@@ -3127,6 +3128,106 @@
       "why_evidence": "Evidence entries are references; verification is a separate person's record.",
       "why_history": "Every job, including cancelled and aborted ones, stays traceable to its events and evidence.",
       "why_offline": "Captures made without a connection are sealed and replayed idempotently; material conflicts wait for a person."
+    },
+    "S10Wpc_tsx_copy": {
+      "renewalOffline": {
+        "heading": "Offline renewal draft",
+        "scope": "Prepare this renewal case on the device to edit its draft metadata without a connection. Replacement certificate and document links, workflow steps, verification and completion stay online.",
+        "unverified": "Configured, not pilot-verified",
+        "offline": "Offline",
+        "prepare": "Prepare offline draft",
+        "prepared": "Offline draft prepared on this device.",
+        "queued": "Draft queued on this device. It is not saved until the server receipt arrives.",
+        "queueSummary": "Pending: {pending} · Conflicts: {conflicts} · Recorded: {committed}",
+        "formLabel": "Offline draft metadata",
+        "linksOnline": "Replacement certificate and new document links can only be changed online.",
+        "capture": "Queue draft",
+        "sync": "Send queued drafts",
+        "synced": "All queued drafts have a server receipt.",
+        "stillPending": "Some drafts are still pending on this device. Nothing was lost; try again when connected.",
+        "conflictRecorded": "A material conflict was recorded. Review it below or in the conflict center.",
+        "ledger": "Recorded {committed} · Conflicts {conflicts} · Pending {pending} · Lost {lost}",
+        "conflicts": "Open material conflicts",
+        "review": "Review",
+        "conflictHeading": "Material conflict",
+        "conflictHelp": "The server record changed after you went offline. Choose explicitly; nothing is overwritten automatically.",
+        "field": "Field",
+        "captured": "Your offline value",
+        "server": "Current server value",
+        "notSet": "Not set",
+        "keepServer": "Keep server value",
+        "useCaptured": "Use my offline value",
+        "noChoice": "No decision is available for this conflict now.",
+        "resolutionRecorded": "Your decision was recorded with a server receipt.",
+        "reauthorize": "Online re-authorization is required. Queued drafts stay retained on this device.",
+        "keyLost": "The device key is unavailable. Queued drafts stay retained; contact your administrator.",
+        "unavailable": "Offline drafting is not configured for you on this vessel.",
+        "failed": "The action could not be completed. Queued drafts stay retained.",
+        "fields": {
+          "renewalType": "Renewal type",
+          "plannedLocation": "Planned location",
+          "authorityReference": "Authority reference",
+          "surveyWindowEnd": "Survey window end",
+          "triggerDate": "Trigger date",
+          "dueDate": "Due date",
+          "surveyWindowStart": "Survey window start",
+          "applicationDate": "Application date"
+        }
+      },
+      "shipDemo": {
+        "title": "Ship operations demo",
+        "eyebrow": "Guided journey",
+        "description": "Walk through departure, daily reporting, fuel, port activity, downtime and readiness using the existing screens.",
+        "syntheticNotice": "Synthetic demo data · drafts only, not verified",
+        "invalidRoute": "This demo address is invalid.",
+        "offline": "You are offline. The demo needs a current server connection.",
+        "loading": "Loading…",
+        "error": "The demo data could not be loaded.",
+        "forbidden": "You do not have access to this information.",
+        "empty": "No vessels are available to you.",
+        "vessel": "Vessel",
+        "chooseVessel": "Choose a vessel",
+        "selectVessel": "Select a vessel to start the demo.",
+        "stepsLabel": "Demo steps",
+        "why": "Why",
+        "open": "Open screen",
+        "reuseHeading": "Single entry, reused",
+        "reuseHelp": "Fuel and port activity records reuse the Noon or Engine report they pin as their origin. There is no second entry form.",
+        "fuelReuse": "Fuel / BDN records: {pinned} reuse a pinned origin, {direct} entered directly",
+        "portReuse": "Port activity / SOF records: {pinned} reuse a pinned origin, {direct} entered directly",
+        "steps": {
+          "departure": {
+            "title": "Departure readiness",
+            "what": "Review the departure readiness inputs for the selected voyage window.",
+            "why": "Readiness is calculated from current owning records; unknown or missing inputs stay review-required and never appear ready."
+          },
+          "daily": {
+            "title": "Noon and daily reports",
+            "what": "Record the Noon report and deck/engine daily logs once.",
+            "why": "These reports are the single source that later fuel and port records pin instead of retyping values."
+          },
+          "fuel": {
+            "title": "Fuel and bunker (BDN)",
+            "what": "Open a fuel or bunker record that pins its Noon or Engine origin revision.",
+            "why": "Pinning the exact origin revision keeps one entry and shows if the origin changed later."
+          },
+          "sof": {
+            "title": "Port activity (SOF)",
+            "what": "Review the statement of facts entries for the port call.",
+            "why": "Port events reuse the same pinned origin so times are not entered twice."
+          },
+          "downtime": {
+            "title": "Operational downtime",
+            "what": "Record downtime with its origin reference.",
+            "why": "Downtime keeps its origin link so the cause and time stay traceable."
+          },
+          "readiness": {
+            "title": "Readiness review",
+            "what": "Return to readiness to see the effect of the recorded inputs.",
+            "why": "The system is advisory; the departure decision remains the Master's human record."
+          }
+        }
+      }
     }
   },
   "pairs": {

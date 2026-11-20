@@ -569,7 +569,8 @@
         "tugPlan": "Römorkör planı",
         "dailyRecord": "Günlük kayıt",
         "workOrderEvidence": "İş emri kanıtı",
-        "tugOperations": "Römorkör operasyonları"
+        "tugOperations": "Römorkör operasyonları",
+        "certificateRenewal": "Sertifika yenileme taslağı"
       },
       "sourceStates": {
         "Included": "dahil",
@@ -3127,6 +3128,106 @@
       "why_evidence": "Kanıt girişleri referanstır; doğrulama başka bir kişinin kaydıdır.",
       "why_history": "İptal edilen ve durdurulanlar dahil her iş olaylarına ve kanıtlarına izlenebilir kalır.",
       "why_offline": "Bağlantısız yapılan kayıtlar mühürlenir ve idempotent olarak yeniden oynatılır; esaslı çakışmalar bir kişinin kararını bekler."
+    },
+    "S10Wpc_tsx_copy": {
+      "renewalOffline": {
+        "heading": "Çevrimdışı yenileme taslağı",
+        "scope": "Bu yenileme dosyasını bağlantı olmadan taslak üst verisini düzenlemek için cihazda hazırlayın. Yerine geçen sertifika ve belge bağlantıları, iş akışı adımları, doğrulama ve tamamlama çevrimiçi kalır.",
+        "unverified": "Yapılandırıldı, pilotta doğrulanmadı",
+        "offline": "Çevrimdışı",
+        "prepare": "Çevrimdışı taslağı hazırla",
+        "prepared": "Çevrimdışı taslak bu cihazda hazırlandı.",
+        "queued": "Taslak bu cihazda kuyruğa alındı. Sunucu makbuzu gelene kadar kaydedilmiş sayılmaz.",
+        "queueSummary": "Bekleyen: {pending} · Çakışma: {conflicts} · Kaydedilen: {committed}",
+        "formLabel": "Çevrimdışı taslak üst verisi",
+        "linksOnline": "Yerine geçen sertifika ve yeni belge bağlantıları yalnız çevrimiçi değiştirilebilir.",
+        "capture": "Taslağı kuyruğa al",
+        "sync": "Kuyruktaki taslakları gönder",
+        "synced": "Kuyruktaki tüm taslakların sunucu makbuzu var.",
+        "stillPending": "Bazı taslaklar bu cihazda hâlâ bekliyor. Hiçbir şey kaybolmadı; bağlantı olunca yeniden deneyin.",
+        "conflictRecorded": "Esaslı bir çakışma kaydedildi. Aşağıda veya çakışma merkezinde inceleyin.",
+        "ledger": "Kaydedilen {committed} · Çakışma {conflicts} · Bekleyen {pending} · Kaybolan {lost}",
+        "conflicts": "Açık esaslı çakışmalar",
+        "review": "İncele",
+        "conflictHeading": "Esaslı çakışma",
+        "conflictHelp": "Siz çevrimdışıyken sunucu kaydı değişti. Açıkça seçin; hiçbir şeyin üzerine otomatik yazılmaz.",
+        "field": "Alan",
+        "captured": "Çevrimdışı değeriniz",
+        "server": "Güncel sunucu değeri",
+        "notSet": "Girilmedi",
+        "keepServer": "Sunucu değerini koru",
+        "useCaptured": "Çevrimdışı değerimi kullan",
+        "noChoice": "Bu çakışma için şu anda karar seçeneği yok.",
+        "resolutionRecorded": "Kararınız sunucu makbuzuyla kaydedildi.",
+        "reauthorize": "Çevrimiçi yeniden yetkilendirme gerekiyor. Kuyruktaki taslaklar bu cihazda saklanır.",
+        "keyLost": "Cihaz anahtarı kullanılamıyor. Kuyruktaki taslaklar saklanır; yöneticinize başvurun.",
+        "unavailable": "Bu gemide sizin için çevrimdışı taslak yapılandırılmamış.",
+        "failed": "İşlem tamamlanamadı. Kuyruktaki taslaklar saklanır.",
+        "fields": {
+          "renewalType": "Yenileme türü",
+          "plannedLocation": "Planlanan yer",
+          "authorityReference": "İdare referansı",
+          "surveyWindowEnd": "Sörvey penceresi sonu",
+          "triggerDate": "Tetikleme tarihi",
+          "dueDate": "Son tarih",
+          "surveyWindowStart": "Sörvey penceresi başlangıcı",
+          "applicationDate": "Başvuru tarihi"
+        }
+      },
+      "shipDemo": {
+        "title": "Gemi operasyonları demosu",
+        "eyebrow": "Rehberli yolculuk",
+        "description": "Mevcut ekranları kullanarak kalkış, günlük raporlama, yakıt, liman faaliyeti, duruş ve hazırlık adımlarını izleyin.",
+        "syntheticNotice": "Sentetik demo verisi · yalnız taslak, doğrulanmamış",
+        "invalidRoute": "Bu demo adresi geçersiz.",
+        "offline": "Çevrimdışısınız. Demo güncel bir sunucu bağlantısı gerektirir.",
+        "loading": "Yükleniyor…",
+        "error": "Demo verileri yüklenemedi.",
+        "forbidden": "Bu bilgiye erişiminiz yok.",
+        "empty": "Erişebileceğiniz gemi yok.",
+        "vessel": "Gemi",
+        "chooseVessel": "Gemi seçin",
+        "selectVessel": "Demoyu başlatmak için bir gemi seçin.",
+        "stepsLabel": "Demo adımları",
+        "why": "Neden",
+        "open": "Ekranı aç",
+        "reuseHeading": "Tek giriş, yeniden kullanım",
+        "reuseHelp": "Yakıt ve liman faaliyeti kayıtları, köken olarak sabitledikleri Öğle veya Makine raporunu yeniden kullanır. İkinci bir giriş formu yoktur.",
+        "fuelReuse": "Yakıt / BDN kayıtları: {pinned} sabitlenmiş kökeni kullanıyor, {direct} doğrudan girildi",
+        "portReuse": "Liman faaliyeti / SOF kayıtları: {pinned} sabitlenmiş kökeni kullanıyor, {direct} doğrudan girildi",
+        "steps": {
+          "departure": {
+            "title": "Kalkış hazırlığı",
+            "what": "Seçilen sefer penceresi için kalkış hazırlık girdilerini inceleyin.",
+            "why": "Hazırlık güncel sahip kayıtlardan hesaplanır; bilinmeyen veya eksik girdiler inceleme gerektirir ve asla hazır görünmez."
+          },
+          "daily": {
+            "title": "Öğle ve günlük raporlar",
+            "what": "Öğle raporunu ve güverte/makine günlüklerini bir kez kaydedin.",
+            "why": "Bu raporlar, sonraki yakıt ve liman kayıtlarının değerleri yeniden yazmak yerine sabitlediği tek kaynaktır."
+          },
+          "fuel": {
+            "title": "Yakıt ve ikmal (BDN)",
+            "what": "Öğle veya Makine köken revizyonunu sabitleyen bir yakıt ya da ikmal kaydı açın.",
+            "why": "Kesin köken revizyonunu sabitlemek tek girişi korur ve köken sonradan değişirse gösterir."
+          },
+          "sof": {
+            "title": "Liman faaliyeti (SOF)",
+            "what": "Liman uğrağı için olay tutanağı kayıtlarını inceleyin.",
+            "why": "Liman olayları aynı sabitlenmiş kökeni kullanır; saatler iki kez girilmez."
+          },
+          "downtime": {
+            "title": "Operasyonel duruş",
+            "what": "Duruşu köken referansıyla kaydedin.",
+            "why": "Duruş köken bağlantısını korur; neden ve süre izlenebilir kalır."
+          },
+          "readiness": {
+            "title": "Hazırlık incelemesi",
+            "what": "Kaydedilen girdilerin etkisini görmek için hazırlığa dönün.",
+            "why": "Sistem tavsiye niteliğindedir; kalkış kararı Kaptanın insan kaydı olarak kalır."
+          }
+        }
+      }
     }
   },
   "pairs": {

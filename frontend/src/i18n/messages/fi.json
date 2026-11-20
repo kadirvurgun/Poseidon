@@ -569,7 +569,8 @@
         "tugPlan": "Hinaajasuunnitelma",
         "dailyRecord": "Päivittäinen tietue",
         "workOrderEvidence": "Työmääräyksen todisteet",
-        "tugOperations": "Hinaajaoperaatiot"
+        "tugOperations": "Hinaajaoperaatiot",
+        "certificateRenewal": "Todistuksen uusimisluonnos"
       },
       "sourceStates": {
         "Included": "mukana",
@@ -3127,6 +3128,106 @@
       "why_evidence": "Todistemerkinnät ovat viitteitä; varmennus on erillisen henkilön tietue.",
       "why_history": "Jokainen toimeksianto, myös peruutetut ja keskeytetyt, pysyy jäljitettävänä tapahtumiinsa ja todisteisiinsa.",
       "why_offline": "Ilman yhteyttä tehdyt tallenteet sinetöidään ja toistetaan idempotentisti; olennaiset ristiriidat odottavat ihmistä."
+    },
+    "S10Wpc_tsx_copy": {
+      "renewalOffline": {
+        "heading": "Offline-uusimisluonnos",
+        "scope": "Valmistele tämä uusimistapaus laitteelle, jotta voit muokata luonnoksen metatietoja ilman yhteyttä. Korvaavan todistuksen ja asiakirjojen linkit, työnkulun vaiheet, varmennus ja valmiiksi merkitseminen pysyvät verkossa.",
+        "unverified": "Määritetty, ei varmennettu pilotissa",
+        "offline": "Offline",
+        "prepare": "Valmistele offline-luonnos",
+        "prepared": "Offline-luonnos valmisteltu tälle laitteelle.",
+        "queued": "Luonnos on jonossa tällä laitteella. Sitä ei ole tallennettu ennen kuin palvelimen kuittaus saapuu.",
+        "queueSummary": "Odottaa: {pending} · Ristiriidat: {conflicts} · Kirjattu: {committed}",
+        "formLabel": "Offline-luonnoksen metatiedot",
+        "linksOnline": "Korvaavaa todistusta ja uusia asiakirjalinkkejä voi muuttaa vain verkossa.",
+        "capture": "Lisää luonnos jonoon",
+        "sync": "Lähetä jonossa olevat luonnokset",
+        "synced": "Kaikilla jonossa olevilla luonnoksilla on palvelimen kuittaus.",
+        "stillPending": "Osa luonnoksista odottaa yhä tällä laitteella. Mitään ei menetetty; yritä uudelleen, kun yhteys on käytettävissä.",
+        "conflictRecorded": "Olennainen ristiriita kirjattiin. Tarkista se alta tai ristiriitakeskuksesta.",
+        "ledger": "Kirjattu {committed} · Ristiriidat {conflicts} · Odottaa {pending} · Menetetty {lost}",
+        "conflicts": "Avoimet olennaiset ristiriidat",
+        "review": "Tarkista",
+        "conflictHeading": "Olennainen ristiriita",
+        "conflictHelp": "Palvelimen tietue muuttui sen jälkeen, kun siirryit offline-tilaan. Valitse nimenomaisesti; mitään ei korvata automaattisesti.",
+        "field": "Kenttä",
+        "captured": "Offline-arvosi",
+        "server": "Nykyinen palvelimen arvo",
+        "notSet": "Ei asetettu",
+        "keepServer": "Säilytä palvelimen arvo",
+        "useCaptured": "Käytä offline-arvoani",
+        "noChoice": "Tälle ristiriidalle ei ole nyt valittavissa päätöstä.",
+        "resolutionRecorded": "Päätöksesi kirjattiin palvelimen kuittauksella.",
+        "reauthorize": "Uusi valtuutus verkossa vaaditaan. Jonossa olevat luonnokset säilyvät tällä laitteella.",
+        "keyLost": "Laiteavain ei ole käytettävissä. Jonossa olevat luonnokset säilyvät; ota yhteyttä järjestelmänvalvojaan.",
+        "unavailable": "Offline-luonnostelua ei ole määritetty sinulle tällä aluksella.",
+        "failed": "Toimintoa ei voitu suorittaa. Jonossa olevat luonnokset säilyvät.",
+        "fields": {
+          "renewalType": "Uusimisen tyyppi",
+          "plannedLocation": "Suunniteltu paikka",
+          "authorityReference": "Viranomaisviite",
+          "surveyWindowEnd": "Katsastusikkunan loppu",
+          "triggerDate": "Laukaisupäivä",
+          "dueDate": "Määräpäivä",
+          "surveyWindowStart": "Katsastusikkunan alku",
+          "applicationDate": "Hakemuspäivä"
+        }
+      },
+      "shipDemo": {
+        "title": "Aluksen toimintojen demo",
+        "eyebrow": "Ohjattu kierros",
+        "description": "Käy läpi lähtö, päivittäinen raportointi, polttoaine, satamatoiminta, seisokit ja valmius olemassa olevilla näkymillä.",
+        "syntheticNotice": "Synteettistä demodataa · vain luonnoksia, ei varmennettu",
+        "invalidRoute": "Tämä demon osoite on virheellinen.",
+        "offline": "Olet offline-tilassa. Demo tarvitsee ajantasaisen palvelinyhteyden.",
+        "loading": "Ladataan…",
+        "error": "Demon tietoja ei voitu ladata.",
+        "forbidden": "Sinulla ei ole pääsyä näihin tietoihin.",
+        "empty": "Sinulle ei ole käytettävissä aluksia.",
+        "vessel": "Alus",
+        "chooseVessel": "Valitse alus",
+        "selectVessel": "Valitse alus aloittaaksesi demon.",
+        "stepsLabel": "Demon vaiheet",
+        "why": "Miksi",
+        "open": "Avaa näkymä",
+        "reuseHeading": "Yksi kirjaus, uudelleenkäyttö",
+        "reuseHelp": "Polttoaine- ja satamatoimintatietueet käyttävät uudelleen Noon- tai konehuoneraporttia, jonka ne kiinnittävät lähteekseen. Toista syöttölomaketta ei ole.",
+        "fuelReuse": "Polttoaine / BDN-tietueet: {pinned} käyttää kiinnitettyä lähdettä, {direct} syötetty suoraan",
+        "portReuse": "Satamatoiminta / SOF-tietueet: {pinned} käyttää kiinnitettyä lähdettä, {direct} syötetty suoraan",
+        "steps": {
+          "departure": {
+            "title": "Lähtövalmius",
+            "what": "Tarkista valitun matkaikkunan lähtövalmiuden syötteet.",
+            "why": "Valmius lasketaan nykyisistä omistavista tietueista; tuntemattomat tai puuttuvat syötteet vaativat edelleen tarkistusta eivätkä koskaan näy valmiina."
+          },
+          "daily": {
+            "title": "Keskipäivä- ja päiväraportit",
+            "what": "Kirjaa keskipäiväraportti (Noon) ja kansi-/konepäiväkirjat kerran.",
+            "why": "Nämä raportit ovat ainoa lähde, jonka myöhemmät polttoaine- ja satamatietueet kiinnittävät arvojen uudelleen kirjoittamisen sijaan."
+          },
+          "fuel": {
+            "title": "Polttoaine ja bunkkeri (BDN)",
+            "what": "Avaa polttoaine- tai bunkkeritietue, joka kiinnittää Noon- tai konehuoneraportin lähderevision.",
+            "why": "Tarkan lähderevision kiinnittäminen säilyttää yhden kirjauksen ja näyttää, jos lähde muuttui myöhemmin."
+          },
+          "sof": {
+            "title": "Satamatoiminta (SOF)",
+            "what": "Tarkista satamakäynnin tapahtumaselvityksen (SOF) merkinnät.",
+            "why": "Satamatapahtumat käyttävät samaa kiinnitettyä lähdettä, joten aikoja ei syötetä kahdesti."
+          },
+          "downtime": {
+            "title": "Toiminnallinen seisokki",
+            "what": "Kirjaa seisokki lähdeviitteineen.",
+            "why": "Seisokki säilyttää lähdelinkkinsä, joten syy ja aika pysyvät jäljitettävinä."
+          },
+          "readiness": {
+            "title": "Valmiuden tarkistus",
+            "what": "Palaa valmiuteen nähdäksesi kirjattujen syötteiden vaikutuksen.",
+            "why": "Järjestelmä on neuvoa-antava; lähtöpäätös pysyy päällikön omana kirjauksena."
+          }
+        }
+      }
     }
   },
   "pairs": {

@@ -569,7 +569,8 @@
         "tugPlan": "Schlepperplan",
         "dailyRecord": "Tagesdatensatz",
         "workOrderEvidence": "Nachweise zum Arbeitsauftrag",
-        "tugOperations": "Schlepperoperationen"
+        "tugOperations": "Schlepperoperationen",
+        "certificateRenewal": "Entwurf zur Zertifikatserneuerung"
       },
       "sourceStates": {
         "Included": "einbezogen",
@@ -3127,6 +3128,106 @@
       "why_evidence": "Nachweiseinträge sind Verweise; die Verifizierung ist der Datensatz einer anderen Person.",
       "why_history": "Jeder Auftrag, auch stornierte und abgebrochene, bleibt zu seinen Ereignissen und Nachweisen rückverfolgbar.",
       "why_offline": "Ohne Verbindung gemachte Erfassungen werden versiegelt und idempotent wiedergegeben; wesentliche Konflikte warten auf eine Person."
+    },
+    "S10Wpc_tsx_copy": {
+      "renewalOffline": {
+        "heading": "Offline-Erneuerungsentwurf",
+        "scope": "Bereiten Sie diesen Erneuerungsvorgang auf dem Gerät vor, um seine Entwurfsmetadaten ohne Verbindung zu bearbeiten. Verknüpfungen zu Ersatzzertifikat und Dokumenten, Workflow-Schritte, Verifizierung und Abschluss bleiben online.",
+        "unverified": "Konfiguriert, nicht im Pilotbetrieb verifiziert",
+        "offline": "Offline",
+        "prepare": "Offline-Entwurf vorbereiten",
+        "prepared": "Offline-Entwurf auf diesem Gerät vorbereitet.",
+        "queued": "Entwurf auf diesem Gerät in die Warteschlange gestellt. Er ist erst gespeichert, wenn die Serverbestätigung eingeht.",
+        "queueSummary": "Ausstehend: {pending} · Konflikte: {conflicts} · Erfasst: {committed}",
+        "formLabel": "Metadaten des Offline-Entwurfs",
+        "linksOnline": "Ersatzzertifikat und neue Dokumentverknüpfungen können nur online geändert werden.",
+        "capture": "Entwurf einreihen",
+        "sync": "Eingereihte Entwürfe senden",
+        "synced": "Für alle eingereihten Entwürfe liegt eine Serverbestätigung vor.",
+        "stillPending": "Einige Entwürfe stehen auf diesem Gerät noch aus. Nichts ist verloren gegangen; versuchen Sie es erneut, sobald eine Verbindung besteht.",
+        "conflictRecorded": "Ein wesentlicher Konflikt wurde erfasst. Prüfen Sie ihn unten oder im Konfliktcenter.",
+        "ledger": "Erfasst {committed} · Konflikte {conflicts} · Ausstehend {pending} · Verloren {lost}",
+        "conflicts": "Offene wesentliche Konflikte",
+        "review": "Prüfen",
+        "conflictHeading": "Wesentlicher Konflikt",
+        "conflictHelp": "Der Serverdatensatz hat sich geändert, nachdem Sie offline gegangen sind. Wählen Sie ausdrücklich; nichts wird automatisch überschrieben.",
+        "field": "Feld",
+        "captured": "Ihr Offline-Wert",
+        "server": "Aktueller Serverwert",
+        "notSet": "Nicht festgelegt",
+        "keepServer": "Serverwert behalten",
+        "useCaptured": "Meinen Offline-Wert verwenden",
+        "noChoice": "Für diesen Konflikt ist derzeit keine Entscheidung möglich.",
+        "resolutionRecorded": "Ihre Entscheidung wurde mit einer Serverbestätigung erfasst.",
+        "reauthorize": "Eine erneute Online-Autorisierung ist erforderlich. Eingereihte Entwürfe bleiben auf diesem Gerät erhalten.",
+        "keyLost": "Der Geräteschlüssel ist nicht verfügbar. Eingereihte Entwürfe bleiben erhalten; wenden Sie sich an Ihren Administrator.",
+        "unavailable": "Offline-Entwürfe sind für Sie auf diesem Schiff nicht konfiguriert.",
+        "failed": "Die Aktion konnte nicht abgeschlossen werden. Eingereihte Entwürfe bleiben erhalten.",
+        "fields": {
+          "renewalType": "Erneuerungsart",
+          "plannedLocation": "Geplanter Ort",
+          "authorityReference": "Behördenreferenz",
+          "surveyWindowEnd": "Ende des Besichtigungszeitraums",
+          "triggerDate": "Auslösedatum",
+          "dueDate": "Fälligkeitsdatum",
+          "surveyWindowStart": "Beginn des Besichtigungszeitraums",
+          "applicationDate": "Antragsdatum"
+        }
+      },
+      "shipDemo": {
+        "title": "Demo Schiffsbetrieb",
+        "eyebrow": "Geführter Ablauf",
+        "description": "Durchlaufen Sie Abfahrt, tägliche Berichte, Kraftstoff, Hafenaktivität, Ausfallzeiten und Bereitschaft mit den vorhandenen Bildschirmen.",
+        "syntheticNotice": "Synthetische Demodaten · nur Entwürfe, nicht verifiziert",
+        "invalidRoute": "Diese Demo-Adresse ist ungültig.",
+        "offline": "Sie sind offline. Die Demo benötigt eine aktuelle Serververbindung.",
+        "loading": "Wird geladen…",
+        "error": "Die Demodaten konnten nicht geladen werden.",
+        "forbidden": "Sie haben keinen Zugriff auf diese Informationen.",
+        "empty": "Für Sie sind keine Schiffe verfügbar.",
+        "vessel": "Schiff",
+        "chooseVessel": "Schiff auswählen",
+        "selectVessel": "Wählen Sie ein Schiff, um die Demo zu starten.",
+        "stepsLabel": "Demo-Schritte",
+        "why": "Warum",
+        "open": "Bildschirm öffnen",
+        "reuseHeading": "Einmal erfasst, wiederverwendet",
+        "reuseHelp": "Kraftstoff- und Hafenaktivitätsdatensätze verwenden den Noon- oder Maschinenbericht wieder, den sie als Ursprung fixieren. Es gibt kein zweites Eingabeformular.",
+        "fuelReuse": "Kraftstoff / BDN-Datensätze: {pinned} verwenden einen fixierten Ursprung, {direct} direkt erfasst",
+        "portReuse": "Hafenaktivität / SOF-Datensätze: {pinned} verwenden einen fixierten Ursprung, {direct} direkt erfasst",
+        "steps": {
+          "departure": {
+            "title": "Abfahrtsbereitschaft",
+            "what": "Prüfen Sie die Eingaben zur Abfahrtsbereitschaft für das gewählte Reisefenster.",
+            "why": "Die Bereitschaft wird aus den aktuellen führenden Datensätzen berechnet; unbekannte oder fehlende Eingaben bleiben prüfpflichtig und erscheinen nie als bereit."
+          },
+          "daily": {
+            "title": "Mittags- und Tagesberichte",
+            "what": "Erfassen Sie den Mittagsbericht (Noon) und die Deck-/Maschinentagebücher einmalig.",
+            "why": "Diese Berichte sind die einzige Quelle, die spätere Kraftstoff- und Hafendatensätze fixieren, statt Werte erneut einzugeben."
+          },
+          "fuel": {
+            "title": "Kraftstoff und Bunker (BDN)",
+            "what": "Öffnen Sie einen Kraftstoff- oder Bunkerdatensatz, der seine Noon- oder Maschinen-Ursprungsrevision fixiert.",
+            "why": "Das Fixieren der genauen Ursprungsrevision erhält eine einzige Eingabe und zeigt an, wenn sich der Ursprung später geändert hat."
+          },
+          "sof": {
+            "title": "Hafenaktivität (SOF)",
+            "what": "Prüfen Sie die Einträge der Tatsachenaufstellung (SOF) für den Hafenanlauf.",
+            "why": "Hafenereignisse verwenden denselben fixierten Ursprung, sodass Zeiten nicht doppelt eingegeben werden."
+          },
+          "downtime": {
+            "title": "Betriebliche Ausfallzeit",
+            "what": "Erfassen Sie die Ausfallzeit mit ihrer Ursprungsreferenz.",
+            "why": "Die Ausfallzeit behält ihre Ursprungsverknüpfung, sodass Ursache und Zeit nachvollziehbar bleiben."
+          },
+          "readiness": {
+            "title": "Bereitschaftsprüfung",
+            "what": "Kehren Sie zur Bereitschaft zurück, um die Wirkung der erfassten Eingaben zu sehen.",
+            "why": "Das System ist beratend; die Abfahrtsentscheidung bleibt die menschliche Aufzeichnung des Kapitäns."
+          }
+        }
+      }
     }
   },
   "pairs": {

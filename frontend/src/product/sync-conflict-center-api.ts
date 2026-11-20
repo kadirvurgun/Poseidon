@@ -6,7 +6,7 @@ import { timestamp } from './date-validation'
 // The index carries command metadata only; captured/server values are read from each owning
 // source's protected conflict detail. An extra member, a value field or a foreign vessel is a
 // contract breach, never ignored.
-export type SyncConflictSource = 'crewAssignment' | 'tugPlan' | 'dailyRecord' | 'workOrderEvidence' | 'tugOperations'
+export type SyncConflictSource = 'crewAssignment' | 'tugPlan' | 'dailyRecord' | 'workOrderEvidence' | 'tugOperations' | 'certificateRenewal'
 export type SyncConflictState = 'Open' | 'Superseded' | 'Resolved'
 export type SyncConflictItem = {
   source: SyncConflictSource; resourceId: string; resourceKind: string | null; enrollmentId: string; commandId: string
@@ -18,7 +18,7 @@ export type SyncConflictPage = {
   items: SyncConflictItem[]; offset: number; hasMore: boolean
 }
 export const conflictPageSize = 25
-const sources: readonly string[] = ['crewAssignment', 'tugPlan', 'dailyRecord', 'workOrderEvidence', 'tugOperations']
+const sources: readonly string[] = ['crewAssignment', 'tugPlan', 'dailyRecord', 'workOrderEvidence', 'tugOperations', 'certificateRenewal']
 // S10 WP-B DEV-092: tug operation captures carry their closed operation code; a create capture has base version 0.
 const tugOperations: readonly string[] = ['tug.briefing.ack.v1', 'tug.execution.event.v1', 'tug.daily.entry.v1']
 const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v)

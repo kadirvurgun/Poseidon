@@ -18,7 +18,7 @@ const item = (patch: Partial<SyncConflictItem> = {}): SyncConflictItem => ({ sou
   enrollmentId: '33333333-3333-4333-8333-333333333333', commandId: command, baseVersion: 7, serverVersionAtConflict: 8, capturedAt: '2026-11-19T07:00:00Z',
   receivedAt: '2026-11-19T07:30:00Z', state: 'Open', resolutionCommandId: null, resolutionResult: null, ...patch })
 const page = (items: SyncConflictItem[]): SyncConflictPage => ({ vesselId: vessel, readAt: '2026-11-19T08:00:00Z',
-  sources: [{ source: 'crewAssignment', state: 'Included' }, { source: 'tugPlan', state: 'Included' }, { source: 'dailyRecord', state: 'NotPermitted' }, { source: 'workOrderEvidence', state: 'NotPermitted' }, { source: 'tugOperations', state: 'NotPermitted' }], items, offset: 0, hasMore: false })
+  sources: [{ source: 'crewAssignment', state: 'Included' }, { source: 'tugPlan', state: 'Included' }, { source: 'dailyRecord', state: 'NotPermitted' }, { source: 'workOrderEvidence', state: 'NotPermitted' }, { source: 'tugOperations', state: 'NotPermitted' }, { source: 'certificateRenewal', state: 'NotPermitted' }], items, offset: 0, hasMore: false })
 const outcome = { commandId: resolution, result: 'Committed' as const, baseVersion: 9, serverVersion: 10, revision: 10, capturedAt: '2026-11-19T08:00:00Z', offsetMinutes: 0, receivedAt: '2026-11-19T08:01:00Z', parentCommandId: command }
 type ReviewMock = Pick<ConflictReviewSession, 'detail' | 'local' | 'actorId'> & { pendingResolution: ConflictReviewSession['pendingResolution']; resolve: Mock; recheck: Mock; discardLocal: Mock; close: Mock }
 let review: ReviewMock

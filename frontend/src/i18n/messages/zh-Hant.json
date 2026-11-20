@@ -569,7 +569,8 @@
         "tugPlan": "拖船計畫",
         "dailyRecord": "每日記錄",
         "workOrderEvidence": "工單證據",
-        "tugOperations": "拖船作業"
+        "tugOperations": "拖船作業",
+        "certificateRenewal": "證書換新草稿"
       },
       "sourceStates": {
         "Included": "已包含",
@@ -3127,6 +3128,106 @@
       "why_evidence": "證據條目是引用;查核是另一人的記錄。",
       "why_history": "每個任務,包括已取消和已中止的,都可追溯到其事件和證據。",
       "why_offline": "無網路時的擷取內容會被封存並以冪等方式重放;實質性衝突等待人工處理。"
+    },
+    "S10Wpc_tsx_copy": {
+      "renewalOffline": {
+        "heading": "離線換新草稿",
+        "scope": "在裝置上準備此換新案件，以便在無連線時編輯其草稿中繼資料。替換證書與文件連結、工作流程步驟、核驗與完成仍需在線上進行。",
+        "unverified": "已設定，未經試行驗證",
+        "offline": "離線",
+        "prepare": "準備離線草稿",
+        "prepared": "已在此裝置上準備離線草稿。",
+        "queued": "草稿已在此裝置上排入佇列。在收到伺服器回執之前，它不算已儲存。",
+        "queueSummary": "待處理：{pending} · 衝突：{conflicts} · 已記錄：{committed}",
+        "formLabel": "離線草稿中繼資料",
+        "linksOnline": "替換證書與新文件連結只能在線上變更。",
+        "capture": "將草稿排入佇列",
+        "sync": "傳送佇列中的草稿",
+        "synced": "佇列中的所有草稿皆已收到伺服器回執。",
+        "stillPending": "部分草稿仍在此裝置上待處理。沒有任何資料遺失；連線後請重試。",
+        "conflictRecorded": "已記錄一項實質性衝突。請在下方或衝突中心檢視。",
+        "ledger": "已記錄 {committed} · 衝突 {conflicts} · 待處理 {pending} · 遺失 {lost}",
+        "conflicts": "未解決的實質性衝突",
+        "review": "檢視",
+        "conflictHeading": "實質性衝突",
+        "conflictHelp": "在您離線後，伺服器記錄已變更。請明確選擇；不會自動覆寫任何內容。",
+        "field": "欄位",
+        "captured": "您的離線值",
+        "server": "目前伺服器值",
+        "notSet": "未設定",
+        "keepServer": "保留伺服器值",
+        "useCaptured": "使用我的離線值",
+        "noChoice": "目前無法對此衝突作出決定。",
+        "resolutionRecorded": "您的決定已記錄並收到伺服器回執。",
+        "reauthorize": "需要線上重新授權。佇列中的草稿仍保留在此裝置上。",
+        "keyLost": "裝置金鑰無法使用。佇列中的草稿仍會保留；請聯絡管理員。",
+        "unavailable": "此船上未為您設定離線草稿功能。",
+        "failed": "無法完成此操作。佇列中的草稿仍會保留。",
+        "fields": {
+          "renewalType": "換新類型",
+          "plannedLocation": "計畫地點",
+          "authorityReference": "主管機關參考號",
+          "surveyWindowEnd": "檢驗窗口結束",
+          "triggerDate": "觸發日期",
+          "dueDate": "到期日期",
+          "surveyWindowStart": "檢驗窗口開始",
+          "applicationDate": "申請日期"
+        }
+      },
+      "shipDemo": {
+        "title": "船舶營運示範",
+        "eyebrow": "導覽流程",
+        "description": "使用現有畫面依序了解開航、每日報告、燃油、港口作業、停工與整備狀態。",
+        "syntheticNotice": "合成示範資料 · 僅為草稿，未經核驗",
+        "invalidRoute": "此示範網址無效。",
+        "offline": "您目前離線。示範需要目前的伺服器連線。",
+        "loading": "載入中…",
+        "error": "無法載入示範資料。",
+        "forbidden": "您無權存取此資訊。",
+        "empty": "沒有可供您使用的船舶。",
+        "vessel": "船舶",
+        "chooseVessel": "選擇船舶",
+        "selectVessel": "選擇一艘船舶以開始示範。",
+        "stepsLabel": "示範步驟",
+        "why": "原因",
+        "open": "開啟畫面",
+        "reuseHeading": "單次輸入，重複使用",
+        "reuseHelp": "燃油與港口作業記錄會重複使用其固定為來源的 Noon 報告或輪機報告。沒有第二個輸入表單。",
+        "fuelReuse": "燃油 / BDN 記錄：{pinned} 筆重用固定來源，{direct} 筆直接輸入",
+        "portReuse": "港口作業 / SOF 記錄：{pinned} 筆重用固定來源，{direct} 筆直接輸入",
+        "steps": {
+          "departure": {
+            "title": "開航整備狀態",
+            "what": "檢視所選航次窗口的開航整備輸入項。",
+            "why": "整備狀態依據目前的歸屬記錄計算；未知或缺漏的輸入項始終需要審查，絕不會顯示為就緒。"
+          },
+          "daily": {
+            "title": "正午報告與每日報告",
+            "what": "一次性記錄正午報告（Noon）以及甲板／輪機日誌。",
+            "why": "這些報告是唯一來源，後續燃油與港口記錄會固定引用它們，而非重新輸入數值。"
+          },
+          "fuel": {
+            "title": "燃油與加油（BDN）",
+            "what": "開啟一筆固定引用其 Noon 或輪機來源修訂版的燃油或加油記錄。",
+            "why": "固定確切的來源修訂版可維持單次輸入，並顯示來源之後是否變更。"
+          },
+          "sof": {
+            "title": "港口作業（SOF）",
+            "what": "檢視本次靠港的事實記錄（SOF）項目。",
+            "why": "港口事件重用同一固定來源，因此時間不會重複輸入。"
+          },
+          "downtime": {
+            "title": "營運停工",
+            "what": "記錄停工及其來源參考。",
+            "why": "停工保留其來源連結，使原因與時間保持可追溯。"
+          },
+          "readiness": {
+            "title": "整備狀態審查",
+            "what": "返回整備狀態以檢視已記錄輸入項的影響。",
+            "why": "系統僅提供建議；開航決定仍由船長作為人工記錄作出。"
+          }
+        }
+      }
     }
   },
   "pairs": {

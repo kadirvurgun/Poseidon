@@ -569,7 +569,8 @@
         "tugPlan": "Plan de remolque",
         "dailyRecord": "Registro diario",
         "workOrderEvidence": "Evidencias de la orden de trabajo",
-        "tugOperations": "Operaciones de remolcador"
+        "tugOperations": "Operaciones de remolcador",
+        "certificateRenewal": "Borrador de renovación de certificado"
       },
       "sourceStates": {
         "Included": "incluido",
@@ -3127,6 +3128,106 @@
       "why_evidence": "Las entradas de evidencia son referencias; la verificación es el registro de otra persona.",
       "why_history": "Todo trabajo, incluidos los cancelados y abortados, sigue siendo trazable hasta sus eventos y evidencias.",
       "why_offline": "Las capturas hechas sin conexión se sellan y se reenvían de forma idempotente; los conflictos materiales esperan a una persona."
+    },
+    "S10Wpc_tsx_copy": {
+      "renewalOffline": {
+        "heading": "Borrador de renovación sin conexión",
+        "scope": "Prepare este expediente de renovación en el dispositivo para editar los metadatos del borrador sin conexión. Los enlaces al certificado de sustitución y a documentos, los pasos del flujo de trabajo, la verificación y la finalización siguen siendo en línea.",
+        "unverified": "Configurado, no verificado en piloto",
+        "offline": "Sin conexión",
+        "prepare": "Preparar borrador sin conexión",
+        "prepared": "Borrador sin conexión preparado en este dispositivo.",
+        "queued": "Borrador en cola en este dispositivo. No se guarda hasta que llegue el acuse de recibo del servidor.",
+        "queueSummary": "Pendientes: {pending} · Conflictos: {conflicts} · Registrados: {committed}",
+        "formLabel": "Metadatos del borrador sin conexión",
+        "linksOnline": "El certificado de sustitución y los nuevos enlaces a documentos solo pueden cambiarse en línea.",
+        "capture": "Poner borrador en cola",
+        "sync": "Enviar borradores en cola",
+        "synced": "Todos los borradores en cola tienen acuse de recibo del servidor.",
+        "stillPending": "Algunos borradores siguen pendientes en este dispositivo. No se ha perdido nada; vuelva a intentarlo cuando tenga conexión.",
+        "conflictRecorded": "Se registró un conflicto sustancial. Revíselo abajo o en el centro de conflictos.",
+        "ledger": "Registrados {committed} · Conflictos {conflicts} · Pendientes {pending} · Perdidos {lost}",
+        "conflicts": "Conflictos sustanciales abiertos",
+        "review": "Revisar",
+        "conflictHeading": "Conflicto sustancial",
+        "conflictHelp": "El registro del servidor cambió después de que usted se desconectara. Elija explícitamente; nada se sobrescribe automáticamente.",
+        "field": "Campo",
+        "captured": "Su valor sin conexión",
+        "server": "Valor actual del servidor",
+        "notSet": "Sin definir",
+        "keepServer": "Mantener valor del servidor",
+        "useCaptured": "Usar mi valor sin conexión",
+        "noChoice": "No hay ninguna decisión disponible para este conflicto en este momento.",
+        "resolutionRecorded": "Su decisión se registró con acuse de recibo del servidor.",
+        "reauthorize": "Se requiere una nueva autorización en línea. Los borradores en cola se conservan en este dispositivo.",
+        "keyLost": "La clave del dispositivo no está disponible. Los borradores en cola se conservan; contacte con su administrador.",
+        "unavailable": "La redacción sin conexión no está configurada para usted en este buque.",
+        "failed": "No se pudo completar la acción. Los borradores en cola se conservan.",
+        "fields": {
+          "renewalType": "Tipo de renovación",
+          "plannedLocation": "Lugar previsto",
+          "authorityReference": "Referencia de la autoridad",
+          "surveyWindowEnd": "Fin de la ventana de inspección",
+          "triggerDate": "Fecha de activación",
+          "dueDate": "Fecha de vencimiento",
+          "surveyWindowStart": "Inicio de la ventana de inspección",
+          "applicationDate": "Fecha de solicitud"
+        }
+      },
+      "shipDemo": {
+        "title": "Demo de operaciones del buque",
+        "eyebrow": "Recorrido guiado",
+        "description": "Recorra la salida, los informes diarios, el combustible, la actividad portuaria, las paradas y la preparación usando las pantallas existentes.",
+        "syntheticNotice": "Datos de demo sintéticos · solo borradores, no verificados",
+        "invalidRoute": "Esta dirección de demo no es válida.",
+        "offline": "Está sin conexión. La demo necesita una conexión actual con el servidor.",
+        "loading": "Cargando…",
+        "error": "No se pudieron cargar los datos de la demo.",
+        "forbidden": "No tiene acceso a esta información.",
+        "empty": "No hay buques disponibles para usted.",
+        "vessel": "Buque",
+        "chooseVessel": "Elegir un buque",
+        "selectVessel": "Seleccione un buque para iniciar la demo.",
+        "stepsLabel": "Pasos de la demo",
+        "why": "Por qué",
+        "open": "Abrir pantalla",
+        "reuseHeading": "Entrada única, reutilizada",
+        "reuseHelp": "Los registros de combustible y de actividad portuaria reutilizan el informe Noon o de máquinas que fijan como origen. No existe un segundo formulario de entrada.",
+        "fuelReuse": "Registros de combustible / BDN: {pinned} reutilizan un origen fijado, {direct} introducidos directamente",
+        "portReuse": "Registros de actividad portuaria / SOF: {pinned} reutilizan un origen fijado, {direct} introducidos directamente",
+        "steps": {
+          "departure": {
+            "title": "Preparación para la salida",
+            "what": "Revise los datos de preparación para la salida de la ventana de viaje seleccionada.",
+            "why": "La preparación se calcula a partir de los registros propietarios actuales; los datos desconocidos o faltantes siguen requiriendo revisión y nunca aparecen como listos."
+          },
+          "daily": {
+            "title": "Informes de mediodía y diarios",
+            "what": "Registre una sola vez el informe de mediodía (Noon) y los diarios de cubierta/máquinas.",
+            "why": "Estos informes son la fuente única que los registros posteriores de combustible y puerto fijan en lugar de volver a escribir los valores."
+          },
+          "fuel": {
+            "title": "Combustible y bunkering (BDN)",
+            "what": "Abra un registro de combustible o de bunkering que fije su revisión de origen Noon o de máquinas.",
+            "why": "Fijar la revisión de origen exacta mantiene una única entrada y muestra si el origen cambió más tarde."
+          },
+          "sof": {
+            "title": "Actividad portuaria (SOF)",
+            "what": "Revise las entradas de la relación de hechos (SOF) de la escala.",
+            "why": "Los eventos portuarios reutilizan el mismo origen fijado para que las horas no se introduzcan dos veces."
+          },
+          "downtime": {
+            "title": "Parada operativa",
+            "what": "Registre la parada con su referencia de origen.",
+            "why": "La parada conserva su vínculo de origen para que la causa y la duración sigan siendo trazables."
+          },
+          "readiness": {
+            "title": "Revisión de preparación",
+            "what": "Vuelva a la preparación para ver el efecto de los datos registrados.",
+            "why": "El sistema es consultivo; la decisión de salida sigue siendo el registro humano del Capitán."
+          }
+        }
+      }
     }
   },
   "pairs": {

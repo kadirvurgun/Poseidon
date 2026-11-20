@@ -569,7 +569,8 @@
         "tugPlan": "Plán remorkéra",
         "dailyRecord": "Denný záznam",
         "workOrderEvidence": "Dôkazy pracovného príkazu",
-        "tugOperations": "Operácie remorkérov"
+        "tugOperations": "Operácie remorkérov",
+        "certificateRenewal": "Koncept obnovy certifikátu"
       },
       "sourceStates": {
         "Included": "zahrnuté",
@@ -3127,6 +3128,106 @@
       "why_evidence": "Záznamy dôkazov sú odkazy; verifikácia je samostatný záznam inej osoby.",
       "why_history": "Každá zákazka, vrátane zrušených a prerušených, zostáva dohľadateľná k udalostiam a dôkazom.",
       "why_offline": "Záznamy vytvorené bez pripojenia sa zapečatia a prehrajú idempotentne; podstatné konflikty čakajú na človeka."
+    },
+    "S10Wpc_tsx_copy": {
+      "renewalOffline": {
+        "heading": "Offline koncept obnovy",
+        "scope": "Pripravte tento prípad obnovy v zariadení, aby ste mohli upravovať metadáta konceptu bez pripojenia. Odkazy na náhradný certifikát a dokumenty, kroky pracovného postupu, overenie a dokončenie zostávajú online.",
+        "unverified": "Nakonfigurované, neoverené v pilotnej prevádzke",
+        "offline": "Offline",
+        "prepare": "Pripraviť offline koncept",
+        "prepared": "Offline koncept bol pripravený v tomto zariadení.",
+        "queued": "Koncept je vo fronte v tomto zariadení. Nie je uložený, kým nepríde potvrdenie servera.",
+        "queueSummary": "Čakajúce: {pending} · Konflikty: {conflicts} · Zaznamenané: {committed}",
+        "formLabel": "Metadáta offline konceptu",
+        "linksOnline": "Náhradný certifikát a nové odkazy na dokumenty možno meniť iba online.",
+        "capture": "Zaradiť koncept do frontu",
+        "sync": "Odoslať koncepty z frontu",
+        "synced": "Všetky koncepty vo fronte majú potvrdenie servera.",
+        "stillPending": "Niektoré koncepty v tomto zariadení stále čakajú. Nič sa nestratilo; skúste to znova po pripojení.",
+        "conflictRecorded": "Bol zaznamenaný podstatný konflikt. Skontrolujte ho nižšie alebo v centre konfliktov.",
+        "ledger": "Zaznamenané {committed} · Konflikty {conflicts} · Čakajúce {pending} · Stratené {lost}",
+        "conflicts": "Otvorené podstatné konflikty",
+        "review": "Skontrolovať",
+        "conflictHeading": "Podstatný konflikt",
+        "conflictHelp": "Záznam na serveri sa zmenil po tom, ako ste prešli do režimu offline. Vyberte výslovne; nič sa automaticky neprepisuje.",
+        "field": "Pole",
+        "captured": "Vaša offline hodnota",
+        "server": "Aktuálna hodnota na serveri",
+        "notSet": "Nenastavené",
+        "keepServer": "Ponechať hodnotu servera",
+        "useCaptured": "Použiť moju offline hodnotu",
+        "noChoice": "Pre tento konflikt teraz nie je k dispozícii žiadne rozhodnutie.",
+        "resolutionRecorded": "Vaše rozhodnutie bolo zaznamenané s potvrdením servera.",
+        "reauthorize": "Vyžaduje sa nová online autorizácia. Koncepty vo fronte zostávajú uchované v tomto zariadení.",
+        "keyLost": "Kľúč zariadenia nie je k dispozícii. Koncepty vo fronte zostávajú uchované; obráťte sa na svojho správcu.",
+        "unavailable": "Offline koncepty pre vás na tomto plavidle nie sú nakonfigurované.",
+        "failed": "Akciu nebolo možné dokončiť. Koncepty vo fronte zostávajú uchované.",
+        "fields": {
+          "renewalType": "Typ obnovy",
+          "plannedLocation": "Plánované miesto",
+          "authorityReference": "Referenčné číslo úradu",
+          "surveyWindowEnd": "Koniec okna prehliadky",
+          "triggerDate": "Dátum spustenia",
+          "dueDate": "Termín splatnosti",
+          "surveyWindowStart": "Začiatok okna prehliadky",
+          "applicationDate": "Dátum žiadosti"
+        }
+      },
+      "shipDemo": {
+        "title": "Ukážka prevádzky lode",
+        "eyebrow": "Sprievodca",
+        "description": "Prejdite vyplávanie, denné hlásenia, palivo, prístavnú činnosť, prestoje a pripravenosť pomocou existujúcich obrazoviek.",
+        "syntheticNotice": "Syntetické ukážkové dáta · iba koncepty, neoverené",
+        "invalidRoute": "Táto adresa ukážky je neplatná.",
+        "offline": "Ste offline. Ukážka vyžaduje aktuálne pripojenie k serveru.",
+        "loading": "Načítava sa…",
+        "error": "Ukážkové dáta sa nepodarilo načítať.",
+        "forbidden": "K týmto informáciám nemáte prístup.",
+        "empty": "Nemáte k dispozícii žiadne plavidlá.",
+        "vessel": "Plavidlo",
+        "chooseVessel": "Vyberte plavidlo",
+        "selectVessel": "Vyberte plavidlo na spustenie ukážky.",
+        "stepsLabel": "Kroky ukážky",
+        "why": "Prečo",
+        "open": "Otvoriť obrazovku",
+        "reuseHeading": "Jeden zápis, opätovné použitie",
+        "reuseHelp": "Záznamy o palive a prístavnej činnosti opätovne používajú poludňajšie (Noon) alebo strojné hlásenie, ktoré pripínajú ako pôvod. Druhý vstupný formulár neexistuje.",
+        "fuelReuse": "Záznamy paliva / BDN: {pinned} používajú pripnutý pôvod, {direct} zadané priamo",
+        "portReuse": "Záznamy prístavnej činnosti / SOF: {pinned} používajú pripnutý pôvod, {direct} zadané priamo",
+        "steps": {
+          "departure": {
+            "title": "Pripravenosť na vyplávanie",
+            "what": "Skontrolujte vstupy pripravenosti na vyplávanie pre zvolené okno plavby.",
+            "why": "Pripravenosť sa počíta z aktuálnych vlastníckych záznamov; neznáme alebo chýbajúce vstupy zostávajú na kontrolu a nikdy sa nezobrazia ako pripravené."
+          },
+          "daily": {
+            "title": "Poludňajšie a denné hlásenia",
+            "what": "Zaznamenajte raz poludňajšie hlásenie (Noon) a denné palubné/strojné denníky.",
+            "why": "Tieto hlásenia sú jediným zdrojom, ktorý neskoršie záznamy o palive a prístave pripínajú namiesto opätovného zadávania hodnôt."
+          },
+          "fuel": {
+            "title": "Palivo a bunkrovanie (BDN)",
+            "what": "Otvorte záznam o palive alebo bunkrovaní, ktorý pripína svoju pôvodnú revíziu Noon alebo strojného hlásenia.",
+            "why": "Pripnutie presnej revízie pôvodu zachováva jeden zápis a ukáže, ak sa pôvod neskôr zmenil."
+          },
+          "sof": {
+            "title": "Prístavná činnosť (SOF)",
+            "what": "Skontrolujte záznamy výkazu skutočností (SOF) pre zastávku v prístave.",
+            "why": "Prístavné udalosti používajú rovnaký pripnutý pôvod, takže časy sa nezadávajú dvakrát."
+          },
+          "downtime": {
+            "title": "Prevádzkový prestoj",
+            "what": "Zaznamenajte prestoj s jeho odkazom na pôvod.",
+            "why": "Prestoj si zachováva odkaz na pôvod, takže príčina a čas zostávajú dohľadateľné."
+          },
+          "readiness": {
+            "title": "Kontrola pripravenosti",
+            "what": "Vráťte sa k pripravenosti a pozrite si vplyv zaznamenaných vstupov.",
+            "why": "Systém má poradný charakter; rozhodnutie o vyplávaní zostáva ľudským záznamom kapitána."
+          }
+        }
+      }
     }
   },
   "pairs": {

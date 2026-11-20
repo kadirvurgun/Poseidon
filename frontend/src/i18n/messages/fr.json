@@ -569,7 +569,8 @@
         "tugPlan": "Plan de remorquage",
         "dailyRecord": "Enregistrement journalier",
         "workOrderEvidence": "Preuves de l'ordre de travail",
-        "tugOperations": "Opérations de remorqueur"
+        "tugOperations": "Opérations de remorqueur",
+        "certificateRenewal": "Brouillon de renouvellement de certificat"
       },
       "sourceStates": {
         "Included": "inclus",
@@ -3127,6 +3128,106 @@
       "why_evidence": "Les entrées de preuve sont des références ; la vérification est l'enregistrement d'une autre personne.",
       "why_history": "Chaque mission, y compris annulée ou interrompue, reste traçable jusqu'à ses événements et preuves.",
       "why_offline": "Les saisies faites sans connexion sont scellées et rejouées de façon idempotente ; les conflits importants attendent une personne."
+    },
+    "S10Wpc_tsx_copy": {
+      "renewalOffline": {
+        "heading": "Brouillon de renouvellement hors ligne",
+        "scope": "Préparez ce dossier de renouvellement sur l'appareil pour modifier ses métadonnées de brouillon sans connexion. Les liens vers le certificat de remplacement et les documents, les étapes du workflow, la vérification et la clôture restent en ligne.",
+        "unverified": "Configuré, non vérifié en pilote",
+        "offline": "Hors ligne",
+        "prepare": "Préparer le brouillon hors ligne",
+        "prepared": "Brouillon hors ligne préparé sur cet appareil.",
+        "queued": "Brouillon mis en file d'attente sur cet appareil. Il n'est pas enregistré tant que l'accusé de réception du serveur n'est pas arrivé.",
+        "queueSummary": "En attente : {pending} · Conflits : {conflicts} · Enregistrés : {committed}",
+        "formLabel": "Métadonnées du brouillon hors ligne",
+        "linksOnline": "Le certificat de remplacement et les nouveaux liens de documents ne peuvent être modifiés qu'en ligne.",
+        "capture": "Mettre le brouillon en file",
+        "sync": "Envoyer les brouillons en file",
+        "synced": "Tous les brouillons en file ont un accusé de réception du serveur.",
+        "stillPending": "Certains brouillons sont encore en attente sur cet appareil. Rien n'a été perdu ; réessayez une fois connecté.",
+        "conflictRecorded": "Un conflit substantiel a été enregistré. Examinez-le ci-dessous ou dans le centre des conflits.",
+        "ledger": "Enregistrés {committed} · Conflits {conflicts} · En attente {pending} · Perdus {lost}",
+        "conflicts": "Conflits substantiels ouverts",
+        "review": "Examiner",
+        "conflictHeading": "Conflit substantiel",
+        "conflictHelp": "L'enregistrement du serveur a changé après votre passage hors ligne. Choisissez explicitement ; rien n'est écrasé automatiquement.",
+        "field": "Champ",
+        "captured": "Votre valeur hors ligne",
+        "server": "Valeur actuelle du serveur",
+        "notSet": "Non renseigné",
+        "keepServer": "Conserver la valeur du serveur",
+        "useCaptured": "Utiliser ma valeur hors ligne",
+        "noChoice": "Aucune décision n'est disponible pour ce conflit pour le moment.",
+        "resolutionRecorded": "Votre décision a été enregistrée avec un accusé de réception du serveur.",
+        "reauthorize": "Une nouvelle autorisation en ligne est requise. Les brouillons en file restent conservés sur cet appareil.",
+        "keyLost": "La clé de l'appareil est indisponible. Les brouillons en file restent conservés ; contactez votre administrateur.",
+        "unavailable": "La rédaction hors ligne n'est pas configurée pour vous sur ce navire.",
+        "failed": "L'action n'a pas pu être effectuée. Les brouillons en file restent conservés.",
+        "fields": {
+          "renewalType": "Type de renouvellement",
+          "plannedLocation": "Lieu prévu",
+          "authorityReference": "Référence de l'autorité",
+          "surveyWindowEnd": "Fin de la fenêtre de visite",
+          "triggerDate": "Date de déclenchement",
+          "dueDate": "Date d'échéance",
+          "surveyWindowStart": "Début de la fenêtre de visite",
+          "applicationDate": "Date de demande"
+        }
+      },
+      "shipDemo": {
+        "title": "Démo des opérations navire",
+        "eyebrow": "Parcours guidé",
+        "description": "Parcourez le départ, les rapports quotidiens, le carburant, l'activité portuaire, les arrêts et l'état de préparation à l'aide des écrans existants.",
+        "syntheticNotice": "Données de démo synthétiques · brouillons uniquement, non vérifiés",
+        "invalidRoute": "Cette adresse de démo n'est pas valide.",
+        "offline": "Vous êtes hors ligne. La démo nécessite une connexion actuelle au serveur.",
+        "loading": "Chargement…",
+        "error": "Les données de démo n'ont pas pu être chargées.",
+        "forbidden": "Vous n'avez pas accès à ces informations.",
+        "empty": "Aucun navire ne vous est accessible.",
+        "vessel": "Navire",
+        "chooseVessel": "Choisir un navire",
+        "selectVessel": "Sélectionnez un navire pour démarrer la démo.",
+        "stepsLabel": "Étapes de la démo",
+        "why": "Pourquoi",
+        "open": "Ouvrir l'écran",
+        "reuseHeading": "Saisie unique, réutilisée",
+        "reuseHelp": "Les enregistrements de carburant et d'activité portuaire réutilisent le rapport Noon ou machine qu'ils épinglent comme origine. Il n'existe pas de second formulaire de saisie.",
+        "fuelReuse": "Enregistrements carburant / BDN : {pinned} réutilisent une origine épinglée, {direct} saisis directement",
+        "portReuse": "Enregistrements activité portuaire / SOF : {pinned} réutilisent une origine épinglée, {direct} saisis directement",
+        "steps": {
+          "departure": {
+            "title": "Préparation au départ",
+            "what": "Examinez les données de préparation au départ pour la fenêtre de voyage sélectionnée.",
+            "why": "La préparation est calculée à partir des enregistrements de référence actuels ; les données inconnues ou manquantes restent à examiner et n'apparaissent jamais comme prêtes."
+          },
+          "daily": {
+            "title": "Rapports de midi et quotidiens",
+            "what": "Enregistrez une seule fois le rapport de midi (Noon) et les journaux quotidiens pont/machine.",
+            "why": "Ces rapports sont la source unique que les enregistrements de carburant et portuaires ultérieurs épinglent au lieu de ressaisir les valeurs."
+          },
+          "fuel": {
+            "title": "Carburant et soutage (BDN)",
+            "what": "Ouvrez un enregistrement de carburant ou de soutage qui épingle sa révision d'origine Noon ou machine.",
+            "why": "Épingler la révision d'origine exacte conserve une saisie unique et indique si l'origine a changé ultérieurement."
+          },
+          "sof": {
+            "title": "Activité portuaire (SOF)",
+            "what": "Examinez les entrées de l'état des faits (SOF) pour l'escale.",
+            "why": "Les événements portuaires réutilisent la même origine épinglée afin que les heures ne soient pas saisies deux fois."
+          },
+          "downtime": {
+            "title": "Arrêt opérationnel",
+            "what": "Enregistrez l'arrêt avec sa référence d'origine.",
+            "why": "L'arrêt conserve son lien d'origine afin que la cause et la durée restent traçables."
+          },
+          "readiness": {
+            "title": "Revue de préparation",
+            "what": "Revenez à la préparation pour voir l'effet des données enregistrées.",
+            "why": "Le système est consultatif ; la décision de départ reste l'enregistrement humain du capitaine."
+          }
+        }
+      }
     }
   },
   "pairs": {

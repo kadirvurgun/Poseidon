@@ -237,6 +237,10 @@ public sealed class PoseidonDbContext(
     public DbSet<TugCapabilityBinding> TugCapabilityBindings => Set<TugCapabilityBinding>();
     public DbSet<OperationEquipmentBinding> OperationEquipmentBindings => Set<OperationEquipmentBinding>();
     public DbSet<MsmdRoleBinding> MsmdRoleBindings => Set<MsmdRoleBinding>();
+    // S10 WP-C (DEV-066): certificate renewal offline draft capture.
+    public DbSet<CertificateRenewalOfflineEnrollment> CertificateRenewalOfflineEnrollments => Set<CertificateRenewalOfflineEnrollment>();
+    public DbSet<CertificateRenewalOfflineLifecycle> CertificateRenewalOfflineLifecycles => Set<CertificateRenewalOfflineLifecycle>();
+    public DbSet<CertificateRenewalOfflineOutcome> CertificateRenewalOfflineOutcomes => Set<CertificateRenewalOfflineOutcome>();
     public DbSet<EvaluationUpstreamReference> EvaluationUpstreamReferences => Set<EvaluationUpstreamReference>();
     public DbSet<EvaluationOwningReference> EvaluationOwningReferences => Set<EvaluationOwningReference>();
 
@@ -471,6 +475,11 @@ public sealed class PoseidonDbContext(
         TugOperationsOfflineStorage.Configure(model);
         model.Entity<TugOperationOfflineSnapshot>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TugOperationOfflineOutcome>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        // S10 WP-C (DEV-066): certificate renewal offline draft capture.
+        CertificateRenewalOfflineStorage.Configure(model);
+        model.Entity<CertificateRenewalOfflineEnrollment>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<CertificateRenewalOfflineLifecycle>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<CertificateRenewalOfflineOutcome>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         MaintenanceObservationStorage.Configure(model);
         model.Entity<MaintenanceObservation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<MaintenanceObservationRevocation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -857,6 +866,7 @@ public sealed class PoseidonDbContext(
             throw new InvalidOperationException("Ship operations lifecycle events are immutable.");
         AssuranceStorage.Guard(changes);
         TugOperationsOfflineStorage.Guard(changes);
+        CertificateRenewalOfflineStorage.Guard(changes);
         if(changes.Any(e=>e.Entity is DowntimeRevision or DowntimeReceipt && e.State!=EntityState.Added))
             throw new InvalidOperationException("Downtime history and outcomes are immutable.");
         if(changes.Any(e=>e.Entity is Downtime && (e.State==EntityState.Deleted || e.State==EntityState.Modified &&

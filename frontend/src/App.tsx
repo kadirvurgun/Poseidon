@@ -39,10 +39,14 @@ import { RiskTemplateLibraryWorkspace } from './product/RiskTemplateLibraryWorks
 import { CriticalSparesWorkspace } from './product/CriticalSparesWorkspace';
 import { AuditReadyWorkspace } from './product/AuditReadyWorkspace';
 import { SurveyWorkspace } from './product/SurveyWorkspace';
+import { ShipDemoJourney } from './product/ShipDemoJourney';
 import { AppearanceControls } from './theme/AppearanceControls';
 type Connection = 'loading' | 'available' | 'error';
 const content = localizedCopy("App_tsx_content");
 export function App() {
+    // S10 WP-C DEV-120 ship buyer demo journey (read-only guide over existing screens).
+    if (/^\/app\/ship-demo(?:\/|$)/.test(window.location.pathname))
+        return <ShipDemoJourney />;
     if (/^\/app\/(fuel-bunker-log|port-activity-sof)(?:\/|$)/.test(window.location.pathname))
         return <ShipOperationsWorkspace />;
     if (/^\/app\/(certificate-command-center|renewal-workflow)(?:\/|$)/.test(window.location.pathname))

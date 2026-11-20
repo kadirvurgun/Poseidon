@@ -569,7 +569,8 @@
         "tugPlan": "Vontatóhajó-terv",
         "dailyRecord": "Napi rekord",
         "workOrderEvidence": "Munkarendelés-bizonyítékok",
-        "tugOperations": "Vontatóműveletek"
+        "tugOperations": "Vontatóműveletek",
+        "certificateRenewal": "Tanúsítványmegújítási piszkozat"
       },
       "sourceStates": {
         "Included": "szerepel",
@@ -3127,6 +3128,106 @@
       "why_evidence": "A bizonyíték-bejegyzések hivatkozások; az ellenőrzés külön személy rekordja.",
       "why_history": "Minden megbízás, a törölt és megszakított is, visszakövethető az eseményeihez és bizonyítékaihoz.",
       "why_offline": "A kapcsolat nélkül készült rögzítések lezárásra kerülnek és idempotens módon újrajátszódnak; a lényeges ütközések emberre várnak."
+    },
+    "S10Wpc_tsx_copy": {
+      "renewalOffline": {
+        "heading": "Offline megújítási piszkozat",
+        "scope": "Készítse elő ezt a megújítási ügyet az eszközön, hogy kapcsolat nélkül szerkeszthesse a piszkozat metaadatait. A helyettesítő tanúsítvány és a dokumentumhivatkozások, a munkafolyamat lépései, az ellenőrzés és a lezárás online maradnak.",
+        "unverified": "Konfigurálva, pilotban nem ellenőrizve",
+        "offline": "Offline",
+        "prepare": "Offline piszkozat előkészítése",
+        "prepared": "Az offline piszkozat elkészült ezen az eszközön.",
+        "queued": "A piszkozat sorba került ezen az eszközön. Nincs mentve, amíg meg nem érkezik a szerver visszaigazolása.",
+        "queueSummary": "Függőben: {pending} · Ütközések: {conflicts} · Rögzítve: {committed}",
+        "formLabel": "Offline piszkozat metaadatai",
+        "linksOnline": "A helyettesítő tanúsítvány és az új dokumentumhivatkozások csak online módosíthatók.",
+        "capture": "Piszkozat sorba állítása",
+        "sync": "Sorban álló piszkozatok küldése",
+        "synced": "Minden sorban álló piszkozathoz van szerver-visszaigazolás.",
+        "stillPending": "Néhány piszkozat még függőben van ezen az eszközön. Semmi sem veszett el; próbálja újra, ha van kapcsolat.",
+        "conflictRecorded": "Lényeges ütközés került rögzítésre. Tekintse át alább vagy az ütközéskezelő központban.",
+        "ledger": "Rögzítve {committed} · Ütközések {conflicts} · Függőben {pending} · Elveszett {lost}",
+        "conflicts": "Nyitott lényeges ütközések",
+        "review": "Áttekintés",
+        "conflictHeading": "Lényeges ütközés",
+        "conflictHelp": "A szerveren lévő rekord megváltozott, miután offline módba lépett. Válasszon kifejezetten; semmi sem íródik felül automatikusan.",
+        "field": "Mező",
+        "captured": "Az Ön offline értéke",
+        "server": "Jelenlegi szerverérték",
+        "notSet": "Nincs megadva",
+        "keepServer": "Szerverérték megtartása",
+        "useCaptured": "Saját offline érték használata",
+        "noChoice": "Ehhez az ütközéshez jelenleg nem áll rendelkezésre döntés.",
+        "resolutionRecorded": "A döntését szerver-visszaigazolással rögzítettük.",
+        "reauthorize": "Online újbóli engedélyezés szükséges. A sorban álló piszkozatok megmaradnak ezen az eszközön.",
+        "keyLost": "Az eszközkulcs nem érhető el. A sorban álló piszkozatok megmaradnak; forduljon a rendszergazdához.",
+        "unavailable": "Az offline piszkozatkészítés nincs beállítva Önnek ezen a hajón.",
+        "failed": "A műveletet nem sikerült végrehajtani. A sorban álló piszkozatok megmaradnak.",
+        "fields": {
+          "renewalType": "Megújítás típusa",
+          "plannedLocation": "Tervezett helyszín",
+          "authorityReference": "Hatósági hivatkozás",
+          "surveyWindowEnd": "Szemleablak vége",
+          "triggerDate": "Kiváltó dátum",
+          "dueDate": "Határidő",
+          "surveyWindowStart": "Szemleablak kezdete",
+          "applicationDate": "Kérelem dátuma"
+        }
+      },
+      "shipDemo": {
+        "title": "Hajóüzemeltetési bemutató",
+        "eyebrow": "Vezetett bemutató",
+        "description": "Járja végig az indulást, a napi jelentéseket, az üzemanyagot, a kikötői tevékenységet, az állásidőt és a készenlétet a meglévő képernyőkön.",
+        "syntheticNotice": "Szintetikus bemutatóadatok · csak piszkozatok, nem ellenőrzött",
+        "invalidRoute": "Ez a bemutatócím érvénytelen.",
+        "offline": "Ön offline. A bemutatóhoz aktuális szerverkapcsolat szükséges.",
+        "loading": "Betöltés…",
+        "error": "A bemutatóadatokat nem sikerült betölteni.",
+        "forbidden": "Nincs hozzáférése ehhez az információhoz.",
+        "empty": "Nincs elérhető hajó az Ön számára.",
+        "vessel": "Hajó",
+        "chooseVessel": "Válasszon hajót",
+        "selectVessel": "Válasszon egy hajót a bemutató indításához.",
+        "stepsLabel": "Bemutató lépései",
+        "why": "Miért",
+        "open": "Képernyő megnyitása",
+        "reuseHeading": "Egyszeri rögzítés, újrafelhasználás",
+        "reuseHelp": "Az üzemanyag- és kikötői tevékenységi rekordok újrafelhasználják azt a Noon- vagy gépházi jelentést, amelyet eredetként rögzítenek. Nincs második beviteli űrlap.",
+        "fuelReuse": "Üzemanyag / BDN rekordok: {pinned} rögzített eredetet használ, {direct} közvetlenül bevitt",
+        "portReuse": "Kikötői tevékenység / SOF rekordok: {pinned} rögzített eredetet használ, {direct} közvetlenül bevitt",
+        "steps": {
+          "departure": {
+            "title": "Indulási készenlét",
+            "what": "Tekintse át az indulási készenlét bemeneteit a kiválasztott útablakhoz.",
+            "why": "A készenlétet az aktuális tulajdonos rekordokból számítjuk; az ismeretlen vagy hiányzó bemenetek áttekintést igényelnek, és soha nem jelennek meg készként."
+          },
+          "daily": {
+            "title": "Déli és napi jelentések",
+            "what": "Rögzítse egyszer a déli jelentést (Noon) és a fedélzeti/gépházi napi naplókat.",
+            "why": "Ezek a jelentések az egyetlen forrás, amelyet a későbbi üzemanyag- és kikötői rekordok rögzítenek az értékek újbóli begépelése helyett."
+          },
+          "fuel": {
+            "title": "Üzemanyag és bunkerezés (BDN)",
+            "what": "Nyisson meg egy üzemanyag- vagy bunkerezési rekordot, amely rögzíti a Noon- vagy gépházi eredetrevízióját.",
+            "why": "A pontos eredetrevízió rögzítése megőrzi az egyszeri bevitelt, és jelzi, ha az eredet később megváltozott."
+          },
+          "sof": {
+            "title": "Kikötői tevékenység (SOF)",
+            "what": "Tekintse át a kikötői tényállás-jegyzék (SOF) bejegyzéseit a kikötői tartózkodáshoz.",
+            "why": "A kikötői események ugyanazt a rögzített eredetet használják, így az időpontokat nem kell kétszer bevinni."
+          },
+          "downtime": {
+            "title": "Üzemi állásidő",
+            "what": "Rögzítse az állásidőt az eredethivatkozásával.",
+            "why": "Az állásidő megőrzi az eredethivatkozását, így az ok és az idő nyomon követhető marad."
+          },
+          "readiness": {
+            "title": "Készenlét áttekintése",
+            "what": "Térjen vissza a készenléthez, hogy lássa a rögzített bemenetek hatását.",
+            "why": "A rendszer tanácsadó jellegű; az indulási döntés a kapitány által rögzített emberi döntés marad."
+          }
+        }
+      }
     }
   },
   "pairs": {
