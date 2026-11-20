@@ -85,7 +85,7 @@ public static class TugDailyLogEndpoints
         return null;
     }
 
-    private static async Task<TowageOutcome> Create(TowageContext<TugDailyLogCreateCommand> c) {
+    internal static async Task<TowageOutcome> Create(TowageContext<TugDailyLogCreateCommand> c) {
         var cmd = c.Command; var db = c.Db;
         if (cmd.Id == Guid.Empty || !TugDailyLogPolicy.Watches.Contains(cmd.Watch)) return TowageOutcome.Fail(400, "validation_failed");
         if (await Links(c, null, cmd.Content) is { } failure) return failure;
@@ -97,7 +97,7 @@ public static class TugDailyLogEndpoints
         return TowageOutcome.Ok(l.Id, l.Revision);
     }
 
-    private static async Task<TowageOutcome> Update(TowageContext<TugDailyLogUpdateCommand> c) {
+    internal static async Task<TowageOutcome> Update(TowageContext<TugDailyLogUpdateCommand> c) {
         var db = c.Db;
         if (await Links(null, c, c.Command.Content) is { } failure) return failure;
         var l = await db.TugDailyLogs.SingleOrDefaultAsync(x => x.Id == c.RouteId && x.VesselId == c.Vessel, c.Ct);

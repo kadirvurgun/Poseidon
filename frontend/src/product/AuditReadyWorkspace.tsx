@@ -9,6 +9,7 @@ import * as api from './api';
 import { decodeTodayVessels } from './today-api';
 import { auditReadyHref, auditReadyTrace, chains as loadChains, readAuditReadyLocation, type AuditReadyChain, type AuditReadyChains, type AuditReadyRoute } from './audit-ready-api';
 import type { Anchor, AuditTraceEvent, Review, Segment, Trace } from './human-review-api';
+import { AuditPackPanel } from './AuditPackPanel';
 import './offline-enterprise.css';
 import './product.css';
 
@@ -71,7 +72,7 @@ export function AuditReadyWorkspace() {
       {!online && <p role="status" data-state="offline">{t.offline}</p>}
       {route.invalid ? <p role="alert">{t.invalidRoute}</p> : !identity ? (online ? <p role="status">{t.loading}</p> : null) : identity.error ? <p role="alert">{t.sessionError}</p> : !allowed ? <p role="alert">{t.denied}</p> : <>
         <VesselPicker key={`${user?.tenantId}:${user?.actorId}:${attempt}`} vessel={route.vessel} online={online} t={t} onSelect={id => go(auditReadyHref(id))}/>
-        {route.vessel ? <ChainList key={`${user?.tenantId}:${user?.actorId}:${route.vessel}:${attempt}`} vessel={route.vessel} anchor={route.anchor} online={online} t={t} language={language} onOpen={chain => go(auditReadyHref(route.vessel, chain))}/> : <p role="status">{t.noVessel}</p>}
+        {route.vessel ? <ChainList key={`${user?.tenantId}:${user?.actorId}:${route.vessel}:${attempt}`} vessel={route.vessel} anchor={route.anchor} online={online} t={t} language={language} csrf={user?.csrfToken ?? null} onOpen={chain => go(auditReadyHref(route.vessel, chain))}/> : <p role="status">{t.noVessel}</p>}
       </>}
     </main></div>;
 }
@@ -91,7 +92,7 @@ function VesselPicker({ vessel, online, t, onSelect }: { vessel: string; online:
     </select></EnterpriseToolbar>;
 }
 type Loaded<T> = { data?: T; error?: number; loadedAt?: string };
-function ChainList({ vessel, anchor, online, t, language, onOpen }: { vessel: string; anchor: Anchor | null; online: boolean; t: Copy; language: AppLocale; onOpen: (chain: AuditReadyChain) => void }) {
+function ChainList({ vessel, anchor, online, t, language, csrf, onOpen }: { vessel: string; anchor: Anchor | null; online: boolean; t: Copy; language: AppLocale; csrf: string | null; onOpen: (chain: AuditReadyChain) => void }) {
     const [result, setResult] = useState<Loaded<AuditReadyChains> | null>(null);
     useEffect(() => {
         if (!online) return;
@@ -117,6 +118,8 @@ function ChainList({ vessel, anchor, online, t, language, onOpen }: { vessel: st
       {anchor && (selected
         ? <ChainTrace key={`${anchor.evidenceId}/${anchor.evidenceRevision}/${anchor.controlId}/${anchor.controlRevision}`} anchor={anchor} chain={selected} online={online} t={t} language={language}/>
         : <p role="alert">{t.notFound}</p>)}
+      {/* DEV-064: packs are offered only when the reader has readable appointed chains. */}
+      {data.items.length > 0 && <AuditPackPanel vessel={vessel} csrf={csrf} online={online} language={language}/>}
     </>;
 }
 type Stage = { key: 'requirement' | 'control' | 'evidence' | 'verification' | 'decision'; label: string; state: string; at: string | null; body: ReactNode };

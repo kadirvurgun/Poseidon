@@ -18,7 +18,10 @@ describe('T-OPS2-004/005 strict ordinary declaration contracts (source only)', (
     expect(decodeShipOpsRecord(fuel, shipOpsVessel, 'Fuel').state).toBe('DRAFT')
     expect(() => decodeShipOpsRecord({ ...fuel, fields: { ...fuel.fields, compliance_state: { state: 'Known', value: 'READY' } } }, shipOpsVessel, 'Fuel')).toThrow()
     expect(() => decodeShipOpsRecord({ ...fuel, fields: { ...fuel.fields, verification_state: { state: 'Known', value: 'VERIFIED' } } }, shipOpsVessel, 'Fuel')).toThrow()
-    expect(() => decodeShipOpsRecord({ ...port, fields: { ...port.fields, sof_state: { state: 'Known', value: 'FINAL' } } }, shipOpsVessel, 'Port')).toThrow()
+    // DEV-101: FINAL is server-owned (recorded human finalization revision); any other state is manufactured.
+    expect(decodeShipOpsRecord({ ...port, fields: { ...port.fields, sof_state: { state: 'Known', value: 'FINAL' } } }, shipOpsVessel, 'Port').fields.sof_state.value).toBe('FINAL')
+    expect(() => decodeShipOpsRecord({ ...port, fields: { ...port.fields, sof_state: { state: 'Known', value: 'REVIEWED' } } }, shipOpsVessel, 'Port')).toThrow()
+    expect(() => decodeShipOpsRecord({ ...port, fields: { ...port.fields, sof_state: { state: 'Known', value: 'SIGNED' } } }, shipOpsVessel, 'Port')).toThrow()
     expect(() => decodeShipOpsRecord({ ...fuel, currentRevision: false, canEdit: true }, shipOpsVessel, 'Fuel')).toThrow()
   })
   it('requires explicit second-precision offset instants and preserves seven fractional digits for event ordering', () => {

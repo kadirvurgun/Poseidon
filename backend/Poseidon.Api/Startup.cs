@@ -36,7 +36,12 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddSingleton<IWorkOrderStateSource, WorkOrderStateReader>();
         // S9 WP-B DEV-060: absent operator configuration leaves safety-event offline capture unavailable.
         services.AddSingleton(configuration.GetSection("SafetyEventOffline").Get<SafetyEventOfflineSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
+        services.AddSingleton(configuration.GetSection("TugOperationsOffline").Get<TugOperationsOfflineSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new()); // S10 WP-B DEV-092
         services.AddSingleton<ISafetyEventBlockerSource, SafetyEventBlockerSource>();
+        // S10 WP-A DEV-065: read-only data trust contract for readiness consumers.
+        services.AddSingleton<IDataTrustSignalSource, DataTrustSignalSource>();
+        // S10 WP-C DEV-066: absent operator configuration leaves certificate renewal offline drafts unavailable.
+        services.AddSingleton(configuration.GetSection("CertificateRenewalOffline").Get<CertificateRenewalOfflineSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<ISpareGapSource, SpareGapReader>();
         services.AddSingleton(configuration.GetSection("NotificationScheduler").Get<NotificationSchedulerSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<NotificationServiceContexts>();
@@ -232,6 +237,11 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapSafetyEvents();
             endpoints.MapSafetyInvestigations();
             endpoints.MapSafetyEventOffline();
+            // S10 WP-A DEV-064 / DEV-065 / DEV-113.
+            endpoints.MapAuditPacks();
+            endpoints.MapDataTrust();
+            endpoints.MapIndustryAssurance();
+            endpoints.MapCertificateRenewalOffline(); // S10 WP-C DEV-066
             endpoints.MapDefectLifecycle();
             endpoints.MapServiceReports();
             endpoints.MapVoiceEventDrafts();
@@ -242,6 +252,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapMaintenancePostponements();
             endpoints.MapTug();
             endpoints.MapDrydock(); // S9 WP-D DEV-111
+            endpoints.MapTugOperationsOffline(); // S10 WP-B DEV-092
+            endpoints.MapTugOperationHistory(); // S10 WP-B DEV-091
             endpoints.MapParameters();
             endpoints.MapHr();
             endpoints.MapMemberships();

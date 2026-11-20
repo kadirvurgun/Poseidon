@@ -194,7 +194,7 @@ public static class TowageExecutionEndpoints
     }
 
     // Crew on the executing tug record observations; the ledger is append-only and hash-chained.
-    private static async Task<TowageOutcome> Record(TowageContext<TowageExecutionEventCommand> c) {
+    internal static async Task<TowageOutcome> Record(TowageContext<TowageExecutionEventCommand> c) {
         var e = c.Command.Event; var db = c.Db;
         if (!TowageExecutionPolicy.ValidEvent(e)) return TowageOutcome.Fail(400, "validation_failed");
         var x = await db.TowageExecutions.SingleOrDefaultAsync(r => r.Id == c.RouteId && r.VesselId == c.Vessel, c.Ct);

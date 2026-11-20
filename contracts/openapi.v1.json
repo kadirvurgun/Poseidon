@@ -2217,6 +2217,63 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/data-trust": {
+      "get": {
+        "tags": [
+          "DataTrustEndpoints"
+        ],
+        "operationId": "GetDataTrust",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataTrustPageDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/tug-operation-history": {
+      "get": {
+        "tags": [
+          "TugOperationHistoryEndpoints"
+        ],
+        "operationId": "TugOperationHistoryList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugHistoryPageDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
     "/api/v1/memberships/current": {
       "get": {
         "tags": [
@@ -7855,6 +7912,80 @@
           }
         },
         "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/port-activity-sof/{id}/finalization": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "PortSofFinalization",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortSofFinalizationDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/port-activity-sof/{id}/finalize": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "PortSofFinalize",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PortSofFinalizeCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShipOpsRecordDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
     "/api/v1/port-activity-sof/{id}": {
@@ -14232,6 +14363,78 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/operational-downtime/{id}/lifecycle": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DowntimeLifecycle",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DowntimeLifecycleViewDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DowntimeLifecycleCommand",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DowntimeLifecycleCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DowntimeRecordDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
     "/api/v1/hse/risk-assessments": {
       "get": {
         "tags": [
@@ -15838,6 +16041,655 @@
         "parameters": [
           {
             "name": "enrollment",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/audit-ready/packs": {
+      "get": {
+        "tags": [
+          "AuditPackEndpoints"
+        ],
+        "operationId": "ListAuditPacks",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditPackListDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "AuditPackCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditPackCreateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditPackDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssuranceFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/audit-ready/packs/{id}": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "GetAuditPack",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditPackDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/audit-ready/packs/{id}/export": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "ExportAuditPack",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditPackExportDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/industry-assurance": {
+      "get": {
+        "tags": [
+          "IndustryAssuranceEndpoints"
+        ],
+        "operationId": "GetIndustryAssurance",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndustryAssurancePageDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/industry-assurance/inspections/{id}": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "GetAssuranceInspection",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssuranceInspectionDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/industry-assurance/mappings": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "AssuranceMappingCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssuranceMappingCreateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssuranceMappingDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssuranceFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/industry-assurance/imports": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "AssuranceImportStage",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssuranceImportStageCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssuranceInspectionDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssuranceFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/industry-assurance/imports/{id}/decision": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "AssuranceImportDecide",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssuranceImportDecisionCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssuranceInspectionDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssuranceFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/industry-assurance/inspections/{id}/evidence": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "AssuranceEvidenceCapture",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssuranceEvidenceCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssuranceInspectionDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssuranceFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/industry-assurance/findings/{id}/action-link": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "AssuranceFindingLink",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssuranceFindingLinkCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssuranceInspectionDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssuranceFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/certificate-renewal-offline/{renewal}": {
+      "get": {
+        "tags": [
+          "CertificateRenewalOfflineEndpoints"
+        ],
+        "operationId": "CertificateRenewalOfflineInventory",
+        "parameters": [
+          {
+            "name": "renewal",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "CertificateRenewalOfflineEndpoints"
+        ],
+        "operationId": "CertificateRenewalOfflineEnroll",
+        "parameters": [
+          {
+            "name": "renewal",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificateRenewalOfflineContextDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-OFFLINE-1"
+      }
+    },
+    "/api/v1/certificate-renewal-offline/{renewal}/{enrollment}/{action}": {
+      "post": {
+        "tags": [
+          "CertificateRenewalOfflineEndpoints"
+        ],
+        "operationId": "CertificateRenewalOfflineAction",
+        "parameters": [
+          {
+            "name": "renewal",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "enrollment",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "action",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-OFFLINE-1"
+      }
+    },
+    "/api/v1/certificate-renewal-offline/{renewal}/{enrollment}/history": {
+      "get": {
+        "tags": [
+          "CertificateRenewalOfflineEndpoints"
+        ],
+        "operationId": "CertificateRenewalOfflineHistory",
+        "parameters": [
+          {
+            "name": "renewal",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "enrollment",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/certificate-renewal-offline/{renewal}/{enrollment}/conflicts/{command}": {
+      "get": {
+        "tags": [
+          "CertificateRenewalOfflineEndpoints"
+        ],
+        "operationId": "CertificateRenewalOfflineConflict",
+        "parameters": [
+          {
+            "name": "renewal",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "enrollment",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "command",
             "in": "path",
             "required": true,
             "schema": {
@@ -19490,6 +20342,115 @@
         "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
+    "/api/v1/tug-operations-offline": {
+      "get": {
+        "tags": [
+          "TugOperationsOfflineEndpoints"
+        ],
+        "operationId": "TugOperationsOfflineCapability",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugOperationsOfflineCapabilityDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/tug-operations-offline/snapshots": {
+      "post": {
+        "tags": [
+          "TugOperationsOfflineEndpoints"
+        ],
+        "operationId": "TugOperationsOfflineSnapshot",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugOperationsSnapshotDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-OFFLINE-1"
+      }
+    },
+    "/api/v1/tug-operations-offline/replay": {
+      "post": {
+        "tags": [
+          "TugOperationsOfflineEndpoints"
+        ],
+        "operationId": "TugOperationsOfflineReplay",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugOperationsOfflineResult"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-OFFLINE-1"
+      }
+    },
+    "/api/v1/tug-operations-offline/outcomes": {
+      "get": {
+        "tags": [
+          "TugOperationsOfflineEndpoints"
+        ],
+        "operationId": "TugOperationsOfflineOutcomes",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/tug-operations-offline/conflicts/{command}": {
+      "get": {
+        "tags": [
+          "TugOperationsOfflineEndpoints"
+        ],
+        "operationId": "TugOperationsOfflineConflict",
+        "parameters": [
+          {
+            "name": "command",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugOperationsConflictDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
     "/api/v1/parameter-definitions": {
       "get": {
         "tags": [
@@ -22605,6 +23566,700 @@
           }
         }
       },
+      "AssuranceColumnBinding": {
+        "required": [
+          "header",
+          "field"
+        ],
+        "type": "object",
+        "properties": {
+          "header": {
+            "type": "string"
+          },
+          "field": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AssuranceDiffEntry": {
+        "required": [
+          "questionRef",
+          "change",
+          "fields",
+          "currentRevision"
+        ],
+        "type": "object",
+        "properties": {
+          "questionRef": {
+            "type": "string"
+          },
+          "change": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "currentRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          }
+        }
+      },
+      "AssuranceEvidenceCommand": {
+        "required": [
+          "id",
+          "questionRef",
+          "file",
+          "mediaKind",
+          "capturedAt",
+          "origin"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "questionRef": {
+            "type": "string"
+          },
+          "file": {
+            "$ref": "#/components/schemas/CertificateFilePin"
+          },
+          "mediaKind": {
+            "type": "string"
+          },
+          "capturedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "origin": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AssuranceEvidenceDto": {
+        "required": [
+          "id",
+          "questionRef",
+          "fileId",
+          "fileRevision",
+          "mediaKind",
+          "capturedAt",
+          "origin",
+          "verification",
+          "fileHref"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "questionRef": {
+            "type": "string"
+          },
+          "fileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fileRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "mediaKind": {
+            "type": "string"
+          },
+          "capturedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "origin": {
+            "type": "string"
+          },
+          "verification": {
+            "type": "string"
+          },
+          "fileHref": {
+            "type": "string"
+          }
+        }
+      },
+      "AssuranceFailure": {
+        "required": [
+          "code",
+          "missing",
+          "correlationId"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "missing": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "correlationId": {
+            "type": "string"
+          }
+        }
+      },
+      "AssuranceFindingDto": {
+        "required": [
+          "id",
+          "questionRef",
+          "firstItemRevision",
+          "latestItemRevision",
+          "observationPresent",
+          "state",
+          "verification",
+          "actionLinkState",
+          "actionId",
+          "revision",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "questionRef": {
+            "type": "string"
+          },
+          "firstItemRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "latestItemRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "observationPresent": {
+            "type": "boolean"
+          },
+          "state": {
+            "type": "string"
+          },
+          "verification": {
+            "type": "string"
+          },
+          "actionLinkState": {
+            "type": "string"
+          },
+          "actionId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "AssuranceFindingLinkCommand": {
+        "required": [
+          "expectedVersion",
+          "actionId"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "actionId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AssuranceImportDecisionCommand": {
+        "required": [
+          "expectedVersion",
+          "diffHash",
+          "decision",
+          "acceptChanged",
+          "rejectChanged",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "diffHash": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "acceptChanged": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rejectChanged": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AssuranceImportDto": {
+        "required": [
+          "id",
+          "state",
+          "mappingVersion",
+          "sourceVersion",
+          "diff",
+          "diffHash",
+          "importedByMe",
+          "importedAt",
+          "decidedAt",
+          "version",
+          "new",
+          "changed",
+          "unchanged",
+          "absent"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "mappingVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "diff": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssuranceDiffEntry"
+            }
+          },
+          "diffHash": {
+            "type": "string"
+          },
+          "importedByMe": {
+            "type": "boolean"
+          },
+          "importedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "decidedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "new": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "changed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unchanged": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "absent": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AssuranceImportStageCommand": {
+        "required": [
+          "id",
+          "inspectionId",
+          "mappingId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "inspectionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "mappingId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "referenceNo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "inspectionDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "table": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AssuranceTableInput"
+              }
+            ]
+          },
+          "workbook": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "AssuranceInspectionDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "programme",
+          "referenceNo",
+          "inspectionDate",
+          "state",
+          "classification",
+          "applicability",
+          "revision",
+          "provenance",
+          "sourceVersion",
+          "items",
+          "findings",
+          "evidence",
+          "imports",
+          "notice"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "programme": {
+            "type": "string"
+          },
+          "referenceNo": {
+            "type": "string"
+          },
+          "inspectionDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "state": {
+            "type": "string"
+          },
+          "classification": {
+            "type": "string"
+          },
+          "applicability": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssuranceItemDto"
+            }
+          },
+          "findings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssuranceFindingDto"
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssuranceEvidenceDto"
+            }
+          },
+          "imports": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssuranceImportDto"
+            }
+          },
+          "notice": {
+            "type": "string"
+          }
+        }
+      },
+      "AssuranceInspectionSummaryDto": {
+        "required": [
+          "id",
+          "referenceNo",
+          "inspectionDate",
+          "state",
+          "applicability",
+          "items",
+          "openFindings",
+          "pendingImport"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "referenceNo": {
+            "type": "string"
+          },
+          "inspectionDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "state": {
+            "type": "string"
+          },
+          "applicability": {
+            "type": "string"
+          },
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "openFindings": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pendingImport": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AssuranceItemContent": {
+        "required": [
+          "questionRef",
+          "chapter",
+          "observationType",
+          "observationCategory",
+          "observationText",
+          "inspectorComment"
+        ],
+        "type": "object",
+        "properties": {
+          "questionRef": {
+            "type": "string"
+          },
+          "chapter": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "observationType": {
+            "type": "string"
+          },
+          "observationCategory": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "observationText": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "inspectorComment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "AssuranceItemDto": {
+        "required": [
+          "questionRef",
+          "revision",
+          "content",
+          "hash",
+          "evidence",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "questionRef": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "content": {
+            "$ref": "#/components/schemas/AssuranceItemContent"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AssuranceMappingCreateCommand": {
+        "required": [
+          "id",
+          "key",
+          "bindings"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "key": {
+            "type": "string"
+          },
+          "bindings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssuranceColumnBinding"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "AssuranceMappingDto": {
+        "required": [
+          "id",
+          "key",
+          "version",
+          "sourceVersion",
+          "bindings",
+          "hash",
+          "createdAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "key": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "bindings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssuranceColumnBinding"
+            }
+          },
+          "hash": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AssuranceTableInput": {
+        "required": [
+          "headers",
+          "rows"
+        ],
+        "type": "object",
+        "properties": {
+          "headers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "additionalProperties": false
+      },
       "AuditEvidenceDto": {
         "required": [
           "kind",
@@ -22645,6 +24300,296 @@
                 "$ref": "#/components/schemas/TugAuditRevisionDto"
               }
             ]
+          }
+        }
+      },
+      "AuditPackCreateCommand": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "previousPackId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AuditPackDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "label",
+          "notice",
+          "sourceVersion",
+          "asOf",
+          "createdAt",
+          "createdByMe",
+          "manifestHash",
+          "itemCount",
+          "included",
+          "excluded",
+          "unavailableChains",
+          "truncated",
+          "previousPackId",
+          "superseded",
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "label": {
+            "type": "string"
+          },
+          "notice": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "asOf": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdByMe": {
+            "type": "boolean"
+          },
+          "manifestHash": {
+            "type": "string"
+          },
+          "itemCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "included": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "excluded": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unavailableChains": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "truncated": {
+            "type": "boolean"
+          },
+          "previousPackId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "superseded": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditPackItemDto"
+            }
+          }
+        }
+      },
+      "AuditPackExportDto": {
+        "required": [
+          "schema",
+          "label",
+          "notice",
+          "exportedAt",
+          "pack"
+        ],
+        "type": "object",
+        "properties": {
+          "schema": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "notice": {
+            "type": "string"
+          },
+          "exportedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "pack": {
+            "$ref": "#/components/schemas/AuditPackDto"
+          }
+        }
+      },
+      "AuditPackItemDto": {
+        "required": [
+          "ordinal",
+          "kind",
+          "resourceId",
+          "revision",
+          "state",
+          "hash",
+          "evidenceId",
+          "controlId",
+          "savedAt",
+          "integrity",
+          "fileHref",
+          "historyHref"
+        ],
+        "type": "object",
+        "properties": {
+          "ordinal": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "resourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "hash": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "evidenceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "controlId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "savedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "integrity": {
+            "type": "string"
+          },
+          "fileHref": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "historyHref": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "AuditPackListDto": {
+        "required": [
+          "vesselId",
+          "label",
+          "notice",
+          "canCompile",
+          "items",
+          "hasMore"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "label": {
+            "type": "string"
+          },
+          "notice": {
+            "type": "string"
+          },
+          "canCompile": {
+            "type": "boolean"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditPackSummaryDto"
+            }
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AuditPackSummaryDto": {
+        "required": [
+          "id",
+          "asOf",
+          "createdAt",
+          "createdByMe",
+          "itemCount",
+          "manifestHash",
+          "previousPackId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "asOf": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdByMe": {
+            "type": "boolean"
+          },
+          "itemCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "manifestHash": {
+            "type": "string"
+          },
+          "previousPackId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
           }
         }
       },
@@ -24147,6 +26092,145 @@
             "items": {
               "type": "string"
             }
+          }
+        }
+      },
+      "CertificateRenewalOfflineContextDto": {
+        "required": [
+          "id",
+          "tenantId",
+          "actorId",
+          "vesselId",
+          "certificateId",
+          "renewalId",
+          "deviceId",
+          "keyId",
+          "challenge",
+          "policyVersion",
+          "policyDigest",
+          "authorityDigest",
+          "sourceVersion",
+          "operation",
+          "allowedParts",
+          "baseVersion",
+          "baseRevision",
+          "baseContent",
+          "state",
+          "ownerOptions",
+          "serverTime",
+          "expiresAt",
+          "retainUntil",
+          "maxRecords",
+          "maxEncryptedBytes",
+          "maxDeviceRecords",
+          "maxDeviceEncryptedBytes"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tenantId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "certificateId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "renewalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "deviceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "keyId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "challenge": {
+            "type": "string"
+          },
+          "policyVersion": {
+            "type": "string"
+          },
+          "policyDigest": {
+            "type": "string"
+          },
+          "authorityDigest": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string"
+          },
+          "allowedParts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "baseVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "baseRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "baseContent": {
+            "$ref": "#/components/schemas/CertificateRenewalContent"
+          },
+          "state": {
+            "type": "string"
+          },
+          "ownerOptions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "serverTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "retainUntil": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "maxRecords": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxEncryptedBytes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxDeviceRecords": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxDeviceEncryptedBytes": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -30498,6 +32582,231 @@
           }
         }
       },
+      "DataQualitySignal": {
+        "required": [
+          "kind",
+          "reason",
+          "material"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "material": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DataTrustCountsDto": {
+        "required": [
+          "missing",
+          "stale",
+          "conflicting",
+          "unverified",
+          "orphan"
+        ],
+        "type": "object",
+        "properties": {
+          "missing": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stale": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "conflicting": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unverified": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "orphan": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "DataTrustItemDto": {
+        "required": [
+          "subjectKind",
+          "subjectId",
+          "fieldPath",
+          "revision",
+          "title",
+          "provenance",
+          "sourceKind",
+          "observedAt",
+          "freshUntil",
+          "freshness",
+          "verification",
+          "disposition",
+          "signals",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "subjectKind": {
+            "type": "string"
+          },
+          "subjectId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "fieldPath": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "provenance": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sourceKind": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "observedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "freshUntil": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "freshness": {
+            "type": "string"
+          },
+          "verification": {
+            "type": "string"
+          },
+          "disposition": {
+            "type": "string"
+          },
+          "signals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DataQualitySignal"
+            }
+          },
+          "savedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "DataTrustPageDto": {
+        "required": [
+          "vesselId",
+          "asOf",
+          "state",
+          "disposition",
+          "readinessEffect",
+          "counts",
+          "items",
+          "profileFields",
+          "offset",
+          "limit",
+          "total",
+          "hasMore",
+          "withheld",
+          "truncated",
+          "sourceVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "asOf": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "state": {
+            "type": "string"
+          },
+          "disposition": {
+            "type": "string"
+          },
+          "readinessEffect": {
+            "type": "string"
+          },
+          "counts": {
+            "$ref": "#/components/schemas/DataTrustCountsDto"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DataTrustItemDto"
+            }
+          },
+          "profileFields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DataTrustItemDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "withheld": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "truncated": {
+            "type": "boolean"
+          },
+          "sourceVersion": {
+            "type": "string"
+          }
+        }
+      },
       "DecideParameterChange": {
         "required": [
           "expectedVersion",
@@ -32106,6 +34415,44 @@
         },
         "additionalProperties": false
       },
+      "DowntimeEvidenceOptionDto": {
+        "required": [
+          "id",
+          "revision",
+          "label"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "label": {
+            "type": "string"
+          }
+        }
+      },
+      "DowntimeEvidencePin": {
+        "required": [
+          "id",
+          "revision"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
       "DowntimeFact": {
         "required": [
           "state",
@@ -32227,6 +34574,241 @@
           },
           "qualification": {
             "type": "string"
+          }
+        }
+      },
+      "DowntimeLifecycleCommand": {
+        "required": [
+          "expectedVersion",
+          "action",
+          "reasonCode"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "action": {
+            "type": "string"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "authorityId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "evidence": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DowntimeEvidencePin"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "DowntimeLifecycleDto": {
+        "required": [
+          "state",
+          "claimEvidence",
+          "lossOfHireCandidate",
+          "allowedActions"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "claimEvidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DowntimeEvidencePin"
+            }
+          },
+          "lossOfHireCandidate": {
+            "type": "string"
+          },
+          "allowedActions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "DowntimeLifecycleEventDto": {
+        "required": [
+          "id",
+          "fromRevision",
+          "toRevision",
+          "action",
+          "fromState",
+          "toState",
+          "actorId",
+          "roleId",
+          "duty",
+          "reasonCode",
+          "evidence",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fromRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "toRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "action": {
+            "type": "string"
+          },
+          "fromState": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "toState": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "roleId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "duty": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "evidence": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DowntimeEvidencePin"
+              }
+            ]
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "DowntimeLifecycleViewDto": {
+        "required": [
+          "recordId",
+          "vesselId",
+          "revision",
+          "version",
+          "state",
+          "lossOfHireCandidate",
+          "claimEvidence",
+          "allowedActions",
+          "authorities",
+          "actorIsRecorder",
+          "missingRequired",
+          "evidenceOptions",
+          "events",
+          "qualifications"
+        ],
+        "type": "object",
+        "properties": {
+          "recordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "state": {
+            "type": "string"
+          },
+          "lossOfHireCandidate": {
+            "type": "string"
+          },
+          "claimEvidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DowntimeEvidencePin"
+            }
+          },
+          "allowedActions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipOpsAuthorityDto"
+            }
+          },
+          "actorIsRecorder": {
+            "type": "boolean"
+          },
+          "missingRequired": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidenceOptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DowntimeEvidenceOptionDto"
+            }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DowntimeLifecycleEventDto"
+            }
+          },
+          "qualifications": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -32481,6 +35063,16 @@
           },
           "engineeringInterval": {
             "$ref": "#/components/schemas/DowntimeIntervalObservation"
+          },
+          "lifecycle": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DowntimeLifecycleDto"
+              }
+            ]
           }
         }
       },
@@ -36780,6 +39372,107 @@
           }
         }
       },
+      "IndustryAssuranceCapabilitiesDto": {
+        "required": [
+          "canImport",
+          "canAccept",
+          "canCaptureEvidence",
+          "canLinkAction",
+          "canWriteMapping",
+          "mediaKinds",
+          "availableMediaKinds",
+          "fields",
+          "requiredFields"
+        ],
+        "type": "object",
+        "properties": {
+          "canImport": {
+            "type": "boolean"
+          },
+          "canAccept": {
+            "type": "boolean"
+          },
+          "canCaptureEvidence": {
+            "type": "boolean"
+          },
+          "canLinkAction": {
+            "type": "boolean"
+          },
+          "canWriteMapping": {
+            "type": "boolean"
+          },
+          "mediaKinds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "availableMediaKinds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "requiredFields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "IndustryAssurancePageDto": {
+        "required": [
+          "vesselId",
+          "classification",
+          "applicability",
+          "sourceVersion",
+          "inspections",
+          "mappings",
+          "capabilities",
+          "notice"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "classification": {
+            "type": "string"
+          },
+          "applicability": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "inspections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssuranceInspectionSummaryDto"
+            }
+          },
+          "mappings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssuranceMappingDto"
+            }
+          },
+          "capabilities": {
+            "$ref": "#/components/schemas/IndustryAssuranceCapabilitiesDto"
+          },
+          "notice": {
+            "type": "string"
+          }
+        }
+      },
       "JsonElement": { },
       "LegacyCrewImportCommand": {
         "required": [
@@ -40709,6 +43402,179 @@
             ]
           }
         }
+      },
+      "PortSofFinalizationDto": {
+        "required": [
+          "recordId",
+          "vesselId",
+          "revision",
+          "version",
+          "sofState",
+          "finalRevision",
+          "canFinalize",
+          "authorities",
+          "missingRequired",
+          "unresolvedReferences",
+          "events",
+          "qualifications"
+        ],
+        "type": "object",
+        "properties": {
+          "recordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "sofState": {
+            "type": "string"
+          },
+          "finalRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "canFinalize": {
+            "type": "boolean"
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipOpsAuthorityDto"
+            }
+          },
+          "missingRequired": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "unresolvedReferences": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PortSofFinalizationEventDto"
+            }
+          },
+          "qualifications": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "PortSofFinalizationEventDto": {
+        "required": [
+          "id",
+          "fromRevision",
+          "toRevision",
+          "actorId",
+          "roleId",
+          "duty",
+          "reasonCode",
+          "acknowledgedUnresolved",
+          "signatureState",
+          "recordHash",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fromRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "toRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "roleId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "duty": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "acknowledgedUnresolved": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "signatureState": {
+            "type": "string"
+          },
+          "recordHash": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PortSofFinalizeCommand": {
+        "required": [
+          "expectedVersion",
+          "authorityId",
+          "reasonCode",
+          "acknowledgedUnresolved"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "acknowledgedUnresolved": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
       },
       "PortTimelineAssessment": {
         "required": [
@@ -48323,6 +51189,27 @@
         },
         "additionalProperties": false
       },
+      "ShipOpsAuthorityDto": {
+        "required": [
+          "id",
+          "roleId",
+          "duty"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "roleId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "duty": {
+            "type": "string"
+          }
+        }
+      },
       "ShipOpsCapabilitiesDto": {
         "required": [
           "vesselId",
@@ -54062,6 +56949,261 @@
           }
         }
       },
+      "TugHistoryDailyLogDto": {
+        "required": [
+          "id",
+          "tugId",
+          "logDate",
+          "watch",
+          "state",
+          "linkedToExecution"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tugId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "logDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "watch": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "linkedToExecution": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TugHistoryExecutionDto": {
+        "required": [
+          "id",
+          "tugId",
+          "state",
+          "verificationState",
+          "startedAt",
+          "endedAt",
+          "durationMinutes",
+          "startedBy",
+          "endedBy",
+          "verifiedBy",
+          "sequence",
+          "evidenceEvents",
+          "lastEventHash"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tugId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "verificationState": {
+            "type": "string"
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "durationMinutes": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "startedBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "endedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "verifiedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "evidenceEvents": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastEventHash": {
+            "type": "string"
+          }
+        }
+      },
+      "TugHistoryItemDto": {
+        "required": [
+          "jobId",
+          "vesselId",
+          "jobNumber",
+          "jobStatus",
+          "jobType",
+          "assistedVessel",
+          "operationArea",
+          "at",
+          "cancelledAt",
+          "outcome",
+          "evidence",
+          "planState",
+          "briefingState",
+          "executions",
+          "dailyLogs",
+          "safetyEvents"
+        ],
+        "type": "object",
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobNumber": {
+            "type": "string"
+          },
+          "jobStatus": {
+            "type": "string"
+          },
+          "jobType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "assistedVessel": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "operationArea": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancelledAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "string"
+          },
+          "planState": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "briefingState": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "executions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugHistoryExecutionDto"
+            }
+          },
+          "dailyLogs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugHistoryDailyLogDto"
+            }
+          },
+          "safetyEvents": {
+            "type": "string"
+          }
+        }
+      },
+      "TugHistoryPageDto": {
+        "required": [
+          "items",
+          "nextCursor",
+          "outcomes",
+          "readAt"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugHistoryItemDto"
+            }
+          },
+          "nextCursor": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "outcomes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "readAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletion": {
+            "type": "string",
+            "default": "NoSilentDeletion;CancelledJobsRemainVisible"
+          },
+          "sourceVersion": {
+            "type": "string",
+            "default": "18.01:row92;06.01:p236;13.02:p1131;15.01:p1609"
+          }
+        }
+      },
       "TugLifecycleCommand": {
         "required": [
           "expectedVersion"
@@ -54240,6 +57382,334 @@
               "null",
               "string"
             ],
+            "format": "date-time"
+          }
+        }
+      },
+      "TugOperationsConflictDto": {
+        "required": [
+          "commandId",
+          "operation",
+          "resourceId",
+          "conflictFields",
+          "choices",
+          "resolved",
+          "captured",
+          "atConflict",
+          "current"
+        ],
+        "type": "object",
+        "properties": {
+          "commandId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "operation": {
+            "type": "string"
+          },
+          "resourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "conflictFields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "choices": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "resolved": {
+            "type": "boolean"
+          },
+          "captured": {
+            "$ref": "#/components/schemas/JsonElement"
+          },
+          "atConflict": {
+            "$ref": "#/components/schemas/TugOperationsServerState"
+          },
+          "current": {
+            "$ref": "#/components/schemas/TugOperationsServerState"
+          }
+        }
+      },
+      "TugOperationsOfflineCapabilityDto": {
+        "required": [
+          "vesselId",
+          "state",
+          "operations",
+          "onlineOnly",
+          "snapshots"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "operations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "onlineOnly": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "snapshots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugOperationsSnapshotLeaseDto"
+            }
+          }
+        }
+      },
+      "TugOperationsOfflineResult": {
+        "required": [
+          "commandId",
+          "operation",
+          "result",
+          "resourceId",
+          "baseVersion",
+          "serverVersion",
+          "conflictFields",
+          "choices",
+          "parentCommandId",
+          "receivedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "commandId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "operation": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          },
+          "resourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "baseVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "serverVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "conflictFields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "choices": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "parentCommandId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "receivedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TugOperationsServerState": {
+        "required": [
+          "revision",
+          "hash",
+          "state",
+          "sequence",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "hash": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "state": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sequence": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
+      "TugOperationsSnapshotDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "jobId",
+          "policyVersion",
+          "issuedAt",
+          "expiresAt",
+          "snapshotHash",
+          "job",
+          "briefing",
+          "executions",
+          "dailyLogs",
+          "writableTugs",
+          "operations",
+          "onlineOnly",
+          "watches"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "policyVersion": {
+            "type": "string"
+          },
+          "issuedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "snapshotHash": {
+            "type": "string"
+          },
+          "job": {
+            "$ref": "#/components/schemas/TugSnapshotJob"
+          },
+          "briefing": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TugSnapshotBriefing"
+              }
+            ]
+          },
+          "executions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugSnapshotExecution"
+            }
+          },
+          "dailyLogs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugSnapshotDailyLog"
+            }
+          },
+          "writableTugs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "operations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "onlineOnly": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "watches": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "classification": {
+            "type": "string",
+            "default": "ReadOnlyOperationalSnapshot;NotAReleaseOrGoDecision"
+          },
+          "sourceVersion": {
+            "type": "string",
+            "default": "18.01:row93;63.03:mobile-task-center;06.01:p233-236;DEV-033/034/035"
+          }
+        }
+      },
+      "TugOperationsSnapshotLeaseDto": {
+        "required": [
+          "id",
+          "jobId",
+          "issuedAt",
+          "expiresAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "issuedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
             "format": "date-time"
           }
         }
@@ -55118,6 +58588,194 @@
           }
         },
         "additionalProperties": false
+      },
+      "TugSnapshotBriefing": {
+        "required": [
+          "id",
+          "revision",
+          "state",
+          "contentHash",
+          "participant",
+          "acknowledged",
+          "acknowledgementState"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "contentHash": {
+            "type": "string"
+          },
+          "participant": {
+            "type": "boolean"
+          },
+          "acknowledged": {
+            "type": "boolean"
+          },
+          "acknowledgementState": {
+            "type": "string"
+          }
+        }
+      },
+      "TugSnapshotDailyLog": {
+        "required": [
+          "id",
+          "tugId",
+          "logDate",
+          "watch",
+          "state",
+          "version",
+          "revision",
+          "content"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tugId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "logDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "watch": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "content": {
+            "$ref": "#/components/schemas/TugDailyLogContent"
+          }
+        }
+      },
+      "TugSnapshotExecution": {
+        "required": [
+          "id",
+          "tugId",
+          "state",
+          "sequence",
+          "hash",
+          "canRecord",
+          "towlineConnected",
+          "recordableKinds"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tugId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "canRecord": {
+            "type": "boolean"
+          },
+          "towlineConnected": {
+            "type": "boolean"
+          },
+          "recordableKinds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "TugSnapshotJob": {
+        "required": [
+          "id",
+          "jobNumber",
+          "status",
+          "revision",
+          "assistedVessel",
+          "jobType",
+          "operationArea",
+          "requestedStart",
+          "requestedEnd"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobNumber": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "assistedVessel": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "jobType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "operationArea": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "requestedStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "requestedEnd": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
       },
       "VesselCertificateContent": {
         "required": [
@@ -57693,6 +61351,12 @@
       "name": "DowntimeOriginReader"
     },
     {
+      "name": "DataTrustEndpoints"
+    },
+    {
+      "name": "TugOperationHistoryEndpoints"
+    },
+    {
       "name": "MembershipEndpoints"
     },
     {
@@ -57771,6 +61435,15 @@
       "name": "SafetyEventOfflineEndpoints"
     },
     {
+      "name": "AuditPackEndpoints"
+    },
+    {
+      "name": "IndustryAssuranceEndpoints"
+    },
+    {
+      "name": "CertificateRenewalOfflineEndpoints"
+    },
+    {
       "name": "DepartureReadinessEndpoints"
     },
     {
@@ -57805,6 +61478,9 @@
     },
     {
       "name": "DrydockEndpoints"
+    },
+    {
+      "name": "TugOperationsOfflineEndpoints"
     },
     {
       "name": "ParameterEndpoints"

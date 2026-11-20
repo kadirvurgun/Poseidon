@@ -6,7 +6,7 @@ import { timestamp } from './date-validation'
 // The index carries command metadata only; captured/server values are read from each owning
 // source's protected conflict detail. An extra member, a value field or a foreign vessel is a
 // contract breach, never ignored.
-export type SyncConflictSource = 'crewAssignment' | 'tugPlan' | 'dailyRecord' | 'workOrderEvidence'
+export type SyncConflictSource = 'crewAssignment' | 'tugPlan' | 'dailyRecord' | 'workOrderEvidence' | 'tugOperations' | 'certificateRenewal'
 export type SyncConflictState = 'Open' | 'Superseded' | 'Resolved'
 export type SyncConflictItem = {
   source: SyncConflictSource; resourceId: string; resourceKind: string | null; enrollmentId: string; commandId: string
@@ -18,7 +18,9 @@ export type SyncConflictPage = {
   items: SyncConflictItem[]; offset: number; hasMore: boolean
 }
 export const conflictPageSize = 25
-const sources: readonly string[] = ['crewAssignment', 'tugPlan', 'dailyRecord', 'workOrderEvidence']
+const sources: readonly string[] = ['crewAssignment', 'tugPlan', 'dailyRecord', 'workOrderEvidence', 'tugOperations', 'certificateRenewal']
+// S10 WP-B DEV-092: tug operation captures carry their closed operation code; a create capture has base version 0.
+const tugOperations: readonly string[] = ['tug.briefing.ack.v1', 'tug.execution.event.v1', 'tug.daily.entry.v1']
 const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v)
 const exact = (v: unknown, keys: string[]): v is Record<string, unknown> => object(v) && Object.keys(v).length === keys.length && keys.every(k => Object.hasOwn(v, k))
 const version = (v: unknown) => typeof v === 'number' && Number.isSafeInteger(v) && v >= 1 && v <= 4294967295
@@ -28,8 +30,11 @@ function decodeItem(v: unknown): SyncConflictItem {
   if (!exact(v, ['source', 'resourceId', 'resourceKind', 'enrollmentId', 'commandId', 'baseVersion', 'serverVersionAtConflict',
     'capturedAt', 'receivedAt', 'state', 'resolutionCommandId', 'resolutionResult']) ||
     typeof v.source !== 'string' || !sources.includes(v.source) || !isGuid(v.resourceId) || !isGuid(v.enrollmentId) || !isGuid(v.commandId) ||
-    (v.source === 'dailyRecord' ? typeof v.resourceKind !== 'string' || !['Noon', 'Deck', 'Engine'].includes(v.resourceKind) : v.resourceKind !== null) ||
-    !version(v.baseVersion) || !version(v.serverVersionAtConflict) ||
+    (v.source === 'dailyRecord' ? typeof v.resourceKind !== 'string' || !['Noon', 'Deck', 'Engine'].includes(v.resourceKind)
+      : v.source === 'tugOperations' ? typeof v.resourceKind !== 'string' || !tugOperations.includes(v.resourceKind) : v.resourceKind !== null) ||
+    (v.source === 'tugOperations' ? !Number.isSafeInteger(v.baseVersion) || (v.baseVersion as number) < 0 || (v.baseVersion as number) > 4294967295 ||
+      !Number.isSafeInteger(v.serverVersionAtConflict) || (v.serverVersionAtConflict as number) < 0 || (v.serverVersionAtConflict as number) > 4294967295
+      : !version(v.baseVersion) || !version(v.serverVersionAtConflict)) ||
     v.capturedAt !== null && !timestamp(v.capturedAt) || !timestamp(v.receivedAt) ||
     typeof v.state !== 'string' || !['Open', 'Superseded', 'Resolved'].includes(v.state)) return fail()
   // Open has no successor; Superseded only by a new MaterialConflict; Resolved only by a non-conflict outcome.

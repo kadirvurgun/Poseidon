@@ -29,6 +29,8 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             CommandReceipt r when r.Action is "CompanyCreate" or "CompanyUpdate" or "SourceDraftSave" or "RequirementDraftSave" => "Tenant",
             RiskTemplate or RiskTemplateRevision or RiskTemplateDecision or RiskTemplateSuggestion or RiskMethod => "Tenant",
             RiskCommandReceipt { VesselId: null } => "Tenant",
+            // S10 WP-A DEV-113: an import mapping is tenant configuration (no vessel); its receipt carries no vessel either.
+            AssuranceImportMapping or AssuranceReceipt { VesselId: null } => "Tenant",
             ApplicabilityReceipt r when r.Action is "author" or "review" => "Tenant",
             _ => "Unresolved"
         };
@@ -63,7 +65,9 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if (S9WpcProjection(entry) is { } s9wpc) return s9wpc;
         if (TowageProjection(entry) is { } towage) return towage;
         if (SafetyEventProjection(entry) is { } safety) return safety;
+        if (AssuranceProjection(entry) is { } assurance) return assurance;
         if (FieldOperationsProjection(entry) is { } field) return field;
+        if (TugOperationsOfflineProjection(entry) is { } tugOffline) return tugOffline;
         if(entry.Entity is Defect defect)
             return new(defect.VesselId,defect.Id,"Defect",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,defect.Revision,
                 Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(defect.Revision)),Field("Binding",null,"OwnerReference")));
@@ -80,16 +84,27 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             return new(work_orderReceipt.VesselId,work_orderReceipt.WorkOrderId,"WorkOrderReceipt",null,work_orderReceipt.Revision,Fields(Field("Binding",null,"CommittedResource")));
         if(entry.Entity is Downtime downtime)
             return new(downtime.VesselId,downtime.Id,"Downtime",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,downtime.Revision,
-                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(downtime.Revision)),Field("Binding",null,"OwnerReference")));
+                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(downtime.Revision)),Field("Binding",null,"OwnerReference"),
+                    Field("ClosureState",LifecycleState(entry,nameof(Downtime.ClosureState),true),LifecycleState(entry,nameof(Downtime.ClosureState),false)),Field("ClaimEvidence",null,null,"ValuesWithheld")));
         if(entry.Entity is DowntimeRevision downtimeRevision)
             return new(downtimeRevision.VesselId,downtimeRevision.DowntimeId,"DowntimeRevision",null,downtimeRevision.Revision,Fields(Field("Revision",null,Number(downtimeRevision.Revision)),Field("Binding",null,"OwnerReference")));
         if(entry.Entity is DowntimeReceipt downtimeReceipt)
             return new(downtimeReceipt.VesselId,downtimeReceipt.DowntimeId,"DowntimeReceipt",null,downtimeReceipt.Revision,Fields(Field("Binding",null,"CommittedResource")));
         if(entry.Entity is ShipOperation shipOperation)
             return new(shipOperation.VesselId,shipOperation.Id,"ShipOperation",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,shipOperation.Revision,
-                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(shipOperation.Revision)),Field("Binding",null,"OwnerReference")));
+                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(shipOperation.Revision)),Field("Binding",null,"OwnerReference"),
+                    Field("SofState",LifecycleState(entry,nameof(ShipOperation.SofState),true),LifecycleState(entry,nameof(ShipOperation.SofState),false))));
         if(entry.Entity is ShipOperationRevision shipRevision)
             return new(shipRevision.VesselId,shipRevision.RecordId,"ShipOperationRevision",null,shipRevision.Revision,Fields(Field("Revision",null,Number(shipRevision.Revision)),Field("Binding",null,"OwnerReference")));
+        // DEV-101/102 lifecycle: closed action/state/duty codes only; detail JSON withheld.
+        // The event row is append-only (Added): it has no prior revision of its own. The
+        // record's from/to revision stays in the summary field, never in BeforeRevision.
+        if(entry.Entity is ShipOpsLifecycleEvent opsLifecycle)
+            return new(opsLifecycle.VesselId,opsLifecycle.RecordId,"ShipOpsLifecycleEvent",null,opsLifecycle.ToRevision,Fields(
+                Field("Action",null,Closed(opsLifecycle.Action,["FINALIZE",..Poseidon.Domain.ShipOperationsLifecycle.DowntimeActions])),
+                Field("State",opsLifecycle.FromState==null?null:Closed(opsLifecycle.FromState,LifecycleStates),opsLifecycle.ToState==null?null:Closed(opsLifecycle.ToState,LifecycleStates)),
+                Field("Duty",null,opsLifecycle.Duty==null?null:Closed(opsLifecycle.Duty,Poseidon.Domain.ShipOperationsLifecycle.DowntimeDuties)),
+                Field("Detail",null,null,"ValuesWithheld"),Field("Revision",Number(opsLifecycle.FromRevision),Number(opsLifecycle.ToRevision))));
         if(entry.Entity is ShipOperationReceipt shipReceipt)
             return new(shipReceipt.VesselId,shipReceipt.RecordId,"ShipOperationReceipt",null,null,Fields(Field("Binding",null,"CommittedResource")));
         if(entry.Entity is VesselCertificate certificate)
@@ -150,6 +165,17 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             return new(workOrderOutcome.VesselId,workOrderOutcome.WorkOrderId,"WorkOrderOfflineOutcome",null,workOrderOutcome.Revision,
                 Fields(Field("Binding",null,"OwnerReference"),Field("Outcome",null,Closed(workOrderOutcome.Result,"Committed","MaterialConflict","ServerRetained")),
                     Field("ReasonCode",null,workOrderOutcome.ParentCommandId==null?null:workOrderOutcome.Result=="ServerRetained"?"CURRENT_SERVER_RETAINED":"INPUT_CORRECTED")));
+        // S10 WP-C DEV-066: certificate renewal offline lineage; closed codes only, protected values withheld.
+        if(entry.Entity is CertificateRenewalOfflineEnrollment renewalEnrollment)
+            return new(renewalEnrollment.VesselId,renewalEnrollment.RenewalId,"CertificateRenewalOfflineEnrollment",null,null,
+                Fields(Field("Binding",entry.State==EntityState.Added?null:"OwnerReference","OwnerReference")));
+        if(entry.Entity is CertificateRenewalOfflineLifecycle renewalLifecycle)
+            return new(renewalLifecycle.VesselId,renewalLifecycle.RenewalId,"CertificateRenewalOfflineLifecycle",null,null,
+                Fields(Field("Binding",null,"OwnerReference"),Field("Lifecycle",null,Closed(renewalLifecycle.Action,CertificateRenewalOfflineStorage.LifecycleActions))));
+        if(entry.Entity is CertificateRenewalOfflineOutcome renewalOutcome)
+            return new(renewalOutcome.VesselId,renewalOutcome.RenewalId,"CertificateRenewalOfflineOutcome",null,renewalOutcome.Revision,
+                Fields(Field("Binding",null,"OwnerReference"),Field("Outcome",null,Closed(renewalOutcome.Result,CertificateRenewalOfflineStorage.Results)),
+                    Field("ReasonCode",null,renewalOutcome.ParentCommandId==null?null:renewalOutcome.Result=="ServerRetained"?"CURRENT_SERVER_RETAINED":"INPUT_CORRECTED")));
         if(entry.Entity is CriticalSpare spare)
             return new(spare.VesselId,spare.Id,"CriticalSpare",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,spare.Revision,
                 Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(spare.Revision)),Field("Binding",null,"OwnerReference")));
@@ -987,6 +1013,60 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             _ => null
         };
     }
+    // S10 WP-A (DEV-064/065/113): pack/item kinds, states, revisions and hashes-as-references only. Observation text,
+    // inspector comments, column headers, reasons and file checksums are never copied; no actor identity in the summary.
+    private static AuditMetadata? AssuranceProjection(EntityEntry entry)
+    {
+        long? Before(string property) => entry.State == EntityState.Added ? null : (long?)entry.Property(property).OriginalValue;
+        string? BeforeState(string property, string[] allowed) => entry.State == EntityState.Added ? null : Closed((string)entry.Property(property).OriginalValue!, allowed);
+        return entry.Entity switch
+        {
+            AuditPackManifest m => new(m.VesselId, m.Id, "AuditPackManifest", null, 1, Fields(
+                Field("Label", null, Closed(m.Label, Poseidon.Domain.AuditPackPolicy.Label)), Field("ItemCount", null, Number(m.ItemCount)),
+                Field("ManifestHash", null, null, "RevisionReference"), Field("Binding", null, "OwnerReference"))),
+            AuditPackItem i => new(i.VesselId, i.PackId, "AuditPackItem", null, i.Revision, Fields(
+                Field("Kind", null, Closed(i.Kind, Poseidon.Domain.AuditPackPolicy.Kinds)), Field("State", null, Closed(i.State, Poseidon.Domain.AuditPackPolicy.States)),
+                Field("Revision", null, Number(i.Revision)), Field("Hash", null, null, "RevisionReference"))),
+            AssuranceImportMapping m => new(null, m.Id, "AssuranceImportMapping", null, m.Version, Fields(
+                Field("Version", null, Number(m.Version)), Field("Bindings", null, null, "ValuesWithheld"), Field("Hash", null, null, "RevisionReference"))),
+            AssuranceInspection x => new(x.VesselId, x.Id, "AssuranceInspection", Before("Revision"), x.Revision, Fields(
+                Field("Revision", Before("Revision") is { } r ? Number(r) : null, Number(x.Revision)),
+                Field("State", null, Closed(x.State, Poseidon.Domain.AssurancePolicy.InspectionStates)),
+                Field("Applicability", null, Closed(x.Applicability, Poseidon.Domain.AssurancePolicy.Applicable, Poseidon.Domain.AssurancePolicy.ReviewRequired)),
+                Field("Reference", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
+            // A staged import has exactly two record revisions: 1 = PENDING_REVIEW (Added), 2 = decided once (Modified,
+            // AssuranceStorage.Guard). The decision row therefore proves before/after as 1 -> 2; the mapping version stays a summary field.
+            AssuranceImport x => new(x.VesselId, x.InspectionId, "AssuranceImport", entry.State == EntityState.Added ? null : 1, x.State == "PENDING_REVIEW" ? 1 : 2, Fields(
+                Field("ImportState", BeforeState("State", Poseidon.Domain.AssurancePolicy.ImportStates), Closed(x.State, Poseidon.Domain.AssurancePolicy.ImportStates)),
+                Field("MappingVersion", null, Number(x.MappingVersion)), Field("Content", null, null, "RevisionReference"), Field("Reason", null, null, "ValuesWithheld"))),
+            AssuranceInspectionItem x => new(x.VesselId, x.InspectionId, "AssuranceInspectionItem", null, x.Revision, Fields(
+                Field("Revision", null, Number(x.Revision)), Field("Change", null, Closed(x.ChangeKind, Poseidon.Domain.AssurancePolicy.New, Poseidon.Domain.AssurancePolicy.Changed)),
+                Field("ContentJson", null, null, "RevisionReference"))),
+            AssuranceFinding x => new(x.VesselId, x.Id, "AssuranceFinding", Before("Revision"), x.Revision, Fields(
+                Field("Revision", Before("Revision") is { } r ? Number(r) : null, Number(x.Revision)),
+                Field("FindingState", null, Closed(x.State, Poseidon.Domain.AssurancePolicy.FindingStates)),
+                Field("ActionLinkState", BeforeState("ActionLinkState", Poseidon.Domain.AssurancePolicy.LinkStates), Closed(x.ActionLinkState, Poseidon.Domain.AssurancePolicy.LinkStates)),
+                Field("Binding", null, "OwnerReference"))),
+            AssuranceEvidence x => new(x.VesselId, x.InspectionId, "AssuranceEvidence", null, x.FileRevision, Fields(
+                Field("MediaKind", null, Closed(x.MediaKind, Poseidon.Domain.AssurancePolicy.MediaKinds)), Field("Origin", null, Closed(x.Origin, Poseidon.Domain.AssurancePolicy.Origins)),
+                Field("Verification", null, Closed(x.Verification, "UNVERIFIED")), Field("File", null, null, "RevisionReference"))),
+            AssuranceReceipt c => new(c.VesselId, c.ResourceId, "AssuranceReceipt", null, c.Revision, Fields(
+                Field("Action", null, Closed(c.Action, AssuranceStorage.ReceiptActions)), Field("Revision", null, Number(c.Revision)), Field("Binding", null, "CommittedResource"))),
+            _ => null
+        };
+    }
+    // S10 WP-B (DEV-092): snapshot leases and offline outcomes. Captured values, conflict context, outcome bodies,
+    // snapshot hashes and actor identities are withheld; only closed operation/result codes and revisions are kept.
+    private static AuditMetadata? TugOperationsOfflineProjection(EntityEntry entry) => entry.Entity switch
+    {
+        TugOperationOfflineSnapshot s => new(s.VesselId, s.JobId, "TugOperationOfflineSnapshot", null, null,
+            Fields(Field("Binding", null, "OwnerReference"), Field("Lease", null, null, "ValuesWithheld"))),
+        TugOperationOfflineOutcome o => new(o.VesselId, o.ResourceId, "TugOperationOfflineOutcome", null, o.ServerVersion,
+            Fields(Field("Operation", null, Closed(o.Operation, Poseidon.Domain.TugOperationsOfflineRules.CaptureOperations)),
+                Field("Outcome", null, Closed(o.Result, Poseidon.Domain.TugOperationsOfflineRules.Results)),
+                Field("ProtectedContext", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
+        _ => null
+    };
     internal static readonly string[] RiskOperations = ["RiskAssessmentCreate", "RiskAssessmentUpdate", "RiskAssessmentSubmit", "RiskAssessmentReview",
         "RiskAssessmentAmend", "RiskAssessmentAcknowledge", "RiskTemplateCreate", "RiskTemplateUpdate", "RiskTemplateSubmit", "RiskTemplateReview",
         "RiskTemplateRevise", "RiskTemplateSuggest", "RiskTemplateSuggestionReview", "RiskMethodCreate", "RiskMethodPublish"];
@@ -1045,6 +1125,11 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         };
     }
 
+    private static readonly string[] LifecycleStates = ["DRAFT", "FINAL", "NOT_SUBMITTED", "OPEN", "IN_REVIEW", "VERIFIED", "CLOSED"];
+    private static string? LifecycleState(EntityEntry e, string property, bool before) {
+        var value = before ? (e.State == EntityState.Added ? null : e.Property(property).OriginalValue) : e.Property(property).CurrentValue;
+        return value is string text ? Closed(text, LifecycleStates) : null;
+    }
     private static string Closed(string value, params string[] allowed) => allowed.Contains(value, StringComparer.Ordinal)
         ? value : throw new InvalidOperationException("Invalid controlled audit state.");
 }

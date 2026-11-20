@@ -41,6 +41,9 @@ public static class WorkspaceEndpoints
         if (SafetyEventAccess.Any(actor)) destinations = [.. destinations, new("safety-events", "/app/safety-events")];
         // S9 WP-D DEV-111: same server predicate as /api/v1/drydock-packages.
         if (DrydockEndpoints.CanRead(actor)) destinations = [.. destinations, new("drydock-planning", "/app/drydock-planning")];
+        // S10 WP-A DEV-065 / DEV-113: same server predicates as GET /api/v1/data-trust and GET /api/v1/industry-assurance.
+        if (DataTrustSignalSource.CanRead(actor)) destinations = [.. destinations, new("data-trust-center", "/app/data-trust-center")];
+        if (AssuranceAccess.Reader(actor)) destinations = [.. destinations, new("industry-assurance", "/app/industry-assurance")];
         if (CertificateReader.Read(actor)) destinations = [.. destinations,
             new("certificate-command-center", "/app/certificate-command-center"), new("renewal-workflow", "/app/renewal-workflow"),
             // DEV-104/DEV-112: same server read authority as their endpoints (certificate.read).
@@ -51,7 +54,9 @@ public static class WorkspaceEndpoints
             // S8 WP-D DEV-087/088: towage plan and towage risk & briefing screens.
             new("towage-plan", "/app/towage-plan"), new("towage-risk-briefing", "/app/towage-risk-briefing"),
             // S9 WP-D DEV-089/090: towage execution console and tug daily log (same CanReadTug predicate as the endpoints).
-            new("towage-execution", "/app/towage-execution"), new("tug-daily-log", "/app/tug-daily-log")];
+            new("towage-execution", "/app/towage-execution"), new("tug-daily-log", "/app/tug-daily-log"),
+            // S10 WP-B DEV-091/092/119: operation history, offline operations and demo journey (same CanReadTug predicate).
+            new("tug-operation-history", "/app/tug-operation-history"), new("tug-operations-offline", "/app/tug-operations-offline"), new("tug-demo-journey", "/app/tug-demo-journey")];
         if (actor.CanSeeShip) {
             if (ShipOperationsEndpoints.CanRead(actor,"Fuel")) destinations = [.. destinations,new("fuel-bunker-log","/app/fuel-bunker-log")];
             if (ShipOperationsEndpoints.CanRead(actor,"Port")) destinations = [.. destinations,new("port-activity-sof","/app/port-activity-sof")];

@@ -50,7 +50,7 @@ export function vesselContextHref(path: string, vessel: string, kind: 'Ship' | '
     const family = /^\/app\/(audit-ready|departure-signoff|pms-command-center|service-engineer-report|voice-event-draft|document-compare|work-order-center|defects|crew-roster|equipment-hierarchy|maintenance-plan|excel-migration)(?:\/|$)/.exec(path);
     if (family)
         return `/app/${family[1]}/${id}`;
-    const tug = /^\/app\/(tug-command|tug-job-board|tug-job-intake|tug-assignment|tug-readiness|tug-equipment-readiness|tug-crew-readiness|towage-plan|towage-risk-briefing|towage-execution|tug-daily-log)(?:\/|$)/.exec(path);
+    const tug = /^\/app\/(tug-command|tug-job-board|tug-job-intake|tug-assignment|tug-readiness|tug-equipment-readiness|tug-crew-readiness|towage-plan|towage-risk-briefing|towage-execution|tug-daily-log|tug-operation-history|tug-operations-offline|tug-demo-journey)(?:\/|$)/.exec(path);
     if (tug && kind === 'Tug')
         return `/app/${tug[1]}?vessel=${id}`;
     // S9 WP-D DEV-111: drydock planning applies to ships and tugs alike.

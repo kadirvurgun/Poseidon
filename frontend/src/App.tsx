@@ -9,8 +9,11 @@ import { TugWorkspace } from './product/TugWorkspace';
 import { TugReadinessWorkspace } from './product/TugReadinessWorkspace';
 import { TowageWorkspace } from './product/TowageWorkspace';
 import { FieldOpsWorkspace } from './product/FieldOpsWorkspace';
+import { TugOperationsWorkspace } from './product/TugOperationsWorkspace';
 import { HighRiskWorkWorkspace } from './product/HighRiskWorkWorkspace';
 import { SafetyEventsWorkspace } from './product/SafetyEventsWorkspace';
+import { DataTrustCenterWorkspace } from './product/DataTrustCenterWorkspace';
+import { IndustryAssuranceWorkspace } from './product/IndustryAssuranceWorkspace';
 import { TechnicalWorkspace } from './product/TechnicalWorkspace';
 import { CrewWorkspace } from './product/CrewWorkspace';
 import { CrewComplianceWorkspace } from './product/CrewComplianceWorkspace';
@@ -36,10 +39,14 @@ import { RiskTemplateLibraryWorkspace } from './product/RiskTemplateLibraryWorks
 import { CriticalSparesWorkspace } from './product/CriticalSparesWorkspace';
 import { AuditReadyWorkspace } from './product/AuditReadyWorkspace';
 import { SurveyWorkspace } from './product/SurveyWorkspace';
+import { ShipDemoJourney } from './product/ShipDemoJourney';
 import { AppearanceControls } from './theme/AppearanceControls';
 type Connection = 'loading' | 'available' | 'error';
 const content = localizedCopy("App_tsx_content");
 export function App() {
+    // S10 WP-C DEV-120 ship buyer demo journey (read-only guide over existing screens).
+    if (/^\/app\/ship-demo(?:\/|$)/.test(window.location.pathname))
+        return <ShipDemoJourney />;
     if (/^\/app\/(fuel-bunker-log|port-activity-sof)(?:\/|$)/.test(window.location.pathname))
         return <ShipOperationsWorkspace />;
     if (/^\/app\/(certificate-command-center|renewal-workflow)(?:\/|$)/.test(window.location.pathname))
@@ -65,6 +72,9 @@ export function App() {
     // S9 WP-D DEV-089/090/111 towage execution console, tug daily log and drydock planning.
     if (/^\/app\/(towage-execution|tug-daily-log|drydock-planning)(?:\/|$)/.test(window.location.pathname))
         return <FieldOpsWorkspace />;
+    // S10 WP-B DEV-091/092/119 tug operation history, offline tug operations and tug demo journey.
+    if (/^\/app\/(tug-operation-history|tug-operations-offline|tug-demo-journey)(?:\/|$)/.test(window.location.pathname))
+        return <TugOperationsWorkspace />;
     if (/^\/app\/towage-(plan|risk-briefing)(?:\/|$)/.test(window.location.pathname))
         return <TowageWorkspace />;
     if (/^\/app\/high-risk-work(?:\/|$)/.test(window.location.pathname))
@@ -72,6 +82,11 @@ export function App() {
     // S9 WP-B DEV-060/061 safety events, investigation and action tracking.
     if (/^\/app\/safety-events(?:\/|$)/.test(window.location.pathname))
         return <SafetyEventsWorkspace />;
+    // S10 WP-A DEV-065 data trust center and DEV-113 industry assurance (SIRE 2.0 synthetic schema).
+    if (/^\/app\/data-trust-center(?:\/|$)/.test(window.location.pathname))
+        return <DataTrustCenterWorkspace />;
+    if (/^\/app\/industry-assurance(?:\/|$)/.test(window.location.pathname))
+        return <IndustryAssuranceWorkspace />;
     if (/^\/app\/tug-(command|job-board|job-intake|job-detail)(?:\/|$)/.test(window.location.pathname))
         return <TugWorkspace />;
     if (/^\/app\/(equipment-hierarchy|maintenance-plan)\//.test(window.location.pathname))

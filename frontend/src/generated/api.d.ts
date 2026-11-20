@@ -794,6 +794,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/data-trust": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetDataTrust"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-operation-history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["TugOperationHistoryList"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/memberships/current": {
         parameters: {
             query?: never;
@@ -3915,6 +3947,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/port-activity-sof/{id}/finalization": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PortSofFinalization"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/port-activity-sof/{id}/finalize": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["PortSofFinalize"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/port-activity-sof/{id}": {
         parameters: {
             query?: never;
@@ -5986,6 +6050,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/operational-downtime/{id}/lifecycle": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["DowntimeLifecycle"];
+        put?: never;
+        post: operations["DowntimeLifecycleCommand"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/hse/risk-assessments": {
         parameters: {
             query?: never;
@@ -6554,6 +6634,230 @@ export interface paths {
             cookie?: never;
         };
         get: operations["SafetyEventOfflineHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/audit-ready/packs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ListAuditPacks"];
+        put?: never;
+        post: operations["AuditPackCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/audit-ready/packs/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetAuditPack"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/audit-ready/packs/{id}/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ExportAuditPack"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/industry-assurance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetIndustryAssurance"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/industry-assurance/inspections/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["GetAssuranceInspection"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/industry-assurance/mappings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AssuranceMappingCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/industry-assurance/imports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AssuranceImportStage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/industry-assurance/imports/{id}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AssuranceImportDecide"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/industry-assurance/inspections/{id}/evidence": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AssuranceEvidenceCapture"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/industry-assurance/findings/{id}/action-link": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AssuranceFindingLink"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/certificate-renewal-offline/{renewal}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CertificateRenewalOfflineInventory"];
+        put?: never;
+        post: operations["CertificateRenewalOfflineEnroll"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/certificate-renewal-offline/{renewal}/{enrollment}/{action}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CertificateRenewalOfflineAction"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/certificate-renewal-offline/{renewal}/{enrollment}/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CertificateRenewalOfflineHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/certificate-renewal-offline/{renewal}/{enrollment}/conflicts/{command}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CertificateRenewalOfflineConflict"];
         put?: never;
         post?: never;
         delete?: never;
@@ -7858,6 +8162,86 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/tug-operations-offline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["TugOperationsOfflineCapability"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-operations-offline/snapshots": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TugOperationsOfflineSnapshot"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-operations-offline/replay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TugOperationsOfflineReplay"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-operations-offline/outcomes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["TugOperationsOfflineOutcomes"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-operations-offline/conflicts/{command}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["TugOperationsOfflineConflict"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/parameter-definitions": {
         parameters: {
             query?: never;
@@ -8417,11 +8801,287 @@ export interface components {
             /** Format: uint32 */
             version?: number;
         };
+        AssuranceColumnBinding: {
+            header: string;
+            field: string;
+        };
+        AssuranceDiffEntry: {
+            questionRef: string;
+            change: string;
+            fields: string[];
+            /** Format: int64 */
+            currentRevision: null | number;
+        };
+        AssuranceEvidenceCommand: {
+            /** Format: uuid */
+            id: string;
+            questionRef: string;
+            file: components["schemas"]["CertificateFilePin"];
+            mediaKind: string;
+            /** Format: date-time */
+            capturedAt: string;
+            origin: string;
+        };
+        AssuranceEvidenceDto: {
+            /** Format: uuid */
+            id: string;
+            questionRef: string;
+            /** Format: uuid */
+            fileId: string;
+            /** Format: int64 */
+            fileRevision: number;
+            mediaKind: string;
+            /** Format: date-time */
+            capturedAt: string;
+            origin: string;
+            verification: string;
+            fileHref: string;
+        };
+        AssuranceFailure: {
+            code: string;
+            missing: string[];
+            correlationId: string;
+        };
+        AssuranceFindingDto: {
+            /** Format: uuid */
+            id: string;
+            questionRef: string;
+            /** Format: int64 */
+            firstItemRevision: number;
+            /** Format: int64 */
+            latestItemRevision: number;
+            observationPresent: boolean;
+            state: string;
+            verification: string;
+            actionLinkState: string;
+            /** Format: uuid */
+            actionId: null | string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+        };
+        AssuranceFindingLinkCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            /** Format: uuid */
+            actionId: string;
+        };
+        AssuranceImportDecisionCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            diffHash: string;
+            decision: string;
+            acceptChanged: string[];
+            rejectChanged: string[];
+            reason: string;
+        };
+        AssuranceImportDto: {
+            /** Format: uuid */
+            id: string;
+            state: string;
+            /** Format: int32 */
+            mappingVersion: number;
+            sourceVersion: string;
+            diff: components["schemas"]["AssuranceDiffEntry"][];
+            diffHash: string;
+            importedByMe: boolean;
+            /** Format: date-time */
+            importedAt: string;
+            /** Format: date-time */
+            decidedAt: null | string;
+            /** Format: uint32 */
+            version: number;
+            /** Format: int32 */
+            new: number;
+            /** Format: int32 */
+            changed: number;
+            /** Format: int32 */
+            unchanged: number;
+            /** Format: int32 */
+            absent: number;
+        };
+        AssuranceImportStageCommand: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            inspectionId: string;
+            /** Format: uuid */
+            mappingId: string;
+            referenceNo?: null | string;
+            /** Format: date */
+            inspectionDate?: null | string;
+            table?: null | components["schemas"]["AssuranceTableInput"];
+            workbook?: null | string;
+        };
+        AssuranceInspectionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            programme: string;
+            referenceNo: string;
+            /** Format: date */
+            inspectionDate: string;
+            state: string;
+            classification: string;
+            applicability: string;
+            /** Format: int64 */
+            revision: number;
+            provenance: string;
+            sourceVersion: string;
+            items: components["schemas"]["AssuranceItemDto"][];
+            findings: components["schemas"]["AssuranceFindingDto"][];
+            evidence: components["schemas"]["AssuranceEvidenceDto"][];
+            imports: components["schemas"]["AssuranceImportDto"][];
+            notice: string;
+        };
+        AssuranceInspectionSummaryDto: {
+            /** Format: uuid */
+            id: string;
+            referenceNo: string;
+            /** Format: date */
+            inspectionDate: string;
+            state: string;
+            applicability: string;
+            /** Format: int32 */
+            items: number;
+            /** Format: int32 */
+            openFindings: number;
+            pendingImport: boolean;
+        };
+        AssuranceItemContent: {
+            questionRef: string;
+            chapter: null | string;
+            observationType: string;
+            observationCategory: null | string;
+            observationText: null | string;
+            inspectorComment: null | string;
+        };
+        AssuranceItemDto: {
+            questionRef: string;
+            /** Format: int64 */
+            revision: number;
+            content: components["schemas"]["AssuranceItemContent"];
+            hash: string;
+            /** Format: int32 */
+            evidence: number;
+            /** Format: date-time */
+            savedAt: string;
+        };
+        AssuranceMappingCreateCommand: {
+            /** Format: uuid */
+            id: string;
+            key: string;
+            bindings: components["schemas"]["AssuranceColumnBinding"][];
+        };
+        AssuranceMappingDto: {
+            /** Format: uuid */
+            id: string;
+            key: string;
+            /** Format: int32 */
+            version: number;
+            sourceVersion: string;
+            bindings: components["schemas"]["AssuranceColumnBinding"][];
+            hash: string;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        AssuranceTableInput: {
+            headers: string[];
+            rows: string[][];
+        };
         AuditEvidenceDto: {
             kind: string;
             profile: null | components["schemas"]["RegulatoryRevisionDto"];
             register: null | components["schemas"]["RegisterRevisionDto"];
             tug?: null | components["schemas"]["TugAuditRevisionDto"];
+        };
+        AuditPackCreateCommand: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            previousPackId?: null | string;
+        };
+        AuditPackDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            label: string;
+            notice: string;
+            sourceVersion: string;
+            /** Format: date-time */
+            asOf: string;
+            /** Format: date-time */
+            createdAt: string;
+            createdByMe: boolean;
+            manifestHash: string;
+            /** Format: int32 */
+            itemCount: number;
+            /** Format: int32 */
+            included: number;
+            /** Format: int32 */
+            excluded: number;
+            /** Format: int32 */
+            unavailableChains: number;
+            truncated: boolean;
+            /** Format: uuid */
+            previousPackId: null | string;
+            /** Format: int32 */
+            superseded: number;
+            items: components["schemas"]["AuditPackItemDto"][];
+        };
+        AuditPackExportDto: {
+            schema: string;
+            label: string;
+            notice: string;
+            /** Format: date-time */
+            exportedAt: string;
+            pack: components["schemas"]["AuditPackDto"];
+        };
+        AuditPackItemDto: {
+            /** Format: int32 */
+            ordinal: number;
+            kind: string;
+            /** Format: uuid */
+            resourceId: string;
+            /** Format: int64 */
+            revision: number;
+            state: string;
+            hash: null | string;
+            /** Format: uuid */
+            evidenceId: string;
+            /** Format: uuid */
+            controlId: string;
+            /** Format: date-time */
+            savedAt: null | string;
+            integrity: string;
+            fileHref: null | string;
+            historyHref: null | string;
+        };
+        AuditPackListDto: {
+            /** Format: uuid */
+            vesselId: string;
+            label: string;
+            notice: string;
+            canCompile: boolean;
+            items: components["schemas"]["AuditPackSummaryDto"][];
+            hasMore: boolean;
+        };
+        AuditPackSummaryDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: date-time */
+            asOf: string;
+            /** Format: date-time */
+            createdAt: string;
+            createdByMe: boolean;
+            /** Format: int32 */
+            itemCount: number;
+            manifestHash: string;
+            /** Format: uuid */
+            previousPackId: null | string;
         };
         AuditPageDto: {
             items: components["schemas"]["AuditRecordDto"][];
@@ -8810,6 +9470,52 @@ export interface components {
             transition?: null | string;
             decision?: null | components["schemas"]["CertificateRenewalDecision"];
             allowedTransitions?: null | string[];
+        };
+        CertificateRenewalOfflineContextDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            tenantId: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: uuid */
+            certificateId: string;
+            /** Format: uuid */
+            renewalId: string;
+            /** Format: uuid */
+            deviceId: string;
+            /** Format: uuid */
+            keyId: string;
+            challenge: string;
+            policyVersion: string;
+            policyDigest: string;
+            authorityDigest: string;
+            sourceVersion: string;
+            operation: string;
+            allowedParts: string[];
+            /** Format: uint32 */
+            baseVersion: number;
+            /** Format: int64 */
+            baseRevision: number;
+            baseContent: components["schemas"]["CertificateRenewalContent"];
+            state: string;
+            ownerOptions: string[];
+            /** Format: date-time */
+            serverTime: string;
+            /** Format: date-time */
+            expiresAt: string;
+            /** Format: date-time */
+            retainUntil: string;
+            /** Format: int32 */
+            maxRecords: number;
+            /** Format: int32 */
+            maxEncryptedBytes: number;
+            /** Format: int32 */
+            maxDeviceRecords: number;
+            /** Format: int32 */
+            maxDeviceEncryptedBytes: number;
         };
         CertificateRenewalTransitionCommand: {
             /** Format: uuid */
@@ -10523,6 +11229,67 @@ export interface components {
             state: string;
             value: null | string;
         };
+        DataQualitySignal: {
+            kind: string;
+            reason: string;
+            material: boolean;
+        };
+        DataTrustCountsDto: {
+            /** Format: int32 */
+            missing: number;
+            /** Format: int32 */
+            stale: number;
+            /** Format: int32 */
+            conflicting: number;
+            /** Format: int32 */
+            unverified: number;
+            /** Format: int32 */
+            orphan: number;
+        };
+        DataTrustItemDto: {
+            subjectKind: string;
+            /** Format: uuid */
+            subjectId: null | string;
+            fieldPath: null | string;
+            /** Format: int64 */
+            revision: number;
+            title: null | string;
+            provenance: null | string;
+            sourceKind: null | string;
+            /** Format: date-time */
+            observedAt: null | string;
+            /** Format: date-time */
+            freshUntil: null | string;
+            freshness: string;
+            verification: string;
+            disposition: string;
+            signals: components["schemas"]["DataQualitySignal"][];
+            /** Format: date-time */
+            savedAt: null | string;
+        };
+        DataTrustPageDto: {
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: date-time */
+            asOf: string;
+            state: string;
+            disposition: string;
+            readinessEffect: string;
+            counts: components["schemas"]["DataTrustCountsDto"];
+            items: components["schemas"]["DataTrustItemDto"][];
+            profileFields: components["schemas"]["DataTrustItemDto"][];
+            /** Format: int32 */
+            offset: number;
+            /** Format: int32 */
+            limit: number;
+            /** Format: int32 */
+            total: number;
+            hasMore: boolean;
+            /** Format: int32 */
+            withheld: number;
+            truncated: boolean;
+            sourceVersion: string;
+        };
         DecideParameterChange: {
             /** Format: uint32 */
             expectedVersion: null | number;
@@ -10943,6 +11710,19 @@ export interface components {
             sourceVersion: string;
             origin: null | components["schemas"]["DowntimeOriginPin"];
         };
+        DowntimeEvidenceOptionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            label: string;
+        };
+        DowntimeEvidencePin: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+        };
         DowntimeFact: {
             state: string;
             value: null | string;
@@ -10972,6 +11752,61 @@ export interface components {
             elapsedTicks: null | string;
             unit: string;
             qualification: string;
+        };
+        DowntimeLifecycleCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            action: string;
+            reasonCode: string;
+            /** Format: uuid */
+            authorityId?: null | string;
+            evidence?: null | components["schemas"]["DowntimeEvidencePin"];
+        };
+        DowntimeLifecycleDto: {
+            state: string;
+            claimEvidence: components["schemas"]["DowntimeEvidencePin"][];
+            lossOfHireCandidate: string;
+            allowedActions: string[];
+        };
+        DowntimeLifecycleEventDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            fromRevision: number;
+            /** Format: int64 */
+            toRevision: number;
+            action: string;
+            fromState: null | string;
+            toState: null | string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: uuid */
+            roleId: null | string;
+            duty: null | string;
+            reasonCode: string;
+            evidence: null | components["schemas"]["DowntimeEvidencePin"];
+            /** Format: date-time */
+            savedAt: string;
+        };
+        DowntimeLifecycleViewDto: {
+            /** Format: uuid */
+            recordId: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            state: string;
+            lossOfHireCandidate: string;
+            claimEvidence: components["schemas"]["DowntimeEvidencePin"][];
+            allowedActions: string[];
+            authorities: components["schemas"]["ShipOpsAuthorityDto"][];
+            actorIsRecorder: boolean;
+            missingRequired: string[];
+            evidenceOptions: components["schemas"]["DowntimeEvidenceOptionDto"][];
+            events: components["schemas"]["DowntimeLifecycleEventDto"][];
+            qualifications: string[];
         };
         DowntimeOfflineDto: {
             supported: boolean;
@@ -11043,6 +11878,7 @@ export interface components {
             currentRevision: boolean;
             canEdit: boolean;
             engineeringInterval: components["schemas"]["DowntimeIntervalObservation"];
+            lifecycle?: null | components["schemas"]["DowntimeLifecycleDto"];
         };
         DraftObservation: {
             /** Format: int32 */
@@ -12173,6 +13009,28 @@ export interface components {
             outcome: string;
             issues: components["schemas"]["ImportRowIssueDto"][];
         };
+        IndustryAssuranceCapabilitiesDto: {
+            canImport: boolean;
+            canAccept: boolean;
+            canCaptureEvidence: boolean;
+            canLinkAction: boolean;
+            canWriteMapping: boolean;
+            mediaKinds: string[];
+            availableMediaKinds: string[];
+            fields: string[];
+            requiredFields: string[];
+        };
+        IndustryAssurancePageDto: {
+            /** Format: uuid */
+            vesselId: string;
+            classification: string;
+            applicability: string;
+            sourceVersion: string;
+            inspections: components["schemas"]["AssuranceInspectionSummaryDto"][];
+            mappings: components["schemas"]["AssuranceMappingDto"][];
+            capabilities: components["schemas"]["IndustryAssuranceCapabilitiesDto"];
+            notice: string;
+        };
         JsonElement: unknown;
         LegacyCrewImportCommand: {
             /** Format: uint32 */
@@ -13252,6 +14110,52 @@ export interface components {
         PmsWhy: {
             code: string;
             detail?: null | string;
+        };
+        PortSofFinalizationDto: {
+            /** Format: uuid */
+            recordId: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            sofState: string;
+            /** Format: int64 */
+            finalRevision: null | number;
+            canFinalize: boolean;
+            authorities: components["schemas"]["ShipOpsAuthorityDto"][];
+            missingRequired: string[];
+            unresolvedReferences: string[];
+            events: components["schemas"]["PortSofFinalizationEventDto"][];
+            qualifications: string[];
+        };
+        PortSofFinalizationEventDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            fromRevision: number;
+            /** Format: int64 */
+            toRevision: number;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: uuid */
+            roleId: null | string;
+            duty: null | string;
+            reasonCode: string;
+            acknowledgedUnresolved: string[];
+            signatureState: string;
+            recordHash: string;
+            /** Format: date-time */
+            savedAt: string;
+        };
+        PortSofFinalizeCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            /** Format: uuid */
+            authorityId: string;
+            reasonCode: string;
+            acknowledgedUnresolved: string[];
         };
         PortTimelineAssessment: {
             /** Format: uuid */
@@ -15197,6 +16101,13 @@ export interface components {
             hash: string;
             sourceVersion: string;
         };
+        ShipOpsAuthorityDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            roleId: string;
+            duty: string;
+        };
         ShipOpsCapabilitiesDto: {
             /** Format: uuid */
             vesselId: string;
@@ -16689,6 +17600,75 @@ export interface components {
             openInterval: boolean;
             meterHours: null | string;
         };
+        TugHistoryDailyLogDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            tugId: string;
+            /** Format: date */
+            logDate: string;
+            watch: string;
+            state: string;
+            linkedToExecution: boolean;
+        };
+        TugHistoryExecutionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            tugId: string;
+            state: string;
+            verificationState: string;
+            /** Format: date-time */
+            startedAt: string;
+            /** Format: date-time */
+            endedAt: null | string;
+            /** Format: int64 */
+            durationMinutes: null | number;
+            /** Format: uuid */
+            startedBy: string;
+            /** Format: uuid */
+            endedBy: null | string;
+            /** Format: uuid */
+            verifiedBy: null | string;
+            /** Format: int64 */
+            sequence: number;
+            /** Format: int32 */
+            evidenceEvents: number;
+            lastEventHash: string;
+        };
+        TugHistoryItemDto: {
+            /** Format: uuid */
+            jobId: string;
+            /** Format: uuid */
+            vesselId: string;
+            jobNumber: string;
+            jobStatus: string;
+            jobType: null | string;
+            assistedVessel: null | string;
+            operationArea: null | string;
+            /** Format: date-time */
+            at: string;
+            /** Format: date-time */
+            cancelledAt: null | string;
+            outcome: string;
+            evidence: string;
+            planState: null | string;
+            briefingState: null | string;
+            executions: components["schemas"]["TugHistoryExecutionDto"][];
+            dailyLogs: components["schemas"]["TugHistoryDailyLogDto"][];
+            safetyEvents: string;
+        };
+        TugHistoryPageDto: {
+            items: components["schemas"]["TugHistoryItemDto"][];
+            nextCursor: null | string;
+            outcomes: string[];
+            /** Format: date-time */
+            readAt: string;
+            /** @default NoSilentDeletion;CancelledJobsRemainVisible */
+            deletion: string;
+            /** @default 18.01:row92;06.01:p236;13.02:p1131;15.01:p1609 */
+            sourceVersion: string;
+        };
         TugLifecycleCommand: {
             /** Format: uint32 */
             expectedVersion: number;
@@ -16745,6 +17725,91 @@ export interface components {
             provenance: string;
             /** Format: date-time */
             observedAt: null | string;
+        };
+        TugOperationsConflictDto: {
+            /** Format: uuid */
+            commandId: string;
+            operation: string;
+            /** Format: uuid */
+            resourceId: string;
+            conflictFields: string[];
+            choices: string[];
+            resolved: boolean;
+            captured: components["schemas"]["JsonElement"];
+            atConflict: components["schemas"]["TugOperationsServerState"];
+            current: components["schemas"]["TugOperationsServerState"];
+        };
+        TugOperationsOfflineCapabilityDto: {
+            /** Format: uuid */
+            vesselId: string;
+            state: string;
+            operations: string[];
+            onlineOnly: string[];
+            snapshots: components["schemas"]["TugOperationsSnapshotLeaseDto"][];
+        };
+        TugOperationsOfflineResult: {
+            /** Format: uuid */
+            commandId: string;
+            operation: string;
+            result: string;
+            /** Format: uuid */
+            resourceId: string;
+            /** Format: uint32 */
+            baseVersion: number;
+            /** Format: uint32 */
+            serverVersion: number;
+            conflictFields: string[];
+            choices: string[];
+            /** Format: uuid */
+            parentCommandId: null | string;
+            /** Format: date-time */
+            receivedAt: string;
+        };
+        TugOperationsServerState: {
+            /** Format: int64 */
+            revision: null | number;
+            hash: null | string;
+            state: null | string;
+            /** Format: int64 */
+            sequence: null | number;
+            /** Format: uint32 */
+            version: null | number;
+        };
+        TugOperationsSnapshotDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: uuid */
+            jobId: string;
+            policyVersion: string;
+            /** Format: date-time */
+            issuedAt: string;
+            /** Format: date-time */
+            expiresAt: string;
+            snapshotHash: string;
+            job: components["schemas"]["TugSnapshotJob"];
+            briefing: null | components["schemas"]["TugSnapshotBriefing"];
+            executions: components["schemas"]["TugSnapshotExecution"][];
+            dailyLogs: components["schemas"]["TugSnapshotDailyLog"][];
+            writableTugs: string[];
+            operations: string[];
+            onlineOnly: string[];
+            watches: string[];
+            /** @default ReadOnlyOperationalSnapshot;NotAReleaseOrGoDecision */
+            classification: string;
+            /** @default 18.01:row93;63.03:mobile-task-center;06.01:p233-236;DEV-033/034/035 */
+            sourceVersion: string;
+        };
+        TugOperationsSnapshotLeaseDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            jobId: string;
+            /** Format: date-time */
+            issuedAt: string;
+            /** Format: date-time */
+            expiresAt: string;
         };
         TugOption: {
             /** Format: uuid */
@@ -16973,6 +18038,60 @@ export interface components {
             /** Format: uint32 */
             baseVersion: null | number;
             inputs: components["schemas"]["TugRequestInputs"];
+        };
+        TugSnapshotBriefing: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            state: string;
+            contentHash: string;
+            participant: boolean;
+            acknowledged: boolean;
+            acknowledgementState: string;
+        };
+        TugSnapshotDailyLog: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            tugId: string;
+            /** Format: date */
+            logDate: string;
+            watch: string;
+            state: string;
+            /** Format: uint32 */
+            version: number;
+            /** Format: int64 */
+            revision: number;
+            content: components["schemas"]["TugDailyLogContent"];
+        };
+        TugSnapshotExecution: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            tugId: string;
+            state: string;
+            /** Format: int64 */
+            sequence: number;
+            hash: string;
+            canRecord: boolean;
+            towlineConnected: boolean;
+            recordableKinds: string[];
+        };
+        TugSnapshotJob: {
+            /** Format: uuid */
+            id: string;
+            jobNumber: string;
+            status: string;
+            /** Format: int64 */
+            revision: number;
+            assistedVessel: null | string;
+            jobType: null | string;
+            operationArea: null | string;
+            /** Format: date-time */
+            requestedStart: null | string;
+            /** Format: date-time */
+            requestedEnd: null | string;
         };
         VesselCertificateContent: {
             metadata: components["schemas"]["CertificateMetadata"];
@@ -19558,6 +20677,81 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DowntimeOriginDto"];
+                };
+            };
+        };
+    };
+    GetDataTrust: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DataTrustPageDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TugOperationHistoryList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugHistoryPageDto"];
                 };
             };
         };
@@ -22954,6 +24148,54 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PortTimelineDto"];
+                };
+            };
+        };
+    };
+    PortSofFinalization: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PortSofFinalizationDto"];
+                };
+            };
+        };
+    };
+    PortSofFinalize: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PortSofFinalizeCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ShipOpsRecordDto"];
                 };
             };
         };
@@ -26762,6 +28004,54 @@ export interface operations {
             };
         };
     };
+    DowntimeLifecycle: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DowntimeLifecycleViewDto"];
+                };
+            };
+        };
+    };
+    DowntimeLifecycleCommand: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DowntimeLifecycleCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DowntimeRecordDto"];
+                };
+            };
+        };
+    };
     RiskAssessmentList: {
         parameters: {
             query?: never;
@@ -27874,6 +29164,563 @@ export interface operations {
             header?: never;
             path: {
                 enrollment: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ListAuditPacks: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditPackListDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AuditPackCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AuditPackCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditPackDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssuranceFailure"];
+                };
+            };
+        };
+    };
+    GetAuditPack: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditPackDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ExportAuditPack: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditPackExportDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GetIndustryAssurance: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IndustryAssurancePageDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GetAssuranceInspection: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssuranceInspectionDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AssuranceMappingCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssuranceMappingCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssuranceMappingDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssuranceFailure"];
+                };
+            };
+        };
+    };
+    AssuranceImportStage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssuranceImportStageCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssuranceInspectionDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssuranceFailure"];
+                };
+            };
+        };
+    };
+    AssuranceImportDecide: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssuranceImportDecisionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssuranceInspectionDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssuranceFailure"];
+                };
+            };
+        };
+    };
+    AssuranceEvidenceCapture: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssuranceEvidenceCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssuranceInspectionDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssuranceFailure"];
+                };
+            };
+        };
+    };
+    AssuranceFindingLink: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AssuranceFindingLinkCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssuranceInspectionDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AssuranceFailure"];
+                };
+            };
+        };
+    };
+    CertificateRenewalOfflineInventory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                renewal: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CertificateRenewalOfflineEnroll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                renewal: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CertificateRenewalOfflineContextDto"];
+                };
+            };
+        };
+    };
+    CertificateRenewalOfflineAction: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                renewal: string;
+                enrollment: string;
+                action: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CertificateRenewalOfflineHistory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                renewal: string;
+                enrollment: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CertificateRenewalOfflineConflict: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                renewal: string;
+                enrollment: string;
+                command: string;
             };
             cookie?: never;
         };
@@ -30422,6 +32269,106 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DrydockView"];
+                };
+            };
+        };
+    };
+    TugOperationsOfflineCapability: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugOperationsOfflineCapabilityDto"];
+                };
+            };
+        };
+    };
+    TugOperationsOfflineSnapshot: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugOperationsSnapshotDto"];
+                };
+            };
+        };
+    };
+    TugOperationsOfflineReplay: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugOperationsOfflineResult"];
+                };
+            };
+        };
+    };
+    TugOperationsOfflineOutcomes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TugOperationsOfflineConflict: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                command: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugOperationsConflictDto"];
                 };
             };
         };

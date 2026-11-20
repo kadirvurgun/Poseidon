@@ -78,7 +78,7 @@ export function decodeCertificatePage(value: unknown, vessel: string, scope: Cer
   if (new Set(items.map(row => `${row.scope}/${row.id}`)).size !== items.length || items.some(row => row.calendar.referenceDate !== value.referenceDate || scope !== 'All' && row.scope !== scope)) fail()
   return { ...value, items } as CertificatePage
 }
-function decodeRenewalContent(value: unknown): CertificateRenewalContent {
+export function decodeRenewalContent(value: unknown): CertificateRenewalContent {
   if (!exact(value, Object.keys(emptyCertificateRenewal()))) fail()
   for (const key of ['renewalType', 'plannedLocation', 'authorityReference', 'surveyWindowEnd']) if (!(value[key] === null || text(value[key]) && !/\p{Cc}/u.test(value[key] as string))) fail()
   for (const key of ['triggerDate', 'dueDate', 'surveyWindowStart', 'applicationDate', 'newIssueDate', 'newExpiryDate']) if (!date(value[key])) fail()

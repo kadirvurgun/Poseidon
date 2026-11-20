@@ -33,6 +33,7 @@ public static class SecurityEventCodes
         "TowagePlanRead", "TowagePlanCommand", "TowageBriefingRead", "TowageBriefingCommand", "HighRiskWorkRead",
         "SafetyEventRead", "SafetyEventCommand", "SafetyEventOfflineRead", "SafetyEventOfflineRequest",
         "TowageExecutionRead", "TowageExecutionCommand", "TugDailyLogRead", "TugDailyLogCommand", "DrydockRead", "DrydockCommand",
+        "TugOperationHistoryRead", "TugOperationsOfflineRead", "TugOperationsOfflineCommand",
         "ParameterRead", "ParameterCommand", "HrRead", "HrCommand", "MembershipRead", "MembershipCommand", "SessionRevalidation",
         "ControlledDocument", "ControlledDocumentRead", "ControlledDocumentCommand", "ControlledDocumentReplay",
         "SyncOperationRead", "SyncConflictList",
@@ -50,6 +51,10 @@ public static class SecurityEventCodes
         "DepartureReadinessRead", "DepartureSignoffCommand",
         // S9 WP-C DEV-062 / DEV-114.
         "VoiceDraftRead", "VoiceDraftCommand", "VoiceDraftTranscription", "ControlledDocumentContentAccess",
+        // S10 WP-A DEV-064 / DEV-065 / DEV-113.
+        "AuditPackRead", "AuditPackCommand", "DataTrustRead", "AssuranceRead", "AssuranceCommand",
+        // S10 WP-C DEV-066 certificate renewal offline draft capture.
+        "CertificateRenewalOfflineRead", "CertificateRenewalOfflineRequest",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static IReadOnlySet<string> Results { get; } = new string[]
     {
@@ -92,6 +97,7 @@ public static class SecurityEventCodes
         "reading_out_of_order", "original_due_unavailable", "postponement_not_allowed", "postponement_deadline_not_after_due",
         "postponement_deadline_not_after_previous", "postponement_extension_exceeds_policy", "postponement_policy_unconfigured",
         "risk_review_required", "postponement_pending", "independent_reviewer_required",
+        "sof_finalized", "sof_record_incomplete", "sof_references_not_acknowledged", "downtime_record_incomplete", "downtime_lifecycle_locked",
         "incomplete_qualification", "acceptance_trigger_required", "impact_review_required",
         "outside_effective_dates", "superseding_rule_required", "hr_reference_incomplete", "hr_identifier_duplicate", "hr_role_overlap", "hr_employee_no_overlap", "hr_person_not_verified", "hr_legal_entity_inactive", "hr_employer_role_missing", "hr_employment_not_active", "hr_period_outside_employment", "hr_operator_path_missing", "hr_assignment_overlap", "hr_active_assignment_at_exit", "hr_actual_exists", "hr_event_conflict", "hr_employment_outside_legal_entity", "hr_employment_outside_employer_role", "last_admin", "membership_inactive",
         "legal_hold_active", "legal_hold_not_active", "retention_not_elapsed", "retention_unconfigured", "intake_not_released",
@@ -125,6 +131,11 @@ public static class SecurityEventCodes
         "speech_capability_unavailable", "speech_input_invalid", "speech_attestation_invalid", "voice_draft_incomplete",
         "document_download_restricted", "controlled_document_download_policy", "acknowledgement_revision_stale", "already_acknowledged",
         "content_access_required", "isps_classification_required",
+        // S10 WP-A DEV-064 / DEV-065 / DEV-113.
+        "not_applicable_vessel_type", "mapping_invalid", "mapping_unavailable", "import_rows_invalid", "import_pending_exists", "import_decision_incomplete",
+        "diff_changed", "media_type_unavailable", "pack_scope_empty",
+        // S10 WP-B DEV-092.
+        "offline_snapshot_unavailable",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static bool Allows(string action, string result) => Actions.Contains(action) && Results.Contains(result);
 }
