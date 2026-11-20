@@ -215,7 +215,7 @@ public static class AssuranceStorage
                 "(\"DecidedBy\" IS NULL OR \"DecidedBy\"<>\"ImportedBy\" AND length(\"Reason\")>=10)"));
             b.HasKey(x => new { x.TenantId, x.Id }); b.HasIndex(x => new { x.TenantId, x.InspectionId, x.State });
             // At most one staged import per inspection waits for review at a time.
-            b.HasIndex(x => new { x.TenantId, x.InspectionId }).IsUnique().HasFilter("\"State\"='PENDING_REVIEW'").HasDatabaseName("IX_AssuranceImports_OnePending");
+            b.HasIndex(x => new { x.TenantId, x.InspectionId }).IsUnique().HasFilter("\"State\" = 'PENDING_REVIEW'").HasDatabaseName("IX_AssuranceImports_OnePending");
             b.Property(x => x.Version).IsRowVersion();
             b.Property(x => x.MappingHash).HasMaxLength(64); b.Property(x => x.SourceVersion).HasMaxLength(192); b.Property(x => x.TableHash).HasMaxLength(64);
             b.Property(x => x.ItemsJson).HasColumnType("text"); b.Property(x => x.DiffJson).HasColumnType("text"); b.Property(x => x.DiffHash).HasMaxLength(64);

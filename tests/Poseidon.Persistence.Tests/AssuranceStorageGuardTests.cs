@@ -72,6 +72,6 @@ public sealed class AssuranceStorageGuardTests
         Assert.Contains("\"Verification\"='UNVERIFIED'", Check(typeof(AssuranceEvidence), "CK_AssuranceEvidence_Unverified"));
         Assert.Contains("\"DecidedBy\"<>\"ImportedBy\"", Check(typeof(AssuranceImport), "CK_AssuranceImport_Decision"));
         Assert.Contains("(\"Classification\"<>'NOT_TANKER')", Check(typeof(AssuranceInspection), "CK_AssuranceInspection_State"));
-        Assert.Equal("\"State\"='PENDING_REVIEW'", model.FindEntityType(typeof(AssuranceImport))!.GetIndexes().Single(i => i.GetDatabaseName() == "IX_AssuranceImports_OnePending").GetFilter());
+        Assert.Equal("\"State\" = 'PENDING_REVIEW'", model.FindEntityType(typeof(AssuranceImport))!.GetIndexes().Single(i => i.GetDatabaseName() == "IX_AssuranceImports_OnePending").GetFilter());
     }
 }

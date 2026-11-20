@@ -743,7 +743,7 @@ namespace Poseidon.Persistence.Migrations
                     b.HasIndex("TenantId", "InspectionId")
                         .IsUnique()
                         .HasDatabaseName("IX_AssuranceImports_OnePending")
-                        .HasFilter("\"State\"='PENDING_REVIEW'");
+                        .HasFilter("\"State\" = 'PENDING_REVIEW'");
 
                     b.HasIndex("TenantId", "MappingId");
 

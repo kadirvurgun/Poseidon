@@ -350,7 +350,7 @@ namespace Poseidon.Persistence.Migrations
                 table: "AssuranceImports",
                 columns: new[] { "TenantId", "InspectionId" },
                 unique: true,
-                filter: "\"State\"='PENDING_REVIEW'");
+                filter: "\"State\" = 'PENDING_REVIEW'");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AssuranceImports_TenantId_InspectionId_State",
