@@ -107,11 +107,10 @@ public static class TowageExecutionEndpoints
             .OrderByDescending(x => x.RecordedAt).ThenByDescending(x => x.Id).FirstOrDefaultAsync(ct);
         var hashCurrent = false; var ready = false;
         if (assess && p != null && d?.Decision == TugReadinessDecisionPolicy.Go) {
-            var outcome = (await TugReadinessAssessor.Assess(h, db, a, p, job, TugReadinessHttp.Now(h), ct)).Outcome;
-            hashCurrent = outcome.Hash == d.AssessmentHash;
-            // QA N2: a GO only opens the start when both the recorded and the recomputed assessment are READY; a
-            // CONDITIONAL/REVIEW_REQUIRED/NOT_READY state never starts an operation, whatever the stored row claims.
-            ready = outcome.State == TugReadinessEngine.Ready && d.AssessedState == TugReadinessEngine.Ready;
+            hashCurrent = (await TugReadinessAssessor.Assess(h, db, a, p, job, TugReadinessHttp.Now(h), ct)).Outcome.Hash == d.AssessmentHash;
+            // QA N2: the hash covers every check (category/result/reason/source), so an equal hash means the identical
+            // assessment and state. The DB CHECK still admits a CONDITIONAL GO; only a GO recorded on READY starts.
+            ready = d.AssessedState == TugReadinessEngine.Ready;
         }
         var plan = s.Plan;
         var facts = new TowageStartFacts(job.Status, existing != null, plan != null,
