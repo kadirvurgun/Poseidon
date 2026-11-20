@@ -111,6 +111,7 @@ public static class TowageExecutionPolicy
         else {
             if (!f.DecisionRevisionCurrent) b.Add("readiness_go_assignment_changed");
             if (!f.DecisionHashCurrent) b.Add("readiness_go_stale");
+            else if (!f.AssessmentReady) b.Add("readiness_not_ready");
         }
         return [.. b.Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal)];
     }
@@ -187,7 +188,8 @@ public sealed record TowageEventPayload(string? Value, string? Unit, string? Res
 { public override string ToString() => nameof(TowageEventPayload); }
 
 public sealed record TowageStartFacts(string JobStatus, bool ExecutionExists, bool PlanPresent, bool PlanApprovedCurrent, bool PlanRequestCurrent, bool TugInPlan,
-    TugReadinessCheck[] BriefingChecks, bool AssignmentActive, string? Decision, bool DecisionRevisionCurrent, bool DecisionHashCurrent);
+    TugReadinessCheck[] BriefingChecks, bool AssignmentActive, string? Decision, bool DecisionRevisionCurrent, bool DecisionHashCurrent,
+    bool AssessmentReady);
 public sealed record TowageLedgerEvent(long Sequence, string Kind, DateTimeOffset OccurredAt, string? Value, string? Unit, string? Result);
 public sealed record TowageMaxLoad(string Value, string Unit, int Samples);
 public sealed record TowageActiveInterval(DateTimeOffset From, DateTimeOffset? To);

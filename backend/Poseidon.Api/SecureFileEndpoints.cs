@@ -63,7 +63,13 @@ public static class SecureFileEndpoints
             return db.FileStages.Where(x => owners.Any(a => a.PersonId == x.PersonId) && x.PersonalKind == kind &&
                 x.PersonalRevision == personalRevision && x.PersonalPolicyVersion == policy.Version && x.PersonalPurpose == policy.Purpose);
         }
-        return db.FileStages.Where(x => x.PersonId == null && x.DocumentId == document && x.DocumentRevision == revision);
+        var stages = db.FileStages.Where(x => x.PersonId == null && x.DocumentId == document && x.DocumentRevision == revision);
+        // DEV-114 / ISPS Code A/9.7: a stage registered to an ISPS-sensitive controlled document is indistinguishable
+        // from a missing file on every generic route (list, detail, upload, access, bytes) without document.isps.read.
+        if (document == null && !ControlledDocumentEndpoints.Isps(Actor(h)))
+            stages = stages.Where(x => !db.ControlledDocumentRevisions.Any(r => r.FileId == x.Id && r.VesselId == x.VesselId &&
+                db.ControlledDocuments.Any(d => d.TenantId == r.TenantId && d.Id == r.DocumentId && d.IspsRestricted)));
+        return stages;
     }
     private static IQueryable<StoredFile> OwnedFiles(PoseidonDbContext db, HttpContext h, Guid vessel) {
         var stages = Owned(db, h).Where(s => s.VesselId == vessel);
