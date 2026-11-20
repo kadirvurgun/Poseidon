@@ -275,7 +275,9 @@ public static class ImportEndpoints
                     if (!TechnicalEndpoints.ValidEquipmentInput(c)) Issue("domain_validation");
                     if (c.ResponsibleRoleId is { } owner && !TechnicalEndpoints.EligibleOwners(h, b.VesselId).Contains(owner)) Issue("unresolved_reference");
                     if (c.Code != null && assets.Any(x => x.Id != id && x.Code == c.Code)) Issue("conflict", "code");
-                    if (old == null) nodes.Add(new(db.TenantId, b.VesselId, id, null));
+                    // A duplicated key is rejected as duplicate; it must not add a second node with the same id,
+                    // which would make every later valid row fail hierarchy validation.
+                    if (old == null && !nodes.Any(x => x.Id == id)) nodes.Add(new(db.TenantId, b.VesselId, id, null));
                     if (EquipmentHierarchyPolicy.ValidateReparent(db.TenantId, b.VesselId, nodes, id, c.ParentId) != EquipmentHierarchyValidation.Valid) Issue("unresolved_reference", "parent_ref");
                     if (issues.Count == 0) { nodes.RemoveAll(x => x.Id == id); nodes.Add(new(db.TenantId, b.VesselId, id, c.ParentId)); }
                 }
