@@ -26,3 +26,5 @@
 @media (forced-colors: active) {
   .equipment-hierarchy-row[aria-selected='true'] { border-color: Highlight; }
 }
+.equipment-hierarchy-criticality { margin-inline-start: auto; font-size: 0.75rem; padding: 0 0.4rem; border: 1px solid var(--border); border-radius: 999px; color: var(--muted-foreground); }
+.equipment-hierarchy-criticality[data-criticality="CRITICAL"], .equipment-hierarchy-criticality[data-criticality="UNKNOWN"] { color: var(--foreground); border-color: var(--destructive); }

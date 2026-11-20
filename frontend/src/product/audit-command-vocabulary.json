@@ -191,7 +191,11 @@
     "SetControlledDocumentRetention": "PREPARATION_COMMAND",
     "RequestControlledDocumentDisposal": "HUMAN_REVIEW_WORKFLOW",
     "ApproveControlledDocumentDisposal": "HUMAN_REVIEW_WORKFLOW",
-    "LinkControlledDocument": "PREPARATION_COMMAND"
+    "LinkControlledDocument": "PREPARATION_COMMAND",
+    "MeasurementPointSave": "PREPARATION_COMMAND",
+    "MeasurementReadingRecord": "PREPARATION_COMMAND",
+    "MaintenancePostpone": "PREPARATION_COMMAND",
+    "MaintenancePostponementDecide": "HUMAN_REVIEW_WORKFLOW"
   },
   "reasonCodes": [
     "PREPARATION_COMMAND",

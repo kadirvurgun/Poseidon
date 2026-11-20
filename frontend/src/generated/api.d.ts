@@ -5570,22 +5570,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/maintenance-plan/{vessel}/{id}/postpone": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["MaintenancePostpone"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/v1/defects": {
         parameters: {
             query?: never;
@@ -6092,6 +6076,86 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["MaintenanceObservationRevoke"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/equipment-hierarchy/{vessel}/measurement-points": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["MeasurementPointList"];
+        put?: never;
+        post: operations["MeasurementPointSave"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/equipment-hierarchy/{vessel}/measurement-points/{point}/readings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["MeasurementReadingList"];
+        put?: never;
+        post: operations["MeasurementReadingRecord"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/maintenance-plan/{vessel}/{id}/postponements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["MaintenancePostponementList"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/maintenance-plan/{vessel}/{id}/postpone": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["MaintenancePostpone"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/maintenance-plan/{vessel}/{id}/postponements/{postponement}/decision": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["MaintenancePostponementDecide"];
         delete?: never;
         options?: never;
         head?: never;
@@ -10298,6 +10362,9 @@ export interface components {
             planType?: null | string;
             /** Format: uuid */
             observationId?: null | string;
+            /** Format: uuid */
+            measurementPointId?: null | string;
+            triggerOn?: null | string;
         };
         MaintenanceJobCommand: {
             /** Format: uuid */
@@ -10330,6 +10397,105 @@ export interface components {
             canWrite: boolean;
             canReadHistory: boolean;
         };
+        MaintenancePostponementDecisionCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            decision: string;
+            reason: string;
+        };
+        MaintenancePostponementDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            planId: string;
+            /** Format: int64 */
+            planRevision: number;
+            /** Format: uuid */
+            assetId: string;
+            /** Format: uuid */
+            workOrderId: null | string;
+            defectIds: string[];
+            requirementRefs: string[];
+            /** Format: date */
+            originalDue: string;
+            /** Format: date */
+            requestedDeadline: string;
+            /** Format: int32 */
+            extensionDays: number;
+            reason: string;
+            /** Format: uuid */
+            riskAssessmentId: null | string;
+            criticality: string;
+            state: string;
+            effectiveState: string;
+            readinessImpact: string;
+            /** Format: uuid */
+            requestedBy: string;
+            /** Format: date-time */
+            requestedAt: string;
+            /** Format: uuid */
+            decidedBy: null | string;
+            /** Format: date-time */
+            decidedAt: null | string;
+            decisionReason: null | string;
+            policyRef: null | string;
+            policyVersion: null | string;
+            /** Format: int32 */
+            maxExtensionDays: null | number;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            canDecide: boolean;
+            decisionBlockers: string[];
+        };
+        MaintenancePostponementOutcome: {
+            postponement: components["schemas"]["MaintenancePostponementDto"];
+        };
+        MaintenancePostponementPage: {
+            /** Format: uuid */
+            planId: string;
+            /** Format: int64 */
+            planRevision: number;
+            /** Format: date */
+            originalDue: null | string;
+            dueState: string;
+            criticality: string;
+            policyState: string;
+            policyRef: null | string;
+            policyVersion: null | string;
+            /** Format: int32 */
+            maxExtensionDays: null | number;
+            canRequest: boolean;
+            canDecide: boolean;
+            items: components["schemas"]["MaintenancePostponementDto"][];
+            sourceVersion: string;
+        };
+        MaintenancePostponementRequestCommand: {
+            /** Format: uuid */
+            id: string;
+            /** Format: date */
+            requestedDeadline: string;
+            reason: string;
+            /** Format: uuid */
+            riskAssessmentId?: null | string;
+            /** Format: uuid */
+            workOrderId?: null | string;
+            defectIds?: null | string[];
+            requirementRefs?: null | string[];
+        };
+        MaintenancePostponementSummary: {
+            /** Format: uuid */
+            id: string;
+            state: string;
+            effectiveState: string;
+            /** Format: date */
+            originalDue: string;
+            /** Format: date */
+            requestedDeadline: string;
+            criticality: string;
+            readinessImpact: string;
+        };
         MaintenanceRow: {
             /** Format: uuid */
             id: string;
@@ -10357,6 +10523,9 @@ export interface components {
             observationState: string;
             /** Format: date-time */
             observationAssessedAt?: null | string;
+            postponement?: null | components["schemas"]["MaintenancePostponementSummary"];
+            /** @default UNKNOWN */
+            assetCriticality: string;
         };
         ManningDispensation: {
             evidenceKind: string;
@@ -10407,6 +10576,115 @@ export interface components {
             unknown: number;
             state: string;
             reason: string;
+        };
+        MeasurementPage: {
+            items: components["schemas"]["MeasurementPointDto"][];
+            canWrite: boolean;
+            kinds: string[];
+            units: {
+                [key: string]: string[];
+            };
+            sources: string[];
+            sourceVersion: string;
+        };
+        MeasurementPointDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            assetId: string;
+            code: string;
+            kind: string;
+            unit: string;
+            source: string;
+            /** Format: int32 */
+            precision: number;
+            rangeMin: null | string;
+            rangeMax: null | string;
+            /** Format: uuid */
+            parentPointId: null | string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            provenance: string;
+            latest: null | components["schemas"]["MeasurementReadingDto"];
+            band: string;
+            policyState: string;
+            policyVersion: null | string;
+            /** Format: int32 */
+            freshnessMinutes: null | number;
+            freshness: string;
+        };
+        MeasurementPointOutcome: {
+            point: components["schemas"]["MeasurementPointDto"];
+        };
+        MeasurementPointSaveCommand: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uint32 */
+            expectedVersion: null | number;
+            /** Format: uuid */
+            assetId: string;
+            code: string;
+            kind: string;
+            unit: string;
+            source: string;
+            /** Format: int32 */
+            precision: number;
+            rangeMin?: null | string;
+            rangeMax?: null | string;
+            /** Format: uuid */
+            parentPointId?: null | string;
+        };
+        MeasurementPropagationSkip: {
+            /** Format: uuid */
+            pointId: string;
+            reason: string;
+        };
+        MeasurementReadingCommand: {
+            /** Format: uuid */
+            id: string;
+            value: string;
+            /** Format: date-time */
+            measuredAt: string;
+            sourceType: string;
+            sourceReference?: null | string;
+            /** Format: uuid */
+            evidenceFileId?: null | string;
+        };
+        MeasurementReadingDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            pointId: string;
+            value: string;
+            unit: string;
+            /** Format: date-time */
+            measuredAt: string;
+            /** Format: date-time */
+            recordedAt: string;
+            sourceType: string;
+            sourceReference: null | string;
+            /** Format: uuid */
+            evidenceFileId: null | string;
+            /** Format: uuid */
+            previousReadingId: null | string;
+            delta: null | string;
+            /** Format: uuid */
+            propagatedFromReadingId: null | string;
+            /** Format: uuid */
+            actorId: string;
+            provenance: string;
+        };
+        MeasurementReadingOutcome: {
+            reading: components["schemas"]["MeasurementReadingDto"];
+            propagated: components["schemas"]["MeasurementReadingDto"][];
+            skipped: components["schemas"]["MeasurementPropagationSkip"][];
+        };
+        MeasurementReadingPage: {
+            point: components["schemas"]["MeasurementPointDto"];
+            items: components["schemas"]["MeasurementReadingDto"][];
+            canWrite: boolean;
         };
         MembershipDto: {
             /** Format: uuid */
@@ -11046,6 +11324,10 @@ export interface components {
             freshness: string;
             blockers: string[];
             href: string;
+        };
+        PmsFailure: {
+            code: string;
+            correlationId: string;
         };
         PortTimelineAssessment: {
             /** Format: uuid */
@@ -21909,27 +22191,6 @@ export interface operations {
             };
         };
     };
-    MaintenancePostpone: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                vessel: string;
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
-    };
     DefectList: {
         parameters: {
             query?: never;
@@ -22976,6 +23237,218 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    MeasurementPointList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MeasurementPage"];
+                };
+            };
+        };
+    };
+    MeasurementPointSave: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MeasurementPointSaveCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MeasurementPointOutcome"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PmsFailure"];
+                };
+            };
+        };
+    };
+    MeasurementReadingList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                point: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MeasurementReadingPage"];
+                };
+            };
+        };
+    };
+    MeasurementReadingRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                point: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MeasurementReadingCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MeasurementReadingOutcome"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PmsFailure"];
+                };
+            };
+        };
+    };
+    MaintenancePostponementList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MaintenancePostponementPage"];
+                };
+            };
+        };
+    };
+    MaintenancePostpone: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MaintenancePostponementRequestCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MaintenancePostponementOutcome"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PmsFailure"];
+                };
+            };
+        };
+    };
+    MaintenancePostponementDecide: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                id: string;
+                postponement: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MaintenancePostponementDecisionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MaintenancePostponementOutcome"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PmsFailure"];
+                };
             };
         };
     };

@@ -58,6 +58,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
     private static AuditMetadata Project(EntityEntry entry, Guid? parentVessel)
     {
         if (RiskProjection(entry) is { } risk) return risk;
+        if (PmsProjection(entry) is { } pms) return pms;
         if(entry.Entity is Defect defect)
             return new(defect.VesselId,defect.Id,"Defect",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,defect.Revision,
                 Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(defect.Revision)),Field("Binding",null,"OwnerReference")));
@@ -685,6 +686,35 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                 Field("Revision", entry.State == EntityState.Added ? null : Number(m.Revision), Number(m.Revision)), Field("ContentJson", null, null, "RevisionReference"))),
             RiskCommandReceipt c => new(c.VesselId, c.ResourceId, "RiskCommandReceipt", null, c.Revision, Fields(
                 Field("Operation", null, Closed(c.Action, RiskOperations)), Field("Revision", null, Number(c.Revision)), Field("Binding", null, "CommittedResource"))),
+            _ => null
+        };
+    }
+    // DEV-108/DEV-109: closed kinds/states/decisions and revisions only. Measured values, codes,
+    // source references, reasons, requirement references and dates are never copied.
+    private static AuditMetadata? PmsProjection(EntityEntry entry)
+    {
+        long? Before(string property) => entry.State == EntityState.Added ? null : (long?)entry.Property(property).OriginalValue;
+        string? BeforeState(string property, string[] allowed) => entry.State == EntityState.Added ? null : Closed((string)entry.Property(property).OriginalValue!, allowed);
+        var kinds = Poseidon.Domain.PmsMeasurementPolicy.Kinds; var states = Poseidon.Domain.MaintenancePostponementPolicy.States;
+        return entry.Entity switch
+        {
+            MeasurementPoint p => new(p.VesselId, p.Id, "MeasurementPoint", Before("Revision"), p.Revision, Fields(
+                Field("Revision", Before("Revision") is { } r ? Number(r) : null, Number(p.Revision)), Field("Kind", null, Closed(p.Kind, kinds)),
+                Field("Source", null, Closed(p.Source, Poseidon.Domain.PmsMeasurementPolicy.PointSources)), Field("Definition", null, null, "RevisionReference"),
+                Field("Binding", null, "OwnerReference"))),
+            MeasurementPointRevision r => new(r.VesselId, r.PointId, "MeasurementPointRevision", null, r.Revision, Fields(
+                Field("Revision", null, Number(r.Revision)), Field("ContentJson", null, null, "RevisionReference"))),
+            MeasurementReading m => new(m.VesselId, m.PointId, "MeasurementReading", null, null, Fields(
+                Field("SourceType", null, Closed(m.SourceType, Poseidon.Domain.PmsMeasurementPolicy.ReadingSources)), Field("Value", null, null, "ValuesWithheld"),
+                Field("Evidence", null, m.EvidenceFileId == null ? "None" : "Referenced"), Field("Binding", null, "OwnerReference"))),
+            MaintenancePostponement x => new(x.VesselId, x.PlanId, "MaintenancePostponement", Before("Revision"), x.Revision, Fields(
+                Field("Revision", Before("Revision") is { } r ? Number(r) : null, Number(x.Revision)),
+                Field("State", BeforeState("State", states), Closed(x.State, states)),
+                Field("Criticality", null, Closed(x.Criticality, Poseidon.Domain.EquipmentCriticality.All)),
+                Field("PlanRevision", null, Number(x.PlanRevision)), Field("ExtensionDays", null, Number(x.ExtensionDays)),
+                Field("Reason", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
+            PmsCommandReceipt c => new(c.VesselId, c.ResourceId, "PmsCommandReceipt", null, c.Revision, Fields(
+                Field("Operation", null, Closed(c.Action, PmsStorage.Operations)), Field("Revision", null, Number(c.Revision)), Field("Binding", null, "CommittedResource"))),
             _ => null
         };
     }

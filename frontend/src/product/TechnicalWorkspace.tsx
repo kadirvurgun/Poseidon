@@ -5,6 +5,7 @@ import { EnterpriseChrome } from './EnterpriseChrome';
 import { MaintenanceObservations } from './MaintenanceObservations';
 import { DefectEquipmentLaunch } from './DefectEquipmentLaunch';
 import { WorkOrderPlanLaunch } from './WorkOrderPlanLaunch';
+import { MeasurementPointsPanel, PostponementPanel, pmsCopy } from './PmsPanels';
 import { dueReason, dueState } from './maintenance-copy';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ApiError, session } from './api';
@@ -382,7 +383,7 @@ export function TechnicalWorkspace() {
         <label className="technical-filter"><span>{localizedText(en, "pairs.m_53b2085feaa0cc74")}</span><div><Search aria-hidden="true"/><input type="search" value={filter} onChange={e => setFilter(e.target.value)}/></div></label>
         <div className="technical-columns"><section className="technical-record-panel" aria-label={localizedText(en, "pairs.m_37307219f1c6d3ae")}><h2>{route.plan ? (localizedText(en, "pairs.m_fc89847cf2eb3c14")) : (localizedText(en, "pairs.m_61ce25c54dbc0a2f"))}</h2>
           {route.plan ? <TechnicalPlanList plans={plans!.items} assets={assets.items} references={refs} filter={filter} selectedId={route.id} en={en} onSelect={id => navigate({ ...route, id })}/>
-                : <><EquipmentHierarchyTree scopeKey={`${user?.tenantId}:${user?.actorId}:${route.vessel}`} language={language} nodes={assets!.items.map(a => ({ id: a.id, parentId: a.parentId, label: a.name || a.code }))} selectedId={route.id} onSelect={id => navigate({ ...route, id })}/>
+                : <><EquipmentHierarchyTree scopeKey={`${user?.tenantId}:${user?.actorId}:${route.vessel}`} language={language} nodes={assets!.items.map(a => ({ id: a.id, parentId: a.parentId, label: a.name || a.code, criticality: a.criticality }))} selectedId={route.id} onSelect={id => navigate({ ...route, id })}/>
               {filter && <ul aria-label={localizedText(en, "pairs.m_56337645601df143")}>{assets!.items.filter(a => `${a.name ?? ''} ${a.code ?? ''}`.toLocaleLowerCase(language).includes(filter.toLocaleLowerCase(language))).map(a => <li key={a.id}><button onClick={() => navigate({ ...route, id: a.id })}>{a.name || a.code || a.id}</button></li>)}</ul>}</>}
         </section><section aria-label={localizedText(en, "pairs.m_bf14f1c0eb80dc29")}>
           {route.id && !(route.plan ? plan : asset) && <p role="alert">{localizedText(en, "pairs.m_d3956072850197af")}</p>}
@@ -390,6 +391,8 @@ export function TechnicalWorkspace() {
           {!editor && asset && !route.plan && <EquipmentSummary asset={asset} en={en}/>}
           {!editor && asset && !route.plan && user && <DefectEquipmentLaunch session={user} vessel={route.vessel} assetId={asset.id} revision={asset.revision} language={language} disabled={dirty || observationDirty || busy || observationBusy || uncertain || observationUncertain || offline} onNavigate={href => guard(() => window.location.assign(href))}/>}
           {!editor && plan && route.plan && <MaintenancePlanSummary plan={plan} asset={assets.items.find(asset => asset.id === plan.assetId)} references={refs} en={en}/>}
+          {!editor && asset && !route.plan && canShowPrivate && <MeasurementPointsPanel key={`${owner}:${route.vessel}:${asset.id}`} vessel={route.vessel} asset={asset.id} language={language}/>}
+          {!editor && plan && route.plan && canShowPrivate && <PostponementPanel key={`${owner}:${route.vessel}:${plan.id}:${plan.revision}`} vessel={route.vessel} plan={plan.id} language={language}/>}
           {!editor && plan && route.plan && user && <WorkOrderPlanLaunch session={user} vessel={route.vessel} planId={plan.id} revision={plan.revision} language={language} disabled={dirty || observationDirty || busy || observationBusy || uncertain || observationUncertain || offline} onNavigate={href => guard(() => window.location.assign(href))}/>}
           {(canWrite && !editor && (asset || plan) || canHistory && route.id) && <EnterpriseActions align="start" aria-label={localizedText(en, "pairs.m_2ce1bd8b350fd2a6")}>{canWrite && !editor && (asset || plan) && <Button variant="outline" disabled={busy || uncertain || observationBusy || observationUncertain || offline} onClick={() => start(false)}>{localizedText(en, "pairs.m_2a8233db25e97857")}</Button>}{canHistory && route.id && <Button variant="outline" disabled={observationBusy || observationUncertain} onClick={loadHistory}>{localizedText(en, "pairs.m_247303d64af5e1f0")}</Button>}</EnterpriseActions>}
           {historyError && <p role="alert">{localizedText(en, "pairs.m_8918abcb6db89258")}</p>}
@@ -428,7 +431,11 @@ export function TechnicalWorkspace() {
           <label>{localizedText(en, "pairs.m_95b612a214a9ed88")}<select value={editor.parentId ?? ''} onChange={e => change('parentId', e.target.value)}><option value="">{localizedText(en, "pairs.m_fff1cf175aa1a66a")}</option>{assets?.items.filter(a => a.id !== editor.id).map(a => <option key={a.id} value={a.id}>{a.name || a.code || a.id}</option>)}</select></label>
           <label>{localizedText(en, "pairs.m_496c84d8d0354fa1")}<select value={editor.level} onChange={e => change('level', e.target.value)}><option value="System">{localizedText(en, "pairs.m_0e986037a7ebffd5")}</option><option value="Equipment">{localizedText(en, "pairs.m_77e9d3d4c2e4b44f")}</option><option value="Component">{localizedText(en, "pairs.m_1015c6735bd0c910")}</option></select></label>
           <label>{localizedText(en, "pairs.m_4932250e7b636bb1")}<select value={editor.responsibleRoleId ?? ''} onChange={e => change('responsibleRoleId', e.target.value)}><option value="">{localizedText(en, "pairs.m_a5a7675bd7000dbd")}</option>{owners.map(o => <option key={o} value={o}>{o}</option>)}</select></label>
-          {assetFields.map(([key, english, turkish]) => <label key={key}>{localizedLabel({ en: english, tr: turkish }, en)}<input maxLength={2000} type={key === 'commissionDate' ? 'date' : 'text'} value={editor[key] ?? ''} onChange={e => change(key, e.target.value)}/></label>)}
+          {assetFields.map(([key, english, turkish]) => <label key={key}>{localizedLabel({ en: english, tr: turkish }, en)}{key === 'criticality'
+            // DEV-052: closed criticality vocabulary; an empty choice stays UNKNOWN, never "not critical".
+            ? <select value={editor.criticality ?? ''} onChange={e => change('criticality', e.target.value)}><option value="">{pmsCopy[language].crit_UNKNOWN}</option>
+                {(['CRITICAL', 'IMPORTANT', 'STANDARD'] as const).map(c => <option key={c} value={c}>{pmsCopy[language][`crit_${c}`]}</option>)}</select>
+            : <input maxLength={2000} type={key === 'commissionDate' ? 'date' : 'text'} value={editor[key] ?? ''} onChange={e => change(key, e.target.value)}/>}</label>)}
         </>}
       </EnterpriseFormGrid><EnterpriseActions layout="form" aria-label={localizedText(en, "pairs.m_ae1f2ff34e96c6a8")}><Button variant="outline" disabled={busy || uncertain} onClick={() => guard(() => { clear(); setAttempt(x => x + 1); })}>{localizedText(en, "pairs.m_b8c70a3fdcf207b3")}</Button><Button type="submit" disabled={busy || offline || conflict || !canWrite}>{uncertain ? (localizedText(en, "pairs.m_9f97920d4c817430")) : (localizedText(en, "pairs.m_7e0cdba2e467dbec"))}</Button></EnterpriseActions></form>}
       {notice && <p role="status">{notice}</p>}

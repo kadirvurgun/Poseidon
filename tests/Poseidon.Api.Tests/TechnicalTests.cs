@@ -93,11 +93,14 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(HttpStatusCode.Forbidden, deniedOwner.StatusCode);
         var badJob = await Send(client, PlansUrl, cmd with { Id = Guid.NewGuid(), JobId = Guid.NewGuid() }); Assert.Equal(HttpStatusCode.NotFound, badJob.StatusCode);
         await using var before = Db(); var revisionCount = await before.MaintenancePlanRevisions.CountAsync(Ct);
-        var postpone = await Send(client, PlansUrl + $"/{cmd.Id}/postpone", new { reason = "synthetic", authority = "Chief Engineer", newDue = "2099-01-01" });
-        Assert.Equal(HttpStatusCode.UnprocessableEntity, postpone.StatusCode);
+        // DEV-109: a caller-declared authority is never trusted; without the server-provisioned request
+        // permission the postponement is denied and audited, and the plan history is unchanged.
+        var postpone = await Send(client, PlansUrl + $"/{cmd.Id}/postpone", new { id = Guid.NewGuid(), requestedDeadline = "2099-01-01", reason = "synthetic request reason" });
+        Assert.Equal(HttpStatusCode.Forbidden, postpone.StatusCode);
         await using var verify = Db(); Assert.Equal(revisionCount, await verify.MaintenancePlanRevisions.CountAsync(Ct));
+        Assert.Equal(0, await verify.MaintenancePostponements.CountAsync(Ct));
         await using var security = new Poseidon.Persistence.SecurityEventWriter(new DbContextOptionsBuilder<Poseidon.Persistence.SecurityEventWriter>().UseNpgsql(postgres.GetConnectionString()).Options);
-        Assert.Contains(await security.Set<Poseidon.Persistence.SecurityEvent>().ToArrayAsync(Ct), x => x.Action == "MaintenanceSave" && x.Result == "validation_failed");
+        Assert.Contains(await security.Set<Poseidon.Persistence.SecurityEvent>().ToArrayAsync(Ct), x => x.Action == "MaintenancePostponementCommand" && x.Result == "permission_denied");
         var history = await client.GetFromJsonAsync<JsonElement>("/api/v1/" + PlansUrl + $"/{cmd.Id}/history", Ct);
         Assert.Equal("1", history[0].GetProperty("inputs").GetProperty("intervalValue").GetString());
     }

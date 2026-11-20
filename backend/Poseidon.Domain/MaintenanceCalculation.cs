@@ -12,7 +12,11 @@ public sealed record MaintenanceInputs(
     string? Condition = null, string? TimeZone = null, string? Provenance = null,
     string? WarningLead = null, string? GracePeriod = null, string? PostponementAllowed = null,
     string? ApprovalRule = null, string? Criticality = null, string? ApplicableRequirement = null,
-    string? PlanType = null, [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] Guid? ObservationId = null);
+    string? PlanType = null, [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] Guid? ObservationId = null,
+    // DEV-108: a plan may read its meter/condition from a declared measurement point instead of an
+    // observation source. TriggerOn (WARNING|ALARM) selects the threshold band that makes it due.
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] Guid? MeasurementPointId = null,
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? TriggerOn = null);
 public sealed record MaintenanceDue(string State, string Reason, DateOnly? NextDueDate = null,
     string? NextDueMeter = null, string Algorithm = "planning-v1");
 
