@@ -33,6 +33,7 @@ public static class SecurityEventCodes
         "TowagePlanRead", "TowagePlanCommand", "TowageBriefingRead", "TowageBriefingCommand", "HighRiskWorkRead",
         "SafetyEventRead", "SafetyEventCommand", "SafetyEventOfflineRead", "SafetyEventOfflineRequest",
         "TowageExecutionRead", "TowageExecutionCommand", "TugDailyLogRead", "TugDailyLogCommand", "DrydockRead", "DrydockCommand",
+        "TugOperationHistoryRead", "TugOperationsOfflineRead", "TugOperationsOfflineCommand",
         "ParameterRead", "ParameterCommand", "HrRead", "HrCommand", "MembershipRead", "MembershipCommand", "SessionRevalidation",
         "ControlledDocument", "ControlledDocumentRead", "ControlledDocumentCommand", "ControlledDocumentReplay",
         "SyncOperationRead", "SyncConflictList",
@@ -125,6 +126,8 @@ public static class SecurityEventCodes
         "speech_capability_unavailable", "speech_input_invalid", "speech_attestation_invalid", "voice_draft_incomplete",
         "document_download_restricted", "controlled_document_download_policy", "acknowledgement_revision_stale", "already_acknowledged",
         "content_access_required", "isps_classification_required",
+        // S10 WP-B DEV-092.
+        "offline_snapshot_unavailable",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static bool Allows(string action, string result) => Actions.Contains(action) && Results.Contains(result);
 }

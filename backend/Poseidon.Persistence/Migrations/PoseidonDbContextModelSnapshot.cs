@@ -12314,6 +12314,162 @@ namespace Poseidon.Persistence.Migrations
                     b.ToTable("OfflineOutcomes", "tug");
                 });
 
+            modelBuilder.Entity("Poseidon.Persistence.TugOperationOfflineOutcome", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CommandId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("BaseVersion")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("CapturedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ConflictFields")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("Digest")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("JobId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("OffsetMinutes")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Operation")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("OutcomeJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("ParentCommandId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("PayloadDigest")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("ProtectedContext")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("ReceivedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("ResourceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Result")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<long>("ServerVersion")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("SnapshotId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "ActorId", "CommandId");
+
+                    b.HasAlternateKey("TenantId", "ActorId", "CommandId", "SnapshotId")
+                        .HasName("AK_TugOperationOfflineOutcome_Snapshot");
+
+                    b.HasIndex("TenantId", "ActorId", "ParentCommandId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_TugOperationOfflineOutcome_Parent")
+                        .HasFilter("\"ParentCommandId\" IS NOT NULL");
+
+                    b.HasIndex("TenantId", "ActorId", "ParentCommandId", "SnapshotId");
+
+                    b.HasIndex("TenantId", "ActorId", "VesselId", "Result", "ReceivedAt")
+                        .HasDatabaseName("IX_TugOperationOfflineOutcome_Conflicts");
+
+                    b.HasIndex("TenantId", "SnapshotId", "ActorId", "VesselId", "JobId");
+
+                    b.ToTable("OperationOfflineOutcomes", "tug", t =>
+                        {
+                            t.HasCheckConstraint("CK_TugOperationOfflineOutcome_State", "\"Result\" IN ('Committed','MaterialConflict','ServerRetained') AND \"Operation\" IN ('tug.briefing.ack.v1','tug.execution.event.v1','tug.daily.entry.v1') AND (\"Result\"<>'ServerRetained' OR \"ParentCommandId\" IS NOT NULL) AND (\"Result\"<>'MaterialConflict' OR length(\"ConflictFields\")>0)");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.TugOperationOfflineSnapshot", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AuthorityDigest")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("IssuedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("JobId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("PolicyDigest")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("PolicyVersion")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<string>("SnapshotHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "Id");
+
+                    b.HasAlternateKey("TenantId", "Id", "ActorId", "VesselId", "JobId")
+                        .HasName("AK_TugOperationOfflineSnapshot_Scope");
+
+                    b.HasIndex("TenantId", "VesselId");
+
+                    b.HasIndex("TenantId", "ActorId", "VesselId", "JobId", "IssuedAt")
+                        .HasDatabaseName("IX_TugOperationOfflineSnapshot_Owner");
+
+                    b.ToTable("OperationOfflineSnapshots", "tug", t =>
+                        {
+                            t.HasCheckConstraint("CK_TugOperationOfflineSnapshot_Lease", "\"ExpiresAt\" > \"IssuedAt\"");
+                        });
+                });
+
             modelBuilder.Entity("Poseidon.Persistence.TugOwner", b =>
                 {
                     b.Property<Guid>("TenantId")
@@ -16419,6 +16575,34 @@ namespace Poseidon.Persistence.Migrations
                         .HasPrincipalKey("TenantId", "Id", "ActorId", "VesselId", "JobId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.TugOperationOfflineOutcome", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.TugOperationOfflineOutcome", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ActorId", "ParentCommandId", "SnapshotId")
+                        .HasPrincipalKey("TenantId", "ActorId", "CommandId", "SnapshotId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_TugOperationOfflineOutcome_Parent");
+
+                    b.HasOne("Poseidon.Persistence.TugOperationOfflineSnapshot", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "SnapshotId", "ActorId", "VesselId", "JobId")
+                        .HasPrincipalKey("TenantId", "Id", "ActorId", "VesselId", "JobId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_TugOperationOfflineOutcome_Snapshot");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.TugOperationOfflineSnapshot", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.Vessel", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_TugOperationOfflineSnapshot_Vessel");
                 });
 
             modelBuilder.Entity("Poseidon.Persistence.TugOwner", b =>

@@ -8,7 +8,7 @@ const item = (patch: Record<string, unknown> = {}) => ({ source: 'crewAssignment
   enrollmentId: '33333333-3333-4333-8333-333333333333', commandId: '44444444-4444-4444-8444-444444444444', baseVersion: 7, serverVersionAtConflict: 8,
   capturedAt: '2026-11-19T08:00:00Z', receivedAt: '2026-11-19T08:05:00.1234567+00:00', state: 'Open', resolutionCommandId: null, resolutionResult: null, ...patch })
 const page = (patch: Record<string, unknown> = {}) => ({ vesselId: vessel, readAt: '2026-11-19T09:00:00Z',
-  sources: [{ source: 'crewAssignment', state: 'Included' }, { source: 'tugPlan', state: 'NotPermitted' }, { source: 'dailyRecord', state: 'Partial' }, { source: 'workOrderEvidence', state: 'NotPermitted' }],
+  sources: [{ source: 'crewAssignment', state: 'Included' }, { source: 'tugPlan', state: 'NotPermitted' }, { source: 'dailyRecord', state: 'Partial' }, { source: 'workOrderEvidence', state: 'NotPermitted' }, { source: 'tugOperations', state: 'NotPermitted' }],
   items: [item()], offset: 0, hasMore: false, ...patch })
 afterEach(() => { vi.unstubAllGlobals() })
 

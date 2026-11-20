@@ -336,7 +336,7 @@ public static class TowageEndpoints
     }
 
     // Each participant acknowledges the exact issued revision for themselves (ACK or DISPUTE with reason).
-    private static async Task<TowageOutcome> AcknowledgeBriefing(TowageContext<TowageBriefingAcknowledgeCommand> c) {
+    internal static async Task<TowageOutcome> AcknowledgeBriefing(TowageContext<TowageBriefingAcknowledgeCommand> c) {
         var db = c.Db; var cmd = c.Command;
         var b = await db.TowageBriefings.AsNoTracking().SingleOrDefaultAsync(x => x.Id == c.RouteId && x.VesselId == c.Vessel, c.Ct);
         if (b == null) return TowageOutcome.Fail(404, "resource_not_found");

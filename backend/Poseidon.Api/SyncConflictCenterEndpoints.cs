@@ -28,6 +28,7 @@ public static class SyncConflictCenterEndpoints
     internal const int PageSize = 25;
     internal const int MaxOffset = 1000;
     internal const string CrewSource = "crewAssignment", TugSource = "tugPlan", DailySource = "dailyRecord", WorkOrderSource = "workOrderEvidence";
+    internal const string TugOperationsSource = "tugOperations"; // S10 WP-B DEV-092
 
     public static void MapSyncConflictCenter(this IEndpointRouteBuilder app) => app.MapGet("/api/v1/sync/conflicts", List)
         .RequireAuthorization("DirectoryRead").WithName("SyncConflictList").Produces<SyncConflictPageDto>()
@@ -131,12 +132,25 @@ public static class SyncConflictCenterEndpoints
             successors.AddRange(await own.Where(o => o.ParentCommandId != null && parents.Contains(o.ParentCommandId.Value))
                 .Select(o => new SyncConflictSuccessor(o.EnrollmentId, o.ParentCommandId!.Value, o.CommandId, o.Result)).ToArrayAsync(ct));
         }
+        if (tug) {
+            // DEV-092: briefing acknowledgement / execution observation / daily entry captures (own captures only).
+            var own = db.TugOperationOfflineOutcomes.AsNoTracking().Where(o => o.ActorId == actor.Id && o.VesselId == vessel);
+            rows.AddRange(await own.Where(o => o.Result == "MaterialConflict")
+                .OrderBy(o => own.Any(s => s.SnapshotId == o.SnapshotId && s.ParentCommandId == o.CommandId) ? 1 : 0)
+                .ThenByDescending(o => o.ReceivedAt).ThenBy(o => o.CommandId).Take(bound)
+                .Select(o => new SyncConflictRow(TugOperationsSource, o.ResourceId, o.Operation, o.SnapshotId, o.CommandId, o.BaseVersion, o.ServerVersion, (DateTimeOffset?)o.CapturedAt, o.ReceivedAt))
+                .ToArrayAsync(ct));
+            var parents = rows.Where(r => r.Source == TugOperationsSource).Select(r => r.CommandId).ToArray();
+            successors.AddRange(await own.Where(o => o.ParentCommandId != null && parents.Contains(o.ParentCommandId.Value))
+                .Select(o => new SyncConflictSuccessor(o.SnapshotId, o.ParentCommandId!.Value, o.CommandId, o.Result)).ToArrayAsync(ct));
+        }
         var (items, more) = Project(rows, successors, offset);
         SyncConflictSourceDto[] sources = [
             new(CrewSource, crew ? "Included" : "NotPermitted"),
             new(TugSource, tug ? "Included" : "NotPermitted"),
             new(DailySource, dailyKinds.Length == DailyOperationsPolicy.Kinds.Length ? "Included" : dailyKinds.Length > 0 ? "Partial" : "NotPermitted"),
-            new(WorkOrderSource, workOrders ? "Included" : "NotPermitted")];
+            new(WorkOrderSource, workOrders ? "Included" : "NotPermitted"),
+            new(TugOperationsSource, tug ? "Included" : "NotPermitted")];
         await audit.WriteAsync(h, "SyncConflictList", "Success", resourceId: vessel);
         return Results.Ok(new SyncConflictPageDto(vessel, time.GetUtcNow(), sources, items, offset, more));
     }

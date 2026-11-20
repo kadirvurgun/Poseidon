@@ -64,6 +64,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if (TowageProjection(entry) is { } towage) return towage;
         if (SafetyEventProjection(entry) is { } safety) return safety;
         if (FieldOperationsProjection(entry) is { } field) return field;
+        if (TugOperationsOfflineProjection(entry) is { } tugOffline) return tugOffline;
         if(entry.Entity is Defect defect)
             return new(defect.VesselId,defect.Id,"Defect",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,defect.Revision,
                 Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(defect.Revision)),Field("Binding",null,"OwnerReference")));
@@ -987,6 +988,18 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             _ => null
         };
     }
+    // S10 WP-B (DEV-092): snapshot leases and offline outcomes. Captured values, conflict context, outcome bodies,
+    // snapshot hashes and actor identities are withheld; only closed operation/result codes and revisions are kept.
+    private static AuditMetadata? TugOperationsOfflineProjection(EntityEntry entry) => entry.Entity switch
+    {
+        TugOperationOfflineSnapshot s => new(s.VesselId, s.JobId, "TugOperationOfflineSnapshot", null, null,
+            Fields(Field("Binding", null, "OwnerReference"), Field("Lease", null, null, "ValuesWithheld"))),
+        TugOperationOfflineOutcome o => new(o.VesselId, o.ResourceId, "TugOperationOfflineOutcome", null, o.ServerVersion,
+            Fields(Field("Operation", null, Closed(o.Operation, Poseidon.Domain.TugOperationsOfflineRules.CaptureOperations)),
+                Field("Outcome", null, Closed(o.Result, Poseidon.Domain.TugOperationsOfflineRules.Results)),
+                Field("ProtectedContext", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
+        _ => null
+    };
     internal static readonly string[] RiskOperations = ["RiskAssessmentCreate", "RiskAssessmentUpdate", "RiskAssessmentSubmit", "RiskAssessmentReview",
         "RiskAssessmentAmend", "RiskAssessmentAcknowledge", "RiskTemplateCreate", "RiskTemplateUpdate", "RiskTemplateSubmit", "RiskTemplateReview",
         "RiskTemplateRevise", "RiskTemplateSuggest", "RiskTemplateSuggestionReview", "RiskMethodCreate", "RiskMethodPublish"];

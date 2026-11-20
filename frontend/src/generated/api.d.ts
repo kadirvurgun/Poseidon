@@ -794,6 +794,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/tug-operation-history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["TugOperationHistoryList"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/memberships/current": {
         parameters: {
             query?: never;
@@ -7852,6 +7868,86 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["DrydockVerify"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-operations-offline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["TugOperationsOfflineCapability"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-operations-offline/snapshots": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TugOperationsOfflineSnapshot"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-operations-offline/replay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TugOperationsOfflineReplay"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-operations-offline/outcomes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["TugOperationsOfflineOutcomes"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-operations-offline/conflicts/{command}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["TugOperationsOfflineConflict"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -16689,6 +16785,75 @@ export interface components {
             openInterval: boolean;
             meterHours: null | string;
         };
+        TugHistoryDailyLogDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            tugId: string;
+            /** Format: date */
+            logDate: string;
+            watch: string;
+            state: string;
+            linkedToExecution: boolean;
+        };
+        TugHistoryExecutionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            tugId: string;
+            state: string;
+            verificationState: string;
+            /** Format: date-time */
+            startedAt: string;
+            /** Format: date-time */
+            endedAt: null | string;
+            /** Format: int64 */
+            durationMinutes: null | number;
+            /** Format: uuid */
+            startedBy: string;
+            /** Format: uuid */
+            endedBy: null | string;
+            /** Format: uuid */
+            verifiedBy: null | string;
+            /** Format: int64 */
+            sequence: number;
+            /** Format: int32 */
+            evidenceEvents: number;
+            lastEventHash: string;
+        };
+        TugHistoryItemDto: {
+            /** Format: uuid */
+            jobId: string;
+            /** Format: uuid */
+            vesselId: string;
+            jobNumber: string;
+            jobStatus: string;
+            jobType: null | string;
+            assistedVessel: null | string;
+            operationArea: null | string;
+            /** Format: date-time */
+            at: string;
+            /** Format: date-time */
+            cancelledAt: null | string;
+            outcome: string;
+            evidence: string;
+            planState: null | string;
+            briefingState: null | string;
+            executions: components["schemas"]["TugHistoryExecutionDto"][];
+            dailyLogs: components["schemas"]["TugHistoryDailyLogDto"][];
+            safetyEvents: string;
+        };
+        TugHistoryPageDto: {
+            items: components["schemas"]["TugHistoryItemDto"][];
+            nextCursor: null | string;
+            outcomes: string[];
+            /** Format: date-time */
+            readAt: string;
+            /** @default NoSilentDeletion;CancelledJobsRemainVisible */
+            deletion: string;
+            /** @default 18.01:row92;06.01:p236;13.02:p1131;15.01:p1609 */
+            sourceVersion: string;
+        };
         TugLifecycleCommand: {
             /** Format: uint32 */
             expectedVersion: number;
@@ -16745,6 +16910,91 @@ export interface components {
             provenance: string;
             /** Format: date-time */
             observedAt: null | string;
+        };
+        TugOperationsConflictDto: {
+            /** Format: uuid */
+            commandId: string;
+            operation: string;
+            /** Format: uuid */
+            resourceId: string;
+            conflictFields: string[];
+            choices: string[];
+            resolved: boolean;
+            captured: components["schemas"]["JsonElement"];
+            atConflict: components["schemas"]["TugOperationsServerState"];
+            current: components["schemas"]["TugOperationsServerState"];
+        };
+        TugOperationsOfflineCapabilityDto: {
+            /** Format: uuid */
+            vesselId: string;
+            state: string;
+            operations: string[];
+            onlineOnly: string[];
+            snapshots: components["schemas"]["TugOperationsSnapshotLeaseDto"][];
+        };
+        TugOperationsOfflineResult: {
+            /** Format: uuid */
+            commandId: string;
+            operation: string;
+            result: string;
+            /** Format: uuid */
+            resourceId: string;
+            /** Format: uint32 */
+            baseVersion: number;
+            /** Format: uint32 */
+            serverVersion: number;
+            conflictFields: string[];
+            choices: string[];
+            /** Format: uuid */
+            parentCommandId: null | string;
+            /** Format: date-time */
+            receivedAt: string;
+        };
+        TugOperationsServerState: {
+            /** Format: int64 */
+            revision: null | number;
+            hash: null | string;
+            state: null | string;
+            /** Format: int64 */
+            sequence: null | number;
+            /** Format: uint32 */
+            version: null | number;
+        };
+        TugOperationsSnapshotDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: uuid */
+            jobId: string;
+            policyVersion: string;
+            /** Format: date-time */
+            issuedAt: string;
+            /** Format: date-time */
+            expiresAt: string;
+            snapshotHash: string;
+            job: components["schemas"]["TugSnapshotJob"];
+            briefing: null | components["schemas"]["TugSnapshotBriefing"];
+            executions: components["schemas"]["TugSnapshotExecution"][];
+            dailyLogs: components["schemas"]["TugSnapshotDailyLog"][];
+            writableTugs: string[];
+            operations: string[];
+            onlineOnly: string[];
+            watches: string[];
+            /** @default ReadOnlyOperationalSnapshot;NotAReleaseOrGoDecision */
+            classification: string;
+            /** @default 18.01:row93;63.03:mobile-task-center;06.01:p233-236;DEV-033/034/035 */
+            sourceVersion: string;
+        };
+        TugOperationsSnapshotLeaseDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            jobId: string;
+            /** Format: date-time */
+            issuedAt: string;
+            /** Format: date-time */
+            expiresAt: string;
         };
         TugOption: {
             /** Format: uuid */
@@ -16973,6 +17223,60 @@ export interface components {
             /** Format: uint32 */
             baseVersion: null | number;
             inputs: components["schemas"]["TugRequestInputs"];
+        };
+        TugSnapshotBriefing: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            state: string;
+            contentHash: string;
+            participant: boolean;
+            acknowledged: boolean;
+            acknowledgementState: string;
+        };
+        TugSnapshotDailyLog: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            tugId: string;
+            /** Format: date */
+            logDate: string;
+            watch: string;
+            state: string;
+            /** Format: uint32 */
+            version: number;
+            /** Format: int64 */
+            revision: number;
+            content: components["schemas"]["TugDailyLogContent"];
+        };
+        TugSnapshotExecution: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            tugId: string;
+            state: string;
+            /** Format: int64 */
+            sequence: number;
+            hash: string;
+            canRecord: boolean;
+            towlineConnected: boolean;
+            recordableKinds: string[];
+        };
+        TugSnapshotJob: {
+            /** Format: uuid */
+            id: string;
+            jobNumber: string;
+            status: string;
+            /** Format: int64 */
+            revision: number;
+            assistedVessel: null | string;
+            jobType: null | string;
+            operationArea: null | string;
+            /** Format: date-time */
+            requestedStart: null | string;
+            /** Format: date-time */
+            requestedEnd: null | string;
         };
         VesselCertificateContent: {
             metadata: components["schemas"]["CertificateMetadata"];
@@ -19558,6 +19862,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DowntimeOriginDto"];
+                };
+            };
+        };
+    };
+    TugOperationHistoryList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugHistoryPageDto"];
                 };
             };
         };
@@ -30422,6 +30746,106 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DrydockView"];
+                };
+            };
+        };
+    };
+    TugOperationsOfflineCapability: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugOperationsOfflineCapabilityDto"];
+                };
+            };
+        };
+    };
+    TugOperationsOfflineSnapshot: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugOperationsSnapshotDto"];
+                };
+            };
+        };
+    };
+    TugOperationsOfflineReplay: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugOperationsOfflineResult"];
+                };
+            };
+        };
+    };
+    TugOperationsOfflineOutcomes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TugOperationsOfflineConflict: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                command: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugOperationsConflictDto"];
                 };
             };
         };

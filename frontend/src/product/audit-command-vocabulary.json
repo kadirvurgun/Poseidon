@@ -58,6 +58,8 @@
     "TugDailyLogUpdate": "PREPARATION_COMMAND",
     "TugDailyLogSubmit": "PREPARATION_COMMAND",
     "TugDailyLogReview": "HUMAN_REVIEW_WORKFLOW",
+    "TugOperationsOfflineSnapshot": "OFFLINE_LIFECYCLE",
+    "TugOperationsOfflineReplay": "OFFLINE_LIFECYCLE",
     "DrydockCreate": "PREPARATION_COMMAND",
     "DrydockUpdate": "PREPARATION_COMMAND",
     "DrydockTransition": "PREPARATION_COMMAND",
