@@ -1,5 +1,53 @@
 {
   "copies": {
+    "ShipOpsLifecyclePanel_tsx_copy": {
+      "sofTitle": "Statement of Factsin viimeistely",
+      "sofIntro": "Viimeistely on nimetyn päällikön, yliperämiehen tai konepäällikön nimenomainen ihmisen toimi. Siitä kirjataan kuka, milloin, tehtävä ja syy. Se on sisäinen: ei allekirjoitus eikä ulkoinen sopimus.",
+      "draft": "LUONNOS",
+      "final": "LOPULLINEN (sisäinen)",
+      "signature": "Allekirjoitusta ei kirjattu",
+      "amended": "Muutettu LOPULLISEN jälkeen: uusi tarkistus ja viimeistely tarvitaan.",
+      "missing": "Puuttuvat pakolliset tiedot: {{fields}}",
+      "unresolved": "Näille pakollisille viitteille ei ole hakulähdettä, joten matka jää TUNTEMATTOMAKSI. Vahvista jokainen erikseen viimeistelläksesi:",
+      "authority": "Nimitys",
+      "finalize": "Viimeistele SOF",
+      "noAuthority": "Tälle alukselle ei ole voimassa olevaa viimeistelynimitystä.",
+      "history": "Elinkaarihistoria",
+      "loading": "Ladataan…",
+      "unavailable": "Ei käytettävissä nykyisillä käyttöoikeuksillasi.",
+      "retry": "Yritä uudelleen",
+      "offline": "Offline: elinkaarikomennot vaativat ajantasaisen verkkoistunnon.",
+      "unknownOutcome": "Tulos tuntematon: uusi yritys lähettää saman komennon kerran.",
+      "done": "Komento kirjattu.",
+      "failed": "Komentoa ei hyväksytty: {{code}}",
+      "dtTitle": "Seisokin tarkistus ja sulkeminen",
+      "dtIntro": "Lähettäminen, todentaminen ja sulkeminen ovat nimenomaisia ihmisen toimia. Sisällön kirjannut ei koskaan todenna tai sulje sitä. Todennettu sulkeminen ei ole turvallisuusvapautus.",
+      "state": "Tila",
+      "loh": "Loss of Hire -ehdokas",
+      "lohReview": "Tarkistus tarvitaan: vain ehdokas, ei oikeutta eikä summaa",
+      "lohUnknown": "Tuntematon (alkua ei ilmoitettu)",
+      "evidence": "Vaatimuksen todisteet (linkki ei ole todentaminen)",
+      "noEvidence": "Ei linkitettyjä vaatimuksen todisteita.",
+      "link": "Linkitä todiste",
+      "unlink": "Poista",
+      "selectEvidence": "Valitse todiste",
+      "recorderNote": "Kirjasit tämän seisokin: toisen nimetyn henkilön on todennettava ja suljettava se.",
+      "states": {
+        "NOT_SUBMITTED": "Ei lähetetty",
+        "OPEN": "Avoin",
+        "IN_REVIEW": "Tarkistuksessa",
+        "VERIFIED": "Todennettu (ihminen)",
+        "CLOSED": "Suljettu"
+      },
+      "actions": {
+        "SUBMIT_FOR_REVIEW": "Lähetä tarkistukseen",
+        "RETURN_FOR_CORRECTION": "Palauta korjattavaksi",
+        "VERIFY": "Todenna",
+        "CLOSE": "Sulje",
+        "LINK_CLAIM_EVIDENCE": "Linkitä vaatimuksen todiste",
+        "UNLINK_CLAIM_EVIDENCE": "Poista vaatimuksen todiste"
+      }
+    },
     "ShipOperationsLedgerPanel_tsx_copy": {
       "fuelTitle": "ROB-jatkuvuuden tarkistus",
       "portTitle": "Statement of Facts -aikajana",

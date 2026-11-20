@@ -52,9 +52,10 @@ public sealed partial class DirectoryWorkspaceTests
         // enroll + action (6 variants), DEV-110 critical spare create/update and requisition propose/decide.
         // S8 WP-C adds 13: DEV-055 defect lifecycle start/assess/safeguard/lift/action/verify/effectiveness/close and DEV-103 service report create/update/submit/verify/amend.
         // S8 WP-D adds 10 (DEV-087 towage plan create/update/submit/decide/amend; DEV-088 briefing create/update/issue/amend/acknowledge).
-        Assert.Equal(224, observed.Count);
-        Assert.Equal(216, observed.Count(x => x.IsCritical));
-        Assert.Equal(231, S1SecurityContract.CriticalOperationIds.Count);
+        // S6 WP-D redo (DEV-101/102) adds the SOF finalize/amend and downtime lifecycle human commands.
+        Assert.Equal(226, observed.Count);
+        Assert.Equal(218, observed.Count(x => x.IsCritical));
+        Assert.Equal(233, S1SecurityContract.CriticalOperationIds.Count);
         Assert.Equal(8, observed.Count(x => !x.IsCritical));
         var extra = new RouteEndpoint(_ => Task.CompletedTask, RoutePatternFactory.Parse("/api/v1/unclassified-write"), 0,
             new EndpointMetadataCollection(new HttpMethodMetadata(["POST"]), new AuthorizeAttribute("DirectoryRead")), "unclassified");
