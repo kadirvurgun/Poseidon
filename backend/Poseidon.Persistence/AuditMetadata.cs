@@ -61,6 +61,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if (PmsProjection(entry) is { } pms) return pms;
         if (TechnicalRecordProjection(entry) is { } technical) return technical;
         if (TowageProjection(entry) is { } towage) return towage;
+        if (SafetyEventProjection(entry) is { } safety) return safety;
         if(entry.Entity is Defect defect)
             return new(defect.VesselId,defect.Id,"Defect",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,defect.Revision,
                 Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(defect.Revision)),Field("Binding",null,"OwnerReference")));
@@ -835,6 +836,69 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                 Field("Reason", null, null, "ValuesWithheld"))),
             TowageReceipt c => new(c.VesselId, c.ResourceId, "TowageReceipt", null, c.Revision, Fields(
                 Field("Action", null, Closed(c.Action, TowageStorage.ReceiptActions)), Field("Revision", null, Number(c.Revision)), Field("Binding", null, "CommittedResource"))),
+            _ => null
+        };
+    }
+    // S9 WP-B (DEV-060/061): closed state/decision/outcome codes and revisions only. Narrative, summary, location,
+    // reasons, message bodies, factor/root-cause/barrier text, follow-up handles/hashes and the vault reporter binding
+    // are never copied; no actor identity is copied into the summary.
+    private static AuditMetadata? SafetyEventProjection(EntityEntry entry)
+    {
+        long? Before(string property) => entry.State == EntityState.Added ? null : (long?)entry.Property(property).OriginalValue;
+        string? BeforeState(string property, string[] allowed) => entry.State == EntityState.Added ? null : Closed((string)entry.Property(property).OriginalValue!, allowed);
+        var states = Poseidon.Domain.SafetyEventPolicy.States; var investigation = Poseidon.Domain.SafetyEventPolicy.InvestigationStates;
+        string[] outcomes = [.. Poseidon.Domain.SafetyEventPolicy.VerifyOutcomes, .. Poseidon.Domain.SafetyEventPolicy.EffectivenessOutcomes];
+        return entry.Entity switch
+        {
+            SafetyEvent e => new(e.VesselId, e.Id, "SafetyEvent", Before("Revision"), e.Revision, Fields(
+                Field("Revision", Before("Revision") is { } r ? Number(r) : null, Number(e.Revision)),
+                Field("State", BeforeState("State", states), Closed(e.State, states)),
+                Field("ReportingMode", null, Closed(e.ReportingMode, Poseidon.Domain.SafetyEventPolicy.ReportingModes)),
+                Field("ContentJson", null, null, "RevisionReference"), Field("Binding", null, "OwnerReference"))),
+            SafetyEventRevision r => new(r.VesselId, r.EventId, "SafetyEventRevision", null, r.Revision, Fields(
+                Field("Revision", null, Number(r.Revision)), Field("State", null, Closed(r.State, states)),
+                Field("ReasonCode", null, Closed(r.ReasonCode, SafetyEventStorage.EventReasons)), Field("ContentJson", null, null, "RevisionReference"))),
+            SafetyEventIdentity i => new(i.VesselId, i.Id, "SafetyEventIdentity", null, null, Fields(
+                Field("Binding", entry.State == EntityState.Added ? null : "ProtectedStorage", "ProtectedStorage"),
+                Field("ContactPreference", null, Closed(i.ContactPreference, "NONE", "IN_APP_FOLLOW_UP")), Field("Identity", null, null, "ValuesWithheld"))),
+            SafetyEventIdentityAccess x => new(x.VesselId, x.Id, "SafetyEventIdentityAccess", null, x.EventRevision, Fields(
+                Field("Purpose", null, Closed(x.Purpose, Poseidon.Domain.SafetyEventPolicy.IdentityPurposes)), Field("Revision", null, Number(x.EventRevision)),
+                Field("Reason", null, null, "ValuesWithheld"), Field("Binding", null, "ProtectedStorage"))),
+            // A reporter follow-up message is audited against its own id, never the event id.
+            SafetyEventMessage m => new(m.VesselId, m.AuthorKind == "REPORTER" ? m.Id : m.EventId, "SafetyEventMessage", null, m.EventRevision, Fields(
+                Field("Visibility", null, Closed(m.Visibility, Poseidon.Domain.SafetyEventPolicy.MessageVisibilities)),
+                Field("AuthorKind", null, Closed(m.AuthorKind, "TEAM", "REPORTER")), Field("Body", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
+            SafetyEventTriage t => new(t.VesselId, t.EventId, "SafetyEventTriage", null, t.ResultRevision, Fields(
+                Field("Decision", null, Closed(t.Decision, Poseidon.Domain.SafetyEventPolicy.TriageDecisions)), Field("Revision", null, Number(t.ResultRevision)),
+                Field("Severity", null, t.Severity == null ? null : Closed(t.Severity, Poseidon.Domain.SafetyEventPolicy.Severities)),
+                Field("Reason", null, null, "ValuesWithheld"))),
+            SafetyInvestigation v => new(v.VesselId, v.EventId, "SafetyInvestigation", Before("Revision"), v.Revision, Fields(
+                Field("Revision", Before("Revision") is { } r ? Number(r) : null, Number(v.Revision)),
+                Field("State", BeforeState("State", investigation), Closed(v.State, investigation)), Field("ContentJson", null, null, "RevisionReference"),
+                Field("Binding", null, "OwnerReference"))),
+            SafetyInvestigationRevision r => new(r.VesselId, r.EventId, "SafetyInvestigationRevision", null, r.Revision, Fields(
+                Field("Revision", null, Number(r.Revision)), Field("State", null, Closed(r.State, investigation)),
+                Field("ReasonCode", null, Closed(r.ReasonCode, SafetyEventStorage.InvestigationReasons)), Field("ContentJson", null, null, "RevisionReference"))),
+            SafetyInvestigationDecision d => new(d.VesselId, d.EventId, "SafetyInvestigationDecision", null, d.Revision, Fields(
+                Field("Decision", null, Closed(d.Decision, Poseidon.Domain.SafetyEventPolicy.ReviewDecisions)), Field("Revision", null, Number(d.Revision)),
+                Field("Reason", null, null, "ValuesWithheld"))),
+            SafetyAction a => new(a.VesselId, a.Id, "SafetyAction", Before("Revision"), a.Revision, Fields(
+                Field("Revision", Before("Revision") is { } r ? Number(r) : null, Number(a.Revision)),
+                Field("ActionState", BeforeState("State", Poseidon.Domain.SafetyEventPolicy.ActionStates), Closed(a.State, Poseidon.Domain.SafetyEventPolicy.ActionStates)),
+                Field("Effectiveness", BeforeState("Effectiveness", Poseidon.Domain.SafetyEventPolicy.EffectivenessStates), Closed(a.Effectiveness, Poseidon.Domain.SafetyEventPolicy.EffectivenessStates)),
+                Field("Kind", null, Closed(a.Kind, Poseidon.Domain.SafetyEventPolicy.ActionKinds)), Field("Definition", null, null, "ValuesWithheld"),
+                Field("Binding", null, "OwnerReference"))),
+            SafetyActionStep s => new(s.VesselId, s.ActionId, "SafetyActionStep", null, s.ActionRevision, Fields(
+                Field("Step", null, Closed(s.Kind, Poseidon.Domain.SafetyEventPolicy.StepKinds)), Field("Revision", null, Number(s.ActionRevision)),
+                Field("StepOutcome", null, s.Outcome == null ? null : Closed(s.Outcome, outcomes)), Field("Text", null, null, "ValuesWithheld"))),
+            SafetyEventReceipt c => new(c.VesselId, c.ResourceId, "SafetyEventReceipt", null, c.Revision, Fields(
+                Field("Action", null, Closed(c.Action, SafetyEventStorage.ReceiptActions)), Field("Revision", null, Number(c.Revision)), Field("Binding", null, "CommittedResource"))),
+            SafetyEventOfflineEnrollment o => new(o.VesselId, o.Id, "SafetyEventOfflineEnrollment", null, null,
+                Fields(Field("Binding", entry.State == EntityState.Added ? null : "OwnerReference", "OwnerReference"))),
+            SafetyEventOfflineLifecycle l => new(l.VesselId, l.EnrollmentId, "SafetyEventOfflineLifecycle", null, null,
+                Fields(Field("Binding", null, "OwnerReference"), Field("Lifecycle", null, Closed(l.Action, SafetyEventStorage.LifecycleActions)))),
+            SafetyEventOfflineOutcome o => new(o.VesselId, o.EventId, "SafetyEventOfflineOutcome", null, o.Revision,
+                Fields(Field("Binding", null, "OwnerReference"), Field("Outcome", null, Closed(o.Result, "Committed")))),
             _ => null
         };
     }

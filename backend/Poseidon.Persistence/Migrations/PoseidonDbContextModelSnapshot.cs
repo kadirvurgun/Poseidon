@@ -8463,6 +8463,894 @@ namespace Poseidon.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Poseidon.Persistence.SafetyAction", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("BarrierIdsJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("CompletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.Property<DateOnly>("DueDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Effectiveness")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<Guid?>("EffectivenessBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("FollowUpOf")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("InvestigationRevision")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasMaxLength(12)
+                        .HasColumnType("character varying(12)");
+
+                    b.Property<Guid>("OwnerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Revision")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("RootCauseIdsJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(12)
+                        .HasColumnType("character varying(12)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<Guid?>("VerifiedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "EventId");
+
+                    b.HasIndex("TenantId", "VesselId", "EventId");
+
+                    b.ToTable("SafetyActions", "hse", t =>
+                        {
+                            t.HasCheckConstraint("CK_SafetyAction_State", "\"Revision\">0 AND \"Kind\" IN ('CORRECTIVE','PREVENTIVE') AND \"State\" IN ('OPEN','COMPLETED','VERIFIED') AND \"Effectiveness\" IN ('PENDING','EFFECTIVE','NOT_EFFECTIVE','INCONCLUSIVE') AND (\"Effectiveness\"='PENDING' OR \"State\"='VERIFIED' AND \"EffectivenessBy\" IS NOT NULL) AND (\"State\"<>'VERIFIED' OR \"VerifiedBy\" IS NOT NULL AND \"CompletedBy\" IS NOT NULL) AND (\"FollowUpOf\" IS NULL OR \"FollowUpOf\"<>\"Id\")");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyActionStep", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ActionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("ActionRevision")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("EvidenceJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<string>("Outcome")
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<DateTimeOffset>("RecordedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "ActionId", "ActionRevision")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "VesselId", "ActionId");
+
+                    b.ToTable("SafetyActionSteps", "hse", t =>
+                        {
+                            t.HasCheckConstraint("CK_SafetyActionStep_Kind", "\"Kind\" IN ('COMPLETE','VERIFY','EFFECTIVENESS') AND \"ActionRevision\">1 AND length(\"Text\")>=10 AND (\"Kind\"<>'COMPLETE' OR \"Outcome\" IS NULL) AND (\"Kind\"<>'VERIFY' OR \"Outcome\" IN ('VERIFIED','NOT_VERIFIED')) AND (\"Kind\"<>'EFFECTIVENESS' OR \"Outcome\" IN ('EFFECTIVE','NOT_EFFECTIVE','INCONCLUSIVE'))");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyEvent", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Category")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<DateTimeOffset?>("ClosedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("ClosedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ClosureReason")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("ContentJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("EventNo")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("Hash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("InvestigationRequired")
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)");
+
+                    b.Property<string>("Origin")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)");
+
+                    b.Property<string>("Provenance")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<Guid?>("ReportedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ReportingMode")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<long>("Revision")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("SavedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Severity")
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<DateTimeOffset?>("SubmittedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "EventNo")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "VesselId", "State");
+
+                    b.ToTable("SafetyEvents", "hse", t =>
+                        {
+                            t.HasCheckConstraint("CK_SafetyEvent_State", "\"Revision\">0 AND \"State\" IN ('DRAFT','SUBMITTED','RETURNED','TRIAGED','INVESTIGATING','ACTION_TRACKING','CLOSED','WITHDRAWN') AND \"ReportingMode\" IN ('NAMED','CONFIDENTIAL') AND \"Origin\" IN ('ONLINE','OFFLINE') AND \"Provenance\" IN ('UserDeclaredUnverified','SyntheticUnverified') AND (\"Category\" IS NULL OR \"Category\" IN ('NEAR_MISS','INCIDENT','ACCIDENT','AUDIT_FINDING','DEFECT','FATIGUE','ENVIRONMENTAL','CYBER','OBSERVATION')) AND (\"Severity\" IS NULL OR \"Severity\" IN ('UNASSESSED','LOW','MEDIUM','HIGH','CRITICAL')) AND (\"InvestigationRequired\" IS NULL OR \"InvestigationRequired\" IN ('YES','NO','UNKNOWN')) AND ((\"ReportingMode\"='NAMED') = (\"ReportedBy\" IS NOT NULL)) AND (\"State\"<>'CLOSED' OR \"ClosedBy\" IS NOT NULL AND length(\"ClosureReason\")>=10) AND (\"Provenance\"<>'SyntheticUnverified' OR \"State\"='DRAFT' AND \"Severity\" IS NULL AND \"SubmittedAt\" IS NULL)");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyEventIdentity", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ContactPreference")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("FollowUpHandle")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("FollowUpHash")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("ReporterId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "Id");
+
+                    b.HasIndex("FollowUpHandle")
+                        .IsUnique()
+                        .HasFilter("\"FollowUpHandle\" IS NOT NULL");
+
+                    b.HasIndex("TenantId", "EventId")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "VesselId", "EventId");
+
+                    b.ToTable("SafetyEventIdentities", "hse", t =>
+                        {
+                            t.HasCheckConstraint("CK_SafetyEventIdentity_Contact", "\"ContactPreference\" IN ('NONE','IN_APP_FOLLOW_UP') AND ((\"FollowUpHandle\" IS NULL) = (\"FollowUpHash\" IS NULL))");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyEventIdentityAccess", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("AccessedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("EventRevision")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Purpose")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "VesselId", "EventId");
+
+                    b.ToTable("SafetyEventIdentityAccesses", "hse", t =>
+                        {
+                            t.HasCheckConstraint("CK_SafetyEventIdentityAccess_Purpose", "\"Purpose\" IN ('INVESTIGATION_FOLLOW_UP','WELFARE_SUPPORT','LEGAL_OBLIGATION') AND length(\"Reason\")>=10");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyEventMessage", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AuthorKind")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("EventRevision")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Hash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Visibility")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.HasKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "EventId", "CreatedAt");
+
+                    b.HasIndex("TenantId", "VesselId", "EventId");
+
+                    b.ToTable("SafetyEventMessages", "hse", t =>
+                        {
+                            t.HasCheckConstraint("CK_SafetyEventMessage_Kind", "\"Visibility\" IN ('TEAM_ONLY','REPORTER_SHARED') AND \"AuthorKind\" IN ('TEAM','REPORTER') AND ((\"AuthorKind\"='REPORTER') = (\"ActorId\" IS NULL)) AND (\"AuthorKind\"<>'REPORTER' OR \"Visibility\"='REPORTER_SHARED') AND length(\"Body\") BETWEEN 1 AND 4000");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyEventOfflineEnrollment", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AuthorityDigest")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("Challenge")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("DeviceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("KeyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("PolicyDigest")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("PolicyVersion")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<string>("PublicKey")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<DateTimeOffset>("RetainUntil")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset?>("RevokedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SourceVersion")
+                        .IsRequired()
+                        .HasMaxLength(192)
+                        .HasColumnType("character varying(192)");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "Id");
+
+                    b.HasAlternateKey("TenantId", "Id", "ActorId", "VesselId")
+                        .HasName("AK_SafetyEventOfflineEnrollment_Scope");
+
+                    b.HasIndex("TenantId", "VesselId");
+
+                    b.HasIndex("TenantId", "ActorId", "VesselId", "CreatedAt")
+                        .HasDatabaseName("IX_SafetyEventOfflineEnrollment_Owner");
+
+                    b.ToTable("SafetyEventEnrollments", "offline", t =>
+                        {
+                            t.HasCheckConstraint("CK_SafetyEventOfflineEnrollment_State", "\"ExpiresAt\" > \"CreatedAt\" AND \"RetainUntil\" >= \"ExpiresAt\"");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyEventOfflineLifecycle", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(24)
+                        .HasColumnType("character varying(24)");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EnrollmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("RecordedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "EnrollmentId", "ActorId", "VesselId");
+
+                    b.ToTable("SafetyEventLifecycle", "offline", t =>
+                        {
+                            t.HasCheckConstraint("CK_SafetyEventOfflineLifecycle_Action", "\"Action\" IN ('Enrolled','Renewed','KeyEnrolled','Revoked','KeyLost','CleanupAllowed')");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyEventOfflineOutcome", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CommandId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CapturedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Digest")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("EnrollmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("OutcomeJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("ReceivedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Result")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<long>("Revision")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "ActorId", "CommandId");
+
+                    b.HasIndex("TenantId", "VesselId", "EventId");
+
+                    b.HasIndex("TenantId", "EnrollmentId", "ActorId", "VesselId");
+
+                    b.HasIndex("TenantId", "ActorId", "EnrollmentId", "ReceivedAt", "CommandId")
+                        .HasDatabaseName("IX_SafetyEventOfflineOutcome_History");
+
+                    b.ToTable("SafetyEventOutcomes", "offline", t =>
+                        {
+                            t.HasCheckConstraint("CK_SafetyEventOfflineOutcome_State", "\"Result\" IN ('Committed') AND \"Revision\">0");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyEventReceipt", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Key")
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.Property<DateTimeOffset>("CommittedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Fingerprint")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("ResourceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Revision")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "ActorId", "Key");
+
+                    b.HasIndex("TenantId", "VesselId");
+
+                    b.ToTable("SafetyEventReceipts", "hse", t =>
+                        {
+                            t.HasCheckConstraint("CK_SafetyEventReceipt_Action", "\"Action\" IN ('SafetyEventCreate','SafetyEventUpdate','SafetyEventSubmit','SafetyEventWithdraw','SafetyEventTriage','SafetyEventIdentityAccess','SafetyEventMessage','SafetyInvestigationSave','SafetyInvestigationSubmit','SafetyInvestigationReview','SafetyActionCreate','SafetyActionStep','SafetyEventClose') AND \"Revision\">0");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyEventRevision", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Revision")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid?>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ContentJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Hash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("Provenance")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("ReasonCode")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<DateTimeOffset>("SavedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "EventId", "Revision");
+
+                    b.HasIndex("TenantId", "VesselId", "EventId");
+
+                    b.ToTable("SafetyEventRevisions", "hse", t =>
+                        {
+                            t.HasCheckConstraint("CK_SafetyEventRevision_State", "\"Revision\">0 AND \"State\" IN ('DRAFT','SUBMITTED','RETURNED','TRIAGED','INVESTIGATING','ACTION_TRACKING','CLOSED','WITHDRAWN') AND \"ReasonCode\" IN ('CREATE','EDIT','SUBMIT','WITHDRAW','TRIAGE','RETURN','INVESTIGATION_OPENED','INVESTIGATION_APPROVED','INVESTIGATION_REJECTED','CLOSE','OFFLINE_CAPTURE','SYNTHETIC_INCOMPLETE_DRAFT')");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyEventTriage", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("DecidedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Decision")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("InvestigationRequired")
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<long>("ResultRevision")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("Revision")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Severity")
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "EventId", "Revision")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "VesselId", "EventId");
+
+                    b.ToTable("SafetyEventTriages", "hse", t =>
+                        {
+                            t.HasCheckConstraint("CK_SafetyEventTriage_Decision", "\"Decision\" IN ('TRIAGE','RETURN') AND \"ResultRevision\"=\"Revision\"+1 AND length(\"Reason\")>=10 AND (\"Decision\"='RETURN') = (\"Severity\" IS NULL AND \"InvestigationRequired\" IS NULL)");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyInvestigation", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long?>("ApprovedRevision")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("AuthorsJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ContentJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Hash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<long>("Revision")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("SavedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<Guid?>("SubmittedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "EventId");
+
+                    b.ToTable("SafetyInvestigations", "hse", t =>
+                        {
+                            t.HasCheckConstraint("CK_SafetyInvestigation_State", "\"Revision\">0 AND \"State\" IN ('DRAFT','SUBMITTED','RETURNED','APPROVED','REJECTED') AND (\"State\"<>'APPROVED' OR \"ApprovedRevision\"=\"Revision\")");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyInvestigationDecision", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ContentHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateTimeOffset>("DecidedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Decision")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<long>("Revision")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "EventId", "Revision")
+                        .IsUnique();
+
+                    b.ToTable("SafetyInvestigationDecisions", "hse", t =>
+                        {
+                            t.HasCheckConstraint("CK_SafetyInvestigationDecision_Kind", "\"Decision\" IN ('APPROVE','RETURN','REJECT') AND length(\"Reason\")>=10");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyInvestigationRevision", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Revision")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ContentJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Hash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("ReasonCode")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<DateTimeOffset>("SavedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "EventId", "Revision");
+
+                    b.HasIndex("TenantId", "VesselId", "EventId");
+
+                    b.ToTable("SafetyInvestigationRevisions", "hse", t =>
+                        {
+                            t.HasCheckConstraint("CK_SafetyInvestigationRevision_State", "\"Revision\">0 AND \"State\" IN ('DRAFT','SUBMITTED','RETURNED','APPROVED','REJECTED') AND \"ReasonCode\" IN ('CREATE','EDIT','REVISE','SUBMIT','APPROVE','RETURN','REJECT')");
+                        });
+                });
+
             modelBuilder.Entity("Poseidon.Persistence.SecurityEvent", b =>
                 {
                     b.Property<Guid>("Id")
@@ -13706,6 +14594,175 @@ namespace Poseidon.Persistence.Migrations
                         .WithMany()
                         .HasForeignKey("TenantId", "SourceKind", "SourceId", "SourceRevision")
                         .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyAction", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.SafetyEvent", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId", "EventId")
+                        .HasPrincipalKey("TenantId", "VesselId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_SafetyActions_Event");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyActionStep", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.SafetyAction", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId", "ActionId")
+                        .HasPrincipalKey("TenantId", "VesselId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_SafetyActionSteps_Action");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyEvent", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.Vessel", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_SafetyEvents_Vessel");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyEventIdentity", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.SafetyEvent", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId", "EventId")
+                        .HasPrincipalKey("TenantId", "VesselId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_SafetyEventIdentities_Event");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyEventIdentityAccess", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.SafetyEvent", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId", "EventId")
+                        .HasPrincipalKey("TenantId", "VesselId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_SafetyEventIdentityAccesses_Event");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyEventMessage", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.SafetyEvent", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId", "EventId")
+                        .HasPrincipalKey("TenantId", "VesselId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_SafetyEventMessages_Event");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyEventOfflineEnrollment", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.Vessel", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_SafetyEventOffline_Vessel");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyEventOfflineLifecycle", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.SafetyEventOfflineEnrollment", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EnrollmentId", "ActorId", "VesselId")
+                        .HasPrincipalKey("TenantId", "Id", "ActorId", "VesselId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_SafetyEventOfflineLifecycle_Enrollment");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyEventOfflineOutcome", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.SafetyEvent", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId", "EventId")
+                        .HasPrincipalKey("TenantId", "VesselId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_SafetyEventOfflineOutcome_Event");
+
+                    b.HasOne("Poseidon.Persistence.SafetyEventOfflineEnrollment", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EnrollmentId", "ActorId", "VesselId")
+                        .HasPrincipalKey("TenantId", "Id", "ActorId", "VesselId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_SafetyEventOfflineOutcome_Enrollment");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyEventReceipt", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.Vessel", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_SafetyEventReceipts_Vessel");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyEventRevision", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.SafetyEvent", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId", "EventId")
+                        .HasPrincipalKey("TenantId", "VesselId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_SafetyEventRevisions_Event");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyEventTriage", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.SafetyEvent", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId", "EventId")
+                        .HasPrincipalKey("TenantId", "VesselId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_SafetyEventTriages_Event");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyInvestigation", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.SafetyEvent", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId", "EventId")
+                        .HasPrincipalKey("TenantId", "VesselId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_SafetyInvestigations_Event");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyInvestigationDecision", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.SafetyInvestigationRevision", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "EventId", "Revision")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_SafetyInvestigationDecisions_Revision");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.SafetyInvestigationRevision", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.SafetyInvestigation", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId", "EventId")
+                        .HasPrincipalKey("TenantId", "VesselId", "EventId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_SafetyInvestigationRevisions_Investigation");
                 });
 
             modelBuilder.Entity("Poseidon.Persistence.SecurityEvent", b =>

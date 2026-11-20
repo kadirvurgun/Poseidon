@@ -6242,6 +6242,294 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/safety-events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SafetyEventList"];
+        put?: never;
+        post: operations["SafetyEventCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SafetyEventRead"];
+        put: operations["SafetyEventUpdate"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/follow-up": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SafetyEventFollowUpRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/follow-up/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SafetyEventFollowUpMessage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/{id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SafetyEventSubmit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/{id}/withdraw": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SafetyEventWithdraw"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/{id}/triage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SafetyEventTriage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/{id}/identity-access": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SafetyEventIdentityAccess"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/{id}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SafetyEventMessage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/{id}/investigation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["SafetyInvestigationSave"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/{id}/investigation/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SafetyInvestigationSubmit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/{id}/investigation/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SafetyInvestigationReview"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/{id}/actions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SafetyActionCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/{id}/actions/{action}/steps": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SafetyActionStep"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/{id}/close": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SafetyEventClose"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-event-offline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SafetyEventOfflineInventory"];
+        put?: never;
+        post: operations["SafetyEventOfflineEnroll"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-event-offline/{enrollment}/{action}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SafetyEventOfflineAction"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-event-offline/{enrollment}/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SafetyEventOfflineHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/defects/{id}/lifecycle": {
         parameters: {
             query?: never;
@@ -13513,6 +13801,428 @@ export interface components {
             evidenceOptions?: null | components["schemas"]["ManningEvidenceOption"][];
             posts?: null | string[];
             rules?: null | string[];
+        };
+        SafetyActionCreateCommand: {
+            /** Format: uuid */
+            id: string;
+            kind: string;
+            title: string;
+            description: string;
+            /** Format: uuid */
+            ownerId: string;
+            /** Format: date */
+            dueDate: string;
+            rootCauseIds: string[];
+            barrierIds: string[];
+            /** Format: uuid */
+            followUpOf?: null | string;
+        };
+        SafetyActionDto: {
+            /** Format: uuid */
+            id: string;
+            kind: string;
+            title: string;
+            description: string;
+            /** Format: uuid */
+            ownerId: string;
+            /** Format: date */
+            dueDate: string;
+            overdue: boolean;
+            rootCauseIds: string[];
+            barrierIds: string[];
+            /** Format: uuid */
+            followUpOf: null | string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            state: string;
+            effectiveness: string;
+            steps: components["schemas"]["SafetyActionStepDto"][];
+            allowedSteps: string[];
+        };
+        SafetyActionStepCommand: {
+            /** Format: int64 */
+            expectedRevision: number;
+            kind: string;
+            outcome: null | string;
+            text: string;
+            evidence?: null | components["schemas"]["CertificateFilePin"][];
+        };
+        SafetyActionStepDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            kind: string;
+            outcome: null | string;
+            text: string;
+            evidence: components["schemas"]["CertificateFilePin"][];
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            recordedAt: string;
+        };
+        SafetyBarrier: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            function: string;
+            performance: string;
+            riskBarrierRef?: null | string;
+        };
+        SafetyEventBlocker: {
+            /** Format: uuid */
+            eventId: string;
+            eventNo: string;
+            category: null | string;
+            severity: null | string;
+            state: string;
+            reason: string;
+            blocking: boolean;
+        };
+        SafetyEventBlockerSnapshot: {
+            /** Format: uuid */
+            vesselId: string;
+            state: string;
+            items: components["schemas"]["SafetyEventBlocker"][];
+            coverage: string[];
+            /** Format: date-time */
+            evaluatedAt: string;
+        };
+        SafetyEventCapabilitiesDto: {
+            /** Format: uuid */
+            vesselId: string;
+            canRead: boolean;
+            canReport: boolean;
+            canTriage: boolean;
+            canInvestigate: boolean;
+            canReview: boolean;
+            canWriteActions: boolean;
+            canVerifyActions: boolean;
+            canReviewEffectiveness: boolean;
+            canReadIdentity: boolean;
+            anonymousChannel: string;
+            offline: components["schemas"]["SafetyEventOfflineDto"];
+            categories: string[];
+            reportingModes: string[];
+            operationContexts: string[];
+            severities: string[];
+            sourceVersion: string;
+        };
+        SafetyEventCreateCommand: {
+            /** Format: uuid */
+            id: string;
+            reportingMode: string;
+            fields: components["schemas"]["SafetyEventDraftFields"];
+            contactPreference?: null | string;
+        };
+        SafetyEventDraftFields: {
+            category?: null | string;
+            occurrencePrecision?: null | string;
+            /** Format: date-time */
+            occurredAt?: null | string;
+            /** Format: date */
+            occurrenceDate?: null | string;
+            occurrenceUnknownReason?: null | string;
+            timeZone?: null | string;
+            operationContext?: null | string;
+            locationText?: null | string;
+            summary?: null | string;
+            narrative?: null | string;
+            immediateActionTaken?: null | string;
+            immediateActionText?: null | string;
+            severityClaim?: null | string;
+            evidence?: null | components["schemas"]["CertificateFilePin"][];
+        };
+        SafetyEventDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            eventNo: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            state: string;
+            reportingMode: string;
+            fields: components["schemas"]["SafetyEventDraftFields"];
+            hash: string;
+            missing: string[];
+            reporter: components["schemas"]["SafetyEventReporterDto"];
+            severity: null | string;
+            severityClaim: null | string;
+            investigationRequired: null | string;
+            severityPolicy: string;
+            origin: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            savedAt: string;
+            /** Format: date-time */
+            submittedAt: null | string;
+            /** Format: uuid */
+            closedBy: null | string;
+            /** Format: date-time */
+            closedAt: null | string;
+            closureReason: null | string;
+            triages: components["schemas"]["SafetyEventTriageDto"][];
+            investigation: null | components["schemas"]["SafetyInvestigationDto"];
+            actions: components["schemas"]["SafetyActionDto"][];
+            effectiveness: string;
+            closureBlockers: string[];
+            messages: components["schemas"]["SafetyEventMessageDto"][];
+            can: components["schemas"]["SafetyEventPermissionsDto"];
+            followUpSecret: null | string;
+            provenance: string;
+            sourceVersion: string;
+        };
+        SafetyEventFollowUpDto: {
+            eventNo: string;
+            state: string;
+            /** Format: date-time */
+            submittedAt: null | string;
+            messages: components["schemas"]["SafetyEventMessageDto"][];
+        };
+        SafetyEventFollowUpMessageCommand: {
+            /** Format: uuid */
+            id: string;
+            body: string;
+        };
+        SafetyEventIdentityAccessCommand: {
+            /** Format: uuid */
+            id: string;
+            purpose: string;
+            reason: string;
+        };
+        SafetyEventIdentityDto: {
+            /** Format: uuid */
+            accessId: string;
+            /** Format: uuid */
+            eventId: string;
+            /** Format: uuid */
+            reporterActorId: string;
+            contactPreference: string;
+            purpose: string;
+            /** Format: date-time */
+            accessedAt: string;
+        };
+        SafetyEventListItemDto: {
+            /** Format: uuid */
+            id: string;
+            eventNo: string;
+            state: string;
+            reportingMode: string;
+            category: null | string;
+            summary: null | string;
+            occurrencePrecision: null | string;
+            /** Format: date-time */
+            occurredAt: null | string;
+            /** Format: date */
+            occurrenceDate: null | string;
+            severity: null | string;
+            mine: boolean;
+            origin: string;
+            /** Format: date-time */
+            savedAt: string;
+        };
+        SafetyEventMessageCommand: {
+            /** Format: uuid */
+            id: string;
+            visibility: string;
+            body: string;
+        };
+        SafetyEventMessageDto: {
+            /** Format: uuid */
+            id: string;
+            visibility: string;
+            authorKind: string;
+            /** Format: uuid */
+            actorId: null | string;
+            body: string;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        SafetyEventOfflineContextDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            tenantId: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: uuid */
+            deviceId: string;
+            /** Format: uuid */
+            keyId: string;
+            challenge: string;
+            policyVersion: string;
+            policyDigest: string;
+            authorityDigest: string;
+            sourceVersion: string;
+            operation: string;
+            allowedParts: string[];
+            categories: string[];
+            operationContexts: string[];
+            severities: string[];
+            /** Format: date-time */
+            serverTime: string;
+            /** Format: date-time */
+            expiresAt: string;
+            /** Format: date-time */
+            retainUntil: string;
+            /** Format: int32 */
+            maxRecords: number;
+            /** Format: int32 */
+            maxEncryptedBytes: number;
+            /** Format: int32 */
+            maxDeviceRecords: number;
+            /** Format: int32 */
+            maxDeviceEncryptedBytes: number;
+        };
+        SafetyEventOfflineDto: {
+            available: boolean;
+            state: string;
+        };
+        SafetyEventPageDto: {
+            items: components["schemas"]["SafetyEventListItemDto"][];
+            /** Format: int32 */
+            offset: number;
+            /** Format: int32 */
+            limit: number;
+            hasMore: boolean;
+            blockers: components["schemas"]["SafetyEventBlockerSnapshot"];
+            capabilities: components["schemas"]["SafetyEventCapabilitiesDto"];
+        };
+        SafetyEventPermissionsDto: {
+            edit: boolean;
+            submit: boolean;
+            withdraw: boolean;
+            triage: boolean;
+            readIdentity: boolean;
+            message: boolean;
+            investigate: boolean;
+            reviewInvestigation: boolean;
+            createAction: boolean;
+            close: boolean;
+        };
+        SafetyEventReasonCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            reason: string;
+        };
+        SafetyEventReporterDto: {
+            mode: string;
+            /** Format: uuid */
+            actorId: null | string;
+            isCurrentActor: boolean;
+        };
+        SafetyEventSubmitCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+        };
+        SafetyEventTriageCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            decision: string;
+            severity: null | string;
+            investigationRequired: null | string;
+            reason: string;
+        };
+        SafetyEventTriageDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            decision: string;
+            severity: null | string;
+            investigationRequired: null | string;
+            reason: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            decidedAt: string;
+        };
+        SafetyEventUpdateCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            fields: components["schemas"]["SafetyEventDraftFields"];
+        };
+        SafetyFactor: {
+            /** Format: uuid */
+            id: string;
+            kind: string;
+            category: string;
+            statement: string;
+        };
+        SafetyFailure: {
+            code: string;
+            missing: string[];
+            correlationId: string;
+        };
+        SafetyInvestigationContent: {
+            scope: null | string;
+            factors: components["schemas"]["SafetyFactor"][];
+            rootCauses: components["schemas"]["SafetyRootCause"][];
+            barriers: components["schemas"]["SafetyBarrier"][];
+            uncertainties: string[];
+            evidence: components["schemas"]["CertificateFilePin"][];
+        };
+        SafetyInvestigationDecisionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            decision: string;
+            reason: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            decidedAt: string;
+        };
+        SafetyInvestigationDto: {
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            state: string;
+            content: components["schemas"]["SafetyInvestigationContent"];
+            hash: string;
+            /** Format: int64 */
+            approvedRevision: null | number;
+            missing: string[];
+            authors: string[];
+            decisions: components["schemas"]["SafetyInvestigationDecisionDto"][];
+            canEdit: boolean;
+            canSubmit: boolean;
+            canReview: boolean;
+        };
+        SafetyInvestigationReviewCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+            decision: string;
+            reason: string;
+        };
+        SafetyInvestigationSaveCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            content: components["schemas"]["SafetyInvestigationContent"];
+        };
+        SafetyInvestigationSubmitCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+        };
+        SafetyRootCause: {
+            /** Format: uuid */
+            id: string;
+            statement: string;
+            factorIds: string[];
+            verification: string;
         };
         SaveRegulatoryDraft: {
             /** Format: uint32 */
@@ -25237,6 +25947,553 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["RiskMethodDto"];
                 };
+            };
+        };
+    };
+    SafetyEventList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventPageDto"];
+                };
+            };
+        };
+    };
+    SafetyEventCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyEventCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyFailure"];
+                };
+            };
+        };
+    };
+    SafetyEventRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventDto"];
+                };
+            };
+        };
+    };
+    SafetyEventUpdate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyEventUpdateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventDto"];
+                };
+            };
+        };
+    };
+    SafetyEventFollowUpRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventFollowUpDto"];
+                };
+            };
+        };
+    };
+    SafetyEventFollowUpMessage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyEventFollowUpMessageCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventFollowUpDto"];
+                };
+            };
+        };
+    };
+    SafetyEventSubmit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyEventSubmitCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyFailure"];
+                };
+            };
+        };
+    };
+    SafetyEventWithdraw: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyEventReasonCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventDto"];
+                };
+            };
+        };
+    };
+    SafetyEventTriage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyEventTriageCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventDto"];
+                };
+            };
+        };
+    };
+    SafetyEventIdentityAccess: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyEventIdentityAccessCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventIdentityDto"];
+                };
+            };
+        };
+    };
+    SafetyEventMessage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyEventMessageCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventDto"];
+                };
+            };
+        };
+    };
+    SafetyInvestigationSave: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyInvestigationSaveCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventDto"];
+                };
+            };
+        };
+    };
+    SafetyInvestigationSubmit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyInvestigationSubmitCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyFailure"];
+                };
+            };
+        };
+    };
+    SafetyInvestigationReview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyInvestigationReviewCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventDto"];
+                };
+            };
+        };
+    };
+    SafetyActionCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyActionCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyFailure"];
+                };
+            };
+        };
+    };
+    SafetyActionStep: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                action: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyActionStepCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventDto"];
+                };
+            };
+        };
+    };
+    SafetyEventClose: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyEventReasonCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyFailure"];
+                };
+            };
+        };
+    };
+    SafetyEventOfflineInventory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    SafetyEventOfflineEnroll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventOfflineContextDto"];
+                };
+            };
+        };
+    };
+    SafetyEventOfflineAction: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enrollment: string;
+                action: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    SafetyEventOfflineHistory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enrollment: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

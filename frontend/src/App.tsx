@@ -9,6 +9,7 @@ import { TugWorkspace } from './product/TugWorkspace';
 import { TugReadinessWorkspace } from './product/TugReadinessWorkspace';
 import { TowageWorkspace } from './product/TowageWorkspace';
 import { HighRiskWorkWorkspace } from './product/HighRiskWorkWorkspace';
+import { SafetyEventsWorkspace } from './product/SafetyEventsWorkspace';
 import { TechnicalWorkspace } from './product/TechnicalWorkspace';
 import { CrewWorkspace } from './product/CrewWorkspace';
 import { CrewComplianceWorkspace } from './product/CrewComplianceWorkspace';
@@ -61,6 +62,9 @@ export function App() {
         return <TowageWorkspace />;
     if (/^\/app\/high-risk-work(?:\/|$)/.test(window.location.pathname))
         return <HighRiskWorkWorkspace />;
+    // S9 WP-B DEV-060/061 safety events, investigation and action tracking.
+    if (/^\/app\/safety-events(?:\/|$)/.test(window.location.pathname))
+        return <SafetyEventsWorkspace />;
     if (/^\/app\/tug-(command|job-board|job-intake|job-detail)(?:\/|$)/.test(window.location.pathname))
         return <TugWorkspace />;
     if (/^\/app\/(equipment-hierarchy|maintenance-plan)\//.test(window.location.pathname))

@@ -31,6 +31,7 @@ export const lensLabels: Record<string, readonly [
     'risk-template-library': [sourceText("tr", "pairs.m_c086860d120fa851"), sourceText("en", "pairs.m_c086860d120fa851")],
     'pms-command-center': [sourceText("tr", "pairs.m_8c3e1f0a5d2b7c41"), sourceText("en", "pairs.m_8c3e1f0a5d2b7c41")],
     'service-engineer-report': [sourceText("tr", "pairs.m_8c3e1f0a5d2b7c42"), sourceText("en", "pairs.m_8c3e1f0a5d2b7c42")],
+    'safety-events': [sourceText("tr", "pairs.m_8a32195b2423b0ae"), sourceText("en", "pairs.m_8a32195b2423b0ae")],
     'high-risk-work': [sourceText("tr", "pairs.m_04076d4cdaa5ec7d"), sourceText("en", "pairs.m_04076d4cdaa5ec7d")],
     'work-order-center': [sourceText("tr", "pairs.m_8b20599d8e3aae73"), sourceText("en", "pairs.m_8b20599d8e3aae73")],
     'critical-spares': [sourceText("tr", "pairs.m_5e7a1c0d2b4f9b10"), sourceText("en", "pairs.m_5e7a1c0d2b4f9b10")],
