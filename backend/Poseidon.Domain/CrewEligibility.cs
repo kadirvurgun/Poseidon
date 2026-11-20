@@ -282,6 +282,14 @@ public static class SafeManningDecisionPolicy
 {
     public const string Accepted = "MANNING_ACCEPTED", NotAccepted = "MANNING_NOT_ACCEPTED", Hold = "MANNING_HOLD";
     public const string DispensationRequired = "manning_dispensation_required", AcknowledgementRequired = "manning_review_acknowledgement_required";
+    public const string DispensationNotApplicable = "manning_dispensation_not_applicable";
+    // STCW Art. VIII dispensations cover certificate gaps only (certificate of competency or its
+    // endorsement). Work/rest, competence, familiarization, sign-off, medical or assignment
+    // negatives can never be cleared by a dispensation.
+    public static readonly string[] DispensableRequirementTypes = [CrewRequirementTypes.Certificate, CrewRequirementTypes.Endorsement];
+    public static bool Dispensable(CrewEligibilityResult member) => member.Reasons.Where(r => r.Severity == CrewEligibilityStates.NotEligible).All(r =>
+        r.Dimension == "CREDENTIAL" && (r.RequirementId is not { } requirement ||
+            member.Gaps.Any(g => g.RequirementId == requirement && DispensableRequirementTypes.Contains(g.Type, StringComparer.Ordinal))));
     public static readonly string[] EvidenceKinds = ["EVIDENCE", "CONTROLLED_DOCUMENT"];
     // Closed post codes; MASTER and CHIEF_ENGINEER need an explicit force-majeure declaration.
     public static readonly string[] Posts = ["MASTER", "CHIEF_ENGINEER", "OFFICER", "ENGINEER_OFFICER", "RATING", "OTHER"];
@@ -324,6 +332,7 @@ public static class SafeManningDecisionPolicy
         var covered = new HashSet<Guid>();
         foreach (var d in dispensations) {
             var member = negative.SingleOrDefault(m => m.AssignmentId == d.AssignmentId);
+            if (member != null && !Dispensable(member)) return DispensationNotApplicable;
             if (member == null || member.PositionId != d.PositionId || !covered.Add(d.AssignmentId) || !EvidenceKinds.Contains(d.EvidenceKind) ||
                 d.EvidenceId == Guid.Empty || d.EvidenceRevision < 1 || !Posts.Contains(d.Post, StringComparer.Ordinal) ||
                 d.ValidFrom > evaluation.Window.From || d.ValidTo < evaluation.Window.To || !d.HoldsCertificateForPostImmediatelyBelow ||

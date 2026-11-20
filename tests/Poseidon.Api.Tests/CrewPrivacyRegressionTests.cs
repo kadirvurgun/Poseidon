@@ -62,7 +62,7 @@ public sealed class CrewPrivacyRegressionTests
         foreach (var result in new[] { "Attempted", "Success", "permission_denied", "resource_not_found", "invalid_query", "csrf_invalid", "invalid_idempotency_key",
                      "invalid_request", "validation_failed", "idempotency_key_reused", "version_conflict", "service_unavailable", "human_authority_required",
                      "separation_of_duties", "credential_document_required", "competence_requirement_unavailable", "evaluation_stale",
-                     "evaluation_window_invalid", "linked_resource_unavailable", "manning_dispensation_required", "manning_review_acknowledgement_required" })
+                     "evaluation_window_invalid", "linked_resource_unavailable", "manning_dispensation_required", "manning_dispensation_not_applicable", "manning_review_acknowledgement_required" })
             Assert.Contains(result, SecurityEventCodes.Results);
     }
 

@@ -83,6 +83,42 @@ public sealed class SafeManningDecisionPolicyTests
         Assert.Null(Refusal(e, Accept, dispensations: [Dispensation()]));
     }
 
+    // STCW Art. VIII: a dispensation covers certificate gaps only.
+    private static CrewEligibilityResult Gapped(string type, string reason, string dimension)
+    {
+        var requirement = Guid.NewGuid();
+        return new(Assignment, Officer, CrewEligibilityStates.NotEligible, [new(reason, dimension, CrewEligibilityStates.NotEligible, requirement)],
+            [new(requirement, type, true, CrewGapStates.Gap, reason, null)], CrewEligibilityPolicy.Qualifications);
+    }
+
+    [Fact]
+    public void Dispensation_covers_a_credential_only_certificate_gap()
+    {
+        var e = Evaluation(CrewEligibilityStates.NotEligible, [], Gapped(CrewRequirementTypes.Certificate, "CREDENTIAL_MISSING", "CREDENTIAL"));
+        Assert.Null(Refusal(e, Accept, dispensations: [Dispensation()]));
+        var endorsement = Evaluation(CrewEligibilityStates.NotEligible, [], Gapped(CrewRequirementTypes.Endorsement, "ENDORSEMENT_EXPIRED_OR_EXPIRES_WITHIN_WINDOW", "CREDENTIAL"));
+        Assert.Null(Refusal(endorsement, Accept, dispensations: [Dispensation()]));
+    }
+
+    [Fact]
+    public void Dispensation_never_covers_work_rest_non_compliance()
+    {
+        var e = Evaluation(CrewEligibilityStates.NotEligible, [], Member(Assignment, CrewEligibilityStates.NotEligible, Expired,
+            new CrewEligibilityReason("WORK_REST_NON_COMPLIANT", "WORK_REST", CrewEligibilityStates.NotEligible)));
+        Assert.Equal(SafeManningDecisionPolicy.DispensationNotApplicable, Refusal(e, Accept, dispensations: [Dispensation()]));
+    }
+
+    [Theory]
+    [InlineData(CrewRequirementTypes.Competence, "HUMAN_SIGN_OFF_NEGATIVE", "COMPETENCE")]
+    [InlineData(CrewRequirementTypes.Competence, "COMPETENCE_RECORD_MISSING", "COMPETENCE")]
+    [InlineData(CrewRequirementTypes.Familiarization, "VALIDITY_EXPIRED_OR_EXPIRES_WITHIN_WINDOW", "FAMILIARIZATION")]
+    [InlineData(CrewRequirementTypes.Medical, "CREDENTIAL_EXPIRED", "CREDENTIAL")]
+    public void Dispensation_never_covers_competence_familiarization_or_medical_negatives(string type, string reason, string dimension)
+    {
+        var e = Evaluation(CrewEligibilityStates.NotEligible, [], Gapped(type, reason, dimension));
+        Assert.Equal(SafeManningDecisionPolicy.DispensationNotApplicable, Refusal(e, Accept, dispensations: [Dispensation()]));
+    }
+
     [Fact]
     public void Review_required_acceptance_needs_one_acknowledgement_per_reason()
     {
