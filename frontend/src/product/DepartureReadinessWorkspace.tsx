@@ -10,7 +10,7 @@ import { isGuid } from './identifiers'
 import { send, type Command } from './tug-readiness-api'
 import { departureApi, type DepartureDecisionCode, type DepartureReadiness, type DepartureResult, type DepartureState } from './departure-readiness-api'
 
-// S9 WP-A DEV-058 departure readiness (crew/technical/statutory/emergency + "Why" list) and DEV-059 Master sign-off.
+// S9 WP-A DEV-058 departure readiness (crew/technical/statutory/emergency/safety + "Why" list) and DEV-059 Master sign-off.
 // UNKNOWN/REVIEW_REQUIRED is never shown as ready; READY is informational (no green "go" tone). A sign-off is the
 // appointed Master's human record bound to the exact assessment; it is not a departure clearance.
 const copy = localizedCopy('DepartureReadiness_tsx_copy')

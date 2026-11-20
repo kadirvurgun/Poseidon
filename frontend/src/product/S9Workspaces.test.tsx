@@ -27,6 +27,16 @@ describe('S9 WP-C wire decoding', () => {
   it('rejects a confirmation without its human record and unknown document policies', () => {
     expect(decodeVoiceDraft(voiceDraftFixture(), s9Vessel, s9Draft).id).toBe(s9Draft)
     expect(() => decodeVoiceDraft(voiceDraftFixture({ state: 'CONFIRMED', handoff: 'PENDING_EVENT_DRAFT_INTEGRATION', canEdit: false }), s9Vessel)).toThrow(ApiError)
+    // S9 integration: a confirmed hand-off is either a linked event draft or pending with a closed reason; never both, never neither.
+    const human = { state: 'CONFIRMED', confirmedBy: s9Actor, confirmedAt: '2026-11-20T09:00:00Z', corrections: [], canEdit: false, canConfirm: false }
+    const event = '00000000-0000-4000-8000-0000000600e1'
+    expect(decodeVoiceDraft(voiceDraftFixture({ ...human, handoff: 'EVENT_DRAFT_CREATED', safetyEventId: event }), s9Vessel).safetyEventId).toBe(event)
+    expect(decodeVoiceDraft(voiceDraftFixture({ ...human, handoff: 'PENDING_EVENT_DRAFT_INTEGRATION', handoffReason: 'SAFETY_EVENT_REPORT_PERMISSION_REQUIRED' }), s9Vessel).handoffReason)
+      .toBe('SAFETY_EVENT_REPORT_PERMISSION_REQUIRED')
+    expect(() => decodeVoiceDraft(voiceDraftFixture({ ...human, handoff: 'EVENT_DRAFT_CREATED' }), s9Vessel)).toThrow(ApiError)
+    expect(() => decodeVoiceDraft(voiceDraftFixture({ ...human, handoff: 'PENDING_EVENT_DRAFT_INTEGRATION' }), s9Vessel)).toThrow(ApiError)
+    expect(() => decodeVoiceDraft(voiceDraftFixture({ ...human, handoff: 'PENDING_EVENT_DRAFT_INTEGRATION', safetyEventId: event, handoffReason: 'SAFETY_EVENT_REPORT_PERMISSION_REQUIRED' }), s9Vessel)).toThrow(ApiError)
+    expect(() => decodeVoiceDraft(voiceDraftFixture({ safetyEventId: event }), s9Vessel)).toThrow(ApiError)
     expect(() => decodeVoiceDraft(voiceDraftFixture({ audioRetention: 'RETAINED' }), s9Vessel)).toThrow(ApiError)
     expect(() => decodeDocument(documentFixture({ contentPolicy: { ...documentFixture().contentPolicy, download: 'MAYBE' } }), s9Vessel, s9Document)).toThrow(ApiError)
     expect(() => decodeDocument(documentFixture({ classification: 'INTERNAL' }), s9Vessel, s9Document)).toThrow(ApiError)
@@ -74,7 +84,7 @@ describe('DEV-062 voice event draft workspace', () => {
     const complete = voiceDraftFixture({ fields: { ...voiceDraftFixture().fields, occurredAt: '2026-11-19T09:15' }, missing: [], canConfirm: true,
       fieldOrigins: { ...voiceDraftFixture().fieldOrigins, occurredAt: 'USER_ENTERED' } })
     const confirmed = { ...complete, state: 'CONFIRMED', revision: 2, confirmedBy: s9Actor, confirmedAt: '2026-11-20T09:00:00Z', canEdit: false, canConfirm: false,
-      handoff: 'PENDING_EVENT_DRAFT_INTEGRATION', corrections: [{ key: 'occurredAt', outcome: 'ADDED', required: true }] }
+      handoff: 'EVENT_DRAFT_CREATED', safetyEventId: '00000000-0000-4000-8000-0000000600e1', corrections: [{ key: 'occurredAt', outcome: 'ADDED', required: true }] }
     const fetch = transport((path, init) => path.endsWith('/confirm') && init?.method === 'POST' ? json(confirmed) : handler(complete)(path, init))
     render(<VoiceEventDraftWorkspace/>)
     const detail = await screen.findByTestId('voice-detail')
@@ -83,6 +93,8 @@ describe('DEV-062 voice event draft workspace', () => {
     const headers = call[1]!.headers as Record<string, string>
     expect(headers['X-CSRF-TOKEN']).toBe('synthetic-s9-csrf'); expect(headers['Idempotency-Key']).toMatch(/^[0-9a-f-]{36}$/)
     expect(JSON.parse(String(call[1]!.body))).toEqual({ expectedVersion: 11, contentHash: 'a'.repeat(64) })
+    // S9 integration: the confirmed candidate links the NAMED safety event draft it created (never a submitted event).
+    expect(await screen.findByTestId('voice-handoff')).toHaveAttribute('data-handoff', 'EVENT_DRAFT_CREATED')
   })
 
   it('shows the forbidden state without leaking data', async () => {

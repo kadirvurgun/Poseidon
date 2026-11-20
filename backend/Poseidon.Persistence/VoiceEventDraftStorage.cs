@@ -40,6 +40,10 @@ public sealed class VoiceEventDraft : ITenantEntity
     public string? RejectionNote {get;set;}
     public string AudioRetention {get;set;}="NOT_RETAINED";
     public string Provenance {get;set;}="UserDeclaredUnverified";
+    // S9 integration (DEV-062 x DEV-060): the NAMED safety event DRAFT created from this confirmed candidate, or the
+    // closed reason why the hand-off is still pending. Set once, in the same audited confirmation transaction.
+    public Guid? SafetyEventId {get;set;}
+    public string? HandoffReason {get;set;}
 }
 public sealed class VoiceEventDraftRevision : ITenantEntity
 {
@@ -93,6 +97,13 @@ internal static class VoiceEventDraftStorage
             b.Property(r=>r.FieldsJson).HasColumnType("text");b.Property(r=>r.EvidenceJson).HasColumnType("text");b.Property(r=>r.Hash).HasMaxLength(64);
             b.Property(r=>r.CorrectionsJson).HasColumnType("text");b.Property(r=>r.RejectionReason).HasMaxLength(24);b.Property(r=>r.RejectionNote).HasMaxLength(500);
             b.Property(r=>r.AudioRetention).HasMaxLength(16);b.Property(r=>r.Provenance).HasMaxLength(32);
+            b.Property(r=>r.HandoffReason).HasMaxLength(64);
+            b.ToTable(t=>t.HasCheckConstraint("CK_VoiceEventDraft_SafetyEventHandoff",
+                "(\"SafetyEventId\" IS NULL OR \"State\"='CONFIRMED' AND \"HandoffReason\" IS NULL) AND "+
+                "(\"HandoffReason\" IS NULL OR \"State\"='CONFIRMED' AND \"HandoffReason\" IN ('SAFETY_EVENT_REPORT_PERMISSION_REQUIRED'))"));
+            b.HasIndex(r=>new{r.TenantId,r.SafetyEventId}).IsUnique().HasFilter("\"SafetyEventId\" IS NOT NULL");
+            b.HasOne<SafetyEvent>().WithMany().HasForeignKey(r=>new{r.TenantId,r.VesselId,r.SafetyEventId}).HasPrincipalKey(e=>new{e.TenantId,e.VesselId,e.Id})
+                .HasConstraintName("FK_VoiceEventDraft_SafetyEvent").OnDelete(DeleteBehavior.Restrict);
         });
         model.Entity<VoiceEventDraftRevision>(b=> {
             b.ToTable("VoiceEventDraftRevisions","intelligence",t=>t.HasCheckConstraint("CK_VoiceEventDraftRevision_State",
@@ -117,7 +128,7 @@ internal static class VoiceEventDraftStorage
             throw new InvalidOperationException("Voice draft history and command outcomes are immutable.");
         if(changes.Any(e=>e.Entity is VoiceEventDraft d && (e.State==EntityState.Deleted || e.State==EntityState.Added && (d.State!="DRAFT" || d.Revision!=1) ||
             e.State==EntityState.Modified && ((string)e.Property("State").OriginalValue! != "DRAFT" ||
-                Changed(e,"Revision","State","FieldsJson","EvidenceJson","Hash","ActorId","SavedAt","ConfirmedBy","ConfirmedAt","CorrectionsJson","RejectedBy","RejectedAt","RejectionReason","RejectionNote") ||
+                Changed(e,"Revision","State","FieldsJson","EvidenceJson","Hash","ActorId","SavedAt","ConfirmedBy","ConfirmedAt","CorrectionsJson","RejectedBy","RejectedAt","RejectionReason","RejectionNote","SafetyEventId","HandoffReason") ||
                 (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue!+1))))
             throw new InvalidOperationException("A voice draft starts as DRAFT, its transcript and candidate are immutable and confirmed/rejected drafts are terminal.");
     }

@@ -55679,6 +55679,19 @@
           "savedAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "safetyEventId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "handoffReason": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -57756,6 +57769,9 @@
     },
     {
       "name": "SafetyEventOfflineEndpoints"
+    },
+    {
+      "name": "DepartureReadinessEndpoints"
     },
     {
       "name": "MaintenanceObservationEndpoints"

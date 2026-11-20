@@ -31,7 +31,7 @@ public sealed record VoiceDraftDto(Guid Id, Guid VesselId, long Revision, uint V
     DateOnly ReferenceDate, VoiceDraftSpeechDto? Speech, string ExtractorVersion, string RuleSetVersion, VoiceDraftCandidate Candidate, VoiceDraftFields Fields,
     Dictionary<string, string> FieldOrigins, VoiceDraftEvidenceDto[] Evidence, string[] Missing, string Hash, VoiceDraftFieldCorrection[]? Corrections,
     Guid? ConfirmedBy, DateTimeOffset? ConfirmedAt, VoiceDraftRejectionDto? Rejection, VoiceDraftRevisionSummaryDto[] Revisions, Guid CreatedBy,
-    bool CanEdit, bool CanConfirm, string Handoff, string AudioRetention, string Provenance, DateTimeOffset SavedAt);
+    bool CanEdit, bool CanConfirm, string Handoff, string AudioRetention, string Provenance, DateTimeOffset SavedAt, Guid? SafetyEventId = null, string? HandoffReason = null);
 public sealed record VoiceDraftListItemDto(Guid Id, string State, string Origin, string? EventType, string? Location, string? OccurredAt, int MissingCount, long Revision, DateTimeOffset SavedAt);
 public sealed record VoiceDraftPageDto(VoiceDraftListItemDto[] Items, int Offset, int Limit, bool HasMore, bool CanWrite);
 public sealed record VoiceDraftCapabilitiesDto(Guid VesselId, bool CanRead, bool CanWrite, bool CanConfirm, bool SpeechAvailable, string? SpeechUnavailableReason,
@@ -45,8 +45,10 @@ public sealed record VoiceDraftMetricsDto(Guid VesselId, string State, int Confi
 // DEV-062 / T-S9-005 and DEV-063 / T-S9-006. Vessel-scoped voice-to-event draft candidates
 // (NATIVE-COMMAND-1): server authorization, exact ?vesselId scope, CSRF, Idempotency-Key receipt,
 // strict JSON, one SERIALIZABLE transaction through the audited SaveChanges path. Confirm and
-// reject are human records. Nothing here submits, closes or creates a safety event: a confirmed
-// candidate is handed to the owning event draft by a later integration (Handoff=PENDING_EVENT_DRAFT_INTEGRATION).
+// reject are human records. Nothing here submits, triages or closes a safety event. S9 integration: a confirmation by
+// a human who also holds hse.safety_event.report creates a NAMED safety event DRAFT (reported by that human) through
+// the DEV-060 command path in the same transaction (Handoff=EVENT_DRAFT_CREATED); otherwise the candidate stays
+// PENDING_EVENT_DRAFT_INTEGRATION with the closed reason SAFETY_EVENT_REPORT_PERMISSION_REQUIRED.
 public static class VoiceEventDraftEndpoints
 {
     private const string ReadAction = "VoiceDraftRead", CommandAction = "VoiceDraftCommand", TranscriptionAction = "VoiceDraftTranscription";
@@ -143,7 +145,19 @@ public static class VoiceEventDraftEndpoints
         var fields = Fields(row.FieldsJson);
         var missing = VoiceEventDraftPolicy.Missing(fields);
         if (missing.Length > 0) return TechnicalOutcome.Fail(422, "voice_draft_incomplete", missing);
+        // The safety event DRAFT is written first (its own audited SaveChanges in this SERIALIZABLE transaction) so the
+        // voice draft changes exactly once, DRAFT -> CONFIRMED, together with its link or pending reason.
+        Guid? eventId = null;
+        if (SafetyEventAccess.Reporter(c.Actor))
+        {
+            // The confirming human is the NAMED reporter; the event stays an incomplete DRAFT until that human submits it.
+            eventId = Guid.NewGuid();
+            var created = await SafetyEventEndpoints.CreateDraft(c.Db, c.Actor, c.Vessel, eventId.Value, SafetyEventPolicy.Named,
+                VoiceSafetyEventHandoff.Map(fields, c.Now), null, "ONLINE", c.Now, c.Ct);
+            if (created.Status != 200) return TechnicalOutcome.Fail(created.Status, created.Code!, created.Missing);
+        }
         row.Revision++; row.State = VoiceEventDraftPolicy.Confirmed; row.ConfirmedBy = c.Actor.Id; row.ConfirmedAt = c.Now;
+        row.SafetyEventId = eventId; row.HandoffReason = eventId == null ? VoiceSafetyEventHandoff.ReportPermissionRequired : null;
         row.CorrectionsJson = JsonSerializer.Serialize(VoiceEventDraftPolicy.Corrections(Candidate(row.CandidateJson), fields), Json); Stamp(row, c.Actor.Id, c.Now);
         await c.Db.SaveChangesAsync(c.Ct); Append(c.Db, row, "CONFIRM", c.Now); await c.Db.SaveChangesAsync(c.Ct);
         return TechnicalOutcome.Ok(row.Id, row.Revision);
@@ -184,7 +198,7 @@ public static class VoiceEventDraftEndpoints
             d.CorrectionsJson == null ? null : JsonSerializer.Deserialize<VoiceDraftFieldCorrection[]>(d.CorrectionsJson, Json), d.ConfirmedBy, d.ConfirmedAt,
             d.RejectionReason == null ? null : new(d.RejectionReason, d.RejectionNote, d.RejectedBy!.Value, d.RejectedAt!.Value), revisions, d.CreatedBy,
             editable, editable && human && missing.Length == 0,
-            d.State == VoiceEventDraftPolicy.Confirmed ? "PENDING_EVENT_DRAFT_INTEGRATION" : "NOT_READY", d.AudioRetention, d.Provenance, d.SavedAt);
+            VoiceSafetyEventHandoff.State(d.State, d.SafetyEventId), d.AudioRetention, d.Provenance, d.SavedAt, d.SafetyEventId, d.HandoffReason);
     }
 
     private static async Task<IResult> List(HttpContext h, PoseidonDbContext db)

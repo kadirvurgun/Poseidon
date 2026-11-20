@@ -78,4 +78,25 @@ public sealed class S9WpcStorageGuardTests
         var unique = model.FindEntityType(typeof(ControlledDocumentAcknowledgement))!.GetIndexes().Single(i => i.GetDatabaseName() == "IX_ControlledDocumentAcknowledgements_Reader");
         Assert.True(unique.IsUnique);
     }
+
+    // S9 integration DEV-062 x DEV-060: the safety event link is set once, only on the DRAFT -> CONFIRMED transition,
+    // and is exclusive with the closed pending reason (DB CHECK, unique link, same-vessel FK).
+    [Fact]
+    [Trait("Requirement", "DEV-060")]
+    public void Safety_event_link_is_set_once_at_confirmation_and_is_db_constrained()
+    {
+        using var db = Context();
+        var confirmed = Draft("CONFIRMED"); db.Attach(confirmed); confirmed.SafetyEventId = Guid.NewGuid(); confirmed.Revision++;
+        Assert.Throws<InvalidOperationException>(() => db.SaveChanges());
+        db.ChangeTracker.Clear();
+        var model = Microsoft.EntityFrameworkCore.Infrastructure.AccessorExtensions.GetService<Microsoft.EntityFrameworkCore.Metadata.IDesignTimeModel>(db).Model;
+        var voice = model.FindEntityType(typeof(VoiceEventDraft))!;
+        var check = voice.GetCheckConstraints().Single(c => c.Name == "CK_VoiceEventDraft_SafetyEventHandoff").Sql;
+        Assert.Contains("\"SafetyEventId\" IS NULL OR \"State\"='CONFIRMED' AND \"HandoffReason\" IS NULL", check, StringComparison.Ordinal);
+        Assert.Contains("'SAFETY_EVENT_REPORT_PERMISSION_REQUIRED'", check, StringComparison.Ordinal);
+        Assert.Contains(voice.GetIndexes(), i => i.IsUnique && i.Properties.Select(p => p.Name).SequenceEqual(["TenantId", "SafetyEventId"]));
+        var fk = voice.GetForeignKeys().Single(f => f.PrincipalEntityType.ClrType == typeof(SafetyEvent));
+        Assert.Equal(["TenantId", "VesselId", "SafetyEventId"], fk.Properties.Select(p => p.Name));
+        Assert.Equal(DeleteBehavior.Restrict, fk.DeleteBehavior);
+    }
 }

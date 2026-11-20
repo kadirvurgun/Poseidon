@@ -22,6 +22,8 @@ export const voiceOrigins = ['TYPED', 'LOCAL_SPEECH'] as const
 export const fieldOrigins = ['EXTRACTED', 'USER_EDITED', 'USER_ENTERED', 'NONE'] as const
 export const voiceFieldKeys = ['eventType', 'occurredAt', 'location', 'locationDetail', 'description', 'immediateAction'] as const
 export type VoiceFieldKey = typeof voiceFieldKeys[number]
+// S9 integration: a confirmed candidate either links the NAMED safety event DRAFT it created or states why it is pending.
+export const voiceHandoffPendingReasons = ['SAFETY_EVENT_REPORT_PERMISSION_REQUIRED'] as const
 export const downloadPolicies = ['ALLOWED', 'DENIED_RESTRICTED'] as const
 export const printPolicies = ['UNCONTROLLED_COPY_ONLY', 'CONTROLLED_COPY_RENDERER_UNAVAILABLE'] as const
 
@@ -39,8 +41,10 @@ export function decodeVoiceDraft(value: unknown, vessel: string, id?: string): V
     // Every candidate field is traced: spans, a confidence in [0,1], a rule id.
     !value.candidate.fields.every(f => object(f) && Array.isArray(f.spans) && f.spans.length > 0 && typeof f.confidence === 'number' && f.confidence >= 0 && f.confidence <= 1 && typeof f.rule === 'string') ||
     // A confirmation always names its human; nothing is ever handed off without one.
-    value.state === 'CONFIRMED' && (!isGuid(value.confirmedBy) || !Array.isArray(value.corrections) || value.handoff !== 'PENDING_EVENT_DRAFT_INTEGRATION') ||
-    value.state !== 'CONFIRMED' && (value.confirmedBy !== null || value.handoff !== 'NOT_READY') ||
+    value.state === 'CONFIRMED' && (!isGuid(value.confirmedBy) || !Array.isArray(value.corrections) ||
+      !(value.handoff === 'EVENT_DRAFT_CREATED' && isGuid(value.safetyEventId) && (value.handoffReason ?? null) === null ||
+        value.handoff === 'PENDING_EVENT_DRAFT_INTEGRATION' && (value.safetyEventId ?? null) === null && oneOf(value.handoffReason, voiceHandoffPendingReasons))) ||
+    value.state !== 'CONFIRMED' && (value.confirmedBy !== null || value.handoff !== 'NOT_READY' || (value.safetyEventId ?? null) !== null || (value.handoffReason ?? null) !== null) ||
     value.state === 'REJECTED' && !object(value.rejection) || value.state !== 'DRAFT' && (value.canEdit === true || value.canConfirm === true) ||
     value.origin === 'LOCAL_SPEECH' && !object(value.speech)) invalid()
   return value as unknown as VoiceDraft

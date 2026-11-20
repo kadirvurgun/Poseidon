@@ -17108,6 +17108,9 @@ export interface components {
             provenance: string;
             /** Format: date-time */
             savedAt: string;
+            /** Format: uuid */
+            safetyEventId?: null | string;
+            handoffReason?: null | string;
         };
         VoiceDraftEvidenceDto: {
             /** Format: uuid */

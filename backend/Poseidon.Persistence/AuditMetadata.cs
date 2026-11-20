@@ -828,6 +828,8 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                 Field("TranscriptOrigin", null, Closed(d.TranscriptOrigin, Poseidon.Domain.VoiceEventDraftPolicy.Origins)),
                 Field("ExtractorVersion", null, Closed(d.ExtractorVersion, Poseidon.Domain.VoiceEventDraftPolicy.ExtractorVersion)),
                 Field("RejectionReason", null, d.RejectionReason == null ? null : Closed(d.RejectionReason, Poseidon.Domain.VoiceEventDraftPolicy.RejectionReasons)),
+                Field("Handoff", null, Closed(Poseidon.Domain.VoiceSafetyEventHandoff.State(d.State, d.SafetyEventId), Poseidon.Domain.VoiceSafetyEventHandoff.States)),
+                Field("HandoffReason", null, d.HandoffReason == null ? null : Closed(d.HandoffReason, Poseidon.Domain.VoiceSafetyEventHandoff.PendingReasons)),
                 Field("Content", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
             VoiceEventDraftRevision v => new(v.VesselId, v.DraftId, "VoiceEventDraftRevision", null, v.Revision, Fields(
                 Field("Revision", null, Number(v.Revision)), Field("State", null, Closed(v.State, states)),

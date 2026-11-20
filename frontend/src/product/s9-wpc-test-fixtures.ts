@@ -30,7 +30,7 @@ export const voiceDraftFixture = (patch: Record<string, unknown> = {}) => ({
   fields: { eventType: 'NEAR_MISS', occurredAt: null, location: 'MAIN_DECK', locationDetail: null, description: note, immediateAction: 'We cordoned off the area.' },
   fieldOrigins: { eventType: 'EXTRACTED', occurredAt: 'NONE', location: 'EXTRACTED', locationDetail: 'NONE', description: 'EXTRACTED', immediateAction: 'EXTRACTED' },
   evidence: [], missing: ['occurredAt'], hash, corrections: null, confirmedBy: null, confirmedAt: null, rejection: null, revisions: [], createdBy: s9Actor,
-  canEdit: true, canConfirm: false, handoff: 'NOT_READY', audioRetention: 'NOT_RETAINED', provenance: 'UserDeclaredUnverified', savedAt: '2026-11-20T08:00:00Z', ...patch,
+  canEdit: true, canConfirm: false, handoff: 'NOT_READY', safetyEventId: null, handoffReason: null, audioRetention: 'NOT_RETAINED', provenance: 'UserDeclaredUnverified', savedAt: '2026-11-20T08:00:00Z', ...patch,
 })
 export const voicePageFixture = () => ({ items: [{ id: s9Draft, state: 'DRAFT', origin: 'TYPED', eventType: 'NEAR_MISS', location: 'MAIN_DECK', occurredAt: null, missingCount: 1,
   revision: 1, savedAt: '2026-11-20T08:00:00Z' }], offset: 0, limit: 25, hasMore: false, canWrite: true })

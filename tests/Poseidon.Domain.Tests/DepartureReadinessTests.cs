@@ -17,7 +17,7 @@ public sealed class DepartureReadinessTests
         Assert.Equal(DepartureReadinessEngine.Ready, o.State);
         Assert.Empty(o.Why); Assert.Equal(64, o.Hash.Length);
         Assert.Equal(DepartureReadinessEngine.DecisionAuthority, o.Decision);
-        Assert.Equal(new[] { "crew", "technical", "statutory", "emergency" }, o.Categories.Select(c => c.Category));
+        Assert.Equal(new[] { "crew", "technical", "statutory", "emergency", "safety" }, o.Categories.Select(c => c.Category));
     }
 
     [Fact]
@@ -133,5 +133,62 @@ public sealed class DepartureReadinessTests
         Assert.Equal("CURRENT", DepartureDecisionPolicy.Validity(h, From, To, h, From, To));
         Assert.Equal("STALE", DepartureDecisionPolicy.Validity(h, From, To, new string('B', 64), From, To));
         Assert.Equal("STALE", DepartureDecisionPolicy.Validity(h, From, To, h, From, To.AddDays(1)));
+    }
+
+    // S9 integration DEV-058 x DEV-060: the safety event blocker snapshot is one more owning-source input.
+    private static DepartureCheck[] WithSafety(DepartureCheck[] safety) => [.. AllPass().Where(c => c.Category != "safety"), .. safety];
+
+    [Fact]
+    [Trait("Requirement", "DEV-058")]
+    [Trait("Requirement", "DEV-060")]
+    public void An_open_high_severity_safety_event_is_a_critical_blocker_that_passes_never_mask() {
+        var blocking = Guid.NewGuid(); var review = Guid.NewGuid();
+        var safety = DepartureReadinessEngine.SafetyChecks("BLOCKERS_PRESENT",
+            [new DepartureSafetyItem(blocking, "HIGH_SEVERITY_OPEN", true), new DepartureSafetyItem(review, "UNTRIAGED_EVENT", false)], ["SeverityPolicyUnconfigured"]);
+        Assert.Contains(safety, c => c.Result == DepartureReadinessEngine.Fail && c.SourceId == blocking && c.SourceKind == "SafetyEvent" && c.Reason == "SAFETY_EVENT:HIGH_SEVERITY_OPEN");
+        Assert.Contains(safety, c => c.Result == DepartureReadinessEngine.Unknown && c.SourceId == review && c.Reason == "SAFETY_EVENT:UNTRIAGED_EVENT");
+        var o = DepartureReadinessEngine.Evaluate(WithSafety(safety), From, To, E);
+        Assert.Equal(DepartureReadinessEngine.NotReady, o.State);
+        Assert.Equal(new[] { "safety:SAFETY_EVENT:HIGH_SEVERITY_OPEN" }, o.CriticalBlockers);
+        Assert.Equal(DepartureReadinessEngine.Fail, o.Categories.Single(c => c.Category == "safety").Result);
+        Assert.Equal("departure_release_not_permitted", DepartureDecisionPolicy.Refusal("RELEASE", o.State, E, "FICTIONAL reason text"));
+        // A BLOCKERS_PRESENT state without item detail still fails closed.
+        Assert.Equal(DepartureReadinessEngine.Fail, Assert.Single(DepartureReadinessEngine.SafetyChecks("BLOCKERS_PRESENT", [])).Result);
+    }
+
+    [Theory]
+    [Trait("Requirement", "DEV-058")]
+    [Trait("Requirement", "DEV-060")]
+    [InlineData("REVIEW_REQUIRED", "SAFETY_EVENT_REVIEW_REQUIRED")]
+    [InlineData("UNAVAILABLE", "SAFETY_EVENT_SOURCE_UNAVAILABLE")]
+    [InlineData(null, "SAFETY_EVENT_STATE_UNRECOGNIZED")]
+    [InlineData("READY", "SAFETY_EVENT_STATE_UNRECOGNIZED")]
+    public void Review_required_or_unavailable_safety_source_is_unknown_never_pass(string? state, string reason) {
+        var safety = DepartureReadinessEngine.SafetyChecks(state, state == "REVIEW_REQUIRED" ? [new DepartureSafetyItem(Guid.NewGuid(), "SEVERITY_UNASSESSED", false)] : []);
+        Assert.DoesNotContain(safety, c => c.Result == DepartureReadinessEngine.Pass);
+        Assert.Contains(safety, c => c.Result == DepartureReadinessEngine.Unknown && c.Reason == reason);
+        var o = DepartureReadinessEngine.Evaluate(WithSafety(safety), From, To, E);
+        Assert.Equal(DepartureReadinessEngine.ReviewRequired, o.State);
+        Assert.Contains("safety:" + reason, o.ReviewReasons);
+        Assert.Equal(DepartureReadinessEngine.Unknown, o.Categories.Single(c => c.Category == "safety").Result);
+    }
+
+    [Fact]
+    [Trait("Requirement", "DEV-058")]
+    [Trait("Requirement", "DEV-060")]
+    public void Only_no_open_high_severity_event_passes_the_safety_input_and_a_source_limit_stays_unknown() {
+        var pass = Assert.Single(DepartureReadinessEngine.SafetyChecks("NO_OPEN_HIGH_SEVERITY_EVENT", [], ["SeverityPolicyUnconfigured"]));
+        Assert.Equal(("safety", DepartureReadinessEngine.Pass, "NO_OPEN_HIGH_SEVERITY_EVENT"), (pass.Category, pass.Result, pass.Reason));
+        Assert.Equal(DepartureReadinessEngine.Ready, DepartureReadinessEngine.Evaluate(WithSafety([pass]), From, To, E).State);
+        // An inconsistent snapshot (items under a "no event" state) or a truncated source is never PASS.
+        Assert.All(DepartureReadinessEngine.SafetyChecks("NO_OPEN_HIGH_SEVERITY_EVENT", [new DepartureSafetyItem(Guid.NewGuid(), "SEVERITY_UNASSESSED", false)]),
+            c => Assert.NotEqual(DepartureReadinessEngine.Pass, c.Result));
+        var limited = DepartureReadinessEngine.SafetyChecks("NO_OPEN_HIGH_SEVERITY_EVENT", [], ["SafetyEventSourceLimitExceeded"]);
+        Assert.Equal(DepartureReadinessEngine.ReviewRequired, DepartureReadinessEngine.Evaluate(WithSafety(limited), From, To, E).State);
+        // The safety input is bound into the assessment hash: a new blocker makes a prior decision STALE.
+        var before = DepartureReadinessEngine.Evaluate(WithSafety([pass]), From, To, E).Hash;
+        var after = DepartureReadinessEngine.Evaluate(WithSafety(DepartureReadinessEngine.SafetyChecks("BLOCKERS_PRESENT",
+            [new DepartureSafetyItem(Guid.NewGuid(), "HIGH_SEVERITY_OPEN", true)])), From, To, E).Hash;
+        Assert.NotEqual(before, after);
     }
 }

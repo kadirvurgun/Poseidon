@@ -53,6 +53,8 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.NotEqual(DepartureReadinessEngine.Ready, view.State);
         Assert.Equal(DepartureReadinessEngine.Current, view.Mode);
         Assert.Contains("emergency:EMERGENCY_SOURCE_UNAVAILABLE", view.ReviewReasons);
+        // S9 integration: this synthetic Master lacks hse.safety_event.read, so the DEV-060 input is UNKNOWN.
+        Assert.Contains("safety:SAFETY_EVENT_SOURCE_UNAVAILABLE", view.ReviewReasons);
         Assert.Contains("statutory:CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED", view.ReviewReasons);
         Assert.Contains(view.Why, w => w.Category == "emergency" && w.Result == DepartureReadinessEngine.Unknown);
         Assert.DoesNotContain(view.Why, w => w.Result == DepartureReadinessEngine.Pass);

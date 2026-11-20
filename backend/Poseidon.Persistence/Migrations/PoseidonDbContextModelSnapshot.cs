@@ -12869,6 +12869,10 @@ namespace Poseidon.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("HandoffReason")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<string>("Hash")
                         .IsRequired()
                         .HasMaxLength(64)
@@ -12903,6 +12907,9 @@ namespace Poseidon.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
+
+                    b.Property<Guid?>("SafetyEventId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset>("SavedAt")
                         .HasColumnType("timestamp with time zone");
@@ -12949,12 +12956,20 @@ namespace Poseidon.Persistence.Migrations
 
                     b.HasKey("TenantId", "Id");
 
+                    b.HasIndex("TenantId", "SafetyEventId")
+                        .IsUnique()
+                        .HasFilter("\"SafetyEventId\" IS NOT NULL");
+
+                    b.HasIndex("TenantId", "VesselId", "SafetyEventId");
+
                     b.HasIndex("TenantId", "VesselId", "State");
 
                     b.HasIndex("TenantId", "VesselId", "SavedAt", "Id");
 
                     b.ToTable("VoiceEventDrafts", "intelligence", t =>
                         {
+                            t.HasCheckConstraint("CK_VoiceEventDraft_SafetyEventHandoff", "(\"SafetyEventId\" IS NULL OR \"State\"='CONFIRMED' AND \"HandoffReason\" IS NULL) AND (\"HandoffReason\" IS NULL OR \"State\"='CONFIRMED' AND \"HandoffReason\" IN ('SAFETY_EVENT_REPORT_PERMISSION_REQUIRED'))");
+
                             t.HasCheckConstraint("CK_VoiceEventDraft_State", "\"Revision\">0 AND \"State\" IN ('DRAFT','CONFIRMED','REJECTED') AND \"TranscriptOrigin\" IN ('TYPED','LOCAL_SPEECH') AND \"Provenance\" IN ('UserDeclaredUnverified','SyntheticUnverified') AND \"AudioRetention\"='NOT_RETAINED' AND length(\"Transcript\") BETWEEN 1 AND 4000 AND \"TranscriptSha256\" ~ '^[0-9a-f]{64}$' AND ((\"TranscriptOrigin\"='LOCAL_SPEECH')=(\"SpeechEngineVersion\" IS NOT NULL AND \"SpeechModelVersion\" IS NOT NULL)) AND (\"SpeechConfidence\" IS NULL OR \"SpeechConfidence\" BETWEEN 0 AND 1) AND ((\"State\"='CONFIRMED')=(\"ConfirmedBy\" IS NOT NULL AND \"ConfirmedAt\" IS NOT NULL AND \"CorrectionsJson\" IS NOT NULL)) AND ((\"State\"='REJECTED')=(\"RejectedBy\" IS NOT NULL AND \"RejectedAt\" IS NOT NULL AND \"RejectionReason\" IS NOT NULL)) AND (\"RejectionReason\" IS NULL OR \"RejectionReason\" IN ('TRANSCRIPT_WRONG','FIELDS_WRONG','NOT_AN_EVENT','DUPLICATE','OTHER')) AND (\"Provenance\"<>'SyntheticUnverified' OR \"State\"='DRAFT' AND \"ConfirmedBy\" IS NULL)");
                         });
                 });
@@ -16532,6 +16547,13 @@ namespace Poseidon.Persistence.Migrations
                         .HasForeignKey("TenantId", "VesselId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("Poseidon.Persistence.SafetyEvent", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId", "SafetyEventId")
+                        .HasPrincipalKey("TenantId", "VesselId", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_VoiceEventDraft_SafetyEvent");
                 });
 
             modelBuilder.Entity("Poseidon.Persistence.VoiceEventDraftReceipt", b =>

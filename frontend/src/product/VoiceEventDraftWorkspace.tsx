@@ -203,7 +203,10 @@ function VoiceDetail({ record, caps, t, busy, onCommand }: { record: VoiceDraft;
         {candidate(k) && <> {t.vdTrace.replace('{confidence}', String(Math.round(candidate(k)!.confidence * 100))).replace('{rule}', candidate(k)!.rule)} “{excerpt(k)}”</>}</small>
     </div>)}</div>
     {record.missing.length > 0 && <div role="status"><p>{t.vdMissing}</p><ul>{record.missing.map(m => <li key={m}>{s9Label(t, 'f_', m)}</li>)}</ul></div>}
-    {record.state === 'CONFIRMED' && <p role="status" data-testid="voice-handoff">{t.vdConfirmed}</p>}
+    {record.state === 'CONFIRMED' && record.handoff === 'EVENT_DRAFT_CREATED' && record.safetyEventId && <p role="status" data-testid="voice-handoff" data-handoff="EVENT_DRAFT_CREATED">
+      {t.vdHandoffCreated} <a href={`/app/safety-events?vessel=${encodeURIComponent(record.vesselId)}&event=${encodeURIComponent(record.safetyEventId)}`}>{t.vdOpenEventDraft}</a></p>}
+    {record.state === 'CONFIRMED' && record.handoff !== 'EVENT_DRAFT_CREATED' && <p role="status" data-testid="voice-handoff" data-handoff="PENDING_EVENT_DRAFT_INTEGRATION">
+      {t.vdConfirmed} {record.handoffReason === 'SAFETY_EVENT_REPORT_PERMISSION_REQUIRED' && t.vdHandoffPermission}</p>}
     {record.state === 'REJECTED' && record.rejection && <p role="status">{t.vdRejected.replace('{reason}', s9Label(t, 'rr_', record.rejection.reasonCode))}</p>}
     {editable && <div className="technical-actions">
       <Button disabled={busy || !dirty} onClick={() => onCommand('PUT', '/' + record.id, { expectedVersion: record.version, fields, evidenceFileIds: record.evidence.map(e => e.id) })}>{t.save}</Button>

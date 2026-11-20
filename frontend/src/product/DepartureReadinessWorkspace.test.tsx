@@ -16,7 +16,7 @@ const decision = (patch: Record<string, unknown> = {}) => ({ id: decisionId, ves
   duty: 'Master', actorId, recordedAt: '2026-11-21T08:00:00Z', validity: 'STALE', replayed: false, ...patch })
 const readiness = (patch: Record<string, unknown> = {}) => ({ vesselId: vessel, from: '2026-11-21', to: '2026-11-23', mode: 'CURRENT', state: 'REVIEW_REQUIRED',
   categories: [{ category: 'crew', result: 'PASS', reasons: ['SAFE_MANNING_ELIGIBLE'] }, { category: 'technical', result: 'PASS', reasons: ['CONDITION_ALERTS:NO_OPEN_EXCEPTIONS'] },
-    { category: 'statutory', result: 'UNKNOWN', reasons: ['CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED'] }, { category: 'emergency', result: 'UNKNOWN', reasons: ['EMERGENCY_SOURCE_UNAVAILABLE'] }],
+    { category: 'statutory', result: 'UNKNOWN', reasons: ['CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED'] }, { category: 'emergency', result: 'UNKNOWN', reasons: ['EMERGENCY_SOURCE_UNAVAILABLE'] }, { category: 'safety', result: 'PASS', reasons: ['NO_OPEN_HIGH_SEVERITY_EVENT'] }],
   criticalBlockers: [], reviewReasons: ['emergency:EMERGENCY_SOURCE_UNAVAILABLE', 'statutory:CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED'], conditions: [],
   why: [{ category: 'statutory', result: 'UNKNOWN', reason: 'CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED', sourceKind: null, sourceId: null, sourceRevision: null },
     { category: 'emergency', result: 'UNKNOWN', reason: 'EMERGENCY_SOURCE_UNAVAILABLE', sourceKind: null, sourceId: null, sourceRevision: null }],

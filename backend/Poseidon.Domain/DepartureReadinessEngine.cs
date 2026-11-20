@@ -7,6 +7,7 @@ namespace Poseidon.Domain;
 // One typed source observation for the departure gate (PASS|FAIL|UNKNOWN|CONDITIONAL). Reasons are closed
 // UPPER_SNAKE codes; no names, medical data, certificate numbers or free text.
 public sealed record DepartureCheck(string Category, string Result, string Reason, string? SourceKind = null, Guid? SourceId = null, long? SourceRevision = null);
+public sealed record DepartureSafetyItem(Guid EventId, string Reason, bool Blocking);
 public sealed record DepartureCategoryState(string Category, string Result, string[] Reasons);
 public sealed record DepartureWhy(string Category, string Result, string Reason, string? SourceKind, Guid? SourceId, long? SourceRevision);
 public sealed record DepartureOutcome(string State, string Mode, DepartureCategoryState[] Categories, string[] CriticalBlockers, string[] ReviewReasons,
@@ -28,7 +29,8 @@ public static class DepartureReadinessEngine
     public static readonly string[] Modes = [Current, Forecast];
     public const string DecisionAuthority = "MasterHumanDecisionRequired;EngineNeverReleases;NotADepartureClearance";
     // Every category must be observed; a missing category is UNKNOWN (SOURCE_MISSING), never N/A or PASS.
-    public static readonly string[] Categories = ["crew", "technical", "statutory", "emergency"];
+    // S9 integration: "safety" is the DEV-060 open safety event read contract (ISafetyEventBlockerSource).
+    public static readonly string[] Categories = ["crew", "technical", "statutory", "emergency", "safety"];
     public const int ReasonCodeMax = 160, MaxChecks = 2048, MaxWindowDays = 366;
 
     public static bool ValidReasonCode(string? code) => code is { Length: > 0 and <= ReasonCodeMax } &&
@@ -62,6 +64,42 @@ public static class DepartureReadinessEngine
             .ThenBy(x => x.Reason, StringComparer.Ordinal).ThenBy(x => x.SourceId)
             .Select(x => new DepartureWhy(x.Category, x.Result, x.Reason, x.SourceKind, x.SourceId, x.SourceRevision)).ToArray();
         return new(state, mode, categories, blockers, review, conditions, why, Hash(checks, from, to, mode));
+    }
+
+    // S9 integration (DEV-058 x DEV-060): maps the safety event blocker snapshot into this gate. BLOCKERS_PRESENT ->
+    // FAIL per blocking event (an open HIGH/CRITICAL event is never averaged away); REVIEW_REQUIRED / UNAVAILABLE / any
+    // unrecognised state -> UNKNOWN; only NO_OPEN_HIGH_SEVERITY_EVENT is PASS for this input. Non-blocking items are
+    // always UNKNOWN (review), never PASS. Reasons are closed codes; no narrative or reporter identity is copied.
+    public const string SafetySourceKind = "SafetyEvent";
+    public const int SafetyItemMax = 256;
+    public static DepartureCheck[] SafetyChecks(string? state, IEnumerable<DepartureSafetyItem>? items, IEnumerable<string>? coverage = null)
+    {
+        var list = (items ?? []).Where(i => i != null).Take(SafetyItemMax + 1).ToArray();
+        var result = new List<DepartureCheck>();
+        DepartureCheck Item(DepartureSafetyItem i, string r) => new("safety", r, "SAFETY_EVENT:" + Code(i.Reason), SafetySourceKind, i.EventId);
+        switch (state)
+        {
+            case "BLOCKERS_PRESENT":
+                result.AddRange(list.Take(SafetyItemMax).Select(i => Item(i, i.Blocking ? Fail : Unknown)));
+                if (!list.Any(i => i.Blocking)) result.Add(new("safety", Fail, "SAFETY_EVENT_BLOCKERS_PRESENT", SafetySourceKind));
+                break;
+            case "REVIEW_REQUIRED":
+                result.AddRange(list.Take(SafetyItemMax).Select(i => Item(i, Unknown)));
+                result.Add(new("safety", Unknown, "SAFETY_EVENT_REVIEW_REQUIRED", SafetySourceKind));
+                break;
+            case "NO_OPEN_HIGH_SEVERITY_EVENT" when list.Length == 0:
+                result.Add(new("safety", Pass, "NO_OPEN_HIGH_SEVERITY_EVENT", SafetySourceKind));
+                break;
+            case "UNAVAILABLE":
+                result.Add(new("safety", Unknown, "SAFETY_EVENT_SOURCE_UNAVAILABLE", SafetySourceKind));
+                break;
+            default:
+                result.Add(new("safety", Unknown, "SAFETY_EVENT_STATE_UNRECOGNIZED", SafetySourceKind));
+                break;
+        }
+        if (list.Length > SafetyItemMax || (coverage ?? []).Contains("SafetyEventSourceLimitExceeded", StringComparer.Ordinal))
+            result.Add(new("safety", Unknown, "SAFETY_EVENT_SOURCE_LIMIT_EXCEEDED", SafetySourceKind));
+        return result.ToArray();
     }
 
     private static readonly string[] Severity = [Fail, Unknown, Condition, Pass];

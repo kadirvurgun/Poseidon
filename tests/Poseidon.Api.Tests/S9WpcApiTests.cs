@@ -76,7 +76,9 @@ public sealed partial class DirectoryWorkspaceTests
         await AssertCode(await Send(c, Voice($"/{id}/confirm"), new VoiceDraftConfirmCommand(edited.Version, edited.Hash)), HttpStatusCode.Forbidden, "permission_denied");
         S9Actor(host.Services, crew, "Human", "voice.draft.read", "voice.draft.write"); await Token(c);
         var confirmed = await TechOk<VoiceDraftDto>(await Send(c, Voice($"/{id}/confirm"), new VoiceDraftConfirmCommand(edited.Version, edited.Hash)));
-        Assert.Equal(("CONFIRMED", crew, "PENDING_EVENT_DRAFT_INTEGRATION"), (confirmed.State, confirmed.ConfirmedBy, confirmed.Handoff));
+        // S9 integration: without hse.safety_event.report no event draft is created and the reason is explicit.
+        Assert.Equal(("CONFIRMED", crew, "PENDING_EVENT_DRAFT_INTEGRATION", (Guid?)null, "SAFETY_EVENT_REPORT_PERMISSION_REQUIRED"),
+            (confirmed.State, confirmed.ConfirmedBy, confirmed.Handoff, confirmed.SafetyEventId, confirmed.HandoffReason));
         var corrections = confirmed.Corrections!.ToDictionary(x => x.Key, x => x.Outcome);
         Assert.Equal(("ACCEPTED", "CORRECTED", "ADDED"), (corrections["eventType"], corrections["location"], corrections["occurredAt"]));
         await AssertCode(await Send(c, Voice($"/{id}"), new VoiceDraftUpdateCommand(confirmed.Version, confirmed.Fields, []), update: true), HttpStatusCode.Conflict, "invalid_state");
@@ -101,6 +103,29 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.NotEmpty(audits);
         Assert.DoesNotContain(audits, a => (a.ChangeSummary ?? "").Contains("mooring line", StringComparison.Ordinal));
         Assert.All(await db.VoiceEventDrafts.Where(d => d.Id == id || d.Id == other.Id).ToArrayAsync(Ct), d => Assert.Equal("NOT_RETAINED", d.AudioRetention));
+        Assert.False(await db.SafetyEvents.AnyAsync(e => e.ReportedBy == crew, Ct));
+
+        // S9 integration DEV-062 x DEV-060: a human confirmer who may report safety events gets a NAMED event DRAFT in the
+        // same audited transaction; it is reported by that human, never submitted, and the voice draft links it.
+        var reporter = Guid.NewGuid();
+        S9Actor(host.Services, reporter, "Human", "voice.draft.read", "voice.draft.write", SafetyEventPolicy.ReportPermission); await Token(c);
+        var handed = await TechOk<VoiceDraftDto>(await Send(c, Voice(), new VoiceDraftCreateCommand(Guid.NewGuid(), note, "TYPED", DateOnly.FromDateTime(DateTime.UtcNow), null)));
+        handed = await TechOk<VoiceDraftDto>(await Send(c, Voice($"/{handed.Id}"), new VoiceDraftUpdateCommand(handed.Version,
+            handed.Fields with { OccurredAt = "2026-11-19T09:15" }, []), update: true));
+        var linked = await TechOk<VoiceDraftDto>(await Send(c, Voice($"/{handed.Id}/confirm"), new VoiceDraftConfirmCommand(handed.Version, handed.Hash)));
+        Assert.Equal(("CONFIRMED", "EVENT_DRAFT_CREATED", (string?)null), (linked.State, linked.Handoff, linked.HandoffReason));
+        var eventId = Assert.IsType<Guid>(linked.SafetyEventId);
+        await using var check = Db();
+        var safety = await check.SafetyEvents.SingleAsync(e => e.Id == eventId, Ct);
+        Assert.Equal(("DRAFT", SafetyEventPolicy.Named, (Guid?)reporter, "NEAR_MISS", "ONLINE", 1L), (safety.State, safety.ReportingMode, safety.ReportedBy, safety.Category, safety.Origin, safety.Revision));
+        Assert.Null(safety.SubmittedAt);
+        var content = JsonSerializer.Deserialize<SafetyEventDraftFields>(safety.ContentJson, SafetyEventCommands.Json)!;
+        Assert.Equal(("DATE_ONLY", (DateOnly?)new DateOnly(2026, 11, 19), (string?)null, (string?)null), (content.OccurrencePrecision, content.OccurrenceDate, content.ImmediateActionTaken, content.SeverityClaim));
+        Assert.Equal(note, content.Narrative);
+        Assert.Single(await check.SafetyEventRevisions.Where(r => r.EventId == eventId).ToArrayAsync(Ct));
+        Assert.Empty(await check.SafetyEventReceipts.Where(r => r.ResourceId == eventId).ToArrayAsync(Ct));
+        Assert.Equal(eventId, (await check.VoiceEventDrafts.SingleAsync(d => d.Id == handed.Id, Ct)).SafetyEventId);
+        Assert.Contains(await check.AuditEvents.Where(a => a.ResourceId == eventId).ToArrayAsync(Ct), a => a.EntityType == nameof(SafetyEvent) && a.ActorId == reporter.ToString());
     }
 
     [Fact]
