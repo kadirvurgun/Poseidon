@@ -34,6 +34,9 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         // DEV-057: absent operator configuration leaves work order offline capture unavailable.
         services.AddSingleton(configuration.GetSection("WorkOrderOffline").Get<WorkOrderOfflineSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<IWorkOrderStateSource, WorkOrderStateReader>();
+        // S9 WP-B DEV-060: absent operator configuration leaves safety-event offline capture unavailable.
+        services.AddSingleton(configuration.GetSection("SafetyEventOffline").Get<SafetyEventOfflineSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
+        services.AddSingleton<ISafetyEventBlockerSource, SafetyEventBlockerSource>();
         services.AddSingleton<ISpareGapSource, SpareGapReader>();
         services.AddSingleton(configuration.GetSection("NotificationScheduler").Get<NotificationSchedulerSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<NotificationServiceContexts>();
@@ -222,6 +225,9 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapDowntimeOrigins();
             endpoints.MapRiskAssessments();
             endpoints.MapRiskTemplates();
+            endpoints.MapSafetyEvents();
+            endpoints.MapSafetyInvestigations();
+            endpoints.MapSafetyEventOffline();
             endpoints.MapDefectLifecycle();
             endpoints.MapServiceReports();
             endpoints.MapPmsCommandCenter();
