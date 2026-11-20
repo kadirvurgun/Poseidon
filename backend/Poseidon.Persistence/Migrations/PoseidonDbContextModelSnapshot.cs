@@ -8292,7 +8292,7 @@ namespace Poseidon.Persistence.Migrations
                     b.HasIndex("TenantId", "VesselId", "Scope")
                         .IsUnique()
                         .HasDatabaseName("UX_RegulatoryReviewCampaigns_Active")
-                        .HasFilter("\"State\" IN ('OPEN', 'IN_REVIEW')");
+                        .HasFilter("\"State\" = 'OPEN' OR \"State\" = 'IN_REVIEW'");
 
                     b.ToTable("RegulatoryReviewCampaigns", "core", t =>
                         {

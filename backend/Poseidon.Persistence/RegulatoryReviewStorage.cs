@@ -127,7 +127,7 @@ public static class RegulatoryReviewStorage
             });
             b.HasKey(x => new { x.TenantId, x.Id });
             b.Property(x => x.Version).IsRowVersion();
-            b.HasIndex(x => new { x.TenantId, x.VesselId, x.Scope }).IsUnique().HasFilter("\"State\" IN ('OPEN', 'IN_REVIEW')")
+            b.HasIndex(x => new { x.TenantId, x.VesselId, x.Scope }).IsUnique().HasFilter("\"State\" = 'OPEN' OR \"State\" = 'IN_REVIEW'")
                 .HasDatabaseName("UX_RegulatoryReviewCampaigns_Active");
             b.Property(x => x.Scope).HasMaxLength(8); b.Property(x => x.State).HasMaxLength(32); b.Property(x => x.PinHash).HasMaxLength(64);
             b.Property(x => x.CloseReason).HasMaxLength(RegulatoryReviewPolicy.CloseReasonMax); b.Property(x => x.PolicyVersion).HasMaxLength(40); b.Property(x => x.Provenance).HasMaxLength(32);

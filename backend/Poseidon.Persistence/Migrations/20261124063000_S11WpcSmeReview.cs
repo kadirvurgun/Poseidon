@@ -209,7 +209,7 @@ namespace Poseidon.Persistence.Migrations
                 table: "RegulatoryReviewCampaigns",
                 columns: new[] { "TenantId", "VesselId", "Scope" },
                 unique: true,
-                filter: "\"State\" IN ('OPEN', 'IN_REVIEW')");
+                filter: "\"State\" = 'OPEN' OR \"State\" = 'IN_REVIEW'");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RegulatoryReviewItems_TenantId_CampaignId_Kind_SubjectKey",

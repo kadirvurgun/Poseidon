@@ -73,7 +73,7 @@ public sealed class RegulatoryReviewStorageGuardTests
         Assert.Contains("\"State\" <> 'CLOSED' OR \"OpenItemsAtClose\" = 0", campaign);
         var active = model.FindEntityType(typeof(RegulatoryReviewCampaign))!.GetIndexes().Single(i => i.GetDatabaseName() == "UX_RegulatoryReviewCampaigns_Active");
         Assert.True(active.IsUnique);
-        Assert.Equal("\"State\" IN ('OPEN', 'IN_REVIEW')", active.GetFilter());
+        Assert.Equal("\"State\" = 'OPEN' OR \"State\" = 'IN_REVIEW'", active.GetFilter());
     }
 
     [Fact]
