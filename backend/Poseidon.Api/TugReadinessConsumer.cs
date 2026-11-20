@@ -46,6 +46,10 @@ internal static class TugReadinessConsumer
                     var p = current.Row;
                     result.Add(new(tug, "MaintenancePlan", p.Id, p.Revision, p.Due.State == "Due" ? "Blocked" : "Unknown", p.Due.Reason,
                         p.Inputs.ObservedAt));
+                    // DEV-109 readiness recalculation: a postponement never lifts a block; on critical or
+                    // UNKNOWN-criticality equipment it adds an explicit review requirement.
+                    if (p.Postponement?.ReadinessImpact == Poseidon.Domain.MaintenancePostponementPolicy.ReviewRequired)
+                        result.Add(new(tug, "MaintenancePlan", p.Id, p.Revision, "Unknown", "PostponementReadinessReviewRequired", p.Inputs.ObservedAt));
                 }
             }
         }

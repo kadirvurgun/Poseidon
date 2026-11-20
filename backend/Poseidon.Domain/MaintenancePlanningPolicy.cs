@@ -11,7 +11,7 @@ public static class MaintenancePlanningPolicy
     {
         const string algorithm = "planning-current-v1";
         if (!context.AssetRevisionCurrent) return new("ReviewRequired", "EquipmentRevisionChanged", Algorithm: algorithm);
-        if (inputs.ObservationId != null && observation?.Ready != true)
+        if ((inputs.ObservationId != null || inputs.MeasurementPointId != null) && observation?.Ready != true)
             return new("ReviewRequired", observation?.State ?? "ObservationAssessmentUnavailable", Algorithm: algorithm);
         var due = MaintenanceCalculation.Evaluate(observation?.Inputs ?? inputs, serverNow, observation)
             with { Algorithm = observation == null ? algorithm : algorithm + "/" + observation.PolicyVersion };

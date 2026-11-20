@@ -3,12 +3,16 @@ import { type Locale as AppLocale } from "../i18n";
 import { useId, useMemo, useRef, useState } from 'react';
 import type { KeyboardEvent } from 'react';
 import './equipment-hierarchy-tree.css';
+import { pmsCopy } from './PmsPanels';
+const criticalityOf = (value: string | null | undefined) => value === 'CRITICAL' || value === 'IMPORTANT' || value === 'STANDARD' ? value : 'UNKNOWN';
 // Presentation projection of the complete authorized vessel snapshot. The containing
 // workspace maps its generated API DTOs here; this component grants no permissions.
 export type EquipmentHierarchyItem = Readonly<{
     id: string;
     parentId: string | null;
     label: string | null;
+    // DEV-052 closed criticality; absent/null renders the neutral UNKNOWN marker, never "not critical".
+    criticality?: string | null;
 }>;
 type Props = {
     scopeKey: string;
@@ -210,6 +214,8 @@ function ScopedTree({ language, nodes, selectedId, onSelect, onRetry }: Props & 
             <span aria-hidden="true">{open ? '▾' : '▸'}</span>
           </button> : <span className="equipment-hierarchy-marker" aria-hidden="true">·</span>}
           <span>{label(row.id)}</span>
+          {index!.items.get(row.id)!.criticality !== undefined && <span className="equipment-hierarchy-criticality" data-criticality={criticalityOf(index!.items.get(row.id)!.criticality)}>
+            {pmsCopy[language][`crit_${criticalityOf(index!.items.get(row.id)!.criticality)}`]}</span>}
         </div>
         {open && <div role="group" id={groupId} aria-owns={children.map(id => ids.get(id)!).join(' ')}/>}
       </div>;

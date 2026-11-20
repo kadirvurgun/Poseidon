@@ -209,6 +209,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapRiskAssessments();
             endpoints.MapRiskTemplates();
             endpoints.MapMaintenanceObservations();
+            endpoints.MapMeasurementPoints();
+            endpoints.MapMaintenancePostponements();
             endpoints.MapTug();
             endpoints.MapParameters();
             endpoints.MapHr();

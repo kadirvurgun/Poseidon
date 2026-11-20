@@ -13030,40 +13030,6 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
-    "/api/v1/maintenance-plan/{vessel}/{id}/postpone": {
-      "post": {
-        "tags": [
-          "TechnicalEndpoints"
-        ],
-        "operationId": "MaintenancePostpone",
-        "parameters": [
-          {
-            "name": "vessel",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        },
-        "x-poseidon-profile": "NATIVE-DENIED-1"
-      }
-    },
     "/api/v1/defects": {
       "get": {
         "tags": [
@@ -14542,6 +14508,360 @@
           }
         },
         "x-poseidon-profile": "NATIVE-STATE-COMMAND-1"
+      }
+    },
+    "/api/v1/equipment-hierarchy/{vessel}/measurement-points": {
+      "get": {
+        "tags": [
+          "MeasurementPointEndpoints"
+        ],
+        "operationId": "MeasurementPointList",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeasurementPage"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "MeasurementPointSave",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MeasurementPointSaveCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeasurementPointOutcome"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PmsFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/equipment-hierarchy/{vessel}/measurement-points/{point}/readings": {
+      "get": {
+        "tags": [
+          "MeasurementPointEndpoints"
+        ],
+        "operationId": "MeasurementReadingList",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "point",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeasurementReadingPage"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "MeasurementReadingRecord",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "point",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MeasurementReadingCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeasurementReadingOutcome"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PmsFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/maintenance-plan/{vessel}/{id}/postponements": {
+      "get": {
+        "tags": [
+          "MaintenancePostponementEndpoints"
+        ],
+        "operationId": "MaintenancePostponementList",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MaintenancePostponementPage"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/maintenance-plan/{vessel}/{id}/postpone": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "MaintenancePostpone",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MaintenancePostponementRequestCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MaintenancePostponementOutcome"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PmsFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/maintenance-plan/{vessel}/{id}/postponements/{postponement}/decision": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "MaintenancePostponementDecide",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "postponement",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MaintenancePostponementDecisionCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MaintenancePostponementOutcome"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PmsFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
     "/api/v1/tug-jobs/{id}/plan": {
@@ -30821,6 +31141,19 @@
               "string"
             ],
             "format": "uuid"
+          },
+          "measurementPointId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "triggerOn": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
         "additionalProperties": false
@@ -30937,6 +31270,378 @@
           }
         }
       },
+      "MaintenancePostponementDecisionCommand": {
+        "required": [
+          "expectedVersion",
+          "decision",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MaintenancePostponementDto": {
+        "required": [
+          "id",
+          "planId",
+          "planRevision",
+          "assetId",
+          "workOrderId",
+          "defectIds",
+          "requirementRefs",
+          "originalDue",
+          "requestedDeadline",
+          "extensionDays",
+          "reason",
+          "riskAssessmentId",
+          "criticality",
+          "state",
+          "effectiveState",
+          "readinessImpact",
+          "requestedBy",
+          "requestedAt",
+          "decidedBy",
+          "decidedAt",
+          "decisionReason",
+          "policyRef",
+          "policyVersion",
+          "maxExtensionDays",
+          "revision",
+          "version",
+          "canDecide",
+          "decisionBlockers"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "planId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "planRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "assetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "workOrderId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "defectIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "requirementRefs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "originalDue": {
+            "type": "string",
+            "format": "date"
+          },
+          "requestedDeadline": {
+            "type": "string",
+            "format": "date"
+          },
+          "extensionDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "riskAssessmentId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "criticality": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "effectiveState": {
+            "type": "string"
+          },
+          "readinessImpact": {
+            "type": "string"
+          },
+          "requestedBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "requestedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "decidedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "decidedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "decisionReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "policyRef": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "policyVersion": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "maxExtensionDays": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "canDecide": {
+            "type": "boolean"
+          },
+          "decisionBlockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "MaintenancePostponementOutcome": {
+        "required": [
+          "postponement"
+        ],
+        "type": "object",
+        "properties": {
+          "postponement": {
+            "$ref": "#/components/schemas/MaintenancePostponementDto"
+          }
+        }
+      },
+      "MaintenancePostponementPage": {
+        "required": [
+          "planId",
+          "planRevision",
+          "originalDue",
+          "dueState",
+          "criticality",
+          "policyState",
+          "policyRef",
+          "policyVersion",
+          "maxExtensionDays",
+          "canRequest",
+          "canDecide",
+          "items",
+          "sourceVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "planId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "planRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "originalDue": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "dueState": {
+            "type": "string"
+          },
+          "criticality": {
+            "type": "string"
+          },
+          "policyState": {
+            "type": "string"
+          },
+          "policyRef": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "policyVersion": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "maxExtensionDays": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "canRequest": {
+            "type": "boolean"
+          },
+          "canDecide": {
+            "type": "boolean"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MaintenancePostponementDto"
+            }
+          },
+          "sourceVersion": {
+            "type": "string"
+          }
+        }
+      },
+      "MaintenancePostponementRequestCommand": {
+        "required": [
+          "id",
+          "requestedDeadline",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "requestedDeadline": {
+            "type": "string",
+            "format": "date"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "riskAssessmentId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "workOrderId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "defectIds": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "requirementRefs": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "MaintenancePostponementSummary": {
+        "required": [
+          "id",
+          "state",
+          "effectiveState",
+          "originalDue",
+          "requestedDeadline",
+          "criticality",
+          "readinessImpact"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "effectiveState": {
+            "type": "string"
+          },
+          "originalDue": {
+            "type": "string",
+            "format": "date"
+          },
+          "requestedDeadline": {
+            "type": "string",
+            "format": "date"
+          },
+          "criticality": {
+            "type": "string"
+          },
+          "readinessImpact": {
+            "type": "string"
+          }
+        }
+      },
       "MaintenanceRow": {
         "required": [
           "id",
@@ -31019,6 +31724,20 @@
               "string"
             ],
             "format": "date-time"
+          },
+          "postponement": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/MaintenancePostponementSummary"
+              }
+            ]
+          },
+          "assetCriticality": {
+            "type": "string",
+            "default": "UNKNOWN"
           }
         }
       },
@@ -31172,6 +31891,429 @@
           },
           "reason": {
             "type": "string"
+          }
+        }
+      },
+      "MeasurementPage": {
+        "required": [
+          "items",
+          "canWrite",
+          "kinds",
+          "units",
+          "sources",
+          "sourceVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MeasurementPointDto"
+            }
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "kinds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "units": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sourceVersion": {
+            "type": "string"
+          }
+        }
+      },
+      "MeasurementPointDto": {
+        "required": [
+          "id",
+          "assetId",
+          "code",
+          "kind",
+          "unit",
+          "source",
+          "precision",
+          "rangeMin",
+          "rangeMax",
+          "parentPointId",
+          "revision",
+          "version",
+          "provenance",
+          "latest",
+          "band",
+          "policyState",
+          "policyVersion",
+          "freshnessMinutes",
+          "freshness"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "assetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "precision": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rangeMin": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "rangeMax": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "parentPointId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "latest": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/MeasurementReadingDto"
+              }
+            ]
+          },
+          "band": {
+            "type": "string"
+          },
+          "policyState": {
+            "type": "string"
+          },
+          "policyVersion": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "freshnessMinutes": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "freshness": {
+            "type": "string"
+          }
+        }
+      },
+      "MeasurementPointOutcome": {
+        "required": [
+          "point"
+        ],
+        "type": "object",
+        "properties": {
+          "point": {
+            "$ref": "#/components/schemas/MeasurementPointDto"
+          }
+        }
+      },
+      "MeasurementPointSaveCommand": {
+        "required": [
+          "id",
+          "expectedVersion",
+          "assetId",
+          "code",
+          "kind",
+          "unit",
+          "source",
+          "precision"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedVersion": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          },
+          "assetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "precision": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rangeMin": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "rangeMax": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "parentPointId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MeasurementPropagationSkip": {
+        "required": [
+          "pointId",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "pointId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "MeasurementReadingCommand": {
+        "required": [
+          "id",
+          "value",
+          "measuredAt",
+          "sourceType"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "value": {
+            "type": "string"
+          },
+          "measuredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sourceType": {
+            "type": "string"
+          },
+          "sourceReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "evidenceFileId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MeasurementReadingDto": {
+        "required": [
+          "id",
+          "pointId",
+          "value",
+          "unit",
+          "measuredAt",
+          "recordedAt",
+          "sourceType",
+          "sourceReference",
+          "evidenceFileId",
+          "previousReadingId",
+          "delta",
+          "propagatedFromReadingId",
+          "actorId",
+          "provenance"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "pointId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "value": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "measuredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sourceType": {
+            "type": "string"
+          },
+          "sourceReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "evidenceFileId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "previousReadingId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "delta": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "propagatedFromReadingId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "provenance": {
+            "type": "string"
+          }
+        }
+      },
+      "MeasurementReadingOutcome": {
+        "required": [
+          "reading",
+          "propagated",
+          "skipped"
+        ],
+        "type": "object",
+        "properties": {
+          "reading": {
+            "$ref": "#/components/schemas/MeasurementReadingDto"
+          },
+          "propagated": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MeasurementReadingDto"
+            }
+          },
+          "skipped": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MeasurementPropagationSkip"
+            }
+          }
+        }
+      },
+      "MeasurementReadingPage": {
+        "required": [
+          "point",
+          "items",
+          "canWrite"
+        ],
+        "type": "object",
+        "properties": {
+          "point": {
+            "$ref": "#/components/schemas/MeasurementPointDto"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MeasurementReadingDto"
+            }
+          },
+          "canWrite": {
+            "type": "boolean"
           }
         }
       },
@@ -33467,6 +34609,21 @@
             }
           },
           "href": {
+            "type": "string"
+          }
+        }
+      },
+      "PmsFailure": {
+        "required": [
+          "code",
+          "correlationId"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "correlationId": {
             "type": "string"
           }
         }
@@ -43416,6 +44573,12 @@
     },
     {
       "name": "MaintenanceObservationEndpoints"
+    },
+    {
+      "name": "MeasurementPointEndpoints"
+    },
+    {
+      "name": "MaintenancePostponementEndpoints"
     },
     {
       "name": "TugEndpoints"

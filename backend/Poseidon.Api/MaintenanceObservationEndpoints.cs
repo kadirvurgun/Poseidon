@@ -7,6 +7,18 @@ namespace Poseidon.Api;
 public sealed class MaintenanceObservationSettings
 {
     public MaintenanceObservationRule[] Sources { get; set; } = [];
+    // DEV-108/DEV-109 tenant-configured expert parameters. Empty by default: nothing is invented.
+    public MeasurementPolicyRule[] MeasurementPolicies { get; set; } = [];
+    public PostponementPolicyRule[] PostponementPolicies { get; set; } = [];
+    // Exactly one entry for tenant/vessel/point code; duplicates or an invalid entry are UNCONFIGURED.
+    public MeasurementPolicyRule? Measurement(Guid tenant, Guid vessel, string code) {
+        var matches = MeasurementPolicies.Where(s => s.TenantId == tenant && s.VesselId == vessel && s.PointCode == code).Take(2).ToArray();
+        return matches.Length == 1 ? matches[0] : null;
+    }
+    public PostponementPolicyRule? Postponement(Guid tenant) {
+        var matches = PostponementPolicies.Where(s => s.TenantId == tenant).Take(2).ToArray();
+        return matches.Length == 1 && MaintenancePostponementPolicy.ValidPolicy(matches[0]) ? matches[0] : null;
+    }
     public MaintenanceObservationRule? Rule(Guid tenant, Guid vessel, Guid asset, string source) {
         var matches = Sources.Where(s => s.TenantId == tenant && s.VesselId == vessel && s.AssetId == asset && s.Source == source).Take(2).ToArray();
         var candidate = matches.Length == 1 ? matches[0] : null;

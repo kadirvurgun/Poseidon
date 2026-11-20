@@ -21,7 +21,8 @@ public sealed record TechnicalSaved(Guid Id, long Revision, uint Version, bool R
 public sealed record EquipmentSnapshot(Asset[] Items, bool Complete, bool CanWrite, bool CanReadHistory);
 public sealed record EquipmentHistoryRow(long Revision, DateTimeOffset SavedAt, Asset Asset);
 public sealed record MaintenanceRow(Guid Id, Guid AssetId, Guid? JobId, Guid? OwnerRoleId, uint Version, long Revision,
-    string Status, string Provenance, MaintenanceInputs Inputs, MaintenanceDue Due, DateTimeOffset ReferenceAt, DateTimeOffset SavedAt, long AssetRevision, string ObservationState = "NotRequested", DateTimeOffset? ObservationAssessedAt = null);
+    string Status, string Provenance, MaintenanceInputs Inputs, MaintenanceDue Due, DateTimeOffset ReferenceAt, DateTimeOffset SavedAt, long AssetRevision, string ObservationState = "NotRequested", DateTimeOffset? ObservationAssessedAt = null,
+    MaintenancePostponementSummary? Postponement = null, string AssetCriticality = "UNKNOWN");
 public sealed record MaintenancePage(MaintenanceRow[] Items, bool CanWrite, bool CanReadHistory);
 public sealed record MaintenanceJobRow(Guid Id, string Code, string Title, string Provenance);
 public sealed record TechnicalReferences(MaintenanceJobRow[] Jobs, Guid[] Owners, string Policy);
@@ -53,7 +54,7 @@ public static class TechnicalEndpoints
         plans.MapGet("/references", References).WithName("MaintenanceReferences").Produces<TechnicalReferences>();
         plans.MapPost("/jobs", AddJob).WithName("MaintenanceJobSave");
         plans.MapGet("/{id:guid}/history", PlanHistory).WithName("MaintenanceHistory").Produces<MaintenanceHistoryRow[]>();
-        plans.MapPost("/{id:guid}/postpone", RejectPostponement).WithName("MaintenancePostpone");
+        // DEV-109 postponement request/decision routes are owned by MaintenancePostponementEndpoints.
     }
     private static TrustedActor Actor(HttpContext h) => h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User)!;
     private static bool Read(TrustedActor a, string module) => a.CanRead && a.Permissions.Contains(module + ".read") && (module != "maintenance" || a.Permissions.Contains("equipment.read"));
@@ -135,7 +136,7 @@ public static class TechnicalEndpoints
     }
     private static bool Texts(params string?[] values) => values.All(x => x == null || x.Length <= 2000 && !x.Any(char.IsControl));
     internal static bool ValidEquipmentInput(EquipmentCommand command) => command.Id != Guid.Empty && command.ParentId != Guid.Empty &&
-        command.Level is "System" or "Equipment" or "Component" && Texts(command.Code, command.Name, command.SystemFamily, command.EquipmentType,
+        command.Level is "System" or "Equipment" or "Component" && EquipmentCriticality.ValidInput(command.Criticality) && Texts(command.Code, command.Name, command.SystemFamily, command.EquipmentType,
             command.Criticality, command.Maker, command.Model, command.SerialNumber, command.Location, command.Notes);
     private static Task<IResult> SaveEquipment(Guid vessel, EquipmentCommand command, HttpContext h, PoseidonDbContext db) => ApplyImport(vessel, command, h, db, false);
     internal static async Task<IResult> ApplyImport(Guid vessel, EquipmentCommand command, HttpContext h, PoseidonDbContext db, bool imported) {
@@ -155,8 +156,9 @@ public static class TechnicalEndpoints
             if (asset == null && command.BaseVersion != null || asset != null && asset.Version != command.BaseVersion) return await Fail(h, 409, "version_conflict");
             if (asset == null) { asset = new() { TenantId = db.TenantId, VesselId = vessel, Id = command.Id }; rows.Add(asset); db.Assets.Add(asset); }
             var nodes = rows.Select(x => new EquipmentHierarchyNode(x.TenantId, x.VesselId, x.Id, x.ParentId)).ToArray();
-            if (EquipmentHierarchyPolicy.ValidateReparent(db.TenantId, vessel, nodes, command.Id, command.ParentId) != EquipmentHierarchyValidation.Valid)
-                return await Fail(h, 400, "validation_failed");
+            var hierarchy = EquipmentHierarchyPolicy.ValidateReparent(db.TenantId, vessel, nodes, command.Id, command.ParentId);
+            if (hierarchy != EquipmentHierarchyValidation.Valid)
+                return await Fail(h, 400, hierarchy == EquipmentHierarchyValidation.Cycle ? "hierarchy_cycle" : "validation_failed");
             await EnsureOwner(db, vessel, command.ResponsibleRoleId, ct);
             if (command.BaseVersion != null) asset.Revision = checked(asset.Revision + 1);
             asset.ParentId = command.ParentId; asset.Code = command.Code; asset.Name = command.Name; asset.Level = command.Level;
@@ -229,7 +231,16 @@ public static class TechnicalEndpoints
             else plan.Revision = checked(plan.Revision + 1);
             plan.AssetId = asset.Id; plan.JobId = command.JobId; plan.OwnerRoleId = command.OwnerRoleId;
             MaintenanceDue? evaluated = null; var inputs = command.Inputs;
-            if (inputs.ObservationId != null) {
+            if (inputs.ObservationId != null && inputs.MeasurementPointId != null || inputs.TriggerOn is not (null or "WARNING" or "ALARM")) return await Fail(h, 400, "validation_failed");
+            if (inputs.MeasurementPointId != null) {
+                if (!await db.MeasurementPoints.AnyAsync(x => x.Id == inputs.MeasurementPointId && x.VesselId == vessel && x.AssetId == asset.Id, ct)) return await Fail(h, 404, "resource_not_found");
+                var measured = await MeasurementPointEndpoints.ResolveForPlan(vessel, asset.Id, inputs, db, h.RequestServices.GetRequiredService<MaintenanceObservationSettings>(),
+                    command.ReferenceAt.ToUniversalTime(), ct);
+                var assessed = measured.Assessment;
+                evaluated = assessed.Ready ? MaintenanceCalculation.Evaluate(assessed.Inputs, command.ReferenceAt.ToUniversalTime(), assessed)
+                    with { Algorithm = "planning-measurement-v1/" + assessed.PolicyVersion } : new("ReviewRequired", assessed.State, Algorithm: "planning-measurement-v1/" + assessed.PolicyVersion);
+            }
+            else if (inputs.ObservationId != null) {
                 if (!await db.MaintenanceObservations.AnyAsync(x => x.Id == inputs.ObservationId && x.VesselId == vessel && x.AssetId == asset.Id, ct)) return await Fail(h, 404, "resource_not_found");
                 var observation = await MaintenanceObservationEndpoints.Resolve(vessel, asset.Id, inputs, h, db);
                 inputs = observation.Inputs;
@@ -244,12 +255,5 @@ public static class TechnicalEndpoints
         } catch (Exception e) when (e is DbUpdateException || PostgresFailure.IsSerialization(e)) {
             await tx.RollbackAsync(ct); return await Fail(h, 409, "version_conflict");
         }
-    }
-    private static async Task<IResult> RejectPostponement(Guid vessel, Guid id, HttpContext h, PoseidonDbContext db) {
-        var failure = await Gate(h, db, vessel, "maintenance", true); if (failure != null) return failure;
-        if (!await db.MaintenancePlans.AnyAsync(x => x.Id == id && x.VesselId == vessel, h.RequestAborted)) return await Fail(h, 404, "resource_not_found");
-        // DEV-109 source requires authority/risk/evidence/max-extension policy. None is supplied by
-        // an arbitrary request reason or draft approval_rule. No postponed deadline can be activated.
-        return await Fail(h, 422, "validation_failed");
     }
 }

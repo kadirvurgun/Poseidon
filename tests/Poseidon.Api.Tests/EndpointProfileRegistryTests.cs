@@ -105,8 +105,10 @@ public sealed class EndpointProfileRegistryTests
         Assert.Equal(["ImportMappingDraft", "ImportPreview", "ImportUpload"], keyGaps);
         Assert.All(commands.Where(e => e.Deviations.Contains("IDEMPOTENCY_KEY_NOT_REQUIRED")),
             e => Assert.True(EndpointProfiles.HeaderKeyRequired(EndpointProfiles.Profile(e.ProfileId))));
-        Assert.Equal("NATIVE-DENIED-1", Assert.Single(commands, e => S1SecurityContract.Operations
-            .Single(o => o.OperationId == e.SecurityOperationId).Kind == "AlwaysDenied").ProfileId);
+        // S8 DEV-109 replaced the last always-denied command (maintenance postponement) with an audited
+        // request/decision workflow; any future always-denied command must still use NATIVE-DENIED-1.
+        Assert.All(commands.Where(e => S1SecurityContract.Operations.Single(o => o.OperationId == e.SecurityOperationId).Kind == "AlwaysDenied"),
+            e => Assert.Equal("NATIVE-DENIED-1", e.ProfileId));
         Assert.All(commands.Where(e => S1SecurityContract.Operations.Single(o => o.OperationId == e.SecurityOperationId).IsCritical),
             e => Assert.NotEqual("NATIVE-OBSERVATION-COMMAND-1", e.ProfileId));
     }
@@ -255,7 +257,7 @@ public sealed partial class DirectoryWorkspaceTests
         "directory.read", "directory.write", "equipment.history.read", "equipment.read", "equipment.write", "evidence.read",
         "evidence.write", "file.read", "file.write", "human.decide", "human.review.read", "human.review.submit", "human.trace.read",
         "human.verify", "import.legacy.convert", "import.read", "import.write", "maintenance.history.read",
-        "maintenance.observation.write", "maintenance.owner.eligible", "maintenance.read", "maintenance.write", "mode.cross", "mode.tug",
+        "maintenance.observation.write", "maintenance.measurement.write", "maintenance.postponement.request", "maintenance.postponement.decide", "maintenance.owner.eligible", "maintenance.read", "maintenance.write", "mode.cross", "mode.tug",
         "notification.acknowledge", "notification.evaluate", "notification.manage", "notification.preference.write", "notification.read",
         "operations.downtime.read", "operations.downtime.write", "operations.fuel.read", "operations.fuel.write", "operations.port.read",
         "operations.port.write", "regulatory.draft.read", "regulatory.draft.write", "regulatory.facts.attest", "regulatory.qualify",
