@@ -235,3 +235,4 @@ Main: #16 #17 #18 #20 #23 #36 + **#37 paket 2** birleşik (`2995f70`, 19.11 ~08:
 - S9 QA yeniden kontrol (c678218..916e158): B1/B2/B3 RESOLVED, N2 SOUND; DEV-061/089/114 ACCEPT-WITH-NOTES → genel S9 ACCEPT, koşul: 916e158 push 44766423323 + PR 44766440442 yeşil.
 - 916e158 CI push 44766423323 + PR 44766440442 **yeşil** (gh doğrulandı) + QA ACCEPT → **#47 birleşti, main f1c2d51** → main'de **80/654/%67,42** (S8 kabul). S9 kabul kaydı (90/746/≈%76,9) alt-ajanda `docs/s9-gate-acceptance-20261120` → S10 entegrasyonuna.
 - **Sıradaki: S10 entegrasyonu** `integration/s10-bundle-<tarih>` = main + S9 kayıt + S6 redo (4c41e57; 5 çakışma) + S10 WP-A (b3bbbfc; S9 düzeltmeleri gelince miras hatalar kapanır, kendi hatası SIRE testi `S10WpaAssuranceApiTests.cs:49,145`) + WP-B + WP-C + WP-D (488cc45) + DEV-115. **Önce her WP dalının CI'ını kontrol et.**
+- **S9 kayıt** 76c470a `docs/s9-gate-acceptance-20261120` (90/746/%76,91; kapsam 271/271) push edildi, PR yok.
