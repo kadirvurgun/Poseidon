@@ -7621,6 +7621,118 @@ namespace Poseidon.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Poseidon.Persistence.PilotMetricBatch", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ActorBucket")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<int>("EventCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("EventsJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("ReceivedHour")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("RetentionPolicyRef")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("RoleBucket")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("SchemaVersion")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.HasKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "ExpiresAt");
+
+                    b.HasIndex("TenantId", "ReceivedHour");
+
+                    b.ToTable("PilotMetricBatches", "intelligence", t =>
+                        {
+                            t.HasCheckConstraint("CK_PilotMetricBatch_Shape", "\"SchemaVersion\" = 'pilot-event.v1' AND \"ActorBucket\" ~ '^[0-9a-f]{32}$' AND \"RoleBucket\" ~ '^[0-9a-f]{32}$' AND \"EventCount\" BETWEEN 1 AND 50 AND \"ExpiresAt\" > \"ReceivedHour\" AND length(\"RetentionPolicyRef\") BETWEEN 1 AND 128");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.PilotMetricReceipt", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Key")
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<int>("Accepted")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("BatchId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Fingerprint")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<DateTimeOffset>("SavedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("TenantId", "ActorId", "Key");
+
+                    b.HasIndex("TenantId", "ExpiresAt");
+
+                    b.ToTable("PilotMetricReceipts", "intelligence", t =>
+                        {
+                            t.HasCheckConstraint("CK_PilotMetricReceipt_Accepted", "\"Accepted\" BETWEEN 1 AND 50");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.PilotMetricTenantSalt", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<byte[]>("Salt")
+                        .IsRequired()
+                        .HasColumnType("bytea");
+
+                    b.HasKey("TenantId");
+
+                    b.ToTable("PilotMetricTenantSalts", "intelligence", t =>
+                        {
+                            t.HasCheckConstraint("CK_PilotMetricTenantSalt_Length", "length(\"Salt\") = 32");
+                        });
+                });
+
             modelBuilder.Entity("Poseidon.Persistence.PmsCommandReceipt", b =>
                 {
                     b.Property<Guid>("TenantId")
@@ -15481,6 +15593,24 @@ namespace Poseidon.Persistence.Migrations
                     b.HasOne("Poseidon.Persistence.Person", null)
                         .WithMany()
                         .HasForeignKey("TenantId", "PersonId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.PilotMetricBatch", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.PilotMetricTenantSalt", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

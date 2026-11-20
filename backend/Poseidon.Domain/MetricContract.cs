@@ -47,6 +47,9 @@ public static class MetricRegistry
     public const string CrewDeclaredPersons = "crew.assignments.declared_persons";
     public const string ScopeTenantVisible = "TENANT_VISIBLE";
     public const string ScopeVessel = "VESSEL";
+    // S11 WP-B DEV-072: pilot metrics are evaluated only by GET /api/v1/pilot-metrics/summary over a
+    // bounded pilot window; the generic scalar endpoint refuses this scope (invalid_metric_scope).
+    public const string ScopePilotWindow = "PILOT_WINDOW";
     // Upper bound of owning-source rows read for one scalar. Above it the scalar
     // is UNAVAILABLE (query_limit_exceeded), never a truncated partial total.
     public const int MaxSourceVessels = 1000;
@@ -79,7 +82,25 @@ public static class MetricRegistry
             "LIVE_READ;55.01 rpt.freshness.online_min",
             ["directory.read", "crew.read"], ["view"], [ScopeTenantVisible, ScopeVessel], "DECLARED_UNVERIFIED",
             "55.01/paragraph:645-647;55.01/paragraph:661;64.01/paragraph:142;64.01/paragraph:1398"),
+        // S11 WP-B DEV-072 (18.01 Backlog row 73, 19.01 paragraph:137-161): privacy-safe pilot event
+        // observations. Client-instrumented, so DECLARED_UNVERIFIED; MinCohort 5 distinct pseudonymous
+        // contributors is the same unapproved default (64.01 paragraph:1398).
+        Pilot(PilotMetricsPolicy.JourneyCompletion, "Pilot journeys completed out of completed or abandoned (permille)", "permille", "RATIO",
+            "19.01/paragraph:141-143;18.01/Backlog/row:73"),
+        Pilot(PilotMetricsPolicy.RoleAdoption, "Distinct pseudonymous pilot contributors active in the window", "person", "COUNT_DISTINCT",
+            "19.01/paragraph:159-161;18.01/Backlog/row:73"),
+        Pilot(PilotMetricsPolicy.AiCorrectionRate, "AI suggestions corrected out of accepted, corrected or rejected (permille)", "permille", "RATIO",
+            "19.01/paragraph:156-158;18.01/Backlog/row:73"),
+        Pilot(PilotMetricsPolicy.SyncConflicts, "Offline sync conflicts observed by pilot clients", "conflict", "COUNT",
+            "19.01/paragraph:153-155;18.01/Backlog/row:73"),
+        Pilot(PilotMetricsPolicy.EvidenceSearchP95, "Evidence search duration, 95th percentile (nearest rank)", "millisecond", "P95",
+            "19.01/paragraph:150-152;18.01/Backlog/row:73"),
     ];
+
+    private static MetricDefinition Pilot(string id, string label, string unit, string aggregation, string source) =>
+        new(id, PilotMetricsPolicy.Version(id), "18.01 DEV-072 pilot telemetry (PilotMetricsPolicy)", label, unit, "projection.pilot-metric-events.v1",
+            aggregation, PilotMetricsPolicy.MinContributors, "LIVE_READ;55.01 rpt.freshness.online_min",
+            ["directory.read", PilotMetricsPolicy.ReadPermission], ["view"], [ScopePilotWindow], "DECLARED_UNVERIFIED", source + ";55.01/paragraph:646-647");
 
     public static MetricDefinition? Find(string? id) => id == null ? null : All.SingleOrDefault(d => d.Id == id);
 

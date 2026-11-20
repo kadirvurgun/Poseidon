@@ -5757,6 +5757,25 @@
     "m_9a7c51e0d3b2f462": "Porovnanie revízií dokumentu",
     "m_a7ff6a594ad31c81": "Vykonanie vlečenia",
     "m_073dee70df0d133e": "Denný denník remorkéra",
-    "m_7a31428311abb402": "Plánovanie suchého doku"
+    "m_7a31428311abb402": "Plánovanie suchého doku",
+    "m_890c89eeb732e540": "Metriky pilotu",
+    "m_a58de4c61f6aaa0e": "Pozorovania od zapísaných pilotných klientov: deklarované a neoverené, nejde o tvrdenie o prijatí.",
+    "m_6d69ca1d9fb68c62": "Obdobie",
+    "m_b5bbb70736081cf1": "Posledných {{count}} dní",
+    "m_9adc5ee5e5721a00": "Načítavajú sa metriky pilotu…",
+    "m_2a84c38675e0a79c": "Metriky pilotu sa nepodarilo načítať.",
+    "m_927893496f0b3625": "Nemáte oprávnenie zobraziť metriky pilotu.",
+    "m_909aee4a8e414ae0": "Offline: metriky pilotu sa neaktualizujú.",
+    "m_09483c324f9a07f6": "Doba uchovávania nie je nastavená; žiadna telemetria pilotu sa nezbiera.",
+    "m_491e25056de3a616": "Skryté: menej ako {{count}} prispievateľov",
+    "m_9bede0b7d465c30f": "Žiadne pozorovania",
+    "m_9b65549adf9f7a6e": "Nie je k dispozícii",
+    "m_761a38d0c8645634": "{{count}} prispievateľov",
+    "m_1e4e264f37a7f0df": "Dokončenie postupov",
+    "m_f202fa0907b65058": "Aktívni prispievatelia",
+    "m_7d1e92f2c9b93806": "Miera opráv AI",
+    "m_717076f60234c6a8": "Konflikty synchronizácie",
+    "m_07587adbd5b767bb": "Čas vyhľadávania dôkazov (95. percentil)",
+    "m_f8b0b166c51fa3f8": "Zdieľať údaje o používaní pilotu z tohto prehliadača"
   }
 }

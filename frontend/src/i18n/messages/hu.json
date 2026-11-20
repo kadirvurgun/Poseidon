@@ -5757,6 +5757,25 @@
     "m_9a7c51e0d3b2f462": "Dokumentumrevíziók összevetése",
     "m_a7ff6a594ad31c81": "Vontatás végrehajtása",
     "m_073dee70df0d133e": "Vontatóhajó napi naplója",
-    "m_7a31428311abb402": "Szárazdokk-tervezés"
+    "m_7a31428311abb402": "Szárazdokk-tervezés",
+    "m_890c89eeb732e540": "Pilot mérőszámok",
+    "m_a58de4c61f6aaa0e": "Megfigyelések a regisztrált pilot kliensektől: bejelentett és nem ellenőrzött, nem elfogadási állítás.",
+    "m_6d69ca1d9fb68c62": "Időszak",
+    "m_b5bbb70736081cf1": "Utolsó {{count}} nap",
+    "m_9adc5ee5e5721a00": "Pilot mérőszámok betöltése…",
+    "m_2a84c38675e0a79c": "A pilot mérőszámok nem tölthetők be.",
+    "m_927893496f0b3625": "Nincs jogosultsága a pilot mérőszámok megtekintésére.",
+    "m_909aee4a8e414ae0": "Offline: a pilot mérőszámok nem frissülnek.",
+    "m_09483c324f9a07f6": "A megőrzés nincs beállítva; pilot telemetria nem kerül gyűjtésre.",
+    "m_491e25056de3a616": "Rejtett: kevesebb mint {{count}} résztvevő",
+    "m_9bede0b7d465c30f": "Nincs megfigyelés",
+    "m_9b65549adf9f7a6e": "Nem érhető el",
+    "m_761a38d0c8645634": "{{count}} résztvevő",
+    "m_1e4e264f37a7f0df": "Folyamatok befejezése",
+    "m_f202fa0907b65058": "Aktív résztvevők",
+    "m_7d1e92f2c9b93806": "MI-javítási arány",
+    "m_717076f60234c6a8": "Szinkronizálási ütközések",
+    "m_07587adbd5b767bb": "Bizonyítékkeresési idő (95. percentilis)",
+    "m_f8b0b166c51fa3f8": "Pilot használati adatok megosztása ebből a böngészőből"
   }
 }

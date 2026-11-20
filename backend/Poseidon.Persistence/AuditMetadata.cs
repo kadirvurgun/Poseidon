@@ -29,6 +29,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             CommandReceipt r when r.Action is "CompanyCreate" or "CompanyUpdate" or "SourceDraftSave" or "RequirementDraftSave" => "Tenant",
             RiskTemplate or RiskTemplateRevision or RiskTemplateDecision or RiskTemplateSuggestion or RiskMethod => "Tenant",
             RiskCommandReceipt { VesselId: null } => "Tenant",
+            PilotMetricBatch or PilotMetricTenantSalt or PilotMetricReceipt => "Tenant",
             ApplicabilityReceipt r when r.Action is "author" or "review" => "Tenant",
             _ => "Unresolved"
         };
@@ -61,6 +62,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if (PmsProjection(entry) is { } pms) return pms;
         if (TechnicalRecordProjection(entry) is { } technical) return technical;
         if (S9WpcProjection(entry) is { } s9wpc) return s9wpc;
+        if (PilotMetricsProjection(entry) is { } pilot) return pilot;
         if (TowageProjection(entry) is { } towage) return towage;
         if (SafetyEventProjection(entry) is { } safety) return safety;
         if (FieldOperationsProjection(entry) is { } field) return field;
@@ -843,6 +845,24 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                 Field("Revision", null, Number(x.Revision)), Field("Purpose", null, Closed(x.Purpose, Poseidon.Domain.ControlledDocumentSecurityPolicy.Purposes)),
                 Field("Classification", null, Closed(x.Classification, Poseidon.Domain.ControlledDocumentPolicy.Classifications)),
                 Field("PolicyBasis", null, Closed(x.PolicyBasis, Poseidon.Domain.ControlledDocumentSecurityPolicy.Bases)), Field("Attribution", null, null, "ValuesWithheld"))),
+            _ => null
+        };
+    }
+
+    // S11 WP-B DEV-072: schema version, event count and a fixed operation only. Event codes, buckets,
+    // timestamps, the retention reference and the tenant salt are never copied. A purge (Deleted) row
+    // carries the same single revision as its insert, so before/after stay provable.
+    private static AuditMetadata? PilotMetricsProjection(EntityEntry entry)
+    {
+        long? Before() => entry.State == EntityState.Added ? null : 1;
+        return entry.Entity switch
+        {
+            PilotMetricBatch b => new(null, b.Id, "PilotMetricBatch", Before(), 1, Fields(
+                Field("SchemaVersion", null, Closed(b.SchemaVersion, Poseidon.Domain.PilotMetricsPolicy.SchemaVersion)),
+                Field("EventCount", null, Number(b.EventCount)), Field("Events", null, null, "ValuesWithheld"), Field("Buckets", null, null, "ValuesWithheld"))),
+            PilotMetricTenantSalt t => new(null, t.TenantId, "PilotMetricTenantSalt", null, 1, Fields(Field("Salt", null, null, "ValuesWithheld"))),
+            PilotMetricReceipt r => new(null, r.BatchId, "PilotMetricReceipt", Before(), 1, Fields(
+                Field("Operation", null, "PilotMetricsSubmit"), Field("Accepted", null, Number(r.Accepted)), Field("Binding", null, "CommittedResource"))),
             _ => null
         };
     }

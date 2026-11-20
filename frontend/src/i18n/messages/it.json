@@ -5757,6 +5757,25 @@
     "m_9a7c51e0d3b2f462": "Confronto revisioni documento",
     "m_a7ff6a594ad31c81": "Esecuzione del rimorchio",
     "m_073dee70df0d133e": "Giornale del rimorchiatore",
-    "m_7a31428311abb402": "Pianificazione del bacino di carenaggio"
+    "m_7a31428311abb402": "Pianificazione del bacino di carenaggio",
+    "m_890c89eeb732e540": "Metriche del pilota",
+    "m_a58de4c61f6aaa0e": "Osservazioni dai client pilota iscritti: dichiarate e non verificate, non un’attestazione di accettazione.",
+    "m_6d69ca1d9fb68c62": "Periodo",
+    "m_b5bbb70736081cf1": "Ultimi {{count}} giorni",
+    "m_9adc5ee5e5721a00": "Caricamento metriche del pilota…",
+    "m_2a84c38675e0a79c": "Impossibile caricare le metriche del pilota.",
+    "m_927893496f0b3625": "Non sei autorizzato a visualizzare le metriche del pilota.",
+    "m_909aee4a8e414ae0": "Offline: le metriche del pilota non vengono aggiornate.",
+    "m_09483c324f9a07f6": "La conservazione non è configurata; non viene raccolta alcuna telemetria del pilota.",
+    "m_491e25056de3a616": "Nascosto: meno di {{count}} partecipanti",
+    "m_9bede0b7d465c30f": "Nessuna osservazione",
+    "m_9b65549adf9f7a6e": "Non disponibile",
+    "m_761a38d0c8645634": "{{count}} partecipanti",
+    "m_1e4e264f37a7f0df": "Completamento dei percorsi",
+    "m_f202fa0907b65058": "Partecipanti attivi",
+    "m_7d1e92f2c9b93806": "Tasso di correzione IA",
+    "m_717076f60234c6a8": "Conflitti di sincronizzazione",
+    "m_07587adbd5b767bb": "Tempo di ricerca delle evidenze (95° percentile)",
+    "m_f8b0b166c51fa3f8": "Condividi i dati di utilizzo del pilota da questo browser"
   }
 }

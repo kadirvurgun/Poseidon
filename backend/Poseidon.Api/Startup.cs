@@ -20,6 +20,9 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddCertificateExtraction(configuration);
         services.AddSingleton(configuration.GetSection("TugPlanning").Get<TugPlanningPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<TimeProvider>(TimeProvider.System);
+        // S11 WP-B DEV-072: operator retention configuration; unset = no pilot telemetry is collected.
+        services.AddSingleton(configuration.GetSection("PilotTelemetry").Get<PilotTelemetrySettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
+        services.AddSingleton<PilotTelemetryRateLimiter>();
         services.AddSingleton<IProfileFreshnessPolicySource, UnconfiguredProfileFreshnessPolicy>();
         // DEV-056 x DEV-054/DEV-110 (S8 integration): real WorkOrder state and spare gap sources, registered
         // before the UNKNOWN fallbacks below. A denied/unavailable source still answers UNKNOWN / ACCESS_REQUIRED.
@@ -242,6 +245,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapMaintenancePostponements();
             endpoints.MapTug();
             endpoints.MapDrydock(); // S9 WP-D DEV-111
+            endpoints.MapPilotMetrics(); // S11 WP-B DEV-072
             endpoints.MapParameters();
             endpoints.MapHr();
             endpoints.MapMemberships();

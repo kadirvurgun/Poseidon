@@ -136,6 +136,10 @@ public sealed class PoseidonDbContext(
     public DbSet<ControlledDocumentCertificateLink> ControlledDocumentCertificateLinks => Set<ControlledDocumentCertificateLink>();
     public DbSet<ControlledDocumentEvidenceLink> ControlledDocumentEvidenceLinks => Set<ControlledDocumentEvidenceLink>();
     public DbSet<ControlledDocumentCredentialLink> ControlledDocumentCredentialLinks => Set<ControlledDocumentCredentialLink>();
+    // S11 WP-B DEV-072.
+    public DbSet<PilotMetricBatch> PilotMetricBatches => Set<PilotMetricBatch>();
+    public DbSet<PilotMetricTenantSalt> PilotMetricTenantSalts => Set<PilotMetricTenantSalt>();
+    public DbSet<PilotMetricReceipt> PilotMetricReceipts => Set<PilotMetricReceipt>();
 
     public DbSet<Credential> Credentials => Set<Credential>();
     public DbSet<CredentialRevision> CredentialRevisions => Set<CredentialRevision>();
@@ -533,6 +537,11 @@ public sealed class PoseidonDbContext(
         model.Entity<ControlledDocumentCertificateLink>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ControlledDocumentEvidenceLink>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ControlledDocumentCredentialLink>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        // S11 WP-B DEV-072.
+        PilotMetricsStorage.Configure(model);
+        model.Entity<PilotMetricBatch>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<PilotMetricTenantSalt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<PilotMetricReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         RegisterStorage.Configure(model);
         model.Entity<RegisterDraft>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<RegisterRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -819,6 +828,7 @@ public sealed class PoseidonDbContext(
         TechnicalRecordStorage.Guard(changes);
         ControlledDocumentSecurityStorage.Guard(changes);
         VoiceEventDraftStorage.Guard(changes);
+        PilotMetricsStorage.Guard(changes);
         TowageStorage.Guard(changes);
         SafetyEventStorage.Guard(changes);
         FieldOperationsStorage.Guard(changes);

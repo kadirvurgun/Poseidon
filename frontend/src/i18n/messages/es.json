@@ -5757,6 +5757,25 @@
     "m_9a7c51e0d3b2f462": "Comparación de revisiones de documento",
     "m_a7ff6a594ad31c81": "Ejecución del remolque",
     "m_073dee70df0d133e": "Diario del remolcador",
-    "m_7a31428311abb402": "Planificación de dique seco"
+    "m_7a31428311abb402": "Planificación de dique seco",
+    "m_890c89eeb732e540": "Métricas del piloto",
+    "m_a58de4c61f6aaa0e": "Observaciones de clientes piloto inscritos: declaradas y no verificadas, no constituyen una aceptación.",
+    "m_6d69ca1d9fb68c62": "Periodo",
+    "m_b5bbb70736081cf1": "Últimos {{count}} días",
+    "m_9adc5ee5e5721a00": "Cargando métricas del piloto…",
+    "m_2a84c38675e0a79c": "No se pudieron cargar las métricas del piloto.",
+    "m_927893496f0b3625": "No tiene permiso para ver las métricas del piloto.",
+    "m_909aee4a8e414ae0": "Sin conexión: las métricas del piloto no se actualizan.",
+    "m_09483c324f9a07f6": "La retención no está configurada; no se recopila telemetría del piloto.",
+    "m_491e25056de3a616": "Oculto: menos de {{count}} participantes",
+    "m_9bede0b7d465c30f": "Sin observaciones",
+    "m_9b65549adf9f7a6e": "No disponible",
+    "m_761a38d0c8645634": "{{count}} participantes",
+    "m_1e4e264f37a7f0df": "Finalización de recorridos",
+    "m_f202fa0907b65058": "Participantes activos",
+    "m_7d1e92f2c9b93806": "Tasa de corrección de IA",
+    "m_717076f60234c6a8": "Conflictos de sincronización",
+    "m_07587adbd5b767bb": "Tiempo de búsqueda de evidencias (percentil 95)",
+    "m_f8b0b166c51fa3f8": "Compartir datos de uso del piloto desde este navegador"
   }
 }

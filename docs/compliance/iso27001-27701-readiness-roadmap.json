@@ -1,0 +1,47 @@
+{
+  "schemaVersion": "poseidon.compliance-roadmap.v1",
+  "id": "DEV-118",
+  "title": "ISO/IEC 27001 / 27701 readiness roadmap",
+  "state": "DRAFT",
+  "disclaimer": "Sertifika/onay iddiası değildir. No ISMS or PIMS has been scoped, implemented, internally audited or externally audited; this is a readiness plan only.",
+  "sources": [
+    "18.01/Backlog/row:119 DEV-118 T-V463-004",
+    "22.01/paragraph:29-31",
+    "22.01/paragraph:91-124",
+    "03.02/paragraph:292-293",
+    "docs/security-baseline.md"
+  ],
+  "scope": {
+    "isms": { "state": "DRAFT_PROPOSAL", "proposal": "POSEIDON product company: cloud runtime, development pipeline and customer support boundary (22.01 paragraph:95-97).", "approvedBy": null },
+    "pims": { "state": "DRAFT_PROPOSAL", "proposal": "Customer and crew personal data processed by POSEIDON, including crew medical/identity fields and protected safety reports (03.02 paragraph:293).", "approvedBy": null }
+  },
+  "boundaries": {
+    "provider": { "state": "OPEN", "note": "Production IdP, hosting/deployment provider, object storage provider and backup store are not selected (docs/architecture.md). Each becomes a supplier-register entry." },
+    "tenant": { "state": "AUTHORED_UNVERIFIED", "note": "Tenant, vessel and job scope are enforced server-side from the trusted membership; query filters are not the only boundary (docs/security-baseline.md).", "evidence": ["backend/Poseidon.Api/FoundationIdentity.cs", "docs/security-baseline.md"] },
+    "data": { "state": "OPEN", "note": "Data inventory, purpose, legal basis, retention and transfer controls per data class are required; AI/embedding providers receive no real customer data by default; pilot telemetry carries pseudonymous buckets only." }
+  },
+  "approval": { "state": "APPROVAL_PENDING", "approverRole": "Security Owner + Product Owner", "approvedBy": null, "approvedAt": null },
+  "auditReadiness": { "state": "NOT_READY", "internalAudit": "NOT_STARTED", "managementReview": "NOT_STARTED", "externalAudit": "NOT_STARTED", "claimRule": "A certificate exists only after a formal external audit by an accredited body (22.01 paragraph:122-124)." },
+  "gaps": [
+    { "id": "ISO-GAP-01", "area": "ISMS scope statement and asset/service inventory", "source": "22.01/paragraph:95-97", "ownerRole": "Security Owner", "targetDate": null, "status": "OPEN",
+      "evidence": [], "remaining": "Scope statement, asset and service inventory." },
+    { "id": "ISO-GAP-02", "area": "Information-security risk register and treatment plan", "source": "22.01/paragraph:98-100", "ownerRole": "Security Owner", "targetDate": null, "status": "OPEN",
+      "evidence": [], "remaining": "Risk method, register and treatment plan." },
+    { "id": "ISO-GAP-03", "area": "Access control: IAM/MFA/privileged access, RBAC/object scope, separation of duties", "source": "22.01/paragraph:101-103", "ownerRole": "Security Owner", "targetDate": null, "status": "EVIDENCE_AUTHORED_UNVERIFIED",
+      "evidence": ["backend/Poseidon.Api/FoundationIdentity.cs", "backend/Poseidon.Api/MembershipEndpoints.cs", "docs/security-baseline.md"], "remaining": "Production IdP/MFA rollout and privileged-access review are open." },
+    { "id": "ISO-GAP-04", "area": "Secure SDLC: code, dependency, secret and release controls", "source": "22.01/paragraph:104-106", "ownerRole": "Engineering Lead", "targetDate": null, "status": "EVIDENCE_AUTHORED_UNVERIFIED",
+      "evidence": [".github/workflows/backend-foundation.yml", "docs/dependency-policy.md", "scripts/secret_scan.py"], "remaining": "Written SDLC policy and its periodic review record." },
+    { "id": "ISO-GAP-05", "area": "Supplier/cloud and subprocessor risk", "source": "22.01/paragraph:107-109", "ownerRole": "Product Owner", "targetDate": null, "status": "OPEN",
+      "evidence": [], "remaining": "Supplier register, contracts/DPAs and reviews once providers are selected." },
+    { "id": "ISO-GAP-06", "area": "Incident detection, response and reporting", "source": "22.01/paragraph:110-112", "ownerRole": "Security Owner", "targetDate": null, "status": "OPEN",
+      "evidence": ["backend/Poseidon.Api/SecurityAudit.cs"], "remaining": "Incident response plan, notification timelines and an exercise record." },
+    { "id": "ISO-GAP-07", "area": "Business continuity / DR: backup, restore, RTO/RPO", "source": "22.01/paragraph:113-115", "ownerRole": "DevOps Lead", "targetDate": null, "status": "OPEN",
+      "evidence": ["docs/operations/dr-runbook.md", "scripts/dr_backup.py", "scripts/dr_restore.py", "scripts/dr_rehearsal.py"], "remaining": "Measured restore test and approved RPO/RTO targets (DEV-071 DEFERRED)." },
+    { "id": "ISO-GAP-08", "area": "Privacy/PIMS: processing inventory, roles, retention and transfer controls", "source": "22.01/paragraph:116-118", "ownerRole": "Data Protection Officer", "targetDate": null, "status": "OPEN",
+      "evidence": ["docs/security-baseline.md"], "remaining": "Processing inventory, controller/processor roles, retention schedule, transfer assessment, DPIA where needed." },
+    { "id": "ISO-GAP-09", "area": "Internal audit and management review", "source": "22.01/paragraph:119-121", "ownerRole": "Security Owner", "targetDate": null, "status": "OPEN",
+      "evidence": [], "remaining": "Audit programme, first internal audit and management review." },
+    { "id": "ISO-GAP-10", "area": "External certification audit", "source": "22.01/paragraph:122-124", "ownerRole": "Product Owner", "targetDate": null, "status": "OPEN",
+      "evidence": [], "remaining": "Accredited body selection after ISO-GAP-01..09 are closed." }
+  ]
+}

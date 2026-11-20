@@ -5757,6 +5757,25 @@
     "m_9a7c51e0d3b2f462": "Asiakirjarevisioiden vertailu",
     "m_a7ff6a594ad31c81": "Hinauksen suoritus",
     "m_073dee70df0d133e": "Hinaajan päiväkirja",
-    "m_7a31428311abb402": "Telakoinnin suunnittelu"
+    "m_7a31428311abb402": "Telakoinnin suunnittelu",
+    "m_890c89eeb732e540": "Pilotin mittarit",
+    "m_a58de4c61f6aaa0e": "Havaintoja rekisteröidyiltä pilottiasiakkailta: ilmoitettuja ja vahvistamattomia, ei hyväksyntäväite.",
+    "m_6d69ca1d9fb68c62": "Aikaikkuna",
+    "m_b5bbb70736081cf1": "Viimeiset {{count}} päivää",
+    "m_9adc5ee5e5721a00": "Ladataan pilotin mittareita…",
+    "m_2a84c38675e0a79c": "Pilotin mittareita ei voitu ladata.",
+    "m_927893496f0b3625": "Sinulla ei ole oikeutta nähdä pilotin mittareita.",
+    "m_909aee4a8e414ae0": "Offline: pilotin mittareita ei päivitetä.",
+    "m_09483c324f9a07f6": "Säilytystä ei ole määritetty; pilotin telemetriaa ei kerätä.",
+    "m_491e25056de3a616": "Piilotettu: alle {{count}} osallistujaa",
+    "m_9bede0b7d465c30f": "Ei havaintoja",
+    "m_9b65549adf9f7a6e": "Ei saatavilla",
+    "m_761a38d0c8645634": "{{count}} osallistujaa",
+    "m_1e4e264f37a7f0df": "Polkujen valmistuminen",
+    "m_f202fa0907b65058": "Aktiiviset osallistujat",
+    "m_7d1e92f2c9b93806": "Tekoälyn korjausaste",
+    "m_717076f60234c6a8": "Synkronointiristiriidat",
+    "m_07587adbd5b767bb": "Näytön hakuaika (95. persentiili)",
+    "m_f8b0b166c51fa3f8": "Jaa pilotin käyttötietoja tästä selaimesta"
   }
 }

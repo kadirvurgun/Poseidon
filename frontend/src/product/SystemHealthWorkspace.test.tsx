@@ -4,12 +4,14 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import * as api from './api'
 import { SystemHealthWorkspace } from './SystemHealthWorkspace'
 import { loadSystemHealth } from './system-health-api'
+import { loadPilotCapabilities } from './pilot-telemetry'
 import { healthVessel, unobservedHealth } from './system-health.test-fixture'
 import { changeAppLanguage } from '../i18n'
 
 vi.mock('./EnterpriseChrome', () => ({ EnterpriseChrome: ({ onLanguageChange }: { onLanguageChange: (value: 'en' | 'tr') => void }) => <button onClick={() => onLanguageChange('en')}>EN</button> }))
 vi.mock('./api', async original => ({ ...await original<typeof import('./api')>(), session: vi.fn(), vessels: vi.fn() }))
 vi.mock('./system-health-api', async original => ({ ...await original<typeof import('./system-health-api')>(), loadSystemHealth: vi.fn() }))
+vi.mock('./pilot-telemetry', async original => ({ ...await original<typeof import('./pilot-telemetry')>(), loadPilotCapabilities: vi.fn(), loadPilotSummary: vi.fn() }))
 const tenant = '10000000-0000-4000-8000-000000000002'
 beforeEach(() => {
   history.replaceState(null, '', `/app/system-health?vessel=${healthVessel}`)
@@ -18,6 +20,9 @@ beforeEach(() => {
   vi.mocked(api.session).mockResolvedValue({ authenticated: true, canRead: true, actorId: tenant, tenantId: tenant, tenantName: 'FICTIONAL tenant', csrfToken: 'synthetic-only', setupRequired: false, canCreate: false, canReadCompanies: false, canSearch: false })
   vi.mocked(api.vessels).mockResolvedValue({ items: [{ id: healthVessel, companyId: tenant, code: 'SYN-1', name: 'FICTIONAL vessel', kind: 'Ship', version: 1, canEdit: false }], offset: 0, limit: 25, hasMore: false })
   vi.mocked(loadSystemHealth).mockResolvedValue(unobservedHealth())
+  // S11 WP-B: a membership without pilot read/contribute renders no pilot panel.
+  vi.mocked(loadPilotCapabilities).mockResolvedValue({ canContribute: false, canRead: false, retentionState: 'UNCONFIGURED', retentionDays: null, schemaVersion: 'pilot-event.v1',
+    maxEventsPerBatch: 50, requestsPerMinute: 30, kinds: [], areas: [], shipJourneys: [], tugJourneys: [], aiSources: [], windowDays: [7, 30], minContributors: 5 })
 })
 afterEach(() => { vi.resetAllMocks(); vi.restoreAllMocks(); history.replaceState(null, '', '/') })
 
