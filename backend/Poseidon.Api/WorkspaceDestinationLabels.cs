@@ -24,6 +24,7 @@ internal static class WorkspaceDestinationLabels
         ["work-order-center"] = ["İş emirleri", "Work orders"],
         ["critical-spares"] = ["Kritik yedekler ve talepler", "Critical spares and requisitions"],
         ["pms-command-center"] = ["PMS komuta merkezi", "PMS command center"],
+        ["departure-signoff"] = ["Kalkış hazırlığı ve Kaptan kararı", "Departure readiness and Master sign-off"],
         ["service-engineer-report"] = ["Servis ve mühendis raporları", "Service and engineer reports"],
         ["operational-downtime"] = ["Operasyonel duruşlar", "Operational downtime"],
         ["risk-assessment"] = ["Risk değerlendirmesi", "Risk assessment"],

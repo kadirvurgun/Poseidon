@@ -27,6 +27,7 @@ import { WorkOrderWorkspace } from './product/WorkOrderWorkspace';
 import { DowntimeWorkspace } from './product/DowntimeWorkspace';
 import { RiskAssessmentWorkspace } from './product/RiskAssessmentWorkspace';
 import { PmsCommandCenterWorkspace } from './product/PmsCommandCenterWorkspace';
+import { DepartureReadinessWorkspace } from './product/DepartureReadinessWorkspace';
 import { ServiceReportWorkspace } from './product/ServiceReportWorkspace';
 import { RiskTemplateLibraryWorkspace } from './product/RiskTemplateLibraryWorkspace';
 import { CriticalSparesWorkspace } from './product/CriticalSparesWorkspace';
@@ -71,6 +72,8 @@ export function App() {
         return <TechnicalWorkspace />;
     if (/^\/app\/defects(?:\/|$)/.test(window.location.pathname))
         return <DefectWorkspace />;
+    if (/^\/app\/departure-signoff(?:\/|$)/.test(window.location.pathname))
+        return <DepartureReadinessWorkspace />;
     if (/^\/app\/pms-command-center(?:\/|$)/.test(window.location.pathname))
         return <PmsCommandCenterWorkspace />;
     if (/^\/app\/service-engineer-report(?:\/|$)/.test(window.location.pathname))

@@ -55,9 +55,10 @@ public sealed partial class DirectoryWorkspaceTests
         // S9 WP-B adds 16 routes / 21 operations: DEV-060 safety event create/update/submit/withdraw/triage/identity access/
         // team message/follow-up message, offline enroll + action (6 variants); DEV-061 investigation save/submit/review,
         // action create/step and closure.
-        Assert.Equal(240, observed.Count);
-        Assert.Equal(232, observed.Count(x => x.IsCritical));
-        Assert.Equal(252, S1SecurityContract.CriticalOperationIds.Count);
+        // S9 WP-A adds 1 (DEV-059 Master departure sign-off record).
+        Assert.Equal(241, observed.Count);
+        Assert.Equal(233, observed.Count(x => x.IsCritical));
+        Assert.Equal(253, S1SecurityContract.CriticalOperationIds.Count);
         Assert.Equal(8, observed.Count(x => !x.IsCritical));
         var extra = new RouteEndpoint(_ => Task.CompletedTask, RoutePatternFactory.Parse("/api/v1/unclassified-write"), 0,
             new EndpointMetadataCollection(new HttpMethodMetadata(["POST"]), new AuthorizeAttribute("DirectoryRead")), "unclassified");

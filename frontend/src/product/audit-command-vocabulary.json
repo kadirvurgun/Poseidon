@@ -141,6 +141,7 @@
     "TugAssignmentRespond": "HUMAN_REVIEW_WORKFLOW",
     "TugAssignmentWithdraw": "PREPARATION_COMMAND",
     "TugReadinessDecide": "HUMAN_REVIEW_WORKFLOW",
+    "DepartureSignoffRecord": "HUMAN_REVIEW_WORKFLOW",
     "TugTowEquipmentSave": "PREPARATION_COMMAND",
     "TugTowEquipmentUpdate": "PREPARATION_COMMAND",
     "TugTowEquipmentVerify": "HUMAN_REVIEW_WORKFLOW",

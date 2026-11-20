@@ -26,6 +26,7 @@ const labels: Record<string, {
     'operational-downtime': { tr: sourceText("tr", "pairs.m_0208af14c2c3282e"), en: sourceText("en", "pairs.m_0208af14c2c3282e"), icon: Gauge, group: 'operations' },
     'risk-assessment': { tr: sourceText("tr", "pairs.m_2ba46e791f65fb5f"), en: sourceText("en", "pairs.m_2ba46e791f65fb5f"), icon: ShieldCheck, group: 'operations' },
     'risk-template-library': { tr: sourceText("tr", "pairs.m_c086860d120fa851"), en: sourceText("en", "pairs.m_c086860d120fa851"), icon: FolderCheck, group: 'assurance' },
+    'departure-signoff': { tr: sourceText("tr", "pairs.m_9d2a4c6e8f0b1d35"), en: sourceText("en", "pairs.m_9d2a4c6e8f0b1d35"), icon: ShieldCheck, group: 'operations' },
     'pms-command-center': { tr: sourceText("tr", "pairs.m_8c3e1f0a5d2b7c41"), en: sourceText("en", "pairs.m_8c3e1f0a5d2b7c41"), icon: Gauge, group: 'operations' },
     'service-engineer-report': { tr: sourceText("tr", "pairs.m_8c3e1f0a5d2b7c42"), en: sourceText("en", "pairs.m_8c3e1f0a5d2b7c42"), icon: FileCheck2, group: 'operations' },
     'safety-events': { tr: sourceText("tr", "pairs.m_8a32195b2423b0ae"), en: sourceText("en", "pairs.m_8a32195b2423b0ae"), icon: ShieldCheck, group: 'assurance' },

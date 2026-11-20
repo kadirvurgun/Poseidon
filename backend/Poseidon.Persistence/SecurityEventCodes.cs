@@ -46,6 +46,7 @@ public static class SecurityEventCodes
         "CriticalSpareRead", "CriticalSpareCommand", "TechnicalRequisitionRead", "TechnicalRequisitionCommand",
         "CredentialVerificationRead", "CredentialVerificationCommand", "CrewCompetenceRead", "CrewCompetenceCommand", "SafeManningRead", "SafeManningCommand",
         "MeasurementRead", "MeasurementCommand", "MaintenancePostponementRead", "MaintenancePostponementCommand",
+        "DepartureReadinessRead", "DepartureSignoffCommand",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static IReadOnlySet<string> Results { get; } = new string[]
     {
@@ -115,6 +116,7 @@ public static class SecurityEventCodes
         "checklist_items_mismatch", "na_not_authorized", "port_call_unavailable", "template_unavailable", "verification_rejected",
         "required_evidence_missing", "required_evidence_unconfigured", "evidence_changed", "stock_not_low", "requisition_already_open", "quantity_required",
         "credential_document_required", "competence_requirement_unavailable", "evaluation_window_invalid", "manning_dispensation_required", "manning_dispensation_not_applicable", "manning_review_acknowledgement_required",
+        "departure_release_not_permitted", "departure_release_forecast_only", "departure_window_invalid", "departure_authority_required", "decision_sequence_conflict",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static bool Allows(string action, string result) => Actions.Contains(action) && Results.Contains(result);
 }
