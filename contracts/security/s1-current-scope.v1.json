@@ -30,9 +30,9 @@
     "TenantPerson",
     "Unresolved"
   ],
-  "mutationRouteTemplates": 277,
-  "criticalRouteTemplates": 268,
-  "criticalOperations": 293,
+  "mutationRouteTemplates": 278,
+  "criticalRouteTemplates": 269,
+  "criticalOperations": 294,
   "scopeMeaning": "Current exposed HTTP command surface, including aliases. Counts are authoring definitions until actual EndpointDataSource drift and real audit observations pass the phase gate. Technical codes describe accepted commands, never human justification or safety authority.",
   "operations": [
     {"operationId": "MeasurementPointSave", "method": "POST", "routePattern": "/api/v1/equipment-hierarchy/{vessel:guid}/measurement-points", "family": "Maintenance", "scope": "Vessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "MeasurementCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"]},
@@ -2016,6 +2016,7 @@
     { "operationId": "ServiceReportUpdate", "method": "PUT", "routePattern": "/api/v1/service-reports/{id:guid}", "family": "ServiceReport", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "ServiceReportCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "ServiceReportSubmit", "method": "POST", "routePattern": "/api/v1/service-reports/{id:guid}/submit", "family": "ServiceReport", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "HUMAN_REVIEW_WORKFLOW", "denialAction": "ServiceReportCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "ServiceReportVerify", "method": "POST", "routePattern": "/api/v1/service-reports/{id:guid}/verify", "family": "ServiceReport", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "HUMAN_REVIEW_WORKFLOW", "denialAction": "ServiceReportCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
-    { "operationId": "ServiceReportAmend", "method": "POST", "routePattern": "/api/v1/service-reports/{id:guid}/amend", "family": "ServiceReport", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "HUMAN_REVIEW_WORKFLOW", "denialAction": "ServiceReportCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] }
+    { "operationId": "ServiceReportAmend", "method": "POST", "routePattern": "/api/v1/service-reports/{id:guid}/amend", "family": "ServiceReport", "scope": "CommandVessel", "kind": "CriticalWrite", "reasonCode": "HUMAN_REVIEW_WORKFLOW", "denialAction": "ServiceReportCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "PilotMetricsSubmit", "method": "POST", "routePattern": "/api/v1/pilot-metrics/events", "family": "PilotMetrics", "scope": "Tenant", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "PilotMetricsCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] }
   ]
 }

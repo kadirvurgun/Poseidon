@@ -6419,6 +6419,25 @@
     "m_6045fea6f2dedb7c": "Römorkör çevrimdışı operasyonlar",
     "m_c358e78b32f41ae3": "Römorkör demo yolculuğu",
     "m_e5831d38d264db25": "Veri mutabakatı",
-    "m_3c8e1f5a7b2d9e40": "Regülasyon uzman incelemesi"
+    "m_3c8e1f5a7b2d9e40": "Regülasyon uzman incelemesi",
+    "m_890c89eeb732e540": "Pilot metrikleri",
+    "m_a58de4c61f6aaa0e": "Kayıtlı pilot istemcilerinden gözlemler: beyan edilmiş ve doğrulanmamış, kabul iddiası değildir.",
+    "m_6d69ca1d9fb68c62": "Pencere",
+    "m_b5bbb70736081cf1": "Son {{count}} gün",
+    "m_9adc5ee5e5721a00": "Pilot metrikleri yükleniyor…",
+    "m_2a84c38675e0a79c": "Pilot metrikleri yüklenemedi.",
+    "m_927893496f0b3625": "Pilot metriklerini görüntüleme yetkiniz yok.",
+    "m_909aee4a8e414ae0": "Çevrimdışı: pilot metrikleri yenilenmiyor.",
+    "m_09483c324f9a07f6": "Saklama süresi yapılandırılmadı; pilot telemetrisi toplanmıyor.",
+    "m_491e25056de3a616": "Gizli: {{count}} katılımcıdan az",
+    "m_9bede0b7d465c30f": "Gözlem yok",
+    "m_9b65549adf9f7a6e": "Mevcut değil",
+    "m_761a38d0c8645634": "{{count}} katılımcı",
+    "m_1e4e264f37a7f0df": "Yolculuk tamamlama",
+    "m_f202fa0907b65058": "Aktif katılımcılar",
+    "m_7d1e92f2c9b93806": "AI düzeltme oranı",
+    "m_717076f60234c6a8": "Senkronizasyon çakışmaları",
+    "m_07587adbd5b767bb": "Kanıt arama süresi (95. yüzdelik)",
+    "m_f8b0b166c51fa3f8": "Bu tarayıcıdan pilot kullanım verisi paylaş"
   }
 }

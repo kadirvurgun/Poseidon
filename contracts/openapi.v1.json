@@ -20667,6 +20667,97 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/pilot-metrics/capabilities": {
+      "get": {
+        "tags": [
+          "PilotMetricsEndpoints"
+        ],
+        "summary": "Pilot telemetry schema and whether this membership is enrolled. No identity or stored value is returned.",
+        "operationId": "PilotMetricsCapabilities",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotMetricCapabilitiesDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/pilot-metrics/events": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "summary": "Records one closed-code pilot event batch for the trusted actor. Free text, identities and record ids are not accepted.",
+        "operationId": "PilotMetricsSubmit",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PilotMetricEventsCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotMetricIngestDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Too Many Requests"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/pilot-metrics/summary": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "summary": "Pilot metric observations over a bounded window. SUPPRESSED, UNKNOWN and UNAVAILABLE carry no value; zero is never substituted.",
+        "operationId": "PilotMetricsSummary",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotMetricSummaryDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
     "/api/v1/parameter-definitions": {
       "get": {
         "tags": [
@@ -43773,6 +43864,320 @@
           }
         }
       },
+      "PilotMetricCapabilitiesDto": {
+        "required": [
+          "canContribute",
+          "canRead",
+          "retentionState",
+          "retentionDays",
+          "schemaVersion",
+          "maxEventsPerBatch",
+          "requestsPerMinute",
+          "kinds",
+          "areas",
+          "shipJourneys",
+          "tugJourneys",
+          "aiSources",
+          "windowDays",
+          "minContributors"
+        ],
+        "type": "object",
+        "properties": {
+          "canContribute": {
+            "type": "boolean"
+          },
+          "canRead": {
+            "type": "boolean"
+          },
+          "retentionState": {
+            "type": "string"
+          },
+          "retentionDays": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "schemaVersion": {
+            "type": "string"
+          },
+          "maxEventsPerBatch": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requestsPerMinute": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "kinds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "areas": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "shipJourneys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tugJourneys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "aiSources": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "windowDays": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "minContributors": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "PilotMetricCell": {
+        "required": [
+          "dimension",
+          "key",
+          "state",
+          "value",
+          "contributors",
+          "reasons"
+        ],
+        "type": "object",
+        "properties": {
+          "dimension": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "contributors": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "PilotMetricEventCommand": {
+        "required": [
+          "kind",
+          "area",
+          "journey",
+          "aiSource",
+          "durationMs",
+          "occurredAt"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "area": {
+            "type": "string"
+          },
+          "journey": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "aiSource": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "durationMs": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PilotMetricEventsCommand": {
+        "required": [
+          "events"
+        ],
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotMetricEventCommand"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "PilotMetricIngestDto": {
+        "required": [
+          "batchId",
+          "accepted",
+          "schemaVersion",
+          "replayed"
+        ],
+        "type": "object",
+        "properties": {
+          "batchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "accepted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "schemaVersion": {
+            "type": "string"
+          },
+          "replayed": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PilotMetricResult": {
+        "required": [
+          "metricId",
+          "definitionVersion",
+          "unitCode",
+          "state",
+          "value",
+          "contributors",
+          "reasons",
+          "breakdown"
+        ],
+        "type": "object",
+        "properties": {
+          "metricId": {
+            "type": "string"
+          },
+          "definitionVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unitCode": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "contributors": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "breakdown": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotMetricCell"
+            }
+          }
+        }
+      },
+      "PilotMetricSummaryDto": {
+        "required": [
+          "contractVersion",
+          "windowDays",
+          "from",
+          "asOf",
+          "basis",
+          "retentionState",
+          "areas",
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "contractVersion": {
+            "type": "string"
+          },
+          "windowDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "asOf": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "basis": {
+            "type": "string"
+          },
+          "retentionState": {
+            "type": "string"
+          },
+          "areas": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotMetricResult"
+            }
+          }
+        }
+      },
       "PmsCommandCenterDto": {
         "required": [
           "vesselId",
@@ -63174,6 +63579,9 @@
     },
     {
       "name": "TugOperationsOfflineEndpoints"
+    },
+    {
+      "name": "PilotMetricsEndpoints"
     },
     {
       "name": "ParameterEndpoints"

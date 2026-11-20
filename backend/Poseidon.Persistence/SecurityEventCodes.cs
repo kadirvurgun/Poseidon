@@ -58,6 +58,8 @@ public static class SecurityEventCodes
         "CertificateRenewalOfflineRead", "CertificateRenewalOfflineRequest",
         // S11 WP-A DEV-069 / DEV-070.
         "ImportProvenanceRead", "ImportReconciliationRead", "ImportReconciliationCommand",
+        // S11 WP-B DEV-072.
+        "PilotMetricsRead", "PilotMetricsCommand",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static IReadOnlySet<string> Results { get; } = new string[]
     {

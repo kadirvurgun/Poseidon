@@ -53,7 +53,8 @@ public sealed partial class DirectoryWorkspaceTests
         {
             using var client = Client(host);
             var catalog = (await client.GetFromJsonAsync<MetricCatalogDto>("/api/v1/metrics/definitions", Ct))!;
-            Assert.Equal(MetricRegistry.All.Select(x => x.Id), catalog.Items.Select(x => x.Id));
+            // S11 WP-B: pilot metric definitions additionally require pilot.metrics.read and are omitted here.
+            Assert.Equal(MetricRegistry.All.Where(x => !x.RequiredPermissions.Contains(PilotMetricsPolicy.ReadPermission)).Select(x => x.Id), catalog.Items.Select(x => x.Id));
             Assert.All(catalog.Items, x => Assert.Equal(["view"], x.AllowedActions));
         }
     }

@@ -65,9 +65,10 @@ public sealed partial class DirectoryWorkspaceTests
         // S6 WP-D redo (DEV-101/102) adds 2: SOF finalize/amend and downtime lifecycle human commands.
         // S11 WP-A adds 2 (DEV-070 reconciliation report create and data owner sign-off).
         // S11 WP-C adds 3 (DEV-073/093 regulatory review campaign create, item verdict, close).
-        Assert.Equal(277, observed.Count);
-        Assert.Equal(268, observed.Count(x => x.IsCritical));
-        Assert.Equal(293, S1SecurityContract.CriticalOperationIds.Count);
+        // S11 WP-B adds 1 (DEV-072 pilot metrics event submit).
+        Assert.Equal(278, observed.Count);
+        Assert.Equal(269, observed.Count(x => x.IsCritical));
+        Assert.Equal(294, S1SecurityContract.CriticalOperationIds.Count);
         Assert.Equal(9, observed.Count(x => !x.IsCritical));
         var extra = new RouteEndpoint(_ => Task.CompletedTask, RoutePatternFactory.Parse("/api/v1/unclassified-write"), 0,
             new EndpointMetadataCollection(new HttpMethodMetadata(["POST"]), new AuthorizeAttribute("DirectoryRead")), "unclassified");

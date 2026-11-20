@@ -6419,6 +6419,25 @@
     "m_6045fea6f2dedb7c": "Opérations hors ligne du remorqueur",
     "m_c358e78b32f41ae3": "Parcours de démonstration remorqueur",
     "m_e5831d38d264db25": "Rapprochement des données",
-    "m_3c8e1f5a7b2d9e40": "Examen réglementaire par expert"
+    "m_3c8e1f5a7b2d9e40": "Examen réglementaire par expert",
+    "m_890c89eeb732e540": "Indicateurs du pilote",
+    "m_a58de4c61f6aaa0e": "Observations des clients pilotes inscrits : déclarées et non vérifiées, sans valeur d’acceptation.",
+    "m_6d69ca1d9fb68c62": "Période",
+    "m_b5bbb70736081cf1": "{{count}} derniers jours",
+    "m_9adc5ee5e5721a00": "Chargement des indicateurs du pilote…",
+    "m_2a84c38675e0a79c": "Les indicateurs du pilote n’ont pas pu être chargés.",
+    "m_927893496f0b3625": "Vous n’êtes pas autorisé à consulter les indicateurs du pilote.",
+    "m_909aee4a8e414ae0": "Hors ligne : les indicateurs du pilote ne sont pas actualisés.",
+    "m_09483c324f9a07f6": "La conservation n’est pas configurée ; aucune télémétrie du pilote n’est collectée.",
+    "m_491e25056de3a616": "Masqué : moins de {{count}} contributeurs",
+    "m_9bede0b7d465c30f": "Aucune observation",
+    "m_9b65549adf9f7a6e": "Non disponible",
+    "m_761a38d0c8645634": "{{count}} contributeurs",
+    "m_1e4e264f37a7f0df": "Achèvement des parcours",
+    "m_f202fa0907b65058": "Contributeurs actifs",
+    "m_7d1e92f2c9b93806": "Taux de correction de l’IA",
+    "m_717076f60234c6a8": "Conflits de synchronisation",
+    "m_07587adbd5b767bb": "Durée de recherche des preuves (95e centile)",
+    "m_f8b0b166c51fa3f8": "Partager les données d’usage du pilote depuis ce navigateur"
   }
 }

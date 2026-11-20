@@ -8322,6 +8322,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/pilot-metrics/capabilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Pilot telemetry schema and whether this membership is enrolled. No identity or stored value is returned. */
+        get: operations["PilotMetricsCapabilities"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot-metrics/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Records one closed-code pilot event batch for the trusted actor. Free text, identities and record ids are not accepted. */
+        post: operations["PilotMetricsSubmit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot-metrics/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Pilot metric observations over a bounded window. SUPPRESSED, UNKNOWN and UNAVAILABLE carry no value; zero is never substituted. */
+        get: operations["PilotMetricsSummary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/parameter-definitions": {
         parameters: {
             query?: never;
@@ -14246,6 +14297,81 @@ export interface components {
             freshness: string;
             blockers: string[];
             href: string;
+        };
+        PilotMetricCapabilitiesDto: {
+            canContribute: boolean;
+            canRead: boolean;
+            retentionState: string;
+            /** Format: int32 */
+            retentionDays: null | number;
+            schemaVersion: string;
+            /** Format: int32 */
+            maxEventsPerBatch: number;
+            /** Format: int32 */
+            requestsPerMinute: number;
+            kinds: string[];
+            areas: string[];
+            shipJourneys: string[];
+            tugJourneys: string[];
+            aiSources: string[];
+            windowDays: number[];
+            /** Format: int32 */
+            minContributors: number;
+        };
+        PilotMetricCell: {
+            dimension: string;
+            key: string;
+            state: string;
+            value: null | string;
+            /** Format: int32 */
+            contributors: null | number;
+            reasons: string[];
+        };
+        PilotMetricEventCommand: {
+            kind: string;
+            area: string;
+            journey: null | string;
+            aiSource: null | string;
+            /** Format: int32 */
+            durationMs: null | number;
+            /** Format: date-time */
+            occurredAt: string;
+        };
+        PilotMetricEventsCommand: {
+            events: components["schemas"]["PilotMetricEventCommand"][];
+        };
+        PilotMetricIngestDto: {
+            /** Format: uuid */
+            batchId: string;
+            /** Format: int32 */
+            accepted: number;
+            schemaVersion: string;
+            replayed: boolean;
+        };
+        PilotMetricResult: {
+            metricId: string;
+            /** Format: int32 */
+            definitionVersion: number;
+            unitCode: string;
+            state: string;
+            value: null | string;
+            /** Format: int32 */
+            contributors: null | number;
+            reasons: string[];
+            breakdown: components["schemas"]["PilotMetricCell"][];
+        };
+        PilotMetricSummaryDto: {
+            contractVersion: string;
+            /** Format: int32 */
+            windowDays: number;
+            /** Format: date-time */
+            from: string;
+            /** Format: date-time */
+            asOf: string;
+            basis: string;
+            retentionState: string;
+            areas: string[];
+            items: components["schemas"]["PilotMetricResult"][];
         };
         PmsCommandCenterDto: {
             /** Format: uuid */
@@ -33001,6 +33127,105 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TugOperationsConflictDto"];
+                };
+            };
+        };
+    };
+    PilotMetricsCapabilities: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotMetricCapabilitiesDto"];
+                };
+            };
+        };
+    };
+    PilotMetricsSubmit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PilotMetricEventsCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotMetricIngestDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PilotMetricsSummary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotMetricSummaryDto"];
                 };
             };
         };
