@@ -182,3 +182,11 @@ Main: #16 #17 #18 #20 #23 #36 + **#37 paket 2** birleşik (`2995f70`, 19.11 ~08:
 - **a7b2730** (+e52bfc5): muafiyet yalnız CREDENTIAL boyutu (aksi 422 `manning_dispensation_not_applicable`); risk testi TOWAGE. Domain 1332, API unit 373. CI izleniyor; yeşilse S7 kısa yeniden QA (yalnız bu iki commit) → #45 birleştir → S7 kabul kaydı.
 - a7b2730 CI push 44644334404 + PR 44644347908 yeşil (kapsam 191/191), S7 3. tur QA ACCEPT-WITH-NOTES ×13 → **#45 birleşti, main 021e8ed** → main'de **54/409/%42,16** (S6 kabul). S7 kabul kaydı (67/534/%55,05) `docs/s7-gate-acceptance-20261120` dalında alt-ajanda; sonraki entegrasyon PR'ına (S8) katılacak.
 - Sıradaki: S8 keşif → paketler (en fazla 4 paralel ajan). Açık: S6 DEV-101/102 (PG ile yeniden üretim; Docker gerekli).
+
+### DEVİR NOKTASI (20.11 ~15:30) — yeni oturum buradan başlar
+- **Main 021e8ed: 54 iş / 409 SP / %42,16** (S0–S6 kabul; S6 DEV-101/102 hariç).
+- **S7 kabul edildi** (13 iş / **121 SP** — 125 değil), kayıt `docs/s7-gate-acceptance-20261120` **0989c4f** (67/530/%54,64) push edildi, PR YOK → S8 entegrasyon dalına birleştir.
+- Açık PR yok. Çalışan alt-ajan yok.
+- **Sıradaki:** (1) S8 keşfi (S8 görevleri project-status.json'da sprint 'S8'; önce Explore ajanıyla AC ↔ mevcut kod karşılaştırması), (2) en fazla 4 paralel WP (feature/s8-wp*-<tarih>, taban origin/main), (3) entegrasyon dalı `integration/s8-bundle-<tarih>` = main + S7 kayıt dalı + WP'ler, tek PR, (4) bağımsız kapı QA + CI (push+PR) kendin doğrula, (5) S8 kayıt.
+- **S6 DEV-101/102:** kod `feature/s6-wpd-ship-ops-20261119` (4c3aaae) + düzeltme içeriği b95626a (s6 bundle'dan geri alındı). `ShipOpsLifecycleTests.cs:47` (finalize ≠200), `:81` (SUBMIT_FOR_REVIEW ≠200) çözülmedi; PG ile yeniden üretim gerekir (Docker kapalı, başlatma).
+- **Öğrenilenler (uygula):** yeni izin → `FoundationIdentity` TrustedPermissions (PermissionAllowlistGuardTests korur); yeni audit kodu → SecurityEventCodes (ApiSecurityAuditLiteralCodeTests korur); her kritik yazma için başarılı-yol PG testi (kapsam kapısı); varsayılan seed'e yeni fixture ekleme (PostgresSeedTests sayıları); menü etiketleri frontend TR/EN ile birebir; migration kimliği 14 haneli sayısal; aynı anda ≤4 alt-ajan (kota).
