@@ -6562,6 +6562,70 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/certificate-renewal-offline/{renewal}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CertificateRenewalOfflineInventory"];
+        put?: never;
+        post: operations["CertificateRenewalOfflineEnroll"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/certificate-renewal-offline/{renewal}/{enrollment}/{action}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CertificateRenewalOfflineAction"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/certificate-renewal-offline/{renewal}/{enrollment}/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CertificateRenewalOfflineHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/certificate-renewal-offline/{renewal}/{enrollment}/conflicts/{command}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CertificateRenewalOfflineConflict"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/defects/{id}/lifecycle": {
         parameters: {
             query?: never;
@@ -8810,6 +8874,52 @@ export interface components {
             transition?: null | string;
             decision?: null | components["schemas"]["CertificateRenewalDecision"];
             allowedTransitions?: null | string[];
+        };
+        CertificateRenewalOfflineContextDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            tenantId: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: uuid */
+            certificateId: string;
+            /** Format: uuid */
+            renewalId: string;
+            /** Format: uuid */
+            deviceId: string;
+            /** Format: uuid */
+            keyId: string;
+            challenge: string;
+            policyVersion: string;
+            policyDigest: string;
+            authorityDigest: string;
+            sourceVersion: string;
+            operation: string;
+            allowedParts: string[];
+            /** Format: uint32 */
+            baseVersion: number;
+            /** Format: int64 */
+            baseRevision: number;
+            baseContent: components["schemas"]["CertificateRenewalContent"];
+            state: string;
+            ownerOptions: string[];
+            /** Format: date-time */
+            serverTime: string;
+            /** Format: date-time */
+            expiresAt: string;
+            /** Format: date-time */
+            retainUntil: string;
+            /** Format: int32 */
+            maxRecords: number;
+            /** Format: int32 */
+            maxEncryptedBytes: number;
+            /** Format: int32 */
+            maxDeviceRecords: number;
+            /** Format: int32 */
+            maxDeviceEncryptedBytes: number;
         };
         CertificateRenewalTransitionCommand: {
             /** Format: uuid */
@@ -27874,6 +27984,113 @@ export interface operations {
             header?: never;
             path: {
                 enrollment: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CertificateRenewalOfflineInventory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                renewal: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CertificateRenewalOfflineEnroll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                renewal: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CertificateRenewalOfflineContextDto"];
+                };
+            };
+        };
+    };
+    CertificateRenewalOfflineAction: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                renewal: string;
+                enrollment: string;
+                action: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CertificateRenewalOfflineHistory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                renewal: string;
+                enrollment: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CertificateRenewalOfflineConflict: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                renewal: string;
+                enrollment: string;
+                command: string;
             };
             cookie?: never;
         };

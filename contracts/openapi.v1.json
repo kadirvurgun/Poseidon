@@ -15854,6 +15854,180 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/certificate-renewal-offline/{renewal}": {
+      "get": {
+        "tags": [
+          "CertificateRenewalOfflineEndpoints"
+        ],
+        "operationId": "CertificateRenewalOfflineInventory",
+        "parameters": [
+          {
+            "name": "renewal",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "CertificateRenewalOfflineEndpoints"
+        ],
+        "operationId": "CertificateRenewalOfflineEnroll",
+        "parameters": [
+          {
+            "name": "renewal",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificateRenewalOfflineContextDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-OFFLINE-1"
+      }
+    },
+    "/api/v1/certificate-renewal-offline/{renewal}/{enrollment}/{action}": {
+      "post": {
+        "tags": [
+          "CertificateRenewalOfflineEndpoints"
+        ],
+        "operationId": "CertificateRenewalOfflineAction",
+        "parameters": [
+          {
+            "name": "renewal",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "enrollment",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "action",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-OFFLINE-1"
+      }
+    },
+    "/api/v1/certificate-renewal-offline/{renewal}/{enrollment}/history": {
+      "get": {
+        "tags": [
+          "CertificateRenewalOfflineEndpoints"
+        ],
+        "operationId": "CertificateRenewalOfflineHistory",
+        "parameters": [
+          {
+            "name": "renewal",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "enrollment",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/certificate-renewal-offline/{renewal}/{enrollment}/conflicts/{command}": {
+      "get": {
+        "tags": [
+          "CertificateRenewalOfflineEndpoints"
+        ],
+        "operationId": "CertificateRenewalOfflineConflict",
+        "parameters": [
+          {
+            "name": "renewal",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "enrollment",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "command",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
     "/api/v1/defects/{id}/lifecycle": {
       "get": {
         "tags": [
@@ -24147,6 +24321,145 @@
             "items": {
               "type": "string"
             }
+          }
+        }
+      },
+      "CertificateRenewalOfflineContextDto": {
+        "required": [
+          "id",
+          "tenantId",
+          "actorId",
+          "vesselId",
+          "certificateId",
+          "renewalId",
+          "deviceId",
+          "keyId",
+          "challenge",
+          "policyVersion",
+          "policyDigest",
+          "authorityDigest",
+          "sourceVersion",
+          "operation",
+          "allowedParts",
+          "baseVersion",
+          "baseRevision",
+          "baseContent",
+          "state",
+          "ownerOptions",
+          "serverTime",
+          "expiresAt",
+          "retainUntil",
+          "maxRecords",
+          "maxEncryptedBytes",
+          "maxDeviceRecords",
+          "maxDeviceEncryptedBytes"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tenantId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "certificateId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "renewalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "deviceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "keyId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "challenge": {
+            "type": "string"
+          },
+          "policyVersion": {
+            "type": "string"
+          },
+          "policyDigest": {
+            "type": "string"
+          },
+          "authorityDigest": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string"
+          },
+          "allowedParts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "baseVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "baseRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "baseContent": {
+            "$ref": "#/components/schemas/CertificateRenewalContent"
+          },
+          "state": {
+            "type": "string"
+          },
+          "ownerOptions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "serverTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "retainUntil": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "maxRecords": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxEncryptedBytes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxDeviceRecords": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxDeviceEncryptedBytes": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -57769,6 +58082,9 @@
     },
     {
       "name": "SafetyEventOfflineEndpoints"
+    },
+    {
+      "name": "CertificateRenewalOfflineEndpoints"
     },
     {
       "name": "DepartureReadinessEndpoints"

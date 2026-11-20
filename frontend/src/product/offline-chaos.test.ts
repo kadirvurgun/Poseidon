@@ -44,7 +44,7 @@ function serve(url: string, init?: RequestInit): Response {
     return json(200, server.authenticated ? { authenticated: true, canRead: true, actorId: actor, tenantId: tenant, csrfToken: 'synthetic-csrf' } : { authenticated: false })
   if (url.startsWith('/api/v1/sync/conflicts')) {
     const resolved = [...server.outcomes.values()].find(o => o.outcome.parentCommandId === conflictId)
-    return json(200, { vesselId: vessel, readAt: '2026-11-19T08:00:00Z', sources: [{ source: 'crewAssignment', state: 'Included' }, { source: 'tugPlan', state: 'Included' }, { source: 'dailyRecord', state: 'Included' }, { source: 'workOrderEvidence', state: 'NotPermitted' }],
+    return json(200, { vesselId: vessel, readAt: '2026-11-19T08:00:00Z', sources: [{ source: 'crewAssignment', state: 'Included' }, { source: 'tugPlan', state: 'Included' }, { source: 'dailyRecord', state: 'Included' }, { source: 'workOrderEvidence', state: 'NotPermitted' }, { source: 'certificateRenewal', state: 'NotPermitted' }],
       items: [{ source: 'crewAssignment', resourceId: assignment, resourceKind: null, enrollmentId: enrollment, commandId: conflictId, baseVersion: 7, serverVersionAtConflict: 8,
         capturedAt: '2026-11-19T07:00:00Z', receivedAt: '2026-11-19T07:30:00Z', state: resolved ? 'Resolved' : 'Open',
         resolutionCommandId: resolved?.outcome.commandId ?? null, resolutionResult: resolved ? 'Committed' : null }], offset: 0, hasMore: false })

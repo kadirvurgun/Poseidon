@@ -8,6 +8,7 @@ import { CertificateDocumentPicker } from './CertificateDocumentPicker';
 import { CertificateRenewalForm } from './CertificateRenewalForm';
 import { CertificateSummary } from './CertificateSummary';
 import { CertificateRenewalWorkflowPanel } from './CertificateRenewalWorkflowPanel';
+import { CertificateRenewalOfflinePanel } from './CertificateRenewalOfflinePanel';
 import type { RenewalDto } from './certificates-api';
 import type { CertificateWorkflowEditor, CertificateWorkspaceSource } from './certificate-workspace-model';
 import type { CertificateRenewalContent, VesselCertificateContent } from './certificate-content';
@@ -85,6 +86,7 @@ export function CertificateEditorView({ editor, source, vessel, language, editab
       <p>{localizedText(en, "pairs.m_7e4e96172f321199")}</p>
       {editor.record ? <CertificateRenewalWorkflowPanel key={editor.owner + '/' + editor.record.id + '/' + editor.record.version} vessel={vessel} record={editor.record} enabled={!busy && !frozen && !editor.dirty && !denied && !conflict} language={language} onDirty={onWorkflowDirty ?? (() => undefined)} onApplied={receipt => onTransitioned?.(receipt)}/>
         : <Button disabled>{localizedText(en, "pairs.m_8cb7f72fb9fa00d9")}</Button>}
+      {editor.record?.currentRevision && editor.record.canEdit && <CertificateRenewalOfflinePanel key={editor.owner + '/' + editor.record.id} vessel={vessel} renewal={editor.record.id} language={language}/>}
     </>}
   </section>;
 }

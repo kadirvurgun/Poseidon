@@ -37,6 +37,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         // S9 WP-B DEV-060: absent operator configuration leaves safety-event offline capture unavailable.
         services.AddSingleton(configuration.GetSection("SafetyEventOffline").Get<SafetyEventOfflineSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<ISafetyEventBlockerSource, SafetyEventBlockerSource>();
+        // S10 WP-C DEV-066: absent operator configuration leaves certificate renewal offline drafts unavailable.
+        services.AddSingleton(configuration.GetSection("CertificateRenewalOffline").Get<CertificateRenewalOfflineSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<ISpareGapSource, SpareGapReader>();
         services.AddSingleton(configuration.GetSection("NotificationScheduler").Get<NotificationSchedulerSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<NotificationServiceContexts>();
@@ -232,6 +234,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapSafetyEvents();
             endpoints.MapSafetyInvestigations();
             endpoints.MapSafetyEventOffline();
+            endpoints.MapCertificateRenewalOffline(); // S10 WP-C DEV-066
             endpoints.MapDefectLifecycle();
             endpoints.MapServiceReports();
             endpoints.MapVoiceEventDrafts();

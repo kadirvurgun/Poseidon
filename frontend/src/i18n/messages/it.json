@@ -520,7 +520,8 @@
         "crewAssignment": "Assegnazione equipaggio",
         "tugPlan": "Piano rimorchio",
         "dailyRecord": "Record giornaliero",
-        "workOrderEvidence": "Evidenze dell'ordine di lavoro"
+        "workOrderEvidence": "Evidenze dell'ordine di lavoro",
+        "certificateRenewal": "Bozza di rinnovo certificato"
       },
       "sourceStates": {
         "Included": "incluso",
@@ -2745,6 +2746,106 @@
       "state_PHOTO": "Foto",
       "state_AIS_OR_TIME": "Prova AIS o temporale",
       "state_DOCUMENT": "Documento"
+    },
+    "S10Wpc_tsx_copy": {
+      "renewalOffline": {
+        "heading": "Bozza di rinnovo offline",
+        "scope": "Prepara questa pratica di rinnovo sul dispositivo per modificarne i metadati della bozza senza connessione. I collegamenti al certificato sostitutivo e ai documenti, i passaggi del flusso di lavoro, la verifica e il completamento restano online.",
+        "unverified": "Configurato, non verificato in pilota",
+        "offline": "Offline",
+        "prepare": "Prepara bozza offline",
+        "prepared": "Bozza offline preparata su questo dispositivo.",
+        "queued": "Bozza in coda su questo dispositivo. Non è salvata finché non arriva la ricevuta del server.",
+        "queueSummary": "In attesa: {pending} · Conflitti: {conflicts} · Registrate: {committed}",
+        "formLabel": "Metadati della bozza offline",
+        "linksOnline": "Il certificato sostitutivo e i nuovi collegamenti ai documenti possono essere modificati solo online.",
+        "capture": "Metti in coda la bozza",
+        "sync": "Invia bozze in coda",
+        "synced": "Tutte le bozze in coda hanno una ricevuta del server.",
+        "stillPending": "Alcune bozze sono ancora in attesa su questo dispositivo. Nulla è andato perso; riprova quando sei connesso.",
+        "conflictRecorded": "È stato registrato un conflitto sostanziale. Esaminalo qui sotto o nel centro conflitti.",
+        "ledger": "Registrate {committed} · Conflitti {conflicts} · In attesa {pending} · Perse {lost}",
+        "conflicts": "Conflitti sostanziali aperti",
+        "review": "Esamina",
+        "conflictHeading": "Conflitto sostanziale",
+        "conflictHelp": "Il record del server è cambiato dopo che sei andato offline. Scegli esplicitamente; nulla viene sovrascritto automaticamente.",
+        "field": "Campo",
+        "captured": "Il tuo valore offline",
+        "server": "Valore attuale del server",
+        "notSet": "Non impostato",
+        "keepServer": "Mantieni valore del server",
+        "useCaptured": "Usa il mio valore offline",
+        "noChoice": "Al momento non è disponibile alcuna decisione per questo conflitto.",
+        "resolutionRecorded": "La tua decisione è stata registrata con una ricevuta del server.",
+        "reauthorize": "È necessaria una nuova autorizzazione online. Le bozze in coda restano conservate su questo dispositivo.",
+        "keyLost": "La chiave del dispositivo non è disponibile. Le bozze in coda restano conservate; contatta l'amministratore.",
+        "unavailable": "La redazione offline non è configurata per te su questa nave.",
+        "failed": "Impossibile completare l'azione. Le bozze in coda restano conservate.",
+        "fields": {
+          "renewalType": "Tipo di rinnovo",
+          "plannedLocation": "Luogo previsto",
+          "authorityReference": "Riferimento dell'autorità",
+          "surveyWindowEnd": "Fine della finestra di visita",
+          "triggerDate": "Data di attivazione",
+          "dueDate": "Data di scadenza",
+          "surveyWindowStart": "Inizio della finestra di visita",
+          "applicationDate": "Data di domanda"
+        }
+      },
+      "shipDemo": {
+        "title": "Demo operazioni nave",
+        "eyebrow": "Percorso guidato",
+        "description": "Percorri partenza, rapporti giornalieri, carburante, attività portuale, fermi e prontezza utilizzando le schermate esistenti.",
+        "syntheticNotice": "Dati demo sintetici · solo bozze, non verificati",
+        "invalidRoute": "Questo indirizzo demo non è valido.",
+        "offline": "Sei offline. La demo richiede una connessione attuale al server.",
+        "loading": "Caricamento…",
+        "error": "Impossibile caricare i dati della demo.",
+        "forbidden": "Non hai accesso a queste informazioni.",
+        "empty": "Nessuna nave è disponibile per te.",
+        "vessel": "Nave",
+        "chooseVessel": "Scegli una nave",
+        "selectVessel": "Seleziona una nave per avviare la demo.",
+        "stepsLabel": "Passaggi della demo",
+        "why": "Perché",
+        "open": "Apri schermata",
+        "reuseHeading": "Inserimento unico, riutilizzato",
+        "reuseHelp": "I record di carburante e attività portuale riutilizzano il rapporto Noon o di macchina che fissano come origine. Non esiste un secondo modulo di inserimento.",
+        "fuelReuse": "Record carburante / BDN: {pinned} riutilizzano un'origine fissata, {direct} inseriti direttamente",
+        "portReuse": "Record attività portuale / SOF: {pinned} riutilizzano un'origine fissata, {direct} inseriti direttamente",
+        "steps": {
+          "departure": {
+            "title": "Prontezza alla partenza",
+            "what": "Esamina i dati di prontezza alla partenza per la finestra di viaggio selezionata.",
+            "why": "La prontezza è calcolata dai record di riferimento attuali; i dati sconosciuti o mancanti restano da esaminare e non appaiono mai come pronti."
+          },
+          "daily": {
+            "title": "Rapporti di mezzogiorno e giornalieri",
+            "what": "Registra una sola volta il rapporto di mezzogiorno (Noon) e i giornali di coperta/macchina.",
+            "why": "Questi rapporti sono la fonte unica che i successivi record di carburante e porto fissano invece di reinserire i valori."
+          },
+          "fuel": {
+            "title": "Carburante e bunkeraggio (BDN)",
+            "what": "Apri un record di carburante o bunkeraggio che fissa la sua revisione di origine Noon o di macchina.",
+            "why": "Fissare l'esatta revisione di origine mantiene un unico inserimento e mostra se l'origine è cambiata in seguito."
+          },
+          "sof": {
+            "title": "Attività portuale (SOF)",
+            "what": "Esamina le voci dello statement of facts (SOF) per lo scalo.",
+            "why": "Gli eventi portuali riutilizzano la stessa origine fissata, così gli orari non vengono inseriti due volte."
+          },
+          "downtime": {
+            "title": "Fermo operativo",
+            "what": "Registra il fermo con il suo riferimento di origine.",
+            "why": "Il fermo conserva il collegamento all'origine, così causa e durata restano tracciabili."
+          },
+          "readiness": {
+            "title": "Revisione della prontezza",
+            "what": "Torna alla prontezza per vedere l'effetto dei dati registrati.",
+            "why": "Il sistema è consultivo; la decisione di partenza resta la registrazione umana del Comandante."
+          }
+        }
+      }
     }
   },
   "pairs": {

@@ -520,7 +520,8 @@
         "crewAssignment": "船员分配",
         "tugPlan": "拖船计划",
         "dailyRecord": "日常记录",
-        "workOrderEvidence": "工单证据"
+        "workOrderEvidence": "工单证据",
+        "certificateRenewal": "证书换新草稿"
       },
       "sourceStates": {
         "Included": "已包含",
@@ -2745,6 +2746,106 @@
       "state_PHOTO": "照片",
       "state_AIS_OR_TIME": "AIS 或时间证据",
       "state_DOCUMENT": "文件"
+    },
+    "S10Wpc_tsx_copy": {
+      "renewalOffline": {
+        "heading": "离线换新草稿",
+        "scope": "在设备上准备此换新案例，以便在无连接时编辑其草稿元数据。替换证书和文档链接、工作流步骤、核验和完成仍需在线进行。",
+        "unverified": "已配置，未经试点验证",
+        "offline": "离线",
+        "prepare": "准备离线草稿",
+        "prepared": "已在此设备上准备离线草稿。",
+        "queued": "草稿已在此设备上排队。在收到服务器回执之前，它不算已保存。",
+        "queueSummary": "待处理：{pending} · 冲突：{conflicts} · 已记录：{committed}",
+        "formLabel": "离线草稿元数据",
+        "linksOnline": "替换证书和新文档链接只能在线更改。",
+        "capture": "将草稿加入队列",
+        "sync": "发送排队的草稿",
+        "synced": "所有排队的草稿均已收到服务器回执。",
+        "stillPending": "部分草稿仍在此设备上待处理。没有任何数据丢失；连接后请重试。",
+        "conflictRecorded": "已记录一项实质性冲突。请在下方或冲突中心查看。",
+        "ledger": "已记录 {committed} · 冲突 {conflicts} · 待处理 {pending} · 丢失 {lost}",
+        "conflicts": "未解决的实质性冲突",
+        "review": "查看",
+        "conflictHeading": "实质性冲突",
+        "conflictHelp": "在您离线后，服务器记录已发生变化。请明确选择；不会自动覆盖任何内容。",
+        "field": "字段",
+        "captured": "您的离线值",
+        "server": "当前服务器值",
+        "notSet": "未设置",
+        "keepServer": "保留服务器值",
+        "useCaptured": "使用我的离线值",
+        "noChoice": "目前无法对此冲突作出决定。",
+        "resolutionRecorded": "您的决定已记录并收到服务器回执。",
+        "reauthorize": "需要在线重新授权。排队的草稿仍保留在此设备上。",
+        "keyLost": "设备密钥不可用。排队的草稿仍会保留；请联系管理员。",
+        "unavailable": "此船上未为您配置离线草稿功能。",
+        "failed": "无法完成该操作。排队的草稿仍会保留。",
+        "fields": {
+          "renewalType": "换新类型",
+          "plannedLocation": "计划地点",
+          "authorityReference": "主管机关参考号",
+          "surveyWindowEnd": "检验窗口结束",
+          "triggerDate": "触发日期",
+          "dueDate": "到期日期",
+          "surveyWindowStart": "检验窗口开始",
+          "applicationDate": "申请日期"
+        }
+      },
+      "shipDemo": {
+        "title": "船舶运营演示",
+        "eyebrow": "引导流程",
+        "description": "使用现有界面依次了解开航、每日报告、燃油、港口作业、停工和准备状态。",
+        "syntheticNotice": "合成演示数据 · 仅为草稿，未经核验",
+        "invalidRoute": "此演示地址无效。",
+        "offline": "您处于离线状态。演示需要当前的服务器连接。",
+        "loading": "正在加载…",
+        "error": "无法加载演示数据。",
+        "forbidden": "您无权访问此信息。",
+        "empty": "没有可供您使用的船舶。",
+        "vessel": "船舶",
+        "chooseVessel": "选择船舶",
+        "selectVessel": "选择一艘船舶以开始演示。",
+        "stepsLabel": "演示步骤",
+        "why": "原因",
+        "open": "打开界面",
+        "reuseHeading": "单次录入，重复使用",
+        "reuseHelp": "燃油和港口作业记录会重复使用其固定为来源的 Noon 报告或轮机报告。没有第二个录入表单。",
+        "fuelReuse": "燃油 / BDN 记录：{pinned} 条重用固定来源，{direct} 条直接录入",
+        "portReuse": "港口作业 / SOF 记录：{pinned} 条重用固定来源，{direct} 条直接录入",
+        "steps": {
+          "departure": {
+            "title": "开航准备状态",
+            "what": "查看所选航次窗口的开航准备输入项。",
+            "why": "准备状态根据当前的归属记录计算；未知或缺失的输入项始终需要审核，绝不会显示为就绪。"
+          },
+          "daily": {
+            "title": "正午报告和每日报告",
+            "what": "一次性记录正午报告（Noon）以及甲板/轮机日志。",
+            "why": "这些报告是唯一来源，后续燃油和港口记录会固定引用它们，而不是重新输入数值。"
+          },
+          "fuel": {
+            "title": "燃油和加油（BDN）",
+            "what": "打开一条固定引用其 Noon 或轮机来源修订版的燃油或加油记录。",
+            "why": "固定确切的来源修订版可保持单次录入，并显示来源之后是否发生变化。"
+          },
+          "sof": {
+            "title": "港口作业（SOF）",
+            "what": "查看本次挂港的事实记录（SOF）条目。",
+            "why": "港口事件重用同一固定来源，因此时间不会重复录入。"
+          },
+          "downtime": {
+            "title": "运营停工",
+            "what": "记录停工及其来源参考。",
+            "why": "停工保留其来源链接，使原因和时间保持可追溯。"
+          },
+          "readiness": {
+            "title": "准备状态审核",
+            "what": "返回准备状态以查看已记录输入项的影响。",
+            "why": "系统仅提供建议；开航决定仍由船长作为人工记录作出。"
+          }
+        }
+      }
     }
   },
   "pairs": {

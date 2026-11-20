@@ -520,7 +520,8 @@
         "crewAssignment": "Designação de tripulação",
         "tugPlan": "Plano de rebocador",
         "dailyRecord": "Registro diário",
-        "workOrderEvidence": "Evidências da ordem de serviço"
+        "workOrderEvidence": "Evidências da ordem de serviço",
+        "certificateRenewal": "Rascunho de renovação de certificado"
       },
       "sourceStates": {
         "Included": "incluído",
@@ -2745,6 +2746,106 @@
       "state_PHOTO": "Foto",
       "state_AIS_OR_TIME": "Evidência AIS ou de horário",
       "state_DOCUMENT": "Documento"
+    },
+    "S10Wpc_tsx_copy": {
+      "renewalOffline": {
+        "heading": "Rascunho de renovação offline",
+        "scope": "Prepare este processo de renovação no dispositivo para editar os metadados do rascunho sem conexão. Os vínculos ao certificado substituto e a documentos, as etapas do fluxo de trabalho, a verificação e a conclusão permanecem online.",
+        "unverified": "Configurado, não verificado em piloto",
+        "offline": "Offline",
+        "prepare": "Preparar rascunho offline",
+        "prepared": "Rascunho offline preparado neste dispositivo.",
+        "queued": "Rascunho enfileirado neste dispositivo. Ele não é salvo até que chegue o recibo do servidor.",
+        "queueSummary": "Pendentes: {pending} · Conflitos: {conflicts} · Registrados: {committed}",
+        "formLabel": "Metadados do rascunho offline",
+        "linksOnline": "O certificado substituto e novos vínculos de documentos só podem ser alterados online.",
+        "capture": "Enfileirar rascunho",
+        "sync": "Enviar rascunhos enfileirados",
+        "synced": "Todos os rascunhos enfileirados têm recibo do servidor.",
+        "stillPending": "Alguns rascunhos ainda estão pendentes neste dispositivo. Nada foi perdido; tente novamente quando estiver conectado.",
+        "conflictRecorded": "Um conflito material foi registrado. Revise-o abaixo ou na central de conflitos.",
+        "ledger": "Registrados {committed} · Conflitos {conflicts} · Pendentes {pending} · Perdidos {lost}",
+        "conflicts": "Conflitos materiais abertos",
+        "review": "Revisar",
+        "conflictHeading": "Conflito material",
+        "conflictHelp": "O registro do servidor mudou depois que você ficou offline. Escolha explicitamente; nada é sobrescrito automaticamente.",
+        "field": "Campo",
+        "captured": "Seu valor offline",
+        "server": "Valor atual do servidor",
+        "notSet": "Não definido",
+        "keepServer": "Manter valor do servidor",
+        "useCaptured": "Usar meu valor offline",
+        "noChoice": "Nenhuma decisão está disponível para este conflito no momento.",
+        "resolutionRecorded": "Sua decisão foi registrada com recibo do servidor.",
+        "reauthorize": "É necessária uma nova autorização online. Os rascunhos enfileirados permanecem retidos neste dispositivo.",
+        "keyLost": "A chave do dispositivo não está disponível. Os rascunhos enfileirados permanecem retidos; contate seu administrador.",
+        "unavailable": "A redação offline não está configurada para você nesta embarcação.",
+        "failed": "Não foi possível concluir a ação. Os rascunhos enfileirados permanecem retidos.",
+        "fields": {
+          "renewalType": "Tipo de renovação",
+          "plannedLocation": "Local planejado",
+          "authorityReference": "Referência da autoridade",
+          "surveyWindowEnd": "Fim da janela de vistoria",
+          "triggerDate": "Data de acionamento",
+          "dueDate": "Data de vencimento",
+          "surveyWindowStart": "Início da janela de vistoria",
+          "applicationDate": "Data de solicitação"
+        }
+      },
+      "shipDemo": {
+        "title": "Demonstração de operações do navio",
+        "eyebrow": "Jornada guiada",
+        "description": "Percorra partida, relatórios diários, combustível, atividade portuária, paradas e prontidão usando as telas existentes.",
+        "syntheticNotice": "Dados de demonstração sintéticos · apenas rascunhos, não verificados",
+        "invalidRoute": "Este endereço de demonstração é inválido.",
+        "offline": "Você está offline. A demonstração precisa de uma conexão atual com o servidor.",
+        "loading": "Carregando…",
+        "error": "Não foi possível carregar os dados da demonstração.",
+        "forbidden": "Você não tem acesso a estas informações.",
+        "empty": "Nenhuma embarcação está disponível para você.",
+        "vessel": "Embarcação",
+        "chooseVessel": "Escolha uma embarcação",
+        "selectVessel": "Selecione uma embarcação para iniciar a demonstração.",
+        "stepsLabel": "Etapas da demonstração",
+        "why": "Por quê",
+        "open": "Abrir tela",
+        "reuseHeading": "Entrada única, reutilizada",
+        "reuseHelp": "Os registros de combustível e de atividade portuária reutilizam o relatório Noon ou de máquinas que fixam como origem. Não há um segundo formulário de entrada.",
+        "fuelReuse": "Registros de combustível / BDN: {pinned} reutilizam uma origem fixada, {direct} inseridos diretamente",
+        "portReuse": "Registros de atividade portuária / SOF: {pinned} reutilizam uma origem fixada, {direct} inseridos diretamente",
+        "steps": {
+          "departure": {
+            "title": "Prontidão para partida",
+            "what": "Revise os dados de prontidão para partida da janela de viagem selecionada.",
+            "why": "A prontidão é calculada a partir dos registros proprietários atuais; dados desconhecidos ou ausentes continuam exigindo revisão e nunca aparecem como prontos."
+          },
+          "daily": {
+            "title": "Relatórios do meio-dia e diários",
+            "what": "Registre uma única vez o relatório do meio-dia (Noon) e os diários de convés/máquinas.",
+            "why": "Esses relatórios são a fonte única que os registros posteriores de combustível e porto fixam em vez de redigitar os valores."
+          },
+          "fuel": {
+            "title": "Combustível e abastecimento (BDN)",
+            "what": "Abra um registro de combustível ou abastecimento que fixe sua revisão de origem Noon ou de máquinas.",
+            "why": "Fixar a revisão de origem exata mantém uma única entrada e mostra se a origem mudou depois."
+          },
+          "sof": {
+            "title": "Atividade portuária (SOF)",
+            "what": "Revise os lançamentos do statement of facts (SOF) da escala no porto.",
+            "why": "Os eventos portuários reutilizam a mesma origem fixada para que os horários não sejam inseridos duas vezes."
+          },
+          "downtime": {
+            "title": "Parada operacional",
+            "what": "Registre a parada com sua referência de origem.",
+            "why": "A parada mantém seu vínculo de origem para que a causa e o tempo continuem rastreáveis."
+          },
+          "readiness": {
+            "title": "Revisão de prontidão",
+            "what": "Volte à prontidão para ver o efeito dos dados registrados.",
+            "why": "O sistema é consultivo; a decisão de partida continua sendo o registro humano do Comandante."
+          }
+        }
+      }
     }
   },
   "pairs": {

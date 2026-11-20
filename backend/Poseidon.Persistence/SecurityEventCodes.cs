@@ -50,6 +50,8 @@ public static class SecurityEventCodes
         "DepartureReadinessRead", "DepartureSignoffCommand",
         // S9 WP-C DEV-062 / DEV-114.
         "VoiceDraftRead", "VoiceDraftCommand", "VoiceDraftTranscription", "ControlledDocumentContentAccess",
+        // S10 WP-C DEV-066 certificate renewal offline draft capture.
+        "CertificateRenewalOfflineRead", "CertificateRenewalOfflineRequest",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static IReadOnlySet<string> Results { get; } = new string[]
     {

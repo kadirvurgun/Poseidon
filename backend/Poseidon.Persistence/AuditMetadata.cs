@@ -150,6 +150,17 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             return new(workOrderOutcome.VesselId,workOrderOutcome.WorkOrderId,"WorkOrderOfflineOutcome",null,workOrderOutcome.Revision,
                 Fields(Field("Binding",null,"OwnerReference"),Field("Outcome",null,Closed(workOrderOutcome.Result,"Committed","MaterialConflict","ServerRetained")),
                     Field("ReasonCode",null,workOrderOutcome.ParentCommandId==null?null:workOrderOutcome.Result=="ServerRetained"?"CURRENT_SERVER_RETAINED":"INPUT_CORRECTED")));
+        // S10 WP-C DEV-066: certificate renewal offline lineage; closed codes only, protected values withheld.
+        if(entry.Entity is CertificateRenewalOfflineEnrollment renewalEnrollment)
+            return new(renewalEnrollment.VesselId,renewalEnrollment.RenewalId,"CertificateRenewalOfflineEnrollment",null,null,
+                Fields(Field("Binding",entry.State==EntityState.Added?null:"OwnerReference","OwnerReference")));
+        if(entry.Entity is CertificateRenewalOfflineLifecycle renewalLifecycle)
+            return new(renewalLifecycle.VesselId,renewalLifecycle.RenewalId,"CertificateRenewalOfflineLifecycle",null,null,
+                Fields(Field("Binding",null,"OwnerReference"),Field("Lifecycle",null,Closed(renewalLifecycle.Action,CertificateRenewalOfflineStorage.LifecycleActions))));
+        if(entry.Entity is CertificateRenewalOfflineOutcome renewalOutcome)
+            return new(renewalOutcome.VesselId,renewalOutcome.RenewalId,"CertificateRenewalOfflineOutcome",null,renewalOutcome.Revision,
+                Fields(Field("Binding",null,"OwnerReference"),Field("Outcome",null,Closed(renewalOutcome.Result,CertificateRenewalOfflineStorage.Results)),
+                    Field("ReasonCode",null,renewalOutcome.ParentCommandId==null?null:renewalOutcome.Result=="ServerRetained"?"CURRENT_SERVER_RETAINED":"INPUT_CORRECTED")));
         if(entry.Entity is CriticalSpare spare)
             return new(spare.VesselId,spare.Id,"CriticalSpare",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,spare.Revision,
                 Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(spare.Revision)),Field("Binding",null,"OwnerReference")));
