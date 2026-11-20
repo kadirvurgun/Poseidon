@@ -162,7 +162,7 @@ public sealed partial class DirectoryWorkspaceTests
         await using var host = Host(); using var c = Client(host);
         var author = Guid.NewGuid(); var hseq = Guid.NewGuid(); var crew = Guid.NewGuid();
         RiskActor(host.Services, author, RiskPermissions); await Token(c);
-        var template = new RiskTemplateContent("FICTIONAL mooring", "MOORING", [], ["FICTIONAL-MOOR"],
+        var template = new RiskTemplateContent("FICTIONAL mooring", "TOWAGE", [], ["FICTIONAL-MOOR"],
             [new(Guid.NewGuid(), "Single up lines", "FICTIONAL snap-back", ["Injury"], [new(Guid.NewGuid(), "FICTIONAL snap-back zone marking", "EXISTING", "Bosun", true, [])], [])],
             ["FICTIONAL-SMS-7"], "FICTIONAL HSEQ owner", null);
         var created = await RiskOk<RiskTemplateDetailDto>(await Send(c, "hse/risk-templates", new RiskTemplateCreateCommand(Guid.NewGuid(), "FICTIONAL-T-" + Guid.NewGuid().ToString("N")[..6], template)));
