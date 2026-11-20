@@ -90,8 +90,10 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if(entry.Entity is ShipOperationRevision shipRevision)
             return new(shipRevision.VesselId,shipRevision.RecordId,"ShipOperationRevision",null,shipRevision.Revision,Fields(Field("Revision",null,Number(shipRevision.Revision)),Field("Binding",null,"OwnerReference")));
         // DEV-101/102 lifecycle: closed action/state/duty codes only; detail JSON withheld.
+        // The event row is append-only (Added): it has no prior revision of its own. The
+        // record's from/to revision stays in the summary field, never in BeforeRevision.
         if(entry.Entity is ShipOpsLifecycleEvent opsLifecycle)
-            return new(opsLifecycle.VesselId,opsLifecycle.RecordId,"ShipOpsLifecycleEvent",opsLifecycle.FromRevision,opsLifecycle.ToRevision,Fields(
+            return new(opsLifecycle.VesselId,opsLifecycle.RecordId,"ShipOpsLifecycleEvent",null,opsLifecycle.ToRevision,Fields(
                 Field("Action",null,Closed(opsLifecycle.Action,["FINALIZE",..Poseidon.Domain.ShipOperationsLifecycle.DowntimeActions])),
                 Field("State",opsLifecycle.FromState==null?null:Closed(opsLifecycle.FromState,LifecycleStates),opsLifecycle.ToState==null?null:Closed(opsLifecycle.ToState,LifecycleStates)),
                 Field("Duty",null,opsLifecycle.Duty==null?null:Closed(opsLifecycle.Duty,Poseidon.Domain.ShipOperationsLifecycle.DowntimeDuties)),
