@@ -41,6 +41,9 @@ public static class WorkspaceEndpoints
         if (SafetyEventAccess.Any(actor)) destinations = [.. destinations, new("safety-events", "/app/safety-events")];
         // S9 WP-D DEV-111: same server predicate as /api/v1/drydock-packages.
         if (DrydockEndpoints.CanRead(actor)) destinations = [.. destinations, new("drydock-planning", "/app/drydock-planning")];
+        // S10 WP-A DEV-065 / DEV-113: same server predicates as GET /api/v1/data-trust and GET /api/v1/industry-assurance.
+        if (DataTrustSignalSource.CanRead(actor)) destinations = [.. destinations, new("data-trust-center", "/app/data-trust-center")];
+        if (AssuranceAccess.Reader(actor)) destinations = [.. destinations, new("industry-assurance", "/app/industry-assurance")];
         if (CertificateReader.Read(actor)) destinations = [.. destinations,
             new("certificate-command-center", "/app/certificate-command-center"), new("renewal-workflow", "/app/renewal-workflow"),
             // DEV-104/DEV-112: same server read authority as their endpoints (certificate.read).

@@ -2217,6 +2217,42 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/data-trust": {
+      "get": {
+        "tags": [
+          "DataTrustEndpoints"
+        ],
+        "operationId": "GetDataTrust",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataTrustPageDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
     "/api/v1/memberships/current": {
       "get": {
         "tags": [
@@ -15854,6 +15890,481 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/audit-ready/packs": {
+      "get": {
+        "tags": [
+          "AuditPackEndpoints"
+        ],
+        "operationId": "ListAuditPacks",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditPackListDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "AuditPackCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditPackCreateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditPackDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssuranceFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/audit-ready/packs/{id}": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "GetAuditPack",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditPackDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/audit-ready/packs/{id}/export": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "ExportAuditPack",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditPackExportDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/industry-assurance": {
+      "get": {
+        "tags": [
+          "IndustryAssuranceEndpoints"
+        ],
+        "operationId": "GetIndustryAssurance",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IndustryAssurancePageDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/industry-assurance/inspections/{id}": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "GetAssuranceInspection",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssuranceInspectionDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/industry-assurance/mappings": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "AssuranceMappingCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssuranceMappingCreateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssuranceMappingDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssuranceFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/industry-assurance/imports": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "AssuranceImportStage",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssuranceImportStageCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssuranceInspectionDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssuranceFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/industry-assurance/imports/{id}/decision": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "AssuranceImportDecide",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssuranceImportDecisionCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssuranceInspectionDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssuranceFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/industry-assurance/inspections/{id}/evidence": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "AssuranceEvidenceCapture",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssuranceEvidenceCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssuranceInspectionDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssuranceFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/industry-assurance/findings/{id}/action-link": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "AssuranceFindingLink",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssuranceFindingLinkCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssuranceInspectionDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssuranceFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
     "/api/v1/defects/{id}/lifecycle": {
       "get": {
         "tags": [
@@ -22605,6 +23116,700 @@
           }
         }
       },
+      "AssuranceColumnBinding": {
+        "required": [
+          "header",
+          "field"
+        ],
+        "type": "object",
+        "properties": {
+          "header": {
+            "type": "string"
+          },
+          "field": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AssuranceDiffEntry": {
+        "required": [
+          "questionRef",
+          "change",
+          "fields",
+          "currentRevision"
+        ],
+        "type": "object",
+        "properties": {
+          "questionRef": {
+            "type": "string"
+          },
+          "change": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "currentRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          }
+        }
+      },
+      "AssuranceEvidenceCommand": {
+        "required": [
+          "id",
+          "questionRef",
+          "file",
+          "mediaKind",
+          "capturedAt",
+          "origin"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "questionRef": {
+            "type": "string"
+          },
+          "file": {
+            "$ref": "#/components/schemas/CertificateFilePin"
+          },
+          "mediaKind": {
+            "type": "string"
+          },
+          "capturedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "origin": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AssuranceEvidenceDto": {
+        "required": [
+          "id",
+          "questionRef",
+          "fileId",
+          "fileRevision",
+          "mediaKind",
+          "capturedAt",
+          "origin",
+          "verification",
+          "fileHref"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "questionRef": {
+            "type": "string"
+          },
+          "fileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fileRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "mediaKind": {
+            "type": "string"
+          },
+          "capturedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "origin": {
+            "type": "string"
+          },
+          "verification": {
+            "type": "string"
+          },
+          "fileHref": {
+            "type": "string"
+          }
+        }
+      },
+      "AssuranceFailure": {
+        "required": [
+          "code",
+          "missing",
+          "correlationId"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "missing": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "correlationId": {
+            "type": "string"
+          }
+        }
+      },
+      "AssuranceFindingDto": {
+        "required": [
+          "id",
+          "questionRef",
+          "firstItemRevision",
+          "latestItemRevision",
+          "observationPresent",
+          "state",
+          "verification",
+          "actionLinkState",
+          "actionId",
+          "revision",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "questionRef": {
+            "type": "string"
+          },
+          "firstItemRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "latestItemRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "observationPresent": {
+            "type": "boolean"
+          },
+          "state": {
+            "type": "string"
+          },
+          "verification": {
+            "type": "string"
+          },
+          "actionLinkState": {
+            "type": "string"
+          },
+          "actionId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "AssuranceFindingLinkCommand": {
+        "required": [
+          "expectedVersion",
+          "actionId"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "actionId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AssuranceImportDecisionCommand": {
+        "required": [
+          "expectedVersion",
+          "diffHash",
+          "decision",
+          "acceptChanged",
+          "rejectChanged",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "diffHash": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "acceptChanged": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rejectChanged": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AssuranceImportDto": {
+        "required": [
+          "id",
+          "state",
+          "mappingVersion",
+          "sourceVersion",
+          "diff",
+          "diffHash",
+          "importedByMe",
+          "importedAt",
+          "decidedAt",
+          "version",
+          "new",
+          "changed",
+          "unchanged",
+          "absent"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "mappingVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "diff": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssuranceDiffEntry"
+            }
+          },
+          "diffHash": {
+            "type": "string"
+          },
+          "importedByMe": {
+            "type": "boolean"
+          },
+          "importedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "decidedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "new": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "changed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unchanged": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "absent": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AssuranceImportStageCommand": {
+        "required": [
+          "id",
+          "inspectionId",
+          "mappingId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "inspectionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "mappingId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "referenceNo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "inspectionDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "table": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AssuranceTableInput"
+              }
+            ]
+          },
+          "workbook": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "AssuranceInspectionDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "programme",
+          "referenceNo",
+          "inspectionDate",
+          "state",
+          "classification",
+          "applicability",
+          "revision",
+          "provenance",
+          "sourceVersion",
+          "items",
+          "findings",
+          "evidence",
+          "imports",
+          "notice"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "programme": {
+            "type": "string"
+          },
+          "referenceNo": {
+            "type": "string"
+          },
+          "inspectionDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "state": {
+            "type": "string"
+          },
+          "classification": {
+            "type": "string"
+          },
+          "applicability": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssuranceItemDto"
+            }
+          },
+          "findings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssuranceFindingDto"
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssuranceEvidenceDto"
+            }
+          },
+          "imports": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssuranceImportDto"
+            }
+          },
+          "notice": {
+            "type": "string"
+          }
+        }
+      },
+      "AssuranceInspectionSummaryDto": {
+        "required": [
+          "id",
+          "referenceNo",
+          "inspectionDate",
+          "state",
+          "applicability",
+          "items",
+          "openFindings",
+          "pendingImport"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "referenceNo": {
+            "type": "string"
+          },
+          "inspectionDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "state": {
+            "type": "string"
+          },
+          "applicability": {
+            "type": "string"
+          },
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "openFindings": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pendingImport": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AssuranceItemContent": {
+        "required": [
+          "questionRef",
+          "chapter",
+          "observationType",
+          "observationCategory",
+          "observationText",
+          "inspectorComment"
+        ],
+        "type": "object",
+        "properties": {
+          "questionRef": {
+            "type": "string"
+          },
+          "chapter": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "observationType": {
+            "type": "string"
+          },
+          "observationCategory": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "observationText": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "inspectorComment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "AssuranceItemDto": {
+        "required": [
+          "questionRef",
+          "revision",
+          "content",
+          "hash",
+          "evidence",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "questionRef": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "content": {
+            "$ref": "#/components/schemas/AssuranceItemContent"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AssuranceMappingCreateCommand": {
+        "required": [
+          "id",
+          "key",
+          "bindings"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "key": {
+            "type": "string"
+          },
+          "bindings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssuranceColumnBinding"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "AssuranceMappingDto": {
+        "required": [
+          "id",
+          "key",
+          "version",
+          "sourceVersion",
+          "bindings",
+          "hash",
+          "createdAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "key": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "bindings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssuranceColumnBinding"
+            }
+          },
+          "hash": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AssuranceTableInput": {
+        "required": [
+          "headers",
+          "rows"
+        ],
+        "type": "object",
+        "properties": {
+          "headers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "additionalProperties": false
+      },
       "AuditEvidenceDto": {
         "required": [
           "kind",
@@ -22645,6 +23850,296 @@
                 "$ref": "#/components/schemas/TugAuditRevisionDto"
               }
             ]
+          }
+        }
+      },
+      "AuditPackCreateCommand": {
+        "required": [
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "previousPackId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AuditPackDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "label",
+          "notice",
+          "sourceVersion",
+          "asOf",
+          "createdAt",
+          "createdByMe",
+          "manifestHash",
+          "itemCount",
+          "included",
+          "excluded",
+          "unavailableChains",
+          "truncated",
+          "previousPackId",
+          "superseded",
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "label": {
+            "type": "string"
+          },
+          "notice": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "asOf": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdByMe": {
+            "type": "boolean"
+          },
+          "manifestHash": {
+            "type": "string"
+          },
+          "itemCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "included": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "excluded": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unavailableChains": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "truncated": {
+            "type": "boolean"
+          },
+          "previousPackId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "superseded": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditPackItemDto"
+            }
+          }
+        }
+      },
+      "AuditPackExportDto": {
+        "required": [
+          "schema",
+          "label",
+          "notice",
+          "exportedAt",
+          "pack"
+        ],
+        "type": "object",
+        "properties": {
+          "schema": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "notice": {
+            "type": "string"
+          },
+          "exportedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "pack": {
+            "$ref": "#/components/schemas/AuditPackDto"
+          }
+        }
+      },
+      "AuditPackItemDto": {
+        "required": [
+          "ordinal",
+          "kind",
+          "resourceId",
+          "revision",
+          "state",
+          "hash",
+          "evidenceId",
+          "controlId",
+          "savedAt",
+          "integrity",
+          "fileHref",
+          "historyHref"
+        ],
+        "type": "object",
+        "properties": {
+          "ordinal": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "resourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "hash": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "evidenceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "controlId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "savedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "integrity": {
+            "type": "string"
+          },
+          "fileHref": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "historyHref": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "AuditPackListDto": {
+        "required": [
+          "vesselId",
+          "label",
+          "notice",
+          "canCompile",
+          "items",
+          "hasMore"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "label": {
+            "type": "string"
+          },
+          "notice": {
+            "type": "string"
+          },
+          "canCompile": {
+            "type": "boolean"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditPackSummaryDto"
+            }
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AuditPackSummaryDto": {
+        "required": [
+          "id",
+          "asOf",
+          "createdAt",
+          "createdByMe",
+          "itemCount",
+          "manifestHash",
+          "previousPackId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "asOf": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdByMe": {
+            "type": "boolean"
+          },
+          "itemCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "manifestHash": {
+            "type": "string"
+          },
+          "previousPackId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
           }
         }
       },
@@ -30498,6 +31993,231 @@
           }
         }
       },
+      "DataQualitySignal": {
+        "required": [
+          "kind",
+          "reason",
+          "material"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "material": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DataTrustCountsDto": {
+        "required": [
+          "missing",
+          "stale",
+          "conflicting",
+          "unverified",
+          "orphan"
+        ],
+        "type": "object",
+        "properties": {
+          "missing": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stale": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "conflicting": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unverified": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "orphan": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "DataTrustItemDto": {
+        "required": [
+          "subjectKind",
+          "subjectId",
+          "fieldPath",
+          "revision",
+          "title",
+          "provenance",
+          "sourceKind",
+          "observedAt",
+          "freshUntil",
+          "freshness",
+          "verification",
+          "disposition",
+          "signals",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "subjectKind": {
+            "type": "string"
+          },
+          "subjectId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "fieldPath": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "provenance": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sourceKind": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "observedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "freshUntil": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "freshness": {
+            "type": "string"
+          },
+          "verification": {
+            "type": "string"
+          },
+          "disposition": {
+            "type": "string"
+          },
+          "signals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DataQualitySignal"
+            }
+          },
+          "savedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "DataTrustPageDto": {
+        "required": [
+          "vesselId",
+          "asOf",
+          "state",
+          "disposition",
+          "readinessEffect",
+          "counts",
+          "items",
+          "profileFields",
+          "offset",
+          "limit",
+          "total",
+          "hasMore",
+          "withheld",
+          "truncated",
+          "sourceVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "asOf": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "state": {
+            "type": "string"
+          },
+          "disposition": {
+            "type": "string"
+          },
+          "readinessEffect": {
+            "type": "string"
+          },
+          "counts": {
+            "$ref": "#/components/schemas/DataTrustCountsDto"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DataTrustItemDto"
+            }
+          },
+          "profileFields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DataTrustItemDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "withheld": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "truncated": {
+            "type": "boolean"
+          },
+          "sourceVersion": {
+            "type": "string"
+          }
+        }
+      },
       "DecideParameterChange": {
         "required": [
           "expectedVersion",
@@ -36777,6 +38497,107 @@
             "items": {
               "$ref": "#/components/schemas/ImportRowIssueDto"
             }
+          }
+        }
+      },
+      "IndustryAssuranceCapabilitiesDto": {
+        "required": [
+          "canImport",
+          "canAccept",
+          "canCaptureEvidence",
+          "canLinkAction",
+          "canWriteMapping",
+          "mediaKinds",
+          "availableMediaKinds",
+          "fields",
+          "requiredFields"
+        ],
+        "type": "object",
+        "properties": {
+          "canImport": {
+            "type": "boolean"
+          },
+          "canAccept": {
+            "type": "boolean"
+          },
+          "canCaptureEvidence": {
+            "type": "boolean"
+          },
+          "canLinkAction": {
+            "type": "boolean"
+          },
+          "canWriteMapping": {
+            "type": "boolean"
+          },
+          "mediaKinds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "availableMediaKinds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "requiredFields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "IndustryAssurancePageDto": {
+        "required": [
+          "vesselId",
+          "classification",
+          "applicability",
+          "sourceVersion",
+          "inspections",
+          "mappings",
+          "capabilities",
+          "notice"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "classification": {
+            "type": "string"
+          },
+          "applicability": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "inspections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssuranceInspectionSummaryDto"
+            }
+          },
+          "mappings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AssuranceMappingDto"
+            }
+          },
+          "capabilities": {
+            "$ref": "#/components/schemas/IndustryAssuranceCapabilitiesDto"
+          },
+          "notice": {
+            "type": "string"
           }
         }
       },
@@ -57693,6 +59514,9 @@
       "name": "DowntimeOriginReader"
     },
     {
+      "name": "DataTrustEndpoints"
+    },
+    {
       "name": "MembershipEndpoints"
     },
     {
@@ -57769,6 +59593,12 @@
     },
     {
       "name": "SafetyEventOfflineEndpoints"
+    },
+    {
+      "name": "AuditPackEndpoints"
+    },
+    {
+      "name": "IndustryAssuranceEndpoints"
     },
     {
       "name": "DepartureReadinessEndpoints"

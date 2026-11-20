@@ -284,3 +284,7 @@ departure decisions (`ship.DepartureDecisions`) and their receipts are signed hu
 are never seeded: no RELEASE, HOLD or DENY, no receipt and no Master appointment exist in any fixture.
 DB CHECKs allow RELEASE only against a CURRENT READY assessment by the Master duty. Default seed audit
 counts are unchanged.
+
+## S10-WPA DEV-113 — industry assurance fixture (optional)
+
+`AssuranceFixtures.AddMissingAsync` is an explicit administrative fixture, not wired into normal startup/seed import (default seed and audit totals unchanged). Per seeded SHIP vessel it adds one FICTIONAL empty DRAFT SIRE 2.0 inspection header with `Provenance=SyntheticUnverified`, classification `UNKNOWN` and applicability `REVIEW_REQUIRED` (the synthetic vessel declares no ship type). No mapping version, staged import, accepted item, finding, field evidence, acceptance, finding→action link or audit pack is seeded. DB checks keep every finding `OPEN`/`UNVERIFIED`, every evidence row `UNVERIFIED`, every audit pack labelled `SYSTEM_COMPILATION_NOT_OFFICIAL_RECORD` and an import decision by someone other than its importer. Add-missing; operator edits are kept.

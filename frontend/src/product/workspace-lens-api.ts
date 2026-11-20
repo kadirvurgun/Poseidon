@@ -33,6 +33,8 @@ export const lensLabels: Record<string, readonly [
     'pms-command-center': [sourceText("tr", "pairs.m_8c3e1f0a5d2b7c41"), sourceText("en", "pairs.m_8c3e1f0a5d2b7c41")],
     'service-engineer-report': [sourceText("tr", "pairs.m_8c3e1f0a5d2b7c42"), sourceText("en", "pairs.m_8c3e1f0a5d2b7c42")],
     'safety-events': [sourceText("tr", "pairs.m_8a32195b2423b0ae"), sourceText("en", "pairs.m_8a32195b2423b0ae")],
+    'data-trust-center': [sourceText("tr", "pairs.m_a51d0c7e3f9b2481"), sourceText("en", "pairs.m_a51d0c7e3f9b2481")],
+    'industry-assurance': [sourceText("tr", "pairs.m_b62e1f8d4a0c3592"), sourceText("en", "pairs.m_b62e1f8d4a0c3592")],
     'voice-event-draft': [sourceText("tr", "pairs.m_9a7c51e0d3b2f461"), sourceText("en", "pairs.m_9a7c51e0d3b2f461")],
     'document-compare': [sourceText("tr", "pairs.m_9a7c51e0d3b2f462"), sourceText("en", "pairs.m_9a7c51e0d3b2f462")],
     'high-risk-work': [sourceText("tr", "pairs.m_04076d4cdaa5ec7d"), sourceText("en", "pairs.m_04076d4cdaa5ec7d")],

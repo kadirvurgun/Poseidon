@@ -37,6 +37,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         // S9 WP-B DEV-060: absent operator configuration leaves safety-event offline capture unavailable.
         services.AddSingleton(configuration.GetSection("SafetyEventOffline").Get<SafetyEventOfflineSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<ISafetyEventBlockerSource, SafetyEventBlockerSource>();
+        // S10 WP-A DEV-065: read-only data trust contract for readiness consumers.
+        services.AddSingleton<IDataTrustSignalSource, DataTrustSignalSource>();
         services.AddSingleton<ISpareGapSource, SpareGapReader>();
         services.AddSingleton(configuration.GetSection("NotificationScheduler").Get<NotificationSchedulerSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<NotificationServiceContexts>();
@@ -232,6 +234,10 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapSafetyEvents();
             endpoints.MapSafetyInvestigations();
             endpoints.MapSafetyEventOffline();
+            // S10 WP-A DEV-064 / DEV-065 / DEV-113.
+            endpoints.MapAuditPacks();
+            endpoints.MapDataTrust();
+            endpoints.MapIndustryAssurance();
             endpoints.MapDefectLifecycle();
             endpoints.MapServiceReports();
             endpoints.MapVoiceEventDrafts();

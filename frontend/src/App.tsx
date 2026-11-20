@@ -11,6 +11,8 @@ import { TowageWorkspace } from './product/TowageWorkspace';
 import { FieldOpsWorkspace } from './product/FieldOpsWorkspace';
 import { HighRiskWorkWorkspace } from './product/HighRiskWorkWorkspace';
 import { SafetyEventsWorkspace } from './product/SafetyEventsWorkspace';
+import { DataTrustCenterWorkspace } from './product/DataTrustCenterWorkspace';
+import { IndustryAssuranceWorkspace } from './product/IndustryAssuranceWorkspace';
 import { TechnicalWorkspace } from './product/TechnicalWorkspace';
 import { CrewWorkspace } from './product/CrewWorkspace';
 import { CrewComplianceWorkspace } from './product/CrewComplianceWorkspace';
@@ -72,6 +74,11 @@ export function App() {
     // S9 WP-B DEV-060/061 safety events, investigation and action tracking.
     if (/^\/app\/safety-events(?:\/|$)/.test(window.location.pathname))
         return <SafetyEventsWorkspace />;
+    // S10 WP-A DEV-065 data trust center and DEV-113 industry assurance (SIRE 2.0 synthetic schema).
+    if (/^\/app\/data-trust-center(?:\/|$)/.test(window.location.pathname))
+        return <DataTrustCenterWorkspace />;
+    if (/^\/app\/industry-assurance(?:\/|$)/.test(window.location.pathname))
+        return <IndustryAssuranceWorkspace />;
     if (/^\/app\/tug-(command|job-board|job-intake|job-detail)(?:\/|$)/.test(window.location.pathname))
         return <TugWorkspace />;
     if (/^\/app\/(equipment-hierarchy|maintenance-plan)\//.test(window.location.pathname))

@@ -33,6 +33,8 @@ internal static class WorkspaceDestinationLabels
         ["risk-template-library"] = ["Risk şablon kütüphanesi", "Risk template library"],
         ["high-risk-work"] = ["Yüksek riskli işler", "High-risk work"],
         ["safety-events"] = ["Olaylar ve ramak kala", "Safety events & near misses"],
+        ["data-trust-center"] = ["Veri güven merkezi", "Data trust center"],
+        ["industry-assurance"] = ["Endüstri güvencesi (SIRE 2.0)", "Industry assurance (SIRE 2.0)"],
         ["certificate-command-center"] = ["Sertifika merkezi", "Certificate center"],
         ["renewal-workflow"] = ["Sertifika yenileme", "Certificate renewal"],
         ["pre-survey-checklist"] = ["Sörvey öncesi kontrol listesi", "Pre-survey checklist"],
