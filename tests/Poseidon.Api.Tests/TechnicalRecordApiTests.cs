@@ -101,7 +101,7 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(["START", "ASSESS", "SAFEGUARD", "SAFEGUARD", "LIFT", "ACTION", "VERIFY", "EFFECTIVENESS", "CLOSE"], closed.Records.Select(r => r.Kind));
 
         await using var db = Db();
-        var actor = new TrustedActor(chief, SeedVessel.TenantId, ["equipment.read", "defect.read"], true, false, []);
+        var actor = new TrustedActor(chief, SeedVessel.TenantId, ["directory.read", "equipment.read", "defect.read"], true, false, []);
         var check = Assert.Single(await TugReadinessAssessor.Defects(db, actor, SeedVessel.Id, Ct), x => x.SourceId == defect.Id);
         Assert.Equal((TugReadinessEngine.Pass, "DefectClosed"), (check.Result, check.Reason));
         var audit = await db.AuditEvents.Where(e => e.ResourceId == defect.Id && e.EntityType != nameof(Defect) && e.EntityType != nameof(DefectRevision) && e.EntityType != nameof(DefectReceipt)).ToArrayAsync(Ct);
