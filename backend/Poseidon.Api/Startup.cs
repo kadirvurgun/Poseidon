@@ -45,6 +45,14 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddSingleton<IDataTrustSignalSource, DataTrustSignalSource>();
         // S10 WP-C DEV-066: absent operator configuration leaves certificate renewal offline drafts unavailable.
         services.AddSingleton(configuration.GetSection("CertificateRenewalOffline").Get<CertificateRenewalOfflineSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
+        // S11 WP-D DEV-075: one reader per pilot gate. Not-yet-integrated owners stay DEFERRED (never PASS).
+        foreach (var deferred in DeferredPilotGateSource.Defaults()) services.AddSingleton(deferred);
+        services.AddSingleton<IPilotGateSource>(new UatPilotGateSource(Poseidon.Domain.UatScenarioCatalog.Ship));
+        services.AddSingleton<IPilotGateSource>(new UatPilotGateSource(Poseidon.Domain.UatScenarioCatalog.Tug));
+        services.AddSingleton<IPilotGateSource, SupportPilotGateSource>();
+        services.AddSingleton<IPilotGateSource, RegulatoryReviewPilotGateSource>(); // S11 WP-C DEV-073/093
+        services.AddSingleton<IPilotGateSource, DataReconciliationPilotGateSource>(); // S11 WP-A DEV-070
+        services.AddSingleton<IPilotP0Source, UatBlockerP0Source>();
         services.AddSingleton<ISpareGapSource, SpareGapReader>();
         services.AddSingleton(configuration.GetSection("NotificationScheduler").Get<NotificationSchedulerSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<NotificationServiceContexts>();
@@ -259,6 +267,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapTugOperationsOffline(); // S10 WP-B DEV-092
             endpoints.MapTugOperationHistory(); // S10 WP-B DEV-091
             endpoints.MapPilotMetrics(); // S11 WP-B DEV-072
+            endpoints.MapUat(); // S11 WP-D DEV-074/094
+            endpoints.MapPilotGate(); // S11 WP-D DEV-075
             endpoints.MapParameters();
             endpoints.MapHr();
             endpoints.MapMemberships();

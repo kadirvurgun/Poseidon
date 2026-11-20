@@ -60,6 +60,8 @@ public static class SecurityEventCodes
         "ImportProvenanceRead", "ImportReconciliationRead", "ImportReconciliationCommand",
         // S11 WP-B DEV-072.
         "PilotMetricsRead", "PilotMetricsCommand",
+        // S11 WP-D DEV-074/094/075.
+        "UatRead", "UatCommand", "PilotGateRead", "PilotGateCommand",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static IReadOnlySet<string> Results { get; } = new string[]
     {
@@ -146,6 +148,11 @@ public static class SecurityEventCodes
         // S11 WP-A DEV-069 / DEV-070.
         "invalid_decision", "invalid_exception", "invalid_sample", "reconciliation_superseded", "reconciliation_stale", "reconciliation_open_items",
         "reconciliation_exceptions_required", "reconciliation_batch_unavailable", "data_owner_authority_required",
+        // S11 WP-D DEV-074/094/075.
+        "facilitator_required", "uat_run_not_open", "uat_run_not_submitted", "scenario_out_of_scope", "synthetic_record_not_submittable",
+        "separation_of_duties_required", "uat_finding_not_open", "blocker_risk_acceptance_not_permitted", "threshold_sequence_conflict",
+        "support_sequence_conflict", "review_stale", "pilot_gate_failed", "pilot_gate_p0_open_or_unknown", "pilot_gate_not_passed",
+        "pilot_gate_unknown", "conditions_required", "pilot_gate_authority_required",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static bool Allows(string action, string result) => Actions.Contains(action) && Results.Contains(result);
 }

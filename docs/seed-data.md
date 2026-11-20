@@ -298,3 +298,15 @@ counts are unchanged.
 ## S10-WPA DEV-113 — industry assurance fixture (optional)
 
 `AssuranceFixtures.AddMissingAsync` is an explicit administrative fixture, not wired into normal startup/seed import (default seed and audit totals unchanged). Per seeded SHIP vessel it adds one FICTIONAL empty DRAFT SIRE 2.0 inspection header with `Provenance=SyntheticUnverified`, classification `UNKNOWN` and applicability `REVIEW_REQUIRED` (the synthetic vessel declares no ship type). No mapping version, staged import, accepted item, finding, field evidence, acceptance, finding→action link or audit pack is seeded. DB checks keep every finding `OPEN`/`UNVERIFIED`, every evidence row `UNVERIFIED`, every audit pack labelled `SYSTEM_COMPILATION_NOT_OFFICIAL_RECORD` and an import decision by someone other than its importer. Add-missing; operator edits are kept.
+
+## S11-WPD DEV-074/094/075 — UAT run fixture (optional)
+
+`UatFixtures.AddMissingAsync` is an explicit administrative fixture, not wired into normal startup/seed import
+(default seed and audit totals unchanged). Per tenant it adds one FICTIONAL OPEN ship UAT run (role MASTER) and one
+FICTIONAL OPEN tug UAT run (role TUG_MASTER) with pseudonym `FICTIONAL-<SCOPE>-01`, environment LAB, facilitated by a
+deterministic synthetic actor id without membership, provenance `SyntheticUnverified`. No outcome, finding, UAT
+threshold, submission, attestation, support check, pilot gate decision, Product Owner appointment or receipt is seeded;
+DB CHECK `CK_UatRun_Synthetic` rejects a synthetic run leaving OPEN. UAT thresholds, attestations and go/no-go decisions
+are human records and are never seeded. Add-missing; operator edits are preserved. Real-PostgreSQL test
+`Readers_without_permission_are_denied_unknown_runs_are_not_found_and_the_uat_fixture_is_opt_in_fictional_and_open` is
+AUTHORED, execution DEFERRED to CI.

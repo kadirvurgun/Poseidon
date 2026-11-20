@@ -20758,6 +20758,435 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/uat/scenarios": {
+      "get": {
+        "tags": [
+          "UatEndpoints"
+        ],
+        "operationId": "UatScenarioCatalog",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UatCatalogView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/uat/summary": {
+      "get": {
+        "tags": [
+          "UatEndpoints"
+        ],
+        "operationId": "UatSummaryRead",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UatSummaryView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/uat/runs/{id}": {
+      "get": {
+        "tags": [
+          "UatEndpoints"
+        ],
+        "operationId": "UatRunRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UatRunDetailView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/uat/thresholds": {
+      "post": {
+        "tags": [
+          "UatEndpoints"
+        ],
+        "operationId": "UatThresholdRecord",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UatThresholdCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UatThresholdDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/uat/runs": {
+      "post": {
+        "tags": [
+          "UatEndpoints"
+        ],
+        "operationId": "UatRunCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UatRunCreateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UatRunDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/uat/runs/{id}/results": {
+      "post": {
+        "tags": [
+          "UatEndpoints"
+        ],
+        "operationId": "UatResultRecord",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UatResultCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UatResultDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/uat/runs/{id}/findings": {
+      "post": {
+        "tags": [
+          "UatEndpoints"
+        ],
+        "operationId": "UatFindingRecord",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UatFindingCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UatFindingDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/uat/runs/{id}/submit": {
+      "post": {
+        "tags": [
+          "UatEndpoints"
+        ],
+        "operationId": "UatRunSubmit",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UatRunSubmitCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UatRunDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/uat/runs/{id}/attest": {
+      "post": {
+        "tags": [
+          "UatEndpoints"
+        ],
+        "operationId": "UatRunAttest",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UatRunAttestCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UatRunDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/uat/findings/{id}/resolve": {
+      "post": {
+        "tags": [
+          "UatEndpoints"
+        ],
+        "operationId": "UatFindingResolve",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UatFindingResolveCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UatFindingDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/pilot-gate": {
+      "get": {
+        "tags": [
+          "PilotGateEndpoints"
+        ],
+        "operationId": "PilotGateRead",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotGateView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/pilot-gate/support-checks": {
+      "post": {
+        "tags": [
+          "PilotGateEndpoints"
+        ],
+        "operationId": "PilotSupportCheckRecord",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PilotSupportCheckCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotSupportCheckDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/pilot-gate/decisions": {
+      "post": {
+        "tags": [
+          "PilotGateEndpoints"
+        ],
+        "operationId": "PilotGateDecide",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PilotGateDecisionCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotGateDecisionDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
     "/api/v1/parameter-definitions": {
       "get": {
         "tags": [
@@ -43864,6 +44293,257 @@
           }
         }
       },
+      "PilotGateAuthorityDto": {
+        "required": [
+          "id",
+          "duty"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "duty": {
+            "type": "string"
+          }
+        }
+      },
+      "PilotGateDecisionCommand": {
+        "required": [
+          "decision",
+          "rationale",
+          "conditions",
+          "expectedReviewHash",
+          "expectedSequence",
+          "authorityId"
+        ],
+        "type": "object",
+        "properties": {
+          "decision": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "conditions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "expectedReviewHash": {
+            "type": "string"
+          },
+          "expectedSequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PilotGateDecisionDto": {
+        "required": [
+          "id",
+          "sequence",
+          "previousDecisionId",
+          "decision",
+          "recommendation",
+          "reviewHash",
+          "conditions",
+          "rationale",
+          "duty",
+          "actorId",
+          "recordedAt",
+          "validity"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "previousDecisionId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "recommendation": {
+            "type": "string"
+          },
+          "reviewHash": {
+            "type": "string"
+          },
+          "conditions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "duty": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "validity": {
+            "type": "string"
+          }
+        }
+      },
+      "PilotGateInput": {
+        "required": [
+          "gate",
+          "state",
+          "reasons",
+          "source"
+        ],
+        "type": "object",
+        "properties": {
+          "gate": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "source": {
+            "type": "string"
+          }
+        }
+      },
+      "PilotGateReviewOutcome": {
+        "required": [
+          "recommendation",
+          "gates",
+          "openP0",
+          "noGoReasons",
+          "hash"
+        ],
+        "type": "object",
+        "properties": {
+          "recommendation": {
+            "type": "string"
+          },
+          "gates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotGateInput"
+            }
+          },
+          "openP0": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "noGoReasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "hash": {
+            "type": "string"
+          },
+          "authority": {
+            "type": "string",
+            "default": "ProductOwnerHumanDecisionRequired;EngineNeverDecidesGo;AiCannotDecide"
+          }
+        }
+      },
+      "PilotGateView": {
+        "required": [
+          "review",
+          "support",
+          "decisions",
+          "sequence",
+          "authorities",
+          "canDecide",
+          "canRecordSupport",
+          "allowedDecisions",
+          "assessedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "review": {
+            "$ref": "#/components/schemas/PilotGateReviewOutcome"
+          },
+          "support": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotSupportItemView"
+            }
+          },
+          "decisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotGateDecisionDto"
+            }
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotGateAuthorityDto"
+            }
+          },
+          "canDecide": {
+            "type": "boolean"
+          },
+          "canRecordSupport": {
+            "type": "boolean"
+          },
+          "allowedDecisions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "assessedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sourceLocator": {
+            "type": "string",
+            "default": "18.01/sheet:Backlog/row:76;18.01/sheet:DoR DoD Gates/row:4;23.03/paragraph:97-110;19.01/paragraph:130-136,276-279"
+          },
+          "authority": {
+            "type": "string",
+            "default": "ProductOwnerHumanDecisionRequired;EngineNeverDecidesGo;AiCannotDecide"
+          }
+        }
+      },
       "PilotMetricCapabilitiesDto": {
         "required": [
           "canContribute",
@@ -44175,6 +44855,114 @@
             "items": {
               "$ref": "#/components/schemas/PilotMetricResult"
             }
+          }
+        }
+      },
+      "PilotSupportCheckCommand": {
+        "required": [
+          "item",
+          "state",
+          "evidenceReference",
+          "note",
+          "expectedSequence"
+        ],
+        "type": "object",
+        "properties": {
+          "item": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "evidenceReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "note": {
+            "type": "string"
+          },
+          "expectedSequence": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PilotSupportCheckDto": {
+        "required": [
+          "id",
+          "item",
+          "sequence",
+          "previousCheckId",
+          "state",
+          "evidenceReference",
+          "note",
+          "actorId",
+          "recordedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "item": {
+            "type": "string"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "previousCheckId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "evidenceReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "note": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PilotSupportItemView": {
+        "required": [
+          "item",
+          "latest"
+        ],
+        "type": "object",
+        "properties": {
+          "item": {
+            "type": "string"
+          },
+          "latest": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PilotSupportCheckDto"
+              }
+            ]
           }
         }
       },
@@ -60872,6 +61660,800 @@
           }
         }
       },
+      "UatCatalogView": {
+        "required": [
+          "version",
+          "scenarios",
+          "shipRoles",
+          "tugRoles",
+          "environments",
+          "outcomes",
+          "severities"
+        ],
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string"
+          },
+          "scenarios": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UatScenario"
+            }
+          },
+          "shipRoles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tugRoles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "environments": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "outcomes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "severities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "authority": {
+            "type": "string",
+            "default": "HumanUatEvidenceOnly;EngineNeverAcceptsUat;NotAPilotGo"
+          }
+        }
+      },
+      "UatFindingCommand": {
+        "required": [
+          "scenarioId",
+          "severity",
+          "isUx",
+          "designConformance",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "scenarioId": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "isUx": {
+            "type": "boolean"
+          },
+          "designConformance": {
+            "type": "boolean"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UatFindingDto": {
+        "required": [
+          "id",
+          "runId",
+          "scope",
+          "scenarioId",
+          "severity",
+          "isUx",
+          "designConformance",
+          "title",
+          "state",
+          "reportedBy",
+          "reportedAt",
+          "resolvedBy",
+          "resolvedAt",
+          "resolution",
+          "resolutionReference",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "runId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "scenarioId": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "isUx": {
+            "type": "boolean"
+          },
+          "designConformance": {
+            "type": "boolean"
+          },
+          "title": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reportedBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reportedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "resolvedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "resolvedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "resolution": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "resolutionReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "UatFindingResolveCommand": {
+        "required": [
+          "state",
+          "resolution",
+          "resolutionReference",
+          "expectedVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "resolution": {
+            "type": "string"
+          },
+          "resolutionReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UatGateOutcome": {
+        "required": [
+          "scope",
+          "state",
+          "gateState",
+          "reasons",
+          "scenarios",
+          "openBlockers",
+          "openMajors",
+          "openDesignConformance",
+          "attestedRuns",
+          "pendingAttestation"
+        ],
+        "type": "object",
+        "properties": {
+          "scope": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "gateState": {
+            "type": "string"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "scenarios": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UatScenarioOutcome"
+            }
+          },
+          "openBlockers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "openMajors": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "openDesignConformance": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "attestedRuns": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pendingAttestation": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "authority": {
+            "type": "string",
+            "default": "HumanUatEvidenceOnly;EngineNeverAcceptsUat;NotAPilotGo"
+          }
+        }
+      },
+      "UatResultCommand": {
+        "required": [
+          "scenarioId",
+          "outcome",
+          "durationSeconds",
+          "assisted",
+          "automatedEvidenceReference",
+          "note"
+        ],
+        "type": "object",
+        "properties": {
+          "scenarioId": {
+            "type": "string"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "durationSeconds": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "assisted": {
+            "type": "boolean"
+          },
+          "automatedEvidenceReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "UatResultDto": {
+        "required": [
+          "id",
+          "runId",
+          "scenarioId",
+          "attempt",
+          "outcome",
+          "durationSeconds",
+          "assisted",
+          "automatedEvidenceReference",
+          "note",
+          "recordedBy",
+          "recordedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "runId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scenarioId": {
+            "type": "string"
+          },
+          "attempt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "durationSeconds": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "assisted": {
+            "type": "boolean"
+          },
+          "automatedEvidenceReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "recordedBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "evidenceRule": {
+            "type": "string",
+            "default": "AutomatedEvidenceIsAttachmentOnly"
+          }
+        }
+      },
+      "UatRunAttestCommand": {
+        "required": [
+          "statement",
+          "expectedVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "statement": {
+            "type": "string"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UatRunCreateCommand": {
+        "required": [
+          "scope",
+          "role",
+          "environment",
+          "buildCommit",
+          "participantPseudonym"
+        ],
+        "type": "object",
+        "properties": {
+          "scope": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "environment": {
+            "type": "string"
+          },
+          "buildCommit": {
+            "type": "string"
+          },
+          "participantPseudonym": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UatRunDetailView": {
+        "required": [
+          "run",
+          "results",
+          "findings",
+          "canRecord",
+          "canAttest"
+        ],
+        "type": "object",
+        "properties": {
+          "run": {
+            "$ref": "#/components/schemas/UatRunDto"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UatResultDto"
+            }
+          },
+          "findings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UatFindingDto"
+            }
+          },
+          "canRecord": {
+            "type": "boolean"
+          },
+          "canAttest": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UatRunDto": {
+        "required": [
+          "id",
+          "scope",
+          "role",
+          "environment",
+          "buildCommit",
+          "participantPseudonym",
+          "catalogVersion",
+          "state",
+          "facilitatorActorId",
+          "createdAt",
+          "submittedAt",
+          "attestedBy",
+          "attestedAt",
+          "attestationStatement",
+          "provenance",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "environment": {
+            "type": "string"
+          },
+          "buildCommit": {
+            "type": "string"
+          },
+          "participantPseudonym": {
+            "type": "string"
+          },
+          "catalogVersion": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "facilitatorActorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "submittedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "attestedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "attestedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "attestationStatement": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "UatRunSubmitCommand": {
+        "required": [
+          "expectedVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UatScenario": {
+        "required": [
+          "id",
+          "scope",
+          "journey",
+          "passProof",
+          "locator"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "journey": {
+            "type": "string"
+          },
+          "passProof": {
+            "type": "string"
+          },
+          "locator": {
+            "type": "string"
+          }
+        }
+      },
+      "UatScenarioOutcome": {
+        "required": [
+          "scenarioId",
+          "attestedRuns",
+          "passed",
+          "failed",
+          "blocked",
+          "notRun",
+          "passPercent"
+        ],
+        "type": "object",
+        "properties": {
+          "scenarioId": {
+            "type": "string"
+          },
+          "attestedRuns": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "passed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "failed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "blocked": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "notRun": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "passPercent": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "UatSummaryView": {
+        "required": [
+          "scope",
+          "catalogVersion",
+          "threshold",
+          "thresholdSequence",
+          "gate",
+          "runs",
+          "openFindings",
+          "canRecord",
+          "canRecordThreshold",
+          "canAttest"
+        ],
+        "type": "object",
+        "properties": {
+          "scope": {
+            "type": "string"
+          },
+          "catalogVersion": {
+            "type": "string"
+          },
+          "threshold": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/UatThresholdDto"
+              }
+            ]
+          },
+          "thresholdSequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "gate": {
+            "$ref": "#/components/schemas/UatGateOutcome"
+          },
+          "runs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UatRunDto"
+            }
+          },
+          "openFindings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UatFindingDto"
+            }
+          },
+          "canRecord": {
+            "type": "boolean"
+          },
+          "canRecordThreshold": {
+            "type": "boolean"
+          },
+          "canAttest": {
+            "type": "boolean"
+          },
+          "authority": {
+            "type": "string",
+            "default": "HumanUatEvidenceOnly;EngineNeverAcceptsUat;NotAPilotGo"
+          }
+        }
+      },
+      "UatThresholdCommand": {
+        "required": [
+          "scope",
+          "minScenarioPassPercent",
+          "maxOpenMajorFindings",
+          "requireDesignConformance",
+          "agreementReference",
+          "rationale",
+          "expectedSequence"
+        ],
+        "type": "object",
+        "properties": {
+          "scope": {
+            "type": "string"
+          },
+          "minScenarioPassPercent": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxOpenMajorFindings": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requireDesignConformance": {
+            "type": "boolean"
+          },
+          "agreementReference": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "expectedSequence": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UatThresholdDto": {
+        "required": [
+          "id",
+          "scope",
+          "sequence",
+          "previousThresholdId",
+          "minScenarioPassPercent",
+          "maxOpenMajorFindings",
+          "requireDesignConformance",
+          "agreementReference",
+          "rationale",
+          "actorId",
+          "recordedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "previousThresholdId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "minScenarioPassPercent": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxOpenMajorFindings": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requireDesignConformance": {
+            "type": "boolean"
+          },
+          "agreementReference": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
       "VesselCertificateContent": {
         "required": [
           "metadata"
@@ -63582,6 +65164,12 @@
     },
     {
       "name": "PilotMetricsEndpoints"
+    },
+    {
+      "name": "UatEndpoints"
+    },
+    {
+      "name": "PilotGateEndpoints"
     },
     {
       "name": "ParameterEndpoints"

@@ -36,6 +36,8 @@ import { RegulatoryReviewWorkspace } from './product/RegulatoryReviewWorkspace';
 import { ServiceReportWorkspace } from './product/ServiceReportWorkspace';
 import { VoiceEventDraftWorkspace } from './product/VoiceEventDraftWorkspace';
 import { DocumentCompareWorkspace } from './product/DocumentCompareWorkspace';
+import { UatWorkspace } from './product/UatWorkspace';
+import { PilotGateWorkspace } from './product/PilotGateWorkspace';
 import { RiskTemplateLibraryWorkspace } from './product/RiskTemplateLibraryWorkspace';
 import { CriticalSparesWorkspace } from './product/CriticalSparesWorkspace';
 import { AuditReadyWorkspace } from './product/AuditReadyWorkspace';
@@ -108,6 +110,10 @@ export function App() {
         return <ServiceReportWorkspace />;
     if (/^\/app\/voice-event-draft(?:\/|$)/.test(window.location.pathname))
         return <VoiceEventDraftWorkspace />;
+    if (/^\/app\/role-uat(?:\/|$)/.test(window.location.pathname))
+        return <UatWorkspace />;
+    if (/^\/app\/pilot-gate(?:\/|$)/.test(window.location.pathname))
+        return <PilotGateWorkspace />;
     if (/^\/app\/document-compare(?:\/|$)/.test(window.location.pathname))
         return <DocumentCompareWorkspace />;
     if (/^\/app\/work-order-center(?:\/|$)/.test(window.location.pathname))

@@ -8373,6 +8373,214 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/uat/scenarios": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["UatScenarioCatalog"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/uat/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["UatSummaryRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/uat/runs/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["UatRunRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/uat/thresholds": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["UatThresholdRecord"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/uat/runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["UatRunCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/uat/runs/{id}/results": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["UatResultRecord"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/uat/runs/{id}/findings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["UatFindingRecord"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/uat/runs/{id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["UatRunSubmit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/uat/runs/{id}/attest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["UatRunAttest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/uat/findings/{id}/resolve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["UatFindingResolve"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot-gate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PilotGateRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot-gate/support-checks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["PilotSupportCheckRecord"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot-gate/decisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["PilotGateDecide"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/parameter-definitions": {
         parameters: {
             query?: never;
@@ -14298,6 +14506,73 @@ export interface components {
             blockers: string[];
             href: string;
         };
+        PilotGateAuthorityDto: {
+            /** Format: uuid */
+            id: string;
+            duty: string;
+        };
+        PilotGateDecisionCommand: {
+            decision: string;
+            rationale: string;
+            conditions: string[];
+            expectedReviewHash: string;
+            /** Format: int64 */
+            expectedSequence: number;
+            /** Format: uuid */
+            authorityId: string;
+        };
+        PilotGateDecisionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            sequence: number;
+            /** Format: uuid */
+            previousDecisionId: null | string;
+            decision: string;
+            recommendation: string;
+            reviewHash: string;
+            conditions: string[];
+            rationale: string;
+            duty: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            recordedAt: string;
+            validity: string;
+        };
+        PilotGateInput: {
+            gate: string;
+            state: string;
+            reasons: string[];
+            source: string;
+        };
+        PilotGateReviewOutcome: {
+            recommendation: string;
+            gates: components["schemas"]["PilotGateInput"][];
+            /** Format: int32 */
+            openP0: null | number;
+            noGoReasons: string[];
+            hash: string;
+            /** @default ProductOwnerHumanDecisionRequired;EngineNeverDecidesGo;AiCannotDecide */
+            authority: string;
+        };
+        PilotGateView: {
+            review: components["schemas"]["PilotGateReviewOutcome"];
+            support: components["schemas"]["PilotSupportItemView"][];
+            decisions: components["schemas"]["PilotGateDecisionDto"][];
+            /** Format: int64 */
+            sequence: number;
+            authorities: components["schemas"]["PilotGateAuthorityDto"][];
+            canDecide: boolean;
+            canRecordSupport: boolean;
+            allowedDecisions: string[];
+            /** Format: date-time */
+            assessedAt: string;
+            /** @default 18.01/sheet:Backlog/row:76;18.01/sheet:DoR DoD Gates/row:4;23.03/paragraph:97-110;19.01/paragraph:130-136,276-279 */
+            sourceLocator: string;
+            /** @default ProductOwnerHumanDecisionRequired;EngineNeverDecidesGo;AiCannotDecide */
+            authority: string;
+        };
         PilotMetricCapabilitiesDto: {
             canContribute: boolean;
             canRead: boolean;
@@ -14372,6 +14647,34 @@ export interface components {
             retentionState: string;
             areas: string[];
             items: components["schemas"]["PilotMetricResult"][];
+        };
+        PilotSupportCheckCommand: {
+            item: string;
+            state: string;
+            evidenceReference: null | string;
+            note: string;
+            /** Format: int64 */
+            expectedSequence: number;
+        };
+        PilotSupportCheckDto: {
+            /** Format: uuid */
+            id: string;
+            item: string;
+            /** Format: int64 */
+            sequence: number;
+            /** Format: uuid */
+            previousCheckId: null | string;
+            state: string;
+            evidenceReference: null | string;
+            note: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            recordedAt: string;
+        };
+        PilotSupportItemView: {
+            item: string;
+            latest: null | components["schemas"]["PilotSupportCheckDto"];
         };
         PmsCommandCenterDto: {
             /** Format: uuid */
@@ -18708,6 +19011,222 @@ export interface components {
             requestedStart: null | string;
             /** Format: date-time */
             requestedEnd: null | string;
+        };
+        UatCatalogView: {
+            version: string;
+            scenarios: components["schemas"]["UatScenario"][];
+            shipRoles: string[];
+            tugRoles: string[];
+            environments: string[];
+            outcomes: string[];
+            severities: string[];
+            /** @default HumanUatEvidenceOnly;EngineNeverAcceptsUat;NotAPilotGo */
+            authority: string;
+        };
+        UatFindingCommand: {
+            scenarioId: string;
+            severity: string;
+            isUx: boolean;
+            designConformance: boolean;
+            title: string;
+        };
+        UatFindingDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            runId: string;
+            scope: string;
+            scenarioId: string;
+            severity: string;
+            isUx: boolean;
+            designConformance: boolean;
+            title: string;
+            state: string;
+            /** Format: uuid */
+            reportedBy: string;
+            /** Format: date-time */
+            reportedAt: string;
+            /** Format: uuid */
+            resolvedBy: null | string;
+            /** Format: date-time */
+            resolvedAt: null | string;
+            resolution: null | string;
+            resolutionReference: null | string;
+            /** Format: uint32 */
+            version: number;
+        };
+        UatFindingResolveCommand: {
+            state: string;
+            resolution: string;
+            resolutionReference: null | string;
+            /** Format: uint32 */
+            expectedVersion: number;
+        };
+        UatGateOutcome: {
+            scope: string;
+            state: string;
+            gateState: string;
+            reasons: string[];
+            scenarios: components["schemas"]["UatScenarioOutcome"][];
+            /** Format: int32 */
+            openBlockers: number;
+            /** Format: int32 */
+            openMajors: number;
+            /** Format: int32 */
+            openDesignConformance: number;
+            /** Format: int32 */
+            attestedRuns: number;
+            /** Format: int32 */
+            pendingAttestation: number;
+            /** @default HumanUatEvidenceOnly;EngineNeverAcceptsUat;NotAPilotGo */
+            authority: string;
+        };
+        UatResultCommand: {
+            scenarioId: string;
+            outcome: string;
+            /** Format: int32 */
+            durationSeconds: null | number;
+            assisted: boolean;
+            automatedEvidenceReference: null | string;
+            note: null | string;
+        };
+        UatResultDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            runId: string;
+            scenarioId: string;
+            /** Format: int32 */
+            attempt: number;
+            outcome: string;
+            /** Format: int32 */
+            durationSeconds: null | number;
+            assisted: boolean;
+            automatedEvidenceReference: null | string;
+            note: null | string;
+            /** Format: uuid */
+            recordedBy: string;
+            /** Format: date-time */
+            recordedAt: string;
+            /** @default AutomatedEvidenceIsAttachmentOnly */
+            evidenceRule: string;
+        };
+        UatRunAttestCommand: {
+            statement: string;
+            /** Format: uint32 */
+            expectedVersion: number;
+        };
+        UatRunCreateCommand: {
+            scope: string;
+            role: string;
+            environment: string;
+            buildCommit: string;
+            participantPseudonym: string;
+        };
+        UatRunDetailView: {
+            run: components["schemas"]["UatRunDto"];
+            results: components["schemas"]["UatResultDto"][];
+            findings: components["schemas"]["UatFindingDto"][];
+            canRecord: boolean;
+            canAttest: boolean;
+        };
+        UatRunDto: {
+            /** Format: uuid */
+            id: string;
+            scope: string;
+            role: string;
+            environment: string;
+            buildCommit: string;
+            participantPseudonym: string;
+            catalogVersion: string;
+            state: string;
+            /** Format: uuid */
+            facilitatorActorId: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            submittedAt: null | string;
+            /** Format: uuid */
+            attestedBy: null | string;
+            /** Format: date-time */
+            attestedAt: null | string;
+            attestationStatement: null | string;
+            provenance: string;
+            /** Format: uint32 */
+            version: number;
+        };
+        UatRunSubmitCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+        };
+        UatScenario: {
+            id: string;
+            scope: string;
+            journey: string;
+            passProof: string;
+            locator: string;
+        };
+        UatScenarioOutcome: {
+            scenarioId: string;
+            /** Format: int32 */
+            attestedRuns: number;
+            /** Format: int32 */
+            passed: number;
+            /** Format: int32 */
+            failed: number;
+            /** Format: int32 */
+            blocked: number;
+            /** Format: int32 */
+            notRun: number;
+            /** Format: int32 */
+            passPercent: null | number;
+        };
+        UatSummaryView: {
+            scope: string;
+            catalogVersion: string;
+            threshold: null | components["schemas"]["UatThresholdDto"];
+            /** Format: int64 */
+            thresholdSequence: number;
+            gate: components["schemas"]["UatGateOutcome"];
+            runs: components["schemas"]["UatRunDto"][];
+            openFindings: components["schemas"]["UatFindingDto"][];
+            canRecord: boolean;
+            canRecordThreshold: boolean;
+            canAttest: boolean;
+            /** @default HumanUatEvidenceOnly;EngineNeverAcceptsUat;NotAPilotGo */
+            authority: string;
+        };
+        UatThresholdCommand: {
+            scope: string;
+            /** Format: int32 */
+            minScenarioPassPercent: number;
+            /** Format: int32 */
+            maxOpenMajorFindings: number;
+            requireDesignConformance: boolean;
+            agreementReference: string;
+            rationale: string;
+            /** Format: int64 */
+            expectedSequence: number;
+        };
+        UatThresholdDto: {
+            /** Format: uuid */
+            id: string;
+            scope: string;
+            /** Format: int64 */
+            sequence: number;
+            /** Format: uuid */
+            previousThresholdId: null | string;
+            /** Format: int32 */
+            minScenarioPassPercent: number;
+            /** Format: int32 */
+            maxOpenMajorFindings: number;
+            requireDesignConformance: boolean;
+            agreementReference: string;
+            rationale: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            recordedAt: string;
         };
         VesselCertificateContent: {
             metadata: components["schemas"]["CertificateMetadata"];
@@ -33226,6 +33745,314 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PilotMetricSummaryDto"];
+                };
+            };
+        };
+    };
+    UatScenarioCatalog: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UatCatalogView"];
+                };
+            };
+        };
+    };
+    UatSummaryRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UatSummaryView"];
+                };
+            };
+        };
+    };
+    UatRunRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UatRunDetailView"];
+                };
+            };
+        };
+    };
+    UatThresholdRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UatThresholdCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UatThresholdDto"];
+                };
+            };
+        };
+    };
+    UatRunCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UatRunCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UatRunDto"];
+                };
+            };
+        };
+    };
+    UatResultRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UatResultCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UatResultDto"];
+                };
+            };
+        };
+    };
+    UatFindingRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UatFindingCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UatFindingDto"];
+                };
+            };
+        };
+    };
+    UatRunSubmit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UatRunSubmitCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UatRunDto"];
+                };
+            };
+        };
+    };
+    UatRunAttest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UatRunAttestCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UatRunDto"];
+                };
+            };
+        };
+    };
+    UatFindingResolve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UatFindingResolveCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UatFindingDto"];
+                };
+            };
+        };
+    };
+    PilotGateRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotGateView"];
+                };
+            };
+        };
+    };
+    PilotSupportCheckRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PilotSupportCheckCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotSupportCheckDto"];
+                };
+            };
+        };
+    };
+    PilotGateDecide: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PilotGateDecisionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotGateDecisionDto"];
                 };
             };
         };

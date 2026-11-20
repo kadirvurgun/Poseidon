@@ -294,7 +294,16 @@
     "MeasurementPointSave": "PREPARATION_COMMAND",
     "MeasurementReadingRecord": "PREPARATION_COMMAND",
     "MaintenancePostpone": "PREPARATION_COMMAND",
-    "MaintenancePostponementDecide": "HUMAN_REVIEW_WORKFLOW"
+    "MaintenancePostponementDecide": "HUMAN_REVIEW_WORKFLOW",
+    "UatThresholdRecord": "HUMAN_REVIEW_WORKFLOW",
+    "UatRunCreate": "PREPARATION_COMMAND",
+    "UatResultRecord": "PREPARATION_COMMAND",
+    "UatFindingRecord": "PREPARATION_COMMAND",
+    "UatRunSubmit": "PREPARATION_COMMAND",
+    "UatRunAttest": "HUMAN_REVIEW_WORKFLOW",
+    "UatFindingResolve": "HUMAN_REVIEW_WORKFLOW",
+    "PilotSupportCheckRecord": "HUMAN_REVIEW_WORKFLOW",
+    "PilotGateDecide": "HUMAN_REVIEW_WORKFLOW"
   },
   "reasonCodes": [
     "PREPARATION_COMMAND",
