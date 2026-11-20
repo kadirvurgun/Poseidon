@@ -87,10 +87,10 @@ describe('DEV-062 voice event draft workspace', () => {
       handoff: 'EVENT_DRAFT_CREATED', safetyEventId: '00000000-0000-4000-8000-0000000600e1', corrections: [{ key: 'occurredAt', outcome: 'ADDED', required: true }] }
     // The synthetic server is stateful: after the confirm receipt the component re-reads the canonical record,
     // which must then be the confirmed one (a stale GET would race the hand-off assertion on slow runners).
-    let current = complete
+    let current: unknown = complete
     const fetch = transport((path, init) => {
       if (path.endsWith('/confirm') && init?.method === 'POST') { current = confirmed; return json(confirmed) }
-      return handler(current)(path, init)
+      return handler(current as typeof complete)(path, init)
     })
     render(<VoiceEventDraftWorkspace/>)
     const detail = await screen.findByTestId('voice-detail')
