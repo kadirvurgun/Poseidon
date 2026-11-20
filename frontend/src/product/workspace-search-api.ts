@@ -11,6 +11,7 @@ const destinations: Readonly<Record<string, string>> = {
   'risk-assessment': '/app/risk-assessment', 'risk-template-library': '/app/risk-template-library', 'high-risk-work': '/app/high-risk-work', 'towage-plan': '/app/towage-plan', 'towage-risk-briefing': '/app/towage-risk-briefing',
   'work-order-center': '/app/work-order-center', 'critical-spares': '/app/critical-spares',
   'pms-command-center': '/app/pms-command-center', 'service-engineer-report': '/app/service-engineer-report',
+  'voice-event-draft': '/app/voice-event-draft', 'document-compare': '/app/document-compare',
   defects: '/app/defects',
   'fuel-bunker-log': '/app/fuel-bunker-log', 'port-activity-sof': '/app/port-activity-sof',
   'certificate-command-center': '/app/certificate-command-center', 'renewal-workflow': '/app/renewal-workflow',
@@ -29,6 +30,7 @@ export const isSeparateWorkspaceDestination = (href: string) =>
   href === '/app/operational-downtime' || /^\/app\/operational-downtime\/[0-9a-f-]{36}$/.test(href) ||
   href === '/app/risk-assessment' || /^\/app\/risk-assessment\/[0-9a-f-]{36}$/.test(href) || href === '/app/risk-template-library' ||
   href === '/app/pms-command-center' || /^\/app\/pms-command-center\/[0-9a-f-]{36}$/.test(href) || href === '/app/service-engineer-report' || /^\/app\/service-engineer-report\/[0-9a-f-]{36}$/.test(href) ||
+  href === '/app/voice-event-draft' || /^\/app\/voice-event-draft\/[0-9a-f-]{36}$/.test(href) || href === '/app/document-compare' || /^\/app\/document-compare\/[0-9a-f-]{36}$/.test(href) ||
   href === '/app/work-order-center' || href === '/app/critical-spares' || /^\/app\/work-order-center\/[0-9a-f-]{36}$/.test(href) ||
   href === '/app/defects' || /^\/app\/defects\/[0-9a-f-]{36}$/.test(href) ||
   href === '/app/fuel-bunker-log' || href === '/app/port-activity-sof' || /^\/app\/(fuel-bunker-log|port-activity-sof)\/[0-9a-f-]{36}$/.test(href) || href === '/app/certificate-command-center' || href === '/app/renewal-workflow' || /^\/app\/(certificate-command-center|renewal-workflow)\/[0-9a-f-]{36}$/.test(href) || href === '/app/pre-survey-checklist' || href === '/app/survey-planner' || /^\/app\/pre-survey-checklist\/[0-9a-f-]{36}$/.test(href) || href === '/app/noon-report' || href === '/app/deck-daily-log' || href === '/app/engine-daily-log' || /^\/app\/(noon-report|deck-daily-log|engine-daily-log)\/[0-9a-f-]{36}$/.test(href) || href === '/app/tug-command' || href === '/app/tug-job-board' || href === '/app/tug-job-intake' || href === '/app/tug-assignment' || href === '/app/tug-readiness' || href === '/app/tug-equipment-readiness' || href === '/app/tug-crew-readiness' || href === '/app/system-health' || href === '/app/notification-escalation' || href === '/app/offline-conflict-center'

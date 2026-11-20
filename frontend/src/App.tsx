@@ -27,6 +27,8 @@ import { DowntimeWorkspace } from './product/DowntimeWorkspace';
 import { RiskAssessmentWorkspace } from './product/RiskAssessmentWorkspace';
 import { PmsCommandCenterWorkspace } from './product/PmsCommandCenterWorkspace';
 import { ServiceReportWorkspace } from './product/ServiceReportWorkspace';
+import { VoiceEventDraftWorkspace } from './product/VoiceEventDraftWorkspace';
+import { DocumentCompareWorkspace } from './product/DocumentCompareWorkspace';
 import { RiskTemplateLibraryWorkspace } from './product/RiskTemplateLibraryWorkspace';
 import { CriticalSparesWorkspace } from './product/CriticalSparesWorkspace';
 import { AuditReadyWorkspace } from './product/AuditReadyWorkspace';
@@ -71,6 +73,10 @@ export function App() {
         return <PmsCommandCenterWorkspace />;
     if (/^\/app\/service-engineer-report(?:\/|$)/.test(window.location.pathname))
         return <ServiceReportWorkspace />;
+    if (/^\/app\/voice-event-draft(?:\/|$)/.test(window.location.pathname))
+        return <VoiceEventDraftWorkspace />;
+    if (/^\/app\/document-compare(?:\/|$)/.test(window.location.pathname))
+        return <DocumentCompareWorkspace />;
     if (/^\/app\/work-order-center(?:\/|$)/.test(window.location.pathname))
         return <WorkOrderWorkspace />;
     if (/^\/app\/operational-downtime(?:\/|$)/.test(window.location.pathname))

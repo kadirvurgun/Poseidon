@@ -188,4 +188,22 @@ public sealed partial class DirectoryWorkspaceTests
         }
         finally { Directory.Delete(root, true); }
     }
+
+    [Fact]
+    [Trait("Requirement", "DEV-062")]
+    public async Task Voice_draft_fixture_is_opt_in_idempotent_fictional_and_seeds_no_confirmation()
+    {
+        await using var db = new PoseidonDbContext(Poseidon.Persistence.Seeding.SeedImporter.Options(postgres.GetConnectionString(), seed), Guid.Empty, ActorContext.SeedImport(), true);
+        await using (var tx = await db.Database.BeginTransactionAsync(Ct))
+        {
+            await Poseidon.Persistence.Seeding.VoiceEventDraftFixtures.AddMissingAsync(db, seed.Vessels, Ct);
+            await Poseidon.Persistence.Seeding.VoiceEventDraftFixtures.AddMissingAsync(db, seed.Vessels, Ct); await tx.CommitAsync(Ct);
+        }
+        var ids = seed.Vessels.Select(v => Poseidon.Persistence.Seeding.VoiceEventDraftFixtures.DraftId(v.Id)).ToArray();
+        var rows = await db.VoiceEventDrafts.Where(d => ids.Contains(d.Id)).ToArrayAsync(Ct);
+        Assert.Equal(ids.Length, rows.Length);
+        Assert.All(rows, d => Assert.Equal(("DRAFT", "SyntheticUnverified", "TYPED", (Guid?)null, "NOT_RETAINED"), (d.State, d.Provenance, d.TranscriptOrigin, d.ConfirmedBy, d.AudioRetention)));
+        Assert.Equal(ids.Length, await db.VoiceEventDraftRevisions.CountAsync(r => ids.Contains(r.DraftId), Ct));
+        Assert.Empty(await db.VoiceEventDraftReceipts.Where(r => ids.Contains(r.ResourceId)).ToArrayAsync(Ct));
+    }
 }
