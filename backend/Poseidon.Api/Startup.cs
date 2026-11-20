@@ -241,6 +241,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapMeasurementPoints();
             endpoints.MapMaintenancePostponements();
             endpoints.MapTug();
+            endpoints.MapDrydock(); // S9 WP-D DEV-111
             endpoints.MapParameters();
             endpoints.MapHr();
             endpoints.MapMemberships();

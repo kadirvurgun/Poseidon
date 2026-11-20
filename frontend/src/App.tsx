@@ -8,6 +8,7 @@ import { DailyReportWorkspace } from './product/DailyReportWorkspace';
 import { TugWorkspace } from './product/TugWorkspace';
 import { TugReadinessWorkspace } from './product/TugReadinessWorkspace';
 import { TowageWorkspace } from './product/TowageWorkspace';
+import { FieldOpsWorkspace } from './product/FieldOpsWorkspace';
 import { HighRiskWorkWorkspace } from './product/HighRiskWorkWorkspace';
 import { SafetyEventsWorkspace } from './product/SafetyEventsWorkspace';
 import { TechnicalWorkspace } from './product/TechnicalWorkspace';
@@ -61,6 +62,9 @@ export function App() {
     if (/^\/app\/tug-(assignment|readiness|equipment-readiness|crew-readiness)(?:\/|$)/.test(window.location.pathname))
         return <TugReadinessWorkspace />;
     // S8 WP-D DEV-087/088 towage plan and risk & briefing; DEV-107 fleet high-risk work.
+    // S9 WP-D DEV-089/090/111 towage execution console, tug daily log and drydock planning.
+    if (/^\/app\/(towage-execution|tug-daily-log|drydock-planning)(?:\/|$)/.test(window.location.pathname))
+        return <FieldOpsWorkspace />;
     if (/^\/app\/towage-(plan|risk-briefing)(?:\/|$)/.test(window.location.pathname))
         return <TowageWorkspace />;
     if (/^\/app\/high-risk-work(?:\/|$)/.test(window.location.pathname))

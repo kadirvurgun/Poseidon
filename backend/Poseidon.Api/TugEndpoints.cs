@@ -35,6 +35,8 @@ public static partial class TugEndpoints
         app.MapTugReadiness(); // S7 WP-B DEV-084..086
         app.MapTowage(); // S8 WP-D DEV-087/088
         app.MapHighRiskWork(); // S8 WP-D DEV-107
+        app.MapTowageExecutions(); // S9 WP-D DEV-089
+        app.MapTugDailyLogs(); // S9 WP-D DEV-090
     }
     private static TrustedActor Actor(HttpContext h) => h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User)!;
     private static bool Write(TrustedActor a, Guid vessel) => a.CanReadTug && a.HasWriteAttribution && a.Permissions.Contains("tug.write") &&
