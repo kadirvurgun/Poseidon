@@ -69,7 +69,7 @@ it('rejects history contracts that would hide a cancellation or show unknown sta
 })
 
 it('accepts the tug operations conflict source with its operation code and refuses an unknown one', () => {
-  const sources = ['crewAssignment', 'tugPlan', 'dailyRecord', 'workOrderEvidence', 'tugOperations'].map(source => ({ source, state: 'Included' }))
+  const sources = ['crewAssignment', 'tugPlan', 'dailyRecord', 'workOrderEvidence', 'tugOperations', 'certificateRenewal'].map(source => ({ source, state: 'Included' }))
   const row = { source: 'tugOperations', resourceId: log, resourceKind: 'tug.daily.entry.v1', enrollmentId: job, commandId: command, baseVersion: 0, serverVersionAtConflict: 0,
     capturedAt: T, receivedAt: T, state: 'Open', resolutionCommandId: null, resolutionResult: null }
   const value = { vesselId: vessel, readAt: T, sources, items: [row], offset: 0, hasMore: false }
