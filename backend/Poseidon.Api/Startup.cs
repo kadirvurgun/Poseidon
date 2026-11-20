@@ -37,6 +37,12 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         // S9 WP-B DEV-060: absent operator configuration leaves safety-event offline capture unavailable.
         services.AddSingleton(configuration.GetSection("SafetyEventOffline").Get<SafetyEventOfflineSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<ISafetyEventBlockerSource, SafetyEventBlockerSource>();
+        // S11 WP-D DEV-075: one reader per pilot gate. Not-yet-integrated owners stay DEFERRED (never PASS).
+        foreach (var deferred in DeferredPilotGateSource.Defaults()) services.AddSingleton(deferred);
+        services.AddSingleton<IPilotGateSource>(new UatPilotGateSource(Poseidon.Domain.UatScenarioCatalog.Ship));
+        services.AddSingleton<IPilotGateSource>(new UatPilotGateSource(Poseidon.Domain.UatScenarioCatalog.Tug));
+        services.AddSingleton<IPilotGateSource, SupportPilotGateSource>();
+        services.AddSingleton<IPilotP0Source, UatBlockerP0Source>();
         services.AddSingleton<ISpareGapSource, SpareGapReader>();
         services.AddSingleton(configuration.GetSection("NotificationScheduler").Get<NotificationSchedulerSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<NotificationServiceContexts>();
@@ -242,6 +248,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapMaintenancePostponements();
             endpoints.MapTug();
             endpoints.MapDrydock(); // S9 WP-D DEV-111
+            endpoints.MapUat(); // S11 WP-D DEV-074/094
+            endpoints.MapPilotGate(); // S11 WP-D DEV-075
             endpoints.MapParameters();
             endpoints.MapHr();
             endpoints.MapMemberships();

@@ -32,6 +32,8 @@ const labels: Record<string, {
     'safety-events': { tr: sourceText("tr", "pairs.m_8a32195b2423b0ae"), en: sourceText("en", "pairs.m_8a32195b2423b0ae"), icon: ShieldCheck, group: 'assurance' },
     'voice-event-draft': { tr: sourceText("tr", "pairs.m_9a7c51e0d3b2f461"), en: sourceText("en", "pairs.m_9a7c51e0d3b2f461"), icon: ClipboardList, group: 'assurance' },
     'document-compare': { tr: sourceText("tr", "pairs.m_9a7c51e0d3b2f462"), en: sourceText("en", "pairs.m_9a7c51e0d3b2f462"), icon: FolderCheck, group: 'assurance' },
+    'role-uat': { tr: sourceText("tr", "pairs.m_5b1e7c9d3a2f4e60"), en: sourceText("en", "pairs.m_5b1e7c9d3a2f4e60"), icon: FolderCheck, group: 'assurance' },
+    'pilot-gate': { tr: sourceText("tr", "pairs.m_5b1e7c9d3a2f4e61"), en: sourceText("en", "pairs.m_5b1e7c9d3a2f4e61"), icon: FolderCheck, group: 'assurance' },
     'high-risk-work': { tr: sourceText("tr", "pairs.m_04076d4cdaa5ec7d"), en: sourceText("en", "pairs.m_04076d4cdaa5ec7d"), icon: ShieldCheck, group: 'assurance' },
     'work-order-center': { tr: sourceText("tr", "pairs.m_8b20599d8e3aae73"), en: sourceText("en", "pairs.m_8b20599d8e3aae73"), icon: ClipboardList, group: 'operations' },
     'critical-spares': { tr: sourceText("tr", "pairs.m_5e7a1c0d2b4f9b10"), en: sourceText("en", "pairs.m_5e7a1c0d2b4f9b10"), icon: ClipboardList, group: 'operations' },

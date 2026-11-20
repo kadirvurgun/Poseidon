@@ -284,3 +284,15 @@ departure decisions (`ship.DepartureDecisions`) and their receipts are signed hu
 are never seeded: no RELEASE, HOLD or DENY, no receipt and no Master appointment exist in any fixture.
 DB CHECKs allow RELEASE only against a CURRENT READY assessment by the Master duty. Default seed audit
 counts are unchanged.
+
+## S11-WPD DEV-074/094/075 — UAT run fixture (optional)
+
+`UatFixtures.AddMissingAsync` is an explicit administrative fixture, not wired into normal startup/seed import
+(default seed and audit totals unchanged). Per tenant it adds one FICTIONAL OPEN ship UAT run (role MASTER) and one
+FICTIONAL OPEN tug UAT run (role TUG_MASTER) with pseudonym `FICTIONAL-<SCOPE>-01`, environment LAB, facilitated by a
+deterministic synthetic actor id without membership, provenance `SyntheticUnverified`. No outcome, finding, UAT
+threshold, submission, attestation, support check, pilot gate decision, Product Owner appointment or receipt is seeded;
+DB CHECK `CK_UatRun_Synthetic` rejects a synthetic run leaving OPEN. UAT thresholds, attestations and go/no-go decisions
+are human records and are never seeded. Add-missing; operator edits are preserved. Real-PostgreSQL test
+`Readers_without_permission_are_denied_unknown_runs_are_not_found_and_the_uat_fixture_is_opt_in_fictional_and_open` is
+AUTHORED, execution DEFERRED to CI.

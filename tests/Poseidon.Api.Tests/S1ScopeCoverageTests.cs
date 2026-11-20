@@ -59,9 +59,10 @@ public sealed partial class DirectoryWorkspaceTests
         // S9 WP-C adds 7: DEV-062 voice draft create/update/confirm/reject + transcription observation; DEV-114 acknowledgement and content access.
         // S9 WP-D adds 12 (DEV-089 execution start/transition/event/verify; DEV-090 daily log create/update/submit/review;
         // DEV-111 drydock create/update/transition/verify).
-        Assert.Equal(260, observed.Count);
-        Assert.Equal(251, observed.Count(x => x.IsCritical));
-        Assert.Equal(271, S1SecurityContract.CriticalOperationIds.Count);
+        // S11 WP-D adds 9 (DEV-074/094 UAT threshold/run create/result/finding/submit/attest/finding resolve; DEV-075 support check and go/no-go decision).
+        Assert.Equal(269, observed.Count);
+        Assert.Equal(260, observed.Count(x => x.IsCritical));
+        Assert.Equal(280, S1SecurityContract.CriticalOperationIds.Count);
         Assert.Equal(9, observed.Count(x => !x.IsCritical));
         var extra = new RouteEndpoint(_ => Task.CompletedTask, RoutePatternFactory.Parse("/api/v1/unclassified-write"), 0,
             new EndpointMetadataCollection(new HttpMethodMetadata(["POST"]), new AuthorizeAttribute("DirectoryRead")), "unclassified");

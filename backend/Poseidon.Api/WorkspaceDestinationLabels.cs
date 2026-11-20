@@ -28,6 +28,8 @@ internal static class WorkspaceDestinationLabels
         ["service-engineer-report"] = ["Servis ve mühendis raporları", "Service and engineer reports"],
         ["voice-event-draft"] = ["Sesli olay taslağı", "Voice event draft"],
         ["document-compare"] = ["Doküman revizyon karşılaştırma", "Document revision compare"],
+        ["role-uat"] = ["Rol UAT kayıtları", "Role UAT records"],
+        ["pilot-gate"] = ["Pilot go/no-go incelemesi", "Pilot go/no-go review"],
         ["operational-downtime"] = ["Operasyonel duruşlar", "Operational downtime"],
         ["risk-assessment"] = ["Risk değerlendirmesi", "Risk assessment"],
         ["risk-template-library"] = ["Risk şablon kütüphanesi", "Risk template library"],
