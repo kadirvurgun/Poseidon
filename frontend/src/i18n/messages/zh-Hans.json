@@ -1,5 +1,53 @@
 {
   "copies": {
+    "ShipOpsLifecyclePanel_tsx_copy": {
+      "sofTitle": "Statement of Facts 定稿",
+      "sofIntro": "定稿是经指定的船长、大副或轮机长作出的明确人工行为。它记录由谁、何时、职务和原因。它是内部的：不是签字，也不是外部协议。",
+      "draft": "草稿",
+      "final": "定稿（内部）",
+      "signature": "未记录签字",
+      "amended": "定稿后已修改：需要重新审核并定稿。",
+      "missing": "缺少必填事实：{{fields}}",
+      "unresolved": "这些必填引用没有可查询的来源，因此航次保持未知。定稿前请逐项明确确认：",
+      "authority": "任命",
+      "finalize": "定稿 SOF",
+      "noAuthority": "此船没有当前有效的定稿任命。",
+      "history": "生命周期历史",
+      "loading": "正在加载…",
+      "unavailable": "您当前的访问权限不可用。",
+      "retry": "重试",
+      "offline": "离线：生命周期命令需要当前在线会话。",
+      "unknownOutcome": "结果未知：重试只会再发送一次相同命令。",
+      "done": "命令已记录。",
+      "failed": "命令未被接受：{{code}}",
+      "dtTitle": "停航审核与关闭",
+      "dtIntro": "提交、核实和关闭都是明确的人工行为。记录内容的人绝不核实或关闭该内容。已核实关闭不等于安全放行。",
+      "state": "状态",
+      "loh": "租金损失（Loss of Hire）候选",
+      "lohReview": "需要审核：仅为候选，不涉及权利或金额",
+      "lohUnknown": "未知（未申报开始时间）",
+      "evidence": "索赔证据（链接不等于核实）",
+      "noEvidence": "未链接索赔证据。",
+      "link": "链接证据",
+      "unlink": "移除",
+      "selectEvidence": "选择证据",
+      "recorderNote": "此停航由您记录：必须由另一位受任命人员核实并关闭。",
+      "states": {
+        "NOT_SUBMITTED": "未提交",
+        "OPEN": "打开",
+        "IN_REVIEW": "审核中",
+        "VERIFIED": "已核实（人工）",
+        "CLOSED": "已关闭"
+      },
+      "actions": {
+        "SUBMIT_FOR_REVIEW": "提交审核",
+        "RETURN_FOR_CORRECTION": "退回更正",
+        "VERIFY": "核实",
+        "CLOSE": "关闭",
+        "LINK_CLAIM_EVIDENCE": "链接索赔证据",
+        "UNLINK_CLAIM_EVIDENCE": "移除索赔证据"
+      }
+    },
     "ShipOperationsLedgerPanel_tsx_copy": {
       "fuelTitle": "ROB 连续性审核",
       "portTitle": "Statement of Facts 时间线",

@@ -1,5 +1,53 @@
 {
   "copies": {
+    "ShipOpsLifecyclePanel_tsx_copy": {
+      "sofTitle": "Statement of Facts kesinleştirme",
+      "sofIntro": "Kesinleştirme, atanmış Kaptan, Birinci Zabit veya Başmühendisin açık bir insan eylemidir. Kimin, ne zaman, hangi görevle ve hangi gerekçeyle kesinleştirdiğini kaydeder. İçseldir: imza ya da dış mutabakat değildir.",
+      "draft": "TASLAK",
+      "final": "KESİN (içsel)",
+      "signature": "İmza kaydedilmedi",
+      "amended": "KESİN sonrası değiştirildi: yeni inceleme ve kesinleştirme gerekir.",
+      "missing": "Eksik zorunlu bilgiler: {{fields}}",
+      "unresolved": "Bu zorunlu referanslar için sahip arama kaynağı yok; sefer BİLİNMİYOR olarak kalır. Kesinleştirmek için her birini açıkça onaylayın:",
+      "authority": "Atama",
+      "finalize": "SOF’u kesinleştir",
+      "noAuthority": "Bu gemi için geçerli kesinleştirme ataması yok.",
+      "history": "Yaşam döngüsü geçmişi",
+      "loading": "Yükleniyor…",
+      "unavailable": "Mevcut erişiminizle kullanılamıyor.",
+      "retry": "Yeniden dene",
+      "offline": "Çevrimdışı: yaşam döngüsü komutları güncel çevrimiçi oturum gerektirir.",
+      "unknownOutcome": "Sonuç bilinmiyor: yeniden deneme aynı komutu bir kez gönderir.",
+      "done": "Komut kaydedildi.",
+      "failed": "Komut kabul edilmedi: {{code}}",
+      "dtTitle": "Duruş inceleme ve kapanışı",
+      "dtIntro": "Gönderim, doğrulama ve kapanış açık insan eylemleridir. İçeriği kaydeden kişi onu asla doğrulamaz veya kapatmaz. Doğrulanmış kapanış emniyet serbest bırakması değildir.",
+      "state": "Durum",
+      "loh": "Kira kaybı (Loss of Hire) adayı",
+      "lohReview": "İnceleme gerekli: yalnızca aday, hak veya tutar yok",
+      "lohUnknown": "Bilinmiyor (başlangıç beyan edilmedi)",
+      "evidence": "Talep kanıtı (bağlantı doğrulama değildir)",
+      "noEvidence": "Bağlı talep kanıtı yok.",
+      "link": "Kanıt bağla",
+      "unlink": "Kaldır",
+      "selectEvidence": "Kanıt seçin",
+      "recorderNote": "Bu duruşu siz kaydettiniz: doğrulama ve kapanışı başka bir atanmış kişi yapmalıdır.",
+      "states": {
+        "NOT_SUBMITTED": "Gönderilmedi",
+        "OPEN": "Açık",
+        "IN_REVIEW": "İncelemede",
+        "VERIFIED": "Doğrulandı (insan)",
+        "CLOSED": "Kapatıldı"
+      },
+      "actions": {
+        "SUBMIT_FOR_REVIEW": "İncelemeye gönder",
+        "RETURN_FOR_CORRECTION": "Düzeltmeye iade et",
+        "VERIFY": "Doğrula",
+        "CLOSE": "Kapat",
+        "LINK_CLAIM_EVIDENCE": "Talep kanıtı bağla",
+        "UNLINK_CLAIM_EVIDENCE": "Talep kanıtını kaldır"
+      }
+    },
     "ShipOperationsLedgerPanel_tsx_copy": {
       "fuelTitle": "ROB süreklilik incelemesi",
       "portTitle": "Statement of Facts zaman çizelgesi",

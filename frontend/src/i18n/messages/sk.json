@@ -1,5 +1,53 @@
 {
   "copies": {
+    "ShipOpsLifecyclePanel_tsx_copy": {
+      "sofTitle": "Finalizácia Statement of Facts",
+      "sofIntro": "Finalizácia je výslovný ľudský úkon menovaného kapitána, prvého dôstojníka alebo prvého strojného dôstojníka. Zaznamená kto, kedy, funkciu a dôvod. Je interná: nie je to podpis ani externá dohoda.",
+      "draft": "KONCEPT",
+      "final": "FINÁLNY (interný)",
+      "signature": "Podpis nezaznamenaný",
+      "amended": "Zmenené po FINÁLNOM: je potrebná nová kontrola a finalizácia.",
+      "missing": "Chýbajúce povinné údaje: {{fields}}",
+      "unresolved": "Pre tieto povinné odkazy neexistuje zdroj vyhľadávania; plavba zostáva NEZNÁMA. Na finalizáciu každý výslovne potvrďte:",
+      "authority": "Menovanie",
+      "finalize": "Finalizovať SOF",
+      "noAuthority": "Pre toto plavidlo neexistuje platné menovanie na finalizáciu.",
+      "history": "História životného cyklu",
+      "loading": "Načítava sa…",
+      "unavailable": "Pre váš aktuálny prístup nedostupné.",
+      "retry": "Skúsiť znova",
+      "offline": "Offline: príkazy životného cyklu vyžadujú aktuálnu online reláciu.",
+      "unknownOutcome": "Výsledok neznámy: opakovanie odošle rovnaký príkaz raz.",
+      "done": "Príkaz zaznamenaný.",
+      "failed": "Príkaz neprijatý: {{code}}",
+      "dtTitle": "Kontrola a uzavretie odstávky",
+      "dtIntro": "Odoslanie, overenie a uzavretie sú výslovné ľudské úkony. Kto obsah zaznamenal, ho nikdy neoveruje ani neuzatvára. Overené uzavretie nie je bezpečnostné uvoľnenie.",
+      "state": "Stav",
+      "loh": "Kandidát Loss of Hire",
+      "lohReview": "Vyžaduje sa kontrola: iba kandidát, bez nároku či sumy",
+      "lohUnknown": "Neznáme (nedeklarovaný začiatok)",
+      "evidence": "Dôkazy k nároku (odkaz nie je overenie)",
+      "noEvidence": "Nie sú pripojené dôkazy k nároku.",
+      "link": "Pripojiť dôkaz",
+      "unlink": "Odobrať",
+      "selectEvidence": "Vyberte dôkaz",
+      "recorderNote": "Túto odstávku ste zaznamenali vy: overiť a uzavrieť ju musí iná menovaná osoba.",
+      "states": {
+        "NOT_SUBMITTED": "Neodoslané",
+        "OPEN": "Otvorené",
+        "IN_REVIEW": "V kontrole",
+        "VERIFIED": "Overené (človek)",
+        "CLOSED": "Uzavreté"
+      },
+      "actions": {
+        "SUBMIT_FOR_REVIEW": "Odoslať na kontrolu",
+        "RETURN_FOR_CORRECTION": "Vrátiť na opravu",
+        "VERIFY": "Overiť",
+        "CLOSE": "Uzavrieť",
+        "LINK_CLAIM_EVIDENCE": "Pripojiť dôkaz k nároku",
+        "UNLINK_CLAIM_EVIDENCE": "Odobrať dôkaz k nároku"
+      }
+    },
     "ShipOperationsLedgerPanel_tsx_copy": {
       "fuelTitle": "Kontrola kontinuity ROB",
       "portTitle": "Časová os Statement of Facts",

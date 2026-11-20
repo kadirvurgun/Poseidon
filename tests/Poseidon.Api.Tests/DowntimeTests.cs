@@ -27,11 +27,12 @@ public sealed partial class DirectoryWorkspaceTests
     private static DowntimeDraftCommand DowntimeDraft(Guid? id=null)=>new(id??Guid.NewGuid(),0,[],DowntimePolicy.SourceVersion);
     private static string DowntimeFacts(DowntimeRecordDto record)=>JsonSerializer.Serialize(record);
     [Fact]
-    public async Task Downtime_preserves_incomplete_source_facts_actual_versions_exact_receipts_history_and_attributed_audit_without_LoH_or_closure() {
+    public async Task Downtime_preserves_incomplete_source_facts_actual_versions_exact_receipts_history_and_attributed_audit_without_LoH_decision_or_closure() {
         await using var host=Host();using var client=Client(host);DowntimePermissions(host.Services);
         var command=DowntimeDraft() with{Fields=new(){["cause"]=new("Known","FICTIONAL incident\nNo approved conclusion"),["start_at"]=new("Known","2026-11-09T12:00:00+03:00"),["end_at"]=new("Known","2026-11-09T09:00:00.0000001Z"),["duration_minutes"]=new("Unknown",null)}};
         var key=Guid.NewGuid().ToString("D");using var first=await DowntimeSend(client,command,key);Assert.Equal(HttpStatusCode.OK,first.StatusCode);var saved=(await first.Content.ReadFromJsonAsync<DowntimeRecordDto>(Ct))!;
-        Assert.Equal(14,saved.Fields.Count);Assert.Equal(new DowntimeFact("Unknown",null),saved.Fields["closure_state"]);Assert.Equal(new DowntimeFact("Unknown",null),saved.Fields["loss_of_hire_flag"]);Assert.Equal(SeedVessel.Id.ToString("D"),saved.Fields["vessel_id"].Value);
+        Assert.Equal(14,saved.Fields.Count);Assert.Equal(new DowntimeFact("Unknown",null),saved.Fields["closure_state"]);// DEV-102 AC "Loss of Hire candidate" (60.01 p.1682): a declared start yields the computed claim candidate REVIEW_REQUIRED, never YES/NO.
+        Assert.Equal(new DowntimeFact("Known","REVIEW_REQUIRED"),saved.Fields["loss_of_hire_flag"]);Assert.Equal("REVIEW_REQUIRED",saved.Lifecycle!.LossOfHireCandidate);Assert.Equal("NOT_SUBMITTED",saved.Lifecycle.State);Assert.Equal(SeedVessel.Id.ToString("D"),saved.Fields["vessel_id"].Value);
         Assert.Equal("DRAFT",saved.State);Assert.Equal("REVIEW_REQUIRED",saved.Qualification);Assert.False(saved.CurrentRevision);Assert.False(saved.CanEdit);Assert.Equal("1",saved.EngineeringInterval.ElapsedTicks);Assert.Equal("UNASSESSED",saved.EngineeringInterval.Qualification);Assert.Equal("Unknown",saved.Fields["duration_minutes"].State);
         using var replay=await DowntimeSend(client,command,key);Assert.Equal(DowntimeFacts(saved),DowntimeFacts((await replay.Content.ReadFromJsonAsync<DowntimeRecordDto>(Ct))!));
         Assert.Equal(HttpStatusCode.Conflict,(await DowntimeSend(client,command with{Fields=[]},key)).StatusCode);

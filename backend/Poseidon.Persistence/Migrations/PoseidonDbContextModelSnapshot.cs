@@ -4421,6 +4421,13 @@ namespace Poseidon.Persistence.Migrations
                     b.Property<Guid>("ActorId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("ClaimEvidenceJson")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClosureState")
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
                     b.Property<string>("FieldsJson")
                         .IsRequired()
                         .HasColumnType("text");
@@ -4467,7 +4474,7 @@ namespace Poseidon.Persistence.Migrations
 
                     b.ToTable("Downtimes", "operations", t =>
                         {
-                            t.HasCheckConstraint("CK_Downtime_Draft", "\"Revision\">0 AND \"Provenance\" IN ('UserDeclaredUnverified','SyntheticUnverified')");
+                            t.HasCheckConstraint("CK_Downtime_Draft", "\"Revision\">0 AND \"Provenance\" IN ('UserDeclaredUnverified','SyntheticUnverified') AND (\"ClosureState\" IS NULL OR \"ClosureState\" IN ('OPEN','IN_REVIEW','VERIFIED','CLOSED'))");
                         });
                 });
 
@@ -4533,6 +4540,13 @@ namespace Poseidon.Persistence.Migrations
                     b.Property<Guid>("ActorId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("ClaimEvidenceJson")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ClosureState")
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
                     b.Property<string>("FieldsJson")
                         .IsRequired()
                         .HasColumnType("text");
@@ -4573,7 +4587,7 @@ namespace Poseidon.Persistence.Migrations
 
                     b.ToTable("DowntimeRevisions", "operations", t =>
                         {
-                            t.HasCheckConstraint("CK_DowntimeRevision_Draft", "\"Revision\">0 AND \"RecordVersion\">0 AND \"Provenance\" IN ('UserDeclaredUnverified','SyntheticUnverified')");
+                            t.HasCheckConstraint("CK_DowntimeRevision_Draft", "\"Revision\">0 AND \"RecordVersion\">0 AND \"Provenance\" IN ('UserDeclaredUnverified','SyntheticUnverified') AND (\"ClosureState\" IS NULL OR \"ClosureState\" IN ('OPEN','IN_REVIEW','VERIFIED','CLOSED'))");
                         });
                 });
 
@@ -10073,6 +10087,9 @@ namespace Poseidon.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<long?>("FinalRevision")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Hash")
                         .IsRequired()
                         .HasMaxLength(64)
@@ -10100,6 +10117,10 @@ namespace Poseidon.Persistence.Migrations
                     b.Property<DateTimeOffset>("SavedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("SofState")
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)");
+
                     b.Property<string>("SourceVersion")
                         .IsRequired()
                         .HasMaxLength(160)
@@ -10120,7 +10141,7 @@ namespace Poseidon.Persistence.Migrations
 
                     b.ToTable("ShipOperations", "operations", t =>
                         {
-                            t.HasCheckConstraint("CK_ShipOperation_State", "\"Kind\" IN ('Fuel','Port') AND \"Revision\">0 AND \"Provenance\" IN ('UserDeclaredUnverified','SyntheticUnverified')");
+                            t.HasCheckConstraint("CK_ShipOperation_State", "\"Kind\" IN ('Fuel','Port') AND \"Revision\">0 AND \"Provenance\" IN ('UserDeclaredUnverified','SyntheticUnverified') AND (\"SofState\" IS NULL OR \"Kind\"='Port' AND \"SofState\" IN ('DRAFT','FINAL')) AND (\"FinalRevision\" IS NULL OR \"FinalRevision\">0 AND \"FinalRevision\"<=\"Revision\")");
                         });
                 });
 
@@ -10190,6 +10211,9 @@ namespace Poseidon.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<long?>("FinalRevision")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Hash")
                         .IsRequired()
                         .HasMaxLength(64)
@@ -10217,6 +10241,10 @@ namespace Poseidon.Persistence.Migrations
                     b.Property<DateTimeOffset>("SavedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("SofState")
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)");
+
                     b.Property<string>("SourceVersion")
                         .IsRequired()
                         .HasMaxLength(160)
@@ -10231,7 +10259,95 @@ namespace Poseidon.Persistence.Migrations
 
                     b.ToTable("ShipOperationRevisions", "operations", t =>
                         {
-                            t.HasCheckConstraint("CK_ShipOperationRevision_State", "\"Revision\">0 AND \"RecordVersion\">0 AND \"Provenance\" IN ('UserDeclaredUnverified','SyntheticUnverified')");
+                            t.HasCheckConstraint("CK_ShipOperationRevision_State", "\"Revision\">0 AND \"RecordVersion\">0 AND \"Provenance\" IN ('UserDeclaredUnverified','SyntheticUnverified') AND (\"SofState\" IS NULL OR \"SofState\" IN ('DRAFT','FINAL')) AND (\"FinalRevision\" IS NULL OR \"FinalRevision\">0 AND \"FinalRevision\"<=\"Revision\")");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.ShipOpsLifecycleEvent", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AuthorityHash")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid?>("AuthorityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("DetailJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Duty")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<long>("FromRevision")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("FromState")
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<string>("Module")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<string>("ReasonCode")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("RecordHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("RecordId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("RoleId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("SavedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SignatureState")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<long>("ToRevision")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("ToState")
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "VesselId", "Module", "RecordId", "ToRevision")
+                        .IsUnique();
+
+                    b.ToTable("ShipOpsLifecycleEvents", "operations", t =>
+                        {
+                            t.HasCheckConstraint("CK_ShipOpsLifecycleEvent_State", "\"Module\" IN ('PortSof','Downtime') AND \"FromRevision\">0 AND \"ToRevision\"=\"FromRevision\"+1 AND \"SignatureState\"='SOF_SIGNATURE_NOT_RECORDED' AND (\"Module\"<>'PortSof' OR \"Action\"='FINALIZE' AND \"AuthorityId\" IS NOT NULL AND \"Duty\" IN ('Master','ChiefOfficer','ChiefEngineer'))");
                         });
                 });
 
@@ -15999,6 +16115,15 @@ namespace Poseidon.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("FK_ShipOperationRevision_Head");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.ShipOpsLifecycleEvent", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.Vessel", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Poseidon.Persistence.StoredFile", b =>

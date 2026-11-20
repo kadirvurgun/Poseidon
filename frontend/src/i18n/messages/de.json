@@ -1,5 +1,53 @@
 {
   "copies": {
+    "ShipOpsLifecyclePanel_tsx_copy": {
+      "sofTitle": "Abschluss des Statement of Facts",
+      "sofIntro": "Der Abschluss ist eine ausdrückliche menschliche Handlung eines bestellten Kapitäns, Ersten Offiziers oder Leitenden Ingenieurs. Erfasst werden wer, wann, Funktion und Grund. Er ist intern: keine Unterschrift und keine externe Vereinbarung.",
+      "draft": "ENTWURF",
+      "final": "FINAL (intern)",
+      "signature": "Unterschrift nicht erfasst",
+      "amended": "Nach FINAL geändert: neue Prüfung und neuer Abschluss erforderlich.",
+      "missing": "Fehlende Pflichtangaben: {{fields}}",
+      "unresolved": "Für diese Pflichtreferenzen gibt es keine Nachschlagequelle; die Reise bleibt UNBEKANNT. Bestätigen Sie jede ausdrücklich, um abzuschließen:",
+      "authority": "Bestellung",
+      "finalize": "SOF abschließen",
+      "noAuthority": "Keine aktuelle Abschlussbestellung für dieses Schiff.",
+      "history": "Lebenszyklus-Verlauf",
+      "loading": "Wird geladen…",
+      "unavailable": "Für Ihren aktuellen Zugriff nicht verfügbar.",
+      "retry": "Erneut versuchen",
+      "offline": "Offline: Lebenszyklusbefehle erfordern eine aktuelle Online-Sitzung.",
+      "unknownOutcome": "Ergebnis unbekannt: Ein erneuter Versuch sendet denselben Befehl einmal.",
+      "done": "Befehl erfasst.",
+      "failed": "Befehl nicht angenommen: {{code}}",
+      "dtTitle": "Ausfallzeit – Prüfung und Abschluss",
+      "dtIntro": "Einreichung, Verifizierung und Abschluss sind ausdrückliche menschliche Handlungen. Wer den Inhalt erfasst hat, verifiziert oder schließt ihn nie. Ein verifizierter Abschluss ist keine Sicherheitsfreigabe.",
+      "state": "Status",
+      "loh": "Loss-of-Hire-Kandidat",
+      "lohReview": "Prüfung erforderlich: nur Kandidat, kein Anspruch und kein Betrag",
+      "lohUnknown": "Unbekannt (kein deklarierter Beginn)",
+      "evidence": "Anspruchsnachweise (eine Verknüpfung ist keine Verifizierung)",
+      "noEvidence": "Keine Anspruchsnachweise verknüpft.",
+      "link": "Nachweis verknüpfen",
+      "unlink": "Entfernen",
+      "selectEvidence": "Nachweis wählen",
+      "recorderNote": "Sie haben diese Ausfallzeit erfasst: Eine andere bestellte Person muss verifizieren und abschließen.",
+      "states": {
+        "NOT_SUBMITTED": "Nicht eingereicht",
+        "OPEN": "Offen",
+        "IN_REVIEW": "In Prüfung",
+        "VERIFIED": "Verifiziert (Mensch)",
+        "CLOSED": "Abgeschlossen"
+      },
+      "actions": {
+        "SUBMIT_FOR_REVIEW": "Zur Prüfung einreichen",
+        "RETURN_FOR_CORRECTION": "Zur Korrektur zurückgeben",
+        "VERIFY": "Verifizieren",
+        "CLOSE": "Abschließen",
+        "LINK_CLAIM_EVIDENCE": "Anspruchsnachweis verknüpfen",
+        "UNLINK_CLAIM_EVIDENCE": "Anspruchsnachweis entfernen"
+      }
+    },
     "ShipOperationsLedgerPanel_tsx_copy": {
       "fuelTitle": "ROB-Kontinuitätsprüfung",
       "portTitle": "Statement-of-Facts-Zeitleiste",

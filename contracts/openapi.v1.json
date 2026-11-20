@@ -7857,6 +7857,80 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/port-activity-sof/{id}/finalization": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "PortSofFinalization",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PortSofFinalizationDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/port-activity-sof/{id}/finalize": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "PortSofFinalize",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PortSofFinalizeCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShipOpsRecordDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
     "/api/v1/port-activity-sof/{id}": {
       "get": {
         "tags": [
@@ -14230,6 +14304,78 @@
           }
         },
         "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/operational-downtime/{id}/lifecycle": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DowntimeLifecycle",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DowntimeLifecycleViewDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DowntimeLifecycleCommand",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DowntimeLifecycleCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DowntimeRecordDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
     "/api/v1/hse/risk-assessments": {
@@ -32106,6 +32252,44 @@
         },
         "additionalProperties": false
       },
+      "DowntimeEvidenceOptionDto": {
+        "required": [
+          "id",
+          "revision",
+          "label"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "label": {
+            "type": "string"
+          }
+        }
+      },
+      "DowntimeEvidencePin": {
+        "required": [
+          "id",
+          "revision"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
       "DowntimeFact": {
         "required": [
           "state",
@@ -32227,6 +32411,241 @@
           },
           "qualification": {
             "type": "string"
+          }
+        }
+      },
+      "DowntimeLifecycleCommand": {
+        "required": [
+          "expectedVersion",
+          "action",
+          "reasonCode"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "action": {
+            "type": "string"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "authorityId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "evidence": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DowntimeEvidencePin"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "DowntimeLifecycleDto": {
+        "required": [
+          "state",
+          "claimEvidence",
+          "lossOfHireCandidate",
+          "allowedActions"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "claimEvidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DowntimeEvidencePin"
+            }
+          },
+          "lossOfHireCandidate": {
+            "type": "string"
+          },
+          "allowedActions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "DowntimeLifecycleEventDto": {
+        "required": [
+          "id",
+          "fromRevision",
+          "toRevision",
+          "action",
+          "fromState",
+          "toState",
+          "actorId",
+          "roleId",
+          "duty",
+          "reasonCode",
+          "evidence",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fromRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "toRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "action": {
+            "type": "string"
+          },
+          "fromState": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "toState": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "roleId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "duty": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "evidence": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DowntimeEvidencePin"
+              }
+            ]
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "DowntimeLifecycleViewDto": {
+        "required": [
+          "recordId",
+          "vesselId",
+          "revision",
+          "version",
+          "state",
+          "lossOfHireCandidate",
+          "claimEvidence",
+          "allowedActions",
+          "authorities",
+          "actorIsRecorder",
+          "missingRequired",
+          "evidenceOptions",
+          "events",
+          "qualifications"
+        ],
+        "type": "object",
+        "properties": {
+          "recordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "state": {
+            "type": "string"
+          },
+          "lossOfHireCandidate": {
+            "type": "string"
+          },
+          "claimEvidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DowntimeEvidencePin"
+            }
+          },
+          "allowedActions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipOpsAuthorityDto"
+            }
+          },
+          "actorIsRecorder": {
+            "type": "boolean"
+          },
+          "missingRequired": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidenceOptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DowntimeEvidenceOptionDto"
+            }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DowntimeLifecycleEventDto"
+            }
+          },
+          "qualifications": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -32481,6 +32900,16 @@
           },
           "engineeringInterval": {
             "$ref": "#/components/schemas/DowntimeIntervalObservation"
+          },
+          "lifecycle": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DowntimeLifecycleDto"
+              }
+            ]
           }
         }
       },
@@ -40710,6 +41139,179 @@
           }
         }
       },
+      "PortSofFinalizationDto": {
+        "required": [
+          "recordId",
+          "vesselId",
+          "revision",
+          "version",
+          "sofState",
+          "finalRevision",
+          "canFinalize",
+          "authorities",
+          "missingRequired",
+          "unresolvedReferences",
+          "events",
+          "qualifications"
+        ],
+        "type": "object",
+        "properties": {
+          "recordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "sofState": {
+            "type": "string"
+          },
+          "finalRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "canFinalize": {
+            "type": "boolean"
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ShipOpsAuthorityDto"
+            }
+          },
+          "missingRequired": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "unresolvedReferences": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PortSofFinalizationEventDto"
+            }
+          },
+          "qualifications": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "PortSofFinalizationEventDto": {
+        "required": [
+          "id",
+          "fromRevision",
+          "toRevision",
+          "actorId",
+          "roleId",
+          "duty",
+          "reasonCode",
+          "acknowledgedUnresolved",
+          "signatureState",
+          "recordHash",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fromRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "toRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "roleId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "duty": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "acknowledgedUnresolved": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "signatureState": {
+            "type": "string"
+          },
+          "recordHash": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PortSofFinalizeCommand": {
+        "required": [
+          "expectedVersion",
+          "authorityId",
+          "reasonCode",
+          "acknowledgedUnresolved"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "acknowledgedUnresolved": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
       "PortTimelineAssessment": {
         "required": [
           "recordId",
@@ -48322,6 +48924,27 @@
           }
         },
         "additionalProperties": false
+      },
+      "ShipOpsAuthorityDto": {
+        "required": [
+          "id",
+          "roleId",
+          "duty"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "roleId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "duty": {
+            "type": "string"
+          }
+        }
       },
       "ShipOpsCapabilitiesDto": {
         "required": [
