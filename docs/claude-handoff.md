@@ -245,3 +245,4 @@ Main: #16 #17 #18 #20 #23 #36 + **#37 paket 2** birleşik (`2995f70`, 19.11 ~08:
 - **4880bdc**: `AuditMetadata.cs:1039` AssuranceImport projeksiyonu Modified satırda BeforeRevision=null + kapalı sözlükte olmayan ImportState → 'none→1' staged, '1→2' decided; `AssuranceAuditContractTests` eklendi. CI izleniyor.
 - 4880bdc CI push 44794227692 + PR 44794237190 **yeşil** (kapsam kapısı geçti). S10 kapı QA (6ea3a2b): KABUL YOK — B1 DEV-092 tug offline MaterialConflict çözümünde insan kontrolü yok (`TugOperationsOfflineEndpoints.cs:314-325,407`), B2 DEV-113 = 4880bdc ile çözüldü; diğer 9 iş + S6 101/102 ACCEPT/-WITH-NOTES. B1 düzeltmesi alt-ajanda (tek push) → kısa QA yeniden kontrol → birleştir.
 - İşçiler **s11-wpa** ve **s11-wpc** DONE (sonuçları oku, S11 entegrasyonuna).
+- S11 WP-A 310d77c + WP-C b9bb93f kendi dallarında CI yeşil. 22:21 işçiler **s11-wpb** (DEV-071/072/117/118) ve **s11-wpd** (DEV-074/094/075; UAT/GO kararı üretilmez) açıldı.
