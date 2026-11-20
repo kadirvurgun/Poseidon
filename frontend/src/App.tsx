@@ -24,6 +24,7 @@ import { WorkOrderWorkspace } from './product/WorkOrderWorkspace';
 import { DowntimeWorkspace } from './product/DowntimeWorkspace';
 import { RiskAssessmentWorkspace } from './product/RiskAssessmentWorkspace';
 import { RiskTemplateLibraryWorkspace } from './product/RiskTemplateLibraryWorkspace';
+import { CriticalSparesWorkspace } from './product/CriticalSparesWorkspace';
 import { AuditReadyWorkspace } from './product/AuditReadyWorkspace';
 import { SurveyWorkspace } from './product/SurveyWorkspace';
 import { AppearanceControls } from './theme/AppearanceControls';
@@ -65,6 +66,8 @@ export function App() {
         return <RiskAssessmentWorkspace />;
     if (/^\/app\/risk-template-library(?:\/|$)/.test(window.location.pathname))
         return <RiskTemplateLibraryWorkspace />;
+    if (/^\/app\/critical-spares(?:\/|$)/.test(window.location.pathname))
+        return <CriticalSparesWorkspace />;
     const crew = /^\/app\/crew-roster\/([0-9a-fA-F-]{36})(?:\/crew-profile\/([0-9a-fA-F-]{36}))?\/?$/.exec(window.location.pathname);
     if (crew)
         return <CrewWorkspace key={`${crew[1]}:${crew[2] ?? ''}`} vessel={crew[1]} assignment={crew[2]}/>;
