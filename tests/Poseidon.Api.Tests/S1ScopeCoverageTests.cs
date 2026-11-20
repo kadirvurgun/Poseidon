@@ -50,9 +50,10 @@ public sealed partial class DirectoryWorkspaceTests
         // previously always-denied DEV-109 postponement route into an audited request command (critical +1, non-critical -1).
         // S8 WP-B adds 8 routes / 13 operations: DEV-054 execution transition + evidence, DEV-057 WO offline
         // enroll + action (6 variants), DEV-110 critical spare create/update and requisition propose/decide.
-        Assert.Equal(201, observed.Count);
-        Assert.Equal(193, observed.Count(x => x.IsCritical));
-        Assert.Equal(208, S1SecurityContract.CriticalOperationIds.Count);
+        // S8 WP-C adds 13: DEV-055 defect lifecycle start/assess/safeguard/lift/action/verify/effectiveness/close and DEV-103 service report create/update/submit/verify/amend.
+        Assert.Equal(214, observed.Count);
+        Assert.Equal(206, observed.Count(x => x.IsCritical));
+        Assert.Equal(221, S1SecurityContract.CriticalOperationIds.Count);
         Assert.Equal(8, observed.Count(x => !x.IsCritical));
         var extra = new RouteEndpoint(_ => Task.CompletedTask, RoutePatternFactory.Parse("/api/v1/unclassified-write"), 0,
             new EndpointMetadataCollection(new HttpMethodMetadata(["POST"]), new AuthorizeAttribute("DirectoryRead")), "unclassified");
