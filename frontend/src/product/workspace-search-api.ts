@@ -10,7 +10,7 @@ const destinations: Readonly<Record<string, string>> = {
   'operational-downtime': '/app/operational-downtime',
   'risk-assessment': '/app/risk-assessment', 'risk-template-library': '/app/risk-template-library', 'high-risk-work': '/app/high-risk-work', 'safety-events': '/app/safety-events', 'data-trust-center': '/app/data-trust-center', 'industry-assurance': '/app/industry-assurance', 'towage-plan': '/app/towage-plan', 'towage-execution': '/app/towage-execution', 'tug-daily-log': '/app/tug-daily-log', 'tug-operation-history': '/app/tug-operation-history', 'tug-operations-offline': '/app/tug-operations-offline', 'tug-demo-journey': '/app/tug-demo-journey', 'drydock-planning': '/app/drydock-planning', 'towage-risk-briefing': '/app/towage-risk-briefing',
   'work-order-center': '/app/work-order-center', 'critical-spares': '/app/critical-spares',
-  'pms-command-center': '/app/pms-command-center', 'departure-signoff': '/app/departure-signoff', 'service-engineer-report': '/app/service-engineer-report',
+  'pms-command-center': '/app/pms-command-center', 'departure-signoff': '/app/departure-signoff', 'regulatory-review': '/app/regulatory-review', 'service-engineer-report': '/app/service-engineer-report',
   'voice-event-draft': '/app/voice-event-draft', 'document-compare': '/app/document-compare',
   defects: '/app/defects',
   'fuel-bunker-log': '/app/fuel-bunker-log', 'port-activity-sof': '/app/port-activity-sof',
@@ -30,6 +30,7 @@ export const isSeparateWorkspaceDestination = (href: string) =>
   href === '/app/operational-downtime' || /^\/app\/operational-downtime\/[0-9a-f-]{36}$/.test(href) ||
   href === '/app/risk-assessment' || /^\/app\/risk-assessment\/[0-9a-f-]{36}$/.test(href) || href === '/app/risk-template-library' ||
   href === '/app/departure-signoff' || /^\/app\/departure-signoff\/[0-9a-f-]{36}$/.test(href) ||
+  href === '/app/regulatory-review' || /^\/app\/regulatory-review\/[0-9a-f-]{36}$/.test(href) ||
   href === '/app/pms-command-center' || /^\/app\/pms-command-center\/[0-9a-f-]{36}$/.test(href) || href === '/app/service-engineer-report' || /^\/app\/service-engineer-report\/[0-9a-f-]{36}$/.test(href) ||
   href === '/app/voice-event-draft' || /^\/app\/voice-event-draft\/[0-9a-f-]{36}$/.test(href) || href === '/app/document-compare' || /^\/app\/document-compare\/[0-9a-f-]{36}$/.test(href) ||
   href === '/app/work-order-center' || href === '/app/critical-spares' || /^\/app\/work-order-center\/[0-9a-f-]{36}$/.test(href) ||

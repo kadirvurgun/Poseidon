@@ -49,6 +49,7 @@ public static class SecurityEventCodes
         "CredentialVerificationRead", "CredentialVerificationCommand", "CrewCompetenceRead", "CrewCompetenceCommand", "SafeManningRead", "SafeManningCommand",
         "MeasurementRead", "MeasurementCommand", "MaintenancePostponementRead", "MaintenancePostponementCommand",
         "DepartureReadinessRead", "DepartureSignoffCommand",
+        "RegulatoryReviewRead", "RegulatoryReviewCommand",
         // S9 WP-C DEV-062 / DEV-114.
         "VoiceDraftRead", "VoiceDraftCommand", "VoiceDraftTranscription", "ControlledDocumentContentAccess",
         // S10 WP-A DEV-064 / DEV-065 / DEV-113.
@@ -129,6 +130,8 @@ public static class SecurityEventCodes
         "required_evidence_missing", "required_evidence_unconfigured", "evidence_changed", "stock_not_low", "requisition_already_open", "quantity_required",
         "credential_document_required", "competence_requirement_unavailable", "evaluation_window_invalid", "manning_dispensation_required", "manning_dispensation_not_applicable", "manning_review_acknowledgement_required",
         "departure_release_not_permitted", "departure_release_forecast_only", "departure_window_invalid", "departure_authority_required", "decision_sequence_conflict",
+        "review_campaign_open", "review_scope_mismatch", "reviewer_authority_required", "reviewer_qualification_unverified", "item_revision_stale", "source_authority_required",
+        "source_owner_required", "source_reference_required", "tracked_issue_required", "unsupported_approval_claim", "campaign_closed", "open_items_remain", "no_open_items", "open_item_untracked",
         // S9 WP-C DEV-062 / DEV-114.
         "speech_capability_unavailable", "speech_input_invalid", "speech_attestation_invalid", "voice_draft_incomplete",
         "document_download_restricted", "controlled_document_download_policy", "acknowledgement_revision_stale", "already_acknowledged",

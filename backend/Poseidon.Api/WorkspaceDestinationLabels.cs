@@ -25,6 +25,7 @@ internal static class WorkspaceDestinationLabels
         ["critical-spares"] = ["Kritik yedekler ve talepler", "Critical spares and requisitions"],
         ["pms-command-center"] = ["PMS komuta merkezi", "PMS command center"],
         ["departure-signoff"] = ["Kalkış hazırlığı ve Kaptan kararı", "Departure readiness and Master sign-off"],
+        ["regulatory-review"] = ["Regülasyon uzman incelemesi", "Regulatory SME review"],
         ["service-engineer-report"] = ["Servis ve mühendis raporları", "Service and engineer reports"],
         ["voice-event-draft"] = ["Sesli olay taslağı", "Voice event draft"],
         ["document-compare"] = ["Doküman revizyon karşılaştırma", "Document revision compare"],

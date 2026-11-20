@@ -247,6 +247,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapVoiceEventDrafts();
             endpoints.MapPmsCommandCenter();
             endpoints.MapDepartureReadiness(); // S9 WP-A DEV-058/059
+            endpoints.MapRegulatoryReviews(); // S11 WP-C DEV-073/093
             endpoints.MapMaintenanceObservations();
             endpoints.MapMeasurementPoints();
             endpoints.MapMaintenancePostponements();

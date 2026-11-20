@@ -597,6 +597,36 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if (entry.Entity is DepartureReceipt departureReceipt)
             return new(departureReceipt.VesselId, departureReceipt.RecordId, "DepartureReceipt", null, departureReceipt.Sequence, Fields(
                 Field("Action", null, Closed(departureReceipt.Action, DepartureStorage.ReceiptActions)), Field("Binding", null, "CommittedResource")));
+        // S11 WP-C DEV-073/093: closed codes only; notes, source references, editions, issue ids and qualification refs are withheld.
+        if (entry.Entity is RegulatoryReviewCampaign reviewCampaign)
+            return new(reviewCampaign.VesselId, reviewCampaign.Id, "RegulatoryReviewCampaign", null, null, Fields(
+                Field("Scope", null, Closed(reviewCampaign.Scope, RegulatoryReviewPolicy.Scopes)),
+                Field("State", entry.State == EntityState.Added ? null : Closed((string)entry.Property("State").OriginalValue!, RegulatoryReviewPolicy.States), Closed(reviewCampaign.State, RegulatoryReviewPolicy.States)),
+                Field("ItemCount", null, Number(reviewCampaign.ItemCount)), Field("OpenItemsAtClose", null, reviewCampaign.OpenItemsAtClose is { } open ? Number(open) : null),
+                Field("Provenance", null, Closed(reviewCampaign.Provenance, "Recorded", "SyntheticUnverified")),
+                Field("PinHash", null, null, "ValuesWithheld"), Field("CloseReason", null, null, "ValuesWithheld"),
+                Field("Binding", entry.State == EntityState.Added ? null : "OwnerReference", "OwnerReference")));
+        if (entry.Entity is RegulatoryReviewItem reviewItem)
+            return new(reviewItem.VesselId, reviewItem.Id, "RegulatoryReviewItem",
+                entry.State == EntityState.Added ? null : (int)entry.Property("VerdictCount").OriginalValue!, reviewItem.VerdictCount, Fields(
+                Field("Kind", null, Closed(reviewItem.Kind, RegulatoryReviewPolicy.Kinds)),
+                Field("Verdict", entry.State == EntityState.Added ? null : Closed((string)entry.Property("Verdict").OriginalValue!, RegulatoryReviewPolicy.Verdicts), Closed(reviewItem.Verdict, RegulatoryReviewPolicy.Verdicts)),
+                Field("SourceAuthority", null, reviewItem.SourceAuthority == null ? null : Closed(reviewItem.SourceAuthority, RegulatoryReviewPolicy.Authorities)),
+                Field("OwnerRole", null, Closed(reviewItem.OwnerRole, RegulatoryReviewPolicy.OwnerRoles)),
+                Field("Provenance", null, Closed(reviewItem.Provenance, "Recorded", "SyntheticUnverified")),
+                Field("SourceReference", null, null, "ValuesWithheld"), Field("TrackedIssueId", null, null, "ValuesWithheld"),
+                Field("Binding", entry.State == EntityState.Added ? null : "OwnerReference", "OwnerReference")));
+        if (entry.Entity is RegulatoryReviewVerdict reviewVerdict)
+            return new(reviewVerdict.VesselId, reviewVerdict.ItemId, "RegulatoryReviewVerdict", null, reviewVerdict.Sequence, Fields(
+                Field("Verdict", null, Closed(reviewVerdict.Verdict, RegulatoryReviewPolicy.Verdicts)),
+                Field("SourceAuthority", null, reviewVerdict.SourceAuthority == null ? null : Closed(reviewVerdict.SourceAuthority, RegulatoryReviewPolicy.Authorities)),
+                Field("OwnerRole", null, Closed(reviewVerdict.OwnerRole, RegulatoryReviewPolicy.OwnerRoles)),
+                Field("QualificationState", null, Closed(reviewVerdict.QualificationState, RegulatoryReviewPolicy.QualificationVerified, "UNVERIFIED")),
+                Field("Sequence", null, Number(reviewVerdict.Sequence)), Field("Note", null, null, "ValuesWithheld"), Field("QualificationRef", null, null, "ValuesWithheld"),
+                Field("SourceReference", null, null, "ValuesWithheld"), Field("TrackedIssueId", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference")));
+        if (entry.Entity is RegulatoryReviewReceipt regulatoryReviewReceipt)
+            return new(regulatoryReviewReceipt.VesselId, regulatoryReviewReceipt.RecordId, "RegulatoryReviewReceipt", null, null, Fields(
+                Field("Action", null, Closed(regulatoryReviewReceipt.Action, RegulatoryReviewStorage.ReceiptActions)), Field("Binding", null, "CommittedResource")));
         if (entry.Entity is TechnicalOwner or TugOwner)
             return new(vessel, resource, "OwnerReference", null, null, Fields(Field("Binding", null, "OwnerReference")));
         if (entry.Entity is CrewPosition)

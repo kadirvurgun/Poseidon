@@ -7298,6 +7298,70 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/regulatory-reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["RegulatoryReviewList"];
+        put?: never;
+        post: operations["RegulatoryReviewCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/regulatory-reviews/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["RegulatoryReviewRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/regulatory-reviews/{id}/items/{item}/verdicts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RegulatoryReviewVerdict"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/regulatory-reviews/{id}/close": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RegulatoryReviewClose"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/equipment-hierarchy/{vessel}/{asset}/observations": {
         parameters: {
             query?: never;
@@ -14944,6 +15008,151 @@ export interface components {
             savedAt: null | string;
             provenance: string;
             content: components["schemas"]["RegulatoryDraftContent"];
+        };
+        RegulatoryReviewCloseCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            outcome: string;
+            reason: string;
+        };
+        RegulatoryReviewCreateCommand: {
+            /** Format: uuid */
+            vesselId: string;
+            scope: string;
+        };
+        RegulatoryReviewDetailDto: {
+            campaign: components["schemas"]["RegulatoryReviewSummaryDto"];
+            items: components["schemas"]["RegulatoryReviewItemDto"][];
+            ownerMatrix: components["schemas"]["RegulatoryReviewOwnerRow"][];
+            canManage: boolean;
+            canReview: boolean;
+            reviewerAuthorities: components["schemas"]["RegulatoryReviewerAuthorityDto"][];
+            notices: string[];
+            /** @default false */
+            replayed: boolean;
+            /** @default regulatory-sme-review-v1 */
+            policyVersion: string;
+            /** @default contracts/sources/pilot-ownership.v1.json */
+            candidateSourcePlan: string;
+        };
+        RegulatoryReviewerAuthorityDto: {
+            /** Format: uuid */
+            id: string;
+            scopes: string[];
+            sourceAuthorities: string[];
+            qualificationVerified: boolean;
+        };
+        RegulatoryReviewItemDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int32 */
+            ordinal: number;
+            kind: string;
+            subjectKey: string;
+            /** Format: uuid */
+            ruleId: null | string;
+            /** Format: int64 */
+            ruleRevision: null | number;
+            /** Format: uuid */
+            requirementId: null | string;
+            /** Format: int64 */
+            requirementRevision: null | number;
+            /** Format: uuid */
+            sourceId: null | string;
+            /** Format: int64 */
+            sourceRevision: null | number;
+            candidateSourceCode: null | string;
+            candidateAuthority: null | string;
+            candidateUnverified: boolean;
+            predictedResult: null | string;
+            verdict: string;
+            effectiveVerdict: string;
+            stale: boolean;
+            open: boolean;
+            sourceAuthority: null | string;
+            authorityCategory: string;
+            ownerRole: string;
+            sourceReference: null | string;
+            sourceEdition: null | string;
+            trackedIssueId: null | string;
+            /** Format: uuid */
+            reviewerId: null | string;
+            qualificationRef: null | string;
+            /** Format: int32 */
+            verdictCount: number;
+            /** Format: date-time */
+            verdictAt: null | string;
+            /** Format: uint32 */
+            version: number;
+            blockers: string[];
+            /** @default false */
+            replayed: boolean;
+        };
+        RegulatoryReviewListDto: {
+            items: components["schemas"]["RegulatoryReviewSummaryDto"][];
+            canManage: boolean;
+        };
+        RegulatoryReviewOwnerRow: {
+            authority: string;
+            category: string;
+            /** Format: int32 */
+            items: number;
+            /** Format: int32 */
+            open: number;
+            /** Format: int32 */
+            confirmed: number;
+            ownerRoles: string[];
+        };
+        RegulatoryReviewSummaryDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            scope: string;
+            state: string;
+            /** Format: int64 */
+            profileRevision: null | number;
+            /** Format: uuid */
+            evaluationId: null | string;
+            pinHash: string;
+            /** Format: int32 */
+            itemCount: number;
+            /** Format: int32 */
+            openItems: number;
+            /** Format: int32 */
+            untrackedOpenItems: number;
+            /** Format: int32 */
+            confirmedItems: number;
+            /** Format: int32 */
+            staleItems: number;
+            profileStale: boolean;
+            /** Format: uuid */
+            createdBy: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: uuid */
+            closedBy: null | string;
+            /** Format: date-time */
+            closedAt: null | string;
+            /** Format: int32 */
+            openItemsAtClose: null | number;
+            provenance: string;
+            /** Format: uint32 */
+            version: number;
+            blockers: string[];
+        };
+        RegulatoryReviewVerdictCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            /** Format: uuid */
+            authorityId: string;
+            verdict: string;
+            sourceAuthority: null | string;
+            ownerRole: string;
+            sourceReference: null | string;
+            sourceEdition: null | string;
+            trackedIssueId: null | string;
+            note: string;
         };
         RegulatoryRevisionDto: {
             /** Format: int64 */
@@ -30852,6 +31061,125 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    RegulatoryReviewList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegulatoryReviewListDto"];
+                };
+            };
+        };
+    };
+    RegulatoryReviewCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RegulatoryReviewCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegulatoryReviewDetailDto"];
+                };
+            };
+        };
+    };
+    RegulatoryReviewRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegulatoryReviewDetailDto"];
+                };
+            };
+        };
+    };
+    RegulatoryReviewVerdict: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                item: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RegulatoryReviewVerdictCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegulatoryReviewItemDto"];
+                };
+            };
+        };
+    };
+    RegulatoryReviewClose: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RegulatoryReviewCloseCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegulatoryReviewDetailDto"];
+                };
             };
         };
     };

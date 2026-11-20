@@ -17908,6 +17908,181 @@
         "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
+    "/api/v1/regulatory-reviews": {
+      "get": {
+        "tags": [
+          "RegulatoryReviewEndpoints"
+        ],
+        "operationId": "RegulatoryReviewList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegulatoryReviewListDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "RegulatoryReviewEndpoints"
+        ],
+        "operationId": "RegulatoryReviewCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegulatoryReviewCreateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegulatoryReviewDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/regulatory-reviews/{id}": {
+      "get": {
+        "tags": [
+          "RegulatoryReviewEndpoints"
+        ],
+        "operationId": "RegulatoryReviewRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegulatoryReviewDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/regulatory-reviews/{id}/items/{item}/verdicts": {
+      "post": {
+        "tags": [
+          "RegulatoryReviewEndpoints"
+        ],
+        "operationId": "RegulatoryReviewVerdict",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "item",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegulatoryReviewVerdictCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegulatoryReviewItemDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/regulatory-reviews/{id}/close": {
+      "post": {
+        "tags": [
+          "RegulatoryReviewEndpoints"
+        ],
+        "operationId": "RegulatoryReviewClose",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegulatoryReviewCloseCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegulatoryReviewDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
     "/api/v1/equipment-hierarchy/{vessel}/{asset}/observations": {
       "get": {
         "tags": [
@@ -46573,6 +46748,564 @@
           }
         }
       },
+      "RegulatoryReviewCloseCommand": {
+        "required": [
+          "expectedVersion",
+          "outcome",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RegulatoryReviewCreateCommand": {
+        "required": [
+          "vesselId",
+          "scope"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scope": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RegulatoryReviewDetailDto": {
+        "required": [
+          "campaign",
+          "items",
+          "ownerMatrix",
+          "canManage",
+          "canReview",
+          "reviewerAuthorities",
+          "notices"
+        ],
+        "type": "object",
+        "properties": {
+          "campaign": {
+            "$ref": "#/components/schemas/RegulatoryReviewSummaryDto"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RegulatoryReviewItemDto"
+            }
+          },
+          "ownerMatrix": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RegulatoryReviewOwnerRow"
+            }
+          },
+          "canManage": {
+            "type": "boolean"
+          },
+          "canReview": {
+            "type": "boolean"
+          },
+          "reviewerAuthorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RegulatoryReviewerAuthorityDto"
+            }
+          },
+          "notices": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "replayed": {
+            "type": "boolean",
+            "default": false
+          },
+          "policyVersion": {
+            "type": "string",
+            "default": "regulatory-sme-review-v1"
+          },
+          "candidateSourcePlan": {
+            "type": "string",
+            "default": "contracts/sources/pilot-ownership.v1.json"
+          }
+        }
+      },
+      "RegulatoryReviewerAuthorityDto": {
+        "required": [
+          "id",
+          "scopes",
+          "sourceAuthorities",
+          "qualificationVerified"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sourceAuthorities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "qualificationVerified": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RegulatoryReviewItemDto": {
+        "required": [
+          "id",
+          "ordinal",
+          "kind",
+          "subjectKey",
+          "ruleId",
+          "ruleRevision",
+          "requirementId",
+          "requirementRevision",
+          "sourceId",
+          "sourceRevision",
+          "candidateSourceCode",
+          "candidateAuthority",
+          "candidateUnverified",
+          "predictedResult",
+          "verdict",
+          "effectiveVerdict",
+          "stale",
+          "open",
+          "sourceAuthority",
+          "authorityCategory",
+          "ownerRole",
+          "sourceReference",
+          "sourceEdition",
+          "trackedIssueId",
+          "reviewerId",
+          "qualificationRef",
+          "verdictCount",
+          "verdictAt",
+          "version",
+          "blockers"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "ordinal": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "subjectKey": {
+            "type": "string"
+          },
+          "ruleId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "ruleRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "requirementId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "requirementRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "sourceId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "sourceRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "candidateSourceCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "candidateAuthority": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "candidateUnverified": {
+            "type": "boolean"
+          },
+          "predictedResult": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "verdict": {
+            "type": "string"
+          },
+          "effectiveVerdict": {
+            "type": "string"
+          },
+          "stale": {
+            "type": "boolean"
+          },
+          "open": {
+            "type": "boolean"
+          },
+          "sourceAuthority": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "authorityCategory": {
+            "type": "string"
+          },
+          "ownerRole": {
+            "type": "string"
+          },
+          "sourceReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sourceEdition": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "trackedIssueId": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reviewerId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "qualificationRef": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "verdictCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "verdictAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "replayed": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "RegulatoryReviewListDto": {
+        "required": [
+          "items",
+          "canManage"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RegulatoryReviewSummaryDto"
+            }
+          },
+          "canManage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RegulatoryReviewOwnerRow": {
+        "required": [
+          "authority",
+          "category",
+          "items",
+          "open",
+          "confirmed",
+          "ownerRoles"
+        ],
+        "type": "object",
+        "properties": {
+          "authority": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "open": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "confirmed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ownerRoles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "RegulatoryReviewSummaryDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "scope",
+          "state",
+          "profileRevision",
+          "evaluationId",
+          "pinHash",
+          "itemCount",
+          "openItems",
+          "untrackedOpenItems",
+          "confirmedItems",
+          "staleItems",
+          "profileStale",
+          "createdBy",
+          "createdAt",
+          "closedBy",
+          "closedAt",
+          "openItemsAtClose",
+          "provenance",
+          "version",
+          "blockers"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "profileRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "evaluationId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "pinHash": {
+            "type": "string"
+          },
+          "itemCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "openItems": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "untrackedOpenItems": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "confirmedItems": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "staleItems": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "profileStale": {
+            "type": "boolean"
+          },
+          "createdBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "closedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "closedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "openItemsAtClose": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "RegulatoryReviewVerdictCommand": {
+        "required": [
+          "expectedVersion",
+          "authorityId",
+          "verdict",
+          "sourceAuthority",
+          "ownerRole",
+          "sourceReference",
+          "sourceEdition",
+          "trackedIssueId",
+          "note"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "verdict": {
+            "type": "string"
+          },
+          "sourceAuthority": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "ownerRole": {
+            "type": "string"
+          },
+          "sourceReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sourceEdition": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "trackedIssueId": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
       "RegulatoryRevisionDto": {
         "required": [
           "revision",
@@ -62402,6 +63135,9 @@
     },
     {
       "name": "DepartureReadinessEndpoints"
+    },
+    {
+      "name": "RegulatoryReviewEndpoints"
     },
     {
       "name": "MaintenanceObservationEndpoints"

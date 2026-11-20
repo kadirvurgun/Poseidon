@@ -32,6 +32,7 @@ import { DowntimeWorkspace } from './product/DowntimeWorkspace';
 import { RiskAssessmentWorkspace } from './product/RiskAssessmentWorkspace';
 import { PmsCommandCenterWorkspace } from './product/PmsCommandCenterWorkspace';
 import { DepartureReadinessWorkspace } from './product/DepartureReadinessWorkspace';
+import { RegulatoryReviewWorkspace } from './product/RegulatoryReviewWorkspace';
 import { ServiceReportWorkspace } from './product/ServiceReportWorkspace';
 import { VoiceEventDraftWorkspace } from './product/VoiceEventDraftWorkspace';
 import { DocumentCompareWorkspace } from './product/DocumentCompareWorkspace';
@@ -99,6 +100,8 @@ export function App() {
         return <DefectWorkspace />;
     if (/^\/app\/departure-signoff(?:\/|$)/.test(window.location.pathname))
         return <DepartureReadinessWorkspace />;
+    if (/^\/app\/regulatory-review(?:\/|$)/.test(window.location.pathname))
+        return <RegulatoryReviewWorkspace />;
     if (/^\/app\/pms-command-center(?:\/|$)/.test(window.location.pathname))
         return <PmsCommandCenterWorkspace />;
     if (/^\/app\/service-engineer-report(?:\/|$)/.test(window.location.pathname))

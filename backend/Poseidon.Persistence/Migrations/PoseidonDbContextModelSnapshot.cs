@@ -9317,6 +9317,396 @@ namespace Poseidon.Persistence.Migrations
                     b.ToTable("RegulatoryQualificationReceipts", "core");
                 });
 
+            modelBuilder.Entity("Poseidon.Persistence.RegulatoryReviewCampaign", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CloseReason")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<DateTimeOffset?>("ClosedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("ClosedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("EvaluationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("ItemCount")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("OpenItemsAtClose")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("PinHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("PolicyVersion")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.Property<long?>("ProfileRevision")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Provenance")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("Scope")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "VesselId", "Scope")
+                        .IsUnique()
+                        .HasDatabaseName("UX_RegulatoryReviewCampaigns_Active")
+                        .HasFilter("\"State\" = 'OPEN' OR \"State\" = 'IN_REVIEW'");
+
+                    b.ToTable("RegulatoryReviewCampaigns", "core", t =>
+                        {
+                            t.HasCheckConstraint("CK_RegulatoryReviewCampaign_ClosedOpen", "\"State\" <> 'CLOSED' OR \"OpenItemsAtClose\" = 0");
+
+                            t.HasCheckConstraint("CK_RegulatoryReviewCampaign_Closure", "(\"State\" IN ('CLOSED', 'CLOSED_WITH_OPEN_ITEMS')) = (\"ClosedBy\" IS NOT NULL AND \"ClosedAt\" IS NOT NULL AND \"CloseReason\" IS NOT NULL AND \"OpenItemsAtClose\" IS NOT NULL)");
+
+                            t.HasCheckConstraint("CK_RegulatoryReviewCampaign_Items", "\"ItemCount\" >= 0");
+
+                            t.HasCheckConstraint("CK_RegulatoryReviewCampaign_Scope", "\"Scope\" IN ('SHIP', 'TUG')");
+
+                            t.HasCheckConstraint("CK_RegulatoryReviewCampaign_State", "\"State\" IN ('OPEN', 'IN_REVIEW', 'CLOSED_WITH_OPEN_ITEMS', 'CLOSED')");
+
+                            t.HasCheckConstraint("CK_RegulatoryReviewCampaign_Synthetic", "\"Provenance\" IN ('Recorded', 'SyntheticUnverified') AND (\"Provenance\" <> 'SyntheticUnverified' OR \"State\" = 'OPEN')");
+
+                            t.HasCheckConstraint("CK_RegulatoryReviewCampaign_WithOpen", "\"State\" <> 'CLOSED_WITH_OPEN_ITEMS' OR \"OpenItemsAtClose\" > 0");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.RegulatoryReviewItem", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CampaignId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CandidateAuthority")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("CandidateSourceCode")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.Property<bool>("CandidateUnverified")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<int>("Ordinal")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("OwnerRole")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("PredictedResult")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.Property<string>("Provenance")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("QualificationRef")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<Guid?>("RequirementId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long?>("RequirementRevision")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid?>("ReviewerAuthorityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ReviewerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ReviewerRoleId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("RuleId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long?>("RuleRevision")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("SourceAuthority")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("SourceEdition")
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<Guid?>("SourceId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("SourceReference")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<long?>("SourceRevision")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("SubjectKey")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<string>("TrackedIssueId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("Verdict")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<DateTimeOffset?>("VerdictAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("VerdictCount")
+                        .HasColumnType("integer");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "VesselId");
+
+                    b.HasIndex("TenantId", "CampaignId", "Ordinal")
+                        .IsUnique();
+
+                    b.HasIndex("TenantId", "RuleId", "RuleRevision");
+
+                    b.HasIndex("TenantId", "CampaignId", "Kind", "SubjectKey")
+                        .IsUnique();
+
+                    b.ToTable("RegulatoryReviewItems", "core", t =>
+                        {
+                            t.HasCheckConstraint("CK_RegulatoryReviewItem_Authority", "(\"SourceAuthority\" IS NULL OR \"SourceAuthority\" IN ('STATUTORY', 'FLAG', 'CLASS', 'PORT_LOCAL', 'COMPANY_SMS', 'MANUFACTURER', 'INDUSTRY_GUIDANCE')) AND (\"CandidateAuthority\" IS NULL OR \"CandidateAuthority\" IN ('STATUTORY', 'FLAG', 'CLASS', 'PORT_LOCAL', 'COMPANY_SMS', 'MANUFACTURER', 'INDUSTRY_GUIDANCE'))");
+
+                            t.HasCheckConstraint("CK_RegulatoryReviewItem_Confirmed", "\"Verdict\" NOT IN ('CONFIRMED', 'NOT_APPLICABLE_CONFIRMED') OR \"ReviewerId\" IS NOT NULL AND \"QualificationRef\" IS NOT NULL AND \"SourceAuthority\" IS NOT NULL AND \"OwnerRole\" <> 'UNASSIGNED' AND \"VerdictCount\" > 0");
+
+                            t.HasCheckConstraint("CK_RegulatoryReviewItem_Kind", "\"Kind\" IN ('APPLICABILITY_RULE', 'SOURCE_CANDIDATE', 'TUG_LIMIT', 'OWNERSHIP_SLOT')");
+
+                            t.HasCheckConstraint("CK_RegulatoryReviewItem_Owner", "\"OwnerRole\" IN ('UNASSIGNED', 'REGULATORY_LEAD', 'REGULATORY_SME', 'PRODUCT_OWNER', 'DPA', 'PILOT_CUSTOMER')");
+
+                            t.HasCheckConstraint("CK_RegulatoryReviewItem_Reviewer", "(\"VerdictCount\" = 0) = (\"ReviewerId\" IS NULL) AND (\"ReviewerId\" IS NULL OR \"ReviewerId\" <> \"CreatedBy\")");
+
+                            t.HasCheckConstraint("CK_RegulatoryReviewItem_Synthetic", "\"Provenance\" IN ('Recorded', 'SyntheticUnverified') AND (\"Provenance\" <> 'SyntheticUnverified' OR \"Verdict\" = 'REVIEW_REQUIRED' AND \"VerdictCount\" = 0)");
+
+                            t.HasCheckConstraint("CK_RegulatoryReviewItem_Verdict", "\"Verdict\" IN ('CONFIRMED', 'AMBIGUOUS', 'NOT_APPLICABLE_CONFIRMED', 'REVIEW_REQUIRED')");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.RegulatoryReviewReceipt", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Key")
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.Property<Guid>("CampaignId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("CommittedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Fingerprint")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("RecordId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "ActorId", "Key");
+
+                    b.HasIndex("TenantId", "CampaignId");
+
+                    b.ToTable("RegulatoryReviewReceipts", "core", t =>
+                        {
+                            t.HasCheckConstraint("CK_RegulatoryReviewReceipt_Action", "\"Action\" IN ('RegulatoryReviewCreate', 'RegulatoryReviewVerdict', 'RegulatoryReviewClose')");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.RegulatoryReviewVerdict", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AuthorityHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("AuthorityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CampaignId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("OwnerRole")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("PinHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("QualificationRef")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("QualificationState")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<DateTimeOffset>("RecordedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("ReviewerId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Sequence")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SourceAuthority")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("SourceEdition")
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<string>("SourceReference")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("TrackedIssueId")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("Verdict")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "CampaignId");
+
+                    b.HasIndex("TenantId", "ItemId", "Sequence")
+                        .IsUnique();
+
+                    b.ToTable("RegulatoryReviewVerdicts", "core", t =>
+                        {
+                            t.HasCheckConstraint("CK_RegulatoryReviewVerdict_Confirmed", "\"Verdict\" NOT IN ('CONFIRMED', 'NOT_APPLICABLE_CONFIRMED') OR \"QualificationState\" = 'VERIFIED' AND \"SourceAuthority\" IS NOT NULL AND \"OwnerRole\" <> 'UNASSIGNED'");
+
+                            t.HasCheckConstraint("CK_RegulatoryReviewVerdict_Note", "char_length(\"Note\") >= 10 AND \"Sequence\" >= 1");
+
+                            t.HasCheckConstraint("CK_RegulatoryReviewVerdict_Open", "\"Verdict\" IN ('CONFIRMED', 'NOT_APPLICABLE_CONFIRMED') OR \"TrackedIssueId\" IS NOT NULL");
+
+                            t.HasCheckConstraint("CK_RegulatoryReviewVerdict_Verdict", "\"Verdict\" IN ('CONFIRMED', 'AMBIGUOUS', 'NOT_APPLICABLE_CONFIRMED', 'REVIEW_REQUIRED')");
+                        });
+                });
+
             modelBuilder.Entity("Poseidon.Persistence.RiskAssessment", b =>
                 {
                     b.Property<Guid>("TenantId")
@@ -17168,6 +17558,59 @@ namespace Poseidon.Persistence.Migrations
                     b.HasOne("Poseidon.Persistence.RuleDraft", null)
                         .WithMany()
                         .HasForeignKey("TenantId", "RuleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.RegulatoryReviewCampaign", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.Vessel", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.RegulatoryReviewItem", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.RegulatoryReviewCampaign", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "CampaignId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Poseidon.Persistence.Vessel", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Poseidon.Persistence.RuleRevision", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "RuleId", "RuleRevision")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.RegulatoryReviewReceipt", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.RegulatoryReviewCampaign", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "CampaignId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.RegulatoryReviewVerdict", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.RegulatoryReviewCampaign", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "CampaignId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Poseidon.Persistence.RegulatoryReviewItem", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ItemId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
