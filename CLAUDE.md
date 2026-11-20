@@ -20,7 +20,7 @@ Gemi ve römorkör (ship/tug) operasyon, uyum ve emniyet platformu. Çok kiracı
 ## Durum takibi (her paket sonunda güncelle)
 - `docs/claude-handoff.md` — zamanlanmış 5 saatlik oturumların devamlılık dosyası (aktif dal, son iş, sıradaki iş, `STATUS:`).
 - `docs/project-status.md` / `.json` ve `docs/phases/<ID>.md` — canonical ilerleme. Kabul = sadece gerçek test + CI + bağımsız QA geçmiş iş. Yazılmış ama doğrulanmamış iş `AUTHORED_UNVERIFIED`, ertelenmiş kontrol `DEFERRED`; asla PASS denmez.
-- Canonical sayım: 121 iş / 970 SP / 196 ekran; S0–S9 kabul edildi (90 iş, 746 SP, %76,91; S9 kapısı 20.11.2026 `docs/phases/S9-GATE-20261120.md`; S6 DEV-101/102 hariç).
+- Canonical sayım: 121 iş / 970 SP / 196 ekran; S0–S10 kabul edildi (103 iş, 861 SP, %88,76; S10 kapısı `docs/phases/S10-GATE-20261121.md`; S6 DEV-101/102 aynı PR ile kabul).
 
 ## Rol rehberleri (eski Codex skill'leri, `.agents/skills/`)
 - **backend**: sahip modülde uygula; tenant/vessel/job kapsamı sunucuda; Completed/Verified/Effective ayrı; mutable aggregate'ta concurrency; offline komutta idempotent receipt; her operasyonel varlıkla EF migration + idempotent sentetik seed + domain unit + gerçek PG integration testi.

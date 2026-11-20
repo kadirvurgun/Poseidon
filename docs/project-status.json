@@ -1175,14 +1175,14 @@
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
-  "current_stage": "S9 accepted with notes 20.11.2026 (S9-GATE-20261120: PR #47 916e158 -> main f1c2d51, CI push 44766423323 + PR 44766440442 green, critical-write coverage 271/271, independent QA re-check ACCEPT-WITH-NOTES x10). S6 DEV-101/DEV-102 remain not accepted (with S10). S10 next.",
+  "current_stage": "S10 accepted with notes 20.11.2026 (S10-GATE-20261121: PR #48 09fc33d -> main 6bba4f3, CI push 44802159747 + PR 44802178895 green, critical-write coverage 288/288, independent QA re-check ACCEPT x11 incl. notes). S6 DEV-101/DEV-102 accepted via the same PR (S6 addendum). S11 next.",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
   "total_story_points": 970,
-  "accepted_tasks": 90,
-  "accepted_story_points": 746,
-  "completion_percent": 76.91,
+  "accepted_tasks": 103,
+  "accepted_story_points": 861,
+  "completion_percent": 88.76,
   "screen_inventory": 196,
   "accepted_screens": 0,
   "field_contract_inventory": 2316,
@@ -1239,9 +1239,9 @@
       "sprint": "S6",
       "tasks": 9,
       "story_points": 87,
-      "accepted_tasks": 7,
-      "accepted_story_points": 71,
-      "completion_percent": 81.61
+      "accepted_tasks": 9,
+      "accepted_story_points": 87,
+      "completion_percent": 100.0
     },
     {
       "sprint": "S7",
@@ -1271,9 +1271,9 @@
       "sprint": "S10",
       "tasks": 11,
       "story_points": 99,
-      "accepted_tasks": 0,
-      "accepted_story_points": 0,
-      "completion_percent": 0
+      "accepted_tasks": 11,
+      "accepted_story_points": 99,
+      "completion_percent": 100.0
     },
     {
       "sprint": "S11",
@@ -3767,9 +3767,29 @@
       "priority": "P0",
       "story_points": 8,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S10-GATE-20261121",
+          "implementation_target": {
+            "commit": "6bba4f3b3d994a3a6df00c174155f7b59735f01b",
+            "pr": 48,
+            "pr_head": "09fc33dfb3bbe1ef56901e4edda84d1dce946949"
+          },
+          "ci_run": {
+            "push": "44802159747",
+            "pull_request": "44802178895"
+          },
+          "independent_qa": {
+            "path": "docs/evidence/s10-20261121-09fc33d/qa/s10-gate-independent-review.md",
+            "sha256": "ecfcb020a1c4344fd235dd7097d287cf5cb2a9b6f3e59491f71c533cd28ce445",
+            "verdict": "ACCEPT-WITH-NOTES"
+          },
+          "criteria_task_id": "DEV-064",
+          "phase_report": "docs/phases/S10-GATE-20261121.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:65",
@@ -3783,9 +3803,29 @@
       "priority": "P0",
       "story_points": 8,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S10-GATE-20261121",
+          "implementation_target": {
+            "commit": "6bba4f3b3d994a3a6df00c174155f7b59735f01b",
+            "pr": 48,
+            "pr_head": "09fc33dfb3bbe1ef56901e4edda84d1dce946949"
+          },
+          "ci_run": {
+            "push": "44802159747",
+            "pull_request": "44802178895"
+          },
+          "independent_qa": {
+            "path": "docs/evidence/s10-20261121-09fc33d/qa/s10-gate-independent-review.md",
+            "sha256": "ecfcb020a1c4344fd235dd7097d287cf5cb2a9b6f3e59491f71c533cd28ce445",
+            "verdict": "ACCEPT-WITH-NOTES"
+          },
+          "criteria_task_id": "DEV-065",
+          "phase_report": "docs/phases/S10-GATE-20261121.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:66",
@@ -3799,9 +3839,29 @@
       "priority": "P0",
       "story_points": 13,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S10-GATE-20261121",
+          "implementation_target": {
+            "commit": "6bba4f3b3d994a3a6df00c174155f7b59735f01b",
+            "pr": 48,
+            "pr_head": "09fc33dfb3bbe1ef56901e4edda84d1dce946949"
+          },
+          "ci_run": {
+            "push": "44802159747",
+            "pull_request": "44802178895"
+          },
+          "independent_qa": {
+            "path": "docs/evidence/s10-20261121-09fc33d/qa/s10-gate-independent-review.md",
+            "sha256": "ecfcb020a1c4344fd235dd7097d287cf5cb2a9b6f3e59491f71c533cd28ce445",
+            "verdict": "ACCEPT-WITH-NOTES"
+          },
+          "criteria_task_id": "DEV-066",
+          "phase_report": "docs/phases/S10-GATE-20261121.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:67",
@@ -3815,9 +3875,29 @@
       "priority": "P1",
       "story_points": 8,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S10-GATE-20261121",
+          "implementation_target": {
+            "commit": "6bba4f3b3d994a3a6df00c174155f7b59735f01b",
+            "pr": 48,
+            "pr_head": "09fc33dfb3bbe1ef56901e4edda84d1dce946949"
+          },
+          "ci_run": {
+            "push": "44802159747",
+            "pull_request": "44802178895"
+          },
+          "independent_qa": {
+            "path": "docs/evidence/s10-20261121-09fc33d/qa/s10-gate-independent-review.md",
+            "sha256": "ecfcb020a1c4344fd235dd7097d287cf5cb2a9b6f3e59491f71c533cd28ce445",
+            "verdict": "ACCEPT-WITH-NOTES"
+          },
+          "criteria_task_id": "DEV-067",
+          "phase_report": "docs/phases/S10-GATE-20261121.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:68",
@@ -3831,9 +3911,29 @@
       "priority": "P0",
       "story_points": 8,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S10-GATE-20261121",
+          "implementation_target": {
+            "commit": "6bba4f3b3d994a3a6df00c174155f7b59735f01b",
+            "pr": 48,
+            "pr_head": "09fc33dfb3bbe1ef56901e4edda84d1dce946949"
+          },
+          "ci_run": {
+            "push": "44802159747",
+            "pull_request": "44802178895"
+          },
+          "independent_qa": {
+            "path": "docs/evidence/s10-20261121-09fc33d/qa/s10-gate-independent-review.md",
+            "sha256": "ecfcb020a1c4344fd235dd7097d287cf5cb2a9b6f3e59491f71c533cd28ce445",
+            "verdict": "ACCEPT-WITH-NOTES"
+          },
+          "criteria_task_id": "DEV-068",
+          "phase_report": "docs/phases/S10-GATE-20261121.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:69",
@@ -4419,9 +4519,29 @@
       "priority": "P1",
       "story_points": 5,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S10-GATE-20261121",
+          "implementation_target": {
+            "commit": "6bba4f3b3d994a3a6df00c174155f7b59735f01b",
+            "pr": 48,
+            "pr_head": "09fc33dfb3bbe1ef56901e4edda84d1dce946949"
+          },
+          "ci_run": {
+            "push": "44802159747",
+            "pull_request": "44802178895"
+          },
+          "independent_qa": {
+            "path": "docs/evidence/s10-20261121-09fc33d/qa/s10-gate-independent-review.md",
+            "sha256": "ecfcb020a1c4344fd235dd7097d287cf5cb2a9b6f3e59491f71c533cd28ce445",
+            "verdict": "ACCEPT-WITH-NOTES"
+          },
+          "criteria_task_id": "DEV-091",
+          "phase_report": "docs/phases/S10-GATE-20261121.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:92",
@@ -4435,9 +4555,29 @@
       "priority": "P0",
       "story_points": 13,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S10-GATE-20261121",
+          "implementation_target": {
+            "commit": "6bba4f3b3d994a3a6df00c174155f7b59735f01b",
+            "pr": 48,
+            "pr_head": "09fc33dfb3bbe1ef56901e4edda84d1dce946949"
+          },
+          "ci_run": {
+            "push": "44802159747",
+            "pull_request": "44802178895"
+          },
+          "independent_qa": {
+            "path": "docs/evidence/s10-20261121-09fc33d/qa/s10-gate-independent-review.md",
+            "sha256": "ecfcb020a1c4344fd235dd7097d287cf5cb2a9b6f3e59491f71c533cd28ce445",
+            "verdict": "ACCEPT"
+          },
+          "criteria_task_id": "DEV-092",
+          "phase_report": "docs/phases/S10-GATE-20261121.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:93",
@@ -4659,9 +4799,36 @@
       "priority": "P1",
       "story_points": 8,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S10-GATE-20261121",
+          "implementation_target": {
+            "commit": "6bba4f3b3d994a3a6df00c174155f7b59735f01b",
+            "pr": 48,
+            "pr_head": "09fc33dfb3bbe1ef56901e4edda84d1dce946949"
+          },
+          "ci_run": {
+            "push": "44802159747",
+            "pull_request": "44802178895"
+          },
+          "independent_qa": {
+            "path": "docs/evidence/s10-20261121-09fc33d/qa/s10-gate-independent-review.md",
+            "sha256": "ecfcb020a1c4344fd235dd7097d287cf5cb2a9b6f3e59491f71c533cd28ce445",
+            "verdict": "ACCEPT"
+          },
+          "criteria_task_id": "DEV-101",
+          "phase_report": "docs/phases/S10-GATE-20261121.md",
+          "s6_addendum": {
+            "redo_branch": "feature/s6-wpd-redo-20261120",
+            "redo_head": "4c41e57",
+            "redo_push_ci": "44738600604",
+            "bundle_merge": "cca5417",
+            "independent_qa_target": "4c41e57"
+          }
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:102",
@@ -4675,9 +4842,36 @@
       "priority": "P1",
       "story_points": 8,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S10-GATE-20261121",
+          "implementation_target": {
+            "commit": "6bba4f3b3d994a3a6df00c174155f7b59735f01b",
+            "pr": 48,
+            "pr_head": "09fc33dfb3bbe1ef56901e4edda84d1dce946949"
+          },
+          "ci_run": {
+            "push": "44802159747",
+            "pull_request": "44802178895"
+          },
+          "independent_qa": {
+            "path": "docs/evidence/s10-20261121-09fc33d/qa/s10-gate-independent-review.md",
+            "sha256": "ecfcb020a1c4344fd235dd7097d287cf5cb2a9b6f3e59491f71c533cd28ce445",
+            "verdict": "ACCEPT-WITH-NOTES"
+          },
+          "criteria_task_id": "DEV-102",
+          "phase_report": "docs/phases/S10-GATE-20261121.md",
+          "s6_addendum": {
+            "redo_branch": "feature/s6-wpd-redo-20261120",
+            "redo_head": "4c41e57",
+            "redo_push_ci": "44738600604",
+            "bundle_merge": "cca5417",
+            "independent_qa_target": "4c41e57"
+          }
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:103",
@@ -5051,9 +5245,29 @@
       "priority": "P1",
       "story_points": 13,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S10-GATE-20261121",
+          "implementation_target": {
+            "commit": "6bba4f3b3d994a3a6df00c174155f7b59735f01b",
+            "pr": 48,
+            "pr_head": "09fc33dfb3bbe1ef56901e4edda84d1dce946949"
+          },
+          "ci_run": {
+            "push": "44802159747",
+            "pull_request": "44802178895"
+          },
+          "independent_qa": {
+            "path": "docs/evidence/s10-20261121-09fc33d/qa/s10-gate-independent-review.md",
+            "sha256": "ecfcb020a1c4344fd235dd7097d287cf5cb2a9b6f3e59491f71c533cd28ce445",
+            "verdict": "ACCEPT"
+          },
+          "criteria_task_id": "DEV-113",
+          "phase_report": "docs/phases/S10-GATE-20261121.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:114",
@@ -5103,9 +5317,29 @@
       "priority": "P0",
       "story_points": 13,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S10-GATE-20261121",
+          "implementation_target": {
+            "commit": "6bba4f3b3d994a3a6df00c174155f7b59735f01b",
+            "pr": 48,
+            "pr_head": "09fc33dfb3bbe1ef56901e4edda84d1dce946949"
+          },
+          "ci_run": {
+            "push": "44802159747",
+            "pull_request": "44802178895"
+          },
+          "independent_qa": {
+            "path": "docs/evidence/s10-20261121-09fc33d/qa/s10-gate-independent-review.md",
+            "sha256": "ecfcb020a1c4344fd235dd7097d287cf5cb2a9b6f3e59491f71c533cd28ce445",
+            "verdict": "ACCEPT-WITH-NOTES"
+          },
+          "criteria_task_id": "DEV-115",
+          "phase_report": "docs/phases/S10-GATE-20261121.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:116",
@@ -5202,9 +5436,29 @@
       "priority": "P0",
       "story_points": 5,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S10-GATE-20261121",
+          "implementation_target": {
+            "commit": "6bba4f3b3d994a3a6df00c174155f7b59735f01b",
+            "pr": 48,
+            "pr_head": "09fc33dfb3bbe1ef56901e4edda84d1dce946949"
+          },
+          "ci_run": {
+            "push": "44802159747",
+            "pull_request": "44802178895"
+          },
+          "independent_qa": {
+            "path": "docs/evidence/s10-20261121-09fc33d/qa/s10-gate-independent-review.md",
+            "sha256": "ecfcb020a1c4344fd235dd7097d287cf5cb2a9b6f3e59491f71c533cd28ce445",
+            "verdict": "ACCEPT"
+          },
+          "criteria_task_id": "DEV-119",
+          "phase_report": "docs/phases/S10-GATE-20261121.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:120",
@@ -5218,9 +5472,29 @@
       "priority": "P0",
       "story_points": 5,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S10-GATE-20261121",
+          "implementation_target": {
+            "commit": "6bba4f3b3d994a3a6df00c174155f7b59735f01b",
+            "pr": 48,
+            "pr_head": "09fc33dfb3bbe1ef56901e4edda84d1dce946949"
+          },
+          "ci_run": {
+            "push": "44802159747",
+            "pull_request": "44802178895"
+          },
+          "independent_qa": {
+            "path": "docs/evidence/s10-20261121-09fc33d/qa/s10-gate-independent-review.md",
+            "sha256": "ecfcb020a1c4344fd235dd7097d287cf5cb2a9b6f3e59491f71c533cd28ce445",
+            "verdict": "ACCEPT"
+          },
+          "criteria_task_id": "DEV-120",
+          "phase_report": "docs/phases/S10-GATE-20261121.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:121",
@@ -5368,7 +5642,8 @@
     "docs/phases/S6-GATE-20261120.md",
     "docs/phases/S7-GATE-20261120.md",
     "docs/phases/S8-GATE-20261120.md",
-    "docs/phases/S9-GATE-20261120.md"
+    "docs/phases/S9-GATE-20261120.md",
+    "docs/phases/S10-GATE-20261121.md"
   ],
   "active_source": "docs/sources/active.json",
   "current_package": {
@@ -17221,19 +17496,11 @@
       "DEV-046",
       "DEV-081",
       "DEV-082",
-      "DEV-100"
+      "DEV-100",
+      "DEV-101",
+      "DEV-102"
     ],
-    "accepted_story_points_added": 71,
-    "not_accepted_tasks": [
-      {
-        "id": "DEV-101",
-        "reason": "lifecycle reverted after red CI ShipOpsLifecycleTests.cs:47 (runs 44601911669/44601931922); continues on feature/s6-wpd-ship-ops-20261119"
-      },
-      {
-        "id": "DEV-102",
-        "reason": "lifecycle reverted after red CI ShipOpsLifecycleTests.cs:81 (runs 44601911669/44601931922); continues on feature/s6-wpd-ship-ops-20261119"
-      }
-    ],
+    "accepted_story_points_added": 87,
     "phase_report": "docs/phases/S6-GATE-20261120.md",
     "signoffs_claimed": false,
     "open_expert_gates": [
@@ -17243,7 +17510,73 @@
       "SOF signature authority",
       "Loss of Hire claim assessment",
       "assisted-vessel reference model"
-    ]
+    ],
+    "original_record_20261120": {
+      "accepted_tasks": [
+        "DEV-043",
+        "DEV-044",
+        "DEV-045",
+        "DEV-046",
+        "DEV-081",
+        "DEV-082",
+        "DEV-100"
+      ],
+      "accepted_story_points_added": 71,
+      "not_accepted_tasks": [
+        {
+          "id": "DEV-101",
+          "reason": "lifecycle reverted after red CI ShipOpsLifecycleTests.cs:47 (runs 44601911669/44601931922); continues on feature/s6-wpd-ship-ops-20261119"
+        },
+        {
+          "id": "DEV-102",
+          "reason": "lifecycle reverted after red CI ShipOpsLifecycleTests.cs:81 (runs 44601911669/44601931922); continues on feature/s6-wpd-ship-ops-20261119"
+        }
+      ]
+    },
+    "addendum_20261121": {
+      "delivery": "S10-GATE-20261121",
+      "accepted_tasks": [
+        "DEV-101",
+        "DEV-102"
+      ],
+      "accepted_story_points_added": 16,
+      "implementation_target": {
+        "commit": "6bba4f3b3d994a3a6df00c174155f7b59735f01b",
+        "pr": 48,
+        "pr_head": "09fc33dfb3bbe1ef56901e4edda84d1dce946949"
+      },
+      "ci_run": {
+        "push": "44802159747",
+        "pull_request": "44802178895"
+      },
+      "redo": {
+        "branch": "feature/s6-wpd-redo-20261120",
+        "head": "4c41e57",
+        "push_ci": "44738600604",
+        "commits": [
+          "1d98b5b",
+          "c416367",
+          "4c41e57"
+        ],
+        "bundle_merge": "cca5417"
+      },
+      "independent_qa": {
+        "target": "4c41e57",
+        "verdicts": {
+          "DEV-101": "ACCEPT",
+          "DEV-102": "ACCEPT-WITH-NOTES"
+        },
+        "regression_check": "S10 gate QA 6ea3a2b + re-check 6ea3a2b..09fc33d: no regression",
+        "path": "docs/evidence/s10-20261121-09fc33d/qa/s10-gate-independent-review.md",
+        "sha256": "ecfcb020a1c4344fd235dd7097d287cf5cb2a9b6f3e59491f71c533cd28ce445"
+      },
+      "notes": [
+        "DEV-102 only 'recorder cannot verify/close' is enforced; verifier may equal closer (AC asks for verified closure; not a defect)",
+        "migration 20261121040001_S6WpdSofDowntimeLifecycle older than S9 20261122* migrations; applies out of order on an S9-migrated database (no production data)"
+      ],
+      "phase_report": "docs/phases/S10-GATE-20261121.md",
+      "note": "Original 20.11.2026 S6 record preserved in original_record_20261120; history not rewritten."
+    }
   },
   "s7_gate_20261120": {
     "state": "ACCEPTED_WITH_NOTES",
@@ -17542,6 +17875,132 @@
       "controlled-copy print renderer",
       "drydock scope catalogue",
       "durable offline tug log capture"
+    ]
+  },
+  "s10_gate_20261121": {
+    "state": "ACCEPTED_WITH_NOTES",
+    "target": {
+      "commit": "6bba4f3b3d994a3a6df00c174155f7b59735f01b",
+      "pr": 48,
+      "pr_head": "09fc33dfb3bbe1ef56901e4edda84d1dce946949"
+    },
+    "ci_run": {
+      "push": "44802159747",
+      "pull_request": "44802178895"
+    },
+    "coverage_gate": {
+      "state": "PASS_ACTUAL_CURRENT_CRITICAL_SCOPE",
+      "observed": 288,
+      "required": 288,
+      "critical_route_templates": 263,
+      "invalid_rows": 0,
+      "observed_rows": 16813,
+      "integration_partition": "EXACT_DISJOINT_COMPLETE_MULTISET (4 shards, 1160 cases)",
+      "unit_scope": "PASS_EXACT_DISCOVERED_SCOPE 421/421",
+      "source": "pull_request 44802178895 api-test-counts artifact"
+    },
+    "bundle_merges": {
+      "s9_record": "3a04251",
+      "s6_redo": "cca5417 (4c41e57)",
+      "wp_d": "135e353 (488cc45)",
+      "wp_a": "8610dbe (b3bbbfc)",
+      "dev_115": "3da305f (62bf499)",
+      "wp_b": "ea52af5 (d8f2b66)",
+      "wp_c": "812cf00 (479cb0a)"
+    },
+    "integration_fixes": {
+      "30d5140": "assurance mapping/receipt audit scope Unresolved -> Tenant",
+      "65bbc3a": "SIRE test FileHost + clean scanner",
+      "5033aff": "OpenAPI",
+      "6ea3a2b": "conflict center 6 sources",
+      "4880bdc": "AssuranceImport audit revision none->1 / 1->2 (before/after proven)",
+      "09fc33d": "tug offline material conflict resolution human-only"
+    },
+    "independent_qa": {
+      "path": "docs/evidence/s10-20261121-09fc33d/qa/s10-gate-independent-review.md",
+      "sha256": "ecfcb020a1c4344fd235dd7097d287cf5cb2a9b6f3e59491f71c533cd28ce445",
+      "source_result": "scheduled/workers/s10-gate-qa.result.md (round 1)",
+      "rounds": [
+        {
+          "round": 1,
+          "target": "6ea3a2b",
+          "verdict": "NOT_ACCEPTED (CI push 44787515329 + PR 44787618820 red; B1 DEV-092 tug offline MaterialConflict resolution without human gate TugOperationsOfflineEndpoints.cs:314-325,407; B2 DEV-113 AssuranceImport audit before/after unproven AuditMetadata.cs:1037-1039); 9 ACCEPT/-WITH-NOTES; S6 DEV-101/102 no regression",
+          "fixes": [
+            "4880bdc",
+            "09fc33d"
+          ]
+        },
+        {
+          "round": 2,
+          "target": "6ea3a2b..09fc33d",
+          "verdict": "B1/B2 RESOLVED; DEV-092/DEV-113 ACCEPT; overall ACCEPT conditional on 09fc33d push + PR green (satisfied)"
+        }
+      ]
+    },
+    "intermediate_ci": [
+      {
+        "commit": "30d5140",
+        "push": "44777872773",
+        "result": "red: single SIRE test S10WpaAssuranceApiTests.cs:105 (shard 1, 1 of 289)"
+      },
+      {
+        "commit": "6ea3a2b",
+        "push": "44787515329",
+        "pull_request": "44787618820",
+        "result": "both red: coverage gate AUDIT_BEFORE_AFTER_UNPROVEN, 2 invalid rows; all shards 1160/1160 passed"
+      },
+      {
+        "commit": "4880bdc",
+        "push": "44794227692",
+        "pull_request": "44794237190",
+        "result": "both green"
+      }
+    ],
+    "accepted_tasks": [
+      "DEV-064",
+      "DEV-065",
+      "DEV-066",
+      "DEV-067",
+      "DEV-068",
+      "DEV-091",
+      "DEV-092",
+      "DEV-113",
+      "DEV-115",
+      "DEV-119",
+      "DEV-120"
+    ],
+    "accepted_story_points_added": 99,
+    "s6_addendum": {
+      "accepted_tasks": [
+        "DEV-101",
+        "DEV-102"
+      ],
+      "accepted_story_points_added": 16,
+      "recorded_in": "s6_gate_20261120.addendum_20261121"
+    },
+    "notes": [
+      "DEV-064 pack list shows other packs' ItemCount/ManifestHash to assignment holders; no integration test for superseded item in pack",
+      "DEV-065 DataQualityPolicy.Floor unused; no integration test that readiness drops on DATA_TRUST; profile vessels stay REVIEW_REQUIRED; readiness actor-dependent",
+      "DEV-066 attachment bytes in memory only (durable offline binary closed)",
+      "DEV-067 tooling only; measurement never ran on real PG; p95 envelope not recorded; pilot-hardening.yml workflow_dispatch only",
+      "DEV-068 gate INCOMPLETE locally: critical 0 / high 0 / medium 49 (41 at WP-D); secret-scan and control-evidence checks missing; scans pass not evidenced for HEAD",
+      "DEV-091 outcome filter vs visible-row outcome may disagree under partial visibility; no foreign-tenant vessel test",
+      "DEV-092 no PG test for briefing-ack/execution-event offline; no device-key signature (lease + CSRF only)",
+      "DEV-113 capture does not re-check tanker classification; AssuranceFixtures untested",
+      "DEV-115 phase report shows pre-integration 42/11/143 (HEAD 45/11/140); route-snapshot.v1.json not refreshed"
+    ],
+    "phase_report": "docs/phases/S10-GATE-20261121.md",
+    "signoffs_claimed": false,
+    "open_expert_gates": [
+      "agreed p95 performance envelope (never measured on real PG; manual pilot-hardening.yml)",
+      "secret-scan exceptions/pin",
+      "OCIMF SIRE 2.0 licensed format",
+      "finding closure workflow",
+      "data freshness policy",
+      "durable offline binary capture",
+      "demo data stays synthetic",
+      "DEV-068 medium findings need security owner review",
+      "tug offline device key policy"
     ]
   }
 }
