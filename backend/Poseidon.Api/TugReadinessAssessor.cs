@@ -63,10 +63,13 @@ internal static class TugReadinessAssessor
         var defects = await db.Defects.AsNoTracking().Where(d => d.VesselId == tug).OrderBy(d => d.Id).Take(Limit + 1).ToArrayAsync(ct);
         if (defects.Length > Limit) return [new("pms", TugReadinessEngine.Unknown, "DefectProjectionLimitExceeded")];
         var result = new List<TugReadinessCheck>();
+        // DEV-055: only a human-closed lifecycle for the current declaration revision is not open.
+        var closed = await DefectLifecycleReader.ClosedRevisions(db, tug, defects.Select(d => d.Id).ToArray(), ct);
         foreach (var d in defects) {
+            if (closed.TryGetValue(d.Id, out var closedRevision) && closedRevision == d.Revision) { result.Add(new("pms", TugReadinessEngine.Pass, "DefectClosed", false, d.Id, d.Revision)); continue; }
             SortedDictionary<string, DefectFact> fields;
             try { fields = DefectPolicy.ReadFields(d.FieldsJson); } catch (InvalidDataException) { result.Add(new("pms", TugReadinessEngine.Unknown, "DefectFieldsUnavailable", true, d.Id, d.Revision)); continue; }
-            // No defect closure/verification exists yet: every declaration is treated as open.
+            // Not closed through the DEV-055 lifecycle: the declaration is treated as open.
             var criticality = fields.TryGetValue("criticality", out var c) && c.State == "Known" ? c.Value : null;
             result.Add(criticality switch {
                 "Critical" => new("pms", TugReadinessEngine.Fail, "DeclaredCriticalDefectOpen", true, d.Id, d.Revision),
@@ -153,8 +156,12 @@ internal static class TugReadinessAssessor
         checks.AddRange(crew.Checks.Where(c => c.Category == "crew_competence"));
         var equipment = await Equipment(h, db, a, p.TugId, p.PlannedEnd, ct);
         checks.AddRange(equipment.Checks.Select(c => c.Category == "pms" ? c : c with { Category = "tow_equipment" }));
-        // No typed communication or whole-window weather source exists yet (60.02 paragraph 196): UNKNOWN.
-        checks.Add(new("communication", TugReadinessEngine.Unknown, "CommunicationSourceUnavailable"));
+        // S8 DEV-087/088: the communication input comes only from a current approved towage plan that covers this
+        // tug (otherwise UNKNOWN); an incomplete towage risk briefing is a FAIL that blocks READY.
+        var towage = await TowageReader.Read(db, a, p.VesselId, p.JobId, ct);
+        checks.Add(TowagePlanPolicy.Communication(towage.Plan, p.TugId, job.Revision));
+        checks.AddRange(TowageBriefingPolicy.Checks(towage.Briefing, towage.Plan, towage.Risk, towage.RiskReadable));
+        // No whole-window weather source exists yet (60.02 paragraph 196): UNKNOWN.
         checks.Add(new("weather", TugReadinessEngine.Unknown, "WholeWindowWeatherSourceUnavailable"));
         var capacity = evidence.OwnedBp?.SingleOrDefault(c => c.TugId == p.TugId);
         decimal? available = capacity is { State: "CurrentPlanningCapacity", Tonnes: { } t } && decimal.TryParse(t, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var v) ? v : null;

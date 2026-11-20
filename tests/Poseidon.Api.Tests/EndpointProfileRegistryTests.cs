@@ -105,8 +105,12 @@ public sealed class EndpointProfileRegistryTests
         Assert.Equal(["ImportMappingDraft", "ImportPreview", "ImportUpload"], keyGaps);
         Assert.All(commands.Where(e => e.Deviations.Contains("IDEMPOTENCY_KEY_NOT_REQUIRED")),
             e => Assert.True(EndpointProfiles.HeaderKeyRequired(EndpointProfiles.Profile(e.ProfileId))));
-        Assert.Equal("NATIVE-DENIED-1", Assert.Single(commands, e => S1SecurityContract.Operations
-            .Single(o => o.OperationId == e.SecurityOperationId).Kind == "AlwaysDenied").ProfileId);
+        // S8 DEV-109 replaced the last always-denied command (maintenance postponement) with an audited
+        // request/decision workflow: the current surface has exactly zero always-denied operations and no
+        // command still carries the always-denied profile. A new always-denied command must update this count.
+        Assert.Equal(0, S1SecurityContract.Operations.Count(o => o.Kind == "AlwaysDenied"));
+        Assert.DoesNotContain(commands, e => S1SecurityContract.Operations.Single(o => o.OperationId == e.SecurityOperationId).Kind == "AlwaysDenied");
+        Assert.DoesNotContain(commands, e => e.ProfileId == "NATIVE-DENIED-1");
         Assert.All(commands.Where(e => S1SecurityContract.Operations.Single(o => o.OperationId == e.SecurityOperationId).IsCritical),
             e => Assert.NotEqual("NATIVE-OBSERVATION-COMMAND-1", e.ProfileId));
     }
@@ -251,19 +255,20 @@ public sealed partial class DirectoryWorkspaceTests
         "crew.profile.contact.read", "crew.profile.contact.write", "crew.profile.employment.read", "crew.profile.employment.write",
         "crew.profile.identity.read", "crew.profile.identity.write", "crew.profile.medical.read", "crew.profile.medical.write",
         "crew.read", "crew.write", "daily.deck.read", "daily.deck.review", "daily.deck.write", "daily.engine.read", "daily.engine.review",
-        "daily.engine.write", "daily.noon.read", "daily.noon.review", "daily.noon.write", "defect.read", "defect.write",
+        "daily.engine.write", "daily.noon.read", "daily.noon.review", "daily.noon.write", "defect.read", "defect.write", "defect.verify", "defect.effectiveness", "defect.close", "service.report.read", "service.report.write", "service.report.verify",
         "directory.read", "directory.write", "equipment.history.read", "equipment.read", "equipment.write", "evidence.read",
         "evidence.write", "file.read", "file.write", "human.decide", "human.review.read", "human.review.submit", "human.trace.read",
         "human.verify", "import.legacy.convert", "import.read", "import.write", "maintenance.history.read",
-        "maintenance.observation.write", "maintenance.owner.eligible", "maintenance.read", "maintenance.write", "mode.cross", "mode.tug",
+        "maintenance.observation.write", "maintenance.measurement.write", "maintenance.postponement.request", "maintenance.postponement.decide", "maintenance.owner.eligible", "maintenance.read", "maintenance.write", "mode.cross", "mode.tug",
         "notification.acknowledge", "notification.evaluate", "notification.manage", "notification.preference.write", "notification.read",
         "operations.downtime.read", "operations.downtime.write", "operations.fuel.read", "operations.fuel.write", "operations.port.read",
         "operations.port.write", "regulatory.draft.read", "regulatory.draft.write", "regulatory.facts.attest", "regulatory.qualify",
         "rules.review", "rules.write", "system.health.read", "tug.owner.eligible", "tug.plan.write", "tug.read", "tug.write",
-        "workorder.read", "workorder.write", "workspace.search",
+        "workorder.read", "workorder.write", "workorder.release", "workorder.execute", "workorder.verify", "workorder.close",
+        "spare.read", "spare.write", "requisition.propose", "requisition.approve", "workspace.search",
         "membership.read", "membership.manage", "membership.security.suspend",
         "document.publish", "evidence.verify", "record.hold", "record.retention.manage", "record.purge.request", "record.purge.approve",
-        "hse.risk.read", "hse.risk.write", "hse.risk.approve", "hse.risk.acknowledge", "hse.risk_template.read", "hse.risk_template.write", "hse.risk_template.publish", "hse.risk_template.suggest", "hse.risk_method.write", "hse.risk_method.publish"];
+        "hse.risk.read", "hse.risk.write", "hse.risk.approve", "hse.risk.acknowledge", "hse.risk_template.read", "hse.risk_template.write", "hse.risk_template.publish", "hse.risk_template.suggest", "hse.risk_method.write", "hse.risk_method.publish", "hse.high_risk_work.read"];
 
     private async Task<HttpResponseMessage> ProfileSend(WebApplicationFactory<Program> host, HttpClient client, EndpointProfileEntry entry,
         string path, bool csrf, bool key)

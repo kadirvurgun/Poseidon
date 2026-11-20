@@ -25,14 +25,14 @@ public sealed partial class DirectoryWorkspaceTests
     {
         using var host = Host(technicalRead: true, technicalWrite: true); using var client = Client(host);
         EnableDefectContext(host.Services); await Token(client);
-        var command = NewEquipment() with { Name = "FICTIONAL source equipment", Criticality = "DeclaredCritical", Notes = "FICTIONAL private source notes" };
+        var command = NewEquipment() with { Name = "FICTIONAL source equipment", Criticality = "CRITICAL", Notes = "FICTIONAL private source notes" };
         using var saved = await Send(client, EquipmentUrl, command); Assert.Equal(HttpStatusCode.OK, saved.StatusCode);
         var first = (await saved.Content.ReadFromJsonAsync<TechnicalSaved>(Ct))!;
         var context = (await client.GetFromJsonAsync<DefectAssetContextDto>(DefectAssetPath(command.Id) + "?revision=1", Ct))!;
         Assert.True(context.Current); Assert.Equal(first.Version, context.Pin.Version); Assert.Equal(first.Revision, context.Pin.Revision);
         Assert.Equal(command.Id, context.Pin.Id); Assert.Equal(64, context.Pin.Hash.Length);
         Assert.Equal("REVIEW_REQUIRED", context.Qualification); Assert.Equal(command.Name, context.Asset.Name);
-        Assert.Equal("DeclaredCritical", context.Asset.Criticality);
+        Assert.Equal("CRITICAL", context.Asset.Criticality); // DEV-052 closed criticality
         using var raw = await client.GetAsync(DefectAssetPath(command.Id), Ct);
         var body = await raw.Content.ReadAsStringAsync(Ct);
         Assert.DoesNotContain("FICTIONAL private source notes", body); Assert.DoesNotContain("responsibleRoleId", body);

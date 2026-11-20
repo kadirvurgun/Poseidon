@@ -4,7 +4,7 @@ import { isGuid } from './identifiers'
 // DEV-033/DEV-034 (18.01 Backlog rows 34/35). Hand-authored strict decoder for
 // POST /api/v1/sync/operations; generated types live in src/generated/api.d.ts.
 // Reconciliation is read-only on the server: it never replays or re-signs a command.
-export const syncDomains = ['CrewWatchGroup', 'TugPlanWindow', 'DailyNoon', 'DailyDeck', 'DailyEngine'] as const
+export const syncDomains = ['CrewWatchGroup', 'TugPlanWindow', 'DailyNoon', 'DailyDeck', 'DailyEngine', 'WorkOrderEvidence'] as const
 export type SyncDomain = typeof syncDomains[number]
 export const syncStates = ['NotReceived', 'Recorded', 'PayloadMismatch', 'KeyReused', 'Unavailable'] as const
 export type SyncState = typeof syncStates[number]

@@ -11,6 +11,7 @@ import { emptyDefectFields, type DefectFields } from './defect-fields';
 import { defectApi, defectInputErrors, freezeDefectCommand, type DefectAttempt, type DefectAssetContext, type DefectAssetPin, type DefectCapabilities, type DefectHistory, type DefectPage, type DefectRecord } from './defect-api';
 import { readDefectLocation, defectLocationPath, useDefectLocation, type DefectLocation } from './defect-location';
 import { DefectFieldsForm } from './DefectFieldsForm';
+import { DefectLifecyclePanel } from './DefectLifecyclePanel';
 import { DefectAssetAside, DefectRecordHistory, DefectRecordList, DefectSourceSummary, DefectTemporalTimeline } from './DefectRecordView';
 import { useWorkspaceRevalidation } from './use-workspace-revalidation';
 import { DowntimeSourceLaunch } from './DowntimeSourceLaunch';
@@ -280,6 +281,7 @@ function DefectSurface({ route, language, onLanguage, onNavigate, onCanonical, o
           </form>
           {editor.record && <EnterpriseActions align="start" aria-label={localizedText(en, "pairs.m_bdd59ff85a0d5483")}><Button variant="outline" disabled={busy || !!frozen} onClick={readCurrent}>{localizedText(en, "pairs.m_1a67815de6333b5c")}</Button></EnterpriseActions>}
           {snapshot ? <DefectTemporalTimeline value={snapshot} language={language} dirty={editor.dirty}/> : <p className="defect-hint">{localizedText(en, "pairs.m_b962307455b94e1f")}</p>}
+          {editor.record && route.vessel && user?.csrfToken && <DefectLifecyclePanel vessel={route.vessel} defect={editor.record.id} defectRevision={editor.record.revision} csrf={user.csrfToken} language={language}/>}
           {current.history && <DefectRecordHistory value={current.history} offset={historyOffset} disabled={busy || !!frozen || editor.dirty} language={language} onOffset={setHistoryOffset}/>}
         </section>
                                     : current.page ? <DefectRecordList page={current.page} offset={route.offset} language={language} onOffset={offset => onNavigate(defectLocationPath({ ...route, offset }))} onOpen={id => onNavigate(defectLocationPath({ vessel: route.vessel, id, offset: 0 }))}/>

@@ -30,6 +30,7 @@ public static class SecurityEventCodes
         "VesselCreate", "VesselUpdate", "VesselsRead", "WorkspaceRead",
         "WorkspaceSearch", "SystemHealthRead", "NotificationRead", "NotificationCommand", "ComplianceWorkspaceRead", "CriticalStateRead", "DailyOfflineRead", "DailyOfflineRequest", "DailyOperationsRead", "DailyOperationsCommand", "DailyReviewRead", "DailyReviewCommand", "ShipOperationsRead", "ShipOperationsCommand",
         "TugAssignmentRead", "TugAssignmentCommand", "TugReadinessRead", "TugReadinessDecision", "TugEquipmentRead", "TugEquipmentCommand", "TugCrewReadinessRead",
+        "TowagePlanRead", "TowagePlanCommand", "TowageBriefingRead", "TowageBriefingCommand", "HighRiskWorkRead",
         "ParameterRead", "ParameterCommand", "HrRead", "HrCommand", "MembershipRead", "MembershipCommand", "SessionRevalidation",
         "ControlledDocument", "ControlledDocumentRead", "ControlledDocumentCommand", "ControlledDocumentReplay",
         "SyncOperationRead", "SyncConflictList",
@@ -38,8 +39,12 @@ public static class SecurityEventCodes
         "DailyEngineReferenceRead", "DailyEngineReferenceCommand",
         "TugLifecycle",
         "RiskAssessmentRead", "RiskAssessmentCommand", "RiskTemplateRead", "RiskTemplateCommand",
+        "DefectLifecycleRead", "DefectLifecycleCommand", "ServiceReportRead", "ServiceReportCommand", "PmsCommandCenterRead",
         "PreSurveyRead", "PreSurveyCommand", "SurveyPlannerRead",
+        "WorkOrderExecutionRead", "WorkOrderExecutionCommand", "WorkOrderOfflineRead", "WorkOrderOfflineRequest",
+        "CriticalSpareRead", "CriticalSpareCommand", "TechnicalRequisitionRead", "TechnicalRequisitionCommand",
         "CredentialVerificationRead", "CredentialVerificationCommand", "CrewCompetenceRead", "CrewCompetenceCommand", "SafeManningRead", "SafeManningCommand",
+        "MeasurementRead", "MeasurementCommand", "MaintenancePostponementRead", "MaintenancePostponementCommand",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static IReadOnlySet<string> Results { get; } = new string[]
     {
@@ -77,7 +82,11 @@ public static class SecurityEventCodes
         "trace_reader_required", "tug_capability_context_unavailable", "validation_failed", "verification_unavailable",
         "terminal_review", "source_admission_and_signature_unavailable", "pending_required",
         "invalid_reason", "invalid_state", "expiry_not_due", "supersession_not_proven", "freshness_review_required",
-        "version_conflict", "invalid_qualification_transition", "independent_reviewer_required",
+        "version_conflict", "invalid_qualification_transition",
+        "hierarchy_cycle", "measurement_definition_invalid", "reading_out_of_range", "reading_precision_unsupported", "counter_decreasing",
+        "reading_out_of_order", "original_due_unavailable", "postponement_not_allowed", "postponement_deadline_not_after_due",
+        "postponement_deadline_not_after_previous", "postponement_extension_exceeds_policy", "postponement_policy_unconfigured",
+        "risk_review_required", "postponement_pending", "independent_reviewer_required",
         "incomplete_qualification", "acceptance_trigger_required", "impact_review_required",
         "outside_effective_dates", "superseding_rule_required", "hr_reference_incomplete", "hr_identifier_duplicate", "hr_role_overlap", "hr_employee_no_overlap", "hr_person_not_verified", "hr_legal_entity_inactive", "hr_employer_role_missing", "hr_employment_not_active", "hr_period_outside_employment", "hr_operator_path_missing", "hr_assignment_overlap", "hr_active_assignment_at_exit", "hr_actual_exists", "hr_event_conflict", "hr_employment_outside_legal_entity", "hr_employment_outside_employer_role", "last_admin", "membership_inactive",
         "legal_hold_active", "legal_hold_not_active", "retention_not_elapsed", "retention_unconfigured", "intake_not_released",
@@ -88,6 +97,7 @@ public static class SecurityEventCodes
         "unresolved_reference", "scope_not_allowed", "selector_invalid", "definition_version_mismatch", "effective_from_in_past",
         "pending_change_exists", "ambiguous_selection", "synthetic_not_approvable",
         "tug_assignment_scope_stale", "tug_assignment_active_exists", "tug_go_not_permitted", "tug_authority_required", "assessment_stale",
+        "towage_record_incomplete", "towage_plan_not_approved",
         "quiet_hours_incomplete", "tug_request_incomplete", "quiet_hours_invalid", "quiet_hours_zone_unknown",
         "control_retired", "control_record_incomplete", "control_reviewer_required", "control_revision_conflict",
         "override_reason_not_allowed", "override_evidence_required", "override_evidence_unavailable", "override_unknown_not_acceptable", "override_validity_invalid",
@@ -98,7 +108,9 @@ public static class SecurityEventCodes
         "renewal_verification_not_matched", "renewal_replacement_not_effective", "renewal_cancellation_receipt_required", "renewal_already_open",
         "renewal_state_locked", "certificate_already_superseded",
         "risk_record_incomplete", "method_matrix_incomplete", "template_not_effective", "risk_acknowledgement_exists",
+        "defect_lifecycle_exists", "defect_safeguard_required", "defect_closure_blocked", "defect_declaration_changed", "service_report_incomplete",
         "checklist_items_mismatch", "na_not_authorized", "port_call_unavailable", "template_unavailable", "verification_rejected",
+        "required_evidence_missing", "required_evidence_unconfigured", "evidence_changed", "stock_not_low", "requisition_already_open", "quantity_required",
         "credential_document_required", "competence_requirement_unavailable", "evaluation_window_invalid", "manning_dispensation_required", "manning_dispensation_not_applicable", "manning_review_acknowledgement_required",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static bool Allows(string action, string result) => Actions.Contains(action) && Results.Contains(result);

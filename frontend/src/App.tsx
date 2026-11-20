@@ -7,6 +7,8 @@ import { ImportWorkspace } from './product/ImportWorkspace';
 import { DailyReportWorkspace } from './product/DailyReportWorkspace';
 import { TugWorkspace } from './product/TugWorkspace';
 import { TugReadinessWorkspace } from './product/TugReadinessWorkspace';
+import { TowageWorkspace } from './product/TowageWorkspace';
+import { HighRiskWorkWorkspace } from './product/HighRiskWorkWorkspace';
 import { TechnicalWorkspace } from './product/TechnicalWorkspace';
 import { CrewWorkspace } from './product/CrewWorkspace';
 import { CrewComplianceWorkspace } from './product/CrewComplianceWorkspace';
@@ -23,7 +25,10 @@ import { DefectWorkspace } from './product/DefectWorkspace';
 import { WorkOrderWorkspace } from './product/WorkOrderWorkspace';
 import { DowntimeWorkspace } from './product/DowntimeWorkspace';
 import { RiskAssessmentWorkspace } from './product/RiskAssessmentWorkspace';
+import { PmsCommandCenterWorkspace } from './product/PmsCommandCenterWorkspace';
+import { ServiceReportWorkspace } from './product/ServiceReportWorkspace';
 import { RiskTemplateLibraryWorkspace } from './product/RiskTemplateLibraryWorkspace';
+import { CriticalSparesWorkspace } from './product/CriticalSparesWorkspace';
 import { AuditReadyWorkspace } from './product/AuditReadyWorkspace';
 import { SurveyWorkspace } from './product/SurveyWorkspace';
 import { AppearanceControls } from './theme/AppearanceControls';
@@ -51,12 +56,21 @@ export function App() {
         return <ImportWorkspace key={importer[1]} vessel={importer[1]}/>;
     if (/^\/app\/tug-(assignment|readiness|equipment-readiness|crew-readiness)(?:\/|$)/.test(window.location.pathname))
         return <TugReadinessWorkspace />;
+    // S8 WP-D DEV-087/088 towage plan and risk & briefing; DEV-107 fleet high-risk work.
+    if (/^\/app\/towage-(plan|risk-briefing)(?:\/|$)/.test(window.location.pathname))
+        return <TowageWorkspace />;
+    if (/^\/app\/high-risk-work(?:\/|$)/.test(window.location.pathname))
+        return <HighRiskWorkWorkspace />;
     if (/^\/app\/tug-(command|job-board|job-intake|job-detail)(?:\/|$)/.test(window.location.pathname))
         return <TugWorkspace />;
     if (/^\/app\/(equipment-hierarchy|maintenance-plan)\//.test(window.location.pathname))
         return <TechnicalWorkspace />;
     if (/^\/app\/defects(?:\/|$)/.test(window.location.pathname))
         return <DefectWorkspace />;
+    if (/^\/app\/pms-command-center(?:\/|$)/.test(window.location.pathname))
+        return <PmsCommandCenterWorkspace />;
+    if (/^\/app\/service-engineer-report(?:\/|$)/.test(window.location.pathname))
+        return <ServiceReportWorkspace />;
     if (/^\/app\/work-order-center(?:\/|$)/.test(window.location.pathname))
         return <WorkOrderWorkspace />;
     if (/^\/app\/operational-downtime(?:\/|$)/.test(window.location.pathname))
@@ -65,6 +79,8 @@ export function App() {
         return <RiskAssessmentWorkspace />;
     if (/^\/app\/risk-template-library(?:\/|$)/.test(window.location.pathname))
         return <RiskTemplateLibraryWorkspace />;
+    if (/^\/app\/critical-spares(?:\/|$)/.test(window.location.pathname))
+        return <CriticalSparesWorkspace />;
     const crew = /^\/app\/crew-roster\/([0-9a-fA-F-]{36})(?:\/crew-profile\/([0-9a-fA-F-]{36}))?\/?$/.exec(window.location.pathname);
     if (crew)
         return <CrewWorkspace key={`${crew[1]}:${crew[2] ?? ''}`} vessel={crew[1]} assignment={crew[2]}/>;

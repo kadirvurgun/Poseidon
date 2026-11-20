@@ -21,17 +21,26 @@ public static class WorkspaceEndpoints
         if (SyncConflictCenterEndpoints.CanOpen(actor)) destinations = [.. destinations, new("offline-conflict-center", "/app/offline-conflict-center")];
         if (DefectAssetContextReader.CanRead(actor)) destinations = [.. destinations, new("defects", "/app/defects")];
         if (WorkOrderEndpoints.CanRead(actor)) destinations = [.. destinations, new("work-order-center", "/app/work-order-center")];
+        // DEV-056/DEV-103: the same server predicates as their endpoints.
+        if (PmsCommandCenterEndpoints.CanRead(actor)) destinations = [.. destinations, new("pms-command-center", "/app/pms-command-center")];
+        if (ServiceReportEndpoints.CanRead(actor)) destinations = [.. destinations, new("service-engineer-report", "/app/service-engineer-report")];
         if (OperationalDowntimeEndpoints.CanRead(actor)) destinations = [.. destinations, new("operational-downtime", "/app/operational-downtime")];
         // DEV-105/DEV-106: the same server predicates as the risk endpoints.
         if (RiskAssessmentEndpoints.CanRead(actor)) destinations = [.. destinations, new("risk-assessment", "/app/risk-assessment")];
         if (RiskTemplateEndpoints.CanRead(actor)) destinations = [.. destinations, new("risk-template-library", "/app/risk-template-library")];
+        // DEV-110: same server read authority as the critical spare endpoints (spare.read).
+        if (CriticalSpareEndpoints.CanRead(actor)) destinations = [.. destinations, new("critical-spares", "/app/critical-spares")];
+        // S8 WP-D DEV-107: same server predicate as GET /api/v1/hse/high-risk-work.
+        if (HighRiskWorkEndpoints.CanRead(actor)) destinations = [.. destinations, new("high-risk-work", "/app/high-risk-work")];
         if (CertificateReader.Read(actor)) destinations = [.. destinations,
             new("certificate-command-center", "/app/certificate-command-center"), new("renewal-workflow", "/app/renewal-workflow"),
             // DEV-104/DEV-112: same server read authority as their endpoints (certificate.read).
             new("pre-survey-checklist", "/app/pre-survey-checklist"), new("survey-planner", "/app/survey-planner")];
         if (actor.CanReadTug) destinations = [.. destinations, new("tug-command", "/app/tug-command"), new("tug-job-board", "/app/tug-job-board"), new("tug-job-intake", "/app/tug-job-intake"),
             // S7 WP-B DEV-083..086: assignment, readiness gate, tow equipment and crew readiness screens.
-            new("tug-assignment", "/app/tug-assignment"), new("tug-readiness", "/app/tug-readiness"), new("tug-equipment-readiness", "/app/tug-equipment-readiness"), new("tug-crew-readiness", "/app/tug-crew-readiness")];
+            new("tug-assignment", "/app/tug-assignment"), new("tug-readiness", "/app/tug-readiness"), new("tug-equipment-readiness", "/app/tug-equipment-readiness"), new("tug-crew-readiness", "/app/tug-crew-readiness"),
+            // S8 WP-D DEV-087/088: towage plan and towage risk & briefing screens.
+            new("towage-plan", "/app/towage-plan"), new("towage-risk-briefing", "/app/towage-risk-briefing")];
         if (actor.CanSeeShip) {
             if (ShipOperationsEndpoints.CanRead(actor,"Fuel")) destinations = [.. destinations,new("fuel-bunker-log","/app/fuel-bunker-log")];
             if (ShipOperationsEndpoints.CanRead(actor,"Port")) destinations = [.. destinations,new("port-activity-sof","/app/port-activity-sof")];

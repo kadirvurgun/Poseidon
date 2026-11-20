@@ -58,6 +58,9 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
     private static AuditMetadata Project(EntityEntry entry, Guid? parentVessel)
     {
         if (RiskProjection(entry) is { } risk) return risk;
+        if (PmsProjection(entry) is { } pms) return pms;
+        if (TechnicalRecordProjection(entry) is { } technical) return technical;
+        if (TowageProjection(entry) is { } towage) return towage;
         if(entry.Entity is Defect defect)
             return new(defect.VesselId,defect.Id,"Defect",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,defect.Revision,
                 Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(defect.Revision)),Field("Binding",null,"OwnerReference")));
@@ -118,6 +121,52 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if(entry.Entity is CertificateAssertionEvent assertion)
             return new(assertion.VesselId,assertion.CertificateId,"CertificateAssertion",null,assertion.Revision,
                 Fields(Field("Revision",null,Number(assertion.Revision)),Field("Binding",null,"RecordedUnassessedAssertion")));
+        // DEV-054/DEV-057/DEV-110: closed state/transition codes only. Readings, spares, quantities,
+        // captions, file pins, part numbers and actor identities are never copied into audit.
+        if(entry.Entity is WorkOrderExecution execution) {
+            string? executionBefore=entry.State==EntityState.Added?null:Closed((string)entry.Property("State").OriginalValue!,WorkOrderExecutionPolicy.States);
+            return new(execution.VesselId,execution.WorkOrderId,"WorkOrderExecution",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,execution.Revision,
+                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(execution.Revision)),
+                    Field("ExecutionState",executionBefore,Closed(execution.State,WorkOrderExecutionPolicy.States)),Field("Binding",null,"OwnerReference")));
+        }
+        if(entry.Entity is WorkOrderExecutionRevision executionRevision)
+            return new(executionRevision.VesselId,executionRevision.WorkOrderId,"WorkOrderExecutionRevision",null,executionRevision.Revision,
+                Fields(Field("Revision",null,Number(executionRevision.Revision)),Field("Transition",null,Closed(executionRevision.Transition,WorkOrderExecutionPolicy.Transitions)),
+                    Field("ExecutionState",null,Closed(executionRevision.State,WorkOrderExecutionPolicy.States)),Field("EvidenceGate",null,Closed(executionRevision.EvidenceGate,WorkOrderExecutionPolicy.GateStates)),
+                    Field("Content",null,null,"ValuesWithheld"),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is WorkOrderExecutionReceipt executionReceipt)
+            return new(executionReceipt.VesselId,executionReceipt.WorkOrderId,"WorkOrderExecutionReceipt",null,executionReceipt.Revision,
+                Fields(Field("Operation",null,Closed(executionReceipt.Action,"WorkOrderExecutionTransition","WorkOrderExecutionEvidence")),Field("Binding",null,"CommittedResource")));
+        if(entry.Entity is WorkOrderOfflineEnrollment workOrderEnrollment)
+            return new(workOrderEnrollment.VesselId,workOrderEnrollment.WorkOrderId,"WorkOrderOfflineEnrollment",null,null,
+                Fields(Field("Binding",entry.State==EntityState.Added?null:"OwnerReference","OwnerReference")));
+        if(entry.Entity is WorkOrderOfflineLifecycle workOrderLifecycle)
+            return new(workOrderLifecycle.VesselId,workOrderLifecycle.WorkOrderId,"WorkOrderOfflineLifecycle",null,null,
+                Fields(Field("Binding",null,"OwnerReference"),Field("Lifecycle",null,Closed(workOrderLifecycle.Action,"Enrolled","Renewed","KeyEnrolled","Revoked","KeyLost","CleanupAllowed"))));
+        if(entry.Entity is WorkOrderOfflineOutcome workOrderOutcome)
+            return new(workOrderOutcome.VesselId,workOrderOutcome.WorkOrderId,"WorkOrderOfflineOutcome",null,workOrderOutcome.Revision,
+                Fields(Field("Binding",null,"OwnerReference"),Field("Outcome",null,Closed(workOrderOutcome.Result,"Committed","MaterialConflict","ServerRetained")),
+                    Field("ReasonCode",null,workOrderOutcome.ParentCommandId==null?null:workOrderOutcome.Result=="ServerRetained"?"CURRENT_SERVER_RETAINED":"INPUT_CORRECTED")));
+        if(entry.Entity is CriticalSpare spare)
+            return new(spare.VesselId,spare.Id,"CriticalSpare",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,spare.Revision,
+                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(spare.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is CriticalSpareRevision spareRevision)
+            return new(spareRevision.VesselId,spareRevision.SpareId,"CriticalSpareRevision",null,spareRevision.Revision,
+                Fields(Field("Revision",null,Number(spareRevision.Revision)),Field("Transition",null,Closed(spareRevision.Transition,CriticalSparePolicy.SpareTransitions)),
+                    Field("Content",null,null,"ValuesWithheld"),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is TechnicalRequisition requisition) {
+            string? requisitionBefore=entry.State==EntityState.Added?null:Closed((string)entry.Property("State").OriginalValue!,CriticalSparePolicy.RequisitionStates);
+            return new(requisition.VesselId,requisition.Id,"TechnicalRequisition",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,requisition.Revision,
+                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(requisition.Revision)),
+                    Field("RequisitionState",requisitionBefore,Closed(requisition.State,CriticalSparePolicy.RequisitionStates)),Field("Binding",null,"OwnerReference")));
+        }
+        if(entry.Entity is TechnicalRequisitionRevision requisitionRevision)
+            return new(requisitionRevision.VesselId,requisitionRevision.RequisitionId,"TechnicalRequisitionRevision",null,requisitionRevision.Revision,
+                Fields(Field("Revision",null,Number(requisitionRevision.Revision)),Field("Transition",null,Closed(requisitionRevision.Transition,CriticalSparePolicy.RequisitionTransitions)),
+                    Field("RequisitionState",null,Closed(requisitionRevision.State,CriticalSparePolicy.RequisitionStates)),Field("Content",null,null,"ValuesWithheld"),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is TechnicalSupplyReceipt supplyReceipt)
+            return new(supplyReceipt.VesselId,supplyReceipt.ResourceId,"TechnicalSupplyReceipt",null,supplyReceipt.Revision,
+                Fields(Field("Operation",null,Closed(supplyReceipt.Action,"CriticalSpareCreate","CriticalSpareUpdate","TechnicalRequisitionPropose","TechnicalRequisitionDecide")),Field("Binding",null,"CommittedResource")));
         if(entry.Entity is PreSurveyChecklist preSurvey)
             return new(preSurvey.VesselId,preSurvey.Id,"PreSurveyChecklist",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,preSurvey.Revision,
                 Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(preSurvey.Revision)),Field("Binding",null,"OwnerReference")));
@@ -685,6 +734,107 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                 Field("Revision", entry.State == EntityState.Added ? null : Number(m.Revision), Number(m.Revision)), Field("ContentJson", null, null, "RevisionReference"))),
             RiskCommandReceipt c => new(c.VesselId, c.ResourceId, "RiskCommandReceipt", null, c.Revision, Fields(
                 Field("Operation", null, Closed(c.Action, RiskOperations)), Field("Revision", null, Number(c.Revision)), Field("Binding", null, "CommittedResource"))),
+            _ => null
+        };
+    }
+    // DEV-108/DEV-109: closed kinds/states/decisions and revisions only. Measured values, codes,
+    // source references, reasons, requirement references and dates are never copied.
+    private static AuditMetadata? PmsProjection(EntityEntry entry)
+    {
+        long? Before(string property) => entry.State == EntityState.Added ? null : (long?)entry.Property(property).OriginalValue;
+        string? BeforeState(string property, string[] allowed) => entry.State == EntityState.Added ? null : Closed((string)entry.Property(property).OriginalValue!, allowed);
+        var kinds = Poseidon.Domain.PmsMeasurementPolicy.Kinds; var states = Poseidon.Domain.MaintenancePostponementPolicy.States;
+        return entry.Entity switch
+        {
+            MeasurementPoint p => new(p.VesselId, p.Id, "MeasurementPoint", Before("Revision"), p.Revision, Fields(
+                Field("Revision", Before("Revision") is { } r ? Number(r) : null, Number(p.Revision)), Field("Kind", null, Closed(p.Kind, kinds)),
+                Field("Source", null, Closed(p.Source, Poseidon.Domain.PmsMeasurementPolicy.PointSources)), Field("Definition", null, null, "RevisionReference"),
+                Field("Binding", null, "OwnerReference"))),
+            MeasurementPointRevision r => new(r.VesselId, r.PointId, "MeasurementPointRevision", null, r.Revision, Fields(
+                Field("Revision", null, Number(r.Revision)), Field("ContentJson", null, null, "RevisionReference"))),
+            MeasurementReading m => new(m.VesselId, m.PointId, "MeasurementReading", null, null, Fields(
+                Field("SourceType", null, Closed(m.SourceType, Poseidon.Domain.PmsMeasurementPolicy.ReadingSources)), Field("Value", null, null, "ValuesWithheld"),
+                Field("Evidence", null, m.EvidenceFileId == null ? "None" : "Referenced"), Field("Binding", null, "OwnerReference"))),
+            MaintenancePostponement x => new(x.VesselId, x.PlanId, "MaintenancePostponement", Before("Revision"), x.Revision, Fields(
+                Field("Revision", Before("Revision") is { } r ? Number(r) : null, Number(x.Revision)),
+                Field("State", BeforeState("State", states), Closed(x.State, states)),
+                Field("Criticality", null, Closed(x.Criticality, Poseidon.Domain.EquipmentCriticality.All)),
+                Field("PlanRevision", null, Number(x.PlanRevision)), Field("ExtensionDays", null, Number(x.ExtensionDays)),
+                Field("Reason", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
+            PmsCommandReceipt c => new(c.VesselId, c.ResourceId, "PmsCommandReceipt", null, c.Revision, Fields(
+                Field("Operation", null, Closed(c.Action, PmsStorage.Operations)), Field("Revision", null, Number(c.Revision)), Field("Binding", null, "CommittedResource"))),
+            _ => null
+        };
+    }
+    // DEV-055 / DEV-103: closed stage, kind, outcome and state codes and revisions only. Assessment,
+    // safeguard, action, verification and return-to-service statements, report content, engineer
+    // names and reasons are never copied (ValuesWithheld / RevisionReference).
+    private static AuditMetadata? TechnicalRecordProjection(EntityEntry entry)
+    {
+        long? Before(string property) => entry.State == EntityState.Added ? null : (long?)entry.Property(property).OriginalValue;
+        string? BeforeState(string property, string[] allowed) => entry.State == EntityState.Added ? null : Closed((string)entry.Property(property).OriginalValue!, allowed);
+        var stages = Poseidon.Domain.DefectLifecyclePolicy.Stages; var states = Poseidon.Domain.ServiceReportPolicy.States;
+        return entry.Entity switch
+        {
+            DefectLifecycle l => new(l.VesselId, l.DefectId, "DefectLifecycle", Before("Revision"), l.Revision, Fields(
+                Field("Revision", Before("Revision") is { } r ? Number(r) : null, Number(l.Revision)),
+                Field("Stage", BeforeState("Stage", stages), Closed(l.Stage, stages)), Field("Binding", null, "OwnerReference"))),
+            DefectLifecycleRecord r => new(r.VesselId, r.DefectId, "DefectLifecycleRecord", null, r.Sequence, Fields(
+                Field("Kind", null, Closed(r.Kind, Poseidon.Domain.DefectLifecyclePolicy.Kinds)), Field("StageAfter", null, Closed(r.StageAfter, stages)),
+                Field("Revision", null, Number(r.Sequence)), Field("DefectRevision", null, Number(r.DefectRevision)),
+                Field("Outcome", null, r.Outcome == null ? null : Closed(r.Outcome, [.. Poseidon.Domain.DefectLifecyclePolicy.VerifyOutcomes,
+                    .. Poseidon.Domain.DefectLifecyclePolicy.EffectivenessOutcomes, Poseidon.Domain.DefectLifecyclePolicy.ClosureOutcome])),
+                Field("Text", null, null, "ValuesWithheld"))),
+            ServiceReport s => new(s.VesselId, s.Id, "ServiceReport", Before("Revision"), s.Revision, Fields(
+                Field("Revision", Before("Revision") is { } r ? Number(r) : null, Number(s.Revision)),
+                Field("State", BeforeState("State", states), Closed(s.State, states)), Field("ContentJson", null, null, "RevisionReference"),
+                Field("Binding", null, "OwnerReference"))),
+            ServiceReportRevision v => new(v.VesselId, v.ReportId, "ServiceReportRevision", null, v.Revision, Fields(
+                Field("Revision", null, Number(v.Revision)), Field("State", null, Closed(v.State, states)),
+                Field("ReasonCode", null, Closed(v.ReasonCode, Poseidon.Domain.ServiceReportPolicy.ReasonCodes)), Field("ContentJson", null, null, "RevisionReference"))),
+            ServiceReportVerification d => new(d.VesselId, d.ReportId, "ServiceReportVerification", null, d.ResultRevision, Fields(
+                Field("Decision", null, Closed(d.Decision, Poseidon.Domain.ServiceReportPolicy.Decisions)), Field("Revision", null, Number(d.ResultRevision)),
+                Field("Reason", null, null, "ValuesWithheld"))),
+            TechnicalRecordReceipt c => new(c.VesselId, c.ResourceId, "TechnicalRecordReceipt", null, c.Revision, Fields(
+                Field("Operation", null, Closed(c.Action, TechnicalRecordOperations)), Field("Revision", null, Number(c.Revision)), Field("Binding", null, "CommittedResource"))),
+            _ => null
+        };
+    }
+    internal static readonly string[] TechnicalRecordOperations = ["DefectLifecycleStart", "DefectLifecycleAssess", "DefectLifecycleSafeguard", "DefectLifecycleLift",
+        "DefectLifecycleAction", "DefectLifecycleVerify", "DefectLifecycleEffectiveness", "DefectLifecycleClose",
+        "ServiceReportCreate", "ServiceReportUpdate", "ServiceReportSubmit", "ServiceReportVerify", "ServiceReportAmend"];
+
+    // S8 WP-D (DEV-087/088): closed state/decision/choice codes, revisions and duty only. Plan/briefing content,
+    // limits, channels, hazards, barriers, reasons and hashes are withheld; no actor identity is copied.
+    private static AuditMetadata? TowageProjection(EntityEntry entry)
+    {
+        long? Before(string property) => entry.State == EntityState.Added ? null : (long?)entry.Property(property).OriginalValue;
+        string? BeforeState(string property, string[] allowed) => entry.State == EntityState.Added ? null : Closed((string)entry.Property(property).OriginalValue!, allowed);
+        var plan = Poseidon.Domain.TowagePlanPolicy.States; var briefing = Poseidon.Domain.TowageBriefingPolicy.States;
+        return entry.Entity switch
+        {
+            TowagePlan p => new(p.VesselId, p.Id, "TowagePlan", Before("Revision"), p.Revision, Fields(
+                Field("Revision", Before("Revision") is { } r ? Number(r) : null, Number(p.Revision)),
+                Field("State", BeforeState("State", plan), Closed(p.State, plan)), Field("ContentJson", null, null, "RevisionReference"),
+                Field("Binding", null, "OwnerReference"))),
+            TowagePlanRevision r => new(r.VesselId, r.PlanId, "TowagePlanRevision", null, r.Revision, Fields(
+                Field("Revision", null, Number(r.Revision)), Field("State", null, Closed(r.State, plan)),
+                Field("ReasonCode", null, Closed(r.ReasonCode, TowageStorage.PlanReasons)), Field("ContentJson", null, null, "RevisionReference"))),
+            TowagePlanDecision d => new(d.VesselId, d.PlanId, "TowagePlanDecision", null, d.ResultRevision, Fields(
+                Field("Decision", null, Closed(d.Decision, Poseidon.Domain.TowagePlanPolicy.Decisions)), Field("Revision", null, Number(d.ResultRevision)),
+                Field("Duty", null, Closed(d.Duty, "TugMaster", "Master")), Field("Reason", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
+            TowageBriefing b => new(b.VesselId, b.Id, "TowageBriefing", Before("Revision"), b.Revision, Fields(
+                Field("Revision", Before("Revision") is { } r ? Number(r) : null, Number(b.Revision)),
+                Field("State", BeforeState("State", briefing), Closed(b.State, briefing)), Field("ContentJson", null, null, "RevisionReference"),
+                Field("Binding", null, "OwnerReference"))),
+            TowageBriefingRevision r => new(r.VesselId, r.BriefingId, "TowageBriefingRevision", null, r.Revision, Fields(
+                Field("Revision", null, Number(r.Revision)), Field("State", null, Closed(r.State, briefing)),
+                Field("ReasonCode", null, Closed(r.ReasonCode, TowageStorage.BriefingReasons)), Field("ContentJson", null, null, "RevisionReference"))),
+            TowageBriefingAcknowledgement k => new(k.VesselId, k.BriefingId, "TowageBriefingAcknowledgement", null, k.Revision, Fields(
+                Field("Choice", null, Closed(k.Choice, Poseidon.Domain.TowageBriefingPolicy.AckChoices)), Field("Revision", null, Number(k.Revision)),
+                Field("Reason", null, null, "ValuesWithheld"))),
+            TowageReceipt c => new(c.VesselId, c.ResourceId, "TowageReceipt", null, c.Revision, Fields(
+                Field("Action", null, Closed(c.Action, TowageStorage.ReceiptActions)), Field("Revision", null, Number(c.Revision)), Field("Binding", null, "CommittedResource"))),
             _ => null
         };
     }

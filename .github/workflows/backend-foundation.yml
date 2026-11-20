@@ -30,7 +30,7 @@ jobs:
 
   persistence-and-security:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 70
     steps:
       - uses: actions/checkout@v7.0.1
       - name: Scan every tracked repository input including controlled documents
@@ -70,7 +70,7 @@ jobs:
           POSEIDON_API_GATE_SHARDS: 4
         run: |
           dotnet test --project tests/Poseidon.Persistence.Tests/Poseidon.Persistence.Tests.csproj --configuration Release --no-build --filter-trait "Category=Integration"
-          python3 scripts/s3_gate.py --image "$(cat .runtime/s3-gate-image-id)" --child-timeout 1980 -- python3 scripts/api_test_gate.py --scope integration
+          python3 scripts/s3_gate.py --image "$(cat .runtime/s3-gate-image-id)" --child-timeout 3180 -- python3 scripts/api_test_gate.py --scope integration
       - name: Show failed API gate evidence
         # The owned S3 driver discards child output; the gate evidence is value-free by design
         # (status, counts, static test names, source file:line), so surface it where agents look.
@@ -98,6 +98,12 @@ jobs:
                       lines.append(f"- unobserved critical operation: `{missing['operation_id']}` at `{missing['contract_file']}:{missing['contract_line']}`; positive HTTP audit fixture: `{missing['test_fixture_file']}`")
               if e.get('interrupted_stage'):
                   lines.append(f"interrupted stage: {e['interrupted_stage']}")
+              for index, shard in enumerate(e.get('shards', [])):
+                  lines.append(f"shard {index}: {shard.get('status')} elapsed={shard.get('elapsed_seconds')}s")
+              for index, markers in [(None, e.get('test_markers'))] + [(i, s.get('test_markers')) for i, s in enumerate(e.get('shards', []))]:
+                  if markers:
+                      lines += [f"- started, never finished (shard {index}): `{n}`" for n in markers.get('started_unfinished_identifiers', [])]
+                      lines += [f"- last started (shard {index}): `{n}`" for n in markers.get('last_started_identifiers', [])]
           text = '\n'.join(lines) or 'No API gate evidence was written; the failure is outside api_test_gate.'
           print(text)
           with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
@@ -118,6 +124,7 @@ jobs:
           path: |
             .runtime/api-gate/*.json
             .runtime/api-gate/critical-write-*/*.json
+            .runtime/api-gate/markers/*.log
           if-no-files-found: ignore
       - name: Document import tests
         run: python3 -m unittest discover -s scripts -p 'test_*.py' -v

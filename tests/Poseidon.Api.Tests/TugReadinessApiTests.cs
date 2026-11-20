@@ -101,6 +101,10 @@ public sealed partial class DirectoryWorkspaceTests
         var proposal = (await (await Send(c, $"tug-assignments?vessel={Tug.Id}", Proposal(job))).Content.ReadFromJsonAsync<TugAssignmentDto>(Ct))!;
         var view = (await c.GetFromJsonAsync<TugReadinessView>($"/api/v1/tug-readiness?vessel={Tug.Id}&assignment={proposal.Id}", Ct))!;
         Assert.NotEqual(TugReadinessEngine.Ready, view.State);
+        // S8 DEV-088: without an issued and fully acknowledged towage briefing the briefing category is a FAIL,
+        // so the advisory state is NOT_READY (a known blocker), not merely REVIEW_REQUIRED.
+        Assert.Equal(TugReadinessEngine.NotReady, view.State);
+        Assert.Contains("briefing:TowageBriefingMissing", view.CriticalBlockers);
         Assert.Contains("communication:CommunicationSourceUnavailable", view.ReviewReasons);
         Assert.Contains("weather:WholeWindowWeatherSourceUnavailable", view.ReviewReasons);
         Assert.Contains("assignment:MasterAcknowledgementPending", view.ReviewReasons);

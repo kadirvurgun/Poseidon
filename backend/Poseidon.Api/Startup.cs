@@ -21,9 +21,20 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddSingleton(configuration.GetSection("TugPlanning").Get<TugPlanningPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<TimeProvider>(TimeProvider.System);
         services.AddSingleton<IProfileFreshnessPolicySource, UnconfiguredProfileFreshnessPolicy>();
+        // DEV-056 x DEV-054/DEV-110 (S8 integration): real WorkOrder state and spare gap sources, registered
+        // before the UNKNOWN fallbacks below. A denied/unavailable source still answers UNKNOWN / ACCESS_REQUIRED.
+        services.AddSingleton<IPmsWorkOrderStateSource, WorkOrderExecutionPmsSource>();
+        services.AddSingleton<IPmsSpareGapSource, CriticalSparePmsSource>();
+        // Fallbacks (kept for hosts that remove the real sources): answer UNKNOWN, never zero or healthy.
+        Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddSingleton<IPmsWorkOrderStateSource, UnavailablePmsWorkOrderStateSource>(services);
+        Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddSingleton<IPmsSpareGapSource, UnavailablePmsSpareGapSource>(services);
         services.AddSingleton(configuration.GetSection("Notifications").Get<NotificationSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddScoped<NotificationEngine>();
         services.AddSingleton(configuration.GetSection("DailyOffline").Get<DailyOfflineSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
+        // DEV-057: absent operator configuration leaves work order offline capture unavailable.
+        services.AddSingleton(configuration.GetSection("WorkOrderOffline").Get<WorkOrderOfflineSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
+        services.AddSingleton<IWorkOrderStateSource, WorkOrderStateReader>();
+        services.AddSingleton<ISpareGapSource, SpareGapReader>();
         services.AddSingleton(configuration.GetSection("NotificationScheduler").Get<NotificationSchedulerSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<NotificationServiceContexts>();
         services.AddSingleton<NotificationScheduler>();
@@ -203,12 +214,20 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapDefects();
             endpoints.MapDefectAssetContexts();
             endpoints.MapWorkOrders();
+            endpoints.MapWorkOrderExecution();
+            endpoints.MapWorkOrderOffline();
+            endpoints.MapCriticalSpares();
             endpoints.MapWorkOrderPlanOrigins();
             endpoints.MapOperationalDowntime();
             endpoints.MapDowntimeOrigins();
             endpoints.MapRiskAssessments();
             endpoints.MapRiskTemplates();
+            endpoints.MapDefectLifecycle();
+            endpoints.MapServiceReports();
+            endpoints.MapPmsCommandCenter();
             endpoints.MapMaintenanceObservations();
+            endpoints.MapMeasurementPoints();
+            endpoints.MapMaintenancePostponements();
             endpoints.MapTug();
             endpoints.MapParameters();
             endpoints.MapHr();

@@ -6,7 +6,7 @@ import { timestamp } from './date-validation'
 // The index carries command metadata only; captured/server values are read from each owning
 // source's protected conflict detail. An extra member, a value field or a foreign vessel is a
 // contract breach, never ignored.
-export type SyncConflictSource = 'crewAssignment' | 'tugPlan' | 'dailyRecord'
+export type SyncConflictSource = 'crewAssignment' | 'tugPlan' | 'dailyRecord' | 'workOrderEvidence'
 export type SyncConflictState = 'Open' | 'Superseded' | 'Resolved'
 export type SyncConflictItem = {
   source: SyncConflictSource; resourceId: string; resourceKind: string | null; enrollmentId: string; commandId: string
@@ -18,7 +18,7 @@ export type SyncConflictPage = {
   items: SyncConflictItem[]; offset: number; hasMore: boolean
 }
 export const conflictPageSize = 25
-const sources: readonly string[] = ['crewAssignment', 'tugPlan', 'dailyRecord']
+const sources: readonly string[] = ['crewAssignment', 'tugPlan', 'dailyRecord', 'workOrderEvidence']
 const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v)
 const exact = (v: unknown, keys: string[]): v is Record<string, unknown> => object(v) && Object.keys(v).length === keys.length && keys.every(k => Object.hasOwn(v, k))
 const version = (v: unknown) => typeof v === 'number' && Number.isSafeInteger(v) && v >= 1 && v <= 4294967295

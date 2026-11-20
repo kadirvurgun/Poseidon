@@ -1,5 +1,24 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
+## S8 entegrasyon paketi — yerelde doğrulandı, kabul edilmedi (20.11.2026)
+
+Dal `integration/s8-bundle-20261120` (main `021e8ed` üstüne S7 kabul kaydı + S8 WP-A/B/C/D). Canonical ilerleme değişmedi (67 iş / 530 SP / %54,64); S8 kapısı CI + bağımsız QA sonrası.
+- S1 kapsamı 224 mutasyon / 216 kritik rota / 231 kritik operasyon (main 190/181/191).
+- Entegrasyon: PMS komuta merkezi gerçek iş emri durumu ve kritik yedek boşluğu kaynaklarına bağlandı (izin yok → ACCESS_REQUIRED, okunamaz → UNKNOWN); briefing readiness kategorisi testleri sıkılaştırıldı; snapshot birleşik modelden yeniden üretildi.
+- Yerel: Release build 0 uyarı, has-pending-model-changes temiz, Domain 1427, Persistence birim 106, API birim 379, script 591 (11 skip), lint/typecheck temiz, vitest 2058/2067 (9 bilinen Node22 `offline-shell-build` ortam hatası). PostgreSQL entegrasyon: yalnız CI.
+- [Faz raporu](phases/S8-BUNDLE-20261120.md). Açık uzman kapıları WP raporlarında; hiçbir onay iddia edilmiyor.
+
+## S7 kabul edildi — notlarla (20.11.2026)
+
+**Canonical ilerleme: 67 iş / 530 SP / 970 SP = %54,64** (önceki: 54 iş / 409 SP, %42,16). S0 13/53, S1 7/50, S2 6/42, S3 7/66, S4 6/58, S5 8/69, S6 7/71 (87 SP'nin), **S7 13/121** kabul.
+
+- Hedef: PR #45 head `a7b2730` → main `021e8ed`. CI push `44644334404` + pull_request `44644347908` yeşil; critical-write kapsama kapısı `PASS_ACTUAL_CURRENT_CRITICAL_SCOPE` 191/191.
+- Bağımsız S7 QA: 3 tur (2750d2c RED; d87b99f RED; a7b2730 **ACCEPT-WITH-NOTES ×13**), engelleyici yok — [kanıt](evidence/s7-20261120-a7b2730/qa/s7-gate-independent-review.md), [faz raporu](phases/S7-GATE-20261120.md).
+- Kabul: DEV-047, 048, 049, 050, 051, 083, 084, 085, 086, 104, 105, 106, 112.
+- Teslim: crew roster/profil, sertifika/endorsement, eğitim-pozisyon/yetkinlik kapısı, crew uygunluğu + Safe Manning (bayrak muafiyeti yalnız sertifika boşlukları, STCW Art. VIII), crew gizlilik regresyonu; römorkör atama/çakışma, operasyon readiness (GO yalnız READY), tow ekipmanı ve crew/towage yetkinliği; ön-survey kontrol listesi, risk değerlendirme alanı + şablon kütüphanesi, survey planner filo takvimi.
+- Notlar: DEV-050 onayları neden kodu başına, master/CE kontrolü İngilizce metne dayalı; DEV-084 GO için haberleşme/hava kaynakları gerekir; DEV-104 öncül DEV-060/061 numaralandırma sorusu; varsayılan risk matrisi yok (50.01 p37/N06), APPROVE yalnız inceleme; survey şablonları STARTER_UNAPPROVED, fit asla FIT değil; crew çevirileri makine yazımı.
+- Açık insan/uzman kapıları: CrewAuthority/TugOperationsAuthorities atamaları, çalışma/dinlenme kaynağı (58.04), haberleşme/hava kaynakları, bayrak muafiyeti süreç sahibi, onaylı STCW/yetkinlik kataloğu, MSMD kayıtları, yayımlanmış RiskMethod, HSE-G01..G08, onaylı klas/bayrak ön-survey şablonları, voyage modülü. Hiçbir onay iddia edilmiyor.
+- Sıradaki: S8; S6 DEV-101/102 ayrı dalda devam.
 ## S6 kabul edildi — notlarla, kısmi (20.11.2026)
 
 **Canonical ilerleme: 54 iş / 409 SP / 970 SP = %42,16** (önceki: 47 iş / 338 SP, %34,85). S0 13/53, S1 7/50, S2 6/42, S3 7/66, S4 6/58, S5 8/69, **S6 7/71** (87 SP'nin) kabul.

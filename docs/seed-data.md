@@ -1,3 +1,7 @@
+## S8-WPD DEV-087/088 — towage plan and briefing fixture (optional)
+
+`TowageFixtures.AddMissingAsync` is an explicit administrative fixture, not wired into normal startup/seed import (default seed and audit totals unchanged). For each seeded synthetic tug job it adds one FICTIONAL towage plan DRAFT (no tug roles, limits, channels, emergency release, contingency or snap-back control) and one FICTIONAL briefing DRAFT (no conditions, hazards, barriers, risk link or participants), each with one `SYNTHETIC_INCOMPLETE_DRAFT` revision. No submission, Master/Tug Master approval, issue, acknowledgement or receipt is seeded; DB CHECKs reject a synthetic non-DRAFT plan/briefing. Readiness therefore keeps communication UNKNOWN and the briefing FAIL. Add-missing; operator edits are preserved. Real-PostgreSQL test `Towage_fixture_is_opt_in_idempotent_fictional_and_seeds_no_approval_issue_or_acknowledgement` is AUTHORED, execution DEFERRED to CI.
+
 ## S5-WPA DEV-040 — applicability override fixture (optional)
 
 `ApplicabilityOverrideFixtures.AddMissingAsync` is an explicit administrative fixture, not wired into normal startup/seed import. Per vessel it adds one FICTIONAL REQUIRE_ADDITIONAL_CONTROL proposal already withdrawn by its synthetic author (REVOKED, two append-only events) pinned to a synthetic non-existent evaluation, so it can never be approved, become ACTIVE or read as CURRENT. No approval, approver, authority grant, OVERRIDE_AUTHORITY policy, evidence or receipt is seeded; a second run adds nothing. Real-PostgreSQL test `ApplicabilityOverridePersistenceTests` is AUTHORED, execution DEFERRED.
@@ -250,3 +254,13 @@ SyntheticUnverified, deterministic IDs, add-missing only. One Tug adds ten attri
 writes. No assignment proposal, Tug Master acknowledgement, Chief Engineer verification,
 GO/NO_GO decision or receipt is ever seeded; every seeded item stays UNKNOWN (REVIEW_REQUIRED).
 Any exact seeded audit-count expectation in deferred PostgreSQL tests must add these ten writes.
+
+## S8 WP-B DEV-110 critical spare — optional fixture, AUTHORED / PG DEFERRED
+
+`CriticalSpareFixtures.AddMissingAsync` is an explicit administrative fixture and is not wired into
+`SeedImporter` (default seed audit counts are unchanged). It adds one FICTIONAL `SyntheticUnverified`
+critical spare per supplied vessel with criticality `UNKNOWN`, no stock count and no min/max, so its
+projection is `STOCK_UNKNOWN` (review required). No technical requisition, approval, work order
+release/execution, evidence or receipt is seeded: release, verification, closure and requisition
+decisions are attributed human records. DB CHECKs reject synthetic execution rows beyond
+RELEASED/IN_PROGRESS and synthetic requisition rows beyond PROPOSED.

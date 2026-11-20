@@ -105,7 +105,7 @@ class ApiTestGateTests(unittest.TestCase):
 
     def test_invalid_scope_and_deadline_never_launch_a_child(self):
         with patch.object(gate, 'capture') as run:
-            for scope, timeout in (('foreign', 10), ('all', 0), ('all', True), ('all', 1801)):
+            for scope, timeout in (('foreign', 10), ('all', 0), ('all', True), ('all', 3001)):
                 with self.assertRaises(ValueError): gate.run(scope, timeout=timeout)
             run.assert_not_called()
 
@@ -168,7 +168,7 @@ class ApiTestGateTests(unittest.TestCase):
         workflow = (gate.ROOT / '.github/workflows/backend-foundation.yml').read_text(encoding='utf-8')
         self.assertIn('docker build --iidfile .runtime/s3-gate-image-id --file infra/s3-gate/Dockerfile infra/s3-gate', workflow)
         self.assertIn('python3 scripts/api_test_gate.py --scope unit', workflow)
-        self.assertIn('python3 scripts/s3_gate.py --image "$(cat .runtime/s3-gate-image-id)" --child-timeout 1980 -- python3 scripts/api_test_gate.py --scope integration', workflow)
+        self.assertIn('python3 scripts/s3_gate.py --image "$(cat .runtime/s3-gate-image-id)" --child-timeout 3180 -- python3 scripts/api_test_gate.py --scope integration', workflow)
         self.assertLess(workflow.index('Build pinned source S3 provider'), workflow.index('name: PostgreSQL integration tests'))
 
     def test_source_provider_build_has_byte_and_builder_pins_without_persisted_credentials(self):
@@ -200,7 +200,7 @@ class ApiShardGateTests(unittest.TestCase):
         self.coverage.write(self.coverage.report())
         executions = []
         def capture(args, root, timeout, env=None):
-            self.assertGreater(timeout, 0); self.assertLessEqual(timeout, 1800)
+            self.assertGreater(timeout, 0); self.assertLessEqual(timeout, 3000)
             if '--filter-method' not in args:
                 return subprocess.CompletedProcess([], 0, self.listed(self.full))
             methods = args[args.index('--filter-method')+1:]
@@ -216,6 +216,7 @@ class ApiShardGateTests(unittest.TestCase):
             executions.append((index, env[gate.critical_write_coverage.ENV_PREFIX+'RUN_ID']))
             if outputs and index in outputs:
                 result = outputs[index]
+                if callable(result): result = result(env)
                 if isinstance(result, Exception): raise result
                 return result
             return subprocess.CompletedProcess([], 0, self.summary(groups[index].total()))
@@ -281,6 +282,53 @@ class ApiShardGateTests(unittest.TestCase):
         self.assertEqual('INTERRUPTED_DEADLINE', report['status']); evaluate.assert_not_called()
         self.assertNotIn('count_observations', report); self.assertNotIn('private-parameter', json.dumps(report))
 
+    def test_parallel_deadline_names_only_discovered_started_unfinished_tests(self):
+        hung = sorted(gate.partition_methods(self.full, 3)[0])[0]
+        paths = []
+        def timeout(env):
+            paths.append(env[gate.MARKER_VARIABLE])
+            with open(env[gate.MARKER_VARIABLE], 'w', encoding='utf-8') as markers:
+                markers.write(f'S\t{hung}\nS\tPoseidon.Api.Tests.Foreign.Private_value\nS\tprivate secret\n')
+            return subprocess.TimeoutExpired('dotnet', 1, output=b'private-parameter')
+        code, report, executions, _, evaluate = self.execute_shards(outputs={0: timeout})
+        self.assertEqual(2, code); self.assertEqual(3, len(executions)); evaluate.assert_not_called()
+        self.assertEqual('INTERRUPTED_DEADLINE', report['status'])
+        markers = report['shards'][0]['test_markers']
+        self.assertEqual([hung], markers['started_unfinished_identifiers'])
+        self.assertEqual([hung], markers['last_started_identifiers'])
+        self.assertTrue(paths[0].endswith('integration-shard0.log'))
+        self.assertNotIn('private', json.dumps(report)); self.assertNotIn('Foreign', json.dumps(report))
+        for shard in report['shards']:
+            self.assertIsInstance(shard['elapsed_seconds'], float)
+
+    def test_each_execution_gets_its_own_fresh_marker_file_and_discovery_gets_none(self):
+        seen = []
+        def record(index):
+            def output(env):
+                seen.append(env[gate.MARKER_VARIABLE])
+                return subprocess.CompletedProcess([], 0, self.summary(gate.partition_methods(self.full, 3)[index].total()))
+            return output
+        code, report, _, _, _ = self.execute_shards(outputs={i: record(i) for i in range(3)})
+        self.assertEqual(0, code)
+        self.assertEqual(3, len(set(seen)))
+        self.assertNotIn('test_markers', json.dumps(report))
+
+    def test_marker_parser_tracks_multiplicity_and_ignores_unknown_lines(self):
+        import tempfile
+        from pathlib import Path
+        theory, other = 'Poseidon.Api.Tests.Cases.Theory', 'Poseidon.Api.Tests.Cases.A'
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'markers.log'
+            path.write_text(f'S\t{theory}\nE\t{theory}\nS\t{theory}\nS\t{other}\nE\t{other}\nE\t{other}\n'
+                            'S\tPoseidon.Api.Tests.Cases.Unknown\nS\tvalue secret\ngarbage\n', encoding='utf-8')
+            result = gate.unfinished_tests(path, [theory, theory, other])
+            self.assertEqual('MARKERS_READ', result['status'])
+            self.assertEqual([theory], result['started_unfinished_identifiers'])
+            self.assertEqual([theory, theory, other], result['last_started_identifiers'])
+            self.assertNotIn('secret', json.dumps(result)); self.assertNotIn('Unknown', json.dumps(result))
+            absent = gate.unfinished_tests(Path(directory) / 'absent.log', [theory])
+            self.assertEqual(([], 0), (absent['started_unfinished_identifiers'], absent['started_markers']))
+
     def test_parallel_exception_collects_every_shard_and_cannot_claim_summary(self):
         code, report, executions, _, evaluate = self.execute_shards(outputs={1: OSError('private-message')})
         self.assertEqual(2, code); self.assertEqual(3, len(executions))
@@ -300,7 +348,7 @@ class ApiShardGateTests(unittest.TestCase):
 
     def test_single_global_deadline_includes_discovery_and_setup(self):
         with patch.object(gate, 'root_tool', return_value='dotnet'), \
-                patch.object(gate.time, 'monotonic', side_effect=[0, 0, 1801, 1801]), \
+                patch.object(gate.time, 'monotonic', side_effect=[0, 0, 3001, 3001]), \
                 patch.object(gate.critical_write_coverage, 'prepare', return_value=self.coverage.run), \
                 patch.object(gate, 'capture', return_value=subprocess.CompletedProcess([], 0, self.listed(self.full))) as capture:
             code, report = gate.run('integration')
