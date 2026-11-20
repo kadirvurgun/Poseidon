@@ -193,3 +193,4 @@ Main: #16 #17 #18 #20 #23 #36 + **#37 paket 2** birleşik (`2995f70`, 19.11 ~08:
 
 ### S8 başladı (20.11 ~16:00)
 - Yeni oturum (kilit PID 13344). Main 021e8ed, açık PR yok. S8 = 13 iş / 124 SP (DEV-052–057, 087, 088, 103, 107–110). Keşif Explore ajanında; ardından 4 WP (taban origin/main), entegrasyon `integration/s8-bundle-20261120` (+ S7 kayıt dalı 0989c4f).
+- Keşif bitti: önceki S8 kabuk paketleri (ekipman/plan, defect bildirimi, WO taslağı) doğrulanmamış; stok/servis raporu/römorkaj planı/brifing yok. 4 WP başlatıldı (taban origin/main 021e8ed, migration 20261121010000–040000): **WP-A** DEV-052/053/108/109 `feature/s8-wpa-pms-core-20261120` (37); **WP-B** DEV-054/057/110 `feature/s8-wpb-work-order-20261120` (29); **WP-C** DEV-055/103/056 `feature/s8-wpc-defect-20261120` (29); **WP-D** DEV-087/088/107 `feature/s8-wpd-towage-hse-20261120` (29). Ortak brif: %TEMP%\s8common.txt. Uzman kapıları açık (eşik/maks uzatma/kritiklik katalogları, PTW yok → UNKNOWN).
