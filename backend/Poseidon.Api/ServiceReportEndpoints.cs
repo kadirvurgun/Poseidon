@@ -54,6 +54,8 @@ public static class ServiceReportEndpoints
     internal static bool CanRead(TrustedActor? a) => a?.CanRead == true && a.Permissions.Contains("service.report.read") && a.Permissions.Contains("equipment.read");
     internal static bool CanWrite(TrustedActor? a, Guid vessel) => CanRead(a) && a!.HasWriteAttribution && a.CanEditVessel(vessel) && a.Permissions.Contains("service.report.write");
     internal static bool CanVerify(TrustedActor? a, Guid vessel) => CanRead(a) && a!.HasWriteAttribution && a.CanEditVessel(vessel) && a.Permissions.Contains("service.report.verify");
+    // Verification is a human record (403 human_actor_required for AI / automation / unspecified principals).
+    internal static bool CanVerify(HttpContext h, TrustedActor? a, Guid vessel) => CanVerify(a, vessel) && CertificateRenewalEndpoints.Human(h, a!);
 
     public static void MapServiceReports(this IEndpointRouteBuilder app)
     {
@@ -64,19 +66,19 @@ public static class ServiceReportEndpoints
         g.MapGet("/{id:guid}/revisions/{revision:long}", (Guid id, long revision, HttpContext h, PoseidonDbContext db) => RevisionRead(id, revision, h, db))
             .WithName("ServiceReportRevisionRead").Produces<ServiceReportRevisionDto>();
         g.MapPost("", (HttpContext h, PoseidonDbContext db) => TechnicalRecordCommands.Run<ServiceReportCreateCommand>(h, db, "ServiceReportCreate", CommandAction, null, null,
-                CanWrite, c => c.Id, Create, Fresh))
+                CanWrite, c => c.Id, Create, Fresh(h)))
             .WithName("ServiceReportCreate").Accepts<ServiceReportCreateCommand>("application/json").Produces<ServiceReportDto>();
         g.MapPut("/{id:guid}", (Guid id, HttpContext h, PoseidonDbContext db) => TechnicalRecordCommands.Run<ServiceReportUpdateCommand>(h, db, "ServiceReportUpdate", CommandAction, id, null,
-                CanWrite, _ => id, Update, Fresh))
+                CanWrite, _ => id, Update, Fresh(h)))
             .WithName("ServiceReportUpdate").Accepts<ServiceReportUpdateCommand>("application/json").Produces<ServiceReportDto>();
         g.MapPost("/{id:guid}/submit", (Guid id, HttpContext h, PoseidonDbContext db) => TechnicalRecordCommands.Run<ServiceReportSubmitCommand>(h, db, "ServiceReportSubmit", CommandAction, id, null,
-                CanWrite, _ => id, Submit, Fresh))
+                CanWrite, _ => id, Submit, Fresh(h)))
             .WithName("ServiceReportSubmit").Accepts<ServiceReportSubmitCommand>("application/json").Produces<ServiceReportDto>().Produces<TechnicalRecordFailure>(422);
         g.MapPost("/{id:guid}/verify", (Guid id, HttpContext h, PoseidonDbContext db) => TechnicalRecordCommands.Run<ServiceReportVerifyCommand>(h, db, "ServiceReportVerify", CommandAction, id, null,
-                CanVerify, _ => id, Verify, Fresh))
+                CanVerify, _ => id, Verify, Fresh(h), humanOnly: true))
             .WithName("ServiceReportVerify").Accepts<ServiceReportVerifyCommand>("application/json").Produces<ServiceReportDto>();
         g.MapPost("/{id:guid}/amend", (Guid id, HttpContext h, PoseidonDbContext db) => TechnicalRecordCommands.Run<ServiceReportAmendCommand>(h, db, "ServiceReportAmend", CommandAction, id, null,
-                CanWrite, _ => id, Amend, Fresh))
+                CanWrite, _ => id, Amend, Fresh(h)))
             .WithName("ServiceReportAmend").Accepts<ServiceReportAmendCommand>("application/json").Produces<ServiceReportDto>();
     }
 
@@ -228,10 +230,10 @@ public static class ServiceReportEndpoints
         return TechnicalOutcome.Ok(row.Id, row.Revision);
     }
 
-    private static async Task<object?> Fresh(PoseidonDbContext db, TrustedActor actor, Guid vessel, Guid id, DateTimeOffset now, CancellationToken ct) =>
-        await Describe(db, actor, vessel, id, now, ct);
+    private static Func<PoseidonDbContext, TrustedActor, Guid, Guid, DateTimeOffset, CancellationToken, Task<object?>> Fresh(HttpContext h) =>
+        async (db, actor, vessel, id, now, ct) => await Describe(db, actor, vessel, id, now, CertificateRenewalEndpoints.Human(h, actor), ct);
 
-    internal static async Task<ServiceReportDto?> Describe(PoseidonDbContext db, TrustedActor actor, Guid vessel, Guid id, DateTimeOffset now, CancellationToken ct)
+    internal static async Task<ServiceReportDto?> Describe(PoseidonDbContext db, TrustedActor actor, Guid vessel, Guid id, DateTimeOffset now, bool human, CancellationToken ct)
     {
         var r = await db.ServiceReports.AsNoTracking().SingleOrDefaultAsync(x => x.VesselId == vessel && x.Id == id, ct);
         if (r == null) return null;
@@ -265,7 +267,7 @@ public static class ServiceReportEndpoints
         var verification = r.State == ServiceReportPolicy.Verified ? "VERIFIED" : r.VerifiedRevision != null ? "EARLIER_REVISION_VERIFIED" :
             r.State == ServiceReportPolicy.Submitted ? "PENDING_VERIFICATION" : r.State == ServiceReportPolicy.Returned ? "RETURNED" : "NOT_SUBMITTED";
         var editable = ServiceReportPolicy.CanEdit(r.State) && CanWrite(actor, vessel);
-        var canVerify = r.State == ServiceReportPolicy.Submitted && CanVerify(actor, vessel) && !authors.Contains(actor.Id) && r.SubmittedBy != actor.Id;
+        var canVerify = r.State == ServiceReportPolicy.Submitted && human && CanVerify(actor, vessel) && !authors.Contains(actor.Id) && r.SubmittedBy != actor.Id;
         return new(r.Id, r.VesselId, r.ReportNo, r.Revision, r.Version, r.State, content, equipment, workOrder, [.. defects], [.. evidence], missing, r.Hash,
             verification, r.VerifiedRevision, verifications, revisions, authors, editable, editable && missing.Length == 0, canVerify,
             r.State == ServiceReportPolicy.Verified && CanWrite(actor, vessel), r.Provenance, r.SavedAt);
@@ -292,14 +294,14 @@ public static class ServiceReportEndpoints
     {
         var (actor, vessel, failure) = await TechnicalRecordCommands.ReadGate(h, db, ReadAction, CanRead); if (failure != null) return failure;
         await TechnicalRecordCommands.Audit(h, ReadAction, "Success", vessel);
-        return Results.Json(new ServiceReportCapabilitiesDto(vessel, true, CanWrite(actor, vessel), CanVerify(actor, vessel), WorkOrderEndpoints.CanRead(actor),
+        return Results.Json(new ServiceReportCapabilitiesDto(vessel, true, CanWrite(actor, vessel), CanVerify(h, actor, vessel), WorkOrderEndpoints.CanRead(actor),
             DefectEndpoints.CanRead(actor), actor!.Permissions.Contains("file.read"), ServiceReportPolicy.MeasurementResults), Json);
     }
 
     private static async Task<IResult> Detail(Guid id, HttpContext h, PoseidonDbContext db)
     {
         var (actor, vessel, failure) = await TechnicalRecordCommands.ReadGate(h, db, ReadAction, CanRead); if (failure != null) return failure;
-        var dto = await Describe(db, actor!, vessel, id, TechnicalRecordCommands.Now(h), h.RequestAborted);
+        var dto = await Describe(db, actor!, vessel, id, TechnicalRecordCommands.Now(h), CertificateRenewalEndpoints.Human(h, actor!), h.RequestAborted);
         if (dto == null) return await TechnicalRecordCommands.Fail(h, ReadAction, 404, "resource_not_found", id);
         await TechnicalRecordCommands.Audit(h, ReadAction, "Success", id);
         return Results.Json(dto, Json);

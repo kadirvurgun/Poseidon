@@ -71,6 +71,9 @@ public sealed class PmsCommandCenterSourceTests
         var full = PmsCommandCenterSourceMapping.WorkOrders(Enumerable.Range(0, PmsCommandCenterSourceMapping.WorkOrderBound)
             .Select(_ => Wo("CLOSED", "HUMAN_VERIFIED", true)).ToArray(), Now);
         Assert.Equal((false, "WORK_ORDER_PROJECTION_LIMIT_EXCEEDED", 0), (full.Available, full.Reason, full.QuietCount));
+        // Closed executions are counted quiet by the adapter and never consume the open-work-order bound.
+        var closedOnly = PmsCommandCenterSourceMapping.WorkOrders([Wo("RELEASED", "REVIEW_REQUIRED")], Now, 900);
+        Assert.Equal((true, 900, 1), (closedOnly.Available, closedOnly.QuietCount, closedOnly.Items.Length));
         var empty = PmsCommandCenterSourceMapping.WorkOrders([], Now);
         Assert.Equal(PmsCommandCenterPolicy.Quiet, PmsCommandCenterPolicy.Section("open_work_orders", empty.Items, empty.QuietCount, empty.AsOf).State);
     }

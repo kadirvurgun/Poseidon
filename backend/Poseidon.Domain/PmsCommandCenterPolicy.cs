@@ -31,11 +31,23 @@ public static class PmsCommandCenterPolicy
     }
 
     // One maintenance plan row. Returns null for a healthy (NotDue) row, which stays quiet.
+    // Plan-level critical declarations (free-text plan input) and the DEV-052 closed equipment criticality.
+    // Undeclared equipment criticality (UNKNOWN) is treated like CRITICAL (EquipmentCriticality.RequiresReview):
+    // an unknown never hides an overdue job among non-critical rows.
+    private static readonly string[] CriticalPlanDeclarations = ["Critical", "DeclaredCritical", EquipmentCriticality.Critical];
+    public static bool PlanDeclaredCritical(string? planCriticality) => planCriticality != null && CriticalPlanDeclarations.Contains(planCriticality, StringComparer.Ordinal);
+    public static bool IsCritical(string? planCriticality, string? assetCriticality) =>
+        PlanDeclaredCritical(planCriticality) || EquipmentCriticality.RequiresReview(EquipmentCriticality.Of(assetCriticality));
+
     public static (string Section, PmsCommandItem Item)? Classify(Guid planId, long revision, Guid assetId, MaintenanceDue due, string? criticality,
-        string? timeZone, DateTimeOffset? observedAt, DateTimeOffset now)
+        string? assetCriticality, string? timeZone, DateTimeOffset? observedAt, DateTimeOffset now)
     {
         if (due.State == "NotDue") return null;
-        var critical = criticality == "Critical";
+        var critical = IsCritical(criticality, assetCriticality);
+        var equipment = EquipmentCriticality.Of(assetCriticality);
+        PmsWhy[] criticalWhy = [.. PlanDeclaredCritical(criticality) ? new[] { new PmsWhy("PLAN_CRITICALITY", criticality) } : [],
+            .. equipment == EquipmentCriticality.Critical ? new[] { new PmsWhy("EQUIPMENT_CRITICALITY", equipment) }
+                : equipment == EquipmentCriticality.Unknown ? new[] { new PmsWhy("EQUIPMENT_CRITICALITY_UNKNOWN") } : []];
         if (due.State == "Due")
         {
             var today = DateOnly.FromDateTime(now.UtcDateTime);
@@ -45,14 +57,14 @@ public static class PmsCommandCenterPolicy
             PmsWhy[] why = [new(overdue ? "MAINTENANCE_OVERDUE" : "MAINTENANCE_DUE", due.Reason),
                 .. due.NextDueDate is { } date ? new[] { new PmsWhy("NEXT_DUE_DATE", date.ToString("yyyy-MM-dd")) } : [],
                 .. due.NextDueMeter is { } meter ? new[] { new PmsWhy("NEXT_DUE_METER", meter) } : [],
-                .. critical ? new[] { new PmsWhy("PLAN_CRITICALITY", "Critical") } : []];
+                .. criticalWhy];
             return (critical ? "critical_overdue_jobs" : "overdue_jobs",
                 new("MaintenancePlan", planId, revision, critical ? "CRITICAL" : "ATTENTION", why, observedAt, Current, assetId));
         }
         // ReviewRequired: the calculation could not decide. Shown, never counted as healthy.
         var stale = StaleReasons.Contains(due.Reason, StringComparer.Ordinal);
         return (critical ? "critical_overdue_jobs" : "overdue_jobs",
-            new("MaintenancePlan", planId, revision, "REVIEW", [new("MAINTENANCE_REVIEW_REQUIRED", due.Reason)], observedAt,
+            new("MaintenancePlan", planId, revision, "REVIEW", [new("MAINTENANCE_REVIEW_REQUIRED", due.Reason), .. criticalWhy], observedAt,
                 stale ? Stale : observedAt == null ? FreshnessUnknown : Current, assetId));
     }
 

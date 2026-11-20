@@ -30,6 +30,10 @@ public static class DefectLifecycleEndpoints
     };
     internal static bool CanRecord(TrustedActor? a, Guid vessel, string kind) => CanRead(a) && a!.HasWriteAttribution && a.CanEditVessel(vessel) &&
         a.Permissions.Contains(Permission(kind));
+    // Verification, effectiveness and closure (return to service) are human records.
+    internal static bool HumanOnly(string kind) => kind is "VERIFY" or "EFFECTIVENESS" or "CLOSE";
+    internal static bool CanRecord(HttpContext h, TrustedActor? a, Guid vessel, string kind) => CanRecord(a, vessel, kind) &&
+        (!HumanOnly(kind) || CertificateRenewalEndpoints.Human(h, a!));
 
     public static void MapDefectLifecycle(this IEndpointRouteBuilder app)
     {
@@ -40,7 +44,7 @@ public static class DefectLifecycleEndpoints
         Command(g, "/safeguards", "SAFEGUARD", "DefectLifecycleSafeguard");
         g.MapPost("/safeguards/{measureId:guid}/lift", (Guid id, Guid measureId, HttpContext h, PoseidonDbContext db) =>
                 TechnicalRecordCommands.Run<DefectLifecycleCommand>(h, db, "DefectLifecycleLift", CommandAction, id, measureId,
-                    (a, v) => CanRecord(a, v, "LIFT"), _ => id, c => Apply("LIFT", c), Fresh))
+                    (a, v) => CanRecord(a, v, "LIFT"), _ => id, c => Apply("LIFT", c), Fresh(h)))
             .WithName("DefectLifecycleLift").Accepts<DefectLifecycleCommand>("application/json").Produces<DefectLifecycleDto>().Produces<TechnicalRecordFailure>(422);
         Command(g, "/actions", "ACTION", "DefectLifecycleAction");
         Command(g, "/verify", "VERIFY", "DefectLifecycleVerify");
@@ -50,7 +54,7 @@ public static class DefectLifecycleEndpoints
 
     private static void Command(RouteGroupBuilder g, string path, string kind, string operation) =>
         g.MapPost(path, (Guid id, HttpContext h, PoseidonDbContext db) => TechnicalRecordCommands.Run<DefectLifecycleCommand>(h, db, operation, CommandAction, id, null,
-                (a, v) => CanRecord(a, v, kind), _ => id, c => Apply(kind, c), Fresh))
+                (a, v) => CanRecord(a, v, kind), _ => id, c => Apply(kind, c), Fresh(h), HumanOnly(kind)))
             .WithName(operation).Accepts<DefectLifecycleCommand>("application/json").Produces<DefectLifecycleDto>().Produces<TechnicalRecordFailure>(422);
 
     private static string? DeclaredCriticality(string fieldsJson)
@@ -96,10 +100,10 @@ public static class DefectLifecycleEndpoints
         return TechnicalOutcome.Ok(id, head.Revision);
     }
 
-    private static async Task<object?> Fresh(PoseidonDbContext db, TrustedActor actor, Guid vessel, Guid id, DateTimeOffset now, CancellationToken ct) =>
-        await Describe(db, actor, vessel, id, now, ct);
+    private static Func<PoseidonDbContext, TrustedActor, Guid, Guid, DateTimeOffset, CancellationToken, Task<object?>> Fresh(HttpContext h) =>
+        async (db, actor, vessel, id, now, ct) => await Describe(db, actor, vessel, id, now, CertificateRenewalEndpoints.Human(h, actor), ct);
 
-    internal static async Task<DefectLifecycleDto?> Describe(PoseidonDbContext db, TrustedActor actor, Guid vessel, Guid id, DateTimeOffset now, CancellationToken ct)
+    internal static async Task<DefectLifecycleDto?> Describe(PoseidonDbContext db, TrustedActor actor, Guid vessel, Guid id, DateTimeOffset now, bool human, CancellationToken ct)
     {
         var defect = await db.Defects.AsNoTracking().SingleOrDefaultAsync(d => d.VesselId == vessel && d.Id == id, ct);
         if (defect == null) return null;
@@ -108,7 +112,7 @@ public static class DefectLifecycleEndpoints
             .OrderBy(r => r.Sequence).ToArrayAsync(ct);
         var declared = DeclaredCriticality(defect.FieldsJson);
         var e = DefectLifecyclePolicy.Evaluate(records.Select(Entry).ToArray(), declared, defect.Revision, now);
-        bool May(string kind, Guid? measure = null) => CanRecord(actor, vessel, kind) && (kind == "START" ? head == null :
+        bool May(string kind, Guid? measure = null) => CanRecord(actor, vessel, kind) && (human || !HumanOnly(kind)) && (kind == "START" ? head == null :
             head != null && DefectLifecyclePolicy.Decide(kind, e, true, actor.Id, actor.Permissions,
                 new(head.Revision, Outcome: kind == "VERIFY" ? "VERIFIED" : kind == "EFFECTIVENESS" ? "EFFECTIVE" : null), measure).Status == 200);
         var liftable = e.Measures.FirstOrDefault(m => m.State is "ACTIVE" or "EXPIRED")?.Id;
@@ -123,7 +127,7 @@ public static class DefectLifecycleEndpoints
     private static async Task<IResult> Detail(Guid id, HttpContext h, PoseidonDbContext db)
     {
         var (actor, vessel, failure) = await TechnicalRecordCommands.ReadGate(h, db, ReadAction, CanRead); if (failure != null) return failure;
-        var dto = await Describe(db, actor!, vessel, id, TechnicalRecordCommands.Now(h), h.RequestAborted);
+        var dto = await Describe(db, actor!, vessel, id, TechnicalRecordCommands.Now(h), CertificateRenewalEndpoints.Human(h, actor!), h.RequestAborted);
         if (dto == null) return await TechnicalRecordCommands.Fail(h, ReadAction, 404, "resource_not_found", id);
         await TechnicalRecordCommands.Audit(h, ReadAction, "Success", id);
         return Results.Json(dto, TechnicalRecordCommands.Json);

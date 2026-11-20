@@ -16,10 +16,12 @@ internal static class PmsCommandCenterSourceMapping
     internal const int WorkOrderBound = 500, SpareBound = 500;
     private static readonly string[] OpenStates = ["RELEASED", "IN_PROGRESS", "EVIDENCE_SUBMITTED", "VERIFIED"];
 
-    internal static PmsSourceResult WorkOrders(IReadOnlyCollection<WorkOrderStateFact> facts, DateTimeOffset now)
+    // facts: open (non-CLOSED) executions from the WP-B reader; closedCount: current CLOSED executions, counted quiet.
+    // A work order that was never released has no execution and is not listed (it is a planned record, not an open job).
+    internal static PmsSourceResult WorkOrders(IReadOnlyCollection<WorkOrderStateFact> facts, DateTimeOffset now, int closedCount = 0)
     {
         if (facts.Count >= WorkOrderBound) return PmsSourceResult.Unavailable("WORK_ORDER_PROJECTION_LIMIT_EXCEEDED");
-        var items = new List<PmsCommandItem>(); var quiet = 0;
+        var items = new List<PmsCommandItem>(); var quiet = Math.Max(0, closedCount);
         foreach (var f in facts)
         {
             if (f.Closed || f.State == "CLOSED") { quiet++; continue; }
@@ -80,7 +82,12 @@ internal sealed class WorkOrderExecutionPmsSource(IWorkOrderStateSource source) 
     public async Task<PmsSourceResult> OpenWorkOrdersAsync(PmsSourceContext context)
     {
         if (!WorkOrderEndpoints.CanRead(context.Actor)) return PmsSourceResult.Denied("WORK_ORDER_ACCESS_REQUIRED");
-        try { return PmsCommandCenterSourceMapping.WorkOrders(await source.ReadAsync(context.Db, context.Actor, context.VesselId, context.Ct), context.Now); }
+        try
+        {
+            var facts = await source.ReadAsync(context.Db, context.Actor, context.VesselId, context.Ct);
+            var closed = await context.Db.WorkOrderExecutions.AsNoTracking().CountAsync(x => x.VesselId == context.VesselId && x.State == "CLOSED", context.Ct);
+            return PmsCommandCenterSourceMapping.WorkOrders(facts, context.Now, closed);
+        }
         catch (Exception e) when (e is InvalidDataException or JsonException) { return PmsSourceResult.Unavailable("WORK_ORDER_STATE_SOURCE_UNAVAILABLE"); }
     }
 }

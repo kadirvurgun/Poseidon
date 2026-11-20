@@ -13,19 +13,38 @@ public sealed class PmsCommandCenterPolicyTests
     [Fact]
     public void Healthy_plan_rows_stay_quiet_and_due_rows_carry_a_why_chain()
     {
-        Assert.Null(PmsCommandCenterPolicy.Classify(Guid.NewGuid(), 1, Guid.NewGuid(), new("NotDue", "CalendarBoundary", new(2026, 12, 1)), "Critical", "UTC", Now, Now));
-        var overdue = PmsCommandCenterPolicy.Classify(Guid.NewGuid(), 3, Guid.NewGuid(), new("Due", "CalendarBoundary", new(2026, 11, 1)), "Critical", "UTC", Now, Now)!.Value;
+        Assert.Null(PmsCommandCenterPolicy.Classify(Guid.NewGuid(), 1, Guid.NewGuid(), new("NotDue", "CalendarBoundary", new(2026, 12, 1)), "Critical", "STANDARD", "UTC", Now, Now));
+        var overdue = PmsCommandCenterPolicy.Classify(Guid.NewGuid(), 3, Guid.NewGuid(), new("Due", "CalendarBoundary", new(2026, 11, 1)), "Critical", "STANDARD", "UTC", Now, Now)!.Value;
         Assert.Equal("critical_overdue_jobs", overdue.Section);
         Assert.Equal("CRITICAL", overdue.Item.Severity);
         Assert.Equal(["MAINTENANCE_OVERDUE", "NEXT_DUE_DATE", "PLAN_CRITICALITY"], overdue.Item.Why.Select(w => w.Code));
-        var due = PmsCommandCenterPolicy.Classify(Guid.NewGuid(), 1, Guid.NewGuid(), new("Due", "CalendarBoundary", new(2026, 11, 20)), "Low", "UTC", Now, Now)!.Value;
+        var due = PmsCommandCenterPolicy.Classify(Guid.NewGuid(), 1, Guid.NewGuid(), new("Due", "CalendarBoundary", new(2026, 11, 20)), "Low", "STANDARD", "UTC", Now, Now)!.Value;
         Assert.Equal(("overdue_jobs", "ATTENTION", "MAINTENANCE_DUE"), (due.Section, due.Item.Severity, due.Item.Why[0].Code));
+    }
+
+    [Fact]
+    public void Declared_critical_plans_and_undeclared_equipment_criticality_are_critical()
+    {
+        // DEV-052: UNKNOWN equipment criticality is handled like CRITICAL; plan data uses "DeclaredCritical".
+        var unknown = PmsCommandCenterPolicy.Classify(Guid.NewGuid(), 1, Guid.NewGuid(), new("Due", "CalendarBoundary", new(2026, 11, 1)), "Low", null, "UTC", Now, Now)!.Value;
+        Assert.Equal(("critical_overdue_jobs", "CRITICAL"), (unknown.Section, unknown.Item.Severity));
+        Assert.Contains(unknown.Item.Why, w => w.Code == "EQUIPMENT_CRITICALITY_UNKNOWN");
+        var declared = PmsCommandCenterPolicy.Classify(Guid.NewGuid(), 1, Guid.NewGuid(), new("Due", "CalendarBoundary", new(2026, 11, 1)), "DeclaredCritical", "STANDARD", "UTC", Now, Now)!.Value;
+        Assert.Equal(("critical_overdue_jobs", "CRITICAL"), (declared.Section, declared.Item.Severity));
+        Assert.Contains(declared.Item.Why, w => w.Code == "PLAN_CRITICALITY" && w.Detail == "DeclaredCritical");
+        var equipment = PmsCommandCenterPolicy.Classify(Guid.NewGuid(), 1, Guid.NewGuid(), new("Due", "CalendarBoundary", new(2026, 11, 1)), "Low", "CRITICAL", "UTC", Now, Now)!.Value;
+        Assert.Equal(("critical_overdue_jobs", "CRITICAL"), (equipment.Section, equipment.Item.Severity));
+        var review = PmsCommandCenterPolicy.Classify(Guid.NewGuid(), 1, Guid.NewGuid(), new("ReviewRequired", "IncompletePlanContext"), "Low", "garbage", null, null, Now)!.Value;
+        Assert.Equal(("critical_overdue_jobs", "REVIEW"), (review.Section, review.Item.Severity));
+        Assert.True(PmsCommandCenterPolicy.IsCritical(null, "UNKNOWN"));
+        Assert.False(PmsCommandCenterPolicy.IsCritical("Low", "IMPORTANT"));
+        Assert.False(PmsCommandCenterPolicy.IsCritical("critical", "STANDARD"));
     }
 
     [Fact]
     public void Review_required_rows_are_shown_and_freshness_gaps_are_marked_stale()
     {
-        var stale = PmsCommandCenterPolicy.Classify(Guid.NewGuid(), 1, Guid.NewGuid(), new("ReviewRequired", "ReadingFreshnessPolicyUnresolved"), "Critical", null, Now.AddDays(-9), Now)!.Value;
+        var stale = PmsCommandCenterPolicy.Classify(Guid.NewGuid(), 1, Guid.NewGuid(), new("ReviewRequired", "ReadingFreshnessPolicyUnresolved"), "Critical", "STANDARD", null, Now.AddDays(-9), Now)!.Value;
         Assert.Equal(("REVIEW", PmsCommandCenterPolicy.Stale), (stale.Item.Severity, stale.Item.Freshness));
         var section = PmsCommandCenterPolicy.Section("critical_overdue_jobs", [stale.Item], 4, Now);
         Assert.Equal((PmsCommandCenterPolicy.Exceptions, PmsCommandCenterPolicy.Stale, 1, 4), (section.State, section.Freshness, section.Count, section.QuietCount));

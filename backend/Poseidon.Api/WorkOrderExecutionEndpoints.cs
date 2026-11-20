@@ -37,7 +37,8 @@ internal sealed class WorkOrderStateReader:IWorkOrderStateSource
 {
     public async Task<WorkOrderStateFact[]> ReadAsync(PoseidonDbContext db,TrustedActor actor,Guid vessel,CancellationToken ct) {
         if(!WorkOrderEndpoints.CanRead(actor) || db.TenantId!=actor.TenantId || !await actor.Scope(db.Vessels.AsNoTracking()).AnyAsync(v=>v.Id==vessel,ct))return [];
-        var rows=await WorkOrderExecutionEndpoints.Current(db,vessel).OrderByDescending(r=>r.SavedAt).Take(500).ToArrayAsync(ct);
+        // Only non-CLOSED executions are bounded: many closed work orders must never truncate or hide open ones.
+        var rows=await WorkOrderExecutionEndpoints.Current(db,vessel).Where(r=>r.State!="CLOSED").OrderByDescending(r=>r.SavedAt).Take(500).ToArrayAsync(ct);
         return rows.Select(r=>{var c=WorkOrderExecutionEndpoints.Content(r);var gate=WorkOrderExecutionPolicy.Gate(c);
             return new WorkOrderStateFact(r.WorkOrderId,r.Revision,r.State,gate.State,gate.Missing,gate.State=="HUMAN_VERIFIED",r.State=="CLOSED",r.SavedAt);}).ToArray();
     }

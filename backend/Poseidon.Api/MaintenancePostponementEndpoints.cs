@@ -40,6 +40,8 @@ public static class MaintenancePostponementEndpoints
         a.Permissions.Contains("maintenance.postponement.request");
     internal static bool CanDecide(TrustedActor? a, Guid vessel) => a != null && CanRead(a) && a.HasWriteAttribution && a.CanEditVessel(vessel) &&
         a.Permissions.Contains("maintenance.postponement.decide");
+    // Capability shown to the client: the decision is a human record (403 human_actor_required otherwise).
+    internal static bool CanDecide(HttpContext h, TrustedActor? a, Guid vessel) => CanDecide(a, vessel) && CertificateRenewalEndpoints.Human(h, a!);
 
     public static void MapMaintenancePostponements(this IEndpointRouteBuilder app)
     {
@@ -52,7 +54,7 @@ public static class MaintenancePostponementEndpoints
             .Produces<MaintenancePostponementOutcome>().Produces<PmsFailure>(422);
         g.MapPost("/postponements/{postponement:guid}/decision", (Guid vessel, Guid id, Guid postponement, HttpContext h, PoseidonDbContext db) =>
                 PmsCommands.Run<MaintenancePostponementDecisionCommand>(h, db, vessel, "MaintenancePostponementDecide", CommandAction, id, postponement,
-                    (a, v) => CanDecide(a, v), _ => postponement, Decide, ReadOne))
+                    (a, v) => CanDecide(a, v), _ => postponement, Decide, ReadOne, humanOnly: true))
             .WithName("MaintenancePostponementDecide").Accepts<MaintenancePostponementDecisionCommand>("application/json")
             .Produces<MaintenancePostponementOutcome>().Produces<PmsFailure>(422);
     }
@@ -76,7 +78,7 @@ public static class MaintenancePostponementEndpoints
         id != null && await db.RiskAssessments.AsNoTracking().AnyAsync(r => r.VesselId == vessel && r.Id == id && r.ApprovedRevision != null, ct);
 
     private static async Task<MaintenancePostponementDto> Dto(PoseidonDbContext db, MaintenancePostponement x, PlanContext? plan, TrustedActor actor,
-        MaintenanceObservationSettings settings, DateTimeOffset now, CancellationToken ct)
+        MaintenanceObservationSettings settings, DateTimeOffset now, bool human, CancellationToken ct)
     {
         var today = DateOnly.FromDateTime(now.UtcDateTime);
         var effective = MaintenancePostponementPolicy.EffectiveState(x.State, x.RequestedDeadline, today);
@@ -85,7 +87,7 @@ public static class MaintenancePostponementEndpoints
             : x.Criticality;
         var blockers = new List<string>();
         var canDecide = false;
-        if (x.State == MaintenancePostponementPolicy.Requested && CanDecide(actor, x.VesselId))
+        if (x.State == MaintenancePostponementPolicy.Requested && human && CanDecide(actor, x.VesselId))
         {
             var current = plan != null && plan.Plan.Revision == x.PlanRevision && plan.OriginalDue == x.OriginalDue;
             var code = MaintenancePostponementPolicy.ValidateApproval(x.RequestedBy, actor.Id, criticality,
@@ -110,11 +112,12 @@ public static class MaintenancePostponementEndpoints
         var rows = await db.MaintenancePostponements.AsNoTracking().Where(x => x.VesselId == vessel && x.PlanId == id)
             .OrderByDescending(x => x.RequestedAt).ThenBy(x => x.Id).Take(100).ToArrayAsync(ct);
         var items = new List<MaintenancePostponementDto>();
-        foreach (var row in rows) items.Add(await Dto(db, row, plan, actor, settings, now, ct));
+        var human = CertificateRenewalEndpoints.Human(h, actor);
+        foreach (var row in rows) items.Add(await Dto(db, row, plan, actor, settings, now, human, ct));
         var rule = settings.Postponement(actor.TenantId);
         await PmsCommands.Audit(h, ReadAction, "Success", id);
         return Results.Json(new MaintenancePostponementPage(id, plan.Plan.Revision, plan.OriginalDue, plan.DueState, plan.Criticality,
-            rule == null ? "UNCONFIGURED" : "CONFIGURED", rule?.PolicyRef, rule?.Version, rule?.MaxExtensionDays, CanRequest(actor, vessel), CanDecide(actor, vessel),
+            rule == null ? "UNCONFIGURED" : "CONFIGURED", rule?.PolicyRef, rule?.Version, rule?.MaxExtensionDays, CanRequest(actor, vessel), human && CanDecide(actor, vessel),
             [.. items], SourceVersion), PmsCommands.Json);
     }
 
@@ -124,7 +127,8 @@ public static class MaintenancePostponementEndpoints
         if (row == null) return null;
         var now = PmsCommands.Now(h);
         var plan = await Plan(db, vessel, row.PlanId, h, now, ct);
-        return new MaintenancePostponementOutcome(await Dto(db, row, plan, actor, h.RequestServices.GetRequiredService<MaintenanceObservationSettings>(), now, ct));
+        return new MaintenancePostponementOutcome(await Dto(db, row, plan, actor, h.RequestServices.GetRequiredService<MaintenanceObservationSettings>(), now,
+            CertificateRenewalEndpoints.Human(h, actor), ct));
     }
 
     private static async Task<PmsOutcome> Request(PmsContext<MaintenancePostponementRequestCommand> c)

@@ -41,12 +41,15 @@ internal static class PmsCommands
 
     internal static async Task<IResult> Run<T>(HttpContext h, PoseidonDbContext db, Guid vessel, string operation, string auditAction,
         Guid? routeId, Guid? subId, Func<TrustedActor, Guid, bool> allowed, Func<T, Guid?> resourceOf,
-        Func<PmsContext<T>, Task<PmsOutcome>> apply, Func<PoseidonDbContext, TrustedActor, Guid, Guid, HttpContext, CancellationToken, Task<object?>> read) where T : class
+        Func<PmsContext<T>, Task<PmsOutcome>> apply, Func<PoseidonDbContext, TrustedActor, Guid, Guid, HttpContext, CancellationToken, Task<object?>> read, bool humanOnly = false) where T : class
     {
         h.Response.Headers.CacheControl = "no-store"; var ct = h.RequestAborted;
         if (h.Request.Query.Count != 0) return await Fail(h, auditAction, 400, "invalid_query");
         var actor = Actor(h);
         if (actor == null || !actor.HasWriteAttribution || db.TenantId != actor.TenantId || !allowed(actor, vessel)) return await Fail(h, auditAction, 403, "permission_denied", routeId);
+        // Approval / verification / closure are human records: AI, automation, service and unspecified principals are denied
+        // from the trusted server-provisioned membership (never a request field), before any business effect.
+        if (humanOnly && !CertificateRenewalEndpoints.Human(h, actor)) return await Fail(h, auditAction, 403, "human_actor_required", routeId);
         if (!await InScope(db, actor, vessel, ct)) return await Fail(h, auditAction, 404, "resource_not_found", routeId);
         try { await h.RequestServices.GetRequiredService<IAntiforgery>().ValidateRequestAsync(h); }
         catch (AntiforgeryValidationException) { return await Fail(h, auditAction, 403, "csrf_invalid", routeId); }

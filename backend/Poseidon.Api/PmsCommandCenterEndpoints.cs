@@ -61,8 +61,9 @@ public static class PmsCommandCenterEndpoints
                 foreach (var p in rows)
                 {
                     var inputs = p.Row.Inputs;
-                    var classified = PmsCommandCenterPolicy.Classify(p.Row.Id, p.Row.Revision, p.Row.AssetId, p.Row.Due, inputs.Criticality, inputs.TimeZone, p.SourceObservedAt, now);
-                    if (classified == null) { if (inputs.Criticality == "Critical") quietCritical++; else quiet++; continue; }
+                    var classified = PmsCommandCenterPolicy.Classify(p.Row.Id, p.Row.Revision, p.Row.AssetId, p.Row.Due, inputs.Criticality, p.Row.AssetCriticality,
+                        inputs.TimeZone, p.SourceObservedAt, now);
+                    if (classified == null) { if (PmsCommandCenterPolicy.IsCritical(inputs.Criticality, p.Row.AssetCriticality)) quietCritical++; else quiet++; continue; }
                     (classified.Value.Section == "critical_overdue_jobs" ? critical : other).Add(classified.Value.Item);
                 }
                 sections.Add(PmsCommandCenterPolicy.Section("critical_overdue_jobs", critical, quietCritical, now));

@@ -18,10 +18,11 @@ public sealed partial class DirectoryWorkspaceTests
 {
     private static readonly string[] TechnicalRecordPermissions = ["equipment.read", "equipment.write", "defect.read", "defect.write", "defect.verify", "defect.effectiveness",
         "defect.close", "service.report.read", "service.report.write", "service.report.verify", "maintenance.read", "workorder.read", "file.read"];
-    private void TechActor(IServiceProvider services, Guid actor, params string[] permissions)
+    private void TechActor(IServiceProvider services, Guid actor, params string[] permissions) => TechActorOfKind(services, actor, "Human", permissions);
+    private void TechActorOfKind(IServiceProvider services, Guid actor, string kind, params string[] permissions)
     {
         var settings = services.GetRequiredService<FederationSettings>(); var m = settings.Memberships[0];
-        settings.Memberships[0] = m with { ActorId = actor, Permissions = [.. m.Permissions.Where(p => !TechnicalRecordPermissions.Contains(p)), .. permissions] };
+        settings.Memberships[0] = m with { ActorId = actor, ActorKind = kind, Permissions = [.. m.Permissions.Where(p => !TechnicalRecordPermissions.Contains(p)), .. permissions] };
     }
     private string Lifecycle(Guid defect, string suffix = "", Guid? vessel = null) => $"defects/{defect}/lifecycle{suffix}?vesselId={vessel ?? SeedVessel.Id}";
     private async Task<T> TechOk<T>(HttpResponseMessage response)
@@ -72,12 +73,28 @@ public sealed partial class DirectoryWorkspaceTests
         await AssertCode(await Send(c, Lifecycle(defect.Id, "/verify"), new DefectLifecycleCommand(acted.Revision, Text: "FICTIONAL self verification", Outcome: "VERIFIED")),
             HttpStatusCode.Forbidden, "separation_of_duties");
 
+        // B1: verification is a human record; an AI / unspecified principal with the permission is denied and not offered it.
+        foreach (var kind in new[] { "AI", "Unspecified" })
+        {
+            TechActorOfKind(host.Services, Guid.NewGuid(), kind, "equipment.read", "defect.read", "defect.verify"); await Token(c);
+            Assert.False((await c.GetFromJsonAsync<DefectLifecycleDto>("/api/v1/" + Lifecycle(defect.Id), Ct))!.Can.Verify);
+            await AssertCode(await Send(c, Lifecycle(defect.Id, "/verify"), new DefectLifecycleCommand(acted.Revision, Text: "FICTIONAL machine verification", Outcome: "VERIFIED")),
+                HttpStatusCode.Forbidden, "human_actor_required");
+        }
         TechActor(host.Services, verifier, "equipment.read", "defect.read", "defect.verify", "defect.effectiveness"); await Token(c);
         var verified = await TechOk<DefectLifecycleDto>(await Send(c, Lifecycle(defect.Id, "/verify"), new DefectLifecycleCommand(acted.Revision, Text: "FICTIONAL pressure test held", Outcome: "VERIFIED")));
         await AssertCode(await Send(c, Lifecycle(defect.Id, "/close"), new DefectLifecycleCommand(verified.Revision, Text: "FICTIONAL closure attempt")), HttpStatusCode.Forbidden, "permission_denied");
+        TechActorOfKind(host.Services, Guid.NewGuid(), "AI", "equipment.read", "defect.read", "defect.effectiveness"); await Token(c);
+        await AssertCode(await Send(c, Lifecycle(defect.Id, "/effectiveness"), new DefectLifecycleCommand(verified.Revision, Text: "FICTIONAL machine effectiveness", Outcome: "EFFECTIVE")),
+            HttpStatusCode.Forbidden, "human_actor_required");
+        TechActor(host.Services, verifier, "equipment.read", "defect.read", "defect.verify", "defect.effectiveness"); await Token(c);
         var effective = await TechOk<DefectLifecycleDto>(await Send(c, Lifecycle(defect.Id, "/effectiveness"), new DefectLifecycleCommand(verified.Revision, Text: "FICTIONAL no recurrence", Outcome: "EFFECTIVE")));
         Assert.Equal("EFFECTIVENESS", effective.Stage); Assert.Empty(effective.CloseBlockers);
 
+        TechActorOfKind(host.Services, Guid.NewGuid(), "Unspecified", "equipment.read", "defect.read", "defect.close"); await Token(c);
+        Assert.False((await c.GetFromJsonAsync<DefectLifecycleDto>("/api/v1/" + Lifecycle(defect.Id), Ct))!.Can.Close);
+        await AssertCode(await Send(c, Lifecycle(defect.Id, "/close"), new DefectLifecycleCommand(effective.Revision, Text: "FICTIONAL machine closure")),
+            HttpStatusCode.Forbidden, "human_actor_required");
         TechActor(host.Services, chief, "equipment.read", "defect.read", "defect.close"); await Token(c);
         var closed = await TechOk<DefectLifecycleDto>(await Send(c, Lifecycle(defect.Id, "/close"), new DefectLifecycleCommand(effective.Revision, Text: "FICTIONAL returned to service")));
         Assert.Equal(("CLOSED", chief), (closed.Stage, closed.ClosedBy!.Value));
@@ -148,6 +165,13 @@ public sealed partial class DirectoryWorkspaceTests
         await AssertCode(await Send(c, $"service-reports/{id}/verify?vesselId={SeedVessel.Id}", new ServiceReportVerifyCommand(submitted.Version, submitted.Hash, "VERIFY", "FICTIONAL self verification")),
             HttpStatusCode.Forbidden, "separation_of_duties");
 
+        foreach (var kind in new[] { "AI", "Unspecified" })
+        {
+            TechActorOfKind(host.Services, Guid.NewGuid(), kind, "equipment.read", "service.report.read", "service.report.verify"); await Token(c);
+            Assert.False((await c.GetFromJsonAsync<ServiceReportDto>($"/api/v1/service-reports/{id}?vesselId={SeedVessel.Id}", Ct))!.CanVerify);
+            await AssertCode(await Send(c, $"service-reports/{id}/verify?vesselId={SeedVessel.Id}", new ServiceReportVerifyCommand(submitted.Version, submitted.Hash, "VERIFY", "FICTIONAL machine verification")),
+                HttpStatusCode.Forbidden, "human_actor_required");
+        }
         TechActor(host.Services, verifier, "equipment.read", "service.report.read", "service.report.verify"); await Token(c);
         var verified = await TechOk<ServiceReportDto>(await Send(c, $"service-reports/{id}/verify?vesselId={SeedVessel.Id}",
             new ServiceReportVerifyCommand(submitted.Version, submitted.Hash, "VERIFY", "FICTIONAL checked against service sheet")));
@@ -186,19 +210,29 @@ public sealed partial class DirectoryWorkspaceTests
         var alerts = center.Sections.Single(s => s.Key == "condition_alerts");
         var item = Assert.Single(alerts.Items, i => i.SourceId == defect.Id);
         Assert.Contains(item.Why, w => w.Code == "DEFECT_LIFECYCLE_NOT_STARTED");
-        // S8 integration: open_work_orders reads the real DEV-054 execution source (work order read granted), so it is a
-        // counted QUIET/EXCEPTIONS section; critical_spare_gaps stays ACCESS_REQUIRED without spare.read and never zero/quiet.
+        // S8 integration: open_work_orders reads the real DEV-054 execution source (work order read granted). The per-test
+        // database has no released work order, so it is exactly QUIET with count 0 (never UNKNOWN). critical_spare_gaps stays
+        // ACCESS_REQUIRED without spare.read and never zero/quiet.
         var workOrders = center.Sections.Single(s => s.Key == "open_work_orders");
-        Assert.Contains(workOrders.State, new[] { PmsCommandCenterPolicy.Quiet, PmsCommandCenterPolicy.Exceptions });
-        Assert.NotNull(workOrders.Count);
-        Assert.All(workOrders.Items, i => Assert.Equal("WorkOrder", i.Kind));
+        Assert.Equal((PmsCommandCenterPolicy.Quiet, (int?)0, 0), (workOrders.State, workOrders.Count, workOrders.QuietCount));
         var spares = center.Sections.Single(s => s.Key == "critical_spare_gaps");
         Assert.Equal((PmsCommandCenterPolicy.AccessRequired, (int?)null, "SPARE_ACCESS_REQUIRED"), (spares.State, spares.Count, spares.Reason));
         TechActor(host.Services, Guid.NewGuid(), [.. TechnicalRecordPermissions, "spare.read"]); await Token(c);
         var withSpares = (await c.GetFromJsonAsync<PmsCommandCenterDto>($"/api/v1/pms/command-center?vesselId={SeedVessel.Id}", Ct))!;
         var spareSection = withSpares.Sections.Single(s => s.Key == "critical_spare_gaps");
-        Assert.Contains(spareSection.State, new[] { PmsCommandCenterPolicy.Quiet, PmsCommandCenterPolicy.Exceptions });
-        Assert.All(spareSection.Items, i => Assert.Equal("CriticalSpare", i.Kind));
+        // No critical spare is in the default seed (CriticalSpareFixtures is opt-in): exactly QUIET, count 0.
+        Assert.Equal((PmsCommandCenterPolicy.Quiet, (int?)0, 0), (spareSection.State, spareSection.Count, spareSection.QuietCount));
+
+        // End-to-end WP-B adapter: a released work order without a configured evidence policy is an open REVIEW exception.
+        var (order, _) = await ReleasedWorkOrder(c, host.Services, Guid.NewGuid(), null);
+        TechActor(host.Services, Guid.NewGuid(), TechnicalRecordPermissions); await Token(c);
+        var released = (await c.GetFromJsonAsync<PmsCommandCenterDto>($"/api/v1/pms/command-center?vesselId={SeedVessel.Id}", Ct))!;
+        var open = released.Sections.Single(s => s.Key == "open_work_orders");
+        Assert.Equal((PmsCommandCenterPolicy.Exceptions, (int?)1), (open.State, open.Count));
+        var woItem = Assert.Single(open.Items);
+        Assert.Equal(("WorkOrder", order.Id, "REVIEW"), (woItem.Kind, woItem.SourceId, woItem.Severity));
+        Assert.Contains(woItem.Why, w => w.Code == "WORK_ORDER_OPEN" && w.Detail == "RELEASED");
+        Assert.Contains(woItem.Why, w => w.Code == "REQUIRED_EVIDENCE_UNCONFIGURED");
         TechActor(host.Services, Guid.NewGuid(), "equipment.read"); await Token(c);
         var limited = (await c.GetFromJsonAsync<PmsCommandCenterDto>($"/api/v1/pms/command-center?vesselId={SeedVessel.Id}", Ct))!;
         Assert.Equal(PmsCommandCenterPolicy.AccessRequired, limited.Sections.Single(s => s.Key == "condition_alerts").State);

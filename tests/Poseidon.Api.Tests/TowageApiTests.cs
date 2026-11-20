@@ -127,6 +127,16 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.DoesNotContain(page.Items, i => i.WorkId == ra.Id);
         Assert.Contains("PermitToWorkSourceUnavailable", page.Coverage);
         Assert.Equal(HttpStatusCode.BadRequest, (await c.GetAsync("/api/v1/hse/high-risk-work?score=1", Ct)).StatusCode);
+        // Fleet (company) filter: only the company's vessels; ranking is worst-first over the complete dimension set
+        // (live crew/equipment readiness included); an unknown company is indistinguishable from an empty one.
+        var fleet = (await c.GetFromJsonAsync<HighRiskWorkPage>($"/api/v1/hse/high-risk-work?companyId={Tug.CompanyId}", Ct))!;
+        Assert.Contains(fleet.Items, i => i.WorkId == job.Id);
+        Assert.All(fleet.Items, i => Assert.Equal(Tug.CompanyId, fleet.Vessels.Single(v => v.Id == i.VesselId).CompanyId));
+        var ranks = fleet.Items.Select(i => HighRiskWorkPolicy.Rank(i.Why)).ToArray();
+        Assert.Equal(ranks.Order(), ranks);
+        Assert.All(fleet.Items, i => Assert.Equal(i.CriticalBlockers > 0, HighRiskWorkPolicy.Rank(i.Why) == 0));
+        var otherFleet = (await c.GetFromJsonAsync<HighRiskWorkPage>($"/api/v1/hse/high-risk-work?companyId={Guid.NewGuid()}", Ct))!;
+        Assert.Empty(otherFleet.Items); Assert.False(otherFleet.HasMore);
 
         // Amendments open new revisions: the re-briefing needs new acknowledgements and the plan needs re-approval.
         var briefingAfterAck = (await c.GetFromJsonAsync<TowageBriefingView>($"/api/v1/towage-risk-briefings?vessel={Tug.Id}&job={job.Id}", Ct))!.Briefing!;

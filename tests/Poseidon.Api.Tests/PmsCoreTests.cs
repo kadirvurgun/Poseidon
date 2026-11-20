@@ -17,10 +17,11 @@ public sealed partial class DirectoryWorkspaceTests
     private string PointsUrl => $"equipment-hierarchy/{SeedVessel.Id}/measurement-points";
     private static readonly Guid PmsOwnerRole = Guid.Parse("91c26eb5-cf16-4553-981d-1c275358c535");
 
-    private void PmsActor(IServiceProvider services, Guid actor, params string[] extra)
+    private void PmsActor(IServiceProvider services, Guid actor, params string[] extra) => PmsActorOfKind(services, actor, "Human", extra);
+    private void PmsActorOfKind(IServiceProvider services, Guid actor, string kind, params string[] extra)
     {
         var settings = services.GetRequiredService<FederationSettings>(); var m = settings.Memberships[0];
-        settings.Memberships[0] = m with { ActorId = actor, Permissions = [.. m.Permissions.Where(p => !p.StartsWith("maintenance.postponement.", StringComparison.Ordinal) &&
+        settings.Memberships[0] = m with { ActorId = actor, ActorKind = kind, Permissions = [.. m.Permissions.Where(p => !p.StartsWith("maintenance.postponement.", StringComparison.Ordinal) &&
             p != "maintenance.measurement.write"), .. extra] };
     }
     private async Task<T> PmsOk<T>(HttpResponseMessage response)
@@ -136,6 +137,35 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(1, await db.MeasurementReadings.CountAsync(r => r.PropagatedFromReadingId == reading.Id, Ct));
     }
 
+    [Fact]
+    [Trait("Requirement", "DEV-056")]
+    [Trait("Requirement", "DEV-052")]
+    public async Task Command_center_treats_an_overdue_plan_on_undeclared_criticality_equipment_as_critical()
+    {
+        using var host = Host(technicalRead: true, technicalWrite: true); using var client = Client(host);
+        PmsActor(host.Services, Guid.NewGuid()); await Token(client);
+        var undeclared = await PmsAsset(client, null); var standard = await PmsAsset(client, "STANDARD");
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        async Task<Guid> Overdue(Guid asset, string criticality)
+        {
+            var plan = new MaintenanceCommand(Guid.NewGuid(), null, asset, SeedVessel.Id, PmsOwnerRole, new(TriggerType: "Calendar", IntervalValue: "20", IntervalUnit: "day",
+                LastDoneDate: today.AddDays(-30), TimeZone: "UTC", Provenance: "SyntheticDeclaration", Criticality: criticality), DateTimeOffset.UtcNow.AddSeconds(-1));
+            using var saved = await Send(client, PlansUrl, plan); Assert.Equal(HttpStatusCode.OK, saved.StatusCode);
+            return plan.Id;
+        }
+        var unknownPlan = await Overdue(undeclared, "Low"); var standardPlan = await Overdue(standard, "Low"); var declaredPlan = await Overdue(standard, "DeclaredCritical");
+        var center = (await client.GetFromJsonAsync<PmsCommandCenterDto>($"/api/v1/pms/command-center?vesselId={SeedVessel.Id}", Ct))!;
+        var critical = center.Sections.Single(s => s.Key == "critical_overdue_jobs"); var other = center.Sections.Single(s => s.Key == "overdue_jobs");
+        var unknownItem = Assert.Single(critical.Items, i => i.SourceId == unknownPlan);
+        Assert.Equal("CRITICAL", unknownItem.Severity);
+        Assert.Equal("MAINTENANCE_OVERDUE", unknownItem.Why[0].Code);
+        Assert.Contains(unknownItem.Why, w => w.Code == "EQUIPMENT_CRITICALITY_UNKNOWN");
+        Assert.Equal("CRITICAL", Assert.Single(critical.Items, i => i.SourceId == declaredPlan).Severity);
+        Assert.Equal("ATTENTION", Assert.Single(other.Items, i => i.SourceId == standardPlan).Severity);
+        Assert.DoesNotContain(other.Items, i => i.SourceId == unknownPlan || i.SourceId == declaredPlan);
+        Assert.Equal("BLOCKED", center.ReadinessState);
+    }
+
     private async Task<(Guid Plan, DateOnly Due)> PmsCalendarPlan(HttpClient client, Guid asset)
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
@@ -220,6 +250,16 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(("UNKNOWN", "REVIEW_REQUIRED"), (requested.Criticality, requested.ReadinessImpact));
         var plan = (await client.GetFromJsonAsync<JsonElement>("/api/v1/" + PlansUrl, Ct)).GetProperty("items").EnumerateArray().Single(x => x.GetProperty("id").GetGuid() == planId);
         Assert.Equal(("UNKNOWN", "REVIEW_REQUIRED"), (plan.GetProperty("assetCriticality").GetString(), plan.GetProperty("postponement").GetProperty("readinessImpact").GetString()));
+        // B1: the decision is a human record. AI and unspecified principals with the permission are denied before any effect
+        // and are never offered the decision capability.
+        foreach (var kind in new[] { "AI", "Unspecified" })
+        {
+            PmsActorOfKind(host.Services, Guid.NewGuid(), kind, "maintenance.postponement.decide"); await Token(client);
+            var machineView = (await client.GetFromJsonAsync<MaintenancePostponementPage>($"/api/v1/{PlansUrl}/{planId}/postponements", Ct))!;
+            Assert.False(machineView.CanDecide); Assert.False(machineView.Items.Single().CanDecide);
+            await PmsCode(await Send(client, $"{PlansUrl}/{planId}/postponements/{request.Id}/decision",
+                new MaintenancePostponementDecisionCommand(requested.Version, "REJECT", "FICTIONAL machine rejection")), HttpStatusCode.Forbidden, "human_actor_required");
+        }
         PmsActor(host.Services, manager, "maintenance.postponement.decide"); await Token(client);
         var view = (await client.GetFromJsonAsync<MaintenancePostponementPage>($"/api/v1/{PlansUrl}/{planId}/postponements", Ct))!;
         Assert.Equal(new[] { "risk_review_required" }, view.Items.Single().DecisionBlockers);

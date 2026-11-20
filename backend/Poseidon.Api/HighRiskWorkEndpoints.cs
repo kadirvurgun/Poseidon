@@ -46,6 +46,11 @@ public static class HighRiskWorkEndpoints
         return true;
     }
 
+    // Worst-first over the COMPLETE dimension set of each row (critical first, then review, then planned start).
+    internal static HighRiskWorkRow[] Order(IEnumerable<(HighRiskWorkRow Row, DateTimeOffset UpdatedAt)> rows) =>
+        rows.OrderBy(r => HighRiskWorkPolicy.Rank(r.Row.Why)).ThenBy(r => r.Row.PlannedStart ?? DateTimeOffset.MaxValue)
+            .ThenByDescending(r => r.UpdatedAt).ThenBy(r => r.Row.WorkId).Select(r => r.Row).ToArray();
+
     private sealed record Candidate(string Kind, Guid Id, string Ref, Vessel Vessel, string WorkType, DateTimeOffset? PlannedStart, string? Role,
         (string State, string Reason, Guid? Source) Risk, List<HighRiskDimension> Why, HighRiskOwnerDue OwnerDue, DateTimeOffset UpdatedAt, TugJob? Job);
 
@@ -120,11 +125,12 @@ public static class HighRiskWorkEndpoints
             rows.Add(new("RiskAssessment", r.Id, r.AssessmentNo, vessels[r.VesselId], type, null, role, (state, reason, r.Id), why, new(owner, null, null), r.SavedAt, null));
         }
 
-        var filtered = rows.Where(x => workType == null || x.WorkType == workType)
-            .OrderBy(x => HighRiskWorkPolicy.Rank(x.Why)).ThenBy(x => x.PlannedStart ?? DateTimeOffset.MaxValue).ThenByDescending(x => x.UpdatedAt).ThenBy(x => x.Id).ToArray();
-        var page = filtered.Skip(offset).Take(limit).ToArray();
-        var items = new List<HighRiskWorkRow>();
-        foreach (var x in page) {
+        // Every dimension (including the live crew/equipment readiness below) is added BEFORE ranking and
+        // paging, so a row whose only critical blocker comes from live tug readiness still sorts first.
+        // Bounded by MaxSource tug jobs x MaxProposals live evaluations.
+        var candidates = rows.Where(x => workType == null || x.WorkType == workType).ToArray();
+        var items = new List<(HighRiskWorkRow Row, DateTimeOffset UpdatedAt)>();
+        foreach (var x in candidates) {
             var why = x.Why;
             string crew, equipment, barrier;
             if (x.Job is { } job) {
@@ -157,12 +163,14 @@ public static class HighRiskWorkEndpoints
             }
             var dims = why.ToArray();
             var link = x.Kind == "TugJob" ? $"/app/towage-risk-briefing?vessel={x.Vessel.Id:D}&job={x.Id:D}" : $"/app/risk-assessment/{x.Vessel.Id:D}?id={x.Id:D}";
-            items.Add(new(x.Kind, x.Id, x.Ref, x.Vessel.Id, x.Vessel.Code, x.Vessel.Name, x.Vessel.Kind.ToString(), x.WorkType, x.PlannedStart, x.Role, x.Risk.State,
+            items.Add((new(x.Kind, x.Id, x.Ref, x.Vessel.Id, x.Vessel.Code, x.Vessel.Name, x.Vessel.Kind.ToString(), x.WorkType, x.PlannedStart, x.Role, x.Risk.State,
                 HighRiskWorkPolicy.PermitUnknown, barrier, crew, equipment, HighRiskWorkPolicy.NextAction(dims), x.OwnerDue, dims,
-                HighRiskWorkPolicy.Count(dims, "CRITICAL"), HighRiskWorkPolicy.Count(dims, "REVIEW"), link));
+                HighRiskWorkPolicy.Count(dims, "CRITICAL"), HighRiskWorkPolicy.Count(dims, "REVIEW"), link), x.UpdatedAt));
         }
+        var filtered = Order(items);
+        var page = filtered.Skip(offset).Take(limit).ToArray();
         await TugReadinessHttp.Observe(h, Read, "Success");
-        return Results.Ok(new HighRiskWorkPage([.. items], offset, limit, filtered.Length > offset + page.Length, [.. coverage.Distinct()], HighRiskWorkPolicy.WorkTypes,
+        return Results.Ok(new HighRiskWorkPage(page, offset, limit, filtered.Length > offset + page.Length, [.. coverage.Distinct()], HighRiskWorkPolicy.WorkTypes,
             scoped.Select(v => new HighRiskVesselOption(v.Id, v.Code, v.Name, v.Kind.ToString(), v.CompanyId)).ToArray(), fleets, now));
     }
 }
