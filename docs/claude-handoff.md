@@ -258,3 +258,4 @@ Main: #16 #17 #18 #20 #23 #36 + **#37 paket 2** birleşik (`2995f70`, 19.11 ~08:
 - 6fb09be push CI 44813713782 **yeşil**; S10 kayıt dalı CI yeşil. **ee3fa670** = + S11 WP-B (S1 278/269/294; OpenAPI 468; profil 579; Domain 1603, API 443, Persistence 140, script 651) → push edildi.
 - İşçi **s11-wpd** DONE `feature/s11-wpd-uat-gonogo-20261122` 212e0aea (CI yeşil; DEV-074/094/075; migration 20261124064000) → entegratör birleştiriyor (ee3fa670 CI bitince push). Kalan: qa-notes, i18n, pilot-plan işçileri.
 - **53dd7845** (yerel, ee3fa670 CI 44821388755 bitince otomatik push — arka plan): S11 WP-D birleşimi + `PilotGateOwnedSources.cs` (REGULATORY ← WP-C kampanyaları, DATA ← WP-A owner sign-off; SECURITY/OFFLINE/DR/TRACE DEFERRED — insan kaydı yok). S1 287/278/303; OpenAPI 481; profil 592. Domain 1613, API 459, Persistence 144.
+- ee3fa670 CI **yeşil**; **53dd7845 push edildi**, CI koşuyor.
