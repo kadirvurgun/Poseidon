@@ -65,6 +65,43 @@ def deadline_diagnostics(output, discovered):
             'partial_count_observations': observations(raw)}
 
 
+MARKER_VARIABLE = 'POSEIDON_TEST_MARKER_FILE'
+
+
+def marker_path(root, scope, index):
+    """Fresh per-execution marker file; the test assembly appends only static identifiers."""
+    directory = root / '.runtime/api-gate/markers'
+    directory.mkdir(parents=True, exist_ok=True)
+    path = directory / f'{scope}-shard{index}.log'
+    path.unlink(missing_ok=True)
+    return path
+
+
+def unfinished_tests(path, discovered):
+    """Started-but-unfinished static method identifiers. Lines are re-validated against the
+    discovered set, so the file can never inject a value or an unknown name into evidence."""
+    known = set(discovered)
+    try:
+        # No file means no test reached its start marker before the deadline.
+        lines = path.read_text(encoding='utf-8', errors='replace').splitlines() if path is not None and path.exists() else []
+    except OSError:
+        return {'status': 'MARKERS_UNREADABLE'}
+    open_count, started = Counter(), []
+    for line in lines:
+        kind, _, name = line.partition('\t')
+        if name not in known or kind not in ('S', 'E'):
+            continue
+        if kind == 'S':
+            open_count[name] += 1
+            started.append(name)
+        elif open_count[name] > 0:
+            open_count[name] -= 1
+    return {'status': 'MARKERS_READ', 'started_markers': len(started),
+            'started_unfinished_identifiers': sorted(name for name, count in open_count.items() if count > 0)[:16],
+            'last_started_identifiers': started[-4:],
+            'identifier_semantics': 'started_without_finish_marker_at_deadline'}
+
+
 def failure_locations(output, root):
     """Only existing source filenames/line numbers; no exception or body text."""
     known = {p.name for p in (root / 'tests/Poseidon.Api.Tests').glob('*.cs')}
@@ -145,21 +182,30 @@ def run(scope, root=ROOT, timeout=1800, shards=1):
                 'started_at': datetime.now(timezone.utc).isoformat()}
     started = time.monotonic()
     deadline = started + timeout
-    stage, discovered = 'discovery', []
+    stage, discovered, markers = 'discovery', [], []
     def remaining(limit=None):
         left = deadline - time.monotonic()
         if left <= 0:
             raise subprocess.TimeoutExpired('owned-api-native-gate', timeout)
         return min(left, limit) if limit is not None else left
-    def parallel(commands, environment, discovery=False):
-        def invoke(cmd):
+    elapsed = {}
+    def parallel(commands, environments, discovery=False):
+        def invoke(item):
+            index, (cmd, environment) = item
+            began = time.monotonic()
             try:
                 return capture(cmd, root, remaining(120 if discovery else None), env=environment)
             except Exception as failure:
                 # Collect every launched shard even after another shard fails.
                 return failure
+            finally:
+                if not discovery:
+                    elapsed[index] = round(time.monotonic() - began, 3)
         with ThreadPoolExecutor(max_workers=len(commands)) as pool:
-            return list(pool.map(invoke, commands))
+            return list(pool.map(invoke, enumerate(zip(commands, environments))))
+    def marked(environment, index):
+        path = marker_path(root, scope, index)
+        return path, {**environment, MARKER_VARIABLE: str(path)}
     try:
         child_environment = critical_write_coverage.clean_environment(os.environ)
         discovery = capture([*args, '--list-tests'], root, remaining(120), env=child_environment)
@@ -175,7 +221,7 @@ def run(scope, root=ROOT, timeout=1800, shards=1):
             stage = 'shard-discovery'
             groups = partition_methods(discovered, shards)
             shard_commands = [method_command(args, group) for group in groups]
-            results = parallel([[*cmd, '--list-tests'] for cmd in shard_commands], child_environment, True)
+            results = parallel([[*cmd, '--list-tests'] for cmd in shard_commands], [child_environment] * len(shard_commands), True)
             evidence['shard_discovery'] = []
             actual = []
             for result in results:
@@ -198,22 +244,29 @@ def run(scope, root=ROOT, timeout=1800, shards=1):
             coverage_run = critical_write_coverage.prepare(root, scope)
             child_environment = coverage_run.environment(child_environment)
         stage = 'execution'
+        markers = []
         if shard_commands is None:
-            execution = capture([*args, '--output', 'Detailed'], root, remaining(), env=child_environment)
+            path, environment = marked(child_environment, 0); markers.append(path)
+            execution = capture([*args, '--output', 'Detailed'], root, remaining(), env=environment)
             report, complete = execution_evidence(execution, discovered, root)
             evidence.update(report)
             native_code = execution.returncode or 2
         else:
-            results = parallel([[*cmd, '--output', 'Detailed'] for cmd in shard_commands], child_environment)
+            environments = []
+            for index in range(len(shard_commands)):
+                path, environment = marked(child_environment, index)
+                markers.append(path); environments.append(environment)
+            results = parallel([[*cmd, '--output', 'Detailed'] for cmd in shard_commands], environments)
             evidence['shards'] = []
             complete, native_code = True, 2
             totals = {key: 0 for key in ('total', 'failed', 'succeeded', 'skipped')}
             interrupted = execution_error = False
-            for group, result in zip(groups, results):
+            for index, (group, result) in enumerate(zip(groups, results)):
                 names = list(group.elements())
                 if isinstance(result, subprocess.TimeoutExpired):
                     report = {'status': 'INTERRUPTED_DEADLINE',
-                              'deadline_diagnostics': deadline_diagnostics(result.output, names)}
+                              'deadline_diagnostics': deadline_diagnostics(result.output, names),
+                              'test_markers': unfinished_tests(markers[index], names)}
                     interrupted = True; passed = False
                 elif isinstance(result, Exception):
                     report = {'status': 'GATE_EXECUTION_FAILED'}
@@ -224,6 +277,8 @@ def run(scope, root=ROOT, timeout=1800, shards=1):
                     for key, values in report['count_observations'].items():
                         if len(values) == 1: totals[key] += values[0]
                 complete = complete and passed
+                if index in elapsed:
+                    report['elapsed_seconds'] = elapsed[index]
                 evidence['shards'].append(report)
             # Native evidence replay requires a closed aggregate exit status as
             # well as counts. Never infer native success from counts alone.
@@ -257,6 +312,8 @@ def run(scope, root=ROOT, timeout=1800, shards=1):
         evidence['status'] = 'INTERRUPTED_DEADLINE'
         evidence['interrupted_stage'] = stage
         evidence['deadline_diagnostics'] = deadline_diagnostics(expired.output, discovered)
+        if stage == 'execution' and len(markers) == 1:
+            evidence['test_markers'] = unfinished_tests(markers[0], discovered)
         return 2, evidence
     except critical_write_coverage.CoverageInputError as failure:
         evidence['status'] = 'CRITICAL_WRITE_COVERAGE_SETUP_FAILED'

@@ -98,6 +98,12 @@ jobs:
                       lines.append(f"- unobserved critical operation: `{missing['operation_id']}` at `{missing['contract_file']}:{missing['contract_line']}`; positive HTTP audit fixture: `{missing['test_fixture_file']}`")
               if e.get('interrupted_stage'):
                   lines.append(f"interrupted stage: {e['interrupted_stage']}")
+              for index, shard in enumerate(e.get('shards', [])):
+                  lines.append(f"shard {index}: {shard.get('status')} elapsed={shard.get('elapsed_seconds')}s")
+              for index, markers in [(None, e.get('test_markers'))] + [(i, s.get('test_markers')) for i, s in enumerate(e.get('shards', []))]:
+                  if markers:
+                      lines += [f"- started, never finished (shard {index}): `{n}`" for n in markers.get('started_unfinished_identifiers', [])]
+                      lines += [f"- last started (shard {index}): `{n}`" for n in markers.get('last_started_identifiers', [])]
           text = '\n'.join(lines) or 'No API gate evidence was written; the failure is outside api_test_gate.'
           print(text)
           with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
@@ -118,6 +124,7 @@ jobs:
           path: |
             .runtime/api-gate/*.json
             .runtime/api-gate/critical-write-*/*.json
+            .runtime/api-gate/markers/*.log
           if-no-files-found: ignore
       - name: Document import tests
         run: python3 -m unittest discover -s scripts -p 'test_*.py' -v
