@@ -1,5 +1,17 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
+## S9 kabul edildi — notlarla (20.11.2026)
+
+**Canonical ilerleme: 90 iş / 746 SP / 970 SP = %76,91** (önceki: 80 iş / 654 SP, %67,42). S0 13/53, S1 7/50, S2 6/42, S3 7/66, S4 6/58, S5 8/69, S6 7/71 (87 SP'nin), S7 13/121, S8 13/124, **S9 10/92** kabul.
+
+- Hedef: PR #47 head `916e158` → main `f1c2d51`. CI push `44766423323` + pull_request `44766440442` yeşil; critical-write kapsama kapısı `PASS_ACTUAL_CURRENT_CRITICAL_SCOPE` 271/271 (251 kritik rota şablonu).
+- Bağımsız S9 QA: 2 tur (c678218 RED, B1 ISPS dosya metadata sızıntısı / B2 `{action}` yer tutucu çakışması / B3 römorkaj crew test aktörü; c678218..916e158 yeniden kontrol B1–B3 çözüldü, N2 SOUND, **ACCEPT-WITH-NOTES ×10**), engelleyici yok — [kanıt](evidence/s9-20261120-916e158/qa/s9-gate-independent-review.md), [faz raporu](phases/S9-GATE-20261120.md).
+- Kabul: DEV-058, 059, 060, 061, 062, 063, 089, 090, 111, 114.
+- Teslim: kalkış hazırlığı birleştirme + Master kalkış kararı (RELEASE yalnız CURRENT + READY); emniyet olayı/ramak kala bildirimi (gizli bildiren), analiz → bariyer/aksiyon → etkinlik (görev ayrılığı, Closed ≠ Effective); sesten olay taslağı + değerlendirme (yalnız NAMED DRAFT hand-off); doküman karşılaştırma + ISPS/RESTRICTED güvenlik kontrolleri; römorkaj yürütme (READY üzerinde GO, yalnız atanmış insan Tug Master), römorkör günlük defteri, drydock–sertifika–survey–iş emri bağı.
+- Notlar: N1 inceleme/aksiyon oluşturma insan aktör istemiyor; N3 açık LOW/MEDIUM olay PASS (şiddet politikası yok); N5 defter offline yalnız bellekte; başarı yolu PG testi olmayan kritik dallar var (ayrıntı kanıt dosyasında).
+- Açık insan/uzman kapıları: koşullu kalkış politikası, yasal sertifika envanteri, acil durum/tatbikat kaynağı (yok → RELEASE erişilemez), römorkör hava durumu kaynağı (römorkaj başlatma erişilemez), şiddet politikası, anonim bildirim geçidi, gizli bildiren denetim bağlantısı, yerel STT + DPIA, kontrollü kopya baskı, drydock kapsam kataloğu, kalıcı offline defter. Hiçbir onay iddia edilmiyor.
+- Sıradaki: S10; S6 DEV-101/102 S10 ile gelecek.
+
 ## S8 kabul edildi — notlarla (20.11.2026)
 
 **Canonical ilerleme: 80 iş / 654 SP / 970 SP = %67,42** (önceki: 67 iş / 530 SP, %54,64). S0 13/53, S1 7/50, S2 6/42, S3 7/66, S4 6/58, S5 8/69, S6 7/71 (87 SP'nin), S7 13/121, **S8 13/124** kabul.
