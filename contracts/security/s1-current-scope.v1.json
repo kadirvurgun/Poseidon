@@ -30,9 +30,9 @@
     "TenantPerson",
     "Unresolved"
   ],
-  "mutationRouteTemplates": 268,
-  "criticalRouteTemplates": 259,
-  "criticalOperations": 279,
+  "mutationRouteTemplates": 270,
+  "criticalRouteTemplates": 261,
+  "criticalOperations": 281,
   "scopeMeaning": "Current exposed HTTP command surface, including aliases. Counts are authoring definitions until actual EndpointDataSource drift and real audit observations pass the phase gate. Technical codes describe accepted commands, never human justification or safety authority.",
   "operations": [
     {"operationId": "MeasurementPointSave", "method": "POST", "routePattern": "/api/v1/equipment-hierarchy/{vessel:guid}/measurement-points", "family": "Maintenance", "scope": "Vessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "MeasurementCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"]},
@@ -957,6 +957,8 @@
     { "operationId": "TugDailyLogUpdate", "method": "PUT", "routePattern": "/api/v1/tug-daily-logs/{id:guid}", "family": "Tug", "scope": "ResolvedVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "TugDailyLogCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "TugDailyLogSubmit", "method": "POST", "routePattern": "/api/v1/tug-daily-logs/{id:guid}/submit", "family": "Tug", "scope": "ResolvedVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "TugDailyLogCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "TugDailyLogReview", "method": "POST", "routePattern": "/api/v1/tug-daily-logs/{id:guid}/review", "family": "Tug", "scope": "ResolvedVessel", "kind": "CriticalWrite", "reasonCode": "HUMAN_REVIEW_WORKFLOW", "denialAction": "TugDailyLogCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "TugOperationsOfflineSnapshot", "method": "POST", "routePattern": "/api/v1/tug-operations-offline/snapshots", "family": "Tug", "scope": "ResolvedVessel", "kind": "CriticalWrite", "reasonCode": "OFFLINE_LIFECYCLE", "denialAction": "TugOperationsOfflineCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "TugOperationsOfflineReplay", "method": "POST", "routePattern": "/api/v1/tug-operations-offline/replay", "family": "Tug", "scope": "ResolvedVessel", "kind": "CriticalWrite", "reasonCode": "OFFLINE_LIFECYCLE", "denialAction": "TugOperationsOfflineCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "DrydockCreate", "method": "POST", "routePattern": "/api/v1/drydock-packages", "family": "Drydock", "scope": "ResolvedVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DrydockCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "DrydockUpdate", "method": "PUT", "routePattern": "/api/v1/drydock-packages/{id:guid}", "family": "Drydock", "scope": "ResolvedVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DrydockCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "DrydockTransition", "method": "POST", "routePattern": "/api/v1/drydock-packages/{id:guid}/transitions", "family": "Drydock", "scope": "ResolvedVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DrydockCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },

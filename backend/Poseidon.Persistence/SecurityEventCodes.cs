@@ -33,6 +33,7 @@ public static class SecurityEventCodes
         "TowagePlanRead", "TowagePlanCommand", "TowageBriefingRead", "TowageBriefingCommand", "HighRiskWorkRead",
         "SafetyEventRead", "SafetyEventCommand", "SafetyEventOfflineRead", "SafetyEventOfflineRequest",
         "TowageExecutionRead", "TowageExecutionCommand", "TugDailyLogRead", "TugDailyLogCommand", "DrydockRead", "DrydockCommand",
+        "TugOperationHistoryRead", "TugOperationsOfflineRead", "TugOperationsOfflineCommand",
         "ParameterRead", "ParameterCommand", "HrRead", "HrCommand", "MembershipRead", "MembershipCommand", "SessionRevalidation",
         "ControlledDocument", "ControlledDocumentRead", "ControlledDocumentCommand", "ControlledDocumentReplay",
         "SyncOperationRead", "SyncConflictList",
@@ -131,6 +132,8 @@ public static class SecurityEventCodes
         // S10 WP-A DEV-064 / DEV-065 / DEV-113.
         "not_applicable_vessel_type", "mapping_invalid", "mapping_unavailable", "import_rows_invalid", "import_pending_exists", "import_decision_incomplete",
         "diff_changed", "media_type_unavailable", "pack_scope_empty",
+        // S10 WP-B DEV-092.
+        "offline_snapshot_unavailable",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static bool Allows(string action, string result) => Actions.Contains(action) && Results.Contains(result);
 }

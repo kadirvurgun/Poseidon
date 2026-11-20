@@ -8,7 +8,7 @@ export const searchPageSize = 25
 export const searchMaxOffset = 100000
 const destinations: Readonly<Record<string, string>> = {
   'operational-downtime': '/app/operational-downtime',
-  'risk-assessment': '/app/risk-assessment', 'risk-template-library': '/app/risk-template-library', 'high-risk-work': '/app/high-risk-work', 'safety-events': '/app/safety-events', 'data-trust-center': '/app/data-trust-center', 'industry-assurance': '/app/industry-assurance', 'towage-plan': '/app/towage-plan', 'towage-execution': '/app/towage-execution', 'tug-daily-log': '/app/tug-daily-log', 'drydock-planning': '/app/drydock-planning', 'towage-risk-briefing': '/app/towage-risk-briefing',
+  'risk-assessment': '/app/risk-assessment', 'risk-template-library': '/app/risk-template-library', 'high-risk-work': '/app/high-risk-work', 'safety-events': '/app/safety-events', 'data-trust-center': '/app/data-trust-center', 'industry-assurance': '/app/industry-assurance', 'towage-plan': '/app/towage-plan', 'towage-execution': '/app/towage-execution', 'tug-daily-log': '/app/tug-daily-log', 'tug-operation-history': '/app/tug-operation-history', 'tug-operations-offline': '/app/tug-operations-offline', 'tug-demo-journey': '/app/tug-demo-journey', 'drydock-planning': '/app/drydock-planning', 'towage-risk-briefing': '/app/towage-risk-briefing',
   'work-order-center': '/app/work-order-center', 'critical-spares': '/app/critical-spares',
   'pms-command-center': '/app/pms-command-center', 'departure-signoff': '/app/departure-signoff', 'service-engineer-report': '/app/service-engineer-report',
   'voice-event-draft': '/app/voice-event-draft', 'document-compare': '/app/document-compare',

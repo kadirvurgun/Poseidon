@@ -228,6 +228,9 @@ public sealed class PoseidonDbContext(
     public DbSet<AssuranceFinding> AssuranceFindings => Set<AssuranceFinding>();
     public DbSet<AssuranceEvidence> AssuranceEvidence => Set<AssuranceEvidence>();
     public DbSet<AssuranceReceipt> AssuranceReceipts => Set<AssuranceReceipt>();
+    // S10 WP-B DEV-092.
+    public DbSet<TugOperationOfflineSnapshot> TugOperationOfflineSnapshots => Set<TugOperationOfflineSnapshot>();
+    public DbSet<TugOperationOfflineOutcome> TugOperationOfflineOutcomes => Set<TugOperationOfflineOutcome>();
     public DbSet<TugOfflineEnrollment> TugOfflineEnrollments => Set<TugOfflineEnrollment>();
     public DbSet<TugOfflineOutcome> TugOfflineOutcomes => Set<TugOfflineOutcome>();
     public DbSet<TugOfflineLifecycle> TugOfflineLifecycles => Set<TugOfflineLifecycle>();
@@ -464,6 +467,10 @@ public sealed class PoseidonDbContext(
         model.Entity<AssuranceFinding>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<AssuranceEvidence>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<AssuranceReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        // S10 WP-B (DEV-092).
+        TugOperationsOfflineStorage.Configure(model);
+        model.Entity<TugOperationOfflineSnapshot>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TugOperationOfflineOutcome>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         MaintenanceObservationStorage.Configure(model);
         model.Entity<MaintenanceObservation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<MaintenanceObservationRevocation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -849,6 +856,7 @@ public sealed class PoseidonDbContext(
         if(changes.Any(e=>e.Entity is ShipOpsLifecycleEvent && e.State!=EntityState.Added))
             throw new InvalidOperationException("Ship operations lifecycle events are immutable.");
         AssuranceStorage.Guard(changes);
+        TugOperationsOfflineStorage.Guard(changes);
         if(changes.Any(e=>e.Entity is DowntimeRevision or DowntimeReceipt && e.State!=EntityState.Added))
             throw new InvalidOperationException("Downtime history and outcomes are immutable.");
         if(changes.Any(e=>e.Entity is Downtime && (e.State==EntityState.Deleted || e.State==EntityState.Modified &&

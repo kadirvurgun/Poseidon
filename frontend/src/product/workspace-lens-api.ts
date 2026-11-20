@@ -58,6 +58,9 @@ export const lensLabels: Record<string, readonly [
     'towage-plan': [sourceText("tr", "pairs.m_378130a9c426194c"), sourceText("en", "pairs.m_378130a9c426194c")],
     'towage-execution': [sourceText("tr", "pairs.m_a7ff6a594ad31c81"), sourceText("en", "pairs.m_a7ff6a594ad31c81")],
     'tug-daily-log': [sourceText("tr", "pairs.m_073dee70df0d133e"), sourceText("en", "pairs.m_073dee70df0d133e")],
+    'tug-operation-history': [sourceText("tr", "pairs.m_8c8392446918f0da"), sourceText("en", "pairs.m_8c8392446918f0da")],
+    'tug-operations-offline': [sourceText("tr", "pairs.m_6045fea6f2dedb7c"), sourceText("en", "pairs.m_6045fea6f2dedb7c")],
+    'tug-demo-journey': [sourceText("tr", "pairs.m_c358e78b32f41ae3"), sourceText("en", "pairs.m_c358e78b32f41ae3")],
     'drydock-planning': [sourceText("tr", "pairs.m_7a31428311abb402"), sourceText("en", "pairs.m_7a31428311abb402")],
     'towage-risk-briefing': [sourceText("tr", "pairs.m_b75bd8b78f08cd52"), sourceText("en", "pairs.m_b75bd8b78f08cd52")],
 };
