@@ -36,12 +36,25 @@ public sealed class PoseidonDbContext(
     public DbSet<CertificateAssertionEvent> CertificateAssertionEvents => Set<CertificateAssertionEvent>();
     public DbSet<CertificateCommandReceipt> CertificateCommandReceipts => Set<CertificateCommandReceipt>();
     public DbSet<CertificateSupersession> CertificateSupersessions => Set<CertificateSupersession>();
+    public DbSet<PreSurveyChecklist> PreSurveyChecklists => Set<PreSurveyChecklist>();
+    public DbSet<PreSurveyChecklistRevision> PreSurveyChecklistRevisions => Set<PreSurveyChecklistRevision>();
+    public DbSet<PreSurveyReceipt> PreSurveyReceipts => Set<PreSurveyReceipt>();
     public DbSet<ShipOperation> ShipOperations => Set<ShipOperation>();
     public DbSet<ShipOperationRevision> ShipOperationRevisions => Set<ShipOperationRevision>();
     public DbSet<ShipOperationReceipt> ShipOperationReceipts => Set<ShipOperationReceipt>();
     public DbSet<Downtime> Downtimes => Set<Downtime>();
     public DbSet<DowntimeRevision> DowntimeRevisions => Set<DowntimeRevision>();
     public DbSet<DowntimeReceipt> DowntimeReceipts => Set<DowntimeReceipt>();
+    public DbSet<RiskAssessment> RiskAssessments => Set<RiskAssessment>();
+    public DbSet<RiskAssessmentRevision> RiskAssessmentRevisions => Set<RiskAssessmentRevision>();
+    public DbSet<RiskAssessmentDecision> RiskAssessmentDecisions => Set<RiskAssessmentDecision>();
+    public DbSet<RiskAssessmentAcknowledgement> RiskAssessmentAcknowledgements => Set<RiskAssessmentAcknowledgement>();
+    public DbSet<RiskTemplate> RiskTemplates => Set<RiskTemplate>();
+    public DbSet<RiskTemplateRevision> RiskTemplateRevisions => Set<RiskTemplateRevision>();
+    public DbSet<RiskTemplateDecision> RiskTemplateDecisions => Set<RiskTemplateDecision>();
+    public DbSet<RiskTemplateSuggestion> RiskTemplateSuggestions => Set<RiskTemplateSuggestion>();
+    public DbSet<RiskMethod> RiskMethods => Set<RiskMethod>();
+    public DbSet<RiskCommandReceipt> RiskCommandReceipts => Set<RiskCommandReceipt>();
     public DbSet<WorkOrder> WorkOrders => Set<WorkOrder>();
     public DbSet<WorkOrderRevision> WorkOrderRevisions => Set<WorkOrderRevision>();
     public DbSet<WorkOrderReceipt> WorkOrderReceipts => Set<WorkOrderReceipt>();
@@ -103,6 +116,11 @@ public sealed class PoseidonDbContext(
 
     public DbSet<Credential> Credentials => Set<Credential>();
     public DbSet<CredentialRevision> CredentialRevisions => Set<CredentialRevision>();
+    public DbSet<CrewCredentialAssertion> CrewCredentialAssertions => Set<CrewCredentialAssertion>();
+    public DbSet<CrewCompetenceRequirement> CrewCompetenceRequirements => Set<CrewCompetenceRequirement>();
+    public DbSet<CrewCompetenceRecord> CrewCompetenceRecords => Set<CrewCompetenceRecord>();
+    public DbSet<CrewCompetenceSignOff> CrewCompetenceSignOffs => Set<CrewCompetenceSignOff>();
+    public DbSet<CrewSafeManningDecision> CrewSafeManningDecisions => Set<CrewSafeManningDecision>();
     public DbSet<ImportBatch> ImportBatches => Set<ImportBatch>();
     public DbSet<ImportPreview> ImportPreviews => Set<ImportPreview>();
     public DbSet<ImportRowResult> ImportRowResults => Set<ImportRowResult>();
@@ -129,6 +147,13 @@ public sealed class PoseidonDbContext(
     public DbSet<TugJobRevision> TugJobRevisions => Set<TugJobRevision>();
     public DbSet<TugOwner> TugOwners => Set<TugOwner>();
     public DbSet<TugAssignment> TugAssignments => Set<TugAssignment>();
+    public DbSet<TugAssignmentProposal> TugAssignmentProposals => Set<TugAssignmentProposal>();
+    public DbSet<TugAssignmentResponse> TugAssignmentResponses => Set<TugAssignmentResponse>();
+    public DbSet<TowEquipmentItem> TowEquipmentItems => Set<TowEquipmentItem>();
+    public DbSet<TowEquipmentRevision> TowEquipmentRevisions => Set<TowEquipmentRevision>();
+    public DbSet<TowEquipmentVerification> TowEquipmentVerifications => Set<TowEquipmentVerification>();
+    public DbSet<TugReadinessDecision> TugReadinessDecisions => Set<TugReadinessDecision>();
+    public DbSet<TugReadinessReceipt> TugReadinessReceipts => Set<TugReadinessReceipt>();
     public DbSet<TugOfflineEnrollment> TugOfflineEnrollments => Set<TugOfflineEnrollment>();
     public DbSet<TugOfflineOutcome> TugOfflineOutcomes => Set<TugOfflineOutcome>();
     public DbSet<TugOfflineLifecycle> TugOfflineLifecycles => Set<TugOfflineLifecycle>();
@@ -213,6 +238,10 @@ public sealed class PoseidonDbContext(
         model.Entity<CertificateRenewalRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         model.Entity<CertificateCommandReceipt>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         model.Entity<CertificateSupersession>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        PreSurveyStorage.Configure(model);
+        model.Entity<PreSurveyChecklist>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<PreSurveyChecklistRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<PreSurveyReceipt>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         DailyOperationsStorage.Configure(model);
         DailyOfflineStorage.Configure(model);
         model.Entity<DailyOfflineEnrollment>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -270,6 +299,12 @@ public sealed class PoseidonDbContext(
         ImportStorage.Configure(model);
         model.Entity<Credential>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<CredentialRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        CrewCompetenceStorage.Configure(model);
+        model.Entity<CrewCredentialAssertion>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<CrewCompetenceRequirement>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<CrewCompetenceRecord>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<CrewCompetenceSignOff>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<CrewSafeManningDecision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ImportBatch>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ImportPreview>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ImportRowResult>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -295,6 +330,15 @@ public sealed class PoseidonDbContext(
         model.Entity<TugJobRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TugOwner>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TugAssignment>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        // S7 WP-B (DEV-083..086): tug assignment, tow equipment and readiness decision records.
+        TugReadinessStorage.Configure(model);
+        model.Entity<TugAssignmentProposal>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TugAssignmentResponse>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TowEquipmentItem>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TowEquipmentRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TowEquipmentVerification>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TugReadinessDecision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TugReadinessReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         MaintenanceObservationStorage.Configure(model);
         model.Entity<MaintenanceObservation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<MaintenanceObservationRevocation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -307,6 +351,17 @@ public sealed class PoseidonDbContext(
         model.Entity<Downtime>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         model.Entity<DowntimeRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         model.Entity<DowntimeReceipt>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        RiskStorage.Configure(model);
+        model.Entity<RiskAssessment>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<RiskAssessmentRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<RiskAssessmentDecision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<RiskAssessmentAcknowledgement>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<RiskTemplate>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<RiskTemplateRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<RiskTemplateDecision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<RiskTemplateSuggestion>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<RiskMethod>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<RiskCommandReceipt>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         WorkOrderStorage.Configure(model);
         model.Entity<WorkOrder>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         model.Entity<WorkOrderRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
@@ -464,6 +519,8 @@ public sealed class PoseidonDbContext(
             CrewCatalogHead c => receipt.Action == "CrewCatalogSave" && c.VesselId == receipt.ResourceId && c.TenantId == receipt.TenantId,
             ImportBatch b => receipt.Action is "CrewImportLegacyConvert" or "ImportCommit" && b.Id == receipt.ResourceId && b.TenantId == receipt.TenantId,
             Credential c => receipt.Action == "CredentialSave" && c.Id == receipt.ResourceId && c.TenantId == receipt.TenantId,
+            CrewCompetenceRequirement r => receipt.Action == "CrewCompetenceRequirementSave" && r.Id == receipt.ResourceId && r.TenantId == receipt.TenantId,
+            CrewCompetenceRecord r => receipt.Action == "CrewCompetenceRecordSave" && r.Id == receipt.ResourceId && r.TenantId == receipt.TenantId,
             TugDraftPlan p => receipt.Action == "TugPlanSave" && p.JobId == receipt.ResourceId && p.TenantId == receipt.TenantId,
             TugJob j => receipt.Action is "TugSave" or "TugSubmit" or "TugCancel" && j.Id == receipt.ResourceId && j.TenantId == receipt.TenantId,
             Asset a => receipt.Action == "EquipmentSave" && a.Id == receipt.ResourceId && a.TenantId == receipt.TenantId,
@@ -525,6 +582,11 @@ public sealed class PoseidonDbContext(
         "CrewCatalogSave" => OwnedVessel(CrewCatalogHeads, x => x.TenantId == r.TenantId && x.VesselId == r.ResourceId, x => x.VesselId, asynchronous, ct),
         "CrewSave" => OwnedVessel(CrewAssignments, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
         "CredentialSave" => OwnedVessel(Credentials, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
+        "CrewCredentialAssertionRecord" => OwnedVessel(CrewCredentialAssertions, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
+        "CrewCompetenceRequirementSave" => OwnedVessel(CrewCompetenceRequirements, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
+        "CrewCompetenceRecordSave" => OwnedVessel(CrewCompetenceRecords, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
+        "CrewCompetenceSignOff" => OwnedVessel(CrewCompetenceSignOffs, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
+        "SafeManningDecisionRecord" => OwnedVessel(CrewSafeManningDecisions, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
         "ImportCommit" or "CrewImportLegacyConvert" => OwnedVessel(ImportBatches, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
         "EquipmentSave" => OwnedVessel(Assets, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
         "MaintenanceSave" => OwnedVessel(MaintenancePlans, x => x.TenantId == r.TenantId && x.Id == r.ResourceId, x => x.VesselId, asynchronous, ct),
@@ -588,6 +650,12 @@ public sealed class PoseidonDbContext(
         if(changes.Any(e=>e.Entity is VesselCertificate or CertificateRenewal or CertificateAssertionHead && (e.State==EntityState.Deleted || e.State==EntityState.Modified &&
             (e.Properties.Any(p=>p.IsModified && p.Metadata.Name!="Revision") || (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue!+1))))
             throw new InvalidOperationException("Certificate and renewal ownership are immutable; append one revision.");
+        // DEV-104: checklist history and receipts are append-only; the head only advances its revision.
+        if(changes.Any(e=>e.Entity is PreSurveyChecklistRevision or PreSurveyReceipt && e.State!=EntityState.Added))
+            throw new InvalidOperationException("Pre-survey checklist history and receipts are immutable.");
+        if(changes.Any(e=>e.Entity is PreSurveyChecklist && (e.State==EntityState.Deleted || e.State==EntityState.Modified &&
+            (e.Properties.Any(p=>p.IsModified && p.Metadata.Name!="Revision") || (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue!+1))))
+            throw new InvalidOperationException("Pre-survey checklist ownership is immutable; append one revision.");
         if (changes.Any(e => e.Entity is DailyOfflineLifecycle or DailyOfflineOutcome && e.State != EntityState.Added))
             throw new InvalidOperationException("Daily offline lineage is immutable.");
         if (changes.Any(e => e.Entity is DailyOfflineEnrollment && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
@@ -608,6 +676,7 @@ public sealed class PoseidonDbContext(
             (e.Properties.Any(p=>p.IsModified && p.Metadata.Name is not("FieldsJson" or "PlanId" or "PlanRevision" or "PlanVersion" or "PlanHash" or "PlanSourceVersion" or "SourceVersion" or "Hash" or "Provenance" or "ActorId" or "SavedAt" or "Revision")) ||
                 (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue!+1))))
             throw new InvalidOperationException("WorkOrder ownership is immutable; append one revision.");
+        RiskStorage.Guard(changes);
         if(changes.Any(e=>e.Entity is DowntimeRevision or DowntimeReceipt && e.State!=EntityState.Added))
             throw new InvalidOperationException("Downtime history and outcomes are immutable.");
         if(changes.Any(e=>e.Entity is Downtime && (e.State==EntityState.Deleted || e.State==EntityState.Modified &&
@@ -717,6 +786,17 @@ public sealed class PoseidonDbContext(
             throw new InvalidOperationException("Offline capture context is immutable.");
         if (changes.Any(e => e.Entity is TugJobRevision or TugOwner or TugAssignment or TugDraftPlanRevision or TugDraftPlanTug && e.State != EntityState.Added))
             throw new InvalidOperationException("Tug lineage is immutable.");
+        // DEV-083..085: human acknowledgements, verifications, GO/NO_GO decisions, equipment revisions and
+        // receipts are append-only. The proposal head changes only its lifecycle fields; the equipment head
+        // keeps its tug and kind.
+        if (changes.Any(e => e.Entity is TugAssignmentResponse or TowEquipmentRevision or TowEquipmentVerification or TugReadinessDecision or TugReadinessReceipt && e.State != EntityState.Added))
+            throw new InvalidOperationException("Tug readiness human records are immutable.");
+        if (changes.Any(e => e.Entity is TugAssignmentProposal && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            e.Properties.Any(p => p.IsModified && p.Metadata.Name is not ("State" or "MasterAck" or "CancelledAt" or "CancelledBy" or "CancelReason" or "Revision")))))
+            throw new InvalidOperationException("Tug assignment scope is immutable.");
+        if (changes.Any(e => e.Entity is TowEquipmentItem && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            (e.Property("VesselId").IsModified || e.Property("Kind").IsModified))))
+            throw new InvalidOperationException("Tow equipment identity is immutable.");
         if (changes.Any(e => e.Entity is TugDraftPlan && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
             (e.Property("VesselId").IsModified || e.Property("JobId").IsModified))))
             throw new InvalidOperationException("Draft plan ownership is immutable.");
@@ -768,6 +848,14 @@ public sealed class PoseidonDbContext(
             throw new InvalidOperationException("Register kind and history cannot be removed or reassigned.");
         if (changes.Any(e => e.Entity is ImportPreview or ImportRowResult or CredentialRevision && e.State != EntityState.Added))
             throw new InvalidOperationException("Import observations and credential history are immutable.");
+        if (changes.Any(e => e.Entity is CrewCredentialAssertion or CrewCompetenceSignOff or CrewSafeManningDecision && e.State != EntityState.Added))
+            throw new InvalidOperationException("Crew human assertions, sign-offs and Safe Manning decisions are immutable.");
+        if (changes.Any(e => e.Entity is CrewCompetenceRequirement && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            new[] { "VesselId", "PositionId", "RequirementType" }.Any(n => e.Property(n).IsModified))))
+            throw new InvalidOperationException("Competence requirement ownership is immutable; retire instead of deleting.");
+        if (changes.Any(e => e.Entity is CrewCompetenceRecord && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            new[] { "VesselId", "AssignmentId", "PersonId", "RequirementId", "Kind" }.Any(n => e.Property(n).IsModified))))
+            throw new InvalidOperationException("Competence record ownership and kind are immutable.");
         if (changes.Any(e => e.Entity is Credential && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
             new[] { "VesselId", "AssignmentId", "PersonId" }.Any(n => e.Property(n).IsModified))))
             throw new InvalidOperationException("Credential ownership is immutable.");
@@ -801,6 +889,7 @@ public sealed class PoseidonDbContext(
                 Action = entry.State.ToString(), EntityType = entry.Metadata.ClrType.Name,
                 EntityId = entry.Entity is CommandReceipt receipt ? receipt.ResourceId.ToString() :
                     entry.Entity is CertificateCommandReceipt certificateReceipt ? certificateReceipt.ResourceId.ToString() :
+                    entry.Entity is PreSurveyReceipt preSurveyReceipt ? preSurveyReceipt.ChecklistId.ToString() :
                     entry.Entity is DailyOperationReceipt dailyReceipt ? dailyReceipt.RecordId.ToString() :
                     entry.Entity is DailyReviewReceipt reviewReceipt ? reviewReceipt.RecordId.ToString() :
                     entry.Entity is ApplicabilityReceipt applicabilityReceipt ? applicabilityReceipt.ResourceId.ToString() :
@@ -840,6 +929,11 @@ public sealed class PoseidonDbContext(
                         e.Entity.VesselId==certificateOutcome.VesselId && e.Entity.Id==certificateOutcome.RenewalId)?.Entity;
                     events[^1].AfterVersion=saved?.Version;events[^1].AfterRevision=saved?.Revision;
                 }
+            }
+            if(entry.Entity is PreSurveyReceipt preSurveyOutcome) {
+                var saved=ChangeTracker.Entries<PreSurveyChecklist>().SingleOrDefault(e=>e.State==EntityState.Unchanged && e.Entity.TenantId==preSurveyOutcome.TenantId &&
+                    e.Entity.VesselId==preSurveyOutcome.VesselId && e.Entity.Id==preSurveyOutcome.ChecklistId)?.Entity;
+                events[^1].AfterVersion=saved?.Version;events[^1].AfterRevision=saved?.Revision;
             }
             if(entry.Entity is DefectReceipt defectOutcome) {
                 events[^1].AfterVersion=checked((uint)defectOutcome.RecordVersion);events[^1].AfterRevision=defectOutcome.Revision;

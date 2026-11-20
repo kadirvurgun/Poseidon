@@ -1,10 +1,11 @@
-import { localizedText } from "../i18n/messages";
+import { localizedCopy, localizedText } from "../i18n/messages";
 import { presentationLabel } from '../i18n/labels';
 import { type Locale as AppLocale } from "../i18n";
 import { Button } from '../components/ui/button';
 import { useEffect, useState } from 'react';
 import { ApiError } from './api';
 import { owningInputs, type CrewOwningInput } from './crew-api';
+const compliance = localizedCopy('CrewCompliance_tsx_copy');
 export function CrewOwningInputs({ vessel, assignment, language }: {
     vessel: string;
     assignment: string;
@@ -40,9 +41,10 @@ export function CrewOwningInputs({ vessel, assignment, language }: {
         fitness_state: presentationLabel(language, 'crewFitnessInput'),
     };
     const states: Record<CrewOwningInput['state'], string> = {
-        Unknown: presentationLabel(language, 'crewCriteriaUnresolved'),
-        QualifiedEligible: presentationLabel(language, 'crewEligibleCriteriaSatisfied'),
-        QualifiedIneligible: presentationLabel(language, 'crewEligibleCriteriaUnsatisfied'),
+        ELIGIBLE: compliance[language].state_ELIGIBLE,
+        ATTENTION: compliance[language].state_ATTENTION,
+        NOT_ELIGIBLE: compliance[language].state_NOT_ELIGIBLE,
+        REVIEW_REQUIRED: compliance[language].state_REVIEW_REQUIRED,
         Withheld: presentationLabel(language, 'crewAccessWithheld'),
         Missing: presentationLabel(language, 'crewNoVisibleDeclaration'),
         DeclaredUnverified: presentationLabel(language, 'crewDeclaredUnverified'),

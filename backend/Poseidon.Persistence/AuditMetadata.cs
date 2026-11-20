@@ -27,6 +27,8 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                 RegulatoryQualificationHead or RegulatoryQualificationEvent or RegulatoryQualificationReceipt or
                 ParameterRoot or ParameterRevision or ParameterDecision or ParameterCommandReceipt => "Tenant",
             CommandReceipt r when r.Action is "CompanyCreate" or "CompanyUpdate" or "SourceDraftSave" or "RequirementDraftSave" => "Tenant",
+            RiskTemplate or RiskTemplateRevision or RiskTemplateDecision or RiskTemplateSuggestion or RiskMethod => "Tenant",
+            RiskCommandReceipt { VesselId: null } => "Tenant",
             ApplicabilityReceipt r when r.Action is "author" or "review" => "Tenant",
             _ => "Unresolved"
         };
@@ -55,6 +57,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
 
     private static AuditMetadata Project(EntityEntry entry, Guid? parentVessel)
     {
+        if (RiskProjection(entry) is { } risk) return risk;
         if(entry.Entity is Defect defect)
             return new(defect.VesselId,defect.Id,"Defect",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,defect.Revision,
                 Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(defect.Revision)),Field("Binding",null,"OwnerReference")));
@@ -115,6 +118,46 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if(entry.Entity is CertificateAssertionEvent assertion)
             return new(assertion.VesselId,assertion.CertificateId,"CertificateAssertion",null,assertion.Revision,
                 Fields(Field("Revision",null,Number(assertion.Revision)),Field("Binding",null,"RecordedUnassessedAssertion")));
+        if(entry.Entity is PreSurveyChecklist preSurvey)
+            return new(preSurvey.VesselId,preSurvey.Id,"PreSurveyChecklist",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,preSurvey.Revision,
+                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(preSurvey.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is PreSurveyChecklistRevision preSurveyRevision) {
+            // DEV-104: closed transition/readiness codes only. Item answers, findings, comments,
+            // evidence pins, planned dates and verifier identities are never copied into audit.
+            if(!PreSurveyChecklistPolicy.Transitions.Contains(preSurveyRevision.Transition) || !PreSurveyChecklistPolicy.ReadinessStates.Contains(preSurveyRevision.Readiness))
+                throw new InvalidOperationException("Invalid pre-survey checklist metadata.");
+            return new(preSurveyRevision.VesselId,preSurveyRevision.ChecklistId,"PreSurveyChecklistRevision",null,preSurveyRevision.Revision,
+                Fields(Field("Revision",null,Number(preSurveyRevision.Revision)),Field("Transition",null,preSurveyRevision.Transition),Field("Readiness",null,preSurveyRevision.Readiness),
+                    Field("Content",null,null,"ValuesWithheld"),Field("Binding",null,"OwnerReference")));
+        }
+        if(entry.Entity is PreSurveyReceipt preSurveyReceipt)
+            return new(preSurveyReceipt.VesselId,preSurveyReceipt.ChecklistId,"PreSurveyReceipt",null,null,Fields(Field("Binding",null,"CommittedResource")));
+        // S7 WP-A crew human acts and matrix: closed codes and revisions only; rationale,
+        // references and certificate data are withheld (crew PII never enters audit text).
+        if(entry.Entity is CrewCredentialAssertion crewAssertion)
+            return new(crewAssertion.VesselId,crewAssertion.CredentialId,"CrewCredentialAssertion",null,crewAssertion.Sequence,Fields(
+                Field("State",null,Closed(crewAssertion.State,CrewCompetenceStorage.AssertionStates)),Field("Duty",null,Closed(crewAssertion.Duty,CrewCompetenceStorage.CredentialDuties)),
+                Field("CredentialRevision",null,Number(crewAssertion.CredentialRevision)),Field("Rationale",null,null,"ValuesWithheld"),Field("Binding",null,"RecordedHumanAssertion")));
+        if(entry.Entity is CrewCompetenceRequirement crewRequirement)
+            return new(crewRequirement.VesselId,crewRequirement.Id,"CrewCompetenceRequirement",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,crewRequirement.Revision,Fields(
+                Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(crewRequirement.Revision)),
+                Field("RequirementType",null,Closed(crewRequirement.RequirementType,Poseidon.Domain.CrewRequirementTypes.All)),
+                Field("Status",entry.State==EntityState.Added?null:Closed((string)entry.Property("Status").OriginalValue!,CrewCompetenceStorage.RequirementStatuses),Closed(crewRequirement.Status,CrewCompetenceStorage.RequirementStatuses)),
+                Field("Mandatory",null,crewRequirement.Mandatory?"true":"false"),Field("Reference",null,null,"ValuesWithheld"),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is CrewCompetenceRecord crewRecord)
+            return new(crewRecord.VesselId,crewRecord.AssignmentId,"CrewCompetenceRecord",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,crewRecord.Revision,Fields(
+                Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(crewRecord.Revision)),
+                Field("Kind",null,Closed(crewRecord.Kind,Poseidon.Domain.CrewCompetenceKinds.All)),Field("Dates",null,null,"ValuesWithheld"),Field("Reference",null,null,"ValuesWithheld"),Field("Binding",null,"DeclaredUnverified")));
+        if(entry.Entity is CrewCompetenceSignOff crewSignOff)
+            return new(crewSignOff.VesselId,crewSignOff.RecordId,"CrewCompetenceSignOff",null,crewSignOff.Sequence,Fields(
+                Field("Outcome",null,Closed(crewSignOff.Outcome,CrewCompetenceStorage.SignOffOutcomes)),Field("Duty",null,Closed(crewSignOff.Duty,CrewCompetenceStorage.AssessmentDuties)),
+                Field("RecordRevision",null,Number(crewSignOff.RecordRevision)),Field("Rationale",null,null,"ValuesWithheld"),Field("Binding",null,"RecordedHumanSignOff")));
+        if(entry.Entity is CrewSafeManningDecision manningDecision)
+            return new(manningDecision.VesselId,manningDecision.Id,"CrewSafeManningDecision",null,manningDecision.Sequence,Fields(
+                Field("Decision",null,Closed(manningDecision.Decision,CrewCompetenceStorage.Decisions)),Field("Duty",null,Closed(manningDecision.Duty,CrewCompetenceStorage.DecisionDuties)),
+                Field("EvaluationState",null,Closed(manningDecision.EvaluationState,Poseidon.Domain.CrewEligibilityStates.All)),Field("Rationale",null,null,"ValuesWithheld"),
+                Field("Acknowledgements",null,Number(manningDecision.AcknowledgementCount)),Field("Dispensations",null,Number(manningDecision.DispensationCount)),
+                Field("AcknowledgementText",null,null,"ValuesWithheld"),Field("Binding",null,"RecordedHumanDecision")));
         if(entry.Entity is CertificateCommandReceipt certificateReceipt)
             return new(certificateReceipt.VesselId,certificateReceipt.ResourceId,"CertificateReceipt",null,null,Fields(Field("Binding",null,"CommittedResource")));
         if (entry.Entity is DailyOfflineEnrollment dailyEnrollment)
@@ -425,6 +468,45 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                 Field("ContentJson", null, null, "RevisionReference"), Field("JobState", null, Closed(lifecycleRevision.JobState, Poseidon.Domain.TugJobLifecycle.States)),
                 Field("Revision", null, Number(lifecycleRevision.Revision)),
                 .. (lifecycleRevision.CancelReason == null ? Array.Empty<object>() : [Field("CancelReason", null, null, "ValuesWithheld")])]));
+        // S7 WP-B (DEV-083..085): closed state/decision codes, revisions and duty only. Reasons, labels, notes,
+        // scope/assessment hashes and receipt keys are withheld; no actor identity is copied into summaries.
+        if (entry.Entity is TugAssignmentProposal proposal) {
+            var added = entry.State == EntityState.Added;
+            var proposalFields = new List<object> { Field("Revision", added ? null : Number((long)entry.Property(nameof(TugAssignmentProposal.Revision)).OriginalValue!), Number(proposal.Revision)),
+                Field("AssignmentState", added ? null : Closed((string)entry.Property(nameof(TugAssignmentProposal.State)).OriginalValue!, TugAssignmentWorkflow.States), Closed(proposal.State, TugAssignmentWorkflow.States)),
+                Field("MasterAck", added ? null : Closed((string)entry.Property(nameof(TugAssignmentProposal.MasterAck)).OriginalValue!, TugAssignmentWorkflow.Acks), Closed(proposal.MasterAck, TugAssignmentWorkflow.Acks)),
+                Field("Role", null, Closed(proposal.Role, TugAssignmentWorkflow.Roles)), Field("ScopeHash", null, null, "ValuesWithheld") };
+            if (proposal.State == TugAssignmentWorkflow.Cancelled) proposalFields.Add(Field("CancelReason", null, null, "ValuesWithheld"));
+            return new(proposal.VesselId, proposal.Id, "TugAssignmentProposal", added ? null : (long?)entry.Property(nameof(TugAssignmentProposal.Revision)).OriginalValue, proposal.Revision, Fields([.. proposalFields]));
+        }
+        if (entry.Entity is TugAssignmentResponse response)
+            return new(response.VesselId, response.AssignmentId, "TugAssignmentResponse", null, null, Fields(
+                Field("Decision", null, Closed(response.Decision, TugAssignmentWorkflow.Decisions)), Field("Duty", null, Closed(response.Duty, "TugMaster", "Master")),
+                Field("Reason", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference")));
+        if (entry.Entity is TowEquipmentItem towItem) {
+            var added = entry.State == EntityState.Added;
+            return new(towItem.VesselId, towItem.Id, "TowEquipment", added ? null : (long?)entry.Property(nameof(TowEquipmentItem.Revision)).OriginalValue, towItem.Revision, Fields(
+                Field("Revision", added ? null : Number((long)entry.Property(nameof(TowEquipmentItem.Revision)).OriginalValue!), Number(towItem.Revision)),
+                Field("Kind", null, Closed(towItem.Kind, TowEquipmentPolicy.Kinds)),
+                Field("Condition", added ? null : Closed((string)entry.Property(nameof(TowEquipmentItem.Condition)).OriginalValue!, TowEquipmentPolicy.Conditions), Closed(towItem.Condition, TowEquipmentPolicy.Conditions)),
+                Field("Content", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference")));
+        }
+        if (entry.Entity is TowEquipmentRevision towRevision)
+            return new(towRevision.VesselId, towRevision.ItemId, "TowEquipmentRevision", null, towRevision.Revision, Fields(
+                Field("Revision", null, Number(towRevision.Revision)), Field("ContentJson", null, null, "RevisionReference")));
+        if (entry.Entity is TowEquipmentVerification towVerification)
+            return new(towVerification.VesselId, towVerification.ItemId, "TowEquipmentVerification", null, towVerification.ItemRevision, Fields(
+                Field("Outcome", null, Closed(towVerification.Outcome, TowEquipmentPolicy.Verifications)), Field("Duty", null, Closed(towVerification.Duty, "ChiefEngineer")),
+                Field("ItemRevision", null, Number(towVerification.ItemRevision)), Field("Reason", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference")));
+        if (entry.Entity is TugReadinessDecision readinessDecision)
+            return new(readinessDecision.VesselId, readinessDecision.AssignmentId, "TugReadinessDecision", null, readinessDecision.AssignmentRevision, Fields(
+                Field("Decision", null, Closed(readinessDecision.Decision, TugReadinessDecisionPolicy.Decisions)),
+                Field("AssessedState", null, Closed(readinessDecision.AssessedState, TugReadinessEngine.States)),
+                Field("Duty", null, Closed(readinessDecision.Duty, "TugMaster", "Master")), Field("AssessmentHash", null, null, "ValuesWithheld"),
+                Field("Reason", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference")));
+        if (entry.Entity is TugReadinessReceipt readinessReceipt)
+            return new(readinessReceipt.VesselId, readinessReceipt.ResourceId, "TugReadinessReceipt", null, readinessReceipt.Revision, Fields(
+                Field("Action", null, Closed(readinessReceipt.Action, TugReadinessStorage.ReceiptActions)), Field("Binding", null, "CommittedResource")));
         if (entry.Entity is TechnicalOwner or TugOwner)
             return new(vessel, resource, "OwnerReference", null, null, Fields(Field("Binding", null, "OwnerReference")));
         if (entry.Entity is CrewPosition)
@@ -563,6 +645,52 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         }
         return new(vessel, resource, kind, before, after, JsonSerializer.Serialize(fields));
     }
+
+    // DEV-105/DEV-106: closed state/decision codes and revisions only. Hazard, control,
+    // reason, suggestion and matrix text is never copied (ValuesWithheld/RevisionReference).
+    private static AuditMetadata? RiskProjection(EntityEntry entry)
+    {
+        long? Before(string property) => entry.State == EntityState.Added ? null : (long?)entry.Property(property).OriginalValue;
+        string? BeforeState(string property, string[] allowed) => entry.State == EntityState.Added ? null : Closed((string)entry.Property(property).OriginalValue!, allowed);
+        var states = Poseidon.Domain.RiskPolicy.AssessmentStates; var templates = Poseidon.Domain.RiskPolicy.TemplateStates;
+        return entry.Entity switch
+        {
+            RiskAssessment a => new(a.VesselId, a.Id, "RiskAssessment", Before("Revision"), a.Revision, Fields(
+                Field("Revision", Before("Revision") is { } r ? Number(r) : null, Number(a.Revision)),
+                Field("State", BeforeState("State", states), Closed(a.State, states)), Field("ContentJson", null, null, "RevisionReference"),
+                Field("Binding", null, "OwnerReference"))),
+            RiskAssessmentRevision r => new(r.VesselId, r.AssessmentId, "RiskAssessmentRevision", null, r.Revision, Fields(
+                Field("Revision", null, Number(r.Revision)), Field("State", null, Closed(r.State, states)),
+                Field("ReasonCode", null, Closed(r.ReasonCode, "CREATE", "TEMPLATE_COPY", "EDIT", "SUBMIT", "APPROVE", "RETURN", "AMEND", "SYNTHETIC_INCOMPLETE_DRAFT")),
+                Field("ContentJson", null, null, "RevisionReference"))),
+            RiskAssessmentDecision d => new(d.VesselId, d.AssessmentId, "RiskAssessmentDecision", null, d.ResultRevision, Fields(
+                Field("Decision", null, Closed(d.Decision, Poseidon.Domain.RiskPolicy.AssessmentDecisions)), Field("Revision", null, Number(d.ResultRevision)),
+                Field("Reason", null, null, "ValuesWithheld"))),
+            RiskAssessmentAcknowledgement k => new(k.VesselId, k.AssessmentId, "RiskAssessmentAcknowledgement", null, k.Revision, Fields(
+                Field("Choice", null, Closed(k.Choice, Poseidon.Domain.RiskPolicy.AckChoices)), Field("Revision", null, Number(k.Revision)),
+                Field("Reason", null, null, "ValuesWithheld"))),
+            RiskTemplate t => new(null, t.Id, "RiskTemplate", Before("LatestRevision"), t.LatestRevision, Fields(
+                Field("Revision", Before("LatestRevision") is { } r ? Number(r) : null, Number(t.LatestRevision)), Field("Binding", null, "OwnerReference"))),
+            RiskTemplateRevision t => new(null, t.TemplateId, "RiskTemplateRevision", entry.State == EntityState.Added ? null : t.Revision, t.Revision, Fields(
+                Field("Revision", entry.State == EntityState.Added ? null : Number(t.Revision), Number(t.Revision)),
+                Field("Status", BeforeState("Status", templates), Closed(t.Status, templates)), Field("ContentJson", null, null, "RevisionReference"))),
+            RiskTemplateDecision d => new(null, d.TemplateId, "RiskTemplateDecision", null, d.Revision, Fields(
+                Field("Decision", null, Closed(d.Decision, Poseidon.Domain.RiskPolicy.TemplateDecisions)), Field("Revision", null, Number(d.Revision)),
+                Field("Reason", null, null, "ValuesWithheld"))),
+            RiskTemplateSuggestion g => new(null, g.Id, "RiskTemplateSuggestion", entry.State == EntityState.Added ? null : g.Revision, g.Revision, Fields(
+                Field("Status", BeforeState("Status", Poseidon.Domain.RiskPolicy.SuggestionStates), Closed(g.Status, Poseidon.Domain.RiskPolicy.SuggestionStates)),
+                Field("Revision", entry.State == EntityState.Added ? null : Number(g.Revision), Number(g.Revision)), Field("Text", null, null, "ValuesWithheld"))),
+            RiskMethod m => new(null, m.Id, "RiskMethod", entry.State == EntityState.Added ? null : m.Revision, m.Revision, Fields(
+                Field("Status", BeforeState("Status", Poseidon.Domain.RiskPolicy.MethodStates), Closed(m.Status, Poseidon.Domain.RiskPolicy.MethodStates)),
+                Field("Revision", entry.State == EntityState.Added ? null : Number(m.Revision), Number(m.Revision)), Field("ContentJson", null, null, "RevisionReference"))),
+            RiskCommandReceipt c => new(c.VesselId, c.ResourceId, "RiskCommandReceipt", null, c.Revision, Fields(
+                Field("Operation", null, Closed(c.Action, RiskOperations)), Field("Revision", null, Number(c.Revision)), Field("Binding", null, "CommittedResource"))),
+            _ => null
+        };
+    }
+    internal static readonly string[] RiskOperations = ["RiskAssessmentCreate", "RiskAssessmentUpdate", "RiskAssessmentSubmit", "RiskAssessmentReview",
+        "RiskAssessmentAmend", "RiskAssessmentAcknowledge", "RiskTemplateCreate", "RiskTemplateUpdate", "RiskTemplateSubmit", "RiskTemplateReview",
+        "RiskTemplateRevise", "RiskTemplateSuggest", "RiskTemplateSuggestionReview", "RiskMethodCreate", "RiskMethodPublish"];
 
     // PLAN-1511-5201: closed HR audit summaries. Names, legal names, registration values, employee numbers,
     // source references and reasons are never copied into audit summaries.

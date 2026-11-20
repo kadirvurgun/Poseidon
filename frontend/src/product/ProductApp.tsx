@@ -229,7 +229,7 @@ export function ProductApp() {
         return;
     } ; guard(() => { closeEditor(); setDrawer(false); setNotice(''); setTab(value); setSearch(''); setSearchInput(''); setOffset(0); setRecords({ state: 'loading' }); setAttempt(v => v + 1); document.getElementById('product-main')?.focus(); }); };
     const follow = (href: string, committed?: () => void) => {
-        if (/^\/app\/tug-job-detail\/[0-9a-f-]{36}\?vessel=[0-9a-f-]{36}$/.test(href) || /^\/app\/maintenance-plan\/[0-9a-f-]{36}\?id=[0-9a-f-]{36}$/.test(href) || isSeparateWorkspaceDestination(href.split('?')[0]) || /^\/app\/(crew-roster|equipment-hierarchy|maintenance-plan|excel-migration)\/[0-9a-f-]{36}$/.test(href)) {
+        if (/^\/app\/tug-job-detail\/[0-9a-f-]{36}\?vessel=[0-9a-f-]{36}$/.test(href) || /^\/app\/maintenance-plan\/[0-9a-f-]{36}\?id=[0-9a-f-]{36}$/.test(href) || isSeparateWorkspaceDestination(href.split('?')[0]) || /^\/app\/(crew-roster|crew-certificates|training-position-matrix|safe-manning|equipment-hierarchy|maintenance-plan|excel-migration)\/[0-9a-f-]{36}$/.test(href)) {
             guard(() => { committed?.(); closeEditor(); window.location.assign(href); });
             return;
         }

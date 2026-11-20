@@ -55,10 +55,11 @@ function safeChangeValue(field: string, value: unknown): boolean {
 // Metadata emitted by ActorResolver's closed permission filter through
 // TrustedActor.AuditCapabilities (FoundationIdentity.cs), not client authority.
 const auditCapabilities = new Set([
-  'operations.downtime.read', 'operations.downtime.write', 'workorder.read', 'workorder.write', 'defect.read', 'defect.write',
+  'operations.downtime.read', 'operations.downtime.write', 'hse.risk.read', 'hse.risk.write', 'hse.risk.approve', 'hse.risk.acknowledge', 'hse.risk_template.read', 'hse.risk_template.write', 'hse.risk_template.publish', 'hse.risk_template.suggest', 'hse.risk_method.write', 'hse.risk_method.publish', 'workorder.read', 'workorder.write', 'defect.read', 'defect.write',
   'operations.fuel.read', 'operations.fuel.write', 'operations.port.read', 'operations.port.write',
   'certificate.verify.record', 'certificate.read', 'certificate.extract', 'certificate.write',
   'certificate.renewal.write', 'certificate.renewal.owner', 'certificate.renewal.verify', 'certificate.renewal.complete',
+  'certificate.survey.plan', 'certificate.survey.review',
   'daily.noon.review', 'daily.deck.review', 'daily.engine.review', 'daily.noon.read', 'daily.noon.write',
   'daily.deck.read', 'daily.deck.write', 'daily.engine.read', 'daily.engine.write', 'system.health.read',
   'notification.evaluate', 'notification.read', 'notification.manage', 'notification.acknowledge', 'notification.preference.write',

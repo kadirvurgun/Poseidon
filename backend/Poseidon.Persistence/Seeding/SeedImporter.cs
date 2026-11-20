@@ -36,6 +36,8 @@ public static class SeedImporter
             db.RegulatoryDraftRevisions.Add(draft.Snapshot());
         }
         await TugFixtures.AddMissingAsync(db, data.Vessels, cancellationToken).ConfigureAwait(false);
+        // Tow equipment fixtures are optional like the other S7 fixtures (RiskFixtures, pre-survey): not part
+        // of the default seed, so the default seed audit counts asserted by PostgresSeedTests stay exact.
         await TechnicalFixtures.AddMissingAsync(db, data.Vessels, cancellationToken).ConfigureAwait(false);
         await CrewFixtures.AddMissingAsync(db, data.Vessels, cancellationToken).ConfigureAwait(false);
         await HrFixtures.AddMissingAsync(db, data.Companies, data.Vessels, cancellationToken).ConfigureAwait(false);

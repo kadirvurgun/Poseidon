@@ -490,6 +490,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/survey-planner": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SurveyPlannerCalendar"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/vessels/{vessel}/certificates/{id}/extractions": {
         parameters: {
             query?: never;
@@ -3643,6 +3659,102 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/pre-survey-checklists": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PreSurveyChecklists"];
+        put?: never;
+        post: operations["PreSurveyChecklistCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pre-survey-checklists/capabilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PreSurveyCapabilities"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pre-survey-checklists/port-calls": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PreSurveyPortCalls"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pre-survey-checklists/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PreSurveyChecklistRead"];
+        put: operations["PreSurveyChecklistUpdate"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pre-survey-checklists/{id}/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PreSurveyChecklistHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pre-survey-checklists/{id}/verifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["PreSurveyChecklistVerify"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/vessels/{vessel}/certificates/{id}/verification-capabilities": {
         parameters: {
             query?: never;
@@ -5042,6 +5154,118 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/vessels/{vessel}/crew/certificates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CrewCertificateRegister"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/crew/{assignment}/certificates/{id}/verification": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CrewCredentialVerification"];
+        put?: never;
+        post: operations["CrewCredentialAssertionRecord"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/crew/competence-matrix": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CrewCompetenceMatrix"];
+        put?: never;
+        post: operations["CrewCompetenceRequirementSave"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/crew/{assignment}/competence": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CrewCompetenceGaps"];
+        put?: never;
+        post: operations["CrewCompetenceRecordSave"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/crew/{assignment}/competence/{record}/sign-off": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CrewCompetenceSignOff"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{id}/safe-manning/evaluate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SafeManningEvaluate"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{id}/safe-manning/decisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SafeManningDecisions"];
+        put?: never;
+        post: operations["SafeManningDecisionRecord"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/vessels/{vessel}/imports/coverage": {
         parameters: {
             query?: never;
@@ -5554,6 +5778,294 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/hse/risk-assessments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["RiskAssessmentList"];
+        put?: never;
+        post: operations["RiskAssessmentCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-assessments/capabilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["RiskAssessmentCapabilities"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-assessments/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["RiskAssessmentRead"];
+        put: operations["RiskAssessmentUpdate"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-assessments/{id}/revisions/{revision}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["RiskAssessmentRevisionRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-assessments/{id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RiskAssessmentSubmit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-assessments/{id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RiskAssessmentReview"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-assessments/{id}/amend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RiskAssessmentAmend"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-assessments/{id}/acknowledgements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RiskAssessmentAcknowledge"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["RiskTemplateList"];
+        put?: never;
+        post: operations["RiskTemplateCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-templates/applicable": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["RiskTemplateApplicable"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-templates/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["RiskTemplateRead"];
+        put: operations["RiskTemplateUpdate"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-templates/{id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RiskTemplateSubmit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-templates/{id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RiskTemplateReview"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-templates/{id}/revise": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RiskTemplateRevise"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-templates/{id}/suggestions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RiskTemplateSuggest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-templates/{id}/suggestions/{suggestionId}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RiskTemplateSuggestionReview"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-methods": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["RiskMethodList"];
+        put?: never;
+        post: operations["RiskMethodCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/risk-methods/{id}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RiskMethodPublish"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/equipment-hierarchy/{vessel}/{asset}/observations": {
         parameters: {
             query?: never;
@@ -5804,6 +6316,166 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["TugSave"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-assignments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["TugAssignmentList"];
+        put?: never;
+        post: operations["TugAssignmentPropose"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-assignments/{id}/respond": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TugAssignmentRespond"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-assignments/{id}/withdraw": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TugAssignmentWithdraw"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-readiness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["TugReadinessRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-readiness/decisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TugReadinessDecide"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-crew-readiness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["TugCrewReadinessRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-equipment-readiness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["TugEquipmentReadinessRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-tow-equipment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TugTowEquipmentSave"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-tow-equipment/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["TugTowEquipmentUpdate"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-tow-equipment/{id}/verifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TugTowEquipmentVerify"];
         delete?: never;
         options?: never;
         head?: never;
@@ -7329,6 +8001,13 @@ export interface components {
             baseVersion: null | number;
             metadata: components["schemas"]["CertificateMetadata"];
         };
+        CrewAuthorityDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            roleId: string;
+            duty: string;
+        };
         CrewCatalogCommand: {
             /** Format: uint32 */
             expectedVersion: number;
@@ -7338,9 +8017,255 @@ export interface components {
             reason: string;
             content?: null | components["schemas"]["CrewPositionPolicy"];
         };
+        CrewCertificateRegister: {
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: date */
+            referenceDate: string;
+            items: components["schemas"]["CrewCertificateRegisterRow"][];
+            truncated: boolean;
+            qualifications: string[];
+        };
+        CrewCertificateRegisterRow: {
+            /** Format: uuid */
+            credentialId: string;
+            /** Format: uuid */
+            assignmentId: string;
+            /** Format: uuid */
+            positionId: null | string;
+            certificateTypeReference: null | string;
+            /** Format: date */
+            expiryDate: null | string;
+            endorsementRequired: null | boolean;
+            /** Format: date */
+            endorsementExpiry: null | string;
+            /** Format: int64 */
+            revision: number;
+            assertionState: null | string;
+            assertionCurrent: boolean;
+            status: string;
+        };
+        CrewCommandOutcome: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            replayed: boolean;
+        };
+        CrewCompetenceMatrix: {
+            /** Format: uuid */
+            vesselId: string;
+            items: components["schemas"]["CrewCompetenceRequirementDto"][];
+            canWrite: boolean;
+            requirementTypes: string[];
+            qualifications: string[];
+        };
+        CrewCompetenceRecordCommand: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uint32 */
+            expectedVersion: null | number;
+            /** Format: uuid */
+            requirementId: string;
+            kind: string;
+            /** Format: date */
+            completedOn: null | string;
+            /** Format: date */
+            validUntil: null | string;
+            reference: null | string;
+        };
+        CrewCompetenceRecordDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            requirementId: string;
+            kind: string;
+            /** Format: date */
+            completedOn: null | string;
+            /** Format: date */
+            validUntil: null | string;
+            reference: null | string;
+            provenance: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            /** Format: date-time */
+            savedAt: string;
+            actorIsRecorder: boolean;
+            signOff: null | components["schemas"]["CrewCompetenceSignOffDto"];
+        };
+        CrewCompetenceRequirementCommand: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uint32 */
+            expectedVersion: null | number;
+            /** Format: uuid */
+            positionId: string;
+            requirementType: string;
+            reference: string;
+            mandatory: boolean;
+            /** Format: int32 */
+            validityMonths: null | number;
+            vesselTypeScope: null | string;
+            cargoScope: null | string;
+            /** Format: uuid */
+            competenceLinkId: null | string;
+            /** Format: uuid */
+            familiarizationLinkId: null | string;
+            status: string;
+        };
+        CrewCompetenceRequirementDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            positionId: string;
+            positionCode: null | string;
+            requirementType: string;
+            reference: string;
+            mandatory: boolean;
+            /** Format: int32 */
+            validityMonths: null | number;
+            vesselTypeScope: null | string;
+            cargoScope: null | string;
+            /** Format: uuid */
+            competenceLinkId: null | string;
+            /** Format: uuid */
+            familiarizationLinkId: null | string;
+            status: string;
+            provenance: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            /** Format: date-time */
+            savedAt: string;
+        };
+        CrewCompetenceSignOffCommand: {
+            /** Format: int64 */
+            recordRevision: number;
+            /** Format: int64 */
+            expectedSequence: number;
+            /** Format: uuid */
+            authorityId: string;
+            outcome: string;
+            rationale: string;
+        };
+        CrewCompetenceSignOffDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            recordRevision: number;
+            /** Format: int64 */
+            sequence: number;
+            outcome: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: uuid */
+            roleId: string;
+            duty: string;
+            /** Format: date-time */
+            savedAt: string;
+            current: boolean;
+        };
+        CrewCompetenceView: {
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: uuid */
+            assignmentId: string;
+            /** Format: uuid */
+            positionId: null | string;
+            window: components["schemas"]["CrewEligibilityWindow"];
+            records: components["schemas"]["CrewCompetenceRecordDto"][];
+            evaluation: components["schemas"]["CrewEligibilityResult"];
+            authorities: components["schemas"]["CrewAuthorityDto"][];
+            canWrite: boolean;
+            canSignOff: boolean;
+            kinds: string[];
+            qualifications: string[];
+        };
+        CrewCredentialAssertionCommand: {
+            /** Format: int64 */
+            credentialRevision: number;
+            /** Format: int64 */
+            expectedSequence: number;
+            /** Format: uuid */
+            authorityId: string;
+            state: string;
+            rationale: string;
+        };
+        CrewCredentialAssertionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            credentialId: string;
+            /** Format: int64 */
+            credentialRevision: number;
+            /** Format: int64 */
+            sequence: number;
+            state: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: uuid */
+            roleId: string;
+            duty: string;
+            /** Format: date-time */
+            savedAt: string;
+            current: boolean;
+        };
+        CrewCredentialVerificationView: {
+            /** Format: uuid */
+            credentialId: string;
+            /** Format: uuid */
+            assignmentId: string;
+            /** Format: int64 */
+            credentialRevision: number;
+            /** Format: int64 */
+            sequence: number;
+            status: string;
+            latest: null | components["schemas"]["CrewCredentialAssertionDto"];
+            history: components["schemas"]["CrewCredentialAssertionDto"][];
+            authorities: components["schemas"]["CrewAuthorityDto"][];
+            canRecord: boolean;
+            actorIsDeclarer: boolean;
+            documentAvailable: boolean;
+            states: string[];
+            blockers: string[];
+            qualifications: string[];
+        };
         CrewDeclarationPolicyDto: {
             version: string;
             statuses: string[];
+        };
+        CrewEligibilityReason: {
+            code: string;
+            dimension: string;
+            severity: string;
+            /** Format: uuid */
+            requirementId?: null | string;
+            /** Format: uuid */
+            sourceId?: null | string;
+        };
+        CrewEligibilityResult: {
+            /** Format: uuid */
+            assignmentId: string;
+            /** Format: uuid */
+            positionId: null | string;
+            state: string;
+            reasons: components["schemas"]["CrewEligibilityReason"][];
+            gaps: components["schemas"]["CrewRequirementGap"][];
+            qualifications: string[];
+            /** @default ADVISORY_ONLY_NOT_A_DECISION */
+            authority: string;
+        };
+        CrewEligibilityWindow: {
+            /** Format: date */
+            from: string;
+            /** Format: date */
+            to: string;
+            valid?: boolean;
         };
         CrewFileVersionDto: {
             /** Format: uuid */
@@ -7379,6 +8304,11 @@ export interface components {
             canWriteIdentity: boolean;
             declarationPolicy?: null | components["schemas"]["CrewDeclarationPolicyDto"];
             identityPolicy?: null | components["schemas"]["CrewIdentityPolicyDto"];
+            filter?: null | components["schemas"]["CrewRosterFilter"];
+            /** Format: int32 */
+            matchCount?: null | number;
+            /** @default false */
+            filterTruncated: boolean;
         };
         CrewPersonalData: {
             nationality?: null | string;
@@ -7510,6 +8440,16 @@ export interface components {
             field: components["schemas"]["CrewPersonalField"];
             values: string[];
         };
+        CrewRequirementGap: {
+            /** Format: uuid */
+            requirementId: string;
+            type: string;
+            mandatory: boolean;
+            state: string;
+            reason: string;
+            /** Format: uuid */
+            satisfiedBy: null | string;
+        };
         CrewRoleAssessmentReference: {
             /** Format: uuid */
             assignmentId?: null | string;
@@ -7529,6 +8469,14 @@ export interface components {
             recordReference?: null | string;
             satisfied?: null | boolean;
             credential?: null | components["schemas"]["CredentialInputReference"];
+        };
+        CrewRosterFilter: {
+            q: null | string;
+            presence: null | string;
+            department: null | string;
+            status: null | string;
+            /** Format: uuid */
+            position: null | string;
         };
         CrewRow: {
             /** Format: uuid */
@@ -7579,6 +8527,10 @@ export interface components {
             presenceReason: string;
             /** @default Unknown */
             positionState: string;
+            /** @default REVIEW_REQUIRED */
+            profileStatus: string;
+            /** @default DECLARED_UNVERIFIED_PRESENCE */
+            profileStatusBasis: string;
         };
         CrewSaveCommand: {
             /** Format: uuid */
@@ -9406,6 +10358,42 @@ export interface components {
             /** Format: date-time */
             observationAssessedAt?: null | string;
         };
+        ManningDispensation: {
+            evidenceKind: string;
+            /** Format: uuid */
+            evidenceId: string;
+            /** Format: int64 */
+            evidenceRevision: number;
+            /** Format: uuid */
+            assignmentId: string;
+            /** Format: uuid */
+            positionId: string;
+            post: string;
+            /** Format: date */
+            validFrom: string;
+            /** Format: date */
+            validTo: string;
+            holdsCertificateForPostImmediatelyBelow: boolean;
+            forceMajeureDeclared: boolean;
+        };
+        ManningDispensationMember: {
+            /** Format: uuid */
+            assignmentId: string;
+            /** Format: uuid */
+            positionId: null | string;
+        };
+        ManningEvidenceOption: {
+            kind: string;
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            label: string;
+        };
+        ManningReviewAcknowledgement: {
+            reasonCode: string;
+            statement: string;
+        };
         ManningRoleCoverage: {
             /** Format: uuid */
             positionId: string;
@@ -10092,6 +11080,214 @@ export interface components {
             children: components["schemas"]["PredicateReason"][];
             reviewRequired: boolean;
         };
+        PreSurveyCapabilitiesDto: {
+            /** Format: uuid */
+            vesselId: string;
+            canWrite: boolean;
+            canVerify: boolean;
+            ownerOptions: components["schemas"]["RenewalOwnerDto"][];
+            templates: components["schemas"]["PreSurveyTemplateDto"][];
+            canReadPortCalls: boolean;
+            sourceVersion: string;
+            answers: string[];
+            rejectReasons: string[];
+            qualification: string;
+        };
+        PreSurveyChecklistDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: uuid */
+            certificateId: string;
+            /** Format: int64 */
+            certificateRevision: number;
+            /** Format: uint32 */
+            certificateVersion: number;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            templateCode: string;
+            templateRevision: string;
+            templateStatus: string;
+            surveyType: string;
+            plan: components["schemas"]["PreSurveyPlan"];
+            items: components["schemas"]["PreSurveyItemDto"][];
+            readiness: components["schemas"]["PreSurveyReadiness"];
+            window: components["schemas"]["SurveyWindowDto"];
+            voyageFit: components["schemas"]["SurveyFitDto"];
+            portCall: null | components["schemas"]["PreSurveyPortCallDto"];
+            transition: string;
+            sourceVersion: string;
+            hash: string;
+            /** Format: date-time */
+            savedAt: string;
+            provenance: string;
+            currentRevision: boolean;
+            canEdit: boolean;
+            canVerify: boolean;
+            qualification: string;
+            /** @default UNKNOWN_NO_VOYAGE_MODULE */
+            voyageReference: string;
+        };
+        PreSurveyCreateCommand: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uint32 */
+            expectedVersion: number;
+            /** Format: uuid */
+            certificateId: string;
+            /** Format: int64 */
+            certificateRevision: number;
+            /** Format: uint32 */
+            certificateVersion: number;
+            templateCode: string;
+            plan: components["schemas"]["PreSurveyPlan"];
+        };
+        PreSurveyItemDto: {
+            /** Format: uuid */
+            itemId: string;
+            itemCode: string;
+            critical: boolean;
+            required: boolean;
+            evidenceRequired: boolean;
+            allowNotApplicable: boolean;
+            /** Format: uuid */
+            ownerRoleId: null | string;
+            /** Format: date */
+            dueDate: null | string;
+            answer: string;
+            evidence: components["schemas"]["CertificateFilePin"][];
+            finding: null | string;
+            comment: null | string;
+            itemHash: string;
+            verificationState: string;
+            /** Format: date-time */
+            verifiedAt: null | string;
+            verificationReason: null | string;
+            answeredByCurrentActor: boolean;
+            verifiedByCurrentActor: boolean;
+            blockers: string[];
+        };
+        PreSurveyItemInput: {
+            /** Format: uuid */
+            itemId: string;
+            /** Format: uuid */
+            ownerRoleId: null | string;
+            /** Format: date */
+            dueDate: null | string;
+            answer: string;
+            evidence: components["schemas"]["CertificateFilePin"][];
+            finding?: null | string;
+            comment?: null | string;
+        };
+        PreSurveyPageDto: {
+            items: components["schemas"]["PreSurveyChecklistDto"][];
+            /** Format: int32 */
+            offset: number;
+            /** Format: int32 */
+            limit: number;
+            hasMore: boolean;
+        };
+        PreSurveyPlan: {
+            /** Format: date */
+            plannedStart?: null | string;
+            /** Format: date */
+            plannedEnd?: null | string;
+            /** Format: uuid */
+            portCallId?: null | string;
+            /** Format: int64 */
+            portCallRevision?: null | number;
+            locationText?: null | string;
+        };
+        PreSurveyPortCallDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            reference: string;
+            /** Format: date */
+            from: null | string;
+            /** Format: date */
+            to: null | string;
+            /** @default PORT_CALL_DRAFT_UNVERIFIED_PORT_IDENTITY_UNRESOLVED */
+            qualification: string;
+        };
+        PreSurveyPortCallOptionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: date */
+            from: null | string;
+            /** Format: date */
+            to: null | string;
+            label: string;
+            /** @default PORT_CALL_DRAFT_UNVERIFIED_PORT_IDENTITY_UNRESOLVED */
+            qualification: string;
+        };
+        PreSurveyPortCallPageDto: {
+            items: components["schemas"]["PreSurveyPortCallOptionDto"][];
+            truncated: boolean;
+        };
+        PreSurveyReadiness: {
+            state: string;
+            qualification: string;
+            blockers: string[];
+            /** Format: int32 */
+            criticalUnresolved: number;
+            /** Format: int32 */
+            requiredUnresolved: number;
+            /** Format: int32 */
+            verified: number;
+            /** Format: int32 */
+            total: number;
+        };
+        PreSurveyTemplateDto: {
+            code: string;
+            revision: string;
+            surveyType: string;
+            status: string;
+            items: components["schemas"]["PreSurveyTemplateItem"][];
+        };
+        PreSurveyTemplateItem: {
+            itemCode: string;
+            critical: boolean;
+            required: boolean;
+            evidenceRequired: boolean;
+            allowNotApplicable: boolean;
+        };
+        PreSurveyUpdateCommand: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uint32 */
+            expectedVersion: number;
+            /** Format: int64 */
+            expectedRevision: number;
+            /** Format: int64 */
+            certificateRevision: number;
+            /** Format: uint32 */
+            certificateVersion: number;
+            plan: components["schemas"]["PreSurveyPlan"];
+            items: components["schemas"]["PreSurveyItemInput"][];
+        };
+        PreSurveyVerificationDecision: {
+            /** Format: uuid */
+            itemId: string;
+            expectedItemHash: string;
+            decision: string;
+            reasonCode?: null | string;
+        };
+        PreSurveyVerifyCommand: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uint32 */
+            expectedVersion: number;
+            /** Format: int64 */
+            expectedRevision: number;
+            decisions: components["schemas"]["PreSurveyVerificationDecision"][];
+        };
         ProblemDetails: {
             type?: null | string;
             title?: null | string;
@@ -10438,6 +11634,538 @@ export interface components {
             /** Format: date-time */
             savedAt: string;
         };
+        RiskAcknowledgementDto: {
+            /** Format: uuid */
+            actorId: string;
+            /** Format: int64 */
+            revision: number;
+            choice: string;
+            reason: null | string;
+            /** Format: date-time */
+            recordedAt: string;
+        };
+        RiskApplicableTemplateDto: {
+            /** Format: uuid */
+            templateId: string;
+            templateCode: string;
+            /** Format: int64 */
+            revision: number;
+            title: null | string;
+            workType: null | string;
+            /** Format: date-time */
+            effectiveFrom: string;
+            hash: string;
+            /** Format: int32 */
+            hazardCount: number;
+            qualification: string;
+        };
+        RiskApplicableTemplatesDto: {
+            /** Format: uuid */
+            vesselId: string;
+            items: components["schemas"]["RiskApplicableTemplateDto"][];
+        };
+        RiskAssessmentAcknowledgeCommand: {
+            /** Format: int64 */
+            revision: number;
+            contentHash: string;
+            choice: string;
+            reason?: null | string;
+        };
+        RiskAssessmentAmendCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            reason: string;
+        };
+        RiskAssessmentContent: {
+            title: null | string;
+            operationContext: null | string;
+            workType: null | string;
+            workScope: null | string;
+            /** Format: uuid */
+            methodId: null | string;
+            hazards: components["schemas"]["RiskHazard"][];
+            stopWorkRequired: null | boolean;
+            stopWorkConditions: components["schemas"]["RiskStopCondition"][];
+            participants: components["schemas"]["RiskParticipant"][];
+        };
+        RiskAssessmentCreateCommand: {
+            /** Format: uuid */
+            id: string;
+            assessmentNo: string;
+            content: null | components["schemas"]["RiskAssessmentContent"];
+            links: components["schemas"]["RiskLinkRequest"][];
+            /** Format: uuid */
+            templateId?: null | string;
+            /** Format: int64 */
+            templateRevision?: null | number;
+        };
+        RiskAssessmentDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            assessmentNo: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            state: string;
+            content: components["schemas"]["RiskAssessmentContent"];
+            links: components["schemas"]["RiskLinkDto"][];
+            template: null | components["schemas"]["RiskTemplatePin"];
+            method: null | components["schemas"]["RiskMethodSummaryDto"];
+            results: components["schemas"]["RiskHazardResultDto"][];
+            blockers: string[];
+            hash: string;
+            /** Format: int64 */
+            approvedRevision: null | number;
+            acknowledgementState: string;
+            acknowledgements: components["schemas"]["RiskAcknowledgementDto"][];
+            decisions: components["schemas"]["RiskDecisionDto"][];
+            revisions: components["schemas"]["RiskRevisionSummaryDto"][];
+            canEdit: boolean;
+            canSubmit: boolean;
+            canReview: boolean;
+            canAmend: boolean;
+            canAcknowledge: boolean;
+            provenance: string;
+            /** Format: date-time */
+            savedAt: string;
+            sourceVersion: string;
+        };
+        RiskAssessmentListItemDto: {
+            /** Format: uuid */
+            id: string;
+            assessmentNo: string;
+            title: null | string;
+            state: string;
+            /** Format: int64 */
+            revision: number;
+            stopWorkRequired: null | boolean;
+            /** Format: int64 */
+            approvedRevision: null | number;
+            /** Format: date-time */
+            savedAt: string;
+            provenance: string;
+        };
+        RiskAssessmentPageDto: {
+            items: components["schemas"]["RiskAssessmentListItemDto"][];
+            /** Format: int32 */
+            offset: number;
+            /** Format: int32 */
+            limit: number;
+            hasMore: boolean;
+            canWrite: boolean;
+        };
+        RiskAssessmentReviewCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+            decision: string;
+            reason: string;
+        };
+        RiskAssessmentRevisionDto: {
+            /** Format: uuid */
+            assessmentId: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: int64 */
+            revision: number;
+            state: string;
+            reasonCode: string;
+            content: components["schemas"]["RiskAssessmentContent"];
+            links: components["schemas"]["RiskLinkPin"][];
+            template: null | components["schemas"]["RiskTemplatePin"];
+            /** Format: uuid */
+            methodId: null | string;
+            hash: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            savedAt: string;
+            provenance: string;
+        };
+        RiskAssessmentSubmitCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+        };
+        RiskAssessmentUpdateCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            content: components["schemas"]["RiskAssessmentContent"];
+            links: components["schemas"]["RiskLinkRequest"][];
+        };
+        RiskCapabilitiesDto: {
+            /** Format: uuid */
+            vesselId: string;
+            canRead: boolean;
+            canWrite: boolean;
+            canApprove: boolean;
+            canAcknowledge: boolean;
+            methodConfigured: boolean;
+            publishedMethods: components["schemas"]["RiskMethodSummaryDto"][];
+            linkKinds: string[];
+            workTypes: string[];
+            sourceVersion: string;
+        };
+        RiskControl: {
+            /** Format: uuid */
+            id: string;
+            description: string;
+            kind: string;
+            owner: null | string;
+            required: boolean;
+            barrierRefs: string[];
+        };
+        RiskDecisionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: int64 */
+            resultRevision: number;
+            decision: string;
+            /** Format: uuid */
+            actorId: string;
+            reason: string;
+            /** Format: date-time */
+            decidedAt: string;
+        };
+        RiskFailure: {
+            code: string;
+            missing: string[];
+            correlationId: string;
+        };
+        RiskHazard: {
+            /** Format: uuid */
+            id: string;
+            step: null | string;
+            description: string;
+            consequences: string[];
+            initial: components["schemas"]["RiskRating"];
+            controls: components["schemas"]["RiskControl"][];
+            barrierRefs: string[];
+            residual: components["schemas"]["RiskRating"];
+        };
+        RiskHazardResultDto: {
+            /** Format: uuid */
+            hazardId: string;
+            initial: components["schemas"]["RiskResult"];
+            residual: components["schemas"]["RiskResult"];
+        };
+        RiskLinkDto: {
+            kind: string;
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            currency: string;
+        };
+        RiskLinkPin: {
+            kind: string;
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+        };
+        RiskLinkRequest: {
+            kind: string;
+            /** Format: uuid */
+            id: string;
+        };
+        RiskMatrixCell: {
+            likelihood: string;
+            severity: string;
+            result: string;
+            /** Format: int32 */
+            rank: number;
+        };
+        RiskMatrixCode: {
+            code: string;
+            label: string;
+        };
+        RiskMethodContent: {
+            code: string;
+            title: string;
+            likelihoods: components["schemas"]["RiskMatrixCode"][];
+            severities: components["schemas"]["RiskMatrixCode"][];
+            cells: components["schemas"]["RiskMatrixCell"][];
+            sourceRefs: string[];
+            changeReason: string;
+        };
+        RiskMethodCreateCommand: {
+            /** Format: uuid */
+            id: string;
+            content: components["schemas"]["RiskMethodContent"];
+        };
+        RiskMethodDto: {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            status: string;
+            content: components["schemas"]["RiskMethodContent"];
+            hash: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            savedAt: string;
+            /** Format: uuid */
+            publishedBy: null | string;
+            /** Format: date-time */
+            publishedAt: null | string;
+            canPublish: boolean;
+        };
+        RiskMethodListDto: {
+            items: components["schemas"]["RiskMethodDto"][];
+            canWrite: boolean;
+            canPublish: boolean;
+        };
+        RiskMethodPublishCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+            reason: string;
+        };
+        RiskMethodSummaryDto: {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            /** Format: int64 */
+            revision: number;
+            status: string;
+            title: string;
+        };
+        RiskParticipant: {
+            /** Format: uuid */
+            actorId: string;
+            role: string;
+        };
+        RiskRating: {
+            likelihood: null | string;
+            severity: null | string;
+            reason: null | string;
+        };
+        RiskResult: {
+            state: string;
+            result: null | string;
+            /** Format: int32 */
+            rank: null | number;
+        };
+        RiskRevisionSummaryDto: {
+            /** Format: int64 */
+            revision: number;
+            state: string;
+            reasonCode: string;
+            hash: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            savedAt: string;
+        };
+        RiskStopCondition: {
+            /** Format: uuid */
+            id: string;
+            description: string;
+        };
+        RiskTemplateContent: {
+            title: null | string;
+            workType: null | string;
+            vesselKinds: string[];
+            requiredBarriers: string[];
+            hazards: components["schemas"]["RiskTemplateHazard"][];
+            sourceRefs: string[];
+            approvalOwner: null | string;
+            changeReason: null | string;
+        };
+        RiskTemplateControl: {
+            /** Format: uuid */
+            id: string;
+            description: string;
+            kind: string;
+            ownerRole: null | string;
+            required: boolean;
+            barrierRefs: string[];
+        };
+        RiskTemplateCreateCommand: {
+            /** Format: uuid */
+            id: string;
+            templateCode: string;
+            content: components["schemas"]["RiskTemplateContent"];
+        };
+        RiskTemplateDecisionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            decision: string;
+            /** Format: uuid */
+            actorId: string;
+            reason: string;
+            /** Format: date-time */
+            effectiveFrom: null | string;
+            /** Format: date-time */
+            decidedAt: string;
+        };
+        RiskTemplateDetailDto: {
+            /** Format: uuid */
+            id: string;
+            templateCode: string;
+            /** Format: int64 */
+            latestRevision: number;
+            /** Format: uint32 */
+            version: number;
+            revisions: components["schemas"]["RiskTemplateRevisionDto"][];
+            decisions: components["schemas"]["RiskTemplateDecisionDto"][];
+            suggestions: components["schemas"]["RiskTemplateSuggestionDto"][];
+            /** Format: int32 */
+            suggestionCount: number;
+            canRevise: boolean;
+            canSuggest: boolean;
+            sourceVersion: string;
+        };
+        RiskTemplateHazard: {
+            /** Format: uuid */
+            id: string;
+            step: null | string;
+            description: string;
+            consequences: string[];
+            defaultControls: components["schemas"]["RiskTemplateControl"][];
+            barrierRefs: string[];
+        };
+        RiskTemplateListItemDto: {
+            /** Format: uuid */
+            id: string;
+            templateCode: string;
+            title: null | string;
+            workType: null | string;
+            /** Format: int64 */
+            latestRevision: number;
+            latestStatus: string;
+            /** Format: int64 */
+            currentRevision: null | number;
+            /** Format: date-time */
+            currentEffectiveFrom: null | string;
+            /** Format: int32 */
+            suggestionCount: number;
+        };
+        RiskTemplatePageDto: {
+            items: components["schemas"]["RiskTemplateListItemDto"][];
+            /** Format: int32 */
+            offset: number;
+            /** Format: int32 */
+            limit: number;
+            hasMore: boolean;
+            canWrite: boolean;
+            canPublish: boolean;
+            workTypes: string[];
+        };
+        RiskTemplatePin: {
+            /** Format: uuid */
+            templateId: string;
+            /** Format: int64 */
+            revision: number;
+            hash: string;
+        };
+        RiskTemplateReviewCommand: {
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+            decision: string;
+            reason: string;
+            /** Format: date-time */
+            effectiveFrom?: null | string;
+        };
+        RiskTemplateReviseCommand: {
+            /** Format: int64 */
+            baseRevision: number;
+            /** Format: uint32 */
+            expectedVersion: number;
+            reason: string;
+        };
+        RiskTemplateRevisionDto: {
+            /** Format: uuid */
+            templateId: string;
+            templateCode: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            status: string;
+            effectiveState: string;
+            /** Format: date-time */
+            effectiveFrom: null | string;
+            content: components["schemas"]["RiskTemplateContent"];
+            hash: string;
+            blockers: string[];
+            /** Format: uuid */
+            publishedBy: null | string;
+            /** Format: date-time */
+            publishedAt: null | string;
+            /** Format: int64 */
+            supersededByRevision: null | number;
+            canEdit: boolean;
+            canSubmit: boolean;
+            canPublish: boolean;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            savedAt: string;
+            provenance: string;
+        };
+        RiskTemplateSubmitCommand: {
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+        };
+        RiskTemplateSuggestCommand: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            text: string;
+        };
+        RiskTemplateSuggestionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            text: string;
+            status: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: uuid */
+            reviewedBy: null | string;
+            reviewReason: null | string;
+            /** Format: date-time */
+            reviewedAt: null | string;
+            /** Format: uint32 */
+            version: number;
+            canReview: boolean;
+        };
+        RiskTemplateSuggestionReviewCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            decision: string;
+            reason: string;
+        };
+        RiskTemplateUpdateCommand: {
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            expectedVersion: number;
+            content: components["schemas"]["RiskTemplateContent"];
+        };
         RuleAuthorCommand: {
             /** Format: uint32 */
             expectedVersion: number;
@@ -10503,6 +12231,83 @@ export interface components {
             reviewStatus: string;
             /** Format: date-time */
             savedAt: string;
+        };
+        SafeManningDecisionCommand: {
+            /** Format: date */
+            from: string;
+            /** Format: date */
+            to: string;
+            evaluationHash: string;
+            /** Format: int64 */
+            expectedSequence: number;
+            /** Format: uuid */
+            authorityId: string;
+            decision: string;
+            rationale: string;
+            acknowledgements?: null | components["schemas"]["ManningReviewAcknowledgement"][];
+            dispensations?: null | components["schemas"]["ManningDispensation"][];
+        };
+        SafeManningDecisionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            sequence: number;
+            decision: string;
+            evaluationState: string;
+            evaluationHash: string;
+            /** Format: date */
+            windowFrom: string;
+            /** Format: date */
+            windowTo: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: uuid */
+            roleId: string;
+            duty: string;
+            /** Format: date-time */
+            savedAt: string;
+            acknowledgedReasonCodes?: null | string[];
+            dispensations?: null | components["schemas"]["ManningDispensation"][];
+        };
+        SafeManningDecisionPage: {
+            items: components["schemas"]["SafeManningDecisionDto"][];
+            /** Format: int32 */
+            offset: number;
+            hasMore: boolean;
+        };
+        SafeManningEvaluation: {
+            /** Format: uuid */
+            vesselId: string;
+            state: string;
+            reasons: components["schemas"]["CrewEligibilityReason"][];
+            msmdState: string;
+            /** Format: uuid */
+            msmdId: null | string;
+            /** Format: int64 */
+            msmdRevision: null | number;
+            roles: components["schemas"]["ManningRoleCoverage"][];
+            members: components["schemas"]["CrewEligibilityResult"][];
+            window: components["schemas"]["CrewEligibilityWindow"];
+            /** Format: date-time */
+            evaluatedAt: string;
+            hash: string;
+            qualifications: string[];
+            /** @default ADVISORY_ONLY_NOT_A_DECISION */
+            authority: string;
+        };
+        SafeManningView: {
+            evaluation: components["schemas"]["SafeManningEvaluation"];
+            authorities: components["schemas"]["CrewAuthorityDto"][];
+            canDecide: boolean;
+            /** Format: int64 */
+            sequence: number;
+            latestDecision: null | components["schemas"]["SafeManningDecisionDto"];
+            decisions: string[];
+            reviewReasonCodes?: null | string[];
+            dispensationMembers?: null | components["schemas"]["ManningDispensationMember"][];
+            evidenceOptions?: null | components["schemas"]["ManningEvidenceOption"][];
+            posts?: null | string[];
+            rules?: null | string[];
         };
         SaveRegulatoryDraft: {
             /** Format: uint32 */
@@ -10657,6 +12462,102 @@ export interface components {
             checksum: null | string;
             /** Format: date */
             expiresOn?: null | string;
+        };
+        SurveyFitDto: {
+            state: string;
+            reasons: string[];
+            basis: string[];
+        };
+        SurveyPlannerChecklistDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            readiness: string;
+            /** Format: int32 */
+            criticalUnresolved: number;
+            /** Format: int32 */
+            requiredUnresolved: number;
+            /** Format: date */
+            plannedStart: null | string;
+            /** Format: date */
+            plannedEnd: null | string;
+            portCallReference: string;
+            href: string;
+        };
+        SurveyPlannerCountsDto: {
+            /** Format: int32 */
+            windowUnknown: number;
+            /** Format: int32 */
+            windowUpcoming: number;
+            /** Format: int32 */
+            windowOpen: number;
+            /** Format: int32 */
+            windowOverdue: number;
+            /** Format: int32 */
+            fitConditional: number;
+            /** Format: int32 */
+            fitNotFit: number;
+            /** Format: int32 */
+            fitUnknown: number;
+            /** Format: int32 */
+            checklistBlocked: number;
+            /** Format: int32 */
+            checklistMissing: number;
+        };
+        SurveyPlannerDto: {
+            /** Format: date */
+            from: string;
+            /** Format: date */
+            to: string;
+            /** Format: date */
+            referenceDate: string;
+            items: components["schemas"]["SurveyPlannerRowDto"][];
+            truncated: boolean;
+            vesselsTruncated: boolean;
+            counts: components["schemas"]["SurveyPlannerCountsDto"];
+            qualification: string;
+            fitStates: string[];
+            sourceVersion: string;
+        };
+        SurveyPlannerRowDto: {
+            /** Format: uuid */
+            vesselId: string;
+            vesselCode: string;
+            vesselName: string;
+            vesselKind: string;
+            /** Format: uuid */
+            certificateId: string;
+            /** Format: int64 */
+            certificateRevision: number;
+            /** Format: uint32 */
+            certificateVersion: number;
+            certificateType: null | string;
+            certificateNumber: null | string;
+            issuer: null | string;
+            declaredFlag: null | string;
+            regulatoryBasis: null | string;
+            /** Format: date */
+            expiryDate: null | string;
+            window: components["schemas"]["SurveyWindowDto"];
+            fit: components["schemas"]["SurveyFitDto"];
+            checklist: null | components["schemas"]["SurveyPlannerChecklistDto"];
+            coordination: string;
+            href: string;
+        };
+        SurveyWindowDto: {
+            state: string;
+            /** Format: date */
+            start: null | string;
+            /** Format: date */
+            end: null | string;
+            /** Format: int32 */
+            daysToOpen: null | number;
+            /** Format: int32 */
+            daysToClose: null | number;
+            /** Format: int32 */
+            daysOverdue: null | number;
+            qualifiers: string[];
         };
         SyncConflictItemDto: {
             source: string;
@@ -10866,6 +12767,193 @@ export interface components {
             /** Format: int64 */
             revision: null | number;
         };
+        TowEquipmentAssessment: {
+            /** Format: uuid */
+            tugId: string;
+            state: string;
+            items: components["schemas"]["TowEquipmentRow"][];
+            checks: components["schemas"]["TugReadinessCheck"][];
+            /** Format: date-time */
+            assessedAt: string;
+        };
+        TowEquipmentDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            inputs: components["schemas"]["TowEquipmentInputs"];
+            provenance: string;
+            /** Format: date-time */
+            savedAt: string;
+            /** @default false */
+            replayed: boolean;
+        };
+        TowEquipmentInputs: {
+            kind: string;
+            label: null | string;
+            swlTonnes: null | string;
+            /** Format: date */
+            lastTestDate: null | string;
+            /** Format: date */
+            nextTestDue: null | string;
+            condition: string;
+            critical: null | boolean;
+            /** Format: uuid */
+            assetId: null | string;
+            /** Format: uuid */
+            certificateId: null | string;
+            notes: null | string;
+        };
+        TowEquipmentRow: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            inputs: components["schemas"]["TowEquipmentInputs"];
+            provenance: string;
+            /** Format: date-time */
+            savedAt: string;
+            check: components["schemas"]["TugReadinessCheck"];
+            verifications: components["schemas"]["TowEquipmentVerificationDto"][];
+        };
+        TowEquipmentSaveCommand: {
+            /** Format: uuid */
+            clientId: string;
+            /** Format: uint32 */
+            baseVersion: null | number;
+            inputs: components["schemas"]["TowEquipmentInputs"];
+        };
+        TowEquipmentVerificationDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            itemRevision: number;
+            outcome: string;
+            reason: null | string;
+            duty: string;
+            /** Format: date-time */
+            recordedAt: string;
+        };
+        TowEquipmentVerifyCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            /** Format: int64 */
+            expectedRevision: number;
+            outcome: string;
+            /** Format: uuid */
+            authorityId: string;
+            reason?: null | string;
+        };
+        TowEquipmentView: {
+            assessment: components["schemas"]["TowEquipmentAssessment"];
+            canWrite: boolean;
+            canVerify: boolean;
+            authorities: components["schemas"]["TugAuthorityDto"][];
+            kinds: string[];
+            conditions: string[];
+            /** @default 18.01/sheet:Backlog/row:86;60.02/paragraph:190,196,520 */
+            sourceLocator: string;
+        };
+        TugAssignmentDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: uuid */
+            jobId: string;
+            /** Format: int64 */
+            jobRevision: number;
+            /** Format: uuid */
+            tugId: string;
+            /** Format: date-time */
+            plannedStart: string;
+            /** Format: date-time */
+            plannedEnd: string;
+            role: string;
+            state: string;
+            masterAck: string;
+            scopeHash: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            /** Format: date-time */
+            proposedAt: string;
+            /** Format: date-time */
+            cancelledAt: null | string;
+            cancelReason: null | string;
+            /** @default false */
+            replayed: boolean;
+            /** @default 18.01:09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674:84;60.02:Rev2:108-128 */
+            sourceVersion: string;
+        };
+        TugAssignmentItem: {
+            assignment: components["schemas"]["TugAssignmentDto"];
+            response: null | components["schemas"]["TugAssignmentResponseDto"];
+            conflicts: components["schemas"]["TugConflictReason"][];
+            conflictState: string;
+            canRespond: boolean;
+            canWithdraw: boolean;
+            authorities: components["schemas"]["TugAuthorityDto"][];
+            requestChanged: boolean;
+        };
+        TugAssignmentList: {
+            /** Format: uuid */
+            jobId: string;
+            /** Format: int64 */
+            jobRevision: number;
+            /** Format: uint32 */
+            jobVersion: number;
+            jobState: string;
+            canPropose: boolean;
+            items: components["schemas"]["TugAssignmentItem"][];
+            tugs: components["schemas"]["TugOption"][];
+            roles: string[];
+            /** @default ShoreProposes;TugMasterAcknowledges;NoDispatchOrRelease */
+            boundary: string;
+        };
+        TugAssignmentProposeCommand: {
+            /** Format: uuid */
+            clientId: string;
+            /** Format: uuid */
+            jobId: string;
+            /** Format: uint32 */
+            expectedJobVersion: number;
+            /** Format: uuid */
+            tugId: string;
+            plannedStart: null | string;
+            plannedEnd: null | string;
+            role: null | string;
+        };
+        TugAssignmentRespondCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            scopeHash: string;
+            decision: string;
+            /** Format: uuid */
+            authorityId: string;
+            reason?: null | string;
+        };
+        TugAssignmentResponseDto: {
+            /** Format: uuid */
+            id: string;
+            decision: string;
+            reason: null | string;
+            duty: string;
+            /** Format: date-time */
+            recordedAt: string;
+        };
+        TugAssignmentWithdrawCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            reason: string;
+        };
         TugAuditRevisionDto: {
             /** Format: uuid */
             jobId: string;
@@ -10887,6 +12975,11 @@ export interface components {
             priority: null | string;
             /** Format: uuid */
             ownerRoleReference: null | string;
+        };
+        TugAuthorityDto: {
+            /** Format: uuid */
+            id: string;
+            duty: string;
         };
         TugBpEvidence: {
             /** Format: uuid */
@@ -10942,6 +13035,13 @@ export interface components {
             /** Format: uint32 */
             assetVersion?: null | number;
         };
+        TugConflictReason: {
+            kind: string;
+            result: string;
+            reason: string;
+            /** Format: uuid */
+            sourceId: null | string;
+        };
         TugCrewReadinessDto: {
             /** Format: uuid */
             tugId: string;
@@ -10961,6 +13061,23 @@ export interface components {
             /** Format: date-time */
             validUntil: null | string;
             /** @default SourceQualifiedMinimumRolesOnly;OtherCrewGatesAndMasterDecisionSeparate */
+            coverage: string;
+        };
+        TugCrewReadinessView: {
+            /** Format: uuid */
+            tugId: string;
+            /** Format: uuid */
+            assignmentId: string;
+            state: string;
+            evaluatorState: string;
+            evaluatorSource: null | string;
+            checks: components["schemas"]["TugReadinessCheck"][];
+            minimumManning: components["schemas"]["TugCrewReadinessDto"];
+            /** Format: date-time */
+            assessedAt: string;
+            /** Format: date-time */
+            validUntil: null | string;
+            /** @default SharedCrewEngineAndTowageCompetence;UnverifiedNeverPositive;MasterDecisionSeparate */
             coverage: string;
         };
         TugLifecycleCommand: {
@@ -11019,6 +13136,11 @@ export interface components {
             provenance: string;
             /** Format: date-time */
             observedAt: null | string;
+        };
+        TugOption: {
+            /** Format: uuid */
+            id: string;
+            code: string;
         };
         TugOwnedCapacity: {
             /** Format: uuid */
@@ -11112,6 +13234,48 @@ export interface components {
             operationalConflicts?: null | components["schemas"]["TugOperationalConflict"][];
             crew?: null | components["schemas"]["TugCrewReadinessDto"][];
         };
+        TugReadinessCategoryState: {
+            category: string;
+            result: string;
+            reasons: string[];
+        };
+        TugReadinessCheck: {
+            category: string;
+            result: string;
+            reason: string;
+            /** @default true */
+            critical: boolean;
+            /** Format: uuid */
+            sourceId?: null | string;
+            /** Format: int64 */
+            sourceRevision?: null | number;
+        };
+        TugReadinessDecisionCommand: {
+            /** Format: uuid */
+            assignmentId: string;
+            expectedAssessmentHash: string;
+            decision: string;
+            reason: string;
+            /** Format: uuid */
+            authorityId: string;
+        };
+        TugReadinessDecisionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            assignmentId: string;
+            /** Format: int64 */
+            assignmentRevision: number;
+            decision: string;
+            assessedState: string;
+            assessmentHash: string;
+            reason: string;
+            duty: string;
+            /** Format: date-time */
+            recordedAt: string;
+            /** @default false */
+            replayed: boolean;
+        };
         TugReadinessFact: {
             /** Format: uuid */
             tugId: string;
@@ -11126,6 +13290,29 @@ export interface components {
             observedAt?: null | string;
             /** Format: date-time */
             expiresAt?: null | string;
+        };
+        TugReadinessView: {
+            assignment: components["schemas"]["TugAssignmentDto"];
+            state: string;
+            categories: components["schemas"]["TugReadinessCategoryState"][];
+            criticalBlockers: string[];
+            reviewReasons: string[];
+            conditions: string[];
+            assessmentHash: string;
+            requiredBollardPull: null | string;
+            availableBollardPull: null | string;
+            bollardPullMargin: null | string;
+            checks: components["schemas"]["TugReadinessCheck"][];
+            conflicts: components["schemas"]["TugConflictReason"][];
+            decisions: components["schemas"]["TugReadinessDecisionDto"][];
+            authorities: components["schemas"]["TugAuthorityDto"][];
+            canDecide: boolean;
+            /** Format: date-time */
+            assessedAt: string;
+            /** @default MasterOrTugMasterHumanDecisionRequired;EngineNeverIssuesGo */
+            decisionAuthority: string;
+            /** @default 18.01/sheet:Backlog/row:85;60.02/paragraph:199,201,3540-3736 */
+            sourceLocator: string;
         };
         TugRequestDto: {
             /** Format: uuid */
@@ -12782,6 +14969,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CertificateCapabilitiesDto"];
+                };
+            };
+        };
+    };
+    SurveyPlannerCalendar: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SurveyPlannerDto"];
                 };
             };
         };
@@ -16236,6 +18443,186 @@ export interface operations {
             };
         };
     };
+    PreSurveyChecklists: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreSurveyPageDto"];
+                };
+            };
+        };
+    };
+    PreSurveyChecklistCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PreSurveyCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreSurveyChecklistDto"];
+                };
+            };
+        };
+    };
+    PreSurveyCapabilities: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreSurveyCapabilitiesDto"];
+                };
+            };
+        };
+    };
+    PreSurveyPortCalls: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreSurveyPortCallPageDto"];
+                };
+            };
+        };
+    };
+    PreSurveyChecklistRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreSurveyChecklistDto"];
+                };
+            };
+        };
+    };
+    PreSurveyChecklistUpdate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PreSurveyUpdateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreSurveyChecklistDto"];
+                };
+            };
+        };
+    };
+    PreSurveyChecklistHistory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreSurveyPageDto"];
+                };
+            };
+        };
+    };
+    PreSurveyChecklistVerify: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PreSurveyVerifyCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreSurveyChecklistDto"];
+                };
+            };
+        };
+    };
     CertificateAssertionCapabilities: {
         parameters: {
             query?: never;
@@ -18744,6 +21131,276 @@ export interface operations {
             };
         };
     };
+    CrewCertificateRegister: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CrewCertificateRegister"];
+                };
+            };
+        };
+    };
+    CrewCredentialVerification: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                assignment: string;
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CrewCredentialVerificationView"];
+                };
+            };
+        };
+    };
+    CrewCredentialAssertionRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                assignment: string;
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CrewCredentialAssertionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CrewCommandOutcome"];
+                };
+            };
+        };
+    };
+    CrewCompetenceMatrix: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CrewCompetenceMatrix"];
+                };
+            };
+        };
+    };
+    CrewCompetenceRequirementSave: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CrewCompetenceRequirementCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CrewCommandOutcome"];
+                };
+            };
+        };
+    };
+    CrewCompetenceGaps: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                assignment: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CrewCompetenceView"];
+                };
+            };
+        };
+    };
+    CrewCompetenceRecordSave: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                assignment: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CrewCompetenceRecordCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CrewCommandOutcome"];
+                };
+            };
+        };
+    };
+    CrewCompetenceSignOff: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                assignment: string;
+                record: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CrewCompetenceSignOffCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CrewCommandOutcome"];
+                };
+            };
+        };
+    };
+    SafeManningEvaluate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafeManningView"];
+                };
+            };
+        };
+    };
+    SafeManningDecisions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafeManningDecisionPage"];
+                };
+            };
+        };
+    };
+    SafeManningDecisionRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafeManningDecisionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CrewCommandOutcome"];
+                };
+            };
+        };
+    };
     ImportSourceCoverage: {
         parameters: {
             query?: never;
@@ -19675,6 +22332,585 @@ export interface operations {
             };
         };
     };
+    RiskAssessmentList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskAssessmentPageDto"];
+                };
+            };
+        };
+    };
+    RiskAssessmentCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskAssessmentCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskAssessmentDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskFailure"];
+                };
+            };
+        };
+    };
+    RiskAssessmentCapabilities: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskCapabilitiesDto"];
+                };
+            };
+        };
+    };
+    RiskAssessmentRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskAssessmentDto"];
+                };
+            };
+        };
+    };
+    RiskAssessmentUpdate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskAssessmentUpdateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskAssessmentDto"];
+                };
+            };
+        };
+    };
+    RiskAssessmentRevisionRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                revision: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskAssessmentRevisionDto"];
+                };
+            };
+        };
+    };
+    RiskAssessmentSubmit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskAssessmentSubmitCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskAssessmentDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskFailure"];
+                };
+            };
+        };
+    };
+    RiskAssessmentReview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskAssessmentReviewCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskAssessmentDto"];
+                };
+            };
+        };
+    };
+    RiskAssessmentAmend: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskAssessmentAmendCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskAssessmentDto"];
+                };
+            };
+        };
+    };
+    RiskAssessmentAcknowledge: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskAssessmentAcknowledgeCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskAssessmentDto"];
+                };
+            };
+        };
+    };
+    RiskTemplateList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskTemplatePageDto"];
+                };
+            };
+        };
+    };
+    RiskTemplateCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskTemplateCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskTemplateDetailDto"];
+                };
+            };
+        };
+    };
+    RiskTemplateApplicable: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskApplicableTemplatesDto"];
+                };
+            };
+        };
+    };
+    RiskTemplateRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskTemplateDetailDto"];
+                };
+            };
+        };
+    };
+    RiskTemplateUpdate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskTemplateUpdateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskTemplateDetailDto"];
+                };
+            };
+        };
+    };
+    RiskTemplateSubmit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskTemplateSubmitCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskTemplateDetailDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskFailure"];
+                };
+            };
+        };
+    };
+    RiskTemplateReview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskTemplateReviewCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskTemplateDetailDto"];
+                };
+            };
+        };
+    };
+    RiskTemplateRevise: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskTemplateReviseCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskTemplateDetailDto"];
+                };
+            };
+        };
+    };
+    RiskTemplateSuggest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskTemplateSuggestCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskTemplateDetailDto"];
+                };
+            };
+        };
+    };
+    RiskTemplateSuggestionReview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                suggestionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskTemplateSuggestionReviewCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskTemplateDetailDto"];
+                };
+            };
+        };
+    };
+    RiskMethodList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskMethodListDto"];
+                };
+            };
+        };
+    };
+    RiskMethodCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskMethodCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskMethodDto"];
+                };
+            };
+        };
+    };
+    RiskMethodPublish: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RiskMethodPublishCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskMethodDto"];
+                };
+            };
+        };
+    };
     MaintenanceObservationRead: {
         parameters: {
             query?: never;
@@ -20118,6 +23354,267 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TugRequestDto"];
+                };
+            };
+        };
+    };
+    TugAssignmentList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugAssignmentList"];
+                };
+            };
+        };
+    };
+    TugAssignmentPropose: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TugAssignmentProposeCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugAssignmentDto"];
+                };
+            };
+        };
+    };
+    TugAssignmentRespond: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TugAssignmentRespondCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugAssignmentDto"];
+                };
+            };
+        };
+    };
+    TugAssignmentWithdraw: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TugAssignmentWithdrawCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugAssignmentDto"];
+                };
+            };
+        };
+    };
+    TugReadinessRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugReadinessView"];
+                };
+            };
+        };
+    };
+    TugReadinessDecide: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TugReadinessDecisionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugReadinessDecisionDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TugCrewReadinessRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugCrewReadinessView"];
+                };
+            };
+        };
+    };
+    TugEquipmentReadinessRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowEquipmentView"];
+                };
+            };
+        };
+    };
+    TugTowEquipmentSave: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TowEquipmentSaveCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowEquipmentDto"];
+                };
+            };
+        };
+    };
+    TugTowEquipmentUpdate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TowEquipmentSaveCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowEquipmentDto"];
+                };
+            };
+        };
+    };
+    TugTowEquipmentVerify: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TowEquipmentVerifyCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowEquipmentVerificationDto"];
                 };
             };
         };

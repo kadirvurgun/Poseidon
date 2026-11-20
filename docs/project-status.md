@@ -1,5 +1,15 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
+## S6 kabul edildi — notlarla, kısmi (20.11.2026)
+
+**Canonical ilerleme: 54 iş / 409 SP / 970 SP = %42,16** (önceki: 47 iş / 338 SP, %34,85). S0 13/53, S1 7/50, S2 6/42, S3 7/66, S4 6/58, S5 8/69, **S6 7/71** (87 SP'nin) kabul.
+
+- Hedef: PR #44 head `5a96c16` → main `7b0504e`. CI push `44606147317` + pull_request `44606162275` yeşil.
+- Bağımsız S6 QA: 4 tur (e6a8cdd RED; 1d0cf43 ve b95626a DEV-101/102 RED; revert 5a96c16 **ACCEPT-WITH-NOTES ×7**) — [kanıt](evidence/s6-20261120-5a96c16/qa/s6-gate-independent-review.md), [faz raporu](phases/S6-GATE-20261120.md).
+- Kabul: DEV-043, 044, 045, 046, 081, 082, 100. **Kabul edilmedi: DEV-101, DEV-102** — yaşam döngüsü işi iki kırmızı CI denemesinden sonra (`ShipOpsLifecycleTests.cs:47`, `:81`) geri alındı; `feature/s6-wpd-ship-ops-20261119` dalında PG yeniden üretimi bekliyor.
+- Teslim: sertifika merkezi + yenileme (≥3 kişi SoD, değişmez supersession), dijital PDF OCR yardımı + sentetik golden set (P=1,000 R=0,853), römorkör iş talebi + pano, yakıt/bunker/BDN/ROB defteri (otomatik düzeltme yok).
+- Açık insan/uzman kapıları: görüntü OCR motoru + gerçek korpus, düzenleyen/otorite doğrulaması, tank/tedarikçi/BDN kaynakları, SOF imza yetkisi, LoH değerlendirmesi, yardım edilen gemi modeli. Hiçbir onay iddia edilmiyor.
+- Sıradaki: S7 paketi kapıda.
 ## S5 kabul edildi (20.11.2026)
 
 **Canonical ilerleme: 47 iş / 338 SP / 970 SP = %34,85** (önceki: 39 iş / 269 SP, %27,73). S0 13/53, S1 7/50, S2 6/42, S3 7/66, S4 6/58, **S5 8/69** kabul.

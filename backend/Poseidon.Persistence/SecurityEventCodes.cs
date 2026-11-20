@@ -29,6 +29,7 @@ public static class SecurityEventCodes
         "TodayRead", "TodayWhyRead", "MetricCatalogRead", "MetricScalarRead", "TugRead", "TugSave",
         "VesselCreate", "VesselUpdate", "VesselsRead", "WorkspaceRead",
         "WorkspaceSearch", "SystemHealthRead", "NotificationRead", "NotificationCommand", "ComplianceWorkspaceRead", "CriticalStateRead", "DailyOfflineRead", "DailyOfflineRequest", "DailyOperationsRead", "DailyOperationsCommand", "DailyReviewRead", "DailyReviewCommand", "ShipOperationsRead", "ShipOperationsCommand",
+        "TugAssignmentRead", "TugAssignmentCommand", "TugReadinessRead", "TugReadinessDecision", "TugEquipmentRead", "TugEquipmentCommand", "TugCrewReadinessRead",
         "ParameterRead", "ParameterCommand", "HrRead", "HrCommand", "MembershipRead", "MembershipCommand", "SessionRevalidation",
         "ControlledDocument", "ControlledDocumentRead", "ControlledDocumentCommand", "ControlledDocumentReplay",
         "SyncOperationRead", "SyncConflictList",
@@ -36,6 +37,9 @@ public static class SecurityEventCodes
         "ControlLifecycleRead", "ControlLifecycleCommand", "ControlLifecycleReplay", "ControlSupportingEvidenceRead", "HumanReviewRead",
         "DailyEngineReferenceRead", "DailyEngineReferenceCommand",
         "TugLifecycle",
+        "RiskAssessmentRead", "RiskAssessmentCommand", "RiskTemplateRead", "RiskTemplateCommand",
+        "PreSurveyRead", "PreSurveyCommand", "SurveyPlannerRead",
+        "CredentialVerificationRead", "CredentialVerificationCommand", "CrewCompetenceRead", "CrewCompetenceCommand", "SafeManningRead", "SafeManningCommand",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static IReadOnlySet<string> Results { get; } = new string[]
     {
@@ -83,6 +87,7 @@ public static class SecurityEventCodes
         "owner_field_not_writable", "invariant_not_writable", "alias_read_only", "family_not_writable", "type_mismatch", "out_of_range",
         "unresolved_reference", "scope_not_allowed", "selector_invalid", "definition_version_mismatch", "effective_from_in_past",
         "pending_change_exists", "ambiguous_selection", "synthetic_not_approvable",
+        "tug_assignment_scope_stale", "tug_assignment_active_exists", "tug_go_not_permitted", "tug_authority_required", "assessment_stale",
         "quiet_hours_incomplete", "tug_request_incomplete", "quiet_hours_invalid", "quiet_hours_zone_unknown",
         "control_retired", "control_record_incomplete", "control_reviewer_required", "control_revision_conflict",
         "override_reason_not_allowed", "override_evidence_required", "override_evidence_unavailable", "override_unknown_not_acceptable", "override_validity_invalid",
@@ -92,6 +97,9 @@ public static class SecurityEventCodes
         "renewal_application_incomplete", "renewal_replacement_required", "renewal_replacement_dates_unknown", "renewal_evidence_required",
         "renewal_verification_not_matched", "renewal_replacement_not_effective", "renewal_cancellation_receipt_required", "renewal_already_open",
         "renewal_state_locked", "certificate_already_superseded",
+        "risk_record_incomplete", "method_matrix_incomplete", "template_not_effective", "risk_acknowledgement_exists",
+        "checklist_items_mismatch", "na_not_authorized", "port_call_unavailable", "template_unavailable", "verification_rejected",
+        "credential_document_required", "competence_requirement_unavailable", "evaluation_window_invalid", "manning_dispensation_required", "manning_dispensation_not_applicable", "manning_review_acknowledgement_required",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static bool Allows(string action, string result) => Actions.Contains(action) && Results.Contains(result);
 }

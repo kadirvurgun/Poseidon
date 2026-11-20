@@ -44,6 +44,12 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddSingleton<FileCapabilities>();
         services.AddFoundationIdentity(configuration, hostEnvironment);
         services.AddScoped<SecurityAudit>();
+        // S7 WP-A: advisory crew eligibility (stable consumer contract ICrewEligibilityEvaluator).
+        services.AddSingleton<ICrewWorkRestSource, UnavailableCrewWorkRestSource>();
+        services.AddScoped<CrewEligibilityEvaluator>();
+        services.AddScoped<ICrewEligibilityEvaluator>(sp => sp.GetRequiredService<CrewEligibilityEvaluator>());
+        // S7 integration: WP-B tug crew readiness (DEV-086) reads the WP-A engine; advisory only, UNKNOWN never PASS.
+        services.AddScoped<ITugCrewCompetenceSource, CrewEligibilityTugCompetenceSource>();
         services.AddSingleton<Microsoft.AspNetCore.Authorization.IAuthorizationMiddlewareResultHandler, DirectoryAuthorizationResultHandler>();
         services.AddHttpContextAccessor();
         services.AddScoped(sp =>
@@ -169,6 +175,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapDailyOperations();
             endpoints.MapCertificates();
             endpoints.MapCertificateRenewals();
+            endpoints.MapPreSurveyChecklists();
+            endpoints.MapSurveyPlanner();
             endpoints.MapCertificateExtraction();
             endpoints.MapCertificateAssertions();
             endpoints.MapShipOperations();
@@ -188,6 +196,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapCrewPersonalProfiles();
             endpoints.MapCrewSelection();
             endpoints.MapCredentials();
+            endpoints.MapCrewCompliance();
             endpoints.MapImports();
             endpoints.MapLegacyCrewImports();
             endpoints.MapTechnical();
@@ -197,6 +206,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapWorkOrderPlanOrigins();
             endpoints.MapOperationalDowntime();
             endpoints.MapDowntimeOrigins();
+            endpoints.MapRiskAssessments();
+            endpoints.MapRiskTemplates();
             endpoints.MapMaintenanceObservations();
             endpoints.MapTug();
             endpoints.MapParameters();

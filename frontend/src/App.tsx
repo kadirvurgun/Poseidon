@@ -6,8 +6,10 @@ import { Button } from './components/ui/button';
 import { ImportWorkspace } from './product/ImportWorkspace';
 import { DailyReportWorkspace } from './product/DailyReportWorkspace';
 import { TugWorkspace } from './product/TugWorkspace';
+import { TugReadinessWorkspace } from './product/TugReadinessWorkspace';
 import { TechnicalWorkspace } from './product/TechnicalWorkspace';
 import { CrewWorkspace } from './product/CrewWorkspace';
+import { CrewComplianceWorkspace } from './product/CrewComplianceWorkspace';
 import { useEffect, useState } from 'react';
 import { getSystemStatus } from './api';
 import { AgentsDashboard } from './agents/AgentsDashboard';
@@ -20,7 +22,10 @@ import { CertificateWorkspace } from './product/CertificateWorkspace';
 import { DefectWorkspace } from './product/DefectWorkspace';
 import { WorkOrderWorkspace } from './product/WorkOrderWorkspace';
 import { DowntimeWorkspace } from './product/DowntimeWorkspace';
+import { RiskAssessmentWorkspace } from './product/RiskAssessmentWorkspace';
+import { RiskTemplateLibraryWorkspace } from './product/RiskTemplateLibraryWorkspace';
 import { AuditReadyWorkspace } from './product/AuditReadyWorkspace';
+import { SurveyWorkspace } from './product/SurveyWorkspace';
 import { AppearanceControls } from './theme/AppearanceControls';
 type Connection = 'loading' | 'available' | 'error';
 const content = localizedCopy("App_tsx_content");
@@ -29,6 +34,8 @@ export function App() {
         return <ShipOperationsWorkspace />;
     if (/^\/app\/(certificate-command-center|renewal-workflow)(?:\/|$)/.test(window.location.pathname))
         return <CertificateWorkspace />;
+    if (/^\/app\/(pre-survey-checklist|survey-planner)(?:\/|$)/.test(window.location.pathname))
+        return <SurveyWorkspace />;
     if (/^\/app\/(noon-report|deck-daily-log|engine-daily-log)(?:\/|$)/.test(window.location.pathname))
         return <DailyReportWorkspace />;
     if (/^\/app\/audit-ready(?:\/|$)/.test(window.location.pathname))
@@ -42,6 +49,8 @@ export function App() {
     const importer = /^\/app\/excel-migration\/([0-9a-fA-F-]{36})\/?$/.exec(window.location.pathname);
     if (importer)
         return <ImportWorkspace key={importer[1]} vessel={importer[1]}/>;
+    if (/^\/app\/tug-(assignment|readiness|equipment-readiness|crew-readiness)(?:\/|$)/.test(window.location.pathname))
+        return <TugReadinessWorkspace />;
     if (/^\/app\/tug-(command|job-board|job-intake|job-detail)(?:\/|$)/.test(window.location.pathname))
         return <TugWorkspace />;
     if (/^\/app\/(equipment-hierarchy|maintenance-plan)\//.test(window.location.pathname))
@@ -52,9 +61,17 @@ export function App() {
         return <WorkOrderWorkspace />;
     if (/^\/app\/operational-downtime(?:\/|$)/.test(window.location.pathname))
         return <DowntimeWorkspace />;
+    if (/^\/app\/risk-assessment(?:\/|$)/.test(window.location.pathname))
+        return <RiskAssessmentWorkspace />;
+    if (/^\/app\/risk-template-library(?:\/|$)/.test(window.location.pathname))
+        return <RiskTemplateLibraryWorkspace />;
     const crew = /^\/app\/crew-roster\/([0-9a-fA-F-]{36})(?:\/crew-profile\/([0-9a-fA-F-]{36}))?\/?$/.exec(window.location.pathname);
     if (crew)
         return <CrewWorkspace key={`${crew[1]}:${crew[2] ?? ''}`} vessel={crew[1]} assignment={crew[2]}/>;
+    // S7 WP-A: crew certificates (DEV-048), training-position matrix (DEV-049), Safe Manning (DEV-050).
+    const compliance = /^\/app\/(crew-certificates|training-position-matrix|safe-manning)\/([0-9a-fA-F-]{36})\/?$/.exec(window.location.pathname);
+    if (compliance)
+        return <CrewComplianceWorkspace key={`${compliance[1]}:${compliance[2]}`} view={compliance[1] === 'crew-certificates' ? 'certificates' : compliance[1] === 'training-position-matrix' ? 'matrix' : 'safe-manning'} vessel={compliance[2]}/>;
     if (window.location.pathname === '/app' || window.location.pathname.startsWith('/app/'))
         return <ProductApp />;
     return window.location.pathname.replace(/\/$/, '') === '/agents' ? <AgentsDashboard /> : <ExistingApp />;

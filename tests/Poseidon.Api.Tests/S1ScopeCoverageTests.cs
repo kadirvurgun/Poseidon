@@ -42,9 +42,13 @@ public sealed partial class DirectoryWorkspaceTests
         // PLAN-1511-5201 adds 14 audited HR commands; PLAN-1511-5401 adds 3; main S2 bundle adds 1 (legal entity, person master, employment, plan, actual; QA: role cancel); PLAN-1511-5202 adds 7 tenant-scoped membership/delegation lifecycle commands; PLAN-1511-5802 adds 11 controlled document/evidence custody commands; S3 WP-B (DEV-028) adds 1 control lifecycle transition; S4 WP-D adds 1 DEV-034 sync reconciliation observation (no business effect); S5 WP-C adds 1 DEV-099 engine log WO/defect reference link; S5 WP-A adds 3 (DEV-040 override propose/decision, DEV-041 control candidates).
         // S6 WP-C (DEV-081) adds the two audited Tug submit/cancel lifecycle commands.
         // S6 WP-A adds 1 (DEV-044 renewal workflow transition).
-        Assert.Equal(160, observed.Count);
-        Assert.Equal(151, observed.Count(x => x.IsCritical));
-        Assert.Equal(161, S1SecurityContract.CriticalOperationIds.Count);
+        // S7 WP-C adds 15 (DEV-105/DEV-106 risk assessment and risk template/method commands).
+        // S7 WP-D adds 3 (DEV-104 pre-survey checklist create/update/human verification).
+        // S7 WP-B adds 7 (DEV-083 propose/respond/withdraw, DEV-084 GO/NO_GO record, DEV-085 tow equipment save/update/verify).
+        // S7 WP-A adds 5 crew commands: DEV-048 credential assertion, DEV-049 matrix/record/sign-off, DEV-050 Safe Manning decision.
+        Assert.Equal(190, observed.Count);
+        Assert.Equal(181, observed.Count(x => x.IsCritical));
+        Assert.Equal(191, S1SecurityContract.CriticalOperationIds.Count);
         Assert.Equal(9, observed.Count(x => !x.IsCritical));
         var extra = new RouteEndpoint(_ => Task.CompletedTask, RoutePatternFactory.Parse("/api/v1/unclassified-write"), 0,
             new EndpointMetadataCollection(new HttpMethodMetadata(["POST"]), new AuthorizeAttribute("DirectoryRead")), "unclassified");

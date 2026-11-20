@@ -107,6 +107,8 @@ public static class ControlledDocumentEndpoints
 
     private static TrustedActor? Actor(HttpContext h) => h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User);
     private static bool Read(TrustedActor? a) => a != null && a.CanRead && a.Permissions.Contains("file.read");
+    // S7 DEV-050: dispensation links pin a controlled document revision only when the actor may read documents.
+    internal static bool CanReadDocuments(TrustedActor? a) => Read(a);
     private static bool Write(TrustedActor a, Guid vessel) => Read(a) && a.Permissions.Contains("file.write") && a.CanEditVessel(vessel);
     // Authority roles (publisher, verifier, records officer, disposal approver) need a real
     // server role and the exact action key; they need not hold directory/vessel edit rights.

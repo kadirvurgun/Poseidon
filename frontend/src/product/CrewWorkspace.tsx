@@ -15,6 +15,7 @@ import { OfflineApplicationPanel } from './OfflineApplicationPanel';
 import { CrewPersonalFiles } from './CrewPersonalFiles';
 import { CrewPersonalProfile } from './CrewPersonalProfile';
 import { CertificatePanel } from './CertificatePanel';
+import { CrewCompetencePanel } from './CrewComplianceWorkspace';
 import { useEffect, useRef, useState } from 'react';
 import { ApiError, session } from './api';
 import type { Session } from './directory-contract';
@@ -47,6 +48,7 @@ export function CrewWorkspace({ vessel, assignment }: {
     } | null>(null);
     const [positions, setPositions] = useState<crew.CrewPosition[]>([]);
     const [offset, setOffset] = useState(0);
+    const [rosterFilter, setRosterFilter] = useState<crew.CrewRosterFilter>({});
     const [generation, setGeneration] = useState(0);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(0);
@@ -92,7 +94,7 @@ export function CrewWorkspace({ vessel, assignment }: {
         session(c.signal).then(async (identity) => {
             if (!identity.authenticated)
                 throw new ApiError(401);
-            const value = await crew.roster(vessel, offset, c.signal);
+            const value = await crew.roster(vessel, offset, c.signal, rosterFilter);
             const record = assignment ? await crew.profile(vessel, assignment, c.signal) : null;
             const currentAssignment = assignment ? await crew.currentAssignment(vessel, assignment, c.signal) : null;
             const refs = value.canWrite ? await crew.positionPolicy(vessel, c.signal) : { items: [], version: null, state: 'Unavailable' };
@@ -118,7 +120,7 @@ export function CrewWorkspace({ vessel, assignment }: {
             .finally(() => { if (active)
             setLoading(false); clearTimeout(timer); });
         return () => { active = false; c.abort(); clearTimeout(timer); };
-    }, [vessel, assignment, offset, generation]);
+    }, [vessel, assignment, offset, generation, rosterFilter]);
     useEffect(() => {
         const update = () => setOnline(navigator.onLine);
         const leave = (e: BeforeUnloadEvent) => { if (editor || childDirty || inFlight.current)
@@ -218,7 +220,7 @@ export function CrewWorkspace({ vessel, assignment }: {
       {loading && <p role="status">{t.loading}</p>}
       {error > 0 && <div role="alert"><p>{error === 401 ? t.expired : error === 403 || error === 404 ? t.denied : t.error}</p><button onClick={() => setGeneration(v => v + 1)}>{t.retry}</button>{error === 401 && <a href={`/api/v1/auth/login?returnUrl=${encodeURIComponent(window.location.pathname)}`}>{t.expired}</a>}</div>}
       {result !== 'idle' && <p role={result === 'saved' ? 'status' : 'alert'}>{t[result]}</p>}
-      {page && online && !paused && !assignment && <CrewEnterpriseRoster key={`${vessel}:${user?.tenantId}:${user?.actorId}:${generation}:${offset}`} page={page} language={language} locked={!!editor || childDirty} rosterHref={rosterHref} onNavigate={navigate} onPage={setOffset}/>}
+      {page && online && !paused && !assignment && <CrewEnterpriseRoster key={`${vessel}:${user?.tenantId}:${user?.actorId}:${generation}:${offset}`} page={page} language={language} locked={!!editor || childDirty} rosterHref={rosterHref} onNavigate={navigate} onPage={setOffset} filter={rosterFilter} onFilter={value => { setOffset(0); setRosterFilter(value); setGeneration(v => v + 1); }}/>}
       {current && !paused && <section aria-label={localizedText(language, "pairs.m_0f4369dd1009441f")}><h2>{localizedText(language, "pairs.m_0f4369dd1009441f")}</h2><p>{current.state === 'ConfiguredEffectiveDeclaration' ? (localizedText(language, "pairs.m_66f7d6ac21cc4bba")) : current.state === 'PolicyUnavailable' ? (localizedText(language, "pairs.m_f2ecfae2aa6ca3d3")) : current.state === 'PolicyStale' ? (localizedText(language, "pairs.m_dd561645c38feea1")) : current.state === 'Ambiguous' ? (localizedText(language, "pairs.m_ae6748989fdd2ee8")) : (localizedText(language, "pairs.m_f16b2cd47e0621fc"))}</p>{current.assignmentId && <><p>{current.position?.rank ?? t.unknown} · {current.position?.department ?? t.unknown}</p><a href={`/app/crew-roster/${current.vesselId}/crew-profile/${current.assignmentId}`} onClick={e => { e.preventDefault(); navigate(`/app/crew-roster/${current.vesselId}/crew-profile/${current.assignmentId}`); }}>{localizedText(language, "pairs.m_0134cdcac5756c3c")}</a></>}</section>}
       {page && online && !paused && row && <section className="crew-enterprise-profile"><h2>{row.fullName ?? t.withheld}</h2>{detail?.statusSpecification && <p role="status">{localizedText(language, "pairs.m_3582031b40650352")}</p>}{row.privacyScope === 'LegacyUnavailable' && <p role="status">{localizedText(language, "pairs.m_6f26031196b3a14e")}</p>}{row.privacyScope === 'Unavailable' && <p role="alert">{localizedText(language, "pairs.m_a942d354c0beca36")}</p>}<p role="status">{presence(row)}</p><p>{row.positionState === 'Stale' ? (localizedText(language, "pairs.m_2f10accb7ba7a7ee")) : null}</p><CrewEnterpriseProfileFields row={row} language={language}/><EnterpriseActions align="start" className="crew-enterprise-profile-actions" aria-label={localizedText(language, "pairs.m_612ca5a34407a7b9")}><Button variant="outline" disabled={!page.canWrite || !!editor || childDirty || !online} onClick={() => start(row)}>{t.edit}</Button>{page.canWrite && page.canWriteIdentity && detail?.personVersion && <><Button variant="outline" disabled={!!editor || childDirty || !online || row.privacyScope !== 'IdentityPermitted'} onClick={() => start(row, true)}>{t.editPerson}</Button>{row.privacyScope === 'LegacyUnavailable' && detail?.canConvertIdentity && <Button variant="outline" disabled={!!editor || childDirty || !online} onClick={() => start(row, true, true)}>{localizedText(language, "pairs.m_197ca3348ce60847")}</Button>}</>}</EnterpriseActions></section>}
       {editor && !paused && <form className="crew-enterprise-editor" onSubmit={e => { e.preventDefault(); void save(); }}><h2>{t.dirty}</h2><EnterpriseFormGrid disabled={saving || result === 'uncertain' || result === 'conflict'}>
@@ -232,6 +234,7 @@ export function CrewWorkspace({ vessel, assignment }: {
       {destination && <dialog ref={dialog} aria-label={t.dirty} onCancel={() => { navigationCommit.current = null; setDestination(null); }}><p>{t.dirty}</p><button autoFocus disabled={saving || result === 'uncertain'} onClick={() => { navigationCommit.current?.(); navigationCommit.current = null; window.location.assign(destination); }}>{t.reload}</button><button onClick={() => { navigationCommit.current = null; setDestination(null); }}>{t.cancel}</button></dialog>}
       {assignment && detail && user && !editor && !paused && online && error === 0 && <details className="crew-enterprise-disclosure"><summary>{localizedText(language, "pairs.m_ff2239b7ea2f296a")}</summary><div><CrewIdentityHistory key={`identity:${user.actorId}:${user.tenantId}:${user.csrfToken}:${vessel}:${assignment}`} vessel={vessel} assignment={assignment} language={language}/></div></details>}
       {assignment && detail && user && !editor && !paused && online && error === 0 && <details className="crew-enterprise-disclosure"><summary>{localizedText(language, "pairs.m_44f33c577ce6a69b")}</summary><div><CrewAssignmentHistory key={`assignment-history:${user.actorId}:${user.tenantId}:${user.csrfToken}:${vessel}:${assignment}`} vessel={vessel} assignment={assignment} language={language}/></div></details>}
+      {assignment && detail && user && !editor && !paused && online && error === 0 && <CrewCompetencePanel key={`competence:${user.actorId}:${user.tenantId}:${vessel}:${assignment}`} vessel={vessel} assignment={assignment} language={language}/>}
       {assignment && detail && user && !editor && !paused && online && error === 0 && <CrewOwningInputs key={`owning-inputs:${user.actorId}:${user.tenantId}:${user.csrfToken}:${vessel}:${assignment}`} vessel={vessel} assignment={assignment} language={language}/>}
       {assignment && detail && user && !editor && !paused && error === 0 && <CrewPersonalProfile key={`profile:${user.actorId}:${user.tenantId}:${user.csrfToken}:${vessel}:${assignment}`} vessel={vessel} assignment={assignment} language={language} csrf={user.csrfToken} onDirty={setProfileDirty}/>}
       {assignment && row && detail && user && !editor && !paused && error === 0 && <CrewPersonalFiles key={`files:${user.actorId}:${user.tenantId}:${user.csrfToken}:${vessel}:${assignment}`} vessel={vessel} assignment={assignment} person={row.personId} language={language} csrf={user.csrfToken} onDirty={setFileDirty}/>}
