@@ -46,9 +46,10 @@ public sealed partial class DirectoryWorkspaceTests
         // S7 WP-D adds 3 (DEV-104 pre-survey checklist create/update/human verification).
         // S7 WP-B adds 7 (DEV-083 propose/respond/withdraw, DEV-084 GO/NO_GO record, DEV-085 tow equipment save/update/verify).
         // S7 WP-A adds 5 crew commands: DEV-048 credential assertion, DEV-049 matrix/record/sign-off, DEV-050 Safe Manning decision.
-        Assert.Equal(190, observed.Count);
-        Assert.Equal(181, observed.Count(x => x.IsCritical));
-        Assert.Equal(191, S1SecurityContract.CriticalOperationIds.Count);
+        // S8 WP-D adds 10 (DEV-087 towage plan create/update/submit/decide/amend; DEV-088 briefing create/update/issue/amend/acknowledge).
+        Assert.Equal(200, observed.Count);
+        Assert.Equal(191, observed.Count(x => x.IsCritical));
+        Assert.Equal(201, S1SecurityContract.CriticalOperationIds.Count);
         Assert.Equal(9, observed.Count(x => !x.IsCritical));
         var extra = new RouteEndpoint(_ => Task.CompletedTask, RoutePatternFactory.Parse("/api/v1/unclassified-write"), 0,
             new EndpointMetadataCollection(new HttpMethodMetadata(["POST"]), new AuthorizeAttribute("DirectoryRead")), "unclassified");

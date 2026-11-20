@@ -58,6 +58,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
     private static AuditMetadata Project(EntityEntry entry, Guid? parentVessel)
     {
         if (RiskProjection(entry) is { } risk) return risk;
+        if (TowageProjection(entry) is { } towage) return towage;
         if(entry.Entity is Defect defect)
             return new(defect.VesselId,defect.Id,"Defect",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,defect.Revision,
                 Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(defect.Revision)),Field("Binding",null,"OwnerReference")));
@@ -685,6 +686,40 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                 Field("Revision", entry.State == EntityState.Added ? null : Number(m.Revision), Number(m.Revision)), Field("ContentJson", null, null, "RevisionReference"))),
             RiskCommandReceipt c => new(c.VesselId, c.ResourceId, "RiskCommandReceipt", null, c.Revision, Fields(
                 Field("Operation", null, Closed(c.Action, RiskOperations)), Field("Revision", null, Number(c.Revision)), Field("Binding", null, "CommittedResource"))),
+            _ => null
+        };
+    }
+    // S8 WP-D (DEV-087/088): closed state/decision/choice codes, revisions and duty only. Plan/briefing content,
+    // limits, channels, hazards, barriers, reasons and hashes are withheld; no actor identity is copied.
+    private static AuditMetadata? TowageProjection(EntityEntry entry)
+    {
+        long? Before(string property) => entry.State == EntityState.Added ? null : (long?)entry.Property(property).OriginalValue;
+        string? BeforeState(string property, string[] allowed) => entry.State == EntityState.Added ? null : Closed((string)entry.Property(property).OriginalValue!, allowed);
+        var plan = Poseidon.Domain.TowagePlanPolicy.States; var briefing = Poseidon.Domain.TowageBriefingPolicy.States;
+        return entry.Entity switch
+        {
+            TowagePlan p => new(p.VesselId, p.Id, "TowagePlan", Before("Revision"), p.Revision, Fields(
+                Field("Revision", Before("Revision") is { } r ? Number(r) : null, Number(p.Revision)),
+                Field("State", BeforeState("State", plan), Closed(p.State, plan)), Field("ContentJson", null, null, "RevisionReference"),
+                Field("Binding", null, "OwnerReference"))),
+            TowagePlanRevision r => new(r.VesselId, r.PlanId, "TowagePlanRevision", null, r.Revision, Fields(
+                Field("Revision", null, Number(r.Revision)), Field("State", null, Closed(r.State, plan)),
+                Field("ReasonCode", null, Closed(r.ReasonCode, TowageStorage.PlanReasons)), Field("ContentJson", null, null, "RevisionReference"))),
+            TowagePlanDecision d => new(d.VesselId, d.PlanId, "TowagePlanDecision", null, d.ResultRevision, Fields(
+                Field("Decision", null, Closed(d.Decision, Poseidon.Domain.TowagePlanPolicy.Decisions)), Field("Revision", null, Number(d.ResultRevision)),
+                Field("Duty", null, Closed(d.Duty, "TugMaster", "Master")), Field("Reason", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
+            TowageBriefing b => new(b.VesselId, b.Id, "TowageBriefing", Before("Revision"), b.Revision, Fields(
+                Field("Revision", Before("Revision") is { } r ? Number(r) : null, Number(b.Revision)),
+                Field("State", BeforeState("State", briefing), Closed(b.State, briefing)), Field("ContentJson", null, null, "RevisionReference"),
+                Field("Binding", null, "OwnerReference"))),
+            TowageBriefingRevision r => new(r.VesselId, r.BriefingId, "TowageBriefingRevision", null, r.Revision, Fields(
+                Field("Revision", null, Number(r.Revision)), Field("State", null, Closed(r.State, briefing)),
+                Field("ReasonCode", null, Closed(r.ReasonCode, TowageStorage.BriefingReasons)), Field("ContentJson", null, null, "RevisionReference"))),
+            TowageBriefingAcknowledgement k => new(k.VesselId, k.BriefingId, "TowageBriefingAcknowledgement", null, k.Revision, Fields(
+                Field("Choice", null, Closed(k.Choice, Poseidon.Domain.TowageBriefingPolicy.AckChoices)), Field("Revision", null, Number(k.Revision)),
+                Field("Reason", null, null, "ValuesWithheld"))),
+            TowageReceipt c => new(c.VesselId, c.ResourceId, "TowageReceipt", null, c.Revision, Fields(
+                Field("Action", null, Closed(c.Action, TowageStorage.ReceiptActions)), Field("Revision", null, Number(c.Revision)), Field("Binding", null, "CommittedResource"))),
             _ => null
         };
     }

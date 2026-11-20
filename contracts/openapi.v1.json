@@ -15409,6 +15409,483 @@
         "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
+    "/api/v1/towage-plans": {
+      "get": {
+        "tags": [
+          "TowageEndpoints"
+        ],
+        "operationId": "TowagePlanRead",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowagePlanView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TowagePlanCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TowagePlanCreateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowagePlanDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/towage-plans/{id}": {
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TowagePlanUpdate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TowagePlanUpdateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowagePlanDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/towage-plans/{id}/submit": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TowagePlanSubmit",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TowageSubmitCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowagePlanDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/towage-plans/{id}/decisions": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TowagePlanDecide",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TowagePlanDecisionCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowagePlanDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/towage-plans/{id}/amend": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TowagePlanAmend",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TowageAmendCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowagePlanDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/towage-risk-briefings": {
+      "get": {
+        "tags": [
+          "TowageEndpoints"
+        ],
+        "operationId": "TowageBriefingRead",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowageBriefingView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TowageBriefingCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TowageBriefingCreateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowageBriefingDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/towage-risk-briefings/{id}": {
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TowageBriefingUpdate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TowageBriefingUpdateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowageBriefingDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/towage-risk-briefings/{id}/issue": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TowageBriefingIssue",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TowageBriefingIssueCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowageBriefingDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/towage-risk-briefings/{id}/amend": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TowageBriefingAmend",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TowageAmendCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowageBriefingDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/towage-risk-briefings/{id}/acknowledgements": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TowageBriefingAcknowledge",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TowageBriefingAcknowledgeCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowageBriefingDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/hse/high-risk-work": {
+      "get": {
+        "tags": [
+          "HighRiskWorkEndpoints"
+        ],
+        "operationId": "HighRiskWorkList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HighRiskWorkPage"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
     "/api/v1/parameter-definitions": {
       "get": {
         "tags": [
@@ -28596,6 +29073,305 @@
           }
         }
       },
+      "HighRiskCompanyOption": {
+        "required": [
+          "id",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "HighRiskDimension": {
+        "required": [
+          "dimension",
+          "state",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "dimension": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "sourceId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
+      },
+      "HighRiskNextAction": {
+        "required": [
+          "kind",
+          "dimension",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "dimension": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "HighRiskOwnerDue": {
+        "required": [
+          "ownerRole",
+          "dueAt",
+          "sourceKind"
+        ],
+        "type": "object",
+        "properties": {
+          "ownerRole": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "dueAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "sourceKind": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "HighRiskVesselOption": {
+        "required": [
+          "id",
+          "code",
+          "name",
+          "kind",
+          "companyId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "companyId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "HighRiskWorkPage": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore",
+          "coverage",
+          "workTypes",
+          "vessels",
+          "fleets",
+          "evaluatedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HighRiskWorkRow"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "coverage": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "workTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "vessels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HighRiskVesselOption"
+            }
+          },
+          "fleets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HighRiskCompanyOption"
+            }
+          },
+          "evaluatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "scoring": {
+            "type": "string",
+            "default": "NoAggregateScore;EveryDimensionShown;CriticalFirst"
+          },
+          "sourceVersion": {
+            "type": "string",
+            "default": "18.01:row108;50.01-Rev3:p230,431,1072-1076;50.02:KaynakAlanlar:40-51"
+          }
+        }
+      },
+      "HighRiskWorkRow": {
+        "required": [
+          "workKind",
+          "workId",
+          "workRef",
+          "vesselId",
+          "vesselCode",
+          "vesselName",
+          "vesselKind",
+          "workType",
+          "plannedStart",
+          "responsibleRole",
+          "riskState",
+          "permitState",
+          "criticalBarrierState",
+          "crewReadiness",
+          "equipmentReadiness",
+          "nextAction",
+          "ownerDue",
+          "why",
+          "criticalBlockers",
+          "reviewItems",
+          "link"
+        ],
+        "type": "object",
+        "properties": {
+          "workKind": {
+            "type": "string"
+          },
+          "workId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "workRef": {
+            "type": "string"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselCode": {
+            "type": "string"
+          },
+          "vesselName": {
+            "type": "string"
+          },
+          "vesselKind": {
+            "type": "string"
+          },
+          "workType": {
+            "type": "string"
+          },
+          "plannedStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "responsibleRole": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "riskState": {
+            "type": "string"
+          },
+          "permitState": {
+            "type": "string"
+          },
+          "criticalBarrierState": {
+            "type": "string"
+          },
+          "crewReadiness": {
+            "type": "string"
+          },
+          "equipmentReadiness": {
+            "type": "string"
+          },
+          "nextAction": {
+            "$ref": "#/components/schemas/HighRiskNextAction"
+          },
+          "ownerDue": {
+            "$ref": "#/components/schemas/HighRiskOwnerDue"
+          },
+          "why": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HighRiskDimension"
+            }
+          },
+          "criticalBlockers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reviewItems": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "link": {
+            "type": "string"
+          }
+        }
+      },
       "HrActualEventCommand": {
         "required": [
           "kind",
@@ -40132,6 +40908,1115 @@
           }
         }
       },
+      "TowageAcknowledgementDto": {
+        "required": [
+          "actorId",
+          "revision",
+          "choice",
+          "reason",
+          "recordedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "choice": {
+            "type": "string"
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TowageAmendCommand": {
+        "required": [
+          "expectedVersion",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowageBriefingAcknowledgeCommand": {
+        "required": [
+          "revision",
+          "contentHash",
+          "choice"
+        ],
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "contentHash": {
+            "type": "string"
+          },
+          "choice": {
+            "type": "string"
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowageBriefingContent": {
+        "required": [
+          "weather",
+          "current",
+          "visibility",
+          "hazards",
+          "preventiveBarriers",
+          "mitigatingBarriers",
+          "stopWorkAuthority",
+          "stopWorkTriggers",
+          "emergencyArrangements",
+          "riskAssessmentId",
+          "participants"
+        ],
+        "type": "object",
+        "properties": {
+          "weather": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "current": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "visibility": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "hazards": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TowageItem"
+            }
+          },
+          "preventiveBarriers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TowageItem"
+            }
+          },
+          "mitigatingBarriers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TowageItem"
+            }
+          },
+          "stopWorkAuthority": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "stopWorkTriggers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TowageItem"
+            }
+          },
+          "emergencyArrangements": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "riskAssessmentId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "participants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TowageParticipant"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowageBriefingCreateCommand": {
+        "required": [
+          "id",
+          "jobId",
+          "content"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "content": {
+            "$ref": "#/components/schemas/TowageBriefingContent"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowageBriefingDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "jobId",
+          "revision",
+          "version",
+          "state",
+          "content",
+          "hash",
+          "planRevision",
+          "riskRevision",
+          "provenance",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "state": {
+            "type": "string"
+          },
+          "content": {
+            "$ref": "#/components/schemas/TowageBriefingContent"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "planRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "riskRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TowageBriefingIssueCommand": {
+        "required": [
+          "expectedVersion",
+          "contentHash",
+          "authorityId"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "contentHash": {
+            "type": "string"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowageBriefingUpdateCommand": {
+        "required": [
+          "expectedVersion",
+          "content"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "content": {
+            "$ref": "#/components/schemas/TowageBriefingContent"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowageBriefingView": {
+        "required": [
+          "vesselId",
+          "jobId",
+          "briefing",
+          "blockers",
+          "acknowledgementState",
+          "acknowledgements",
+          "risk",
+          "planState",
+          "planRevision",
+          "readinessChecks",
+          "revisions",
+          "authorities",
+          "canEdit",
+          "canIssue",
+          "canAmend",
+          "canAcknowledge",
+          "roles"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "briefing": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TowageBriefingDto"
+              }
+            ]
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "acknowledgementState": {
+            "type": "string"
+          },
+          "acknowledgements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TowageAcknowledgementDto"
+            }
+          },
+          "risk": {
+            "$ref": "#/components/schemas/TowageRiskStateDto"
+          },
+          "planState": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "planRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "readinessChecks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugReadinessCheck"
+            }
+          },
+          "revisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TowageRevisionDto"
+            }
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugAuthorityDto"
+            }
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canIssue": {
+            "type": "boolean"
+          },
+          "canAmend": {
+            "type": "boolean"
+          },
+          "canAcknowledge": {
+            "type": "boolean"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "readinessEffect": {
+            "type": "string",
+            "default": "IncompleteBriefingIsFailAndBlocksReady"
+          },
+          "sourceVersion": {
+            "type": "string",
+            "default": "18.01:row89;10.01:p101-102;08.02:p120-121"
+          }
+        }
+      },
+      "TowageCommunication": {
+        "required": [
+          "primaryChannel",
+          "standbyChannel",
+          "workingLanguage",
+          "lostCommunicationProcedure"
+        ],
+        "type": "object",
+        "properties": {
+          "primaryChannel": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "standbyChannel": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "workingLanguage": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "lostCommunicationProcedure": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowageContingency": {
+        "required": [
+          "id",
+          "scenario",
+          "action"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scenario": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowageDecisionDto": {
+        "required": [
+          "id",
+          "revision",
+          "resultRevision",
+          "decision",
+          "duty",
+          "tugId",
+          "actorId",
+          "reason",
+          "decidedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "resultRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "duty": {
+            "type": "string"
+          },
+          "tugId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "decidedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TowageEmergencyRelease": {
+        "required": [
+          "procedure",
+          "orderedBy"
+        ],
+        "type": "object",
+        "properties": {
+          "procedure": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "orderedBy": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowageItem": {
+        "required": [
+          "id",
+          "description"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowageLimit": {
+        "required": [
+          "parameter",
+          "value",
+          "sourceRef"
+        ],
+        "type": "object",
+        "properties": {
+          "parameter": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sourceRef": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowageParticipant": {
+        "required": [
+          "actorId",
+          "role",
+          "tugId"
+        ],
+        "type": "object",
+        "properties": {
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "role": {
+            "type": "string"
+          },
+          "tugId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowagePlanContent": {
+        "required": [
+          "tugs",
+          "informationExchange",
+          "limits",
+          "communication",
+          "emergencyRelease",
+          "contingencies",
+          "snapBack"
+        ],
+        "type": "object",
+        "properties": {
+          "tugs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TowageTugRole"
+            }
+          },
+          "informationExchange": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "limits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TowageLimit"
+            }
+          },
+          "communication": {
+            "$ref": "#/components/schemas/TowageCommunication"
+          },
+          "emergencyRelease": {
+            "$ref": "#/components/schemas/TowageEmergencyRelease"
+          },
+          "contingencies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TowageContingency"
+            }
+          },
+          "snapBack": {
+            "$ref": "#/components/schemas/TowageSnapBack"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowagePlanCreateCommand": {
+        "required": [
+          "id",
+          "jobId",
+          "content"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "content": {
+            "$ref": "#/components/schemas/TowagePlanContent"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowagePlanDecisionCommand": {
+        "required": [
+          "expectedVersion",
+          "contentHash",
+          "decision",
+          "reason",
+          "authorityId"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "contentHash": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowagePlanDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "jobId",
+          "jobRevision",
+          "revision",
+          "version",
+          "state",
+          "content",
+          "hash",
+          "approvedRevision",
+          "submittedBy",
+          "provenance",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "state": {
+            "type": "string"
+          },
+          "content": {
+            "$ref": "#/components/schemas/TowagePlanContent"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "approvedRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "submittedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TowagePlanUpdateCommand": {
+        "required": [
+          "expectedVersion",
+          "content"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "content": {
+            "$ref": "#/components/schemas/TowagePlanContent"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowagePlanView": {
+        "required": [
+          "vesselId",
+          "jobId",
+          "jobRevision",
+          "requestState",
+          "plan",
+          "blockers",
+          "assignedTugs",
+          "decisions",
+          "revisions",
+          "authorities",
+          "canEdit",
+          "canSubmit",
+          "canDecide",
+          "canAmend",
+          "positions",
+          "methods",
+          "lineSources",
+          "limitUnits",
+          "scenarios"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "requestState": {
+            "type": "string"
+          },
+          "plan": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TowagePlanDto"
+              }
+            ]
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "assignedTugs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "decisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TowageDecisionDto"
+            }
+          },
+          "revisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TowageRevisionDto"
+            }
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugAuthorityDto"
+            }
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canSubmit": {
+            "type": "boolean"
+          },
+          "canDecide": {
+            "type": "boolean"
+          },
+          "canAmend": {
+            "type": "boolean"
+          },
+          "positions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "methods": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "lineSources": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "limitUnits": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "scenarios": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "approvalAuthority": {
+            "type": "string",
+            "default": "MasterOrTugMasterHumanRecord;AuthorNeverApprover;NotAGoDecision"
+          },
+          "sourceVersion": {
+            "type": "string",
+            "default": "18.01:row88;10.01:p98-99;08.02:p117-118;harbour-towage-codes"
+          }
+        }
+      },
+      "TowageRevisionDto": {
+        "required": [
+          "revision",
+          "state",
+          "reasonCode",
+          "hash",
+          "actorId",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TowageRiskStateDto": {
+        "required": [
+          "assessmentId",
+          "state",
+          "reason",
+          "revision",
+          "approvedRevision",
+          "acknowledgementState"
+        ],
+        "type": "object",
+        "properties": {
+          "assessmentId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "revision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "approvedRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "acknowledgementState": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "TowageSnapBack": {
+        "required": [
+          "zonesMarked",
+          "controls"
+        ],
+        "type": "object",
+        "properties": {
+          "zonesMarked": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "controls": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TowageItem"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowageSubmitCommand": {
+        "required": [
+          "expectedVersion",
+          "contentHash"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "contentHash": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowageTugRole": {
+        "required": [
+          "tugId",
+          "position",
+          "method",
+          "coordinating",
+          "lineSource",
+          "connectionPoint",
+          "towlineItemId",
+          "emergencyReleaseItemId"
+        ],
+        "type": "object",
+        "properties": {
+          "tugId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "position": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "method": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "coordinating": {
+            "type": "boolean"
+          },
+          "lineSource": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "connectionPoint": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "towlineItemId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "emergencyReleaseItemId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
       "TowEquipmentAssessment": {
         "required": [
           "tugId",
@@ -43425,6 +45310,12 @@
     },
     {
       "name": "TugReadinessEndpoints"
+    },
+    {
+      "name": "TowageEndpoints"
+    },
+    {
+      "name": "HighRiskWorkEndpoints"
     },
     {
       "name": "ParameterEndpoints"

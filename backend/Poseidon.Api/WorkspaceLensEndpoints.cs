@@ -16,13 +16,13 @@ public static class WorkspaceLensPolicy
         var items = WorkspaceEndpoints.Destinations(actor)
             .Where(x => x.Key is not ("fuel-bunker-log" or "port-activity-sof" or "operational-downtime") || kind != VesselKind.Tug)
             .Where(x => x.Key is not ("noon-report" or "deck-daily-log" or "engine-daily-log") || kind != VesselKind.Tug || actor.Permissions.Contains("mode.cross"))
-            .Where(x => !x.Key.StartsWith("tug-", StringComparison.Ordinal) || kind != VesselKind.Ship)
+            .Where(x => !(x.Key.StartsWith("tug-", StringComparison.Ordinal) || x.Key.StartsWith("towage-", StringComparison.Ordinal)) || kind != VesselKind.Ship)
             .Where(x => x.Key != "tug-job-intake" || actor.HasWriteAttribution && actor.Permissions.Contains("tug.write") &&
                 (actor.TenantWideManage || vessel != null && actor.VesselGrants.Any(g => g.VesselId == vessel && g.CanEdit)))
             .Select(x => new WorkspaceLensItem(x.Key,
-                x.Key.StartsWith("tug-", StringComparison.Ordinal) && vessel != null ? x.Href + "?vessel=" + vessel :
+                (x.Key.StartsWith("tug-", StringComparison.Ordinal) || x.Key.StartsWith("towage-", StringComparison.Ordinal)) && vessel != null ? x.Href + "?vessel=" + vessel :
                 x.Key is "audit-ready" or "operational-downtime" or "risk-assessment" or "work-order-center" or "defects" or "today" or "noon-report" or "deck-daily-log" or "engine-daily-log" or "fuel-bunker-log" or "port-activity-sof" or "certificate-command-center" or "renewal-workflow" or "pre-survey-checklist" && vessel != null ? x.Href + "/" + vessel : x.Href,
-                x.Key is "sources" or "requirements" or "audit" or "audit-ready" or "certificate-command-center" or "renewal-workflow" or "risk-template-library" or "pre-survey-checklist" or "survey-planner" ? "review" : "daily")).ToList();
+                x.Key is "sources" or "requirements" or "audit" or "audit-ready" or "certificate-command-center" or "renewal-workflow" or "risk-template-library" or "high-risk-work" or "pre-survey-checklist" or "survey-planner" ? "review" : "daily")).ToList();
         if (!actor.CanRead || vessel == null) return items.ToArray();
         if (actor.Permissions.Contains("crew.read")) items.Add(new("crew", $"/app/crew-roster/{vessel}", "daily"));
         // S7 WP-A screens: server menu authorization mirrors each endpoint's read permission.
@@ -54,7 +54,7 @@ public static class WorkspaceLensPolicy
         var rows = catalog.GetSection("Mappings").GetChildren().Take(4097).ToArray();
         if (rows.Length > 4096) return Empty("Unavailable");
         var mappings = new Dictionary<Guid, (string[] Keys, string[] Modes)>();
-        string[] known = ["operational-downtime", "risk-assessment", "risk-template-library", "work-order-center", "defects", "today", "fleet", "companies", "crew", "crew-certificates", "crew-competence", "safe-manning", "equipment", "maintenance", "import", "audit", "audit-ready", "sources", "requirements", "tug-command", "tug-job-board", "tug-job-intake", "tug-assignment", "tug-readiness", "tug-equipment-readiness", "tug-crew-readiness", "noon-report", "deck-daily-log", "engine-daily-log", "certificate-command-center", "renewal-workflow", "pre-survey-checklist", "survey-planner", "fuel-bunker-log", "port-activity-sof"];
+        string[] known = ["operational-downtime", "risk-assessment", "risk-template-library", "high-risk-work", "towage-plan", "towage-risk-briefing", "work-order-center", "defects", "today", "fleet", "companies", "crew", "crew-certificates", "crew-competence", "safe-manning", "equipment", "maintenance", "import", "audit", "audit-ready", "sources", "requirements", "tug-command", "tug-job-board", "tug-job-intake", "tug-assignment", "tug-readiness", "tug-equipment-readiness", "tug-crew-readiness", "noon-report", "deck-daily-log", "engine-daily-log", "certificate-command-center", "renewal-workflow", "pre-survey-checklist", "survey-planner", "fuel-bunker-log", "port-activity-sof"];
         foreach (var row in rows) {
             if (!Guid.TryParse(row["TenantId"], out var tenant) || tenant != actor.TenantId) continue;
             var keys = row.GetSection("Keys").GetChildren().Select(x => x.Value ?? "").ToArray();

@@ -27,8 +27,9 @@ public static class TugReadinessEngine
     public static readonly string[] Results = [Pass, Fail, Unknown, Condition];
     public const string DecisionAuthority = "MasterOrTugMasterHumanDecisionRequired;EngineNeverIssuesGo";
     // Every required category must be observed; a missing category is UNKNOWN, never N/A.
+    // "briefing" (S8 DEV-088): towage risk & briefing issued and acknowledged by every participant.
     public static readonly string[] Categories = ["crew", "crew_competence", "equipment", "tow_equipment", "pms", "certificate",
-        "communication", "weather", "bollard_pull_margin", "assignment"];
+        "communication", "weather", "bollard_pull_margin", "assignment", "briefing"];
     public const int ReasonMax = 2000;
 
     public static TugReadinessOutcome Evaluate(IReadOnlyCollection<TugReadinessCheck> input)
