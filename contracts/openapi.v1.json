@@ -2253,6 +2253,27 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/tug-operation-history": {
+      "get": {
+        "tags": [
+          "TugOperationHistoryEndpoints"
+        ],
+        "operationId": "TugOperationHistoryList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugHistoryPageDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
     "/api/v1/memberships/current": {
       "get": {
         "tags": [
@@ -16511,6 +16532,180 @@
         "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
+    "/api/v1/certificate-renewal-offline/{renewal}": {
+      "get": {
+        "tags": [
+          "CertificateRenewalOfflineEndpoints"
+        ],
+        "operationId": "CertificateRenewalOfflineInventory",
+        "parameters": [
+          {
+            "name": "renewal",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "CertificateRenewalOfflineEndpoints"
+        ],
+        "operationId": "CertificateRenewalOfflineEnroll",
+        "parameters": [
+          {
+            "name": "renewal",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CertificateRenewalOfflineContextDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-OFFLINE-1"
+      }
+    },
+    "/api/v1/certificate-renewal-offline/{renewal}/{enrollment}/{action}": {
+      "post": {
+        "tags": [
+          "CertificateRenewalOfflineEndpoints"
+        ],
+        "operationId": "CertificateRenewalOfflineAction",
+        "parameters": [
+          {
+            "name": "renewal",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "enrollment",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "action",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-OFFLINE-1"
+      }
+    },
+    "/api/v1/certificate-renewal-offline/{renewal}/{enrollment}/history": {
+      "get": {
+        "tags": [
+          "CertificateRenewalOfflineEndpoints"
+        ],
+        "operationId": "CertificateRenewalOfflineHistory",
+        "parameters": [
+          {
+            "name": "renewal",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "enrollment",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/certificate-renewal-offline/{renewal}/{enrollment}/conflicts/{command}": {
+      "get": {
+        "tags": [
+          "CertificateRenewalOfflineEndpoints"
+        ],
+        "operationId": "CertificateRenewalOfflineConflict",
+        "parameters": [
+          {
+            "name": "renewal",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "enrollment",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "command",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
     "/api/v1/defects/{id}/lifecycle": {
       "get": {
         "tags": [
@@ -20145,6 +20340,115 @@
           }
         },
         "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/tug-operations-offline": {
+      "get": {
+        "tags": [
+          "TugOperationsOfflineEndpoints"
+        ],
+        "operationId": "TugOperationsOfflineCapability",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugOperationsOfflineCapabilityDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/tug-operations-offline/snapshots": {
+      "post": {
+        "tags": [
+          "TugOperationsOfflineEndpoints"
+        ],
+        "operationId": "TugOperationsOfflineSnapshot",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugOperationsSnapshotDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-OFFLINE-1"
+      }
+    },
+    "/api/v1/tug-operations-offline/replay": {
+      "post": {
+        "tags": [
+          "TugOperationsOfflineEndpoints"
+        ],
+        "operationId": "TugOperationsOfflineReplay",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugOperationsOfflineResult"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-OFFLINE-1"
+      }
+    },
+    "/api/v1/tug-operations-offline/outcomes": {
+      "get": {
+        "tags": [
+          "TugOperationsOfflineEndpoints"
+        ],
+        "operationId": "TugOperationsOfflineOutcomes",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/tug-operations-offline/conflicts/{command}": {
+      "get": {
+        "tags": [
+          "TugOperationsOfflineEndpoints"
+        ],
+        "operationId": "TugOperationsOfflineConflict",
+        "parameters": [
+          {
+            "name": "command",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugOperationsConflictDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
     "/api/v1/parameter-definitions": {
@@ -25788,6 +26092,145 @@
             "items": {
               "type": "string"
             }
+          }
+        }
+      },
+      "CertificateRenewalOfflineContextDto": {
+        "required": [
+          "id",
+          "tenantId",
+          "actorId",
+          "vesselId",
+          "certificateId",
+          "renewalId",
+          "deviceId",
+          "keyId",
+          "challenge",
+          "policyVersion",
+          "policyDigest",
+          "authorityDigest",
+          "sourceVersion",
+          "operation",
+          "allowedParts",
+          "baseVersion",
+          "baseRevision",
+          "baseContent",
+          "state",
+          "ownerOptions",
+          "serverTime",
+          "expiresAt",
+          "retainUntil",
+          "maxRecords",
+          "maxEncryptedBytes",
+          "maxDeviceRecords",
+          "maxDeviceEncryptedBytes"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tenantId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "certificateId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "renewalId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "deviceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "keyId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "challenge": {
+            "type": "string"
+          },
+          "policyVersion": {
+            "type": "string"
+          },
+          "policyDigest": {
+            "type": "string"
+          },
+          "authorityDigest": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string"
+          },
+          "allowedParts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "baseVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "baseRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "baseContent": {
+            "$ref": "#/components/schemas/CertificateRenewalContent"
+          },
+          "state": {
+            "type": "string"
+          },
+          "ownerOptions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "serverTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "retainUntil": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "maxRecords": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxEncryptedBytes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxDeviceRecords": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxDeviceEncryptedBytes": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -56506,6 +56949,261 @@
           }
         }
       },
+      "TugHistoryDailyLogDto": {
+        "required": [
+          "id",
+          "tugId",
+          "logDate",
+          "watch",
+          "state",
+          "linkedToExecution"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tugId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "logDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "watch": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "linkedToExecution": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TugHistoryExecutionDto": {
+        "required": [
+          "id",
+          "tugId",
+          "state",
+          "verificationState",
+          "startedAt",
+          "endedAt",
+          "durationMinutes",
+          "startedBy",
+          "endedBy",
+          "verifiedBy",
+          "sequence",
+          "evidenceEvents",
+          "lastEventHash"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tugId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "verificationState": {
+            "type": "string"
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "durationMinutes": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "startedBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "endedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "verifiedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "evidenceEvents": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastEventHash": {
+            "type": "string"
+          }
+        }
+      },
+      "TugHistoryItemDto": {
+        "required": [
+          "jobId",
+          "vesselId",
+          "jobNumber",
+          "jobStatus",
+          "jobType",
+          "assistedVessel",
+          "operationArea",
+          "at",
+          "cancelledAt",
+          "outcome",
+          "evidence",
+          "planState",
+          "briefingState",
+          "executions",
+          "dailyLogs",
+          "safetyEvents"
+        ],
+        "type": "object",
+        "properties": {
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobNumber": {
+            "type": "string"
+          },
+          "jobStatus": {
+            "type": "string"
+          },
+          "jobType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "assistedVessel": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "operationArea": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "cancelledAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "string"
+          },
+          "planState": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "briefingState": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "executions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugHistoryExecutionDto"
+            }
+          },
+          "dailyLogs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugHistoryDailyLogDto"
+            }
+          },
+          "safetyEvents": {
+            "type": "string"
+          }
+        }
+      },
+      "TugHistoryPageDto": {
+        "required": [
+          "items",
+          "nextCursor",
+          "outcomes",
+          "readAt"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugHistoryItemDto"
+            }
+          },
+          "nextCursor": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "outcomes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "readAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "deletion": {
+            "type": "string",
+            "default": "NoSilentDeletion;CancelledJobsRemainVisible"
+          },
+          "sourceVersion": {
+            "type": "string",
+            "default": "18.01:row92;06.01:p236;13.02:p1131;15.01:p1609"
+          }
+        }
+      },
       "TugLifecycleCommand": {
         "required": [
           "expectedVersion"
@@ -56684,6 +57382,334 @@
               "null",
               "string"
             ],
+            "format": "date-time"
+          }
+        }
+      },
+      "TugOperationsConflictDto": {
+        "required": [
+          "commandId",
+          "operation",
+          "resourceId",
+          "conflictFields",
+          "choices",
+          "resolved",
+          "captured",
+          "atConflict",
+          "current"
+        ],
+        "type": "object",
+        "properties": {
+          "commandId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "operation": {
+            "type": "string"
+          },
+          "resourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "conflictFields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "choices": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "resolved": {
+            "type": "boolean"
+          },
+          "captured": {
+            "$ref": "#/components/schemas/JsonElement"
+          },
+          "atConflict": {
+            "$ref": "#/components/schemas/TugOperationsServerState"
+          },
+          "current": {
+            "$ref": "#/components/schemas/TugOperationsServerState"
+          }
+        }
+      },
+      "TugOperationsOfflineCapabilityDto": {
+        "required": [
+          "vesselId",
+          "state",
+          "operations",
+          "onlineOnly",
+          "snapshots"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "operations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "onlineOnly": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "snapshots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugOperationsSnapshotLeaseDto"
+            }
+          }
+        }
+      },
+      "TugOperationsOfflineResult": {
+        "required": [
+          "commandId",
+          "operation",
+          "result",
+          "resourceId",
+          "baseVersion",
+          "serverVersion",
+          "conflictFields",
+          "choices",
+          "parentCommandId",
+          "receivedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "commandId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "operation": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          },
+          "resourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "baseVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "serverVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "conflictFields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "choices": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "parentCommandId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "receivedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TugOperationsServerState": {
+        "required": [
+          "revision",
+          "hash",
+          "state",
+          "sequence",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "hash": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "state": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sequence": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
+      "TugOperationsSnapshotDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "jobId",
+          "policyVersion",
+          "issuedAt",
+          "expiresAt",
+          "snapshotHash",
+          "job",
+          "briefing",
+          "executions",
+          "dailyLogs",
+          "writableTugs",
+          "operations",
+          "onlineOnly",
+          "watches"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "policyVersion": {
+            "type": "string"
+          },
+          "issuedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "snapshotHash": {
+            "type": "string"
+          },
+          "job": {
+            "$ref": "#/components/schemas/TugSnapshotJob"
+          },
+          "briefing": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TugSnapshotBriefing"
+              }
+            ]
+          },
+          "executions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugSnapshotExecution"
+            }
+          },
+          "dailyLogs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugSnapshotDailyLog"
+            }
+          },
+          "writableTugs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "operations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "onlineOnly": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "watches": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "classification": {
+            "type": "string",
+            "default": "ReadOnlyOperationalSnapshot;NotAReleaseOrGoDecision"
+          },
+          "sourceVersion": {
+            "type": "string",
+            "default": "18.01:row93;63.03:mobile-task-center;06.01:p233-236;DEV-033/034/035"
+          }
+        }
+      },
+      "TugOperationsSnapshotLeaseDto": {
+        "required": [
+          "id",
+          "jobId",
+          "issuedAt",
+          "expiresAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "issuedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
             "format": "date-time"
           }
         }
@@ -57562,6 +58588,194 @@
           }
         },
         "additionalProperties": false
+      },
+      "TugSnapshotBriefing": {
+        "required": [
+          "id",
+          "revision",
+          "state",
+          "contentHash",
+          "participant",
+          "acknowledged",
+          "acknowledgementState"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "contentHash": {
+            "type": "string"
+          },
+          "participant": {
+            "type": "boolean"
+          },
+          "acknowledged": {
+            "type": "boolean"
+          },
+          "acknowledgementState": {
+            "type": "string"
+          }
+        }
+      },
+      "TugSnapshotDailyLog": {
+        "required": [
+          "id",
+          "tugId",
+          "logDate",
+          "watch",
+          "state",
+          "version",
+          "revision",
+          "content"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tugId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "logDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "watch": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "content": {
+            "$ref": "#/components/schemas/TugDailyLogContent"
+          }
+        }
+      },
+      "TugSnapshotExecution": {
+        "required": [
+          "id",
+          "tugId",
+          "state",
+          "sequence",
+          "hash",
+          "canRecord",
+          "towlineConnected",
+          "recordableKinds"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tugId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "canRecord": {
+            "type": "boolean"
+          },
+          "towlineConnected": {
+            "type": "boolean"
+          },
+          "recordableKinds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "TugSnapshotJob": {
+        "required": [
+          "id",
+          "jobNumber",
+          "status",
+          "revision",
+          "assistedVessel",
+          "jobType",
+          "operationArea",
+          "requestedStart",
+          "requestedEnd"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobNumber": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "assistedVessel": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "jobType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "operationArea": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "requestedStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "requestedEnd": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
       },
       "VesselCertificateContent": {
         "required": [
@@ -60140,6 +61354,9 @@
       "name": "DataTrustEndpoints"
     },
     {
+      "name": "TugOperationHistoryEndpoints"
+    },
+    {
       "name": "MembershipEndpoints"
     },
     {
@@ -60224,6 +61441,9 @@
       "name": "IndustryAssuranceEndpoints"
     },
     {
+      "name": "CertificateRenewalOfflineEndpoints"
+    },
+    {
       "name": "DepartureReadinessEndpoints"
     },
     {
@@ -60258,6 +61478,9 @@
     },
     {
       "name": "DrydockEndpoints"
+    },
+    {
+      "name": "TugOperationsOfflineEndpoints"
     },
     {
       "name": "ParameterEndpoints"
