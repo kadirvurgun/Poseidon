@@ -291,6 +291,8 @@ public static class TugOperationsOfflineEndpoints
             return await Fail(h, Command, 400, "invalid_offline_command", c.CommandId == Guid.Empty ? null : c.CommandId);
         var keys = h.Request.Headers["Idempotency-Key"];
         if (keys.Count != 1 || keys[0] != c.CommandId.ToString("D")) return await Fail(h, Command, 400, "invalid_idempotency_key", c.CommandId);
+        // MaterialConflict resolution is a human decision only (DEV-092); AI/service/system actors never resolve, even on replay.
+        if (c.ParentCommandId != null && !CertificateRenewalEndpoints.Human(h, a)) return await Fail(h, Command, 403, "human_authority_required", c.CommandId);
         var p = Policy(h); if (p == null) return await Fail(h, Command, 403, "offline_policy_denied", c.CommandId);
         var vessel = q["vessel"]; var digest = Hex(bytes); var payload = PayloadDigest(c); var now = Now(h);
         await TugReadinessHttp.Observe(h, Command, "Attempted", c.CommandId);
@@ -404,7 +406,7 @@ public static class TugOperationsOfflineEndpoints
         var fields = o.ConflictFields.Split(',', StringSplitOptions.RemoveEmptyEntries);
         await TugReadinessHttp.Observe(h, Read, "Success", o.ResourceId);
         return Results.Json(new TugOperationsConflictDto(o.CommandId, o.Operation, o.ResourceId, fields,
-            resolved ? [] : TugOperationsOfflineRules.Choices(o.Operation, fields, current.CurrentState, capture.ExecutionEvent?.Event.Kind ?? ""), resolved,
+            resolved || !CertificateRenewalEndpoints.Human(h, a) ? [] : TugOperationsOfflineRules.Choices(o.Operation, fields, current.CurrentState, capture.ExecutionEvent?.Event.Kind ?? ""), resolved,
             context.Captured, context.Server, current.Server), Json);
     }
 }

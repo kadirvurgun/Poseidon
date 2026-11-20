@@ -96,6 +96,23 @@ public sealed partial class DirectoryWorkspaceTests
         await AssertCode(await OfflineReplay(c, Entry(snapLog.Version, "FICTIONAL foreign")), HttpStatusCode.NotFound, "offline_snapshot_unavailable");
         Assert.Equal(HttpStatusCode.NotFound, (await c.GetAsync($"/api/v1/tug-operations-offline/conflicts/{stale.CommandId}?vessel={Tug.Id}", Ct)).StatusCode);
 
+        // Non-human memberships of the capturing actor (AI, service, system) never resolve and are offered no choices.
+        var attempt = stale with { CommandId = Guid.NewGuid(), ParentCommandId = stale.CommandId, Choice = "useCaptured", Reason = "INPUT_CORRECTED" };
+        foreach (var kind in new[] { "AI", "Service", "System" }) {
+            FieldActor(host.Services, author);
+            var fed = host.Services.GetRequiredService<FederationSettings>(); fed.Memberships[0] = fed.Memberships[0] with { ActorKind = kind }; await Token(c);
+            await AssertCode(await OfflineReplay(c, attempt), HttpStatusCode.Forbidden, "human_authority_required");
+            await AssertCode(await OfflineReplay(c, attempt with { CommandId = Guid.NewGuid(), Choice = "keepServer", Reason = "CURRENT_SERVER_RETAINED" }),
+                HttpStatusCode.Forbidden, "human_authority_required");
+            var blind = (await c.GetFromJsonAsync<TugOperationsConflictDto>($"/api/v1/tug-operations-offline/conflicts/{stale.CommandId}?vessel={Tug.Id}", Ct))!;
+            Assert.False(blind.Resolved); Assert.Empty(blind.Choices);
+        }
+        Assert.Equal("FICTIONAL offline summary one", (await FieldGet<TugDailyLogView>(c, $"tug-daily-logs/{created.Log.Id}?vessel={Tug.Id}")).Log.Content.DailySummary);
+        await using (var none = Db()) {
+            Assert.False(await none.TugOperationOfflineOutcomes.AnyAsync(o => o.ParentCommandId == stale.CommandId || o.CommandId == attempt.CommandId, Ct));
+            Assert.Equal(2, await none.TugDailyLogRevisions.CountAsync(r => r.LogId == created.Log.Id, Ct));
+        }
+
         // Human resolution: same captured payload with a reason; applied on the CURRENT base exactly once.
         FieldActor(host.Services, author); await Token(c);
         await AssertCode(await OfflineReplay(c, stale with { CommandId = Guid.NewGuid(), DailyEntry = stale.DailyEntry! with { Content = Content("FICTIONAL edited") },
