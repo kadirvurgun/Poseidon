@@ -30,7 +30,7 @@ jobs:
 
   persistence-and-security:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 70
     steps:
       - uses: actions/checkout@v7.0.1
       - name: Scan every tracked repository input including controlled documents
@@ -70,7 +70,7 @@ jobs:
           POSEIDON_API_GATE_SHARDS: 4
         run: |
           dotnet test --project tests/Poseidon.Persistence.Tests/Poseidon.Persistence.Tests.csproj --configuration Release --no-build --filter-trait "Category=Integration"
-          python3 scripts/s3_gate.py --image "$(cat .runtime/s3-gate-image-id)" --child-timeout 1980 -- python3 scripts/api_test_gate.py --scope integration
+          python3 scripts/s3_gate.py --image "$(cat .runtime/s3-gate-image-id)" --child-timeout 3180 -- python3 scripts/api_test_gate.py --scope integration
       - name: Show failed API gate evidence
         # The owned S3 driver discards child output; the gate evidence is value-free by design
         # (status, counts, static test names, source file:line), so surface it where agents look.

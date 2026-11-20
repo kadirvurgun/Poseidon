@@ -105,7 +105,7 @@ class ApiTestGateTests(unittest.TestCase):
 
     def test_invalid_scope_and_deadline_never_launch_a_child(self):
         with patch.object(gate, 'capture') as run:
-            for scope, timeout in (('foreign', 10), ('all', 0), ('all', True), ('all', 1801)):
+            for scope, timeout in (('foreign', 10), ('all', 0), ('all', True), ('all', 3001)):
                 with self.assertRaises(ValueError): gate.run(scope, timeout=timeout)
             run.assert_not_called()
 
@@ -168,7 +168,7 @@ class ApiTestGateTests(unittest.TestCase):
         workflow = (gate.ROOT / '.github/workflows/backend-foundation.yml').read_text(encoding='utf-8')
         self.assertIn('docker build --iidfile .runtime/s3-gate-image-id --file infra/s3-gate/Dockerfile infra/s3-gate', workflow)
         self.assertIn('python3 scripts/api_test_gate.py --scope unit', workflow)
-        self.assertIn('python3 scripts/s3_gate.py --image "$(cat .runtime/s3-gate-image-id)" --child-timeout 1980 -- python3 scripts/api_test_gate.py --scope integration', workflow)
+        self.assertIn('python3 scripts/s3_gate.py --image "$(cat .runtime/s3-gate-image-id)" --child-timeout 3180 -- python3 scripts/api_test_gate.py --scope integration', workflow)
         self.assertLess(workflow.index('Build pinned source S3 provider'), workflow.index('name: PostgreSQL integration tests'))
 
     def test_source_provider_build_has_byte_and_builder_pins_without_persisted_credentials(self):
@@ -200,7 +200,7 @@ class ApiShardGateTests(unittest.TestCase):
         self.coverage.write(self.coverage.report())
         executions = []
         def capture(args, root, timeout, env=None):
-            self.assertGreater(timeout, 0); self.assertLessEqual(timeout, 1800)
+            self.assertGreater(timeout, 0); self.assertLessEqual(timeout, 3000)
             if '--filter-method' not in args:
                 return subprocess.CompletedProcess([], 0, self.listed(self.full))
             methods = args[args.index('--filter-method')+1:]
@@ -348,7 +348,7 @@ class ApiShardGateTests(unittest.TestCase):
 
     def test_single_global_deadline_includes_discovery_and_setup(self):
         with patch.object(gate, 'root_tool', return_value='dotnet'), \
-                patch.object(gate.time, 'monotonic', side_effect=[0, 0, 1801, 1801]), \
+                patch.object(gate.time, 'monotonic', side_effect=[0, 0, 3001, 3001]), \
                 patch.object(gate.critical_write_coverage, 'prepare', return_value=self.coverage.run), \
                 patch.object(gate, 'capture', return_value=subprocess.CompletedProcess([], 0, self.listed(self.full))) as capture:
             code, report = gate.run('integration')

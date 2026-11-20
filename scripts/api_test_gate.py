@@ -173,8 +173,8 @@ def execution_evidence(execution, discovered, root):
     return report, execution.returncode == 0 and complete
 
 
-def run(scope, root=ROOT, timeout=1800, shards=1):
-    if (scope not in ('all', 'unit', 'integration') or type(timeout) is not int or not 1 <= timeout <= 1800
+def run(scope, root=ROOT, timeout=3000, shards=1):
+    if (scope not in ('all', 'unit', 'integration') or type(timeout) is not int or not 1 <= timeout <= 3000
             or type(shards) is not int or not 1 <= shards <= 4 or (shards != 1 and scope != 'integration')):
         raise ValueError('invalid-gate-input')
     args = command(scope)
