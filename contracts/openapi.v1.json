@@ -15725,6 +15725,61 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/departure-readiness": {
+      "get": {
+        "tags": [
+          "DepartureReadinessEndpoints"
+        ],
+        "operationId": "DepartureReadinessRead",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DepartureReadinessView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/departure-signoff": {
+      "post": {
+        "tags": [
+          "DepartureReadinessEndpoints"
+        ],
+        "operationId": "DepartureSignoffRecord",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DepartureSignoffCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DepartureDecisionDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
     "/api/v1/equipment-hierarchy/{vessel}/{asset}/observations": {
       "get": {
         "tags": [
@@ -29459,6 +29514,325 @@
           }
         },
         "additionalProperties": false
+      },
+      "DepartureAuthorityDto": {
+        "required": [
+          "id",
+          "duty"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "duty": {
+            "type": "string"
+          }
+        }
+      },
+      "DepartureCategoryState": {
+        "required": [
+          "category",
+          "result",
+          "reasons"
+        ],
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "DepartureDecisionDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "sequence",
+          "previousDecisionId",
+          "decision",
+          "assessedState",
+          "assessmentMode",
+          "assessmentHash",
+          "windowFrom",
+          "windowTo",
+          "reason",
+          "duty",
+          "actorId",
+          "recordedAt",
+          "validity"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "previousDecisionId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "assessedState": {
+            "type": "string"
+          },
+          "assessmentMode": {
+            "type": "string"
+          },
+          "assessmentHash": {
+            "type": "string"
+          },
+          "windowFrom": {
+            "type": "string",
+            "format": "date"
+          },
+          "windowTo": {
+            "type": "string",
+            "format": "date"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "duty": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "validity": {
+            "type": "string"
+          },
+          "replayed": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "DepartureReadinessView": {
+        "required": [
+          "vesselId",
+          "from",
+          "to",
+          "mode",
+          "state",
+          "categories",
+          "criticalBlockers",
+          "reviewReasons",
+          "conditions",
+          "why",
+          "assessmentHash",
+          "assessedAt",
+          "validUntil",
+          "decisions",
+          "sequence",
+          "authorities",
+          "canDecide",
+          "allowedDecisions"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DepartureCategoryState"
+            }
+          },
+          "criticalBlockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reviewReasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "conditions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "why": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DepartureWhy"
+            }
+          },
+          "assessmentHash": {
+            "type": "string"
+          },
+          "assessedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "validUntil": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "decisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DepartureDecisionDto"
+            }
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DepartureAuthorityDto"
+            }
+          },
+          "canDecide": {
+            "type": "boolean"
+          },
+          "allowedDecisions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "decisionAuthority": {
+            "type": "string",
+            "default": "MasterHumanDecisionRequired;EngineNeverReleases;NotADepartureClearance"
+          },
+          "sourceLocator": {
+            "type": "string",
+            "default": "18.01/sheet:Backlog/row:59-60;60.01/paragraph:220,928,936,952,1080;15.01/paragraph:1203-1213"
+          }
+        }
+      },
+      "DepartureSignoffCommand": {
+        "required": [
+          "from",
+          "to",
+          "expectedAssessmentHash",
+          "expectedSequence",
+          "decision",
+          "reason",
+          "authorityId"
+        ],
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "expectedAssessmentHash": {
+            "type": "string"
+          },
+          "expectedSequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DepartureWhy": {
+        "required": [
+          "category",
+          "result",
+          "reason",
+          "sourceKind",
+          "sourceId",
+          "sourceRevision"
+        ],
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "sourceKind": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sourceId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "sourceRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          }
+        }
       },
       "DocumentDraftDto": {
         "required": [
@@ -50529,6 +50903,9 @@
     },
     {
       "name": "WorkOrderOfflineEndpoints"
+    },
+    {
+      "name": "DepartureReadinessEndpoints"
     },
     {
       "name": "MaintenanceObservationEndpoints"

@@ -225,6 +225,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapDefectLifecycle();
             endpoints.MapServiceReports();
             endpoints.MapPmsCommandCenter();
+            endpoints.MapDepartureReadiness(); // S9 WP-A DEV-058/059
             endpoints.MapMaintenanceObservations();
             endpoints.MapMeasurementPoints();
             endpoints.MapMaintenancePostponements();

@@ -6514,6 +6514,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/departure-readiness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["DepartureReadinessRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/departure-signoff": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["DepartureSignoffRecord"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/equipment-hierarchy/{vessel}/{asset}/observations": {
         parameters: {
             query?: never;
@@ -10075,6 +10107,96 @@ export interface components {
             vesselId: string;
             /** @default false */
             canEdit: boolean;
+        };
+        DepartureAuthorityDto: {
+            /** Format: uuid */
+            id: string;
+            duty: string;
+        };
+        DepartureCategoryState: {
+            category: string;
+            result: string;
+            reasons: string[];
+        };
+        DepartureDecisionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: int64 */
+            sequence: number;
+            /** Format: uuid */
+            previousDecisionId: null | string;
+            decision: string;
+            assessedState: string;
+            assessmentMode: string;
+            assessmentHash: string;
+            /** Format: date */
+            windowFrom: string;
+            /** Format: date */
+            windowTo: string;
+            reason: string;
+            duty: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            recordedAt: string;
+            validity: string;
+            /** @default false */
+            replayed: boolean;
+        };
+        DepartureReadinessView: {
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: date */
+            from: string;
+            /** Format: date */
+            to: string;
+            mode: string;
+            state: string;
+            categories: components["schemas"]["DepartureCategoryState"][];
+            criticalBlockers: string[];
+            reviewReasons: string[];
+            conditions: string[];
+            why: components["schemas"]["DepartureWhy"][];
+            assessmentHash: string;
+            /** Format: date-time */
+            assessedAt: string;
+            /** Format: date-time */
+            validUntil: string;
+            decisions: components["schemas"]["DepartureDecisionDto"][];
+            /** Format: int64 */
+            sequence: number;
+            authorities: components["schemas"]["DepartureAuthorityDto"][];
+            canDecide: boolean;
+            allowedDecisions: string[];
+            /** @default MasterHumanDecisionRequired;EngineNeverReleases;NotADepartureClearance */
+            decisionAuthority: string;
+            /** @default 18.01/sheet:Backlog/row:59-60;60.01/paragraph:220,928,936,952,1080;15.01/paragraph:1203-1213 */
+            sourceLocator: string;
+        };
+        DepartureSignoffCommand: {
+            /** Format: date */
+            from: string;
+            /** Format: date */
+            to: string;
+            expectedAssessmentHash: string;
+            /** Format: int64 */
+            expectedSequence: number;
+            decision: string;
+            reason: string;
+            /** Format: uuid */
+            authorityId: string;
+        };
+        DepartureWhy: {
+            category: string;
+            result: string;
+            reason: string;
+            sourceKind: null | string;
+            /** Format: uuid */
+            sourceId: null | string;
+            /** Format: int64 */
+            sourceRevision: null | number;
         };
         DocumentDraftDto: {
             /** Format: uuid */
@@ -25782,6 +25904,57 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["PmsCommandCenterDto"];
                 };
+            };
+        };
+    };
+    DepartureReadinessRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DepartureReadinessView"];
+                };
+            };
+        };
+    };
+    DepartureSignoffRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DepartureSignoffCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DepartureDecisionDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

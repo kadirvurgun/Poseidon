@@ -264,3 +264,11 @@ projection is `STOCK_UNKNOWN` (review required). No technical requisition, appro
 release/execution, evidence or receipt is seeded: release, verification, closure and requisition
 decisions are attributed human records. DB CHECKs reject synthetic execution rows beyond
 RELEASED/IN_PROGRESS and synthetic requisition rows beyond PROPOSED.
+
+## S9 WP-A DEV-058/059 departure readiness — no fixture by design
+
+DEV-058 readiness is a computed projection over owning sources and stores nothing. DEV-059 Master
+departure decisions (`ship.DepartureDecisions`) and their receipts are signed human safety records and
+are never seeded: no RELEASE, HOLD or DENY, no receipt and no Master appointment exist in any fixture.
+DB CHECKs allow RELEASE only against a CURRENT READY assessment by the Master duty. Default seed audit
+counts are unchanged.

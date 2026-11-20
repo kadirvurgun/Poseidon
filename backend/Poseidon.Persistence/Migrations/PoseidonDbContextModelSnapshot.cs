@@ -4084,6 +4084,147 @@ namespace Poseidon.Persistence.Migrations
                     b.ToTable("DelegationVesselScopes", "identity");
                 });
 
+            modelBuilder.Entity("Poseidon.Persistence.DepartureDecision", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AssessedState")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("AssessmentHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("AssessmentMode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<string>("AuthorityHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("AuthorityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Decision")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<string>("Duty")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<Guid?>("PreviousDecisionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<DateTimeOffset>("RecordedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Sequence")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("SnapshotJson")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("WindowFrom")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly>("WindowTo")
+                        .HasColumnType("date");
+
+                    b.HasKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "VesselId", "Sequence")
+                        .IsUnique();
+
+                    b.ToTable("DepartureDecisions", "ship", t =>
+                        {
+                            t.HasCheckConstraint("CK_DepartureDecision_Decision", "\"Decision\" IN ('RELEASE', 'HOLD', 'DENY') AND (\"Decision\" <> 'RELEASE' OR \"AssessedState\" = 'READY' AND \"AssessmentMode\" = 'CURRENT')");
+
+                            t.HasCheckConstraint("CK_DepartureDecision_Duty", "\"Duty\" = 'Master'");
+
+                            t.HasCheckConstraint("CK_DepartureDecision_Lineage", "\"Sequence\" >= 1 AND (\"Sequence\" = 1) = (\"PreviousDecisionId\" IS NULL)");
+
+                            t.HasCheckConstraint("CK_DepartureDecision_Mode", "\"AssessmentMode\" IN ('CURRENT', 'FORECAST')");
+
+                            t.HasCheckConstraint("CK_DepartureDecision_Reason", "char_length(\"Reason\") >= 10");
+
+                            t.HasCheckConstraint("CK_DepartureDecision_State", "\"AssessedState\" IN ('READY', 'CONDITIONAL', 'NOT_READY', 'REVIEW_REQUIRED')");
+
+                            t.HasCheckConstraint("CK_DepartureDecision_Window", "\"WindowTo\" >= \"WindowFrom\"");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.DepartureReceipt", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Key")
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.Property<DateTimeOffset>("CommittedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Fingerprint")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("RecordId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Sequence")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "ActorId", "Key");
+
+                    b.HasIndex("TenantId", "VesselId");
+
+                    b.ToTable("DepartureReceipts", "ship", t =>
+                        {
+                            t.HasCheckConstraint("CK_DepartureReceipt_Action", "\"Action\" IN ('DepartureSignoffRecord')");
+                        });
+                });
+
             modelBuilder.Entity("Poseidon.Persistence.Document", b =>
                 {
                     b.Property<Guid>("TenantId")
@@ -12694,6 +12835,24 @@ namespace Poseidon.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("FK_DelegationVesselScopes_Vessel");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.DepartureDecision", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.Vessel", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.DepartureReceipt", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.Vessel", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Poseidon.Persistence.Document", b =>

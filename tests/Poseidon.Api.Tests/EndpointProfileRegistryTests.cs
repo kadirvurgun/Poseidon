@@ -268,7 +268,7 @@ public sealed partial class DirectoryWorkspaceTests
         "spare.read", "spare.write", "requisition.propose", "requisition.approve", "workspace.search",
         "membership.read", "membership.manage", "membership.security.suspend",
         "document.publish", "evidence.verify", "record.hold", "record.retention.manage", "record.purge.request", "record.purge.approve",
-        "hse.risk.read", "hse.risk.write", "hse.risk.approve", "hse.risk.acknowledge", "hse.risk_template.read", "hse.risk_template.write", "hse.risk_template.publish", "hse.risk_template.suggest", "hse.risk_method.write", "hse.risk_method.publish", "hse.high_risk_work.read"];
+        "hse.risk.read", "hse.risk.write", "hse.risk.approve", "hse.risk.acknowledge", "hse.risk_template.read", "hse.risk_template.write", "hse.risk_template.publish", "hse.risk_template.suggest", "hse.risk_method.write", "hse.risk_method.publish", "hse.high_risk_work.read", "departure.readiness.read", "departure.decide"];
 
     private async Task<HttpResponseMessage> ProfileSend(WebApplicationFactory<Program> host, HttpClient client, EndpointProfileEntry entry,
         string path, bool csrf, bool key)

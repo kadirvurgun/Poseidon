@@ -23,6 +23,8 @@ public static class WorkspaceEndpoints
         if (WorkOrderEndpoints.CanRead(actor)) destinations = [.. destinations, new("work-order-center", "/app/work-order-center")];
         // DEV-056/DEV-103: the same server predicates as their endpoints.
         if (PmsCommandCenterEndpoints.CanRead(actor)) destinations = [.. destinations, new("pms-command-center", "/app/pms-command-center")];
+        // S9 DEV-058/059: the same server predicate as the departure readiness endpoint.
+        if (DepartureAuthorities.CanRead(actor)) destinations = [.. destinations, new("departure-signoff", "/app/departure-signoff")];
         if (ServiceReportEndpoints.CanRead(actor)) destinations = [.. destinations, new("service-engineer-report", "/app/service-engineer-report")];
         if (OperationalDowntimeEndpoints.CanRead(actor)) destinations = [.. destinations, new("operational-downtime", "/app/operational-downtime")];
         // DEV-105/DEV-106: the same server predicates as the risk endpoints.

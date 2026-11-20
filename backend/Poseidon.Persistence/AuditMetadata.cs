@@ -556,6 +556,17 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if (entry.Entity is TugReadinessReceipt readinessReceipt)
             return new(readinessReceipt.VesselId, readinessReceipt.ResourceId, "TugReadinessReceipt", null, readinessReceipt.Revision, Fields(
                 Field("Action", null, Closed(readinessReceipt.Action, TugReadinessStorage.ReceiptActions)), Field("Binding", null, "CommittedResource")));
+        // S9 WP-A DEV-059: closed codes only; the reason, hash and snapshot content are withheld.
+        if (entry.Entity is DepartureDecision departureDecision)
+            return new(departureDecision.VesselId, departureDecision.Id, "DepartureDecision", null, departureDecision.Sequence, Fields(
+                Field("Decision", null, Closed(departureDecision.Decision, DepartureDecisionPolicy.Decisions)),
+                Field("AssessedState", null, Closed(departureDecision.AssessedState, DepartureReadinessEngine.States)),
+                Field("AssessmentMode", null, Closed(departureDecision.AssessmentMode, DepartureReadinessEngine.Modes)),
+                Field("Duty", null, Closed(departureDecision.Duty, DepartureDecisionPolicy.MasterDuty)), Field("Sequence", null, Number(departureDecision.Sequence)),
+                Field("AssessmentHash", null, null, "ValuesWithheld"), Field("Reason", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference")));
+        if (entry.Entity is DepartureReceipt departureReceipt)
+            return new(departureReceipt.VesselId, departureReceipt.RecordId, "DepartureReceipt", null, departureReceipt.Sequence, Fields(
+                Field("Action", null, Closed(departureReceipt.Action, DepartureStorage.ReceiptActions)), Field("Binding", null, "CommittedResource")));
         if (entry.Entity is TechnicalOwner or TugOwner)
             return new(vessel, resource, "OwnerReference", null, null, Fields(Field("Binding", null, "OwnerReference")));
         if (entry.Entity is CrewPosition)

@@ -10,7 +10,7 @@ const destinations: Readonly<Record<string, string>> = {
   'operational-downtime': '/app/operational-downtime',
   'risk-assessment': '/app/risk-assessment', 'risk-template-library': '/app/risk-template-library', 'high-risk-work': '/app/high-risk-work', 'towage-plan': '/app/towage-plan', 'towage-risk-briefing': '/app/towage-risk-briefing',
   'work-order-center': '/app/work-order-center', 'critical-spares': '/app/critical-spares',
-  'pms-command-center': '/app/pms-command-center', 'service-engineer-report': '/app/service-engineer-report',
+  'pms-command-center': '/app/pms-command-center', 'departure-signoff': '/app/departure-signoff', 'service-engineer-report': '/app/service-engineer-report',
   defects: '/app/defects',
   'fuel-bunker-log': '/app/fuel-bunker-log', 'port-activity-sof': '/app/port-activity-sof',
   'certificate-command-center': '/app/certificate-command-center', 'renewal-workflow': '/app/renewal-workflow',
@@ -28,6 +28,7 @@ export const isSeparateWorkspaceDestination = (href: string) =>
   href === '/app/audit-ready' || /^\/app\/audit-ready\/[0-9a-f-]{36}$/.test(href) ||
   href === '/app/operational-downtime' || /^\/app\/operational-downtime\/[0-9a-f-]{36}$/.test(href) ||
   href === '/app/risk-assessment' || /^\/app\/risk-assessment\/[0-9a-f-]{36}$/.test(href) || href === '/app/risk-template-library' ||
+  href === '/app/departure-signoff' || /^\/app\/departure-signoff\/[0-9a-f-]{36}$/.test(href) ||
   href === '/app/pms-command-center' || /^\/app\/pms-command-center\/[0-9a-f-]{36}$/.test(href) || href === '/app/service-engineer-report' || /^\/app\/service-engineer-report\/[0-9a-f-]{36}$/.test(href) ||
   href === '/app/work-order-center' || href === '/app/critical-spares' || /^\/app\/work-order-center\/[0-9a-f-]{36}$/.test(href) ||
   href === '/app/defects' || /^\/app\/defects\/[0-9a-f-]{36}$/.test(href) ||

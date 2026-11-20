@@ -176,6 +176,9 @@ public sealed class PoseidonDbContext(
     public DbSet<TowEquipmentVerification> TowEquipmentVerifications => Set<TowEquipmentVerification>();
     public DbSet<TugReadinessDecision> TugReadinessDecisions => Set<TugReadinessDecision>();
     public DbSet<TugReadinessReceipt> TugReadinessReceipts => Set<TugReadinessReceipt>();
+    // S9 WP-A (DEV-059): Master departure decisions and their receipts (append-only).
+    public DbSet<DepartureDecision> DepartureDecisions => Set<DepartureDecision>();
+    public DbSet<DepartureReceipt> DepartureReceipts => Set<DepartureReceipt>();
     public DbSet<TowagePlan> TowagePlans => Set<TowagePlan>();
     public DbSet<TowagePlanRevision> TowagePlanRevisions => Set<TowagePlanRevision>();
     public DbSet<TowagePlanDecision> TowagePlanDecisions => Set<TowagePlanDecision>();
@@ -368,6 +371,10 @@ public sealed class PoseidonDbContext(
         model.Entity<TowEquipmentVerification>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TugReadinessDecision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TugReadinessReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        // S9 WP-A (DEV-059): Master departure decisions.
+        DepartureStorage.Configure(model);
+        model.Entity<DepartureDecision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<DepartureReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         // S8 WP-D (DEV-087/088): towage plan, risk & briefing records.
         TowageStorage.Configure(model);
         model.Entity<TowagePlan>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -859,6 +866,9 @@ public sealed class PoseidonDbContext(
         // keeps its tug and kind.
         if (changes.Any(e => e.Entity is TugAssignmentResponse or TowEquipmentRevision or TowEquipmentVerification or TugReadinessDecision or TugReadinessReceipt && e.State != EntityState.Added))
             throw new InvalidOperationException("Tug readiness human records are immutable.");
+        // DEV-059: the Master departure decision lineage and its receipts are append-only.
+        if (changes.Any(e => e.Entity is DepartureDecision or DepartureReceipt && e.State != EntityState.Added))
+            throw new InvalidOperationException("Departure decisions are immutable.");
         if (changes.Any(e => e.Entity is TugAssignmentProposal && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
             e.Properties.Any(p => p.IsModified && p.Metadata.Name is not ("State" or "MasterAck" or "CancelledAt" or "CancelledBy" or "CancelReason" or "Revision")))))
             throw new InvalidOperationException("Tug assignment scope is immutable.");

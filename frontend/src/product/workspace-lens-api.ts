@@ -29,6 +29,7 @@ export const lensLabels: Record<string, readonly [
     'operational-downtime': [sourceText("tr", "pairs.m_0208af14c2c3282e"), sourceText("en", "pairs.m_0208af14c2c3282e")],
     'risk-assessment': [sourceText("tr", "pairs.m_2ba46e791f65fb5f"), sourceText("en", "pairs.m_2ba46e791f65fb5f")],
     'risk-template-library': [sourceText("tr", "pairs.m_c086860d120fa851"), sourceText("en", "pairs.m_c086860d120fa851")],
+    'departure-signoff': [sourceText("tr", "pairs.m_9d2a4c6e8f0b1d35"), sourceText("en", "pairs.m_9d2a4c6e8f0b1d35")],
     'pms-command-center': [sourceText("tr", "pairs.m_8c3e1f0a5d2b7c41"), sourceText("en", "pairs.m_8c3e1f0a5d2b7c41")],
     'service-engineer-report': [sourceText("tr", "pairs.m_8c3e1f0a5d2b7c42"), sourceText("en", "pairs.m_8c3e1f0a5d2b7c42")],
     'high-risk-work': [sourceText("tr", "pairs.m_04076d4cdaa5ec7d"), sourceText("en", "pairs.m_04076d4cdaa5ec7d")],
@@ -56,7 +57,7 @@ const root: Record<string, string> = { crew: 'crew-roster', 'crew-certificates':
 export function lensHref(key: string, vessel: string | null) {
     if (!Object.hasOwn(lensLabels, key))
         return null;
-    if (['audit-ready', 'operational-downtime', 'risk-assessment', 'pms-command-center', 'service-engineer-report', 'work-order-center', 'defects', 'fuel-bunker-log', 'port-activity-sof', 'noon-report', 'deck-daily-log', 'engine-daily-log', 'certificate-command-center', 'renewal-workflow', 'pre-survey-checklist'].includes(key))
+    if (['audit-ready', 'operational-downtime', 'risk-assessment', 'pms-command-center', 'departure-signoff', 'service-engineer-report', 'work-order-center', 'defects', 'fuel-bunker-log', 'port-activity-sof', 'noon-report', 'deck-daily-log', 'engine-daily-log', 'certificate-command-center', 'renewal-workflow', 'pre-survey-checklist'].includes(key))
         return vessel ? `/app/${key}/${vessel}` : `/app/${key}`;
     if (Object.hasOwn(root, key))
         return vessel ? `/app/${root[key]}/${vessel}` : null;
