@@ -1,3 +1,15 @@
+## S9-WPB DEV-060 — safety event fixture (optional)
+
+`SafetyEventFixtures.AddMissingAsync` is an explicit administrative fixture, not wired into normal startup/seed import (default seed and audit totals unchanged). Per seeded vessel it adds one FICTIONAL incomplete NEAR_MISS draft (no occurrence time, context, narrative or immediate action) reported NAMED by a deterministic synthetic actor id without membership, with one `SYNTHETIC_INCOMPLETE_DRAFT` revision. No submission, triage, severity, investigation, action, verification, effectiveness, closure, identity vault entry or receipt is seeded; DB CHECKs reject a synthetic non-DRAFT event. Add-missing; operator edits are preserved. Real-PostgreSQL test `Safety_event_fixture_is_opt_in_idempotent_fictional_and_seeds_no_submission_or_decision` is AUTHORED, execution DEFERRED to CI.
+
+## S9-WPC DEV-062 — voice event draft fixture (optional)
+
+`VoiceEventDraftFixtures.AddMissingAsync` is an explicit administrative fixture, not wired into normal startup/seed import (default seed and audit totals unchanged). Per vessel it adds one FICTIONAL typed voice-event DRAFT whose candidate comes from the real deterministic extractor, with one CREATE revision. No speech provenance, audio, confirmation, rejection, correction record, evidence pin, receipt or safety event is seeded; DB CHECKs reject a synthetic non-DRAFT draft and any retained audio. Add-missing; operator edits are preserved. Real-PostgreSQL test `Voice_draft_fixture_is_opt_in_idempotent_fictional_and_seeds_no_confirmation` is AUTHORED, execution DEFERRED to CI.
+
+## S9-WPD DEV-089/090/111 — field operation fixture (optional)
+
+`FieldOperationsFixtures.AddMissingAsync` is an explicit administrative fixture, not wired into normal startup/seed import (default seed and audit totals unchanged). Per synthetic tug it adds one FICTIONAL tug daily log DRAFT (2026-01-01, watch OTHER; no time zone, meters, fuel, links or summary); per synthetic vessel one FICTIONAL drydock package DRAFT (no dates, yard, scope items, links or evidence), each with one `SYNTHETIC_INCOMPLETE_DRAFT` revision. No towage execution is seeded at all (an execution needs a human GO record and a Tug Master start; the DB CHECK allows only `UserDeclaredUnverified` executions), and no submission, Master review, start, completion, verification or receipt; DB CHECKs reject synthetic non-DRAFT logs/packages. Add-missing; operator edits are preserved. Real-PostgreSQL test `Field_operation_fixture_is_opt_in_idempotent_fictional_and_seeds_no_execution_review_or_verification` is AUTHORED, execution DEFERRED to CI.
+
 ## S8-WPD DEV-087/088 — towage plan and briefing fixture (optional)
 
 `TowageFixtures.AddMissingAsync` is an explicit administrative fixture, not wired into normal startup/seed import (default seed and audit totals unchanged). For each seeded synthetic tug job it adds one FICTIONAL towage plan DRAFT (no tug roles, limits, channels, emergency release, contingency or snap-back control) and one FICTIONAL briefing DRAFT (no conditions, hazards, barriers, risk link or participants), each with one `SYNTHETIC_INCOMPLETE_DRAFT` revision. No submission, Master/Tug Master approval, issue, acknowledgement or receipt is seeded; DB CHECKs reject a synthetic non-DRAFT plan/briefing. Readiness therefore keeps communication UNKNOWN and the briefing FAIL. Add-missing; operator edits are preserved. Real-PostgreSQL test `Towage_fixture_is_opt_in_idempotent_fictional_and_seeds_no_approval_issue_or_acknowledgement` is AUTHORED, execution DEFERRED to CI.
@@ -264,3 +276,11 @@ projection is `STOCK_UNKNOWN` (review required). No technical requisition, appro
 release/execution, evidence or receipt is seeded: release, verification, closure and requisition
 decisions are attributed human records. DB CHECKs reject synthetic execution rows beyond
 RELEASED/IN_PROGRESS and synthetic requisition rows beyond PROPOSED.
+
+## S9 WP-A DEV-058/059 departure readiness — no fixture by design
+
+DEV-058 readiness is a computed projection over owning sources and stores nothing. DEV-059 Master
+departure decisions (`ship.DepartureDecisions`) and their receipts are signed human safety records and
+are never seeded: no RELEASE, HOLD or DENY, no receipt and no Master appointment exist in any fixture.
+DB CHECKs allow RELEASE only against a CURRENT READY assessment by the Master duty. Default seed audit
+counts are unchanged.

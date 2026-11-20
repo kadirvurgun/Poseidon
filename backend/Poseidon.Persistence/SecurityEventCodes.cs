@@ -31,6 +31,8 @@ public static class SecurityEventCodes
         "WorkspaceSearch", "SystemHealthRead", "NotificationRead", "NotificationCommand", "ComplianceWorkspaceRead", "CriticalStateRead", "DailyOfflineRead", "DailyOfflineRequest", "DailyOperationsRead", "DailyOperationsCommand", "DailyReviewRead", "DailyReviewCommand", "ShipOperationsRead", "ShipOperationsCommand",
         "TugAssignmentRead", "TugAssignmentCommand", "TugReadinessRead", "TugReadinessDecision", "TugEquipmentRead", "TugEquipmentCommand", "TugCrewReadinessRead",
         "TowagePlanRead", "TowagePlanCommand", "TowageBriefingRead", "TowageBriefingCommand", "HighRiskWorkRead",
+        "SafetyEventRead", "SafetyEventCommand", "SafetyEventOfflineRead", "SafetyEventOfflineRequest",
+        "TowageExecutionRead", "TowageExecutionCommand", "TugDailyLogRead", "TugDailyLogCommand", "DrydockRead", "DrydockCommand",
         "ParameterRead", "ParameterCommand", "HrRead", "HrCommand", "MembershipRead", "MembershipCommand", "SessionRevalidation",
         "ControlledDocument", "ControlledDocumentRead", "ControlledDocumentCommand", "ControlledDocumentReplay",
         "SyncOperationRead", "SyncConflictList",
@@ -45,6 +47,9 @@ public static class SecurityEventCodes
         "CriticalSpareRead", "CriticalSpareCommand", "TechnicalRequisitionRead", "TechnicalRequisitionCommand",
         "CredentialVerificationRead", "CredentialVerificationCommand", "CrewCompetenceRead", "CrewCompetenceCommand", "SafeManningRead", "SafeManningCommand",
         "MeasurementRead", "MeasurementCommand", "MaintenancePostponementRead", "MaintenancePostponementCommand",
+        "DepartureReadinessRead", "DepartureSignoffCommand",
+        // S9 WP-C DEV-062 / DEV-114.
+        "VoiceDraftRead", "VoiceDraftCommand", "VoiceDraftTranscription", "ControlledDocumentContentAccess",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static IReadOnlySet<string> Results { get; } = new string[]
     {
@@ -98,6 +103,9 @@ public static class SecurityEventCodes
         "pending_change_exists", "ambiguous_selection", "synthetic_not_approvable",
         "tug_assignment_scope_stale", "tug_assignment_active_exists", "tug_go_not_permitted", "tug_authority_required", "assessment_stale",
         "towage_record_incomplete", "towage_plan_not_approved",
+        "safety_event_incomplete", "occurrence_in_future", "anonymous_channel_unavailable", "identity_not_protected", "investigation_incomplete",
+        "safety_event_closure_blocked", "due_date_past", "offline_event_exists",
+        "towage_start_blocked", "towage_resume_blocked", "meter_sequence_conflict", "daily_log_incomplete", "drydock_record_incomplete",
         "quiet_hours_incomplete", "tug_request_incomplete", "quiet_hours_invalid", "quiet_hours_zone_unknown",
         "control_retired", "control_record_incomplete", "control_reviewer_required", "control_revision_conflict",
         "override_reason_not_allowed", "override_evidence_required", "override_evidence_unavailable", "override_unknown_not_acceptable", "override_validity_invalid",
@@ -112,6 +120,11 @@ public static class SecurityEventCodes
         "checklist_items_mismatch", "na_not_authorized", "port_call_unavailable", "template_unavailable", "verification_rejected",
         "required_evidence_missing", "required_evidence_unconfigured", "evidence_changed", "stock_not_low", "requisition_already_open", "quantity_required",
         "credential_document_required", "competence_requirement_unavailable", "evaluation_window_invalid", "manning_dispensation_required", "manning_dispensation_not_applicable", "manning_review_acknowledgement_required",
+        "departure_release_not_permitted", "departure_release_forecast_only", "departure_window_invalid", "departure_authority_required", "decision_sequence_conflict",
+        // S9 WP-C DEV-062 / DEV-114.
+        "speech_capability_unavailable", "speech_input_invalid", "speech_attestation_invalid", "voice_draft_incomplete",
+        "document_download_restricted", "controlled_document_download_policy", "acknowledgement_revision_stale", "already_acknowledged",
+        "content_access_required", "isps_classification_required",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static bool Allows(string action, string result) => Actions.Contains(action) && Results.Contains(result);
 }

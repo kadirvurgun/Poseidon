@@ -17,6 +17,8 @@ public sealed class ControlledDocument : ITenantEntity
     public required string Code { get; set; }
     public required string Title { get; set; }
     public string Classification { get; set; } = "INTERNAL";
+    // DEV-114: ISPS-sensitive (e.g. Ship Security Plan); listed/read only with document.isps.read; always RESTRICTED.
+    public bool IspsRestricted { get; set; }
     public long? CurrentRevision { get; set; }
     public long LatestRevision { get; set; }
     public long Sequence { get; set; }
@@ -156,6 +158,7 @@ public static class ControlledDocumentStorage
                     $"\"Classification\" IN ({In(ControlledDocumentPolicy.Classifications)}) AND \"DisposalState\" IN ({In(ControlledDocumentPolicy.DisposalStates)}) " +
                     "AND \"Provenance\" IN ('DeclaredUnverified','SyntheticUnverified') AND \"Sequence\" > 0 AND \"LatestRevision\" >= 0 " +
                     "AND (\"CurrentRevision\" IS NULL OR (\"CurrentRevision\" > 0 AND \"CurrentRevision\" <= \"LatestRevision\"))");
+                t.HasCheckConstraint("CK_ControlledDocuments_Isps", "NOT \"IspsRestricted\" OR \"Classification\" = 'RESTRICTED'");
                 t.HasCheckConstraint("CK_ControlledDocuments_Hold",
                     "NOT \"HoldActive\" OR (\"HoldPlacedBy\" IS NOT NULL AND \"HoldPlacedAt\" IS NOT NULL AND \"HoldAuthorityRef\" IS NOT NULL)");
                 t.HasCheckConstraint("CK_ControlledDocuments_HoldRelease",
@@ -275,7 +278,7 @@ public static class ControlledDocumentStorage
         nameof(ControlledDocumentRevision.ReleasedAt), nameof(ControlledDocumentRevision.PublicationState), nameof(ControlledDocumentRevision.PublishedBy),
         nameof(ControlledDocumentRevision.PublishedAt)];
     private static readonly string[] DocumentImmutableColumns = [nameof(ControlledDocument.TenantId), nameof(ControlledDocument.Id), nameof(ControlledDocument.VesselId),
-        nameof(ControlledDocument.Code), nameof(ControlledDocument.Title), nameof(ControlledDocument.Classification), nameof(ControlledDocument.CreatedBy),
+        nameof(ControlledDocument.Code), nameof(ControlledDocument.Title), nameof(ControlledDocument.Classification), nameof(ControlledDocument.IspsRestricted), nameof(ControlledDocument.CreatedBy),
         nameof(ControlledDocument.CreatedAt), nameof(ControlledDocument.Provenance)];
 
     // Application-side mirror of the DB triggers; both must hold.

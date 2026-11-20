@@ -10623,6 +10623,147 @@
         "x-poseidon-profile": "NATIVE-COMMAND-IF-MATCH-1"
       }
     },
+    "/api/v1/vessels/{vessel}/controlled-documents/{document}/revisions/{revision}/acknowledgements": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "AcknowledgeControlledDocumentRevision",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "document",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "revision",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-CSRF-TOKEN",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ControlledDocumentAcknowledgeCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ControlledDocumentDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-IF-MATCH-1"
+      }
+    },
+    "/api/v1/vessels/{vessel}/controlled-documents/{document}/revisions/{revision}/content-access": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "AuthorizeControlledDocumentContent",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "document",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "revision",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ControlledDocumentContentAccessCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ControlledDocumentContentAccessDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
     "/api/v1/vessels/{vessel}/crew/position-catalog": {
       "get": {
         "tags": [
@@ -14927,6 +15068,792 @@
         "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
+    "/api/v1/safety-events": {
+      "get": {
+        "tags": [
+          "SafetyEventEndpoints"
+        ],
+        "operationId": "SafetyEventList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafetyEventPageDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "SafetyEventCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SafetyEventCreateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafetyEventDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafetyFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/safety-events/{id}": {
+      "get": {
+        "tags": [
+          "SafetyEventEndpoints"
+        ],
+        "operationId": "SafetyEventRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafetyEventDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "SafetyEventUpdate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SafetyEventUpdateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafetyEventDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/safety-events/follow-up": {
+      "get": {
+        "tags": [
+          "SafetyEventEndpoints"
+        ],
+        "operationId": "SafetyEventFollowUpRead",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafetyEventFollowUpDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/safety-events/follow-up/messages": {
+      "post": {
+        "tags": [
+          "SafetyEventEndpoints"
+        ],
+        "operationId": "SafetyEventFollowUpMessage",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SafetyEventFollowUpMessageCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafetyEventFollowUpDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-CLIENT-ID-COMMAND-1"
+      }
+    },
+    "/api/v1/safety-events/{id}/submit": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "SafetyEventSubmit",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SafetyEventSubmitCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafetyEventDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafetyFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/safety-events/{id}/withdraw": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "SafetyEventWithdraw",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SafetyEventReasonCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafetyEventDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/safety-events/{id}/triage": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "SafetyEventTriage",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SafetyEventTriageCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafetyEventDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/safety-events/{id}/identity-access": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "SafetyEventIdentityAccess",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SafetyEventIdentityAccessCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafetyEventIdentityDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/safety-events/{id}/messages": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "SafetyEventMessage",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SafetyEventMessageCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafetyEventDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/safety-events/{id}/investigation": {
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "SafetyInvestigationSave",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SafetyInvestigationSaveCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafetyEventDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/safety-events/{id}/investigation/submit": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "SafetyInvestigationSubmit",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SafetyInvestigationSubmitCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafetyEventDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafetyFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/safety-events/{id}/investigation/review": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "SafetyInvestigationReview",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SafetyInvestigationReviewCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafetyEventDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/safety-events/{id}/actions": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "SafetyActionCreate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SafetyActionCreateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafetyEventDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafetyFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/safety-events/{id}/actions/{actionId}/steps": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "SafetyActionStep",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "actionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SafetyActionStepCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafetyEventDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/safety-events/{id}/close": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "SafetyEventClose",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SafetyEventReasonCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafetyEventDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafetyFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/safety-event-offline": {
+      "get": {
+        "tags": [
+          "SafetyEventOfflineEndpoints"
+        ],
+        "operationId": "SafetyEventOfflineInventory",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "SafetyEventOfflineEndpoints"
+        ],
+        "operationId": "SafetyEventOfflineEnroll",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SafetyEventOfflineContextDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-OFFLINE-1"
+      }
+    },
+    "/api/v1/safety-event-offline/{enrollment}/{action}": {
+      "post": {
+        "tags": [
+          "SafetyEventOfflineEndpoints"
+        ],
+        "operationId": "SafetyEventOfflineAction",
+        "parameters": [
+          {
+            "name": "enrollment",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "action",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-OFFLINE-1"
+      }
+    },
+    "/api/v1/safety-event-offline/{enrollment}/history": {
+      "get": {
+        "tags": [
+          "SafetyEventOfflineEndpoints"
+        ],
+        "operationId": "SafetyEventOfflineHistory",
+        "parameters": [
+          {
+            "name": "enrollment",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
     "/api/v1/defects/{id}/lifecycle": {
       "get": {
         "tags": [
@@ -15704,6 +16631,314 @@
         "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
+    "/api/v1/voice-event-drafts": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "VoiceDraftList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoiceDraftPageDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "VoiceDraftCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VoiceDraftCreateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoiceDraftDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/voice-event-drafts/capabilities": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "VoiceDraftCapabilities",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoiceDraftCapabilitiesDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/voice-event-drafts/metrics": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "VoiceDraftMetrics",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoiceDraftMetricsDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/voice-event-drafts/{id}": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "VoiceDraftRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoiceDraftDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "VoiceDraftUpdate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VoiceDraftUpdateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoiceDraftDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/voice-event-drafts/transcriptions": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "VoiceDraftTranscribe",
+        "requestBody": {
+          "content": {
+            "audio/webm": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            },
+            "audio/ogg": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            },
+            "audio/wav": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            },
+            "audio/mp4": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoiceDraftTranscriptionDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-OBSERVATION-COMMAND-1"
+      }
+    },
+    "/api/v1/voice-event-drafts/{id}/confirm": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "VoiceDraftConfirm",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VoiceDraftConfirmCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoiceDraftDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TechnicalRecordFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/voice-event-drafts/{id}/reject": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "VoiceDraftReject",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VoiceDraftRejectCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoiceDraftDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
     "/api/v1/pms/command-center": {
       "get": {
         "tags": [
@@ -15723,6 +16958,61 @@
           }
         },
         "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/departure-readiness": {
+      "get": {
+        "tags": [
+          "DepartureReadinessEndpoints"
+        ],
+        "operationId": "DepartureReadinessRead",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DepartureReadinessView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/departure-signoff": {
+      "post": {
+        "tags": [
+          "DepartureReadinessEndpoints"
+        ],
+        "operationId": "DepartureSignoffRecord",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DepartureSignoffCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DepartureDecisionDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
     "/api/v1/equipment-hierarchy/{vessel}/{asset}/observations": {
@@ -17538,6 +18828,666 @@
           }
         },
         "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/towage-executions": {
+      "get": {
+        "tags": [
+          "TowageExecutionEndpoints"
+        ],
+        "operationId": "TowageExecutionJobRead",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowageExecutionJobView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TowageExecutionStart",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TowageExecutionStartCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowageExecutionView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/towage-executions/{id}": {
+      "get": {
+        "tags": [
+          "TowageExecutionEndpoints"
+        ],
+        "operationId": "TowageExecutionRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowageExecutionView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/towage-executions/{id}/transitions": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TowageExecutionTransition",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TowageExecutionTransitionCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowageExecutionView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/towage-executions/{id}/events": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TowageExecutionEvent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TowageExecutionEventCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowageExecutionView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/towage-executions/{id}/verification": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TowageExecutionVerify",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TowageExecutionVerifyCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowageExecutionView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/tug-daily-logs": {
+      "get": {
+        "tags": [
+          "TugDailyLogEndpoints"
+        ],
+        "operationId": "TugDailyLogList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugDailyLogListView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TugDailyLogCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TugDailyLogCreateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugDailyLogView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/tug-daily-logs/{id}": {
+      "get": {
+        "tags": [
+          "TugDailyLogEndpoints"
+        ],
+        "operationId": "TugDailyLogRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugDailyLogView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TugDailyLogUpdate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TugDailyLogUpdateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugDailyLogView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/tug-daily-logs/{id}/submit": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TugDailyLogSubmit",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TugDailyLogSubmitCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugDailyLogView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/tug-daily-logs/{id}/review": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TugDailyLogReview",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TugDailyLogReviewCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugDailyLogView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/drydock-packages": {
+      "get": {
+        "tags": [
+          "DrydockEndpoints"
+        ],
+        "operationId": "DrydockList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DrydockListView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DrydockCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrydockCreateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DrydockView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/drydock-packages/{id}": {
+      "get": {
+        "tags": [
+          "DrydockEndpoints"
+        ],
+        "operationId": "DrydockRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DrydockView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DrydockUpdate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrydockUpdateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DrydockView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/drydock-packages/{id}/transitions": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DrydockTransition",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrydockTransitionCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DrydockView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/drydock-packages/{id}/verification": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DrydockVerify",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrydockVerifyCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DrydockView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
     "/api/v1/parameter-definitions": {
@@ -23536,6 +25486,176 @@
           }
         }
       },
+      "ControlledDocumentAcknowledgeCommand": {
+        "required": [
+          "displayedContentSha256",
+          "statementAccepted"
+        ],
+        "type": "object",
+        "properties": {
+          "displayedContentSha256": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "statementAccepted": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ControlledDocumentAcknowledgementDto": {
+        "required": [
+          "id",
+          "revision",
+          "actorId",
+          "statement",
+          "acknowledgedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "statement": {
+            "type": "string"
+          },
+          "acknowledgedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ControlledDocumentContentAccessCommand": {
+        "required": [
+          "purpose"
+        ],
+        "type": "object",
+        "properties": {
+          "purpose": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "ControlledDocumentContentAccessDto": {
+        "required": [
+          "recordId",
+          "documentId",
+          "revision",
+          "fileId",
+          "fileRevision",
+          "mime",
+          "contentSha256",
+          "classification",
+          "purpose",
+          "policyBasis",
+          "attribution",
+          "print",
+          "capability",
+          "expiresAt",
+          "issuedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "recordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "documentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "fileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fileRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "mime": {
+            "type": "string"
+          },
+          "contentSha256": {
+            "type": "string"
+          },
+          "classification": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "policyBasis": {
+            "type": "string"
+          },
+          "attribution": {
+            "type": "string"
+          },
+          "print": {
+            "type": "string"
+          },
+          "capability": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "issuedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ControlledDocumentContentPolicyDto": {
+        "required": [
+          "classification",
+          "download",
+          "print",
+          "basis",
+          "attributionRequired",
+          "ispsRestricted"
+        ],
+        "type": "object",
+        "properties": {
+          "classification": {
+            "type": "string"
+          },
+          "download": {
+            "type": "string"
+          },
+          "print": {
+            "type": "string"
+          },
+          "basis": {
+            "type": "string"
+          },
+          "attributionRequired": {
+            "type": "boolean"
+          },
+          "ispsRestricted": {
+            "type": "boolean"
+          }
+        }
+      },
       "ControlledDocumentCreateCommand": {
         "required": [
           "code",
@@ -23560,6 +25680,12 @@
             "type": [
               "null",
               "string"
+            ]
+          },
+          "ispsRestricted": {
+            "type": [
+              "null",
+              "boolean"
             ]
           }
         },
@@ -23724,6 +25850,29 @@
           "asOf": {
             "type": "string",
             "format": "date-time"
+          },
+          "ispsRestricted": {
+            "type": "boolean",
+            "default": false
+          },
+          "contentPolicy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ControlledDocumentContentPolicyDto"
+              }
+            ]
+          },
+          "acknowledgements": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ControlledDocumentAcknowledgementDto"
+            }
           }
         }
       },
@@ -23953,6 +26102,17 @@
             "items": {
               "$ref": "#/components/schemas/ControlledDocumentVerificationDto"
             }
+          },
+          "acknowledgedByMeAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "canAcknowledge": {
+            "type": "boolean",
+            "default": false
           }
         }
       },
@@ -24016,6 +26176,10 @@
           },
           "provenance": {
             "type": "string"
+          },
+          "ispsRestricted": {
+            "type": "boolean",
+            "default": false
           }
         }
       },
@@ -29460,6 +31624,325 @@
         },
         "additionalProperties": false
       },
+      "DepartureAuthorityDto": {
+        "required": [
+          "id",
+          "duty"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "duty": {
+            "type": "string"
+          }
+        }
+      },
+      "DepartureCategoryState": {
+        "required": [
+          "category",
+          "result",
+          "reasons"
+        ],
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "DepartureDecisionDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "sequence",
+          "previousDecisionId",
+          "decision",
+          "assessedState",
+          "assessmentMode",
+          "assessmentHash",
+          "windowFrom",
+          "windowTo",
+          "reason",
+          "duty",
+          "actorId",
+          "recordedAt",
+          "validity"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "previousDecisionId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "assessedState": {
+            "type": "string"
+          },
+          "assessmentMode": {
+            "type": "string"
+          },
+          "assessmentHash": {
+            "type": "string"
+          },
+          "windowFrom": {
+            "type": "string",
+            "format": "date"
+          },
+          "windowTo": {
+            "type": "string",
+            "format": "date"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "duty": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "validity": {
+            "type": "string"
+          },
+          "replayed": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "DepartureReadinessView": {
+        "required": [
+          "vesselId",
+          "from",
+          "to",
+          "mode",
+          "state",
+          "categories",
+          "criticalBlockers",
+          "reviewReasons",
+          "conditions",
+          "why",
+          "assessmentHash",
+          "assessedAt",
+          "validUntil",
+          "decisions",
+          "sequence",
+          "authorities",
+          "canDecide",
+          "allowedDecisions"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DepartureCategoryState"
+            }
+          },
+          "criticalBlockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reviewReasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "conditions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "why": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DepartureWhy"
+            }
+          },
+          "assessmentHash": {
+            "type": "string"
+          },
+          "assessedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "validUntil": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "decisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DepartureDecisionDto"
+            }
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DepartureAuthorityDto"
+            }
+          },
+          "canDecide": {
+            "type": "boolean"
+          },
+          "allowedDecisions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "decisionAuthority": {
+            "type": "string",
+            "default": "MasterHumanDecisionRequired;EngineNeverReleases;NotADepartureClearance"
+          },
+          "sourceLocator": {
+            "type": "string",
+            "default": "18.01/sheet:Backlog/row:59-60;60.01/paragraph:220,928,936,952,1080;15.01/paragraph:1203-1213"
+          }
+        }
+      },
+      "DepartureSignoffCommand": {
+        "required": [
+          "from",
+          "to",
+          "expectedAssessmentHash",
+          "expectedSequence",
+          "decision",
+          "reason",
+          "authorityId"
+        ],
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "expectedAssessmentHash": {
+            "type": "string"
+          },
+          "expectedSequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DepartureWhy": {
+        "required": [
+          "category",
+          "result",
+          "reason",
+          "sourceKind",
+          "sourceId",
+          "sourceRevision"
+        ],
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "sourceKind": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sourceId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "sourceRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          }
+        }
+      },
       "DocumentDraftDto": {
         "required": [
           "id",
@@ -30024,6 +32507,700 @@
           },
           "reason": {
             "type": "string"
+          }
+        }
+      },
+      "DrydockContent": {
+        "required": [
+          "projectReference",
+          "yard",
+          "plannedStart",
+          "plannedFinish",
+          "external",
+          "items",
+          "completionEvidence"
+        ],
+        "type": "object",
+        "properties": {
+          "projectReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "yard": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "plannedStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "plannedFinish": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "external": {
+            "$ref": "#/components/schemas/DrydockExternal"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DrydockScopeItem"
+            }
+          },
+          "completionEvidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DrydockEvidence"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrydockCreateCommand": {
+        "required": [
+          "id",
+          "content"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "content": {
+            "$ref": "#/components/schemas/DrydockContent"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrydockEvidence": {
+        "required": [
+          "id",
+          "reference",
+          "note"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reference": {
+            "type": "string"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrydockExternal": {
+        "required": [
+          "estimatedCost",
+          "currency",
+          "vendor",
+          "budgetReference"
+        ],
+        "type": "object",
+        "properties": {
+          "estimatedCost": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "currency": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "vendor": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "budgetReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrydockItemStatus": {
+        "required": [
+          "itemId",
+          "state",
+          "links"
+        ],
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DrydockLinkStatus"
+            }
+          }
+        }
+      },
+      "DrydockLink": {
+        "required": [
+          "kind",
+          "targetId",
+          "pinnedRevision"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "targetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "pinnedRevision": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrydockLinkStatus": {
+        "required": [
+          "kind",
+          "targetId",
+          "pinnedRevision",
+          "currentRevision",
+          "state",
+          "reason",
+          "due"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "targetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "pinnedRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "currentRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "due": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          }
+        }
+      },
+      "DrydockListView": {
+        "required": [
+          "vesselId",
+          "items",
+          "canWrite",
+          "categories",
+          "priorities",
+          "linkKinds"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DrydockSummaryDto"
+            }
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "priorities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "linkKinds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sourceVersion": {
+            "type": "string",
+            "default": "18.01:row112;11.01:2316/rows1542-1559;13.03:p85;59.04:p1038,p2378-2400"
+          }
+        }
+      },
+      "DrydockPackageDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "revision",
+          "version",
+          "state",
+          "content",
+          "hash",
+          "actualStart",
+          "actualFinish",
+          "completedBy",
+          "verifiedBy",
+          "verifiedAt",
+          "provenance",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "state": {
+            "type": "string"
+          },
+          "content": {
+            "$ref": "#/components/schemas/DrydockContent"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "actualStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "actualFinish": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "completedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "verifiedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "verifiedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "DrydockReadiness": {
+        "required": [
+          "state",
+          "items",
+          "unlinked",
+          "overdue",
+          "stale",
+          "unavailable"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DrydockItemStatus"
+            }
+          },
+          "unlinked": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "overdue": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stale": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unavailable": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "meaning": {
+            "type": "string",
+            "default": "LinkageCompletenessOnly;NotASurveyOrClassResult"
+          }
+        }
+      },
+      "DrydockScopeItem": {
+        "required": [
+          "id",
+          "category",
+          "title",
+          "equipmentId",
+          "workPackage",
+          "classRequirement",
+          "statutoryRequirement",
+          "priority",
+          "links"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "category": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "equipmentId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "workPackage": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "classRequirement": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "statutoryRequirement": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "priority": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DrydockLink"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrydockSummaryDto": {
+        "required": [
+          "id",
+          "revision",
+          "state",
+          "projectReference",
+          "yard",
+          "plannedStart",
+          "plannedFinish",
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "projectReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "yard": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "plannedStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "plannedFinish": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "DrydockTimelineDto": {
+        "required": [
+          "revision",
+          "state",
+          "reasonCode",
+          "note",
+          "actorId",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "DrydockTransitionCommand": {
+        "required": [
+          "expectedVersion",
+          "contentHash",
+          "action",
+          "note"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "contentHash": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrydockUpdateCommand": {
+        "required": [
+          "expectedVersion",
+          "content"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "content": {
+            "$ref": "#/components/schemas/DrydockContent"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrydockVerifyCommand": {
+        "required": [
+          "expectedVersion",
+          "contentHash",
+          "decision",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "contentHash": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrydockView": {
+        "required": [
+          "package",
+          "readiness",
+          "timeline",
+          "planBlockers",
+          "completeBlockers",
+          "allowedActions",
+          "canEdit",
+          "canVerify",
+          "unreadableLinkKinds"
+        ],
+        "type": "object",
+        "properties": {
+          "package": {
+            "$ref": "#/components/schemas/DrydockPackageDto"
+          },
+          "readiness": {
+            "$ref": "#/components/schemas/DrydockReadiness"
+          },
+          "timeline": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DrydockTimelineDto"
+            }
+          },
+          "planBlockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "completeBlockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allowedActions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canVerify": {
+            "type": "boolean"
+          },
+          "unreadableLinkKinds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "external": {
+            "type": "string",
+            "default": "SupplierBudgetExternalReferenceOnly;NoProcurementOrApproval"
+          },
+          "sourceVersion": {
+            "type": "string",
+            "default": "18.01:row112;11.01:2316/rows1542-1559;13.03:p85;59.04:p1038,p2378-2400"
           }
         }
       },
@@ -42462,6 +45639,1665 @@
           }
         }
       },
+      "SafetyActionCreateCommand": {
+        "required": [
+          "id",
+          "kind",
+          "title",
+          "description",
+          "ownerId",
+          "dueDate",
+          "rootCauseIds",
+          "barrierIds"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "ownerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "dueDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "rootCauseIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "barrierIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "followUpOf": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SafetyActionDto": {
+        "required": [
+          "id",
+          "kind",
+          "title",
+          "description",
+          "ownerId",
+          "dueDate",
+          "overdue",
+          "rootCauseIds",
+          "barrierIds",
+          "followUpOf",
+          "revision",
+          "version",
+          "state",
+          "effectiveness",
+          "steps",
+          "allowedSteps"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "ownerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "dueDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "overdue": {
+            "type": "boolean"
+          },
+          "rootCauseIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "barrierIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "followUpOf": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "state": {
+            "type": "string"
+          },
+          "effectiveness": {
+            "type": "string"
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SafetyActionStepDto"
+            }
+          },
+          "allowedSteps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "SafetyActionStepCommand": {
+        "required": [
+          "expectedRevision",
+          "kind",
+          "outcome",
+          "text"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "outcome": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "text": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/CertificateFilePin"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "SafetyActionStepDto": {
+        "required": [
+          "id",
+          "revision",
+          "kind",
+          "outcome",
+          "text",
+          "evidence",
+          "actorId",
+          "recordedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "outcome": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "text": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CertificateFilePin"
+            }
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SafetyBarrier": {
+        "required": [
+          "id",
+          "name",
+          "function",
+          "performance"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "function": {
+            "type": "string"
+          },
+          "performance": {
+            "type": "string"
+          },
+          "riskBarrierRef": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "SafetyEventBlocker": {
+        "required": [
+          "eventId",
+          "eventNo",
+          "category",
+          "severity",
+          "state",
+          "reason",
+          "blocking"
+        ],
+        "type": "object",
+        "properties": {
+          "eventId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "eventNo": {
+            "type": "string"
+          },
+          "category": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "severity": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "state": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "blocking": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SafetyEventBlockerSnapshot": {
+        "required": [
+          "vesselId",
+          "state",
+          "items",
+          "coverage",
+          "evaluatedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SafetyEventBlocker"
+            }
+          },
+          "coverage": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evaluatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SafetyEventCapabilitiesDto": {
+        "required": [
+          "vesselId",
+          "canRead",
+          "canReport",
+          "canTriage",
+          "canInvestigate",
+          "canReview",
+          "canWriteActions",
+          "canVerifyActions",
+          "canReviewEffectiveness",
+          "canReadIdentity",
+          "anonymousChannel",
+          "offline",
+          "categories",
+          "reportingModes",
+          "operationContexts",
+          "severities",
+          "sourceVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "canRead": {
+            "type": "boolean"
+          },
+          "canReport": {
+            "type": "boolean"
+          },
+          "canTriage": {
+            "type": "boolean"
+          },
+          "canInvestigate": {
+            "type": "boolean"
+          },
+          "canReview": {
+            "type": "boolean"
+          },
+          "canWriteActions": {
+            "type": "boolean"
+          },
+          "canVerifyActions": {
+            "type": "boolean"
+          },
+          "canReviewEffectiveness": {
+            "type": "boolean"
+          },
+          "canReadIdentity": {
+            "type": "boolean"
+          },
+          "anonymousChannel": {
+            "type": "string"
+          },
+          "offline": {
+            "$ref": "#/components/schemas/SafetyEventOfflineDto"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reportingModes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "operationContexts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "severities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sourceVersion": {
+            "type": "string"
+          }
+        }
+      },
+      "SafetyEventCreateCommand": {
+        "required": [
+          "id",
+          "reportingMode",
+          "fields"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reportingMode": {
+            "type": "string"
+          },
+          "fields": {
+            "$ref": "#/components/schemas/SafetyEventDraftFields"
+          },
+          "contactPreference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "SafetyEventDraftFields": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "occurrencePrecision": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "occurredAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "occurrenceDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "occurrenceUnknownReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "timeZone": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "operationContext": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "locationText": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "summary": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "narrative": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "immediateActionTaken": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "immediateActionText": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "severityClaim": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "evidence": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/CertificateFilePin"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "SafetyEventDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "eventNo",
+          "revision",
+          "version",
+          "state",
+          "reportingMode",
+          "fields",
+          "hash",
+          "missing",
+          "reporter",
+          "severity",
+          "severityClaim",
+          "investigationRequired",
+          "severityPolicy",
+          "origin",
+          "createdAt",
+          "savedAt",
+          "submittedAt",
+          "closedBy",
+          "closedAt",
+          "closureReason",
+          "triages",
+          "investigation",
+          "actions",
+          "effectiveness",
+          "closureBlockers",
+          "messages",
+          "can",
+          "followUpSecret",
+          "provenance",
+          "sourceVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "eventNo": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reportingMode": {
+            "type": "string"
+          },
+          "fields": {
+            "$ref": "#/components/schemas/SafetyEventDraftFields"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "missing": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reporter": {
+            "$ref": "#/components/schemas/SafetyEventReporterDto"
+          },
+          "severity": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "severityClaim": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "investigationRequired": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "severityPolicy": {
+            "type": "string"
+          },
+          "origin": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "submittedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "closedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "closedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "closureReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "triages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SafetyEventTriageDto"
+            }
+          },
+          "investigation": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/SafetyInvestigationDto"
+              }
+            ]
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SafetyActionDto"
+            }
+          },
+          "effectiveness": {
+            "type": "string"
+          },
+          "closureBlockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SafetyEventMessageDto"
+            }
+          },
+          "can": {
+            "$ref": "#/components/schemas/SafetyEventPermissionsDto"
+          },
+          "followUpSecret": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          }
+        }
+      },
+      "SafetyEventFollowUpDto": {
+        "required": [
+          "eventNo",
+          "state",
+          "submittedAt",
+          "messages"
+        ],
+        "type": "object",
+        "properties": {
+          "eventNo": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "submittedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SafetyEventMessageDto"
+            }
+          }
+        }
+      },
+      "SafetyEventFollowUpMessageCommand": {
+        "required": [
+          "id",
+          "body"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "body": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SafetyEventIdentityAccessCommand": {
+        "required": [
+          "id",
+          "purpose",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SafetyEventIdentityDto": {
+        "required": [
+          "accessId",
+          "eventId",
+          "reporterActorId",
+          "contactPreference",
+          "purpose",
+          "accessedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "accessId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "eventId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reporterActorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "contactPreference": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "accessedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SafetyEventListItemDto": {
+        "required": [
+          "id",
+          "eventNo",
+          "state",
+          "reportingMode",
+          "category",
+          "summary",
+          "occurrencePrecision",
+          "occurredAt",
+          "occurrenceDate",
+          "severity",
+          "mine",
+          "origin",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "eventNo": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reportingMode": {
+            "type": "string"
+          },
+          "category": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "summary": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "occurrencePrecision": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "occurredAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "occurrenceDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "severity": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "mine": {
+            "type": "boolean"
+          },
+          "origin": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SafetyEventMessageCommand": {
+        "required": [
+          "id",
+          "visibility",
+          "body"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "visibility": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SafetyEventMessageDto": {
+        "required": [
+          "id",
+          "visibility",
+          "authorKind",
+          "actorId",
+          "body",
+          "createdAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "visibility": {
+            "type": "string"
+          },
+          "authorKind": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "body": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SafetyEventOfflineContextDto": {
+        "required": [
+          "id",
+          "tenantId",
+          "actorId",
+          "vesselId",
+          "deviceId",
+          "keyId",
+          "challenge",
+          "policyVersion",
+          "policyDigest",
+          "authorityDigest",
+          "sourceVersion",
+          "operation",
+          "allowedParts",
+          "categories",
+          "operationContexts",
+          "severities",
+          "serverTime",
+          "expiresAt",
+          "retainUntil",
+          "maxRecords",
+          "maxEncryptedBytes",
+          "maxDeviceRecords",
+          "maxDeviceEncryptedBytes"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tenantId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "deviceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "keyId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "challenge": {
+            "type": "string"
+          },
+          "policyVersion": {
+            "type": "string"
+          },
+          "policyDigest": {
+            "type": "string"
+          },
+          "authorityDigest": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string"
+          },
+          "allowedParts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "operationContexts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "severities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "serverTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "retainUntil": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "maxRecords": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxEncryptedBytes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxDeviceRecords": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxDeviceEncryptedBytes": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "SafetyEventOfflineDto": {
+        "required": [
+          "available",
+          "state"
+        ],
+        "type": "object",
+        "properties": {
+          "available": {
+            "type": "boolean"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      },
+      "SafetyEventPageDto": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore",
+          "blockers",
+          "capabilities"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SafetyEventListItemDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "blockers": {
+            "$ref": "#/components/schemas/SafetyEventBlockerSnapshot"
+          },
+          "capabilities": {
+            "$ref": "#/components/schemas/SafetyEventCapabilitiesDto"
+          }
+        }
+      },
+      "SafetyEventPermissionsDto": {
+        "required": [
+          "edit",
+          "submit",
+          "withdraw",
+          "triage",
+          "readIdentity",
+          "message",
+          "investigate",
+          "reviewInvestigation",
+          "createAction",
+          "close"
+        ],
+        "type": "object",
+        "properties": {
+          "edit": {
+            "type": "boolean"
+          },
+          "submit": {
+            "type": "boolean"
+          },
+          "withdraw": {
+            "type": "boolean"
+          },
+          "triage": {
+            "type": "boolean"
+          },
+          "readIdentity": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "boolean"
+          },
+          "investigate": {
+            "type": "boolean"
+          },
+          "reviewInvestigation": {
+            "type": "boolean"
+          },
+          "createAction": {
+            "type": "boolean"
+          },
+          "close": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SafetyEventReasonCommand": {
+        "required": [
+          "expectedVersion",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SafetyEventReporterDto": {
+        "required": [
+          "mode",
+          "actorId",
+          "isCurrentActor"
+        ],
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "isCurrentActor": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SafetyEventSubmitCommand": {
+        "required": [
+          "expectedVersion",
+          "contentHash"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "contentHash": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SafetyEventTriageCommand": {
+        "required": [
+          "expectedVersion",
+          "decision",
+          "severity",
+          "investigationRequired",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "severity": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "investigationRequired": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SafetyEventTriageDto": {
+        "required": [
+          "id",
+          "revision",
+          "decision",
+          "severity",
+          "investigationRequired",
+          "reason",
+          "actorId",
+          "decidedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "severity": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "investigationRequired": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "decidedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SafetyEventUpdateCommand": {
+        "required": [
+          "expectedVersion",
+          "fields"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "fields": {
+            "$ref": "#/components/schemas/SafetyEventDraftFields"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SafetyFactor": {
+        "required": [
+          "id",
+          "kind",
+          "category",
+          "statement"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "statement": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SafetyFailure": {
+        "required": [
+          "code",
+          "missing",
+          "correlationId"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "missing": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "correlationId": {
+            "type": "string"
+          }
+        }
+      },
+      "SafetyInvestigationContent": {
+        "required": [
+          "scope",
+          "factors",
+          "rootCauses",
+          "barriers",
+          "uncertainties",
+          "evidence"
+        ],
+        "type": "object",
+        "properties": {
+          "scope": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "factors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SafetyFactor"
+            }
+          },
+          "rootCauses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SafetyRootCause"
+            }
+          },
+          "barriers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SafetyBarrier"
+            }
+          },
+          "uncertainties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CertificateFilePin"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "SafetyInvestigationDecisionDto": {
+        "required": [
+          "id",
+          "revision",
+          "decision",
+          "reason",
+          "actorId",
+          "decidedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "decidedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SafetyInvestigationDto": {
+        "required": [
+          "revision",
+          "version",
+          "state",
+          "content",
+          "hash",
+          "approvedRevision",
+          "missing",
+          "authors",
+          "decisions",
+          "canEdit",
+          "canSubmit",
+          "canReview"
+        ],
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "state": {
+            "type": "string"
+          },
+          "content": {
+            "$ref": "#/components/schemas/SafetyInvestigationContent"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "approvedRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "missing": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "authors": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "decisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SafetyInvestigationDecisionDto"
+            }
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canSubmit": {
+            "type": "boolean"
+          },
+          "canReview": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SafetyInvestigationReviewCommand": {
+        "required": [
+          "expectedVersion",
+          "contentHash",
+          "decision",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "contentHash": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SafetyInvestigationSaveCommand": {
+        "required": [
+          "expectedVersion",
+          "content"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "content": {
+            "$ref": "#/components/schemas/SafetyInvestigationContent"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SafetyInvestigationSubmitCommand": {
+        "required": [
+          "expectedVersion",
+          "contentHash"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "contentHash": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SafetyRootCause": {
+        "required": [
+          "id",
+          "statement",
+          "factorIds",
+          "verification"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "statement": {
+            "type": "string"
+          },
+          "factorIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "verification": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
       "SaveRegulatoryDraft": {
         "required": [
           "expectedVersion",
@@ -43904,6 +48740,28 @@
           },
           "qualification": {
             "type": "string"
+          }
+        }
+      },
+      "SpeechSegment": {
+        "required": [
+          "start",
+          "end",
+          "confidence"
+        ],
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "end": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "confidence": {
+            "type": "number",
+            "format": "double"
           }
         }
       },
@@ -45452,6 +50310,26 @@
           }
         }
       },
+      "TowageActiveInterval": {
+        "required": [
+          "from",
+          "to"
+        ],
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "to": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
       "TowageAmendCommand": {
         "required": [
           "expectedVersion",
@@ -45957,6 +50835,601 @@
         },
         "additionalProperties": false
       },
+      "TowageEventInput": {
+        "required": [
+          "kind",
+          "occurredAt",
+          "value",
+          "unit",
+          "result",
+          "text",
+          "reference",
+          "weather"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unit": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "result": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "text": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "weather": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TowageWeather"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowageExecutionDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "jobId",
+          "tugId",
+          "assignmentId",
+          "assignmentRevision",
+          "planId",
+          "planRevision",
+          "briefingId",
+          "briefingRevision",
+          "readinessDecisionId",
+          "state",
+          "verificationState",
+          "revision",
+          "version",
+          "sequence",
+          "hash",
+          "startedAt",
+          "startedBy",
+          "startPosition",
+          "endedAt",
+          "endedBy",
+          "endPosition",
+          "verifiedBy",
+          "verifiedAt",
+          "provenance"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tugId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "assignmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "assignmentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "planId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "planRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "briefingId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "briefingRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "readinessDecisionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "verificationState": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "startedBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "startPosition": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "endedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "endedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "endPosition": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "verifiedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "verifiedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "provenance": {
+            "type": "string"
+          }
+        }
+      },
+      "TowageExecutionEventCommand": {
+        "required": [
+          "event"
+        ],
+        "type": "object",
+        "properties": {
+          "event": {
+            "$ref": "#/components/schemas/TowageEventInput"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowageExecutionEventDto": {
+        "required": [
+          "sequence",
+          "kind",
+          "occurredAt",
+          "recordedAt",
+          "actorId",
+          "duty",
+          "value",
+          "unit",
+          "result",
+          "text",
+          "reference",
+          "weather",
+          "reason",
+          "position",
+          "hash"
+        ],
+        "type": "object",
+        "properties": {
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "duty": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unit": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "result": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "text": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "weather": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TowageWeather"
+              }
+            ]
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "position": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "hash": {
+            "type": "string"
+          }
+        }
+      },
+      "TowageExecutionJobView": {
+        "required": [
+          "vesselId",
+          "jobId",
+          "jobNumber",
+          "jobStatus",
+          "tugs",
+          "executions"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobNumber": {
+            "type": "string"
+          },
+          "jobStatus": {
+            "type": "string"
+          },
+          "tugs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TowageStartGateDto"
+            }
+          },
+          "executions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TowageExecutionDto"
+            }
+          },
+          "sourceVersion": {
+            "type": "string",
+            "default": "18.01:row90;08.02:p133-134;10.01:p103-105;60.02Rev2:p217-254,p1118-1198"
+          }
+        }
+      },
+      "TowageExecutionStartCommand": {
+        "required": [
+          "id",
+          "jobId",
+          "tugId",
+          "authorityId",
+          "readinessDecisionId",
+          "startPosition"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tugId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "readinessDecisionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "startPosition": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowageExecutionTransitionCommand": {
+        "required": [
+          "expectedVersion",
+          "action",
+          "reason",
+          "occurredAt",
+          "authorityId",
+          "endPosition"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "action": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "endPosition": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowageExecutionVerifyCommand": {
+        "required": [
+          "expectedVersion",
+          "contentHash",
+          "decision",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "contentHash": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowageExecutionView": {
+        "required": [
+          "execution",
+          "jobNumber",
+          "assistedVessel",
+          "ledger",
+          "timeline",
+          "authorities",
+          "canRecord",
+          "canTransition",
+          "canVerify",
+          "allowedActions",
+          "completeBlockers",
+          "recordableKinds",
+          "loadUnits",
+          "communicationStates",
+          "winchStates",
+          "releaseTestResults",
+          "evidencePurposes"
+        ],
+        "type": "object",
+        "properties": {
+          "execution": {
+            "$ref": "#/components/schemas/TowageExecutionDto"
+          },
+          "jobNumber": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "assistedVessel": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "ledger": {
+            "$ref": "#/components/schemas/TowageLedgerFacts"
+          },
+          "timeline": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TowageExecutionEventDto"
+            }
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugAuthorityDto"
+            }
+          },
+          "canRecord": {
+            "type": "boolean"
+          },
+          "canTransition": {
+            "type": "boolean"
+          },
+          "canVerify": {
+            "type": "boolean"
+          },
+          "allowedActions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "completeBlockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "recordableKinds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "loadUnits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "communicationStates": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "winchStates": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "releaseTestResults": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidencePurposes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "safetyEvents": {
+            "type": "string",
+            "default": "UNKNOWN:SafetyEventSourceUnavailable"
+          },
+          "authority": {
+            "type": "string",
+            "default": "TugMasterHumanRecord;ShoreAiSystemCannotStartOrAbort;NotAGoDecision"
+          },
+          "sourceVersion": {
+            "type": "string",
+            "default": "18.01:row90;08.02:p133-134;10.01:p103-105;60.02Rev2:p217-254,p1118-1198"
+          }
+        }
+      },
       "TowageItem": {
         "required": [
           "id",
@@ -45973,6 +51446,72 @@
           }
         },
         "additionalProperties": false
+      },
+      "TowageLedgerFacts": {
+        "required": [
+          "towlineConnectedAt",
+          "towlineReleasedAt",
+          "towlineConnected",
+          "maxTowLoad",
+          "communicationState",
+          "winchState",
+          "emergencyReleaseTested",
+          "weatherEventSequence",
+          "activeIntervals",
+          "activeSeconds"
+        ],
+        "type": "object",
+        "properties": {
+          "towlineConnectedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "towlineReleasedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "towlineConnected": {
+            "type": "boolean"
+          },
+          "maxTowLoad": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TowageMaxLoad"
+            }
+          },
+          "communicationState": {
+            "type": "string"
+          },
+          "winchState": {
+            "type": "string"
+          },
+          "emergencyReleaseTested": {
+            "type": "string"
+          },
+          "weatherEventSequence": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "activeIntervals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TowageActiveInterval"
+            }
+          },
+          "activeSeconds": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
       },
       "TowageLimit": {
         "required": [
@@ -45999,6 +51538,26 @@
           }
         },
         "additionalProperties": false
+      },
+      "TowageMaxLoad": {
+        "required": [
+          "value",
+          "unit",
+          "samples"
+        ],
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "samples": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
       },
       "TowageParticipant": {
         "required": [
@@ -46450,6 +52009,74 @@
         },
         "additionalProperties": false
       },
+      "TowageStartGateDto": {
+        "required": [
+          "tugId",
+          "assignmentId",
+          "readinessDecisionId",
+          "decision",
+          "blockers",
+          "authorities",
+          "canStart",
+          "executionId",
+          "executionState"
+        ],
+        "type": "object",
+        "properties": {
+          "tugId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "assignmentId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "readinessDecisionId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "decision": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugAuthorityDto"
+            }
+          },
+          "canStart": {
+            "type": "boolean"
+          },
+          "executionId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "executionState": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "TowageSubmitCommand": {
         "required": [
           "expectedVersion",
@@ -46524,6 +52151,49 @@
               "string"
             ],
             "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowageWeather": {
+        "required": [
+          "windSpeedKn",
+          "windDirection",
+          "seaState",
+          "visibility",
+          "current"
+        ],
+        "type": "object",
+        "properties": {
+          "windSpeedKn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "windDirection": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "seaState": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "visibility": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "current": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
         "additionalProperties": false
@@ -47700,6 +53370,695 @@
           "coverage": {
             "type": "string",
             "default": "SharedCrewEngineAndTowageCompetence;UnverifiedNeverPositive;MasterDecisionSeparate"
+          }
+        }
+      },
+      "TugDailyExecutionDto": {
+        "required": [
+          "id",
+          "jobId",
+          "state",
+          "startedAt",
+          "endedAt",
+          "linked"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "linked": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TugDailyFuel": {
+        "required": [
+          "quantity",
+          "unit",
+          "sourceRef"
+        ],
+        "type": "object",
+        "properties": {
+          "quantity": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unit": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sourceRef": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "TugDailyLogContent": {
+        "required": [
+          "timeZone",
+          "meters",
+          "fuel",
+          "executionIds",
+          "defectIds",
+          "dailySummary"
+        ],
+        "type": "object",
+        "properties": {
+          "timeZone": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "meters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugDailyMeter"
+            }
+          },
+          "fuel": {
+            "$ref": "#/components/schemas/TugDailyFuel"
+          },
+          "executionIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "defectIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "dailySummary": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "TugDailyLogCreateCommand": {
+        "required": [
+          "id",
+          "logDate",
+          "watch",
+          "capturedAt",
+          "content"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "logDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "watch": {
+            "type": "string"
+          },
+          "capturedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "content": {
+            "$ref": "#/components/schemas/TugDailyLogContent"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TugDailyLogDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "logDate",
+          "watch",
+          "revision",
+          "version",
+          "state",
+          "content",
+          "hash",
+          "submittedBy",
+          "verifiedRevision",
+          "capturedAt",
+          "syncedAt",
+          "syncState",
+          "provenance",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "logDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "watch": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "state": {
+            "type": "string"
+          },
+          "content": {
+            "$ref": "#/components/schemas/TugDailyLogContent"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "submittedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "verifiedRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "capturedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "syncedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "syncState": {
+            "type": "string"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TugDailyLogListView": {
+        "required": [
+          "vesselId",
+          "items",
+          "canWrite",
+          "watches",
+          "fuelUnits"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugDailyLogSummaryDto"
+            }
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "watches": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "fuelUnits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sourceVersion": {
+            "type": "string",
+            "default": "18.01:row91;10.01:p112-114;08.02:p135-137;60.02Rev2:p258-267,p1325-1370"
+          }
+        }
+      },
+      "TugDailyLogReviewCommand": {
+        "required": [
+          "expectedVersion",
+          "contentHash",
+          "decision",
+          "reason",
+          "authorityId"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "contentHash": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TugDailyLogReviewDto": {
+        "required": [
+          "id",
+          "revision",
+          "resultRevision",
+          "decision",
+          "reconciliation",
+          "duty",
+          "actorId",
+          "reason",
+          "decidedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "resultRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "reconciliation": {
+            "type": "string"
+          },
+          "duty": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "decidedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TugDailyLogRevisionDto": {
+        "required": [
+          "revision",
+          "state",
+          "reasonCode",
+          "hash",
+          "actorId",
+          "capturedAt",
+          "syncedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "capturedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "syncedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TugDailyLogSubmitCommand": {
+        "required": [
+          "expectedVersion",
+          "contentHash"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "contentHash": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TugDailyLogSummaryDto": {
+        "required": [
+          "id",
+          "logDate",
+          "watch",
+          "revision",
+          "state",
+          "masterReview",
+          "syncedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "logDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "watch": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "masterReview": {
+            "type": "string"
+          },
+          "syncedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TugDailyLogUpdateCommand": {
+        "required": [
+          "expectedVersion",
+          "capturedAt",
+          "content"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "capturedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "content": {
+            "$ref": "#/components/schemas/TugDailyLogContent"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TugDailyLogView": {
+        "required": [
+          "log",
+          "reconciliation",
+          "masterReview",
+          "defectsReported",
+          "safetyEvents",
+          "intervalFrom",
+          "intervalTo",
+          "executions",
+          "submitBlockers",
+          "reviews",
+          "revisions",
+          "authorities",
+          "canEdit",
+          "canSubmit",
+          "canReview",
+          "fuelUnits"
+        ],
+        "type": "object",
+        "properties": {
+          "log": {
+            "$ref": "#/components/schemas/TugDailyLogDto"
+          },
+          "reconciliation": {
+            "$ref": "#/components/schemas/TugDailyReconciliation"
+          },
+          "masterReview": {
+            "type": "string"
+          },
+          "defectsReported": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "safetyEvents": {
+            "type": "string"
+          },
+          "intervalFrom": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "intervalTo": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "executions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugDailyExecutionDto"
+            }
+          },
+          "submitBlockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reviews": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugDailyLogReviewDto"
+            }
+          },
+          "revisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugDailyLogRevisionDto"
+            }
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugAuthorityDto"
+            }
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canSubmit": {
+            "type": "boolean"
+          },
+          "canReview": {
+            "type": "boolean"
+          },
+          "fuelUnits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "offlineCapture": {
+            "type": "string",
+            "default": "InMemoryUnsavedOnly;DurableTugCaptureNotRegistered"
+          },
+          "sourceVersion": {
+            "type": "string",
+            "default": "18.01:row91;10.01:p112-114;08.02:p135-137;60.02Rev2:p258-267,p1325-1370"
+          }
+        }
+      },
+      "TugDailyMeter": {
+        "required": [
+          "id",
+          "meter",
+          "opening",
+          "closing",
+          "resetEvidenceRef"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "meter": {
+            "type": "string"
+          },
+          "opening": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "closing": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "resetEvidenceRef": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "TugDailyReason": {
+        "required": [
+          "scope",
+          "code",
+          "subject"
+        ],
+        "type": "object",
+        "properties": {
+          "scope": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "subject": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "TugDailyReconciliation": {
+        "required": [
+          "state",
+          "reasons",
+          "jobsCompleted",
+          "operatingHours",
+          "openInterval",
+          "meterHours"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugDailyReason"
+            }
+          },
+          "jobsCompleted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "operatingHours": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "openInterval": {
+            "type": "boolean"
+          },
+          "meterHours": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -48936,6 +55295,881 @@
               "integer"
             ],
             "format": "uint32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "VoiceDraftCandidate": {
+        "required": [
+          "protocol",
+          "extractorVersion",
+          "ruleSetVersion",
+          "transcriptSha256",
+          "fields",
+          "hints"
+        ],
+        "type": "object",
+        "properties": {
+          "protocol": {
+            "type": "string"
+          },
+          "extractorVersion": {
+            "type": "string"
+          },
+          "ruleSetVersion": {
+            "type": "string"
+          },
+          "transcriptSha256": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VoiceDraftCandidateField"
+            }
+          },
+          "hints": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VoiceDraftHint"
+            }
+          }
+        }
+      },
+      "VoiceDraftCandidateField": {
+        "required": [
+          "key",
+          "value",
+          "spans",
+          "confidence",
+          "rule"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "spans": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VoiceDraftSpan"
+            }
+          },
+          "confidence": {
+            "type": "number",
+            "format": "double"
+          },
+          "rule": {
+            "type": "string"
+          }
+        }
+      },
+      "VoiceDraftCapabilitiesDto": {
+        "required": [
+          "vesselId",
+          "canRead",
+          "canWrite",
+          "canConfirm",
+          "speechAvailable",
+          "speechUnavailableReason",
+          "speechEngineVersion",
+          "maxAudioBytes",
+          "audioRetention",
+          "extractorVersion",
+          "ruleSetVersion",
+          "eventTypes",
+          "locations",
+          "rejectionReasons",
+          "requiredFields",
+          "canAttachEvidence"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "canRead": {
+            "type": "boolean"
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "canConfirm": {
+            "type": "boolean"
+          },
+          "speechAvailable": {
+            "type": "boolean"
+          },
+          "speechUnavailableReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "speechEngineVersion": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "maxAudioBytes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "audioRetention": {
+            "type": "string"
+          },
+          "extractorVersion": {
+            "type": "string"
+          },
+          "ruleSetVersion": {
+            "type": "string"
+          },
+          "eventTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "locations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rejectionReasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "requiredFields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "canAttachEvidence": {
+            "type": "boolean"
+          }
+        }
+      },
+      "VoiceDraftConfirmCommand": {
+        "required": [
+          "expectedVersion",
+          "contentHash"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "contentHash": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "VoiceDraftCreateCommand": {
+        "required": [
+          "id",
+          "transcript",
+          "origin",
+          "referenceDate",
+          "speechAttestation"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "transcript": {
+            "type": "string"
+          },
+          "origin": {
+            "type": "string"
+          },
+          "referenceDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "speechAttestation": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "VoiceDraftDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "revision",
+          "version",
+          "state",
+          "origin",
+          "transcript",
+          "transcriptSha256",
+          "referenceDate",
+          "speech",
+          "extractorVersion",
+          "ruleSetVersion",
+          "candidate",
+          "fields",
+          "fieldOrigins",
+          "evidence",
+          "missing",
+          "hash",
+          "corrections",
+          "confirmedBy",
+          "confirmedAt",
+          "rejection",
+          "revisions",
+          "createdBy",
+          "canEdit",
+          "canConfirm",
+          "handoff",
+          "audioRetention",
+          "provenance",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "state": {
+            "type": "string"
+          },
+          "origin": {
+            "type": "string"
+          },
+          "transcript": {
+            "type": "string"
+          },
+          "transcriptSha256": {
+            "type": "string"
+          },
+          "referenceDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "speech": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/VoiceDraftSpeechDto"
+              }
+            ]
+          },
+          "extractorVersion": {
+            "type": "string"
+          },
+          "ruleSetVersion": {
+            "type": "string"
+          },
+          "candidate": {
+            "$ref": "#/components/schemas/VoiceDraftCandidate"
+          },
+          "fields": {
+            "$ref": "#/components/schemas/VoiceDraftFields"
+          },
+          "fieldOrigins": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VoiceDraftEvidenceDto"
+            }
+          },
+          "missing": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "hash": {
+            "type": "string"
+          },
+          "corrections": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/VoiceDraftFieldCorrection"
+            }
+          },
+          "confirmedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "confirmedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "rejection": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/VoiceDraftRejectionDto"
+              }
+            ]
+          },
+          "revisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VoiceDraftRevisionSummaryDto"
+            }
+          },
+          "createdBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canConfirm": {
+            "type": "boolean"
+          },
+          "handoff": {
+            "type": "string"
+          },
+          "audioRetention": {
+            "type": "string"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "safetyEventId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "handoffReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "VoiceDraftEvidenceDto": {
+        "required": [
+          "id",
+          "revision",
+          "currency",
+          "state"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      },
+      "VoiceDraftFieldCorrection": {
+        "required": [
+          "key",
+          "outcome",
+          "required"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          }
+        }
+      },
+      "VoiceDraftFields": {
+        "required": [
+          "eventType",
+          "occurredAt",
+          "location",
+          "locationDetail",
+          "description",
+          "immediateAction"
+        ],
+        "type": "object",
+        "properties": {
+          "eventType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "occurredAt": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "location": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "locationDetail": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "immediateAction": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "VoiceDraftHint": {
+        "required": [
+          "code",
+          "span"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "span": {
+            "$ref": "#/components/schemas/VoiceDraftSpan"
+          }
+        }
+      },
+      "VoiceDraftListItemDto": {
+        "required": [
+          "id",
+          "state",
+          "origin",
+          "eventType",
+          "location",
+          "occurredAt",
+          "missingCount",
+          "revision",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "origin": {
+            "type": "string"
+          },
+          "eventType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "location": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "occurredAt": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "missingCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "VoiceDraftMetricsDto": {
+        "required": [
+          "vesselId",
+          "state",
+          "confirmed",
+          "rejected",
+          "open",
+          "fieldCompleteness",
+          "correctionRate",
+          "usability",
+          "rejectionRate",
+          "rejectionsByReason",
+          "sampleLimit",
+          "extractorVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "confirmed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rejected": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "open": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fieldCompleteness": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "correctionRate": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "usability": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rejectionRate": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rejectionsByReason": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "sampleLimit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "extractorVersion": {
+            "type": "string"
+          }
+        }
+      },
+      "VoiceDraftPageDto": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore",
+          "canWrite"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VoiceDraftListItemDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "canWrite": {
+            "type": "boolean"
+          }
+        }
+      },
+      "VoiceDraftRejectCommand": {
+        "required": [
+          "expectedVersion",
+          "reasonCode",
+          "note"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "VoiceDraftRejectionDto": {
+        "required": [
+          "reasonCode",
+          "note",
+          "rejectedBy",
+          "rejectedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "reasonCode": {
+            "type": "string"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "rejectedBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "rejectedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "VoiceDraftRevisionSummaryDto": {
+        "required": [
+          "revision",
+          "state",
+          "reasonCode",
+          "hash",
+          "actorId",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "VoiceDraftSpan": {
+        "required": [
+          "start",
+          "end"
+        ],
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "end": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "VoiceDraftSpeechDto": {
+        "required": [
+          "engineVersion",
+          "modelVersion",
+          "meanConfidence"
+        ],
+        "type": "object",
+        "properties": {
+          "engineVersion": {
+            "type": "string"
+          },
+          "modelVersion": {
+            "type": "string"
+          },
+          "meanConfidence": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          }
+        }
+      },
+      "VoiceDraftTranscriptionDto": {
+        "required": [
+          "transcript",
+          "transcriptSha256",
+          "engineVersion",
+          "modelVersion",
+          "meanConfidence",
+          "segments",
+          "attestation",
+          "expiresAt",
+          "audioRetained"
+        ],
+        "type": "object",
+        "properties": {
+          "transcript": {
+            "type": "string"
+          },
+          "transcriptSha256": {
+            "type": "string"
+          },
+          "engineVersion": {
+            "type": "string"
+          },
+          "modelVersion": {
+            "type": "string"
+          },
+          "meanConfidence": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "segments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SpeechSegment"
+            }
+          },
+          "attestation": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "audioRetained": {
+            "type": "boolean"
+          }
+        }
+      },
+      "VoiceDraftUpdateCommand": {
+        "required": [
+          "expectedVersion",
+          "fields",
+          "evidenceFileIds"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "fields": {
+            "$ref": "#/components/schemas/VoiceDraftFields"
+          },
+          "evidenceFileIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         },
         "additionalProperties": false
@@ -50531,6 +57765,15 @@
       "name": "WorkOrderOfflineEndpoints"
     },
     {
+      "name": "SafetyEventEndpoints"
+    },
+    {
+      "name": "SafetyEventOfflineEndpoints"
+    },
+    {
+      "name": "DepartureReadinessEndpoints"
+    },
+    {
       "name": "MaintenanceObservationEndpoints"
     },
     {
@@ -50553,6 +57796,15 @@
     },
     {
       "name": "HighRiskWorkEndpoints"
+    },
+    {
+      "name": "TowageExecutionEndpoints"
+    },
+    {
+      "name": "TugDailyLogEndpoints"
+    },
+    {
+      "name": "DrydockEndpoints"
     },
     {
       "name": "ParameterEndpoints"

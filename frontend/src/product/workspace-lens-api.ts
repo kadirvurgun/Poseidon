@@ -29,8 +29,12 @@ export const lensLabels: Record<string, readonly [
     'operational-downtime': [sourceText("tr", "pairs.m_0208af14c2c3282e"), sourceText("en", "pairs.m_0208af14c2c3282e")],
     'risk-assessment': [sourceText("tr", "pairs.m_2ba46e791f65fb5f"), sourceText("en", "pairs.m_2ba46e791f65fb5f")],
     'risk-template-library': [sourceText("tr", "pairs.m_c086860d120fa851"), sourceText("en", "pairs.m_c086860d120fa851")],
+    'departure-signoff': [sourceText("tr", "pairs.m_9d2a4c6e8f0b1d35"), sourceText("en", "pairs.m_9d2a4c6e8f0b1d35")],
     'pms-command-center': [sourceText("tr", "pairs.m_8c3e1f0a5d2b7c41"), sourceText("en", "pairs.m_8c3e1f0a5d2b7c41")],
     'service-engineer-report': [sourceText("tr", "pairs.m_8c3e1f0a5d2b7c42"), sourceText("en", "pairs.m_8c3e1f0a5d2b7c42")],
+    'safety-events': [sourceText("tr", "pairs.m_8a32195b2423b0ae"), sourceText("en", "pairs.m_8a32195b2423b0ae")],
+    'voice-event-draft': [sourceText("tr", "pairs.m_9a7c51e0d3b2f461"), sourceText("en", "pairs.m_9a7c51e0d3b2f461")],
+    'document-compare': [sourceText("tr", "pairs.m_9a7c51e0d3b2f462"), sourceText("en", "pairs.m_9a7c51e0d3b2f462")],
     'high-risk-work': [sourceText("tr", "pairs.m_04076d4cdaa5ec7d"), sourceText("en", "pairs.m_04076d4cdaa5ec7d")],
     'work-order-center': [sourceText("tr", "pairs.m_8b20599d8e3aae73"), sourceText("en", "pairs.m_8b20599d8e3aae73")],
     'critical-spares': [sourceText("tr", "pairs.m_5e7a1c0d2b4f9b10"), sourceText("en", "pairs.m_5e7a1c0d2b4f9b10")],
@@ -50,17 +54,20 @@ export const lensLabels: Record<string, readonly [
     'tug-equipment-readiness': [sourceText("tr", "pairs.m_5151864934be8fa1"), sourceText("en", "pairs.m_5151864934be8fa1")],
     'tug-crew-readiness': [sourceText("tr", "pairs.m_13bb4091a158976a"), sourceText("en", "pairs.m_13bb4091a158976a")],
     'towage-plan': [sourceText("tr", "pairs.m_378130a9c426194c"), sourceText("en", "pairs.m_378130a9c426194c")],
+    'towage-execution': [sourceText("tr", "pairs.m_a7ff6a594ad31c81"), sourceText("en", "pairs.m_a7ff6a594ad31c81")],
+    'tug-daily-log': [sourceText("tr", "pairs.m_073dee70df0d133e"), sourceText("en", "pairs.m_073dee70df0d133e")],
+    'drydock-planning': [sourceText("tr", "pairs.m_7a31428311abb402"), sourceText("en", "pairs.m_7a31428311abb402")],
     'towage-risk-briefing': [sourceText("tr", "pairs.m_b75bd8b78f08cd52"), sourceText("en", "pairs.m_b75bd8b78f08cd52")],
 };
 const root: Record<string, string> = { crew: 'crew-roster', 'crew-certificates': 'crew-certificates', 'crew-competence': 'training-position-matrix', 'safe-manning': 'safe-manning', equipment: 'equipment-hierarchy', maintenance: 'maintenance-plan', import: 'excel-migration' };
 export function lensHref(key: string, vessel: string | null) {
     if (!Object.hasOwn(lensLabels, key))
         return null;
-    if (['audit-ready', 'operational-downtime', 'risk-assessment', 'pms-command-center', 'service-engineer-report', 'work-order-center', 'defects', 'fuel-bunker-log', 'port-activity-sof', 'noon-report', 'deck-daily-log', 'engine-daily-log', 'certificate-command-center', 'renewal-workflow', 'pre-survey-checklist'].includes(key))
+    if (['audit-ready', 'operational-downtime', 'risk-assessment', 'pms-command-center', 'departure-signoff', 'service-engineer-report', 'voice-event-draft', 'document-compare', 'work-order-center', 'defects', 'fuel-bunker-log', 'port-activity-sof', 'noon-report', 'deck-daily-log', 'engine-daily-log', 'certificate-command-center', 'renewal-workflow', 'pre-survey-checklist'].includes(key))
         return vessel ? `/app/${key}/${vessel}` : `/app/${key}`;
     if (Object.hasOwn(root, key))
         return vessel ? `/app/${root[key]}/${vessel}` : null;
-    return `/app/${key}${vessel && (key.startsWith('tug-') || key.startsWith('towage-')) ? `?vessel=${vessel}` : vessel && key === 'today' ? `/${vessel}` : ''}`;
+    return `/app/${key}${vessel && (key.startsWith('tug-') || key.startsWith('towage-') || key === 'drydock-planning') ? `?vessel=${vessel}` : vessel && key === 'today' ? `/${vessel}` : ''}`;
 }
 const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 const text = (v: unknown, max: number): v is string => typeof v === 'string' && v.length > 0 && v.length <= max && v.trim() === v && !/\p{Cc}/u.test(v);

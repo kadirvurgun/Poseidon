@@ -127,6 +127,12 @@ public sealed class PoseidonDbContext(
     public DbSet<ControlledDocumentCustodyEvent> ControlledDocumentCustodyEvents => Set<ControlledDocumentCustodyEvent>();
     public DbSet<ControlledDocumentVerification> ControlledDocumentVerifications => Set<ControlledDocumentVerification>();
     public DbSet<ControlledDocumentReceipt> ControlledDocumentReceipts => Set<ControlledDocumentReceipt>();
+    // S9 WP-C DEV-114 / DEV-062.
+    public DbSet<ControlledDocumentAcknowledgement> ControlledDocumentAcknowledgements => Set<ControlledDocumentAcknowledgement>();
+    public DbSet<ControlledDocumentAccessRecord> ControlledDocumentAccessRecords => Set<ControlledDocumentAccessRecord>();
+    public DbSet<VoiceEventDraft> VoiceEventDrafts => Set<VoiceEventDraft>();
+    public DbSet<VoiceEventDraftRevision> VoiceEventDraftRevisions => Set<VoiceEventDraftRevision>();
+    public DbSet<VoiceEventDraftReceipt> VoiceEventDraftReceipts => Set<VoiceEventDraftReceipt>();
     public DbSet<ControlledDocumentCertificateLink> ControlledDocumentCertificateLinks => Set<ControlledDocumentCertificateLink>();
     public DbSet<ControlledDocumentEvidenceLink> ControlledDocumentEvidenceLinks => Set<ControlledDocumentEvidenceLink>();
     public DbSet<ControlledDocumentCredentialLink> ControlledDocumentCredentialLinks => Set<ControlledDocumentCredentialLink>();
@@ -176,6 +182,9 @@ public sealed class PoseidonDbContext(
     public DbSet<TowEquipmentVerification> TowEquipmentVerifications => Set<TowEquipmentVerification>();
     public DbSet<TugReadinessDecision> TugReadinessDecisions => Set<TugReadinessDecision>();
     public DbSet<TugReadinessReceipt> TugReadinessReceipts => Set<TugReadinessReceipt>();
+    // S9 WP-A (DEV-059): Master departure decisions and their receipts (append-only).
+    public DbSet<DepartureDecision> DepartureDecisions => Set<DepartureDecision>();
+    public DbSet<DepartureReceipt> DepartureReceipts => Set<DepartureReceipt>();
     public DbSet<TowagePlan> TowagePlans => Set<TowagePlan>();
     public DbSet<TowagePlanRevision> TowagePlanRevisions => Set<TowagePlanRevision>();
     public DbSet<TowagePlanDecision> TowagePlanDecisions => Set<TowagePlanDecision>();
@@ -183,6 +192,31 @@ public sealed class PoseidonDbContext(
     public DbSet<TowageBriefingRevision> TowageBriefingRevisions => Set<TowageBriefingRevision>();
     public DbSet<TowageBriefingAcknowledgement> TowageBriefingAcknowledgements => Set<TowageBriefingAcknowledgement>();
     public DbSet<TowageReceipt> TowageReceipts => Set<TowageReceipt>();
+    // S9 WP-B (DEV-060/061): safety events, identity vault, investigation, actions and offline capture.
+    public DbSet<SafetyEvent> SafetyEvents => Set<SafetyEvent>();
+    public DbSet<SafetyEventRevision> SafetyEventRevisions => Set<SafetyEventRevision>();
+    public DbSet<SafetyEventIdentity> SafetyEventIdentities => Set<SafetyEventIdentity>();
+    public DbSet<SafetyEventIdentityAccess> SafetyEventIdentityAccesses => Set<SafetyEventIdentityAccess>();
+    public DbSet<SafetyEventMessage> SafetyEventMessages => Set<SafetyEventMessage>();
+    public DbSet<SafetyEventTriage> SafetyEventTriages => Set<SafetyEventTriage>();
+    public DbSet<SafetyInvestigation> SafetyInvestigations => Set<SafetyInvestigation>();
+    public DbSet<SafetyInvestigationRevision> SafetyInvestigationRevisions => Set<SafetyInvestigationRevision>();
+    public DbSet<SafetyInvestigationDecision> SafetyInvestigationDecisions => Set<SafetyInvestigationDecision>();
+    public DbSet<SafetyAction> SafetyActions => Set<SafetyAction>();
+    public DbSet<SafetyActionStep> SafetyActionSteps => Set<SafetyActionStep>();
+    public DbSet<SafetyEventReceipt> SafetyEventReceipts => Set<SafetyEventReceipt>();
+    public DbSet<SafetyEventOfflineEnrollment> SafetyEventOfflineEnrollments => Set<SafetyEventOfflineEnrollment>();
+    public DbSet<SafetyEventOfflineLifecycle> SafetyEventOfflineLifecycles => Set<SafetyEventOfflineLifecycle>();
+    public DbSet<SafetyEventOfflineOutcome> SafetyEventOfflineOutcomes => Set<SafetyEventOfflineOutcome>();
+    // S9 WP-D (DEV-089/090/111): towage execution, tug daily log, drydock package.
+    public DbSet<TowageExecution> TowageExecutions => Set<TowageExecution>();
+    public DbSet<TowageExecutionEvent> TowageExecutionEvents => Set<TowageExecutionEvent>();
+    public DbSet<TugDailyLog> TugDailyLogs => Set<TugDailyLog>();
+    public DbSet<TugDailyLogRevision> TugDailyLogRevisions => Set<TugDailyLogRevision>();
+    public DbSet<TugDailyLogReview> TugDailyLogReviews => Set<TugDailyLogReview>();
+    public DbSet<DrydockPackage> DrydockPackages => Set<DrydockPackage>();
+    public DbSet<DrydockPackageRevision> DrydockPackageRevisions => Set<DrydockPackageRevision>();
+    public DbSet<FieldOperationReceipt> FieldOperationReceipts => Set<FieldOperationReceipt>();
     public DbSet<TugOfflineEnrollment> TugOfflineEnrollments => Set<TugOfflineEnrollment>();
     public DbSet<TugOfflineOutcome> TugOfflineOutcomes => Set<TugOfflineOutcome>();
     public DbSet<TugOfflineLifecycle> TugOfflineLifecycles => Set<TugOfflineLifecycle>();
@@ -368,6 +402,10 @@ public sealed class PoseidonDbContext(
         model.Entity<TowEquipmentVerification>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TugReadinessDecision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TugReadinessReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        // S9 WP-A (DEV-059): Master departure decisions.
+        DepartureStorage.Configure(model);
+        model.Entity<DepartureDecision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<DepartureReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         // S8 WP-D (DEV-087/088): towage plan, risk & briefing records.
         TowageStorage.Configure(model);
         model.Entity<TowagePlan>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -377,6 +415,33 @@ public sealed class PoseidonDbContext(
         model.Entity<TowageBriefingRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TowageBriefingAcknowledgement>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TowageReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        // S9 WP-B (DEV-060/061): safety events.
+        SafetyEventStorage.Configure(model);
+        model.Entity<SafetyEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<SafetyEventRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<SafetyEventIdentity>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<SafetyEventIdentityAccess>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<SafetyEventMessage>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<SafetyEventTriage>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<SafetyInvestigation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<SafetyInvestigationRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<SafetyInvestigationDecision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<SafetyAction>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<SafetyActionStep>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<SafetyEventReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<SafetyEventOfflineEnrollment>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<SafetyEventOfflineLifecycle>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<SafetyEventOfflineOutcome>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        // S9 WP-D (DEV-089/090/111).
+        FieldOperationsStorage.Configure(model);
+        model.Entity<TowageExecution>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TowageExecutionEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TugDailyLog>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TugDailyLogRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TugDailyLogReview>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<DrydockPackage>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<DrydockPackageRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<FieldOperationReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         MaintenanceObservationStorage.Configure(model);
         model.Entity<MaintenanceObservation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<MaintenanceObservationRevocation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -457,6 +522,14 @@ public sealed class PoseidonDbContext(
         model.Entity<ControlledDocumentCustodyEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ControlledDocumentVerification>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ControlledDocumentReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        // S9 WP-C DEV-114 / DEV-062.
+        ControlledDocumentSecurityStorage.Configure(model);
+        model.Entity<ControlledDocumentAcknowledgement>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ControlledDocumentAccessRecord>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        VoiceEventDraftStorage.Configure(model);
+        model.Entity<VoiceEventDraft>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<VoiceEventDraftRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<VoiceEventDraftReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ControlledDocumentCertificateLink>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ControlledDocumentEvidenceLink>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ControlledDocumentCredentialLink>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -744,7 +817,11 @@ public sealed class PoseidonDbContext(
         PmsStorage.Guard(changes);
         WorkOrderExecutionStorage.Guard(changes);
         TechnicalRecordStorage.Guard(changes);
+        ControlledDocumentSecurityStorage.Guard(changes);
+        VoiceEventDraftStorage.Guard(changes);
         TowageStorage.Guard(changes);
+        SafetyEventStorage.Guard(changes);
+        FieldOperationsStorage.Guard(changes);
         if(changes.Any(e=>e.Entity is DowntimeRevision or DowntimeReceipt && e.State!=EntityState.Added))
             throw new InvalidOperationException("Downtime history and outcomes are immutable.");
         if(changes.Any(e=>e.Entity is Downtime && (e.State==EntityState.Deleted || e.State==EntityState.Modified &&
@@ -859,6 +936,9 @@ public sealed class PoseidonDbContext(
         // keeps its tug and kind.
         if (changes.Any(e => e.Entity is TugAssignmentResponse or TowEquipmentRevision or TowEquipmentVerification or TugReadinessDecision or TugReadinessReceipt && e.State != EntityState.Added))
             throw new InvalidOperationException("Tug readiness human records are immutable.");
+        // DEV-059: the Master departure decision lineage and its receipts are append-only.
+        if (changes.Any(e => e.Entity is DepartureDecision or DepartureReceipt && e.State != EntityState.Added))
+            throw new InvalidOperationException("Departure decisions are immutable.");
         if (changes.Any(e => e.Entity is TugAssignmentProposal && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
             e.Properties.Any(p => p.IsModified && p.Metadata.Name is not ("State" or "MasterAck" or "CancelledAt" or "CancelledBy" or "CancelReason" or "Revision")))))
             throw new InvalidOperationException("Tug assignment scope is immutable.");

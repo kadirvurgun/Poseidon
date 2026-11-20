@@ -4818,6 +4818,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/vessels/{vessel}/controlled-documents/{document}/revisions/{revision}/acknowledgements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AcknowledgeControlledDocumentRevision"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/controlled-documents/{document}/revisions/{revision}/content-access": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AuthorizeControlledDocumentContent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/vessels/{vessel}/crew/position-catalog": {
         parameters: {
             query?: never;
@@ -6242,6 +6274,294 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/safety-events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SafetyEventList"];
+        put?: never;
+        post: operations["SafetyEventCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SafetyEventRead"];
+        put: operations["SafetyEventUpdate"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/follow-up": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SafetyEventFollowUpRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/follow-up/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SafetyEventFollowUpMessage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/{id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SafetyEventSubmit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/{id}/withdraw": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SafetyEventWithdraw"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/{id}/triage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SafetyEventTriage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/{id}/identity-access": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SafetyEventIdentityAccess"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/{id}/messages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SafetyEventMessage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/{id}/investigation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["SafetyInvestigationSave"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/{id}/investigation/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SafetyInvestigationSubmit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/{id}/investigation/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SafetyInvestigationReview"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/{id}/actions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SafetyActionCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/{id}/actions/{actionId}/steps": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SafetyActionStep"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-events/{id}/close": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SafetyEventClose"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-event-offline": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SafetyEventOfflineInventory"];
+        put?: never;
+        post: operations["SafetyEventOfflineEnroll"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-event-offline/{enrollment}/{action}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["SafetyEventOfflineAction"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/safety-event-offline/{enrollment}/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["SafetyEventOfflineHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/defects/{id}/lifecycle": {
         parameters: {
             query?: never;
@@ -6498,6 +6818,118 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/voice-event-drafts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["VoiceDraftList"];
+        put?: never;
+        post: operations["VoiceDraftCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/voice-event-drafts/capabilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["VoiceDraftCapabilities"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/voice-event-drafts/metrics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["VoiceDraftMetrics"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/voice-event-drafts/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["VoiceDraftRead"];
+        put: operations["VoiceDraftUpdate"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/voice-event-drafts/transcriptions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["VoiceDraftTranscribe"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/voice-event-drafts/{id}/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["VoiceDraftConfirm"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/voice-event-drafts/{id}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["VoiceDraftReject"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/pms/command-center": {
         parameters: {
             query?: never;
@@ -6508,6 +6940,38 @@ export interface paths {
         get: operations["PmsCommandCenterRead"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/departure-readiness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["DepartureReadinessRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/departure-signoff": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["DepartureSignoffRecord"];
         delete?: never;
         options?: never;
         head?: never;
@@ -7180,6 +7644,214 @@ export interface paths {
         get: operations["HighRiskWorkList"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/towage-executions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["TowageExecutionJobRead"];
+        put?: never;
+        post: operations["TowageExecutionStart"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/towage-executions/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["TowageExecutionRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/towage-executions/{id}/transitions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TowageExecutionTransition"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/towage-executions/{id}/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TowageExecutionEvent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/towage-executions/{id}/verification": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TowageExecutionVerify"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-daily-logs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["TugDailyLogList"];
+        put?: never;
+        post: operations["TugDailyLogCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-daily-logs/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["TugDailyLogRead"];
+        put: operations["TugDailyLogUpdate"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-daily-logs/{id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TugDailyLogSubmit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-daily-logs/{id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TugDailyLogReview"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/drydock-packages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["DrydockList"];
+        put?: never;
+        post: operations["DrydockCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/drydock-packages/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["DrydockRead"];
+        put: operations["DrydockUpdate"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/drydock-packages/{id}/transitions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["DrydockTransition"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/drydock-packages/{id}/verification": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["DrydockVerify"];
         delete?: never;
         options?: never;
         head?: never;
@@ -8480,10 +9152,61 @@ export interface components {
             /** Format: date-time */
             asOf: string;
         };
+        ControlledDocumentAcknowledgeCommand: {
+            displayedContentSha256: null | string;
+            statementAccepted: boolean;
+        };
+        ControlledDocumentAcknowledgementDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uuid */
+            actorId: string;
+            statement: string;
+            /** Format: date-time */
+            acknowledgedAt: string;
+        };
+        ControlledDocumentContentAccessCommand: {
+            purpose: null | string;
+        };
+        ControlledDocumentContentAccessDto: {
+            /** Format: uuid */
+            recordId: string;
+            /** Format: uuid */
+            documentId: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uuid */
+            fileId: string;
+            /** Format: int64 */
+            fileRevision: number;
+            mime: string;
+            contentSha256: string;
+            classification: string;
+            purpose: string;
+            policyBasis: string;
+            attribution: string;
+            print: string;
+            capability: string;
+            /** Format: date-time */
+            expiresAt: string;
+            /** Format: date-time */
+            issuedAt: string;
+        };
+        ControlledDocumentContentPolicyDto: {
+            classification: string;
+            download: string;
+            print: string;
+            basis: string;
+            attributionRequired: boolean;
+            ispsRestricted: boolean;
+        };
         ControlledDocumentCreateCommand: {
             code: null | string;
             title: null | string;
             classification: null | string;
+            ispsRestricted?: null | boolean;
         };
         ControlledDocumentCustodyDto: {
             /** Format: int64 */
@@ -8528,6 +9251,10 @@ export interface components {
             links: components["schemas"]["ControlledDocumentLinkDto"][];
             /** Format: date-time */
             asOf: string;
+            /** @default false */
+            ispsRestricted: boolean;
+            contentPolicy?: null | components["schemas"]["ControlledDocumentContentPolicyDto"];
+            acknowledgements?: null | components["schemas"]["ControlledDocumentAcknowledgementDto"][];
         };
         ControlledDocumentHoldCommand: {
             authorityRef: null | string;
@@ -8589,6 +9316,10 @@ export interface components {
             /** Format: date-time */
             publishedAt: null | string;
             verifications: components["schemas"]["ControlledDocumentVerificationDto"][];
+            /** Format: date-time */
+            acknowledgedByMeAt?: null | string;
+            /** @default false */
+            canAcknowledge: boolean;
         };
         ControlledDocumentSummaryDto: {
             /** Format: uuid */
@@ -8608,6 +9339,8 @@ export interface components {
             retentionState: string;
             disposalState: string;
             provenance: string;
+            /** @default false */
+            ispsRestricted: boolean;
         };
         ControlledDocumentVerificationCommand: {
             method: null | string;
@@ -10076,6 +10809,96 @@ export interface components {
             /** @default false */
             canEdit: boolean;
         };
+        DepartureAuthorityDto: {
+            /** Format: uuid */
+            id: string;
+            duty: string;
+        };
+        DepartureCategoryState: {
+            category: string;
+            result: string;
+            reasons: string[];
+        };
+        DepartureDecisionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: int64 */
+            sequence: number;
+            /** Format: uuid */
+            previousDecisionId: null | string;
+            decision: string;
+            assessedState: string;
+            assessmentMode: string;
+            assessmentHash: string;
+            /** Format: date */
+            windowFrom: string;
+            /** Format: date */
+            windowTo: string;
+            reason: string;
+            duty: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            recordedAt: string;
+            validity: string;
+            /** @default false */
+            replayed: boolean;
+        };
+        DepartureReadinessView: {
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: date */
+            from: string;
+            /** Format: date */
+            to: string;
+            mode: string;
+            state: string;
+            categories: components["schemas"]["DepartureCategoryState"][];
+            criticalBlockers: string[];
+            reviewReasons: string[];
+            conditions: string[];
+            why: components["schemas"]["DepartureWhy"][];
+            assessmentHash: string;
+            /** Format: date-time */
+            assessedAt: string;
+            /** Format: date-time */
+            validUntil: string;
+            decisions: components["schemas"]["DepartureDecisionDto"][];
+            /** Format: int64 */
+            sequence: number;
+            authorities: components["schemas"]["DepartureAuthorityDto"][];
+            canDecide: boolean;
+            allowedDecisions: string[];
+            /** @default MasterHumanDecisionRequired;EngineNeverReleases;NotADepartureClearance */
+            decisionAuthority: string;
+            /** @default 18.01/sheet:Backlog/row:59-60;60.01/paragraph:220,928,936,952,1080;15.01/paragraph:1203-1213 */
+            sourceLocator: string;
+        };
+        DepartureSignoffCommand: {
+            /** Format: date */
+            from: string;
+            /** Format: date */
+            to: string;
+            expectedAssessmentHash: string;
+            /** Format: int64 */
+            expectedSequence: number;
+            decision: string;
+            reason: string;
+            /** Format: uuid */
+            authorityId: string;
+        };
+        DepartureWhy: {
+            category: string;
+            result: string;
+            reason: string;
+            sourceKind: null | string;
+            /** Format: uuid */
+            sourceId: null | string;
+            /** Format: int64 */
+            sourceRevision: null | number;
+        };
         DocumentDraftDto: {
             /** Format: uuid */
             id: string;
@@ -10229,6 +11052,184 @@ export interface components {
             /** Format: int32 */
             unknown: number;
             reason: string;
+        };
+        DrydockContent: {
+            projectReference: null | string;
+            yard: null | string;
+            /** Format: date */
+            plannedStart: null | string;
+            /** Format: date */
+            plannedFinish: null | string;
+            external: components["schemas"]["DrydockExternal"];
+            items: components["schemas"]["DrydockScopeItem"][];
+            completionEvidence: components["schemas"]["DrydockEvidence"][];
+        };
+        DrydockCreateCommand: {
+            /** Format: uuid */
+            id: string;
+            content: components["schemas"]["DrydockContent"];
+        };
+        DrydockEvidence: {
+            /** Format: uuid */
+            id: string;
+            reference: string;
+            note: null | string;
+        };
+        DrydockExternal: {
+            estimatedCost: null | string;
+            currency: null | string;
+            vendor: null | string;
+            budgetReference: null | string;
+        };
+        DrydockItemStatus: {
+            /** Format: uuid */
+            itemId: string;
+            state: string;
+            links: components["schemas"]["DrydockLinkStatus"][];
+        };
+        DrydockLink: {
+            kind: string;
+            /** Format: uuid */
+            targetId: string;
+            /** Format: int64 */
+            pinnedRevision: number;
+        };
+        DrydockLinkStatus: {
+            kind: string;
+            /** Format: uuid */
+            targetId: string;
+            /** Format: int64 */
+            pinnedRevision: number;
+            /** Format: int64 */
+            currentRevision: null | number;
+            state: string;
+            reason: string;
+            /** Format: date */
+            due: null | string;
+        };
+        DrydockListView: {
+            /** Format: uuid */
+            vesselId: string;
+            items: components["schemas"]["DrydockSummaryDto"][];
+            canWrite: boolean;
+            categories: string[];
+            priorities: string[];
+            linkKinds: string[];
+            /** @default 18.01:row112;11.01:2316/rows1542-1559;13.03:p85;59.04:p1038,p2378-2400 */
+            sourceVersion: string;
+        };
+        DrydockPackageDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            state: string;
+            content: components["schemas"]["DrydockContent"];
+            hash: string;
+            /** Format: date-time */
+            actualStart: null | string;
+            /** Format: date-time */
+            actualFinish: null | string;
+            /** Format: uuid */
+            completedBy: null | string;
+            /** Format: uuid */
+            verifiedBy: null | string;
+            /** Format: date-time */
+            verifiedAt: null | string;
+            provenance: string;
+            /** Format: date-time */
+            savedAt: string;
+        };
+        DrydockReadiness: {
+            state: string;
+            items: components["schemas"]["DrydockItemStatus"][];
+            /** Format: int32 */
+            unlinked: number;
+            /** Format: int32 */
+            overdue: number;
+            /** Format: int32 */
+            stale: number;
+            /** Format: int32 */
+            unavailable: number;
+            /** @default LinkageCompletenessOnly;NotASurveyOrClassResult */
+            meaning: string;
+        };
+        DrydockScopeItem: {
+            /** Format: uuid */
+            id: string;
+            category: string;
+            title: string;
+            /** Format: uuid */
+            equipmentId: null | string;
+            workPackage: null | string;
+            classRequirement: null | string;
+            statutoryRequirement: null | string;
+            priority: null | string;
+            links: components["schemas"]["DrydockLink"][];
+        };
+        DrydockSummaryDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            state: string;
+            projectReference: null | string;
+            yard: null | string;
+            /** Format: date */
+            plannedStart: null | string;
+            /** Format: date */
+            plannedFinish: null | string;
+            /** Format: int32 */
+            items: number;
+        };
+        DrydockTimelineDto: {
+            /** Format: int64 */
+            revision: number;
+            state: string;
+            reasonCode: string;
+            note: null | string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            savedAt: string;
+        };
+        DrydockTransitionCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+            action: string;
+            note: null | string;
+        };
+        DrydockUpdateCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            content: components["schemas"]["DrydockContent"];
+        };
+        DrydockVerifyCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+            decision: string;
+            reason: string;
+        };
+        DrydockView: {
+            package: components["schemas"]["DrydockPackageDto"];
+            readiness: components["schemas"]["DrydockReadiness"];
+            timeline: components["schemas"]["DrydockTimelineDto"][];
+            planBlockers: string[];
+            completeBlockers: string[];
+            allowedActions: string[];
+            canEdit: boolean;
+            canVerify: boolean;
+            unreadableLinkKinds: string[];
+            /** @default SupplierBudgetExternalReferenceOnly;NoProcurementOrApproval */
+            external: string;
+            /** @default 18.01:row112;11.01:2316/rows1542-1559;13.03:p85;59.04:p1038,p2378-2400 */
+            sourceVersion: string;
         };
         EffectiveDelegation: {
             /** Format: uuid */
@@ -13514,6 +14515,428 @@ export interface components {
             posts?: null | string[];
             rules?: null | string[];
         };
+        SafetyActionCreateCommand: {
+            /** Format: uuid */
+            id: string;
+            kind: string;
+            title: string;
+            description: string;
+            /** Format: uuid */
+            ownerId: string;
+            /** Format: date */
+            dueDate: string;
+            rootCauseIds: string[];
+            barrierIds: string[];
+            /** Format: uuid */
+            followUpOf?: null | string;
+        };
+        SafetyActionDto: {
+            /** Format: uuid */
+            id: string;
+            kind: string;
+            title: string;
+            description: string;
+            /** Format: uuid */
+            ownerId: string;
+            /** Format: date */
+            dueDate: string;
+            overdue: boolean;
+            rootCauseIds: string[];
+            barrierIds: string[];
+            /** Format: uuid */
+            followUpOf: null | string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            state: string;
+            effectiveness: string;
+            steps: components["schemas"]["SafetyActionStepDto"][];
+            allowedSteps: string[];
+        };
+        SafetyActionStepCommand: {
+            /** Format: int64 */
+            expectedRevision: number;
+            kind: string;
+            outcome: null | string;
+            text: string;
+            evidence?: null | components["schemas"]["CertificateFilePin"][];
+        };
+        SafetyActionStepDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            kind: string;
+            outcome: null | string;
+            text: string;
+            evidence: components["schemas"]["CertificateFilePin"][];
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            recordedAt: string;
+        };
+        SafetyBarrier: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            function: string;
+            performance: string;
+            riskBarrierRef?: null | string;
+        };
+        SafetyEventBlocker: {
+            /** Format: uuid */
+            eventId: string;
+            eventNo: string;
+            category: null | string;
+            severity: null | string;
+            state: string;
+            reason: string;
+            blocking: boolean;
+        };
+        SafetyEventBlockerSnapshot: {
+            /** Format: uuid */
+            vesselId: string;
+            state: string;
+            items: components["schemas"]["SafetyEventBlocker"][];
+            coverage: string[];
+            /** Format: date-time */
+            evaluatedAt: string;
+        };
+        SafetyEventCapabilitiesDto: {
+            /** Format: uuid */
+            vesselId: string;
+            canRead: boolean;
+            canReport: boolean;
+            canTriage: boolean;
+            canInvestigate: boolean;
+            canReview: boolean;
+            canWriteActions: boolean;
+            canVerifyActions: boolean;
+            canReviewEffectiveness: boolean;
+            canReadIdentity: boolean;
+            anonymousChannel: string;
+            offline: components["schemas"]["SafetyEventOfflineDto"];
+            categories: string[];
+            reportingModes: string[];
+            operationContexts: string[];
+            severities: string[];
+            sourceVersion: string;
+        };
+        SafetyEventCreateCommand: {
+            /** Format: uuid */
+            id: string;
+            reportingMode: string;
+            fields: components["schemas"]["SafetyEventDraftFields"];
+            contactPreference?: null | string;
+        };
+        SafetyEventDraftFields: {
+            category?: null | string;
+            occurrencePrecision?: null | string;
+            /** Format: date-time */
+            occurredAt?: null | string;
+            /** Format: date */
+            occurrenceDate?: null | string;
+            occurrenceUnknownReason?: null | string;
+            timeZone?: null | string;
+            operationContext?: null | string;
+            locationText?: null | string;
+            summary?: null | string;
+            narrative?: null | string;
+            immediateActionTaken?: null | string;
+            immediateActionText?: null | string;
+            severityClaim?: null | string;
+            evidence?: null | components["schemas"]["CertificateFilePin"][];
+        };
+        SafetyEventDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            eventNo: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            state: string;
+            reportingMode: string;
+            fields: components["schemas"]["SafetyEventDraftFields"];
+            hash: string;
+            missing: string[];
+            reporter: components["schemas"]["SafetyEventReporterDto"];
+            severity: null | string;
+            severityClaim: null | string;
+            investigationRequired: null | string;
+            severityPolicy: string;
+            origin: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            savedAt: string;
+            /** Format: date-time */
+            submittedAt: null | string;
+            /** Format: uuid */
+            closedBy: null | string;
+            /** Format: date-time */
+            closedAt: null | string;
+            closureReason: null | string;
+            triages: components["schemas"]["SafetyEventTriageDto"][];
+            investigation: null | components["schemas"]["SafetyInvestigationDto"];
+            actions: components["schemas"]["SafetyActionDto"][];
+            effectiveness: string;
+            closureBlockers: string[];
+            messages: components["schemas"]["SafetyEventMessageDto"][];
+            can: components["schemas"]["SafetyEventPermissionsDto"];
+            followUpSecret: null | string;
+            provenance: string;
+            sourceVersion: string;
+        };
+        SafetyEventFollowUpDto: {
+            eventNo: string;
+            state: string;
+            /** Format: date-time */
+            submittedAt: null | string;
+            messages: components["schemas"]["SafetyEventMessageDto"][];
+        };
+        SafetyEventFollowUpMessageCommand: {
+            /** Format: uuid */
+            id: string;
+            body: string;
+        };
+        SafetyEventIdentityAccessCommand: {
+            /** Format: uuid */
+            id: string;
+            purpose: string;
+            reason: string;
+        };
+        SafetyEventIdentityDto: {
+            /** Format: uuid */
+            accessId: string;
+            /** Format: uuid */
+            eventId: string;
+            /** Format: uuid */
+            reporterActorId: string;
+            contactPreference: string;
+            purpose: string;
+            /** Format: date-time */
+            accessedAt: string;
+        };
+        SafetyEventListItemDto: {
+            /** Format: uuid */
+            id: string;
+            eventNo: string;
+            state: string;
+            reportingMode: string;
+            category: null | string;
+            summary: null | string;
+            occurrencePrecision: null | string;
+            /** Format: date-time */
+            occurredAt: null | string;
+            /** Format: date */
+            occurrenceDate: null | string;
+            severity: null | string;
+            mine: boolean;
+            origin: string;
+            /** Format: date-time */
+            savedAt: string;
+        };
+        SafetyEventMessageCommand: {
+            /** Format: uuid */
+            id: string;
+            visibility: string;
+            body: string;
+        };
+        SafetyEventMessageDto: {
+            /** Format: uuid */
+            id: string;
+            visibility: string;
+            authorKind: string;
+            /** Format: uuid */
+            actorId: null | string;
+            body: string;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        SafetyEventOfflineContextDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            tenantId: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: uuid */
+            deviceId: string;
+            /** Format: uuid */
+            keyId: string;
+            challenge: string;
+            policyVersion: string;
+            policyDigest: string;
+            authorityDigest: string;
+            sourceVersion: string;
+            operation: string;
+            allowedParts: string[];
+            categories: string[];
+            operationContexts: string[];
+            severities: string[];
+            /** Format: date-time */
+            serverTime: string;
+            /** Format: date-time */
+            expiresAt: string;
+            /** Format: date-time */
+            retainUntil: string;
+            /** Format: int32 */
+            maxRecords: number;
+            /** Format: int32 */
+            maxEncryptedBytes: number;
+            /** Format: int32 */
+            maxDeviceRecords: number;
+            /** Format: int32 */
+            maxDeviceEncryptedBytes: number;
+        };
+        SafetyEventOfflineDto: {
+            available: boolean;
+            state: string;
+        };
+        SafetyEventPageDto: {
+            items: components["schemas"]["SafetyEventListItemDto"][];
+            /** Format: int32 */
+            offset: number;
+            /** Format: int32 */
+            limit: number;
+            hasMore: boolean;
+            blockers: components["schemas"]["SafetyEventBlockerSnapshot"];
+            capabilities: components["schemas"]["SafetyEventCapabilitiesDto"];
+        };
+        SafetyEventPermissionsDto: {
+            edit: boolean;
+            submit: boolean;
+            withdraw: boolean;
+            triage: boolean;
+            readIdentity: boolean;
+            message: boolean;
+            investigate: boolean;
+            reviewInvestigation: boolean;
+            createAction: boolean;
+            close: boolean;
+        };
+        SafetyEventReasonCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            reason: string;
+        };
+        SafetyEventReporterDto: {
+            mode: string;
+            /** Format: uuid */
+            actorId: null | string;
+            isCurrentActor: boolean;
+        };
+        SafetyEventSubmitCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+        };
+        SafetyEventTriageCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            decision: string;
+            severity: null | string;
+            investigationRequired: null | string;
+            reason: string;
+        };
+        SafetyEventTriageDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            decision: string;
+            severity: null | string;
+            investigationRequired: null | string;
+            reason: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            decidedAt: string;
+        };
+        SafetyEventUpdateCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            fields: components["schemas"]["SafetyEventDraftFields"];
+        };
+        SafetyFactor: {
+            /** Format: uuid */
+            id: string;
+            kind: string;
+            category: string;
+            statement: string;
+        };
+        SafetyFailure: {
+            code: string;
+            missing: string[];
+            correlationId: string;
+        };
+        SafetyInvestigationContent: {
+            scope: null | string;
+            factors: components["schemas"]["SafetyFactor"][];
+            rootCauses: components["schemas"]["SafetyRootCause"][];
+            barriers: components["schemas"]["SafetyBarrier"][];
+            uncertainties: string[];
+            evidence: components["schemas"]["CertificateFilePin"][];
+        };
+        SafetyInvestigationDecisionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            decision: string;
+            reason: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            decidedAt: string;
+        };
+        SafetyInvestigationDto: {
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            state: string;
+            content: components["schemas"]["SafetyInvestigationContent"];
+            hash: string;
+            /** Format: int64 */
+            approvedRevision: null | number;
+            missing: string[];
+            authors: string[];
+            decisions: components["schemas"]["SafetyInvestigationDecisionDto"][];
+            canEdit: boolean;
+            canSubmit: boolean;
+            canReview: boolean;
+        };
+        SafetyInvestigationReviewCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+            decision: string;
+            reason: string;
+        };
+        SafetyInvestigationSaveCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            content: components["schemas"]["SafetyInvestigationContent"];
+        };
+        SafetyInvestigationSubmitCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+        };
+        SafetyRootCause: {
+            /** Format: uuid */
+            id: string;
+            statement: string;
+            factorIds: string[];
+            verification: string;
+        };
         SaveRegulatoryDraft: {
             /** Format: uint32 */
             expectedVersion: null | number;
@@ -13879,6 +15302,14 @@ export interface components {
             proposedQuantity: null | string;
             reasons: string[];
             qualification: string;
+        };
+        SpeechSegment: {
+            /** Format: int32 */
+            start: number;
+            /** Format: int32 */
+            end: number;
+            /** Format: double */
+            confidence: number;
         };
         StageFileCommand: {
             name: null | string;
@@ -14290,6 +15721,12 @@ export interface components {
             /** Format: date-time */
             recordedAt: string;
         };
+        TowageActiveInterval: {
+            /** Format: date-time */
+            from: string;
+            /** Format: date-time */
+            to: null | string;
+        };
         TowageAmendCommand: {
             /** Format: uint32 */
             expectedVersion: number;
@@ -14416,15 +15853,188 @@ export interface components {
             procedure: null | string;
             orderedBy: null | string;
         };
+        TowageEventInput: {
+            kind: string;
+            /** Format: date-time */
+            occurredAt: string;
+            value: null | string;
+            unit: null | string;
+            result: null | string;
+            text: null | string;
+            reference: null | string;
+            weather: null | components["schemas"]["TowageWeather"];
+        };
+        TowageExecutionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: uuid */
+            jobId: string;
+            /** Format: uuid */
+            tugId: string;
+            /** Format: uuid */
+            assignmentId: string;
+            /** Format: int64 */
+            assignmentRevision: number;
+            /** Format: uuid */
+            planId: string;
+            /** Format: int64 */
+            planRevision: number;
+            /** Format: uuid */
+            briefingId: string;
+            /** Format: int64 */
+            briefingRevision: number;
+            /** Format: uuid */
+            readinessDecisionId: string;
+            state: string;
+            verificationState: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            /** Format: int64 */
+            sequence: number;
+            hash: string;
+            /** Format: date-time */
+            startedAt: string;
+            /** Format: uuid */
+            startedBy: string;
+            startPosition: null | string;
+            /** Format: date-time */
+            endedAt: null | string;
+            /** Format: uuid */
+            endedBy: null | string;
+            endPosition: null | string;
+            /** Format: uuid */
+            verifiedBy: null | string;
+            /** Format: date-time */
+            verifiedAt: null | string;
+            provenance: string;
+        };
+        TowageExecutionEventCommand: {
+            event: components["schemas"]["TowageEventInput"];
+        };
+        TowageExecutionEventDto: {
+            /** Format: int64 */
+            sequence: number;
+            kind: string;
+            /** Format: date-time */
+            occurredAt: string;
+            /** Format: date-time */
+            recordedAt: string;
+            /** Format: uuid */
+            actorId: string;
+            duty: null | string;
+            value: null | string;
+            unit: null | string;
+            result: null | string;
+            text: null | string;
+            reference: null | string;
+            weather: null | components["schemas"]["TowageWeather"];
+            reason: null | string;
+            position: null | string;
+            hash: string;
+        };
+        TowageExecutionJobView: {
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: uuid */
+            jobId: string;
+            jobNumber: string;
+            jobStatus: string;
+            tugs: components["schemas"]["TowageStartGateDto"][];
+            executions: components["schemas"]["TowageExecutionDto"][];
+            /** @default 18.01:row90;08.02:p133-134;10.01:p103-105;60.02Rev2:p217-254,p1118-1198 */
+            sourceVersion: string;
+        };
+        TowageExecutionStartCommand: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            jobId: string;
+            /** Format: uuid */
+            tugId: string;
+            /** Format: uuid */
+            authorityId: string;
+            /** Format: uuid */
+            readinessDecisionId: string;
+            startPosition: null | string;
+        };
+        TowageExecutionTransitionCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            action: string;
+            reason: string;
+            /** Format: date-time */
+            occurredAt: string;
+            /** Format: uuid */
+            authorityId: string;
+            endPosition: null | string;
+        };
+        TowageExecutionVerifyCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+            decision: string;
+            reason: string;
+        };
+        TowageExecutionView: {
+            execution: components["schemas"]["TowageExecutionDto"];
+            jobNumber: null | string;
+            assistedVessel: null | string;
+            ledger: components["schemas"]["TowageLedgerFacts"];
+            timeline: components["schemas"]["TowageExecutionEventDto"][];
+            authorities: components["schemas"]["TugAuthorityDto"][];
+            canRecord: boolean;
+            canTransition: boolean;
+            canVerify: boolean;
+            allowedActions: string[];
+            completeBlockers: string[];
+            recordableKinds: string[];
+            loadUnits: string[];
+            communicationStates: string[];
+            winchStates: string[];
+            releaseTestResults: string[];
+            evidencePurposes: string[];
+            /** @default UNKNOWN:SafetyEventSourceUnavailable */
+            safetyEvents: string;
+            /** @default TugMasterHumanRecord;ShoreAiSystemCannotStartOrAbort;NotAGoDecision */
+            authority: string;
+            /** @default 18.01:row90;08.02:p133-134;10.01:p103-105;60.02Rev2:p217-254,p1118-1198 */
+            sourceVersion: string;
+        };
         TowageItem: {
             /** Format: uuid */
             id: string;
             description: string;
         };
+        TowageLedgerFacts: {
+            /** Format: date-time */
+            towlineConnectedAt: null | string;
+            /** Format: date-time */
+            towlineReleasedAt: null | string;
+            towlineConnected: boolean;
+            maxTowLoad: components["schemas"]["TowageMaxLoad"][];
+            communicationState: string;
+            winchState: string;
+            emergencyReleaseTested: string;
+            /** Format: int64 */
+            weatherEventSequence: null | number;
+            activeIntervals: components["schemas"]["TowageActiveInterval"][];
+            /** Format: int64 */
+            activeSeconds: number;
+        };
         TowageLimit: {
             parameter: string;
             value: null | string;
             sourceRef: null | string;
+        };
+        TowageMaxLoad: {
+            value: string;
+            unit: string;
+            /** Format: int32 */
+            samples: number;
         };
         TowageParticipant: {
             /** Format: uuid */
@@ -14543,6 +16153,21 @@ export interface components {
             zonesMarked: null | boolean;
             controls: components["schemas"]["TowageItem"][];
         };
+        TowageStartGateDto: {
+            /** Format: uuid */
+            tugId: string;
+            /** Format: uuid */
+            assignmentId: null | string;
+            /** Format: uuid */
+            readinessDecisionId: null | string;
+            decision: null | string;
+            blockers: string[];
+            authorities: components["schemas"]["TugAuthorityDto"][];
+            canStart: boolean;
+            /** Format: uuid */
+            executionId: null | string;
+            executionState: null | string;
+        };
         TowageSubmitCommand: {
             /** Format: uint32 */
             expectedVersion: number;
@@ -14560,6 +16185,13 @@ export interface components {
             towlineItemId: null | string;
             /** Format: uuid */
             emergencyReleaseItemId: null | string;
+        };
+        TowageWeather: {
+            windSpeedKn: null | string;
+            windDirection: null | string;
+            seaState: null | string;
+            visibility: null | string;
+            current: null | string;
         };
         TowEquipmentAssessment: {
             /** Format: uuid */
@@ -14873,6 +16505,189 @@ export interface components {
             validUntil: null | string;
             /** @default SharedCrewEngineAndTowageCompetence;UnverifiedNeverPositive;MasterDecisionSeparate */
             coverage: string;
+        };
+        TugDailyExecutionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            jobId: string;
+            state: string;
+            /** Format: date-time */
+            startedAt: string;
+            /** Format: date-time */
+            endedAt: null | string;
+            linked: boolean;
+        };
+        TugDailyFuel: {
+            quantity: null | string;
+            unit: null | string;
+            sourceRef: null | string;
+        };
+        TugDailyLogContent: {
+            timeZone: null | string;
+            meters: components["schemas"]["TugDailyMeter"][];
+            fuel: components["schemas"]["TugDailyFuel"];
+            executionIds: string[];
+            defectIds: string[];
+            dailySummary: null | string;
+        };
+        TugDailyLogCreateCommand: {
+            /** Format: uuid */
+            id: string;
+            /** Format: date */
+            logDate: string;
+            watch: string;
+            /** Format: date-time */
+            capturedAt: null | string;
+            content: components["schemas"]["TugDailyLogContent"];
+        };
+        TugDailyLogDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: date */
+            logDate: string;
+            watch: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            state: string;
+            content: components["schemas"]["TugDailyLogContent"];
+            hash: string;
+            /** Format: uuid */
+            submittedBy: null | string;
+            /** Format: int64 */
+            verifiedRevision: null | number;
+            /** Format: date-time */
+            capturedAt: null | string;
+            /** Format: date-time */
+            syncedAt: string;
+            syncState: string;
+            provenance: string;
+            /** Format: date-time */
+            savedAt: string;
+        };
+        TugDailyLogListView: {
+            /** Format: uuid */
+            vesselId: string;
+            items: components["schemas"]["TugDailyLogSummaryDto"][];
+            canWrite: boolean;
+            watches: string[];
+            fuelUnits: string[];
+            /** @default 18.01:row91;10.01:p112-114;08.02:p135-137;60.02Rev2:p258-267,p1325-1370 */
+            sourceVersion: string;
+        };
+        TugDailyLogReviewCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+            decision: string;
+            reason: string;
+            /** Format: uuid */
+            authorityId: string;
+        };
+        TugDailyLogReviewDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: int64 */
+            resultRevision: number;
+            decision: string;
+            reconciliation: string;
+            duty: string;
+            /** Format: uuid */
+            actorId: string;
+            reason: string;
+            /** Format: date-time */
+            decidedAt: string;
+        };
+        TugDailyLogRevisionDto: {
+            /** Format: int64 */
+            revision: number;
+            state: string;
+            reasonCode: string;
+            hash: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            capturedAt: null | string;
+            /** Format: date-time */
+            syncedAt: string;
+        };
+        TugDailyLogSubmitCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+        };
+        TugDailyLogSummaryDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: date */
+            logDate: string;
+            watch: string;
+            /** Format: int64 */
+            revision: number;
+            state: string;
+            masterReview: string;
+            /** Format: date-time */
+            syncedAt: string;
+        };
+        TugDailyLogUpdateCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            /** Format: date-time */
+            capturedAt: null | string;
+            content: components["schemas"]["TugDailyLogContent"];
+        };
+        TugDailyLogView: {
+            log: components["schemas"]["TugDailyLogDto"];
+            reconciliation: components["schemas"]["TugDailyReconciliation"];
+            masterReview: string;
+            /** Format: int32 */
+            defectsReported: number;
+            safetyEvents: string;
+            /** Format: date-time */
+            intervalFrom: null | string;
+            /** Format: date-time */
+            intervalTo: null | string;
+            executions: components["schemas"]["TugDailyExecutionDto"][];
+            submitBlockers: string[];
+            reviews: components["schemas"]["TugDailyLogReviewDto"][];
+            revisions: components["schemas"]["TugDailyLogRevisionDto"][];
+            authorities: components["schemas"]["TugAuthorityDto"][];
+            canEdit: boolean;
+            canSubmit: boolean;
+            canReview: boolean;
+            fuelUnits: string[];
+            /** @default InMemoryUnsavedOnly;DurableTugCaptureNotRegistered */
+            offlineCapture: string;
+            /** @default 18.01:row91;10.01:p112-114;08.02:p135-137;60.02Rev2:p258-267,p1325-1370 */
+            sourceVersion: string;
+        };
+        TugDailyMeter: {
+            /** Format: uuid */
+            id: string;
+            meter: string;
+            opening: null | string;
+            closing: null | string;
+            resetEvidenceRef: null | string;
+        };
+        TugDailyReason: {
+            scope: string;
+            code: string;
+            subject: null | string;
+        };
+        TugDailyReconciliation: {
+            state: string;
+            reasons: components["schemas"]["TugDailyReason"][];
+            /** Format: int32 */
+            jobsCompleted: number;
+            operatingHours: null | string;
+            openInterval: boolean;
+            meterHours: null | string;
         };
         TugLifecycleCommand: {
             /** Format: uint32 */
@@ -15200,6 +17015,232 @@ export interface components {
             name: null | string;
             /** Format: uint32 */
             expectedVersion: null | number;
+        };
+        VoiceDraftCandidate: {
+            protocol: string;
+            extractorVersion: string;
+            ruleSetVersion: string;
+            transcriptSha256: string;
+            fields: components["schemas"]["VoiceDraftCandidateField"][];
+            hints: components["schemas"]["VoiceDraftHint"][];
+        };
+        VoiceDraftCandidateField: {
+            key: string;
+            value: string;
+            spans: components["schemas"]["VoiceDraftSpan"][];
+            /** Format: double */
+            confidence: number;
+            rule: string;
+        };
+        VoiceDraftCapabilitiesDto: {
+            /** Format: uuid */
+            vesselId: string;
+            canRead: boolean;
+            canWrite: boolean;
+            canConfirm: boolean;
+            speechAvailable: boolean;
+            speechUnavailableReason: null | string;
+            speechEngineVersion: null | string;
+            /** Format: int32 */
+            maxAudioBytes: number;
+            audioRetention: string;
+            extractorVersion: string;
+            ruleSetVersion: string;
+            eventTypes: string[];
+            locations: string[];
+            rejectionReasons: string[];
+            requiredFields: string[];
+            canAttachEvidence: boolean;
+        };
+        VoiceDraftConfirmCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+        };
+        VoiceDraftCreateCommand: {
+            /** Format: uuid */
+            id: string;
+            transcript: string;
+            origin: string;
+            /** Format: date */
+            referenceDate: string;
+            speechAttestation: null | string;
+        };
+        VoiceDraftDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            state: string;
+            origin: string;
+            transcript: string;
+            transcriptSha256: string;
+            /** Format: date */
+            referenceDate: string;
+            speech: null | components["schemas"]["VoiceDraftSpeechDto"];
+            extractorVersion: string;
+            ruleSetVersion: string;
+            candidate: components["schemas"]["VoiceDraftCandidate"];
+            fields: components["schemas"]["VoiceDraftFields"];
+            fieldOrigins: {
+                [key: string]: string;
+            };
+            evidence: components["schemas"]["VoiceDraftEvidenceDto"][];
+            missing: string[];
+            hash: string;
+            corrections: null | components["schemas"]["VoiceDraftFieldCorrection"][];
+            /** Format: uuid */
+            confirmedBy: null | string;
+            /** Format: date-time */
+            confirmedAt: null | string;
+            rejection: null | components["schemas"]["VoiceDraftRejectionDto"];
+            revisions: components["schemas"]["VoiceDraftRevisionSummaryDto"][];
+            /** Format: uuid */
+            createdBy: string;
+            canEdit: boolean;
+            canConfirm: boolean;
+            handoff: string;
+            audioRetention: string;
+            provenance: string;
+            /** Format: date-time */
+            savedAt: string;
+            /** Format: uuid */
+            safetyEventId?: null | string;
+            handoffReason?: null | string;
+        };
+        VoiceDraftEvidenceDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            currency: string;
+            state: string;
+        };
+        VoiceDraftFieldCorrection: {
+            key: string;
+            outcome: string;
+            required: boolean;
+        };
+        VoiceDraftFields: {
+            eventType: null | string;
+            occurredAt: null | string;
+            location: null | string;
+            locationDetail: null | string;
+            description: null | string;
+            immediateAction: null | string;
+        };
+        VoiceDraftHint: {
+            code: string;
+            span: components["schemas"]["VoiceDraftSpan"];
+        };
+        VoiceDraftListItemDto: {
+            /** Format: uuid */
+            id: string;
+            state: string;
+            origin: string;
+            eventType: null | string;
+            location: null | string;
+            occurredAt: null | string;
+            /** Format: int32 */
+            missingCount: number;
+            /** Format: int64 */
+            revision: number;
+            /** Format: date-time */
+            savedAt: string;
+        };
+        VoiceDraftMetricsDto: {
+            /** Format: uuid */
+            vesselId: string;
+            state: string;
+            /** Format: int32 */
+            confirmed: number;
+            /** Format: int32 */
+            rejected: number;
+            /** Format: int32 */
+            open: number;
+            /** Format: double */
+            fieldCompleteness: null | number;
+            /** Format: double */
+            correctionRate: null | number;
+            /** Format: double */
+            usability: null | number;
+            /** Format: double */
+            rejectionRate: null | number;
+            rejectionsByReason: {
+                [key: string]: number;
+            };
+            /** Format: int32 */
+            sampleLimit: number;
+            extractorVersion: string;
+        };
+        VoiceDraftPageDto: {
+            items: components["schemas"]["VoiceDraftListItemDto"][];
+            /** Format: int32 */
+            offset: number;
+            /** Format: int32 */
+            limit: number;
+            hasMore: boolean;
+            canWrite: boolean;
+        };
+        VoiceDraftRejectCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            reasonCode: string;
+            note: null | string;
+        };
+        VoiceDraftRejectionDto: {
+            reasonCode: string;
+            note: null | string;
+            /** Format: uuid */
+            rejectedBy: string;
+            /** Format: date-time */
+            rejectedAt: string;
+        };
+        VoiceDraftRevisionSummaryDto: {
+            /** Format: int64 */
+            revision: number;
+            state: string;
+            reasonCode: string;
+            hash: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            savedAt: string;
+        };
+        VoiceDraftSpan: {
+            /** Format: int32 */
+            start: number;
+            /** Format: int32 */
+            end: number;
+        };
+        VoiceDraftSpeechDto: {
+            engineVersion: string;
+            modelVersion: string;
+            /** Format: double */
+            meanConfidence: null | number;
+        };
+        VoiceDraftTranscriptionDto: {
+            transcript: string;
+            transcriptSha256: string;
+            engineVersion: string;
+            modelVersion: string;
+            /** Format: double */
+            meanConfidence: null | number;
+            segments: components["schemas"]["SpeechSegment"][];
+            attestation: string;
+            /** Format: date-time */
+            expiresAt: string;
+            audioRetained: boolean;
+        };
+        VoiceDraftUpdateCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            fields: components["schemas"]["VoiceDraftFields"];
+            evidenceFileIds: string[];
         };
         WinchFitmentReference: {
             /** Format: uuid */
@@ -22501,6 +24542,66 @@ export interface operations {
             };
         };
     };
+    AcknowledgeControlledDocumentRevision: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string;
+                "X-CSRF-TOKEN"?: string;
+                "If-Match"?: string;
+            };
+            path: {
+                vessel: string;
+                document: string;
+                revision: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ControlledDocumentAcknowledgeCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ControlledDocumentDto"];
+                };
+            };
+        };
+    };
+    AuthorizeControlledDocumentContent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                document: string;
+                revision: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ControlledDocumentContentAccessCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ControlledDocumentContentAccessDto"];
+                };
+            };
+        };
+    };
     CrewCatalogRead: {
         parameters: {
             query?: never;
@@ -25240,6 +27341,553 @@ export interface operations {
             };
         };
     };
+    SafetyEventList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventPageDto"];
+                };
+            };
+        };
+    };
+    SafetyEventCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyEventCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyFailure"];
+                };
+            };
+        };
+    };
+    SafetyEventRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventDto"];
+                };
+            };
+        };
+    };
+    SafetyEventUpdate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyEventUpdateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventDto"];
+                };
+            };
+        };
+    };
+    SafetyEventFollowUpRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventFollowUpDto"];
+                };
+            };
+        };
+    };
+    SafetyEventFollowUpMessage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyEventFollowUpMessageCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventFollowUpDto"];
+                };
+            };
+        };
+    };
+    SafetyEventSubmit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyEventSubmitCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyFailure"];
+                };
+            };
+        };
+    };
+    SafetyEventWithdraw: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyEventReasonCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventDto"];
+                };
+            };
+        };
+    };
+    SafetyEventTriage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyEventTriageCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventDto"];
+                };
+            };
+        };
+    };
+    SafetyEventIdentityAccess: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyEventIdentityAccessCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventIdentityDto"];
+                };
+            };
+        };
+    };
+    SafetyEventMessage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyEventMessageCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventDto"];
+                };
+            };
+        };
+    };
+    SafetyInvestigationSave: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyInvestigationSaveCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventDto"];
+                };
+            };
+        };
+    };
+    SafetyInvestigationSubmit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyInvestigationSubmitCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyFailure"];
+                };
+            };
+        };
+    };
+    SafetyInvestigationReview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyInvestigationReviewCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventDto"];
+                };
+            };
+        };
+    };
+    SafetyActionCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyActionCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyFailure"];
+                };
+            };
+        };
+    };
+    SafetyActionStep: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                actionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyActionStepCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventDto"];
+                };
+            };
+        };
+    };
+    SafetyEventClose: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SafetyEventReasonCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyFailure"];
+                };
+            };
+        };
+    };
+    SafetyEventOfflineInventory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    SafetyEventOfflineEnroll: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SafetyEventOfflineContextDto"];
+                };
+            };
+        };
+    };
+    SafetyEventOfflineAction: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enrollment: string;
+                action: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    SafetyEventOfflineHistory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                enrollment: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     DefectLifecycleRead: {
         parameters: {
             query?: never;
@@ -25765,6 +28413,226 @@ export interface operations {
             };
         };
     };
+    VoiceDraftList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoiceDraftPageDto"];
+                };
+            };
+        };
+    };
+    VoiceDraftCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VoiceDraftCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoiceDraftDto"];
+                };
+            };
+        };
+    };
+    VoiceDraftCapabilities: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoiceDraftCapabilitiesDto"];
+                };
+            };
+        };
+    };
+    VoiceDraftMetrics: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoiceDraftMetricsDto"];
+                };
+            };
+        };
+    };
+    VoiceDraftRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoiceDraftDto"];
+                };
+            };
+        };
+    };
+    VoiceDraftUpdate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VoiceDraftUpdateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoiceDraftDto"];
+                };
+            };
+        };
+    };
+    VoiceDraftTranscribe: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "audio/webm": string;
+                "audio/ogg": string;
+                "audio/wav": string;
+                "audio/mp4": string;
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoiceDraftTranscriptionDto"];
+                };
+            };
+        };
+    };
+    VoiceDraftConfirm: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VoiceDraftConfirmCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoiceDraftDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechnicalRecordFailure"];
+                };
+            };
+        };
+    };
+    VoiceDraftReject: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VoiceDraftRejectCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoiceDraftDto"];
+                };
+            };
+        };
+    };
     PmsCommandCenterRead: {
         parameters: {
             query?: never;
@@ -25782,6 +28650,57 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["PmsCommandCenterDto"];
                 };
+            };
+        };
+    };
+    DepartureReadinessRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DepartureReadinessView"];
+                };
+            };
+        };
+    };
+    DepartureSignoffRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DepartureSignoffCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DepartureDecisionDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };
@@ -27035,6 +29954,474 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HighRiskWorkPage"];
+                };
+            };
+        };
+    };
+    TowageExecutionJobRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowageExecutionJobView"];
+                };
+            };
+        };
+    };
+    TowageExecutionStart: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TowageExecutionStartCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowageExecutionView"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskFailure"];
+                };
+            };
+        };
+    };
+    TowageExecutionRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowageExecutionView"];
+                };
+            };
+        };
+    };
+    TowageExecutionTransition: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TowageExecutionTransitionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowageExecutionView"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskFailure"];
+                };
+            };
+        };
+    };
+    TowageExecutionEvent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TowageExecutionEventCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowageExecutionView"];
+                };
+            };
+        };
+    };
+    TowageExecutionVerify: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TowageExecutionVerifyCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowageExecutionView"];
+                };
+            };
+        };
+    };
+    TugDailyLogList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugDailyLogListView"];
+                };
+            };
+        };
+    };
+    TugDailyLogCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TugDailyLogCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugDailyLogView"];
+                };
+            };
+        };
+    };
+    TugDailyLogRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugDailyLogView"];
+                };
+            };
+        };
+    };
+    TugDailyLogUpdate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TugDailyLogUpdateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugDailyLogView"];
+                };
+            };
+        };
+    };
+    TugDailyLogSubmit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TugDailyLogSubmitCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugDailyLogView"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskFailure"];
+                };
+            };
+        };
+    };
+    TugDailyLogReview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TugDailyLogReviewCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugDailyLogView"];
+                };
+            };
+        };
+    };
+    DrydockList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DrydockListView"];
+                };
+            };
+        };
+    };
+    DrydockCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DrydockCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DrydockView"];
+                };
+            };
+        };
+    };
+    DrydockRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DrydockView"];
+                };
+            };
+        };
+    };
+    DrydockUpdate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DrydockUpdateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DrydockView"];
+                };
+            };
+        };
+    };
+    DrydockTransition: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DrydockTransitionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DrydockView"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskFailure"];
+                };
+            };
+        };
+    };
+    DrydockVerify: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DrydockVerifyCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DrydockView"];
                 };
             };
         };

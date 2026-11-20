@@ -63,7 +63,13 @@ public static class SecureFileEndpoints
             return db.FileStages.Where(x => owners.Any(a => a.PersonId == x.PersonId) && x.PersonalKind == kind &&
                 x.PersonalRevision == personalRevision && x.PersonalPolicyVersion == policy.Version && x.PersonalPurpose == policy.Purpose);
         }
-        return db.FileStages.Where(x => x.PersonId == null && x.DocumentId == document && x.DocumentRevision == revision);
+        var stages = db.FileStages.Where(x => x.PersonId == null && x.DocumentId == document && x.DocumentRevision == revision);
+        // DEV-114 / ISPS Code A/9.7: a stage registered to an ISPS-sensitive controlled document is indistinguishable
+        // from a missing file on every generic route (list, detail, upload, access, bytes) without document.isps.read.
+        if (document == null && !ControlledDocumentEndpoints.Isps(Actor(h)))
+            stages = stages.Where(x => !db.ControlledDocumentRevisions.Any(r => r.FileId == x.Id && r.VesselId == x.VesselId &&
+                db.ControlledDocuments.Any(d => d.TenantId == r.TenantId && d.Id == r.DocumentId && d.IspsRestricted)));
+        return stages;
     }
     private static IQueryable<StoredFile> OwnedFiles(PoseidonDbContext db, HttpContext h, Guid vessel) {
         var stages = Owned(db, h).Where(s => s.VesselId == vessel);
@@ -85,7 +91,7 @@ public static class SecureFileEndpoints
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "FileRequest", code, resourceId: id);
         return Results.Problem(statusCode: status, title: code, extensions: new Dictionary<string, object?> { ["code"] = code });
     }
-    private static bool Ready(HttpContext h)
+    internal static bool Ready(HttpContext h)
     {
         var settings = h.RequestServices.GetRequiredService<SecureFileSettings>();
         var environment = h.RequestServices.GetRequiredService<IWebHostEnvironment>();
@@ -278,6 +284,8 @@ public static class SecureFileEndpoints
         if (!Ready(h)) return await Failure(h, 503, "file_settings_unavailable", id);
         var f = await OwnedFiles(db, h, vessel).AsNoTracking().SingleOrDefaultAsync(x => x.Id == id && x.VesselId == vessel, h.RequestAborted);
         if (f == null) return await Failure(h, 404, "resource_not_found", id);
+        // DEV-114: bytes of a controlled document revision are issued only by its classification-aware content-access route.
+        if (await ControlledDocumentAccessEndpoints.FileAllowedAsync(db, a, vessel, id, h.RequestAborted) != null) return await Failure(h, 403, "controlled_document_download_policy", id);
         var expires = DateTimeOffset.UtcNow.AddSeconds(h.RequestServices.GetRequiredService<SecureFileSettings>().CapabilitySeconds);
         var token = h.RequestServices.GetRequiredService<FileCapabilities>().Issue(a.TenantId, a.Id, vessel, id, f.Revision, expires);
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "FileAccessIssue", "Success", resourceId: id);
@@ -301,7 +309,9 @@ public static class SecureFileEndpoints
                 throw new InvalidDataException();
             stream.Position = 0;
             var current = h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User);
-            if (current == null || current.Id != a.Id || current.TenantId != a.TenantId || !await Scope(db, current, vessel, h, ct)) {
+            // DEV-114: the controlled-document classification policy is re-checked for the live actor at stream time.
+            if (current == null || current.Id != a.Id || current.TenantId != a.TenantId || !await Scope(db, current, vessel, h, ct) ||
+                await ControlledDocumentAccessEndpoints.FileAllowedAsync(db, current, vessel, id, ct) == false) {
                 await stream.DisposeAsync(); stream = null;
                 return await Failure(h, 403, "permission_denied", id);
             }

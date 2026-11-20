@@ -25,6 +25,16 @@ public sealed class TestRunMarkerAttribute : BeforeAfterTestAttribute
         var type = method.ReflectedType ?? method.DeclaringType;
         if (type?.FullName is not { } name) return;
         // Open/append/close per line: the content survives the gate killing the process tree.
-        lock (Gate) System.IO.File.AppendAllText(File, $"{kind}\t{name.Replace('+', '.')}.{method.Name}\n");
+        // Diagnostics only: a marker write failure must never fail the test itself.
+        try
+        {
+            lock (Gate) System.IO.File.AppendAllText(File, $"{kind}\t{name.Replace('+', '.')}.{method.Name}\n");
+        }
+        catch (IOException)
+        {
+        }
+        catch (UnauthorizedAccessException)
+        {
+        }
     }
 }

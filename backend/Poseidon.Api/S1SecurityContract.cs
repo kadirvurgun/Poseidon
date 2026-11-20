@@ -56,7 +56,10 @@ public static class S1SecurityContract
             x.Variants.Length > 8 || x.Variants.Select(v => v.RouteValue).Distinct(StringComparer.Ordinal).Count() != x.Variants.Length ||
             x.Variants.Any(v => !Identifier(v.OperationId) ||
                 v.RouteValue is not ("renew" or "key" or "revoke" or "lost" or "cleanup" or "replay")) ||
-            (x.Variants.Length > 0 && (!x.IsCritical || !x.RoutePattern.EndsWith("/{action}", StringComparison.Ordinal)))))
+            (x.Variants.Length > 0 && (!x.IsCritical || !x.RoutePattern.EndsWith("/{action}", StringComparison.Ordinal))) ||
+            // {action} is reserved for variant route values; an ordinary route parameter must use another name.
+            (x.Variants.Length == 0 && (x.RoutePattern.Contains("{action}", StringComparison.Ordinal) ||
+                x.RoutePattern.Contains("{action:", StringComparison.Ordinal)))))
             throw new InvalidOperationException("The current security scope contract is invalid.");
         var concrete = values.SelectMany(x => x.Variants.Length == 0 ? new[] { x.OperationId } : x.Variants.Select(v => v.OperationId)).ToArray();
         if (values.Select(x => (x.Method, Normalize(x.RoutePattern))).Distinct().Count() != values.Length ||

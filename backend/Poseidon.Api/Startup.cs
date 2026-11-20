@@ -34,6 +34,9 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         // DEV-057: absent operator configuration leaves work order offline capture unavailable.
         services.AddSingleton(configuration.GetSection("WorkOrderOffline").Get<WorkOrderOfflineSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<IWorkOrderStateSource, WorkOrderStateReader>();
+        // S9 WP-B DEV-060: absent operator configuration leaves safety-event offline capture unavailable.
+        services.AddSingleton(configuration.GetSection("SafetyEventOffline").Get<SafetyEventOfflineSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
+        services.AddSingleton<ISafetyEventBlockerSource, SafetyEventBlockerSource>();
         services.AddSingleton<ISpareGapSource, SpareGapReader>();
         services.AddSingleton(configuration.GetSection("NotificationScheduler").Get<NotificationSchedulerSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<NotificationServiceContexts>();
@@ -53,6 +56,10 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddDailyReferenceReaders();
         services.AddSingleton<ClamdScanner>();
         services.AddSingleton<FileCapabilities>();
+        // S9 WP-C DEV-062: local-only speech; no engine ships, so the default provider is explicitly unavailable.
+        services.AddSingleton(configuration.GetSection("SpeechTranscription").Get<SpeechTranscriptionSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
+        Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddSingleton<ISpeechTranscriptionProvider, UnavailableSpeechTranscriptionProvider>(services);
+        services.AddSingleton<SpeechAttestations>();
         services.AddFoundationIdentity(configuration, hostEnvironment);
         services.AddScoped<SecurityAudit>();
         // S7 WP-A: advisory crew eligibility (stable consumer contract ICrewEligibilityEvaluator).
@@ -222,13 +229,19 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapDowntimeOrigins();
             endpoints.MapRiskAssessments();
             endpoints.MapRiskTemplates();
+            endpoints.MapSafetyEvents();
+            endpoints.MapSafetyInvestigations();
+            endpoints.MapSafetyEventOffline();
             endpoints.MapDefectLifecycle();
             endpoints.MapServiceReports();
+            endpoints.MapVoiceEventDrafts();
             endpoints.MapPmsCommandCenter();
+            endpoints.MapDepartureReadiness(); // S9 WP-A DEV-058/059
             endpoints.MapMaintenanceObservations();
             endpoints.MapMeasurementPoints();
             endpoints.MapMaintenancePostponements();
             endpoints.MapTug();
+            endpoints.MapDrydock(); // S9 WP-D DEV-111
             endpoints.MapParameters();
             endpoints.MapHr();
             endpoints.MapMemberships();

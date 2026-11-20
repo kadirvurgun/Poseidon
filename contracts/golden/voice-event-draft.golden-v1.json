@@ -1,0 +1,86 @@
+{
+  "datasetVersion": "voice-event-draft-golden-v1",
+  "notice": "FICTIONAL, SYNTHETIC and MASKED maritime notes written for software evaluation only. No real vessel, person, event or voyage. Not an operational corpus and not a measured field accuracy.",
+  "thresholdsNote": "Regression floor = measured baseline of voice-rule-extractor/1.0.0 on this synthetic set (completeness 0.973, correction 0.027, usability 0.917, fabricated 0). A drop fails CI; not an operational accuracy claim.",
+  "thresholds": {
+    "criticalFabricatedFacts": 0,
+    "fabricatedFacts": 0,
+    "minFieldCompleteness": 0.97,
+    "maxCorrectionRate": 0.03,
+    "minUsability": 0.91
+  },
+  "examples": [
+    {
+      "id": "VG-001", "masking": "SYNTHETIC_MASKED", "language": "tr", "referenceDate": "2026-11-19",
+      "transcript": "Ramak kala olayı. Bugün saat 14:30 makine dairesinde yakıt hattından sızıntı görüldü. Pompayı durdurduk ve vardiya mühendisine haber verdik.",
+      "truth": { "eventType": "NEAR_MISS", "occurredAt": "2026-11-19T14:30", "location": "ENGINE_ROOM", "immediateAction": "Pompayı durdurduk ve vardiya mühendisine haber verdik." },
+      "criticalFields": ["eventType", "occurredAt", "location"], "reviewDecision": "CONFIRM", "rejectionReason": null
+    },
+    {
+      "id": "VG-002", "masking": "SYNTHETIC_MASKED", "language": "en", "referenceDate": "2026-11-19",
+      "transcript": "Near miss on the main deck today at 09:15. A loose mooring line whipped across the walkway. We cordoned off the area and informed the chief officer.",
+      "truth": { "eventType": "NEAR_MISS", "occurredAt": "2026-11-19T09:15", "location": "MAIN_DECK", "immediateAction": "We cordoned off the area and informed the chief officer." },
+      "criticalFields": ["eventType", "occurredAt", "location"], "reviewDecision": "CONFIRM", "rejectionReason": null
+    },
+    {
+      "id": "VG-003", "masking": "SYNTHETIC_MASKED", "language": "tr", "referenceDate": "2026-11-19",
+      "transcript": "Dün gece 23.40 civarı mutfakta tavadaki yağ alev aldı. Yangın battaniyesi ile söndürdük, kimse yaralanmadı.",
+      "truth": { "eventType": null, "occurredAt": "2026-11-18T23:40", "location": "GALLEY", "immediateAction": "Yangın battaniyesi ile söndürdük, kimse yaralanmadı." },
+      "criticalFields": ["eventType", "occurredAt", "location"], "reviewDecision": "CONFIRM", "rejectionReason": null
+    },
+    {
+      "id": "VG-004", "masking": "SYNTHETIC_MASKED", "language": "en", "referenceDate": "2026-11-19",
+      "transcript": "Hazardous situation at the gangway. The safety net is torn near the bottom platform. Reported to the officer of the watch.",
+      "truth": { "eventType": "HAZARDOUS_SITUATION", "occurredAt": null, "location": "GANGWAY", "immediateAction": "Reported to the officer of the watch." },
+      "criticalFields": ["eventType", "occurredAt", "location"], "reviewDecision": "CONFIRM", "rejectionReason": null
+    },
+    {
+      "id": "VG-005", "masking": "SYNTHETIC_MASKED", "language": "tr", "referenceDate": "2026-11-19",
+      "transcript": "Uygunsuzluk: pompa dairesine giriş izni olmadan girildi, 19.11.2026 saat 10:05. Çalışma durduruldu ve gaz ölçümü yapıldı.",
+      "truth": { "eventType": "NON_CONFORMITY", "occurredAt": "2026-11-19T10:05", "location": "PUMP_ROOM", "immediateAction": "Çalışma durduruldu ve gaz ölçümü yapıldı." },
+      "criticalFields": ["eventType", "occurredAt", "location"], "reviewDecision": "CONFIRM", "rejectionReason": null
+    },
+    {
+      "id": "VG-006", "masking": "SYNTHETIC_MASKED", "language": "en", "referenceDate": "2026-11-19",
+      "transcript": "Crew member slipped on oil and was injured in the engine room yesterday at 16:20. First aid was given and the spill was cleaned.",
+      "truth": { "eventType": "INCIDENT", "occurredAt": "2026-11-18T16:20", "location": "ENGINE_ROOM", "immediateAction": "First aid was given and the spill was cleaned." },
+      "criticalFields": ["eventType", "occurredAt", "location"], "reviewDecision": "CONFIRM", "rejectionReason": null
+    },
+    {
+      "id": "VG-007", "masking": "SYNTHETIC_MASKED", "language": "tr", "referenceDate": "2026-11-19",
+      "transcript": "Köprüüstünde radar ekranı bir süre dondu. Saat 03:10 civarıydı.",
+      "truth": { "eventType": null, "occurredAt": null, "location": "BRIDGE", "immediateAction": null },
+      "criticalFields": ["eventType", "occurredAt", "location"], "reviewDecision": "REJECT", "rejectionReason": "FIELDS_WRONG"
+    },
+    {
+      "id": "VG-008", "masking": "SYNTHETIC_MASKED", "language": "en", "referenceDate": "2026-11-19",
+      "transcript": "Near miss on the towing deck this morning at 07:45, the tow line jumped the staple pin. Winch stopped immediately and the deck was evacuated.",
+      "truth": { "eventType": "NEAR_MISS", "occurredAt": "2026-11-19T07:45", "location": "TOWING_DECK", "immediateAction": "Near miss on the towing deck this morning at 07:45, the tow line jumped the staple pin. Winch stopped immediately and the deck was evacuated." },
+      "criticalFields": ["eventType", "occurredAt", "location"], "reviewDecision": "CONFIRM", "rejectionReason": null
+    },
+    {
+      "id": "VG-009", "masking": "SYNTHETIC_MASKED", "language": "tr", "referenceDate": "2026-11-19",
+      "transcript": "Bu not test amaçlı, olay yok.",
+      "truth": { "eventType": null, "occurredAt": null, "location": null, "immediateAction": null },
+      "criticalFields": ["eventType", "occurredAt", "location"], "reviewDecision": "REJECT", "rejectionReason": "NOT_AN_EVENT"
+    },
+    {
+      "id": "VG-010", "masking": "SYNTHETIC_MASKED", "language": "en", "referenceDate": "2026-11-19",
+      "transcript": "Incident in cargo hold 2 today at 11:00. A hatch cover rolled while a person was close by. The hatch was secured and the area was barricaded.",
+      "truth": { "eventType": "INCIDENT", "occurredAt": "2026-11-19T11:00", "location": "CARGO_HOLD", "immediateAction": "The hatch was secured and the area was barricaded." },
+      "criticalFields": ["eventType", "occurredAt", "location"], "reviewDecision": "CONFIRM", "rejectionReason": null
+    },
+    {
+      "id": "VG-011", "masking": "SYNTHETIC_MASKED", "language": "tr", "referenceDate": "2026-11-19",
+      "transcript": "Tehlikeli durum: dümen dairesinde hidrolik yağ seviyesi düşük. Bugün 08:30 kontrolünde görüldü. Baş mühendise bildirildi.",
+      "truth": { "eventType": "HAZARDOUS_SITUATION", "occurredAt": "2026-11-19T08:30", "location": "STEERING_GEAR_ROOM", "immediateAction": "Baş mühendise bildirildi." },
+      "criticalFields": ["eventType", "occurredAt", "location"], "reviewDecision": "CONFIRM", "rejectionReason": null
+    },
+    {
+      "id": "VG-012", "masking": "SYNTHETIC_MASKED", "language": "en", "referenceDate": "2026-11-19",
+      "transcript": "Same near miss as reported earlier at the mooring station, duplicate note.",
+      "truth": { "eventType": "NEAR_MISS", "occurredAt": null, "location": "MOORING_STATION", "immediateAction": null },
+      "criticalFields": ["eventType", "occurredAt", "location"], "reviewDecision": "REJECT", "rejectionReason": "DUPLICATE"
+    }
+  ]
+}

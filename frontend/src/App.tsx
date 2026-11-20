@@ -8,7 +8,9 @@ import { DailyReportWorkspace } from './product/DailyReportWorkspace';
 import { TugWorkspace } from './product/TugWorkspace';
 import { TugReadinessWorkspace } from './product/TugReadinessWorkspace';
 import { TowageWorkspace } from './product/TowageWorkspace';
+import { FieldOpsWorkspace } from './product/FieldOpsWorkspace';
 import { HighRiskWorkWorkspace } from './product/HighRiskWorkWorkspace';
+import { SafetyEventsWorkspace } from './product/SafetyEventsWorkspace';
 import { TechnicalWorkspace } from './product/TechnicalWorkspace';
 import { CrewWorkspace } from './product/CrewWorkspace';
 import { CrewComplianceWorkspace } from './product/CrewComplianceWorkspace';
@@ -26,7 +28,10 @@ import { WorkOrderWorkspace } from './product/WorkOrderWorkspace';
 import { DowntimeWorkspace } from './product/DowntimeWorkspace';
 import { RiskAssessmentWorkspace } from './product/RiskAssessmentWorkspace';
 import { PmsCommandCenterWorkspace } from './product/PmsCommandCenterWorkspace';
+import { DepartureReadinessWorkspace } from './product/DepartureReadinessWorkspace';
 import { ServiceReportWorkspace } from './product/ServiceReportWorkspace';
+import { VoiceEventDraftWorkspace } from './product/VoiceEventDraftWorkspace';
+import { DocumentCompareWorkspace } from './product/DocumentCompareWorkspace';
 import { RiskTemplateLibraryWorkspace } from './product/RiskTemplateLibraryWorkspace';
 import { CriticalSparesWorkspace } from './product/CriticalSparesWorkspace';
 import { AuditReadyWorkspace } from './product/AuditReadyWorkspace';
@@ -57,20 +62,32 @@ export function App() {
     if (/^\/app\/tug-(assignment|readiness|equipment-readiness|crew-readiness)(?:\/|$)/.test(window.location.pathname))
         return <TugReadinessWorkspace />;
     // S8 WP-D DEV-087/088 towage plan and risk & briefing; DEV-107 fleet high-risk work.
+    // S9 WP-D DEV-089/090/111 towage execution console, tug daily log and drydock planning.
+    if (/^\/app\/(towage-execution|tug-daily-log|drydock-planning)(?:\/|$)/.test(window.location.pathname))
+        return <FieldOpsWorkspace />;
     if (/^\/app\/towage-(plan|risk-briefing)(?:\/|$)/.test(window.location.pathname))
         return <TowageWorkspace />;
     if (/^\/app\/high-risk-work(?:\/|$)/.test(window.location.pathname))
         return <HighRiskWorkWorkspace />;
+    // S9 WP-B DEV-060/061 safety events, investigation and action tracking.
+    if (/^\/app\/safety-events(?:\/|$)/.test(window.location.pathname))
+        return <SafetyEventsWorkspace />;
     if (/^\/app\/tug-(command|job-board|job-intake|job-detail)(?:\/|$)/.test(window.location.pathname))
         return <TugWorkspace />;
     if (/^\/app\/(equipment-hierarchy|maintenance-plan)\//.test(window.location.pathname))
         return <TechnicalWorkspace />;
     if (/^\/app\/defects(?:\/|$)/.test(window.location.pathname))
         return <DefectWorkspace />;
+    if (/^\/app\/departure-signoff(?:\/|$)/.test(window.location.pathname))
+        return <DepartureReadinessWorkspace />;
     if (/^\/app\/pms-command-center(?:\/|$)/.test(window.location.pathname))
         return <PmsCommandCenterWorkspace />;
     if (/^\/app\/service-engineer-report(?:\/|$)/.test(window.location.pathname))
         return <ServiceReportWorkspace />;
+    if (/^\/app\/voice-event-draft(?:\/|$)/.test(window.location.pathname))
+        return <VoiceEventDraftWorkspace />;
+    if (/^\/app\/document-compare(?:\/|$)/.test(window.location.pathname))
+        return <DocumentCompareWorkspace />;
     if (/^\/app\/work-order-center(?:\/|$)/.test(window.location.pathname))
         return <WorkOrderWorkspace />;
     if (/^\/app\/operational-downtime(?:\/|$)/.test(window.location.pathname))

@@ -47,13 +47,25 @@ public static class PmsCommandCenterEndpoints
     private static async Task<IResult> Read(HttpContext h, PoseidonDbContext db)
     {
         var (actor, vessel, failure) = await TechnicalRecordCommands.ReadGate(h, db, ReadAction, CanRead); if (failure != null) return failure;
-        var now = TechnicalRecordCommands.Now(h); var ct = h.RequestAborted;
+        var now = TechnicalRecordCommands.Now(h);
+        var (ordered, _) = await Compose(h, db, actor!, vessel, now, h.RequestAborted);
+        await TechnicalRecordCommands.Audit(h, ReadAction, "Success", vessel);
+        return Results.Json(new PmsCommandCenterDto(vessel, PmsCommandCenterPolicy.Readiness(ordered), now, ordered, "ADVISORY_EXCEPTION_VIEW_NOT_A_FITNESS_DECISION"),
+            TechnicalRecordCommands.Json);
+    }
+
+    // S9 DEV-058: the same exception sections are the technical input of the departure gate. The caller has
+    // already established vessel scope and CanRead; every section keeps its owning module's read predicate.
+    internal static async Task<(PmsSection[] Sections, MaintenanceCurrentProjection[]? Plans)> Compose(HttpContext h, PoseidonDbContext db, TrustedActor actor,
+        Guid vessel, DateTimeOffset now, CancellationToken ct)
+    {
         var sections = new List<PmsSection>();
+        MaintenanceCurrentProjection[]? plans = null;
 
         // Maintenance plans: overdue / critical overdue; healthy (NotDue) rows stay quiet.
         if (MaintenanceCurrentReader.Permitted(actor!))
         {
-            var rows = await MaintenanceCurrentReader.Read(vessel, h, db, actor!, now);
+            var rows = plans = await MaintenanceCurrentReader.Read(vessel, h, db, actor!, now);
             if (rows == null) { sections.Add(PmsCommandCenterPolicy.Unavailable("critical_overdue_jobs", "MAINTENANCE_SOURCE_UNAVAILABLE")); sections.Add(PmsCommandCenterPolicy.Unavailable("overdue_jobs", "MAINTENANCE_SOURCE_UNAVAILABLE")); }
             else
             {
@@ -112,9 +124,6 @@ public static class PmsCommandCenterEndpoints
         }
 
         sections.Add(FromSource("critical_spare_gaps", await h.RequestServices.GetRequiredService<IPmsSpareGapSource>().CriticalSpareGapsAsync(context)));
-        var ordered = PmsCommandCenterPolicy.SectionKeys.Select(k => sections.Single(s => s.Key == k)).ToArray();
-        await TechnicalRecordCommands.Audit(h, ReadAction, "Success", vessel);
-        return Results.Json(new PmsCommandCenterDto(vessel, PmsCommandCenterPolicy.Readiness(ordered), now, ordered, "ADVISORY_EXCEPTION_VIEW_NOT_A_FITNESS_DECISION"),
-            TechnicalRecordCommands.Json);
+        return (PmsCommandCenterPolicy.SectionKeys.Select(k => sections.Single(s => s.Key == k)).ToArray(), plans);
     }
 }
