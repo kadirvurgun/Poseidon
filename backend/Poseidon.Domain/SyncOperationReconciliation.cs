@@ -33,7 +33,8 @@ public static class SyncOperationReconciliation
     public const string DailyNoon = "DailyNoon";
     public const string DailyDeck = "DailyDeck";
     public const string DailyEngine = "DailyEngine";
-    public static IReadOnlyList<string> Domains { get; } = [CrewWatchGroup, TugPlanWindow, DailyNoon, DailyDeck, DailyEngine];
+    public const string WorkOrderEvidence = "WorkOrderEvidence";
+    public static IReadOnlyList<string> Domains { get; } = [CrewWatchGroup, TugPlanWindow, DailyNoon, DailyDeck, DailyEngine, WorkOrderEvidence];
 
     // Daily offline kinds are stored as Noon/Deck/Engine; the sync domain is explicit.
     public static string? DailyKind(string domain) => domain switch

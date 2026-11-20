@@ -118,6 +118,52 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if(entry.Entity is CertificateAssertionEvent assertion)
             return new(assertion.VesselId,assertion.CertificateId,"CertificateAssertion",null,assertion.Revision,
                 Fields(Field("Revision",null,Number(assertion.Revision)),Field("Binding",null,"RecordedUnassessedAssertion")));
+        // DEV-054/DEV-057/DEV-110: closed state/transition codes only. Readings, spares, quantities,
+        // captions, file pins, part numbers and actor identities are never copied into audit.
+        if(entry.Entity is WorkOrderExecution execution) {
+            string? executionBefore=entry.State==EntityState.Added?null:Closed((string)entry.Property("State").OriginalValue!,WorkOrderExecutionPolicy.States);
+            return new(execution.VesselId,execution.WorkOrderId,"WorkOrderExecution",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,execution.Revision,
+                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(execution.Revision)),
+                    Field("ExecutionState",executionBefore,Closed(execution.State,WorkOrderExecutionPolicy.States)),Field("Binding",null,"OwnerReference")));
+        }
+        if(entry.Entity is WorkOrderExecutionRevision executionRevision)
+            return new(executionRevision.VesselId,executionRevision.WorkOrderId,"WorkOrderExecutionRevision",null,executionRevision.Revision,
+                Fields(Field("Revision",null,Number(executionRevision.Revision)),Field("Transition",null,Closed(executionRevision.Transition,WorkOrderExecutionPolicy.Transitions)),
+                    Field("ExecutionState",null,Closed(executionRevision.State,WorkOrderExecutionPolicy.States)),Field("EvidenceGate",null,Closed(executionRevision.EvidenceGate,WorkOrderExecutionPolicy.GateStates)),
+                    Field("Content",null,null,"ValuesWithheld"),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is WorkOrderExecutionReceipt executionReceipt)
+            return new(executionReceipt.VesselId,executionReceipt.WorkOrderId,"WorkOrderExecutionReceipt",null,executionReceipt.Revision,
+                Fields(Field("Operation",null,Closed(executionReceipt.Action,"WorkOrderExecutionTransition","WorkOrderExecutionEvidence")),Field("Binding",null,"CommittedResource")));
+        if(entry.Entity is WorkOrderOfflineEnrollment workOrderEnrollment)
+            return new(workOrderEnrollment.VesselId,workOrderEnrollment.WorkOrderId,"WorkOrderOfflineEnrollment",null,null,
+                Fields(Field("Binding",entry.State==EntityState.Added?null:"OwnerReference","OwnerReference")));
+        if(entry.Entity is WorkOrderOfflineLifecycle workOrderLifecycle)
+            return new(workOrderLifecycle.VesselId,workOrderLifecycle.WorkOrderId,"WorkOrderOfflineLifecycle",null,null,
+                Fields(Field("Binding",null,"OwnerReference"),Field("Lifecycle",null,Closed(workOrderLifecycle.Action,"Enrolled","Renewed","KeyEnrolled","Revoked","KeyLost","CleanupAllowed"))));
+        if(entry.Entity is WorkOrderOfflineOutcome workOrderOutcome)
+            return new(workOrderOutcome.VesselId,workOrderOutcome.WorkOrderId,"WorkOrderOfflineOutcome",null,workOrderOutcome.Revision,
+                Fields(Field("Binding",null,"OwnerReference"),Field("Outcome",null,Closed(workOrderOutcome.Result,"Committed","MaterialConflict","ServerRetained")),
+                    Field("ReasonCode",null,workOrderOutcome.ParentCommandId==null?null:workOrderOutcome.Result=="ServerRetained"?"CURRENT_SERVER_RETAINED":"INPUT_CORRECTED")));
+        if(entry.Entity is CriticalSpare spare)
+            return new(spare.VesselId,spare.Id,"CriticalSpare",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,spare.Revision,
+                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(spare.Revision)),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is CriticalSpareRevision spareRevision)
+            return new(spareRevision.VesselId,spareRevision.SpareId,"CriticalSpareRevision",null,spareRevision.Revision,
+                Fields(Field("Revision",null,Number(spareRevision.Revision)),Field("Transition",null,Closed(spareRevision.Transition,CriticalSparePolicy.SpareTransitions)),
+                    Field("Content",null,null,"ValuesWithheld"),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is TechnicalRequisition requisition) {
+            string? requisitionBefore=entry.State==EntityState.Added?null:Closed((string)entry.Property("State").OriginalValue!,CriticalSparePolicy.RequisitionStates);
+            return new(requisition.VesselId,requisition.Id,"TechnicalRequisition",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,requisition.Revision,
+                Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(requisition.Revision)),
+                    Field("RequisitionState",requisitionBefore,Closed(requisition.State,CriticalSparePolicy.RequisitionStates)),Field("Binding",null,"OwnerReference")));
+        }
+        if(entry.Entity is TechnicalRequisitionRevision requisitionRevision)
+            return new(requisitionRevision.VesselId,requisitionRevision.RequisitionId,"TechnicalRequisitionRevision",null,requisitionRevision.Revision,
+                Fields(Field("Revision",null,Number(requisitionRevision.Revision)),Field("Transition",null,Closed(requisitionRevision.Transition,CriticalSparePolicy.RequisitionTransitions)),
+                    Field("RequisitionState",null,Closed(requisitionRevision.State,CriticalSparePolicy.RequisitionStates)),Field("Content",null,null,"ValuesWithheld"),Field("Binding",null,"OwnerReference")));
+        if(entry.Entity is TechnicalSupplyReceipt supplyReceipt)
+            return new(supplyReceipt.VesselId,supplyReceipt.ResourceId,"TechnicalSupplyReceipt",null,supplyReceipt.Revision,
+                Fields(Field("Operation",null,Closed(supplyReceipt.Action,"CriticalSpareCreate","CriticalSpareUpdate","TechnicalRequisitionPropose","TechnicalRequisitionDecide")),Field("Binding",null,"CommittedResource")));
         if(entry.Entity is PreSurveyChecklist preSurvey)
             return new(preSurvey.VesselId,preSurvey.Id,"PreSurveyChecklist",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,preSurvey.Revision,
                 Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(preSurvey.Revision)),Field("Binding",null,"OwnerReference")));

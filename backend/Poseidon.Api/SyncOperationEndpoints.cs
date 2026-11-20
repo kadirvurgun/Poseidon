@@ -86,6 +86,7 @@ public static class SyncOperationEndpoints
         {
             SyncOperationReconciliation.CrewWatchGroup => OfflineApplicationEndpoints.ReplayRights(a, vesselId),
             SyncOperationReconciliation.TugPlanWindow => TugEndpoints.SyncRights(h, a, vesselId),
+            SyncOperationReconciliation.WorkOrderEvidence => WorkOrderOfflineEndpoints.ReplayRights(a, vesselId),
             _ => DailyOperationsEndpoints.CanWrite(a, SyncOperationReconciliation.DailyKind(d)!, vesselId) && DailyOfflineEndpoints.ShipVisible(a, vessel),
         }, StringComparer.Ordinal);
 
@@ -127,6 +128,18 @@ public static class SyncOperationEndpoints
             Add(new(o.CommandId, domain, o.RecordId, o.VesselId, o.Digest, o.Result,
                 dailyEnrollments.TryGetValue(o.EnrollmentId, out var e) && DailyOfflineEndpoints.EnrollmentCurrent(h, e)));
             details[(o.CommandId, domain)] = (o.Result, o.BaseVersion, o.ServerVersion, o.Revision, o.ParentCommandId, o.ReceivedAt);
+        }
+
+        // DEV-057 work order evidence offline outcomes (own resource namespace).
+        var orders = await db.WorkOrderOfflineOutcomes.AsNoTracking().Where(o => o.ActorId == a.Id && ids.Contains(o.CommandId)).ToArrayAsync(h.RequestAborted);
+        var orderEnrollmentIds = orders.Select(o => o.EnrollmentId).Distinct().ToArray();
+        var orderEnrollments = await db.WorkOrderOfflineEnrollments.AsNoTracking().Where(e => e.ActorId == a.Id && orderEnrollmentIds.Contains(e.Id))
+            .ToDictionaryAsync(e => e.Id, h.RequestAborted);
+        foreach (var o in orders)
+        {
+            Add(new(o.CommandId, SyncOperationReconciliation.WorkOrderEvidence, o.WorkOrderId, o.VesselId, o.Digest, o.Result,
+                orderEnrollments.TryGetValue(o.EnrollmentId, out var e) && WorkOrderOfflineEndpoints.EnrollmentCurrent(h, e)));
+            details[(o.CommandId, SyncOperationReconciliation.WorkOrderEvidence)] = (o.Result, o.BaseVersion, o.ServerVersion, o.Revision, o.ParentCommandId, o.ReceivedAt);
         }
 
         var items = new SyncOperationOutcomeDto[requests!.Length];

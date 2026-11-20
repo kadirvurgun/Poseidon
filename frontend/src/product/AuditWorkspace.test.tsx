@@ -15,7 +15,7 @@ afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals() })
 // Existing ActorResolver metadata from currently supported operational domains.
 // These strings are observations, never client permission or authority grants.
 const operationalCapabilities = [
-  'operations.downtime.read', 'operations.downtime.write', 'workorder.read', 'workorder.write', 'defect.read', 'defect.write',
+  'operations.downtime.read', 'operations.downtime.write', 'workorder.read', 'workorder.write', 'workorder.release', 'workorder.execute', 'workorder.verify', 'workorder.close', 'spare.read', 'spare.write', 'requisition.propose', 'requisition.approve', 'defect.read', 'defect.write',
   'operations.fuel.read', 'operations.fuel.write', 'operations.port.read', 'operations.port.write',
   'certificate.verify.record', 'certificate.read', 'certificate.extract', 'certificate.write',
   'certificate.renewal.write', 'certificate.renewal.owner', 'certificate.renewal.verify', 'certificate.renewal.complete',

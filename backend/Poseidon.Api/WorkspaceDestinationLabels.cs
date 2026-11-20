@@ -22,6 +22,7 @@ internal static class WorkspaceDestinationLabels
         ["offline-conflict-center"] = ["Önemli çakışma merkezi", "Material conflict center"],
         ["defects"] = ["Arızalar ve önlemler", "Defects and safeguards"],
         ["work-order-center"] = ["İş emirleri", "Work orders"],
+        ["critical-spares"] = ["Kritik yedekler ve talepler", "Critical spares and requisitions"],
         ["operational-downtime"] = ["Operasyonel duruşlar", "Operational downtime"],
         ["risk-assessment"] = ["Risk değerlendirmesi", "Risk assessment"],
         ["risk-template-library"] = ["Risk şablon kütüphanesi", "Risk template library"],
