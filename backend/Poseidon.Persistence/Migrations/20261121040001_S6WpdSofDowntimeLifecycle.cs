@@ -160,11 +160,57 @@ namespace Poseidon.Persistence.Migrations
                 table: "ShipOpsLifecycleEvents",
                 columns: new[] { "TenantId", "VesselId", "Module", "RecordId", "ToRevision" },
                 unique: true);
+
+            // DEV-101/102: the row guards from 20261105030000/20261109010000 treat every column
+            // outside their allowlist as immutable ownership. Without this, the first SOF
+            // FINALIZE (SofState/FinalRevision) or downtime lifecycle command (ClosureState/
+            // ClaimEvidenceJson) UPDATE raises P0001 and the endpoint returns 503.
+            // A FINAL pin is never cleared or moved back; a CLOSED downtime stays closed.
+            migrationBuilder.Sql(GuardShipOperation(["SofState", "FinalRevision"]) + """
+                CREATE TRIGGER "ShipOpsLifecycleEvent_Immutable" BEFORE UPDATE OR DELETE ON operations."ShipOpsLifecycleEvents" FOR EACH ROW EXECUTE FUNCTION audit.reject_mutation();
+                CREATE TRIGGER "ShipOpsLifecycleEvent_NoTruncate" BEFORE TRUNCATE ON operations."ShipOpsLifecycleEvents" FOR EACH STATEMENT EXECUTE FUNCTION audit.reject_mutation();
+                """ + GuardDowntime(["ClosureState", "ClaimEvidenceJson"]));
+        }
+
+        private static string Allowlist(string[] baseline, string[] extra) => "ARRAY[" + string.Join(',', baseline.Concat(extra).Select(c => "'" + c + "'")) + "]";
+        private static string GuardShipOperation(string[] extra)
+        {
+            var columns = Allowlist(["FieldsJson", "OriginJson", "SourceVersion", "Hash", "Provenance", "ActorId", "SavedAt", "OccurredAt", "EndedAt", "Revision"], extra);
+            var finalPin = extra.Length == 0 ? "" : """
+                  IF OLD."FinalRevision" IS NOT NULL AND (NEW."FinalRevision" IS NULL OR NEW."FinalRevision" < OLD."FinalRevision") THEN RAISE EXCEPTION 'Immutable SOF final revision pin'; END IF;
+                """;
+            return $$"""
+                CREATE OR REPLACE FUNCTION operations.guard_ship_operation() RETURNS trigger LANGUAGE plpgsql AS $$
+                BEGIN
+                  IF TG_OP <> 'UPDATE' THEN RAISE EXCEPTION 'Ship operation history cannot be removed'; END IF;
+                  IF (to_jsonb(OLD)-{{columns}}) IS DISTINCT FROM (to_jsonb(NEW)-{{columns}})
+                    OR NEW."Revision" <> OLD."Revision"+1 THEN RAISE EXCEPTION 'Immutable ship operation ownership'; END IF;
+                {{finalPin}}  RETURN NEW;
+                END $$;
+                """;
+        }
+        private static string GuardDowntime(string[] extra)
+        {
+            var columns = Allowlist(["FieldsJson", "OriginJson", "StartedAt", "SourceVersion", "Hash", "Provenance", "ActorId", "SavedAt", "Revision"], extra);
+            var closed = extra.Length == 0 ? "" : """
+                  IF OLD."ClosureState" = 'CLOSED' THEN RAISE EXCEPTION 'Closed downtime is immutable'; END IF;
+                """;
+            return $$"""
+                CREATE OR REPLACE FUNCTION operations.guard_downtime_draft() RETURNS trigger LANGUAGE plpgsql AS $$
+                BEGIN
+                  IF TG_OP <> 'UPDATE' THEN RAISE EXCEPTION 'Downtime history cannot be removed'; END IF;
+                  IF (to_jsonb(OLD)-{{columns}}) IS DISTINCT FROM (to_jsonb(NEW)-{{columns}})
+                    OR NEW."Revision" <> OLD."Revision"+1 THEN RAISE EXCEPTION 'Immutable downtime ownership'; END IF;
+                {{closed}}  RETURN NEW;
+                END $$;
+                """;
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.Sql(GuardShipOperation([]) + GuardDowntime([]));
+
             migrationBuilder.DropTable(
                 name: "ShipOpsLifecycleEvents",
                 schema: "operations");
