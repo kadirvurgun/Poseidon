@@ -106,9 +106,11 @@ public sealed class EndpointProfileRegistryTests
         Assert.All(commands.Where(e => e.Deviations.Contains("IDEMPOTENCY_KEY_NOT_REQUIRED")),
             e => Assert.True(EndpointProfiles.HeaderKeyRequired(EndpointProfiles.Profile(e.ProfileId))));
         // S8 DEV-109 replaced the last always-denied command (maintenance postponement) with an audited
-        // request/decision workflow; any future always-denied command must still use NATIVE-DENIED-1.
-        Assert.All(commands.Where(e => S1SecurityContract.Operations.Single(o => o.OperationId == e.SecurityOperationId).Kind == "AlwaysDenied"),
-            e => Assert.Equal("NATIVE-DENIED-1", e.ProfileId));
+        // request/decision workflow: the current surface has exactly zero always-denied operations and no
+        // command still carries the always-denied profile. A new always-denied command must update this count.
+        Assert.Equal(0, S1SecurityContract.Operations.Count(o => o.Kind == "AlwaysDenied"));
+        Assert.DoesNotContain(commands, e => S1SecurityContract.Operations.Single(o => o.OperationId == e.SecurityOperationId).Kind == "AlwaysDenied");
+        Assert.DoesNotContain(commands, e => e.ProfileId == "NATIVE-DENIED-1");
         Assert.All(commands.Where(e => S1SecurityContract.Operations.Single(o => o.OperationId == e.SecurityOperationId).IsCritical),
             e => Assert.NotEqual("NATIVE-OBSERVATION-COMMAND-1", e.ProfileId));
     }

@@ -7,8 +7,8 @@ namespace Poseidon.Api;
 public sealed record PmsCommandCenterDto(Guid VesselId, string ReadinessState, DateTimeOffset LastRefreshAt, PmsSection[] Sections, string Advisory);
 
 // Read-only inputs owned by other modules. WorkOrder state (S8 WP-B) and spare stock / critical
-// spare gaps (S8 WP-B) are wired at integration; until then the default sources answer UNKNOWN,
-// which the command center shows as UNKNOWN and never as zero or healthy.
+// spare gaps (S8 WP-B) are wired through PmsCommandCenterSources.cs; the Unavailable* fallbacks
+// answer UNKNOWN, which the command center shows as UNKNOWN and never as zero or healthy.
 public sealed record PmsSourceContext(PoseidonDbContext Db, TrustedActor Actor, Guid VesselId, DateTimeOffset Now, CancellationToken Ct);
 public sealed record PmsSourceResult(bool Available, string? Reason, PmsCommandItem[] Items, int QuietCount, DateTimeOffset? AsOf, bool AccessDenied = false)
 {

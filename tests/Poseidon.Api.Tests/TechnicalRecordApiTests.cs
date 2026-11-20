@@ -186,11 +186,19 @@ public sealed partial class DirectoryWorkspaceTests
         var alerts = center.Sections.Single(s => s.Key == "condition_alerts");
         var item = Assert.Single(alerts.Items, i => i.SourceId == defect.Id);
         Assert.Contains(item.Why, w => w.Code == "DEFECT_LIFECYCLE_NOT_STARTED");
-        foreach (var key in new[] { "open_work_orders", "critical_spare_gaps" })
-        {
-            var section = center.Sections.Single(s => s.Key == key);
-            Assert.Equal((PmsCommandCenterPolicy.Unknown, (int?)null), (section.State, section.Count));
-        }
+        // S8 integration: open_work_orders reads the real DEV-054 execution source (work order read granted), so it is a
+        // counted QUIET/EXCEPTIONS section; critical_spare_gaps stays ACCESS_REQUIRED without spare.read and never zero/quiet.
+        var workOrders = center.Sections.Single(s => s.Key == "open_work_orders");
+        Assert.Contains(workOrders.State, new[] { PmsCommandCenterPolicy.Quiet, PmsCommandCenterPolicy.Exceptions });
+        Assert.NotNull(workOrders.Count);
+        Assert.All(workOrders.Items, i => Assert.Equal("WorkOrder", i.Kind));
+        var spares = center.Sections.Single(s => s.Key == "critical_spare_gaps");
+        Assert.Equal((PmsCommandCenterPolicy.AccessRequired, (int?)null, "SPARE_ACCESS_REQUIRED"), (spares.State, spares.Count, spares.Reason));
+        TechActor(host.Services, Guid.NewGuid(), [.. TechnicalRecordPermissions, "spare.read"]); await Token(c);
+        var withSpares = (await c.GetFromJsonAsync<PmsCommandCenterDto>($"/api/v1/pms/command-center?vesselId={SeedVessel.Id}", Ct))!;
+        var spareSection = withSpares.Sections.Single(s => s.Key == "critical_spare_gaps");
+        Assert.Contains(spareSection.State, new[] { PmsCommandCenterPolicy.Quiet, PmsCommandCenterPolicy.Exceptions });
+        Assert.All(spareSection.Items, i => Assert.Equal("CriticalSpare", i.Kind));
         TechActor(host.Services, Guid.NewGuid(), "equipment.read"); await Token(c);
         var limited = (await c.GetFromJsonAsync<PmsCommandCenterDto>($"/api/v1/pms/command-center?vesselId={SeedVessel.Id}", Ct))!;
         Assert.Equal(PmsCommandCenterPolicy.AccessRequired, limited.Sections.Single(s => s.Key == "condition_alerts").State);

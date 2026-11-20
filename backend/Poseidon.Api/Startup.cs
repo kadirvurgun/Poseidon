@@ -21,7 +21,11 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddSingleton(configuration.GetSection("TugPlanning").Get<TugPlanningPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<TimeProvider>(TimeProvider.System);
         services.AddSingleton<IProfileFreshnessPolicySource, UnconfiguredProfileFreshnessPolicy>();
-        // DEV-056: WorkOrder state and spare gap inputs are owned elsewhere; until wired they answer UNKNOWN.
+        // DEV-056 x DEV-054/DEV-110 (S8 integration): real WorkOrder state and spare gap sources, registered
+        // before the UNKNOWN fallbacks below. A denied/unavailable source still answers UNKNOWN / ACCESS_REQUIRED.
+        services.AddSingleton<IPmsWorkOrderStateSource, WorkOrderExecutionPmsSource>();
+        services.AddSingleton<IPmsSpareGapSource, CriticalSparePmsSource>();
+        // Fallbacks (kept for hosts that remove the real sources): answer UNKNOWN, never zero or healthy.
         Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddSingleton<IPmsWorkOrderStateSource, UnavailablePmsWorkOrderStateSource>(services);
         Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddSingleton<IPmsSpareGapSource, UnavailablePmsSpareGapSource>(services);
         services.AddSingleton(configuration.GetSection("Notifications").Get<NotificationSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());

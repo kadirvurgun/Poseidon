@@ -16869,5 +16869,35 @@
       "approved class/flag pre-survey templates",
       "voyage module"
     ]
+  },
+  "s8_integration_bundle_20261120": {
+    "branch": "integration/s8-bundle-20261120",
+    "base": "021e8ed",
+    "state": "AUTHORED_LOCALLY_VALIDATED_NOT_ACCEPTED",
+    "merged": [
+      "docs/s7-gate-acceptance-20261120@0989c4f",
+      "feature/s8-wpa-pms-core-20261120@4452973",
+      "feature/s8-wpb-work-order-20261120@9b3f1f4",
+      "feature/s8-wpc-defect-20261120@c8e89d5",
+      "feature/s8-wpd-towage-hse-20261120@780b796"
+    ],
+    "s1_scope": {
+      "mutationRouteTemplates": 224,
+      "criticalRouteTemplates": 216,
+      "criticalOperations": 231
+    },
+    "local_checks": {
+      "release_build": "PASS_0_WARNINGS",
+      "pending_model_changes": "PASS_CLEAN",
+      "domain": "PASS_1427",
+      "persistence_unit": "PASS_106",
+      "api_unit": "PASS_379",
+      "scripts": "PASS_591_SKIP_11",
+      "frontend_lint": "PASS",
+      "frontend_typecheck": "PASS",
+      "vitest": "2058_PASS_9_ENV_KNOWN_OFFLINE_SHELL_NODE22",
+      "postgres_integration": "CI_ONLY"
+    },
+    "report": "docs/phases/S8-BUNDLE-20261120.md"
   }
 }

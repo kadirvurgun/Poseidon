@@ -6242,6 +6242,278 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/defects/{id}/lifecycle": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["DefectLifecycleRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/defects/{id}/lifecycle/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["DefectLifecycleStart"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/defects/{id}/lifecycle/assess": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["DefectLifecycleAssess"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/defects/{id}/lifecycle/safeguards": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["DefectLifecycleSafeguard"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/defects/{id}/lifecycle/safeguards/{measureId}/lift": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["DefectLifecycleLift"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/defects/{id}/lifecycle/actions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["DefectLifecycleAction"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/defects/{id}/lifecycle/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["DefectLifecycleVerify"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/defects/{id}/lifecycle/effectiveness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["DefectLifecycleEffectiveness"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/defects/{id}/lifecycle/close": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["DefectLifecycleClose"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ServiceReportList"];
+        put?: never;
+        post: operations["ServiceReportCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-reports/capabilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ServiceReportCapabilities"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-reports/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ServiceReportRead"];
+        put: operations["ServiceReportUpdate"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-reports/{id}/revisions/{revision}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ServiceReportRevisionRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-reports/{id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ServiceReportSubmit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-reports/{id}/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ServiceReportVerify"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/service-reports/{id}/amend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ServiceReportAmend"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pms/command-center": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PmsCommandCenterRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/equipment-hierarchy/{vessel}/{asset}/observations": {
         parameters: {
             query?: never;
@@ -9624,6 +9896,99 @@ export interface components {
             limit: number;
             hasMore: boolean;
         };
+        DefectLifecycleActionsDto: {
+            start: boolean;
+            assess: boolean;
+            safeguard: boolean;
+            lift: boolean;
+            action: boolean;
+            verify: boolean;
+            effectiveness: boolean;
+            close: boolean;
+        };
+        DefectLifecycleAlert: {
+            code: string;
+            blocking: boolean;
+            /** Format: uuid */
+            measureId: null | string;
+            /** Format: date-time */
+            at: null | string;
+        };
+        DefectLifecycleCommand: {
+            /** Format: int64 */
+            expectedRevision: number;
+            criticality?: null | string;
+            measureKind?: null | string;
+            text?: null | string;
+            temporary?: null | boolean;
+            expiresAt?: null | string;
+            outcome?: null | string;
+            /** Format: int64 */
+            defectRevision?: null | number;
+        };
+        DefectLifecycleDto: {
+            /** Format: uuid */
+            defectId: string;
+            /** Format: uuid */
+            vesselId: string;
+            started: boolean;
+            /** Format: int64 */
+            revision: number;
+            stage: string;
+            assessedCriticality: null | string;
+            declaredCriticality: null | string;
+            critical: boolean;
+            /** Format: int64 */
+            defectRevision: number;
+            records: components["schemas"]["DefectLifecycleRecordDto"][];
+            measures: components["schemas"]["DefectMeasureView"][];
+            alerts: components["schemas"]["DefectLifecycleAlert"][];
+            closeBlockers: string[];
+            actionOwners: string[];
+            /** Format: uuid */
+            closedBy: null | string;
+            /** Format: date-time */
+            closedAt: null | string;
+            /** Format: date-time */
+            assessedAt: string;
+            can: components["schemas"]["DefectLifecycleActionsDto"];
+        };
+        DefectLifecycleRecordDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            sequence: number;
+            kind: string;
+            stageAfter: string;
+            /** Format: int64 */
+            defectRevision: number;
+            criticality: null | string;
+            measureKind: null | string;
+            temporary: boolean;
+            /** Format: date-time */
+            expiresAt: null | string;
+            /** Format: uuid */
+            measureId: null | string;
+            outcome: null | string;
+            text: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            recordedAt: string;
+        };
+        DefectMeasureView: {
+            /** Format: uuid */
+            id: string;
+            kind: string;
+            temporary: boolean;
+            /** Format: date-time */
+            expiresAt: null | string;
+            state: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            recordedAt: string;
+        };
         DefectOfflineDto: {
             supported: boolean;
             state: string;
@@ -11843,9 +12208,49 @@ export interface components {
             blockers: string[];
             href: string;
         };
+        PmsCommandCenterDto: {
+            /** Format: uuid */
+            vesselId: string;
+            readinessState: string;
+            /** Format: date-time */
+            lastRefreshAt: string;
+            sections: components["schemas"]["PmsSection"][];
+            advisory: string;
+        };
+        PmsCommandItem: {
+            kind: string;
+            /** Format: uuid */
+            sourceId: string;
+            /** Format: int64 */
+            sourceRevision: null | number;
+            severity: string;
+            why: components["schemas"]["PmsWhy"][];
+            /** Format: date-time */
+            observedAt: null | string;
+            freshness: string;
+            /** Format: uuid */
+            assetId?: null | string;
+        };
         PmsFailure: {
             code: string;
             correlationId: string;
+        };
+        PmsSection: {
+            key: string;
+            state: string;
+            /** Format: int32 */
+            count: null | number;
+            /** Format: int32 */
+            quietCount: number;
+            items: components["schemas"]["PmsCommandItem"][];
+            /** Format: date-time */
+            asOf: null | string;
+            freshness: string;
+            reason: null | string;
+        };
+        PmsWhy: {
+            code: string;
+            detail?: null | string;
         };
         PortTimelineAssessment: {
             /** Format: uuid */
@@ -13134,6 +13539,214 @@ export interface components {
             serviceContext?: null | string;
             issuerReference?: null | string;
         };
+        ServiceMeasurement: {
+            name: string;
+            value: null | string;
+            unit: null | string;
+            result: null | string;
+        };
+        ServicePart: {
+            description: string;
+            partNumber: null | string;
+            quantity: null | string;
+            unit: null | string;
+        };
+        ServiceReportAmendCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            reason: string;
+        };
+        ServiceReportCapabilitiesDto: {
+            /** Format: uuid */
+            vesselId: string;
+            canRead: boolean;
+            canWrite: boolean;
+            canVerify: boolean;
+            canLinkWorkOrder: boolean;
+            canLinkDefect: boolean;
+            canAttachEvidence: boolean;
+            measurementResults: string[];
+        };
+        ServiceReportContent: {
+            serviceProvider: null | string;
+            engineerName: null | string;
+            serviceDate: null | string;
+            reasonScope: null | string;
+            workPerformed: null | string;
+            parts: components["schemas"]["ServicePart"][];
+            measurements: components["schemas"]["ServiceMeasurement"][];
+            defectsFound: null | string;
+            recommendations: null | string;
+            nextActionDue: null | string;
+        };
+        ServiceReportCreateCommand: {
+            /** Format: uuid */
+            id: string;
+            reportNo: string;
+            content: components["schemas"]["ServiceReportContent"];
+            links: components["schemas"]["ServiceReportLinks"];
+        };
+        ServiceReportDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            reportNo: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            state: string;
+            content: components["schemas"]["ServiceReportContent"];
+            equipment: null | components["schemas"]["ServiceReportLinkDto"];
+            workOrder: null | components["schemas"]["ServiceReportLinkDto"];
+            defects: components["schemas"]["ServiceReportLinkDto"][];
+            evidence: components["schemas"]["ServiceReportEvidenceDto"][];
+            missing: string[];
+            hash: string;
+            verificationState: string;
+            /** Format: int64 */
+            verifiedRevision: null | number;
+            verifications: components["schemas"]["ServiceReportVerificationDto"][];
+            revisions: components["schemas"]["ServiceReportRevisionSummaryDto"][];
+            authors: string[];
+            canEdit: boolean;
+            canSubmit: boolean;
+            canVerify: boolean;
+            canAmend: boolean;
+            provenance: string;
+            /** Format: date-time */
+            savedAt: string;
+        };
+        ServiceReportEvidenceDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            currency: string;
+            state: string;
+        };
+        ServiceReportEvidencePin: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            checksum: string;
+        };
+        ServiceReportLinkDto: {
+            kind: string;
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            currency: string;
+        };
+        ServiceReportLinkPin: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+        };
+        ServiceReportLinks: {
+            /** Format: uuid */
+            assetId: null | string;
+            /** Format: uuid */
+            workOrderId: null | string;
+            defectIds: string[];
+            evidenceFileIds: string[];
+        };
+        ServiceReportListItemDto: {
+            /** Format: uuid */
+            id: string;
+            reportNo: string;
+            serviceProvider: null | string;
+            serviceDate: null | string;
+            state: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uuid */
+            assetId: null | string;
+            /** Format: uuid */
+            workOrderId: null | string;
+            /** Format: int64 */
+            verifiedRevision: null | number;
+            /** Format: date-time */
+            savedAt: string;
+            provenance: string;
+        };
+        ServiceReportPageDto: {
+            items: components["schemas"]["ServiceReportListItemDto"][];
+            /** Format: int32 */
+            offset: number;
+            /** Format: int32 */
+            limit: number;
+            hasMore: boolean;
+            canWrite: boolean;
+        };
+        ServiceReportRevisionDto: {
+            /** Format: uuid */
+            reportId: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: int64 */
+            revision: number;
+            state: string;
+            reasonCode: string;
+            content: components["schemas"]["ServiceReportContent"];
+            equipment: null | components["schemas"]["ServiceReportLinkPin"];
+            workOrder: null | components["schemas"]["ServiceReportLinkPin"];
+            defects: components["schemas"]["ServiceReportLinkPin"][];
+            evidence: components["schemas"]["ServiceReportEvidencePin"][];
+            hash: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            savedAt: string;
+            provenance: string;
+        };
+        ServiceReportRevisionSummaryDto: {
+            /** Format: int64 */
+            revision: number;
+            state: string;
+            reasonCode: string;
+            hash: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            savedAt: string;
+        };
+        ServiceReportSubmitCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+        };
+        ServiceReportUpdateCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            content: components["schemas"]["ServiceReportContent"];
+            links: components["schemas"]["ServiceReportLinks"];
+        };
+        ServiceReportVerificationDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: int64 */
+            resultRevision: number;
+            decision: string;
+            /** Format: uuid */
+            actorId: string;
+            reason: string;
+            /** Format: date-time */
+            decidedAt: string;
+        };
+        ServiceReportVerifyCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+            decision: string;
+            reason: string;
+        };
         SessionDto: {
             authenticated: boolean;
             setupRequired: boolean;
@@ -13464,6 +14077,11 @@ export interface components {
         SystemStatus: {
             service: string;
             status: string;
+        };
+        TechnicalRecordFailure: {
+            code: string;
+            missing: string[];
+            correlationId: string;
         };
         TechnicalReferences: {
             jobs: components["schemas"]["MaintenanceJobRow"][];
@@ -24618,6 +25236,551 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RiskMethodDto"];
+                };
+            };
+        };
+    };
+    DefectLifecycleRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DefectLifecycleDto"];
+                };
+            };
+        };
+    };
+    DefectLifecycleStart: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DefectLifecycleCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DefectLifecycleDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechnicalRecordFailure"];
+                };
+            };
+        };
+    };
+    DefectLifecycleAssess: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DefectLifecycleCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DefectLifecycleDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechnicalRecordFailure"];
+                };
+            };
+        };
+    };
+    DefectLifecycleSafeguard: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DefectLifecycleCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DefectLifecycleDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechnicalRecordFailure"];
+                };
+            };
+        };
+    };
+    DefectLifecycleLift: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                measureId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DefectLifecycleCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DefectLifecycleDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechnicalRecordFailure"];
+                };
+            };
+        };
+    };
+    DefectLifecycleAction: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DefectLifecycleCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DefectLifecycleDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechnicalRecordFailure"];
+                };
+            };
+        };
+    };
+    DefectLifecycleVerify: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DefectLifecycleCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DefectLifecycleDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechnicalRecordFailure"];
+                };
+            };
+        };
+    };
+    DefectLifecycleEffectiveness: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DefectLifecycleCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DefectLifecycleDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechnicalRecordFailure"];
+                };
+            };
+        };
+    };
+    DefectLifecycleClose: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DefectLifecycleCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DefectLifecycleDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechnicalRecordFailure"];
+                };
+            };
+        };
+    };
+    ServiceReportList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ServiceReportPageDto"];
+                };
+            };
+        };
+    };
+    ServiceReportCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ServiceReportCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ServiceReportDto"];
+                };
+            };
+        };
+    };
+    ServiceReportCapabilities: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ServiceReportCapabilitiesDto"];
+                };
+            };
+        };
+    };
+    ServiceReportRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ServiceReportDto"];
+                };
+            };
+        };
+    };
+    ServiceReportUpdate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ServiceReportUpdateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ServiceReportDto"];
+                };
+            };
+        };
+    };
+    ServiceReportRevisionRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                revision: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ServiceReportRevisionDto"];
+                };
+            };
+        };
+    };
+    ServiceReportSubmit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ServiceReportSubmitCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ServiceReportDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechnicalRecordFailure"];
+                };
+            };
+        };
+    };
+    ServiceReportVerify: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ServiceReportVerifyCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ServiceReportDto"];
+                };
+            };
+        };
+    };
+    ServiceReportAmend: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ServiceReportAmendCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ServiceReportDto"];
+                };
+            };
+        };
+    };
+    PmsCommandCenterRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PmsCommandCenterDto"];
                 };
             };
         };

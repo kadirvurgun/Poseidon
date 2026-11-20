@@ -1,5 +1,13 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
+## S8 entegrasyon paketi — yerelde doğrulandı, kabul edilmedi (20.11.2026)
+
+Dal `integration/s8-bundle-20261120` (main `021e8ed` üstüne S7 kabul kaydı + S8 WP-A/B/C/D). Canonical ilerleme değişmedi (67 iş / 530 SP / %54,64); S8 kapısı CI + bağımsız QA sonrası.
+- S1 kapsamı 224 mutasyon / 216 kritik rota / 231 kritik operasyon (main 190/181/191).
+- Entegrasyon: PMS komuta merkezi gerçek iş emri durumu ve kritik yedek boşluğu kaynaklarına bağlandı (izin yok → ACCESS_REQUIRED, okunamaz → UNKNOWN); briefing readiness kategorisi testleri sıkılaştırıldı; snapshot birleşik modelden yeniden üretildi.
+- Yerel: Release build 0 uyarı, has-pending-model-changes temiz, Domain 1427, Persistence birim 106, API birim 379, script 591 (11 skip), lint/typecheck temiz, vitest 2058/2067 (9 bilinen Node22 `offline-shell-build` ortam hatası). PostgreSQL entegrasyon: yalnız CI.
+- [Faz raporu](phases/S8-BUNDLE-20261120.md). Açık uzman kapıları WP raporlarında; hiçbir onay iddia edilmiyor.
+
 ## S7 kabul edildi — notlarla (20.11.2026)
 
 **Canonical ilerleme: 67 iş / 530 SP / 970 SP = %54,64** (önceki: 54 iş / 409 SP, %42,16). S0 13/53, S1 7/50, S2 6/42, S3 7/66, S4 6/58, S5 8/69, S6 7/71 (87 SP'nin), **S7 13/121** kabul.
