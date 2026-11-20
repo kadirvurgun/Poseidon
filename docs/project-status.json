@@ -1175,14 +1175,14 @@
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
-  "current_stage": "S8 accepted with notes 20.11.2026 (S8-GATE-20261120: PR #46 32197ae -> main aba6e23, CI push 44727495974 + PR 44727506220 green, critical-write coverage 231/231, independent QA ACCEPT-WITH-NOTES x13). S6 DEV-101/DEV-102 remain not accepted. S9 next.",
+  "current_stage": "S9 accepted with notes 20.11.2026 (S9-GATE-20261120: PR #47 916e158 -> main f1c2d51, CI push 44766423323 + PR 44766440442 green, critical-write coverage 271/271, independent QA re-check ACCEPT-WITH-NOTES x10). S6 DEV-101/DEV-102 remain not accepted (with S10). S10 next.",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
   "total_story_points": 970,
-  "accepted_tasks": 80,
-  "accepted_story_points": 654,
-  "completion_percent": 67.42,
+  "accepted_tasks": 90,
+  "accepted_story_points": 746,
+  "completion_percent": 76.91,
   "screen_inventory": 196,
   "accepted_screens": 0,
   "field_contract_inventory": 2316,
@@ -1263,9 +1263,9 @@
       "sprint": "S9",
       "tasks": 10,
       "story_points": 92,
-      "accepted_tasks": 0,
-      "accepted_story_points": 0,
-      "completion_percent": 0
+      "accepted_tasks": 10,
+      "accepted_story_points": 92,
+      "completion_percent": 100.0
     },
     {
       "sprint": "S10",
@@ -3551,9 +3551,29 @@
       "priority": "P0",
       "story_points": 13,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S9-GATE-20261120",
+          "implementation_target": {
+            "commit": "f1c2d513978fffa232a00d7a2edbae56ec0d46af",
+            "pr": 47,
+            "pr_head": "916e158888180656eab32ba899deafca474013c7"
+          },
+          "ci_run": {
+            "push": "44766423323",
+            "pull_request": "44766440442"
+          },
+          "independent_qa": {
+            "path": "docs/evidence/s9-20261120-916e158/qa/s9-gate-independent-review.md",
+            "sha256": "4d7b5f6a22b40a65ee3224dfea83983e18f3df099457cdefb0b2b5b775760a49",
+            "verdict": "ACCEPT-WITH-NOTES"
+          },
+          "criteria_task_id": "DEV-058",
+          "phase_report": "docs/phases/S9-GATE-20261120.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:59",
@@ -3567,9 +3587,29 @@
       "priority": "P0",
       "story_points": 8,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S9-GATE-20261120",
+          "implementation_target": {
+            "commit": "f1c2d513978fffa232a00d7a2edbae56ec0d46af",
+            "pr": 47,
+            "pr_head": "916e158888180656eab32ba899deafca474013c7"
+          },
+          "ci_run": {
+            "push": "44766423323",
+            "pull_request": "44766440442"
+          },
+          "independent_qa": {
+            "path": "docs/evidence/s9-20261120-916e158/qa/s9-gate-independent-review.md",
+            "sha256": "4d7b5f6a22b40a65ee3224dfea83983e18f3df099457cdefb0b2b5b775760a49",
+            "verdict": "ACCEPT-WITH-NOTES"
+          },
+          "criteria_task_id": "DEV-059",
+          "phase_report": "docs/phases/S9-GATE-20261120.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:60",
@@ -3583,9 +3623,29 @@
       "priority": "P0",
       "story_points": 8,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S9-GATE-20261120",
+          "implementation_target": {
+            "commit": "f1c2d513978fffa232a00d7a2edbae56ec0d46af",
+            "pr": 47,
+            "pr_head": "916e158888180656eab32ba899deafca474013c7"
+          },
+          "ci_run": {
+            "push": "44766423323",
+            "pull_request": "44766440442"
+          },
+          "independent_qa": {
+            "path": "docs/evidence/s9-20261120-916e158/qa/s9-gate-independent-review.md",
+            "sha256": "4d7b5f6a22b40a65ee3224dfea83983e18f3df099457cdefb0b2b5b775760a49",
+            "verdict": "ACCEPT-WITH-NOTES"
+          },
+          "criteria_task_id": "DEV-060",
+          "phase_report": "docs/phases/S9-GATE-20261120.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:61",
@@ -3599,9 +3659,29 @@
       "priority": "P0",
       "story_points": 13,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S9-GATE-20261120",
+          "implementation_target": {
+            "commit": "f1c2d513978fffa232a00d7a2edbae56ec0d46af",
+            "pr": 47,
+            "pr_head": "916e158888180656eab32ba899deafca474013c7"
+          },
+          "ci_run": {
+            "push": "44766423323",
+            "pull_request": "44766440442"
+          },
+          "independent_qa": {
+            "path": "docs/evidence/s9-20261120-916e158/qa/s9-gate-independent-review.md",
+            "sha256": "4d7b5f6a22b40a65ee3224dfea83983e18f3df099457cdefb0b2b5b775760a49",
+            "verdict": "ACCEPT-WITH-NOTES"
+          },
+          "criteria_task_id": "DEV-061",
+          "phase_report": "docs/phases/S9-GATE-20261120.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:62",
@@ -3615,9 +3695,29 @@
       "priority": "P1",
       "story_points": 8,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S9-GATE-20261120",
+          "implementation_target": {
+            "commit": "f1c2d513978fffa232a00d7a2edbae56ec0d46af",
+            "pr": 47,
+            "pr_head": "916e158888180656eab32ba899deafca474013c7"
+          },
+          "ci_run": {
+            "push": "44766423323",
+            "pull_request": "44766440442"
+          },
+          "independent_qa": {
+            "path": "docs/evidence/s9-20261120-916e158/qa/s9-gate-independent-review.md",
+            "sha256": "4d7b5f6a22b40a65ee3224dfea83983e18f3df099457cdefb0b2b5b775760a49",
+            "verdict": "ACCEPT-WITH-NOTES"
+          },
+          "criteria_task_id": "DEV-062",
+          "phase_report": "docs/phases/S9-GATE-20261120.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:63",
@@ -3631,9 +3731,29 @@
       "priority": "P1",
       "story_points": 5,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S9-GATE-20261120",
+          "implementation_target": {
+            "commit": "f1c2d513978fffa232a00d7a2edbae56ec0d46af",
+            "pr": 47,
+            "pr_head": "916e158888180656eab32ba899deafca474013c7"
+          },
+          "ci_run": {
+            "push": "44766423323",
+            "pull_request": "44766440442"
+          },
+          "independent_qa": {
+            "path": "docs/evidence/s9-20261120-916e158/qa/s9-gate-independent-review.md",
+            "sha256": "4d7b5f6a22b40a65ee3224dfea83983e18f3df099457cdefb0b2b5b775760a49",
+            "verdict": "ACCEPT-WITH-NOTES"
+          },
+          "criteria_task_id": "DEV-063",
+          "phase_report": "docs/phases/S9-GATE-20261120.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:64",
@@ -4227,9 +4347,29 @@
       "priority": "P0",
       "story_points": 13,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S9-GATE-20261120",
+          "implementation_target": {
+            "commit": "f1c2d513978fffa232a00d7a2edbae56ec0d46af",
+            "pr": 47,
+            "pr_head": "916e158888180656eab32ba899deafca474013c7"
+          },
+          "ci_run": {
+            "push": "44766423323",
+            "pull_request": "44766440442"
+          },
+          "independent_qa": {
+            "path": "docs/evidence/s9-20261120-916e158/qa/s9-gate-independent-review.md",
+            "sha256": "4d7b5f6a22b40a65ee3224dfea83983e18f3df099457cdefb0b2b5b775760a49",
+            "verdict": "ACCEPT-WITH-NOTES"
+          },
+          "criteria_task_id": "DEV-089",
+          "phase_report": "docs/phases/S9-GATE-20261120.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:90",
@@ -4243,9 +4383,29 @@
       "priority": "P1",
       "story_points": 8,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S9-GATE-20261120",
+          "implementation_target": {
+            "commit": "f1c2d513978fffa232a00d7a2edbae56ec0d46af",
+            "pr": 47,
+            "pr_head": "916e158888180656eab32ba899deafca474013c7"
+          },
+          "ci_run": {
+            "push": "44766423323",
+            "pull_request": "44766440442"
+          },
+          "independent_qa": {
+            "path": "docs/evidence/s9-20261120-916e158/qa/s9-gate-independent-review.md",
+            "sha256": "4d7b5f6a22b40a65ee3224dfea83983e18f3df099457cdefb0b2b5b775760a49",
+            "verdict": "ACCEPT-WITH-NOTES"
+          },
+          "criteria_task_id": "DEV-090",
+          "phase_report": "docs/phases/S9-GATE-20261120.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:91",
@@ -4819,9 +4979,29 @@
       "priority": "P1",
       "story_points": 8,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S9-GATE-20261120",
+          "implementation_target": {
+            "commit": "f1c2d513978fffa232a00d7a2edbae56ec0d46af",
+            "pr": 47,
+            "pr_head": "916e158888180656eab32ba899deafca474013c7"
+          },
+          "ci_run": {
+            "push": "44766423323",
+            "pull_request": "44766440442"
+          },
+          "independent_qa": {
+            "path": "docs/evidence/s9-20261120-916e158/qa/s9-gate-independent-review.md",
+            "sha256": "4d7b5f6a22b40a65ee3224dfea83983e18f3df099457cdefb0b2b5b775760a49",
+            "verdict": "ACCEPT-WITH-NOTES"
+          },
+          "criteria_task_id": "DEV-111",
+          "phase_report": "docs/phases/S9-GATE-20261120.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:112",
@@ -4887,9 +5067,29 @@
       "priority": "P1",
       "story_points": 8,
       "source_status": "Not Started",
-      "assessment": "not-started",
-      "accepted": false,
-      "acceptance_evidence": [],
+      "assessment": "accepted",
+      "accepted": true,
+      "acceptance_evidence": [
+        {
+          "delivery": "S9-GATE-20261120",
+          "implementation_target": {
+            "commit": "f1c2d513978fffa232a00d7a2edbae56ec0d46af",
+            "pr": 47,
+            "pr_head": "916e158888180656eab32ba899deafca474013c7"
+          },
+          "ci_run": {
+            "push": "44766423323",
+            "pull_request": "44766440442"
+          },
+          "independent_qa": {
+            "path": "docs/evidence/s9-20261120-916e158/qa/s9-gate-independent-review.md",
+            "sha256": "4d7b5f6a22b40a65ee3224dfea83983e18f3df099457cdefb0b2b5b775760a49",
+            "verdict": "ACCEPT-WITH-NOTES"
+          },
+          "criteria_task_id": "DEV-114",
+          "phase_report": "docs/phases/S9-GATE-20261120.md"
+        }
+      ],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:115",
@@ -5167,7 +5367,8 @@
     "docs/phases/S5-GATE-20261120.md",
     "docs/phases/S6-GATE-20261120.md",
     "docs/phases/S7-GATE-20261120.md",
-    "docs/phases/S8-GATE-20261120.md"
+    "docs/phases/S8-GATE-20261120.md",
+    "docs/phases/S9-GATE-20261120.md"
   ],
   "active_source": "docs/sources/active.json",
   "current_package": {
@@ -17238,6 +17439,109 @@
       "required evidence sets per WO type",
       "PTW source (absent -> UNKNOWN)",
       "ERP export only APPROVED_FOR_ERP_EXPORT; no real ERP integration"
+    ]
+  },
+  "s9_gate_20261120": {
+    "state": "ACCEPTED_WITH_NOTES",
+    "target": {
+      "commit": "f1c2d513978fffa232a00d7a2edbae56ec0d46af",
+      "pr": 47,
+      "pr_head": "916e158888180656eab32ba899deafca474013c7"
+    },
+    "ci_run": {
+      "push": "44766423323",
+      "pull_request": "44766440442"
+    },
+    "coverage_gate": {
+      "state": "PASS_ACTUAL_CURRENT_CRITICAL_SCOPE",
+      "observed": 271,
+      "required": 271,
+      "critical_route_templates": 251,
+      "invalid_rows": 0
+    },
+    "independent_qa": {
+      "path": "docs/evidence/s9-20261120-916e158/qa/s9-gate-independent-review.md",
+      "sha256": "4d7b5f6a22b40a65ee3224dfea83983e18f3df099457cdefb0b2b5b775760a49",
+      "source_result": "scheduled/workers/s9-gate-qa.result.md (round 1)",
+      "rounds": [
+        {
+          "round": 1,
+          "target": "c678218",
+          "verdict": "NOT_ACCEPTED (CI push 44741104744 + PR 44741180574 red; B1 ISPS file metadata leak on generic file routes DEV-114; B2 {action} route placeholder collision breaks S1 harness DEV-061; B3 towage crew test actor kept Tug Master appointment DEV-089)",
+          "fixes": [
+            "bd3ff2f",
+            "8fabe42",
+            "fb9d64a",
+            "916e158"
+          ]
+        },
+        {
+          "round": 2,
+          "target": "c678218..916e158",
+          "verdict": "B1/B2/B3 RESOLVED, N2 SOUND; ACCEPT-WITH-NOTES x10, conditional on 916e158 push + PR green (satisfied)"
+        }
+      ]
+    },
+    "intermediate_ci": [
+      {
+        "commit": "c678218",
+        "push": "44741104744",
+        "pull_request": "44741180574",
+        "result": "both red (deterministic: {action} placeholder + towage actor)"
+      },
+      {
+        "commit": "bd3ff2f",
+        "push": "44750185306",
+        "pull_request": "44750199203",
+        "result": "push green, PR red (frontend voice hand-off race)"
+      },
+      {
+        "commit": "fb9d64a",
+        "push": "44758751409",
+        "pull_request": "44758765486",
+        "result": "red only Lint/typecheck S9Workspaces.test.tsx:92 TS2322; PG shards + coverage passed"
+      }
+    ],
+    "accepted_tasks": [
+      "DEV-058",
+      "DEV-059",
+      "DEV-060",
+      "DEV-061",
+      "DEV-062",
+      "DEV-063",
+      "DEV-089",
+      "DEV-090",
+      "DEV-111",
+      "DEV-114"
+    ],
+    "accepted_story_points_added": 92,
+    "notes": [
+      "N1 investigation save/submit and action create not human-only; root cause human statement enforced via human review gate",
+      "N2 towage start READY check added in fb9d64a; DB CHECK still allows CONDITIONAL GO row",
+      "N3 open LOW/MEDIUM safety event -> NO_OPEN_HIGH_SEVERITY_EVENT PASS while SeverityPolicyUnconfigured",
+      "N4 towage timeline events need only tug.write (cannot start/abort)",
+      "N5 tug daily log offline single in-memory command; server always SYNCED; no reviewer != author DB CHECK",
+      "N6 departure assessment read before SERIALIZABLE tx; later change shows STALE",
+      "N7 voice candidate in SAFETY_EVENT_REPORT_PERMISSION_REQUIRED cannot be linked later; audited as VoiceDraftCommand",
+      "N8 document compare metadata + SHA-256 only; acknowledgement needs no prior access record",
+      "N9 drydock equipment existence check without equipment.read (vessel-scoped)",
+      "N10 towage start gate refuses only Cancelled job",
+      "critical-write branches without success-path PG test (safety RETURN/REJECT/NOT_VERIFIED, towage ABORT/REJECTED, daily log RETURN, drydock CANCEL/REPLAN/REJECT, document DOWNLOAD; departure RELEASE unreachable)"
+    ],
+    "phase_report": "docs/phases/S9-GATE-20261120.md",
+    "signoffs_claimed": false,
+    "open_expert_gates": [
+      "conditional departure release policy",
+      "statutory certificate inventory",
+      "emergency/drill source (absent -> no vessel READY, RELEASE unreachable)",
+      "tug weather source (towage start unreachable in product)",
+      "severity policy",
+      "anonymous intake gateway",
+      "confidential reporter audit linkage (privacy owner)",
+      "local STT engine + DPIA",
+      "controlled-copy print renderer",
+      "drydock scope catalogue",
+      "durable offline tug log capture"
     ]
   }
 }
