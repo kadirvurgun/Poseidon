@@ -8,7 +8,7 @@ export const searchPageSize = 25
 export const searchMaxOffset = 100000
 const destinations: Readonly<Record<string, string>> = {
   'operational-downtime': '/app/operational-downtime',
-  'risk-assessment': '/app/risk-assessment', 'risk-template-library': '/app/risk-template-library', 'high-risk-work': '/app/high-risk-work', 'towage-plan': '/app/towage-plan', 'towage-risk-briefing': '/app/towage-risk-briefing',
+  'risk-assessment': '/app/risk-assessment', 'risk-template-library': '/app/risk-template-library', 'high-risk-work': '/app/high-risk-work', 'towage-plan': '/app/towage-plan', 'towage-execution': '/app/towage-execution', 'tug-daily-log': '/app/tug-daily-log', 'drydock-planning': '/app/drydock-planning', 'towage-risk-briefing': '/app/towage-risk-briefing',
   'work-order-center': '/app/work-order-center', 'critical-spares': '/app/critical-spares',
   'pms-command-center': '/app/pms-command-center', 'service-engineer-report': '/app/service-engineer-report',
   defects: '/app/defects',

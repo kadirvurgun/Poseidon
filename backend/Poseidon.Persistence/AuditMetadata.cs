@@ -61,6 +61,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if (PmsProjection(entry) is { } pms) return pms;
         if (TechnicalRecordProjection(entry) is { } technical) return technical;
         if (TowageProjection(entry) is { } towage) return towage;
+        if (FieldOperationsProjection(entry) is { } field) return field;
         if(entry.Entity is Defect defect)
             return new(defect.VesselId,defect.Id,"Defect",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,defect.Revision,
                 Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(defect.Revision)),Field("Binding",null,"OwnerReference")));
@@ -835,6 +836,44 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                 Field("Reason", null, null, "ValuesWithheld"))),
             TowageReceipt c => new(c.VesselId, c.ResourceId, "TowageReceipt", null, c.Revision, Fields(
                 Field("Action", null, Closed(c.Action, TowageStorage.ReceiptActions)), Field("Revision", null, Number(c.Revision)), Field("Binding", null, "CommittedResource"))),
+            _ => null
+        };
+    }
+    // S9 WP-D (DEV-089/090/111): closed state/kind/decision codes and revisions only. Ledger payloads (loads,
+    // weather, positions, evidence references), log content, meter values, scope items, reasons and verification
+    // texts are withheld; no actor identity is copied into the summary.
+    private static AuditMetadata? FieldOperationsProjection(EntityEntry entry)
+    {
+        long? Before(string property) => entry.State == EntityState.Added ? null : (long?)entry.Property(property).OriginalValue;
+        string? BeforeState(string property, string[] allowed) => entry.State == EntityState.Added ? null : Closed((string)entry.Property(property).OriginalValue!, allowed);
+        string? Rev(string property) => Before(property) is { } r ? Number(r) : null;
+        var execution = Poseidon.Domain.TowageExecutionPolicy.States; var daily = Poseidon.Domain.TugDailyLogPolicy.States; var dock = Poseidon.Domain.DrydockPolicy.States;
+        return entry.Entity switch
+        {
+            TowageExecution x => new(x.VesselId, x.Id, "TowageExecution", Before("Revision"), x.Revision, Fields(
+                Field("Revision", Rev("Revision"), Number(x.Revision)), Field("State", BeforeState("State", execution), Closed(x.State, execution)),
+                Field("VerificationState", BeforeState("VerificationState", Poseidon.Domain.TowageExecutionPolicy.VerificationStates), Closed(x.VerificationState, Poseidon.Domain.TowageExecutionPolicy.VerificationStates)),
+                Field("Sequence", Rev("Sequence"), Number(x.Sequence)), Field("Binding", null, "OwnerReference"))),
+            TowageExecutionEvent e => new(e.VesselId, e.ExecutionId, "TowageExecutionEvent", null, e.Sequence, Fields(
+                Field("Kind", null, Closed(e.Kind, Poseidon.Domain.TowageExecutionPolicy.Kinds)), Field("Sequence", null, Number(e.Sequence)),
+                Field("PayloadJson", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
+            TugDailyLog l => new(l.VesselId, l.Id, "TugDailyLog", Before("Revision"), l.Revision, Fields(
+                Field("Revision", Rev("Revision"), Number(l.Revision)), Field("State", BeforeState("State", daily), Closed(l.State, daily)),
+                Field("ContentJson", null, null, "RevisionReference"), Field("Binding", null, "OwnerReference"))),
+            TugDailyLogRevision r => new(r.VesselId, r.LogId, "TugDailyLogRevision", null, r.Revision, Fields(
+                Field("Revision", null, Number(r.Revision)), Field("State", null, Closed(r.State, daily)),
+                Field("ReasonCode", null, Closed(r.ReasonCode, FieldOperationsStorage.DailyReasons)), Field("ContentJson", null, null, "RevisionReference"))),
+            TugDailyLogReview v => new(v.VesselId, v.LogId, "TugDailyLogReview", null, v.ResultRevision, Fields(
+                Field("Decision", null, Closed(v.Decision, Poseidon.Domain.TugDailyLogPolicy.Decisions)), Field("Revision", null, Number(v.ResultRevision)),
+                Field("Duty", null, Closed(v.Duty, "TugMaster", "Master")), Field("Reason", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
+            DrydockPackage d => new(d.VesselId, d.Id, "DrydockPackage", Before("Revision"), d.Revision, Fields(
+                Field("Revision", Rev("Revision"), Number(d.Revision)), Field("State", BeforeState("State", dock), Closed(d.State, dock)),
+                Field("ContentJson", null, null, "RevisionReference"), Field("Binding", null, "OwnerReference"))),
+            DrydockPackageRevision r => new(r.VesselId, r.PackageId, "DrydockPackageRevision", null, r.Revision, Fields(
+                Field("Revision", null, Number(r.Revision)), Field("State", null, Closed(r.State, dock)),
+                Field("ReasonCode", null, Closed(r.ReasonCode, FieldOperationsStorage.DrydockReasons)), Field("Note", null, null, "ValuesWithheld"))),
+            FieldOperationReceipt c => new(c.VesselId, c.ResourceId, "FieldOperationReceipt", null, c.Revision, Fields(
+                Field("Action", null, Closed(c.Action, FieldOperationsStorage.ReceiptActions)), Field("Revision", null, Number(c.Revision)), Field("Binding", null, "CommittedResource"))),
             _ => null
         };
     }

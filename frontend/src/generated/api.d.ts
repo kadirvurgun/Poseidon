@@ -7186,6 +7186,214 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/towage-executions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["TowageExecutionJobRead"];
+        put?: never;
+        post: operations["TowageExecutionStart"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/towage-executions/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["TowageExecutionRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/towage-executions/{id}/transitions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TowageExecutionTransition"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/towage-executions/{id}/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TowageExecutionEvent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/towage-executions/{id}/verification": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TowageExecutionVerify"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-daily-logs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["TugDailyLogList"];
+        put?: never;
+        post: operations["TugDailyLogCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-daily-logs/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["TugDailyLogRead"];
+        put: operations["TugDailyLogUpdate"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-daily-logs/{id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TugDailyLogSubmit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tug-daily-logs/{id}/review": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TugDailyLogReview"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/drydock-packages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["DrydockList"];
+        put?: never;
+        post: operations["DrydockCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/drydock-packages/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["DrydockRead"];
+        put: operations["DrydockUpdate"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/drydock-packages/{id}/transitions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["DrydockTransition"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/drydock-packages/{id}/verification": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["DrydockVerify"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/parameter-definitions": {
         parameters: {
             query?: never;
@@ -10229,6 +10437,184 @@ export interface components {
             /** Format: int32 */
             unknown: number;
             reason: string;
+        };
+        DrydockContent: {
+            projectReference: null | string;
+            yard: null | string;
+            /** Format: date */
+            plannedStart: null | string;
+            /** Format: date */
+            plannedFinish: null | string;
+            external: components["schemas"]["DrydockExternal"];
+            items: components["schemas"]["DrydockScopeItem"][];
+            completionEvidence: components["schemas"]["DrydockEvidence"][];
+        };
+        DrydockCreateCommand: {
+            /** Format: uuid */
+            id: string;
+            content: components["schemas"]["DrydockContent"];
+        };
+        DrydockEvidence: {
+            /** Format: uuid */
+            id: string;
+            reference: string;
+            note: null | string;
+        };
+        DrydockExternal: {
+            estimatedCost: null | string;
+            currency: null | string;
+            vendor: null | string;
+            budgetReference: null | string;
+        };
+        DrydockItemStatus: {
+            /** Format: uuid */
+            itemId: string;
+            state: string;
+            links: components["schemas"]["DrydockLinkStatus"][];
+        };
+        DrydockLink: {
+            kind: string;
+            /** Format: uuid */
+            targetId: string;
+            /** Format: int64 */
+            pinnedRevision: number;
+        };
+        DrydockLinkStatus: {
+            kind: string;
+            /** Format: uuid */
+            targetId: string;
+            /** Format: int64 */
+            pinnedRevision: number;
+            /** Format: int64 */
+            currentRevision: null | number;
+            state: string;
+            reason: string;
+            /** Format: date */
+            due: null | string;
+        };
+        DrydockListView: {
+            /** Format: uuid */
+            vesselId: string;
+            items: components["schemas"]["DrydockSummaryDto"][];
+            canWrite: boolean;
+            categories: string[];
+            priorities: string[];
+            linkKinds: string[];
+            /** @default 18.01:row112;11.01:2316/rows1542-1559;13.03:p85;59.04:p1038,p2378-2400 */
+            sourceVersion: string;
+        };
+        DrydockPackageDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            state: string;
+            content: components["schemas"]["DrydockContent"];
+            hash: string;
+            /** Format: date-time */
+            actualStart: null | string;
+            /** Format: date-time */
+            actualFinish: null | string;
+            /** Format: uuid */
+            completedBy: null | string;
+            /** Format: uuid */
+            verifiedBy: null | string;
+            /** Format: date-time */
+            verifiedAt: null | string;
+            provenance: string;
+            /** Format: date-time */
+            savedAt: string;
+        };
+        DrydockReadiness: {
+            state: string;
+            items: components["schemas"]["DrydockItemStatus"][];
+            /** Format: int32 */
+            unlinked: number;
+            /** Format: int32 */
+            overdue: number;
+            /** Format: int32 */
+            stale: number;
+            /** Format: int32 */
+            unavailable: number;
+            /** @default LinkageCompletenessOnly;NotASurveyOrClassResult */
+            meaning: string;
+        };
+        DrydockScopeItem: {
+            /** Format: uuid */
+            id: string;
+            category: string;
+            title: string;
+            /** Format: uuid */
+            equipmentId: null | string;
+            workPackage: null | string;
+            classRequirement: null | string;
+            statutoryRequirement: null | string;
+            priority: null | string;
+            links: components["schemas"]["DrydockLink"][];
+        };
+        DrydockSummaryDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            state: string;
+            projectReference: null | string;
+            yard: null | string;
+            /** Format: date */
+            plannedStart: null | string;
+            /** Format: date */
+            plannedFinish: null | string;
+            /** Format: int32 */
+            items: number;
+        };
+        DrydockTimelineDto: {
+            /** Format: int64 */
+            revision: number;
+            state: string;
+            reasonCode: string;
+            note: null | string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            savedAt: string;
+        };
+        DrydockTransitionCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+            action: string;
+            note: null | string;
+        };
+        DrydockUpdateCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            content: components["schemas"]["DrydockContent"];
+        };
+        DrydockVerifyCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+            decision: string;
+            reason: string;
+        };
+        DrydockView: {
+            package: components["schemas"]["DrydockPackageDto"];
+            readiness: components["schemas"]["DrydockReadiness"];
+            timeline: components["schemas"]["DrydockTimelineDto"][];
+            planBlockers: string[];
+            completeBlockers: string[];
+            allowedActions: string[];
+            canEdit: boolean;
+            canVerify: boolean;
+            unreadableLinkKinds: string[];
+            /** @default SupplierBudgetExternalReferenceOnly;NoProcurementOrApproval */
+            external: string;
+            /** @default 18.01:row112;11.01:2316/rows1542-1559;13.03:p85;59.04:p1038,p2378-2400 */
+            sourceVersion: string;
         };
         EffectiveDelegation: {
             /** Format: uuid */
@@ -14290,6 +14676,12 @@ export interface components {
             /** Format: date-time */
             recordedAt: string;
         };
+        TowageActiveInterval: {
+            /** Format: date-time */
+            from: string;
+            /** Format: date-time */
+            to: null | string;
+        };
         TowageAmendCommand: {
             /** Format: uint32 */
             expectedVersion: number;
@@ -14416,15 +14808,188 @@ export interface components {
             procedure: null | string;
             orderedBy: null | string;
         };
+        TowageEventInput: {
+            kind: string;
+            /** Format: date-time */
+            occurredAt: string;
+            value: null | string;
+            unit: null | string;
+            result: null | string;
+            text: null | string;
+            reference: null | string;
+            weather: null | components["schemas"]["TowageWeather"];
+        };
+        TowageExecutionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: uuid */
+            jobId: string;
+            /** Format: uuid */
+            tugId: string;
+            /** Format: uuid */
+            assignmentId: string;
+            /** Format: int64 */
+            assignmentRevision: number;
+            /** Format: uuid */
+            planId: string;
+            /** Format: int64 */
+            planRevision: number;
+            /** Format: uuid */
+            briefingId: string;
+            /** Format: int64 */
+            briefingRevision: number;
+            /** Format: uuid */
+            readinessDecisionId: string;
+            state: string;
+            verificationState: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            /** Format: int64 */
+            sequence: number;
+            hash: string;
+            /** Format: date-time */
+            startedAt: string;
+            /** Format: uuid */
+            startedBy: string;
+            startPosition: null | string;
+            /** Format: date-time */
+            endedAt: null | string;
+            /** Format: uuid */
+            endedBy: null | string;
+            endPosition: null | string;
+            /** Format: uuid */
+            verifiedBy: null | string;
+            /** Format: date-time */
+            verifiedAt: null | string;
+            provenance: string;
+        };
+        TowageExecutionEventCommand: {
+            event: components["schemas"]["TowageEventInput"];
+        };
+        TowageExecutionEventDto: {
+            /** Format: int64 */
+            sequence: number;
+            kind: string;
+            /** Format: date-time */
+            occurredAt: string;
+            /** Format: date-time */
+            recordedAt: string;
+            /** Format: uuid */
+            actorId: string;
+            duty: null | string;
+            value: null | string;
+            unit: null | string;
+            result: null | string;
+            text: null | string;
+            reference: null | string;
+            weather: null | components["schemas"]["TowageWeather"];
+            reason: null | string;
+            position: null | string;
+            hash: string;
+        };
+        TowageExecutionJobView: {
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: uuid */
+            jobId: string;
+            jobNumber: string;
+            jobStatus: string;
+            tugs: components["schemas"]["TowageStartGateDto"][];
+            executions: components["schemas"]["TowageExecutionDto"][];
+            /** @default 18.01:row90;08.02:p133-134;10.01:p103-105;60.02Rev2:p217-254,p1118-1198 */
+            sourceVersion: string;
+        };
+        TowageExecutionStartCommand: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            jobId: string;
+            /** Format: uuid */
+            tugId: string;
+            /** Format: uuid */
+            authorityId: string;
+            /** Format: uuid */
+            readinessDecisionId: string;
+            startPosition: null | string;
+        };
+        TowageExecutionTransitionCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            action: string;
+            reason: string;
+            /** Format: date-time */
+            occurredAt: string;
+            /** Format: uuid */
+            authorityId: string;
+            endPosition: null | string;
+        };
+        TowageExecutionVerifyCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+            decision: string;
+            reason: string;
+        };
+        TowageExecutionView: {
+            execution: components["schemas"]["TowageExecutionDto"];
+            jobNumber: null | string;
+            assistedVessel: null | string;
+            ledger: components["schemas"]["TowageLedgerFacts"];
+            timeline: components["schemas"]["TowageExecutionEventDto"][];
+            authorities: components["schemas"]["TugAuthorityDto"][];
+            canRecord: boolean;
+            canTransition: boolean;
+            canVerify: boolean;
+            allowedActions: string[];
+            completeBlockers: string[];
+            recordableKinds: string[];
+            loadUnits: string[];
+            communicationStates: string[];
+            winchStates: string[];
+            releaseTestResults: string[];
+            evidencePurposes: string[];
+            /** @default UNKNOWN:SafetyEventSourceUnavailable */
+            safetyEvents: string;
+            /** @default TugMasterHumanRecord;ShoreAiSystemCannotStartOrAbort;NotAGoDecision */
+            authority: string;
+            /** @default 18.01:row90;08.02:p133-134;10.01:p103-105;60.02Rev2:p217-254,p1118-1198 */
+            sourceVersion: string;
+        };
         TowageItem: {
             /** Format: uuid */
             id: string;
             description: string;
         };
+        TowageLedgerFacts: {
+            /** Format: date-time */
+            towlineConnectedAt: null | string;
+            /** Format: date-time */
+            towlineReleasedAt: null | string;
+            towlineConnected: boolean;
+            maxTowLoad: components["schemas"]["TowageMaxLoad"][];
+            communicationState: string;
+            winchState: string;
+            emergencyReleaseTested: string;
+            /** Format: int64 */
+            weatherEventSequence: null | number;
+            activeIntervals: components["schemas"]["TowageActiveInterval"][];
+            /** Format: int64 */
+            activeSeconds: number;
+        };
         TowageLimit: {
             parameter: string;
             value: null | string;
             sourceRef: null | string;
+        };
+        TowageMaxLoad: {
+            value: string;
+            unit: string;
+            /** Format: int32 */
+            samples: number;
         };
         TowageParticipant: {
             /** Format: uuid */
@@ -14543,6 +15108,21 @@ export interface components {
             zonesMarked: null | boolean;
             controls: components["schemas"]["TowageItem"][];
         };
+        TowageStartGateDto: {
+            /** Format: uuid */
+            tugId: string;
+            /** Format: uuid */
+            assignmentId: null | string;
+            /** Format: uuid */
+            readinessDecisionId: null | string;
+            decision: null | string;
+            blockers: string[];
+            authorities: components["schemas"]["TugAuthorityDto"][];
+            canStart: boolean;
+            /** Format: uuid */
+            executionId: null | string;
+            executionState: null | string;
+        };
         TowageSubmitCommand: {
             /** Format: uint32 */
             expectedVersion: number;
@@ -14560,6 +15140,13 @@ export interface components {
             towlineItemId: null | string;
             /** Format: uuid */
             emergencyReleaseItemId: null | string;
+        };
+        TowageWeather: {
+            windSpeedKn: null | string;
+            windDirection: null | string;
+            seaState: null | string;
+            visibility: null | string;
+            current: null | string;
         };
         TowEquipmentAssessment: {
             /** Format: uuid */
@@ -14873,6 +15460,189 @@ export interface components {
             validUntil: null | string;
             /** @default SharedCrewEngineAndTowageCompetence;UnverifiedNeverPositive;MasterDecisionSeparate */
             coverage: string;
+        };
+        TugDailyExecutionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            jobId: string;
+            state: string;
+            /** Format: date-time */
+            startedAt: string;
+            /** Format: date-time */
+            endedAt: null | string;
+            linked: boolean;
+        };
+        TugDailyFuel: {
+            quantity: null | string;
+            unit: null | string;
+            sourceRef: null | string;
+        };
+        TugDailyLogContent: {
+            timeZone: null | string;
+            meters: components["schemas"]["TugDailyMeter"][];
+            fuel: components["schemas"]["TugDailyFuel"];
+            executionIds: string[];
+            defectIds: string[];
+            dailySummary: null | string;
+        };
+        TugDailyLogCreateCommand: {
+            /** Format: uuid */
+            id: string;
+            /** Format: date */
+            logDate: string;
+            watch: string;
+            /** Format: date-time */
+            capturedAt: null | string;
+            content: components["schemas"]["TugDailyLogContent"];
+        };
+        TugDailyLogDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: date */
+            logDate: string;
+            watch: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            state: string;
+            content: components["schemas"]["TugDailyLogContent"];
+            hash: string;
+            /** Format: uuid */
+            submittedBy: null | string;
+            /** Format: int64 */
+            verifiedRevision: null | number;
+            /** Format: date-time */
+            capturedAt: null | string;
+            /** Format: date-time */
+            syncedAt: string;
+            syncState: string;
+            provenance: string;
+            /** Format: date-time */
+            savedAt: string;
+        };
+        TugDailyLogListView: {
+            /** Format: uuid */
+            vesselId: string;
+            items: components["schemas"]["TugDailyLogSummaryDto"][];
+            canWrite: boolean;
+            watches: string[];
+            fuelUnits: string[];
+            /** @default 18.01:row91;10.01:p112-114;08.02:p135-137;60.02Rev2:p258-267,p1325-1370 */
+            sourceVersion: string;
+        };
+        TugDailyLogReviewCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+            decision: string;
+            reason: string;
+            /** Format: uuid */
+            authorityId: string;
+        };
+        TugDailyLogReviewDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: int64 */
+            resultRevision: number;
+            decision: string;
+            reconciliation: string;
+            duty: string;
+            /** Format: uuid */
+            actorId: string;
+            reason: string;
+            /** Format: date-time */
+            decidedAt: string;
+        };
+        TugDailyLogRevisionDto: {
+            /** Format: int64 */
+            revision: number;
+            state: string;
+            reasonCode: string;
+            hash: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            capturedAt: null | string;
+            /** Format: date-time */
+            syncedAt: string;
+        };
+        TugDailyLogSubmitCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+        };
+        TugDailyLogSummaryDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: date */
+            logDate: string;
+            watch: string;
+            /** Format: int64 */
+            revision: number;
+            state: string;
+            masterReview: string;
+            /** Format: date-time */
+            syncedAt: string;
+        };
+        TugDailyLogUpdateCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            /** Format: date-time */
+            capturedAt: null | string;
+            content: components["schemas"]["TugDailyLogContent"];
+        };
+        TugDailyLogView: {
+            log: components["schemas"]["TugDailyLogDto"];
+            reconciliation: components["schemas"]["TugDailyReconciliation"];
+            masterReview: string;
+            /** Format: int32 */
+            defectsReported: number;
+            safetyEvents: string;
+            /** Format: date-time */
+            intervalFrom: null | string;
+            /** Format: date-time */
+            intervalTo: null | string;
+            executions: components["schemas"]["TugDailyExecutionDto"][];
+            submitBlockers: string[];
+            reviews: components["schemas"]["TugDailyLogReviewDto"][];
+            revisions: components["schemas"]["TugDailyLogRevisionDto"][];
+            authorities: components["schemas"]["TugAuthorityDto"][];
+            canEdit: boolean;
+            canSubmit: boolean;
+            canReview: boolean;
+            fuelUnits: string[];
+            /** @default InMemoryUnsavedOnly;DurableTugCaptureNotRegistered */
+            offlineCapture: string;
+            /** @default 18.01:row91;10.01:p112-114;08.02:p135-137;60.02Rev2:p258-267,p1325-1370 */
+            sourceVersion: string;
+        };
+        TugDailyMeter: {
+            /** Format: uuid */
+            id: string;
+            meter: string;
+            opening: null | string;
+            closing: null | string;
+            resetEvidenceRef: null | string;
+        };
+        TugDailyReason: {
+            scope: string;
+            code: string;
+            subject: null | string;
+        };
+        TugDailyReconciliation: {
+            state: string;
+            reasons: components["schemas"]["TugDailyReason"][];
+            /** Format: int32 */
+            jobsCompleted: number;
+            operatingHours: null | string;
+            openInterval: boolean;
+            meterHours: null | string;
         };
         TugLifecycleCommand: {
             /** Format: uint32 */
@@ -27035,6 +27805,474 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HighRiskWorkPage"];
+                };
+            };
+        };
+    };
+    TowageExecutionJobRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowageExecutionJobView"];
+                };
+            };
+        };
+    };
+    TowageExecutionStart: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TowageExecutionStartCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowageExecutionView"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskFailure"];
+                };
+            };
+        };
+    };
+    TowageExecutionRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowageExecutionView"];
+                };
+            };
+        };
+    };
+    TowageExecutionTransition: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TowageExecutionTransitionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowageExecutionView"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskFailure"];
+                };
+            };
+        };
+    };
+    TowageExecutionEvent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TowageExecutionEventCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowageExecutionView"];
+                };
+            };
+        };
+    };
+    TowageExecutionVerify: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TowageExecutionVerifyCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowageExecutionView"];
+                };
+            };
+        };
+    };
+    TugDailyLogList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugDailyLogListView"];
+                };
+            };
+        };
+    };
+    TugDailyLogCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TugDailyLogCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugDailyLogView"];
+                };
+            };
+        };
+    };
+    TugDailyLogRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugDailyLogView"];
+                };
+            };
+        };
+    };
+    TugDailyLogUpdate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TugDailyLogUpdateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugDailyLogView"];
+                };
+            };
+        };
+    };
+    TugDailyLogSubmit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TugDailyLogSubmitCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugDailyLogView"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskFailure"];
+                };
+            };
+        };
+    };
+    TugDailyLogReview: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TugDailyLogReviewCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TugDailyLogView"];
+                };
+            };
+        };
+    };
+    DrydockList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DrydockListView"];
+                };
+            };
+        };
+    };
+    DrydockCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DrydockCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DrydockView"];
+                };
+            };
+        };
+    };
+    DrydockRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DrydockView"];
+                };
+            };
+        };
+    };
+    DrydockUpdate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DrydockUpdateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DrydockView"];
+                };
+            };
+        };
+    };
+    DrydockTransition: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DrydockTransitionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DrydockView"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskFailure"];
+                };
+            };
+        };
+    };
+    DrydockVerify: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DrydockVerifyCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DrydockView"];
                 };
             };
         };

@@ -26,3 +26,9 @@
   .tug-workspace .tug-intake-form { padding: 16px; }
   .tug-workspace .tug-intake-form .enterprise-form-grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
 }
+
+/* S9 WP-D field operations (DEV-089/090/111). */
+.field-ops-ledger { display: grid; grid-template-columns: max-content 1fr; gap: 0.25rem 1rem; }
+.field-ops-ledger dt { font-weight: 600; }
+.field-ops-timeline { display: grid; gap: 0.25rem; padding-inline-start: 1.25rem; }
+.field-ops-scope-item { border: 1px solid var(--border, currentColor); border-radius: 0.5rem; padding: 0.5rem; margin-block: 0.5rem; }

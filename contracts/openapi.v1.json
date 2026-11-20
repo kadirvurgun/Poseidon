@@ -17540,6 +17540,666 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/towage-executions": {
+      "get": {
+        "tags": [
+          "TowageExecutionEndpoints"
+        ],
+        "operationId": "TowageExecutionJobRead",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowageExecutionJobView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TowageExecutionStart",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TowageExecutionStartCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowageExecutionView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/towage-executions/{id}": {
+      "get": {
+        "tags": [
+          "TowageExecutionEndpoints"
+        ],
+        "operationId": "TowageExecutionRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowageExecutionView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/towage-executions/{id}/transitions": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TowageExecutionTransition",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TowageExecutionTransitionCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowageExecutionView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/towage-executions/{id}/events": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TowageExecutionEvent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TowageExecutionEventCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowageExecutionView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/towage-executions/{id}/verification": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TowageExecutionVerify",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TowageExecutionVerifyCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TowageExecutionView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/tug-daily-logs": {
+      "get": {
+        "tags": [
+          "TugDailyLogEndpoints"
+        ],
+        "operationId": "TugDailyLogList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugDailyLogListView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TugDailyLogCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TugDailyLogCreateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugDailyLogView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/tug-daily-logs/{id}": {
+      "get": {
+        "tags": [
+          "TugDailyLogEndpoints"
+        ],
+        "operationId": "TugDailyLogRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugDailyLogView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TugDailyLogUpdate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TugDailyLogUpdateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugDailyLogView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/tug-daily-logs/{id}/submit": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TugDailyLogSubmit",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TugDailyLogSubmitCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugDailyLogView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/tug-daily-logs/{id}/review": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TugDailyLogReview",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TugDailyLogReviewCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TugDailyLogView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/drydock-packages": {
+      "get": {
+        "tags": [
+          "DrydockEndpoints"
+        ],
+        "operationId": "DrydockList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DrydockListView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DrydockCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrydockCreateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DrydockView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/drydock-packages/{id}": {
+      "get": {
+        "tags": [
+          "DrydockEndpoints"
+        ],
+        "operationId": "DrydockRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DrydockView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DrydockUpdate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrydockUpdateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DrydockView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/drydock-packages/{id}/transitions": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DrydockTransition",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrydockTransitionCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DrydockView"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/drydock-packages/{id}/verification": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DrydockVerify",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DrydockVerifyCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DrydockView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
     "/api/v1/parameter-definitions": {
       "get": {
         "tags": [
@@ -30024,6 +30684,700 @@
           },
           "reason": {
             "type": "string"
+          }
+        }
+      },
+      "DrydockContent": {
+        "required": [
+          "projectReference",
+          "yard",
+          "plannedStart",
+          "plannedFinish",
+          "external",
+          "items",
+          "completionEvidence"
+        ],
+        "type": "object",
+        "properties": {
+          "projectReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "yard": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "plannedStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "plannedFinish": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "external": {
+            "$ref": "#/components/schemas/DrydockExternal"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DrydockScopeItem"
+            }
+          },
+          "completionEvidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DrydockEvidence"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrydockCreateCommand": {
+        "required": [
+          "id",
+          "content"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "content": {
+            "$ref": "#/components/schemas/DrydockContent"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrydockEvidence": {
+        "required": [
+          "id",
+          "reference",
+          "note"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reference": {
+            "type": "string"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrydockExternal": {
+        "required": [
+          "estimatedCost",
+          "currency",
+          "vendor",
+          "budgetReference"
+        ],
+        "type": "object",
+        "properties": {
+          "estimatedCost": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "currency": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "vendor": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "budgetReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrydockItemStatus": {
+        "required": [
+          "itemId",
+          "state",
+          "links"
+        ],
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DrydockLinkStatus"
+            }
+          }
+        }
+      },
+      "DrydockLink": {
+        "required": [
+          "kind",
+          "targetId",
+          "pinnedRevision"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "targetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "pinnedRevision": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrydockLinkStatus": {
+        "required": [
+          "kind",
+          "targetId",
+          "pinnedRevision",
+          "currentRevision",
+          "state",
+          "reason",
+          "due"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "targetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "pinnedRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "currentRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "due": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          }
+        }
+      },
+      "DrydockListView": {
+        "required": [
+          "vesselId",
+          "items",
+          "canWrite",
+          "categories",
+          "priorities",
+          "linkKinds"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DrydockSummaryDto"
+            }
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "priorities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "linkKinds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sourceVersion": {
+            "type": "string",
+            "default": "18.01:row112;11.01:2316/rows1542-1559;13.03:p85;59.04:p1038,p2378-2400"
+          }
+        }
+      },
+      "DrydockPackageDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "revision",
+          "version",
+          "state",
+          "content",
+          "hash",
+          "actualStart",
+          "actualFinish",
+          "completedBy",
+          "verifiedBy",
+          "verifiedAt",
+          "provenance",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "state": {
+            "type": "string"
+          },
+          "content": {
+            "$ref": "#/components/schemas/DrydockContent"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "actualStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "actualFinish": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "completedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "verifiedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "verifiedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "DrydockReadiness": {
+        "required": [
+          "state",
+          "items",
+          "unlinked",
+          "overdue",
+          "stale",
+          "unavailable"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DrydockItemStatus"
+            }
+          },
+          "unlinked": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "overdue": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stale": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unavailable": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "meaning": {
+            "type": "string",
+            "default": "LinkageCompletenessOnly;NotASurveyOrClassResult"
+          }
+        }
+      },
+      "DrydockScopeItem": {
+        "required": [
+          "id",
+          "category",
+          "title",
+          "equipmentId",
+          "workPackage",
+          "classRequirement",
+          "statutoryRequirement",
+          "priority",
+          "links"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "category": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "equipmentId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "workPackage": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "classRequirement": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "statutoryRequirement": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "priority": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DrydockLink"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrydockSummaryDto": {
+        "required": [
+          "id",
+          "revision",
+          "state",
+          "projectReference",
+          "yard",
+          "plannedStart",
+          "plannedFinish",
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "projectReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "yard": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "plannedStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "plannedFinish": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "DrydockTimelineDto": {
+        "required": [
+          "revision",
+          "state",
+          "reasonCode",
+          "note",
+          "actorId",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "DrydockTransitionCommand": {
+        "required": [
+          "expectedVersion",
+          "contentHash",
+          "action",
+          "note"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "contentHash": {
+            "type": "string"
+          },
+          "action": {
+            "type": "string"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrydockUpdateCommand": {
+        "required": [
+          "expectedVersion",
+          "content"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "content": {
+            "$ref": "#/components/schemas/DrydockContent"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrydockVerifyCommand": {
+        "required": [
+          "expectedVersion",
+          "contentHash",
+          "decision",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "contentHash": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DrydockView": {
+        "required": [
+          "package",
+          "readiness",
+          "timeline",
+          "planBlockers",
+          "completeBlockers",
+          "allowedActions",
+          "canEdit",
+          "canVerify",
+          "unreadableLinkKinds"
+        ],
+        "type": "object",
+        "properties": {
+          "package": {
+            "$ref": "#/components/schemas/DrydockPackageDto"
+          },
+          "readiness": {
+            "$ref": "#/components/schemas/DrydockReadiness"
+          },
+          "timeline": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DrydockTimelineDto"
+            }
+          },
+          "planBlockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "completeBlockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allowedActions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canVerify": {
+            "type": "boolean"
+          },
+          "unreadableLinkKinds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "external": {
+            "type": "string",
+            "default": "SupplierBudgetExternalReferenceOnly;NoProcurementOrApproval"
+          },
+          "sourceVersion": {
+            "type": "string",
+            "default": "18.01:row112;11.01:2316/rows1542-1559;13.03:p85;59.04:p1038,p2378-2400"
           }
         }
       },
@@ -45452,6 +46806,26 @@
           }
         }
       },
+      "TowageActiveInterval": {
+        "required": [
+          "from",
+          "to"
+        ],
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "to": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
       "TowageAmendCommand": {
         "required": [
           "expectedVersion",
@@ -45957,6 +47331,601 @@
         },
         "additionalProperties": false
       },
+      "TowageEventInput": {
+        "required": [
+          "kind",
+          "occurredAt",
+          "value",
+          "unit",
+          "result",
+          "text",
+          "reference",
+          "weather"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unit": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "result": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "text": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "weather": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TowageWeather"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowageExecutionDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "jobId",
+          "tugId",
+          "assignmentId",
+          "assignmentRevision",
+          "planId",
+          "planRevision",
+          "briefingId",
+          "briefingRevision",
+          "readinessDecisionId",
+          "state",
+          "verificationState",
+          "revision",
+          "version",
+          "sequence",
+          "hash",
+          "startedAt",
+          "startedBy",
+          "startPosition",
+          "endedAt",
+          "endedBy",
+          "endPosition",
+          "verifiedBy",
+          "verifiedAt",
+          "provenance"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tugId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "assignmentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "assignmentRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "planId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "planRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "briefingId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "briefingRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "readinessDecisionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "verificationState": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "startedBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "startPosition": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "endedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "endedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "endPosition": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "verifiedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "verifiedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "provenance": {
+            "type": "string"
+          }
+        }
+      },
+      "TowageExecutionEventCommand": {
+        "required": [
+          "event"
+        ],
+        "type": "object",
+        "properties": {
+          "event": {
+            "$ref": "#/components/schemas/TowageEventInput"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowageExecutionEventDto": {
+        "required": [
+          "sequence",
+          "kind",
+          "occurredAt",
+          "recordedAt",
+          "actorId",
+          "duty",
+          "value",
+          "unit",
+          "result",
+          "text",
+          "reference",
+          "weather",
+          "reason",
+          "position",
+          "hash"
+        ],
+        "type": "object",
+        "properties": {
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "duty": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unit": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "result": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "text": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "weather": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TowageWeather"
+              }
+            ]
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "position": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "hash": {
+            "type": "string"
+          }
+        }
+      },
+      "TowageExecutionJobView": {
+        "required": [
+          "vesselId",
+          "jobId",
+          "jobNumber",
+          "jobStatus",
+          "tugs",
+          "executions"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobNumber": {
+            "type": "string"
+          },
+          "jobStatus": {
+            "type": "string"
+          },
+          "tugs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TowageStartGateDto"
+            }
+          },
+          "executions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TowageExecutionDto"
+            }
+          },
+          "sourceVersion": {
+            "type": "string",
+            "default": "18.01:row90;08.02:p133-134;10.01:p103-105;60.02Rev2:p217-254,p1118-1198"
+          }
+        }
+      },
+      "TowageExecutionStartCommand": {
+        "required": [
+          "id",
+          "jobId",
+          "tugId",
+          "authorityId",
+          "readinessDecisionId",
+          "startPosition"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tugId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "readinessDecisionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "startPosition": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowageExecutionTransitionCommand": {
+        "required": [
+          "expectedVersion",
+          "action",
+          "reason",
+          "occurredAt",
+          "authorityId",
+          "endPosition"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "action": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "endPosition": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowageExecutionVerifyCommand": {
+        "required": [
+          "expectedVersion",
+          "contentHash",
+          "decision",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "contentHash": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowageExecutionView": {
+        "required": [
+          "execution",
+          "jobNumber",
+          "assistedVessel",
+          "ledger",
+          "timeline",
+          "authorities",
+          "canRecord",
+          "canTransition",
+          "canVerify",
+          "allowedActions",
+          "completeBlockers",
+          "recordableKinds",
+          "loadUnits",
+          "communicationStates",
+          "winchStates",
+          "releaseTestResults",
+          "evidencePurposes"
+        ],
+        "type": "object",
+        "properties": {
+          "execution": {
+            "$ref": "#/components/schemas/TowageExecutionDto"
+          },
+          "jobNumber": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "assistedVessel": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "ledger": {
+            "$ref": "#/components/schemas/TowageLedgerFacts"
+          },
+          "timeline": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TowageExecutionEventDto"
+            }
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugAuthorityDto"
+            }
+          },
+          "canRecord": {
+            "type": "boolean"
+          },
+          "canTransition": {
+            "type": "boolean"
+          },
+          "canVerify": {
+            "type": "boolean"
+          },
+          "allowedActions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "completeBlockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "recordableKinds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "loadUnits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "communicationStates": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "winchStates": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "releaseTestResults": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidencePurposes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "safetyEvents": {
+            "type": "string",
+            "default": "UNKNOWN:SafetyEventSourceUnavailable"
+          },
+          "authority": {
+            "type": "string",
+            "default": "TugMasterHumanRecord;ShoreAiSystemCannotStartOrAbort;NotAGoDecision"
+          },
+          "sourceVersion": {
+            "type": "string",
+            "default": "18.01:row90;08.02:p133-134;10.01:p103-105;60.02Rev2:p217-254,p1118-1198"
+          }
+        }
+      },
       "TowageItem": {
         "required": [
           "id",
@@ -45973,6 +47942,72 @@
           }
         },
         "additionalProperties": false
+      },
+      "TowageLedgerFacts": {
+        "required": [
+          "towlineConnectedAt",
+          "towlineReleasedAt",
+          "towlineConnected",
+          "maxTowLoad",
+          "communicationState",
+          "winchState",
+          "emergencyReleaseTested",
+          "weatherEventSequence",
+          "activeIntervals",
+          "activeSeconds"
+        ],
+        "type": "object",
+        "properties": {
+          "towlineConnectedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "towlineReleasedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "towlineConnected": {
+            "type": "boolean"
+          },
+          "maxTowLoad": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TowageMaxLoad"
+            }
+          },
+          "communicationState": {
+            "type": "string"
+          },
+          "winchState": {
+            "type": "string"
+          },
+          "emergencyReleaseTested": {
+            "type": "string"
+          },
+          "weatherEventSequence": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "activeIntervals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TowageActiveInterval"
+            }
+          },
+          "activeSeconds": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
       },
       "TowageLimit": {
         "required": [
@@ -45999,6 +48034,26 @@
           }
         },
         "additionalProperties": false
+      },
+      "TowageMaxLoad": {
+        "required": [
+          "value",
+          "unit",
+          "samples"
+        ],
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "samples": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
       },
       "TowageParticipant": {
         "required": [
@@ -46450,6 +48505,74 @@
         },
         "additionalProperties": false
       },
+      "TowageStartGateDto": {
+        "required": [
+          "tugId",
+          "assignmentId",
+          "readinessDecisionId",
+          "decision",
+          "blockers",
+          "authorities",
+          "canStart",
+          "executionId",
+          "executionState"
+        ],
+        "type": "object",
+        "properties": {
+          "tugId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "assignmentId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "readinessDecisionId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "decision": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugAuthorityDto"
+            }
+          },
+          "canStart": {
+            "type": "boolean"
+          },
+          "executionId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "executionState": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "TowageSubmitCommand": {
         "required": [
           "expectedVersion",
@@ -46524,6 +48647,49 @@
               "string"
             ],
             "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TowageWeather": {
+        "required": [
+          "windSpeedKn",
+          "windDirection",
+          "seaState",
+          "visibility",
+          "current"
+        ],
+        "type": "object",
+        "properties": {
+          "windSpeedKn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "windDirection": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "seaState": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "visibility": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "current": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
         "additionalProperties": false
@@ -47700,6 +49866,695 @@
           "coverage": {
             "type": "string",
             "default": "SharedCrewEngineAndTowageCompetence;UnverifiedNeverPositive;MasterDecisionSeparate"
+          }
+        }
+      },
+      "TugDailyExecutionDto": {
+        "required": [
+          "id",
+          "jobId",
+          "state",
+          "startedAt",
+          "endedAt",
+          "linked"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "jobId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "linked": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TugDailyFuel": {
+        "required": [
+          "quantity",
+          "unit",
+          "sourceRef"
+        ],
+        "type": "object",
+        "properties": {
+          "quantity": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unit": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sourceRef": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "TugDailyLogContent": {
+        "required": [
+          "timeZone",
+          "meters",
+          "fuel",
+          "executionIds",
+          "defectIds",
+          "dailySummary"
+        ],
+        "type": "object",
+        "properties": {
+          "timeZone": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "meters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugDailyMeter"
+            }
+          },
+          "fuel": {
+            "$ref": "#/components/schemas/TugDailyFuel"
+          },
+          "executionIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "defectIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "dailySummary": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "TugDailyLogCreateCommand": {
+        "required": [
+          "id",
+          "logDate",
+          "watch",
+          "capturedAt",
+          "content"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "logDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "watch": {
+            "type": "string"
+          },
+          "capturedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "content": {
+            "$ref": "#/components/schemas/TugDailyLogContent"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TugDailyLogDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "logDate",
+          "watch",
+          "revision",
+          "version",
+          "state",
+          "content",
+          "hash",
+          "submittedBy",
+          "verifiedRevision",
+          "capturedAt",
+          "syncedAt",
+          "syncState",
+          "provenance",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "logDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "watch": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "state": {
+            "type": "string"
+          },
+          "content": {
+            "$ref": "#/components/schemas/TugDailyLogContent"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "submittedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "verifiedRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "capturedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "syncedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "syncState": {
+            "type": "string"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TugDailyLogListView": {
+        "required": [
+          "vesselId",
+          "items",
+          "canWrite",
+          "watches",
+          "fuelUnits"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugDailyLogSummaryDto"
+            }
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "watches": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "fuelUnits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sourceVersion": {
+            "type": "string",
+            "default": "18.01:row91;10.01:p112-114;08.02:p135-137;60.02Rev2:p258-267,p1325-1370"
+          }
+        }
+      },
+      "TugDailyLogReviewCommand": {
+        "required": [
+          "expectedVersion",
+          "contentHash",
+          "decision",
+          "reason",
+          "authorityId"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "contentHash": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TugDailyLogReviewDto": {
+        "required": [
+          "id",
+          "revision",
+          "resultRevision",
+          "decision",
+          "reconciliation",
+          "duty",
+          "actorId",
+          "reason",
+          "decidedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "resultRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "reconciliation": {
+            "type": "string"
+          },
+          "duty": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "decidedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TugDailyLogRevisionDto": {
+        "required": [
+          "revision",
+          "state",
+          "reasonCode",
+          "hash",
+          "actorId",
+          "capturedAt",
+          "syncedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "capturedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "syncedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TugDailyLogSubmitCommand": {
+        "required": [
+          "expectedVersion",
+          "contentHash"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "contentHash": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TugDailyLogSummaryDto": {
+        "required": [
+          "id",
+          "logDate",
+          "watch",
+          "revision",
+          "state",
+          "masterReview",
+          "syncedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "logDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "watch": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "masterReview": {
+            "type": "string"
+          },
+          "syncedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "TugDailyLogUpdateCommand": {
+        "required": [
+          "expectedVersion",
+          "capturedAt",
+          "content"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "capturedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "content": {
+            "$ref": "#/components/schemas/TugDailyLogContent"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TugDailyLogView": {
+        "required": [
+          "log",
+          "reconciliation",
+          "masterReview",
+          "defectsReported",
+          "safetyEvents",
+          "intervalFrom",
+          "intervalTo",
+          "executions",
+          "submitBlockers",
+          "reviews",
+          "revisions",
+          "authorities",
+          "canEdit",
+          "canSubmit",
+          "canReview",
+          "fuelUnits"
+        ],
+        "type": "object",
+        "properties": {
+          "log": {
+            "$ref": "#/components/schemas/TugDailyLogDto"
+          },
+          "reconciliation": {
+            "$ref": "#/components/schemas/TugDailyReconciliation"
+          },
+          "masterReview": {
+            "type": "string"
+          },
+          "defectsReported": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "safetyEvents": {
+            "type": "string"
+          },
+          "intervalFrom": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "intervalTo": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "executions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugDailyExecutionDto"
+            }
+          },
+          "submitBlockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reviews": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugDailyLogReviewDto"
+            }
+          },
+          "revisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugDailyLogRevisionDto"
+            }
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugAuthorityDto"
+            }
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canSubmit": {
+            "type": "boolean"
+          },
+          "canReview": {
+            "type": "boolean"
+          },
+          "fuelUnits": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "offlineCapture": {
+            "type": "string",
+            "default": "InMemoryUnsavedOnly;DurableTugCaptureNotRegistered"
+          },
+          "sourceVersion": {
+            "type": "string",
+            "default": "18.01:row91;10.01:p112-114;08.02:p135-137;60.02Rev2:p258-267,p1325-1370"
+          }
+        }
+      },
+      "TugDailyMeter": {
+        "required": [
+          "id",
+          "meter",
+          "opening",
+          "closing",
+          "resetEvidenceRef"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "meter": {
+            "type": "string"
+          },
+          "opening": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "closing": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "resetEvidenceRef": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "TugDailyReason": {
+        "required": [
+          "scope",
+          "code",
+          "subject"
+        ],
+        "type": "object",
+        "properties": {
+          "scope": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "subject": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "TugDailyReconciliation": {
+        "required": [
+          "state",
+          "reasons",
+          "jobsCompleted",
+          "operatingHours",
+          "openInterval",
+          "meterHours"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TugDailyReason"
+            }
+          },
+          "jobsCompleted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "operatingHours": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "openInterval": {
+            "type": "boolean"
+          },
+          "meterHours": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -50553,6 +53408,15 @@
     },
     {
       "name": "HighRiskWorkEndpoints"
+    },
+    {
+      "name": "TowageExecutionEndpoints"
+    },
+    {
+      "name": "TugDailyLogEndpoints"
+    },
+    {
+      "name": "DrydockEndpoints"
     },
     {
       "name": "ParameterEndpoints"

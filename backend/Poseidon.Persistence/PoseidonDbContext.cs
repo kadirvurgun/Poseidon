@@ -183,6 +183,15 @@ public sealed class PoseidonDbContext(
     public DbSet<TowageBriefingRevision> TowageBriefingRevisions => Set<TowageBriefingRevision>();
     public DbSet<TowageBriefingAcknowledgement> TowageBriefingAcknowledgements => Set<TowageBriefingAcknowledgement>();
     public DbSet<TowageReceipt> TowageReceipts => Set<TowageReceipt>();
+    // S9 WP-D (DEV-089/090/111): towage execution, tug daily log, drydock package.
+    public DbSet<TowageExecution> TowageExecutions => Set<TowageExecution>();
+    public DbSet<TowageExecutionEvent> TowageExecutionEvents => Set<TowageExecutionEvent>();
+    public DbSet<TugDailyLog> TugDailyLogs => Set<TugDailyLog>();
+    public DbSet<TugDailyLogRevision> TugDailyLogRevisions => Set<TugDailyLogRevision>();
+    public DbSet<TugDailyLogReview> TugDailyLogReviews => Set<TugDailyLogReview>();
+    public DbSet<DrydockPackage> DrydockPackages => Set<DrydockPackage>();
+    public DbSet<DrydockPackageRevision> DrydockPackageRevisions => Set<DrydockPackageRevision>();
+    public DbSet<FieldOperationReceipt> FieldOperationReceipts => Set<FieldOperationReceipt>();
     public DbSet<TugOfflineEnrollment> TugOfflineEnrollments => Set<TugOfflineEnrollment>();
     public DbSet<TugOfflineOutcome> TugOfflineOutcomes => Set<TugOfflineOutcome>();
     public DbSet<TugOfflineLifecycle> TugOfflineLifecycles => Set<TugOfflineLifecycle>();
@@ -377,6 +386,16 @@ public sealed class PoseidonDbContext(
         model.Entity<TowageBriefingRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TowageBriefingAcknowledgement>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TowageReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        // S9 WP-D (DEV-089/090/111).
+        FieldOperationsStorage.Configure(model);
+        model.Entity<TowageExecution>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TowageExecutionEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TugDailyLog>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TugDailyLogRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TugDailyLogReview>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<DrydockPackage>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<DrydockPackageRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<FieldOperationReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         MaintenanceObservationStorage.Configure(model);
         model.Entity<MaintenanceObservation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<MaintenanceObservationRevocation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -745,6 +764,7 @@ public sealed class PoseidonDbContext(
         WorkOrderExecutionStorage.Guard(changes);
         TechnicalRecordStorage.Guard(changes);
         TowageStorage.Guard(changes);
+        FieldOperationsStorage.Guard(changes);
         if(changes.Any(e=>e.Entity is DowntimeRevision or DowntimeReceipt && e.State!=EntityState.Added))
             throw new InvalidOperationException("Downtime history and outcomes are immutable.");
         if(changes.Any(e=>e.Entity is Downtime && (e.State==EntityState.Deleted || e.State==EntityState.Modified &&
