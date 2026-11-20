@@ -62,6 +62,8 @@
     "DrydockUpdate": "PREPARATION_COMMAND",
     "DrydockTransition": "PREPARATION_COMMAND",
     "DrydockVerify": "HUMAN_REVIEW_WORKFLOW",
+    "ReconciliationReportCreate": "PREPARATION_COMMAND",
+    "ReconciliationSignOff": "HUMAN_REVIEW_WORKFLOW",
     "RiskTemplateCreate": "PREPARATION_COMMAND",
     "RiskTemplateUpdate": "PREPARATION_COMMAND",
     "RiskTemplateSubmit": "HUMAN_REVIEW_WORKFLOW",

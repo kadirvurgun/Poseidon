@@ -19,6 +19,9 @@ public sealed record ImportCommitCommand(Guid PreviewId, long Revision, string T
 public sealed record ImportPreviewPageDto(Guid PreviewId, string Revision, string TemplateVersion, string TemplateFingerprint,
     int TotalRows, int ValidRows, int RejectedRows, int Offset, int Limit, bool HasMore, ImportValidationRowDto[] Rows);
 public sealed record ImportCommittedDto(Guid BatchId, string State, int ImportedRows, Guid PreviewId, bool Replayed);
+public sealed record ImportProvenanceDto(Guid BatchId, Guid PreviewId, int RowNumber, string Category, string SourceHash, string TemplateVersion,
+    string TemplateFingerprint, string TargetKind, Guid TargetId, long TargetRevision, string RevisionKind, string Operation, Guid ActorId, DateTimeOffset RecordedAt);
+public sealed record ImportProvenancePageDto(Guid BatchId, string State, int Total, int Offset, int Limit, bool HasMore, ImportProvenanceDto[] Items);
 
 public static class ImportEndpoints
 {
@@ -35,11 +38,13 @@ public static class ImportEndpoints
         group.MapPost("/{batch:guid}/preview", Preview).WithName("ImportPreview").Produces<ImportPreviewPageDto>();
         group.MapGet("/{batch:guid}/previews/{preview:guid}", Page).WithName("ImportPreviewPage").Produces<ImportPreviewPageDto>();
         group.MapGet("/{batch:guid}/previews/{preview:guid}/rejects", Rejects).WithName("ImportRejectDownload");
+        // S11 WP-A DEV-069: insert-only row lineage of a committed batch (identifiers/hashes/revisions only).
+        group.MapGet("/{batch:guid}/provenance", Provenance).WithName("ImportProvenanceList").Produces<ImportProvenancePageDto>();
         group.MapPost("/{batch:guid}/commit", Commit).WithName("ImportCommit").Accepts<ImportCommitCommand>("application/json").Produces<ImportCommittedDto>();
     }
     private static TrustedActor Actor(HttpContext h) => h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User)!;
     private static string Session(HttpContext h) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(h.Request.Headers.Cookie.ToString())));
-    private static bool Category(TrustedActor a, Guid vessel, string category, bool write) {
+    internal static bool Category(TrustedActor a, Guid vessel, string category, bool write) {
         var module = category switch { "crew" => "crew", "equipment" => "equipment", "certificate" => "crew.certificate", "vessel" => "directory", _ => "invalid" };
         return a.Permissions.Contains(module + ".read") && (!write || a.HasWriteAttribution && a.Permissions.Contains(module + ".write") &&
             (a.TenantWideManage || a.VesselGrants.Any(g => g.VesselId == vessel && g.CanEdit))) &&
@@ -413,10 +418,13 @@ public static class ImportEndpoints
             }
             var current = await Validate(b, table, mapping.Mapping, h, db);
             if (current.Any(r => r.Outcome != "valid")) return await Fail(h, 409, "version_conflict");
+            var lineage = new List<(int Row, Guid Target, bool Existed)>();
             foreach (var (cells, i) in table.Rows.Select((r, i) => (r, i))) {
                 // Row keys are batch/preview/row-bound and deterministic across restart/retry.
                 h.Request.Headers["Idempotency-Key"] = new Guid(SHA256.HashData(Encoding.UTF8.GetBytes($"{batch:D}/{p.Id:D}/{i}"))[..16]).ToString("D");
                 var r = new ImportTemplates.Row(mapping.Mapping, cells); IResult result;
+                var target = b.Category == "vessel" ? vessel : r.Id("record_key", true);
+                lineage.Add((i + 2, target, await ImportLineage.Exists(db, b, vessel, target, h.RequestAborted)));
                 if (b.Category == "vessel") result = await DirectoryCommands.ApplyImport(h, vessel, r.Vessel());
                 else if (b.Category == "equipment") {
                     var id = r.Id("record_key", true);
@@ -451,6 +459,11 @@ public static class ImportEndpoints
                 }
             }
             b.State = "Committed"; b.CommittedAt = DateTimeOffset.UtcNow; b.CommittedPreviewId = p.Id;
+            // DEV-069: one insert-only provenance row per committed row, in this same audited transaction.
+            await ImportLineage.Record(db, a, b, p, lineage, b.CommittedAt.Value, h.RequestAborted);
+            // DEV-070: a new committed import supersedes the vessel's current reconciliation report (and so invalidates
+            // its sign-off) without editing the snapshot or the human record.
+            await ImportLineage.Supersede(db, vessel, b.CommittedAt.Value, h.RequestAborted);
             db.CommandReceipts.Add(new() { TenantId = a.TenantId, ActorId = a.Id, Key = originalKey.ToString(), Action = "ImportCommit", Fingerprint = fingerprint,
                 ResourceId = batch, RegisterRevision = b.Revision, CommittedAt = b.CommittedAt.Value });
             await db.SaveChangesAsync(h.RequestAborted);
@@ -464,5 +477,25 @@ public static class ImportEndpoints
         } catch (Exception e) when (e is DbUpdateException || PostgresFailure.IsSerialization(e)) {
             await tx.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear(); return await Fail(h, 409, "version_conflict");
         } finally { h.Request.Headers["Idempotency-Key"] = originalKey; }
+    }
+    // S11 WP-A DEV-069: committed-row lineage. Readable by any import reader with the batch category's read rights on
+    // this vessel (not only the uploading session): it carries identifiers, hashes and revisions, never cell values.
+    private static async Task<IResult> Provenance(Guid vessel, Guid batch, HttpContext h, PoseidonDbContext db) {
+        var failure = await Gate(h, db, vessel); if (failure != null) return failure;
+        if (h.Request.Query.Keys.Any(k => k is not ("offset" or "limit")) || h.Request.Query.Any(q => q.Value.Count != 1)) return await Fail(h, 400, "invalid_request");
+        if (!Offset(h, out var offset) || offset > 100000) return await Fail(h, 400, "invalid_request");
+        var limit = 50;
+        if (h.Request.Query.ContainsKey("limit") && (!int.TryParse(h.Request.Query["limit"], NumberStyles.None, CultureInfo.InvariantCulture, out limit) || limit < 1 || limit > 100))
+            return await Fail(h, 400, "invalid_request");
+        var a = Actor(h);
+        var b = await db.ImportBatches.AsNoTracking().Where(x => x.Id == batch && x.VesselId == vessel).Select(x => new { x.Id, x.Category, x.State }).SingleOrDefaultAsync(h.RequestAborted);
+        if (b == null || !Category(a, vessel, b.Category, false) || b.Category == "crew" && !h.RequestServices.GetRequiredService<CrewIdentityPolicy>().Allows(a, false))
+            return await Fail(h, 404, "resource_not_found");
+        var query = db.ImportProvenance.AsNoTracking().Where(x => x.BatchId == batch && x.VesselId == vessel);
+        var total = await query.CountAsync(h.RequestAborted);
+        var rows = await query.OrderBy(x => x.RowNumber).Skip(offset).Take(limit).Select(x => new ImportProvenanceDto(x.BatchId, x.PreviewId, x.RowNumber, x.Category,
+            x.SourceHash, x.TemplateVersion, x.TemplateFingerprint, x.TargetKind, x.TargetId, x.TargetRevision, x.RevisionKind, x.Operation, x.ActorId, x.RecordedAt)).ToArrayAsync(h.RequestAborted);
+        await Observe(h, vessel, "ImportProvenanceRead");
+        return Results.Ok(new ImportProvenancePageDto(batch, b.State, total, offset, limit, offset + rows.Length < total, rows));
     }
 }

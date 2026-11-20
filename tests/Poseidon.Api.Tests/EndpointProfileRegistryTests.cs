@@ -263,7 +263,7 @@ public sealed partial class DirectoryWorkspaceTests
         "notification.acknowledge", "notification.evaluate", "notification.manage", "notification.preference.write", "notification.read",
         "operations.downtime.read", "operations.downtime.write", "operations.fuel.read", "operations.fuel.write", "operations.port.read",
         "operations.port.write", "regulatory.draft.read", "regulatory.draft.write", "regulatory.facts.attest", "regulatory.qualify",
-        "rules.review", "rules.write", "system.health.read", "tug.owner.eligible", "tug.plan.write", "tug.execution.verify", "drydock.read", "drydock.write", "drydock.verify", "tug.read", "tug.write",
+        "rules.review", "rules.write", "system.health.read", "tug.owner.eligible", "tug.plan.write", "tug.execution.verify", "import.reconciliation.sign", "drydock.read", "drydock.write", "drydock.verify", "tug.read", "tug.write",
         "workorder.read", "workorder.write", "workorder.release", "workorder.execute", "workorder.verify", "workorder.close",
         "spare.read", "spare.write", "requisition.propose", "requisition.approve", "workspace.search",
         "membership.read", "membership.manage", "membership.security.suspend",

@@ -64,6 +64,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if (TowageProjection(entry) is { } towage) return towage;
         if (SafetyEventProjection(entry) is { } safety) return safety;
         if (FieldOperationsProjection(entry) is { } field) return field;
+        if (ImportReconciliationProjection(entry) is { } reconciliation) return reconciliation;
         if(entry.Entity is Defect defect)
             return new(defect.VesselId,defect.Id,"Defect",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,defect.Revision,
                 Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(defect.Revision)),Field("Binding",null,"OwnerReference")));
@@ -984,6 +985,31 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                 Field("ReasonCode", null, Closed(r.ReasonCode, FieldOperationsStorage.DrydockReasons)), Field("Note", null, null, "ValuesWithheld"))),
             FieldOperationReceipt c => new(c.VesselId, c.ResourceId, "FieldOperationReceipt", null, c.Revision, Fields(
                 Field("Action", null, Closed(c.Action, FieldOperationsStorage.ReceiptActions)), Field("Revision", null, Number(c.Revision)), Field("Binding", null, "CommittedResource"))),
+            _ => null
+        };
+    }
+    // S11 WP-A (DEV-069/070): closed kind/state/decision codes, counts and revisions only. Source hashes, batch pins,
+    // missing-critical lists, samples, reasons, exception dispositions and actor identities are withheld.
+    private static AuditMetadata? ImportReconciliationProjection(EntityEntry entry)
+    {
+        var states = Poseidon.Domain.ImportReconciliationPolicy.States;
+        string? BeforeState() => entry.State == EntityState.Added ? null : Closed((string)entry.Property("State").OriginalValue!, states);
+        long? Before() => entry.State == EntityState.Added ? null : (long?)entry.Property("Revision").OriginalValue;
+        return entry.Entity switch
+        {
+            ImportProvenance p => new(p.VesselId, p.BatchId, "ImportProvenance", null, p.TargetRevision, Fields(
+                Field("TargetKind", null, Closed(p.TargetKind, Poseidon.Domain.ImportReconciliationPolicy.TargetKinds)),
+                Field("Operation", null, Closed(p.Operation, ImportReconciliationStorage.Operations)), Field("RowNumber", null, Number(p.RowNumber)),
+                Field("SourceHash", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
+            ReconciliationReport r => new(r.VesselId, r.Id, "ReconciliationReport", Before(), r.Revision, Fields(
+                Field("Revision", Before() is { } b ? Number(b) : null, Number(r.Revision)), Field("State", BeforeState(), Closed(r.State, states)),
+                Field("SourceCount", null, Number(r.SourceCount)), Field("MissingCriticalCount", null, Number(r.MissingCriticalCount)),
+                Field("SnapshotJson", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
+            ReconciliationSignOff o => new(o.VesselId, o.ReportId, "ReconciliationSignOff", null, null, Fields(
+                Field("Decision", null, Closed(o.Decision, Poseidon.Domain.ImportReconciliationPolicy.Decisions)), Field("Duty", null, Closed(o.Duty, "DataOwner")),
+                Field("Reason", null, null, "ValuesWithheld"), Field("Exceptions", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
+            ImportReconciliationReceipt c => new(c.VesselId, c.ResourceId, "ImportReconciliationReceipt", null, c.Revision, Fields(
+                Field("Action", null, Closed(c.Action, ImportReconciliationStorage.ReceiptActions)), Field("Revision", null, Number(c.Revision)), Field("Binding", null, "CommittedResource"))),
             _ => null
         };
     }

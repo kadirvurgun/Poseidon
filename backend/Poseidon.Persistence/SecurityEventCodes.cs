@@ -50,6 +50,8 @@ public static class SecurityEventCodes
         "DepartureReadinessRead", "DepartureSignoffCommand",
         // S9 WP-C DEV-062 / DEV-114.
         "VoiceDraftRead", "VoiceDraftCommand", "VoiceDraftTranscription", "ControlledDocumentContentAccess",
+        // S11 WP-A DEV-069 / DEV-070.
+        "ImportProvenanceRead", "ImportReconciliationRead", "ImportReconciliationCommand",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static IReadOnlySet<string> Results { get; } = new string[]
     {
@@ -125,6 +127,9 @@ public static class SecurityEventCodes
         "speech_capability_unavailable", "speech_input_invalid", "speech_attestation_invalid", "voice_draft_incomplete",
         "document_download_restricted", "controlled_document_download_policy", "acknowledgement_revision_stale", "already_acknowledged",
         "content_access_required", "isps_classification_required",
+        // S11 WP-A DEV-069 / DEV-070.
+        "invalid_decision", "invalid_exception", "invalid_sample", "reconciliation_superseded", "reconciliation_stale", "reconciliation_open_items",
+        "reconciliation_exceptions_required", "reconciliation_batch_unavailable", "data_owner_authority_required",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static bool Allows(string action, string result) => Actions.Contains(action) && Results.Contains(result);
 }

@@ -36,6 +36,7 @@ import { RiskTemplateLibraryWorkspace } from './product/RiskTemplateLibraryWorks
 import { CriticalSparesWorkspace } from './product/CriticalSparesWorkspace';
 import { AuditReadyWorkspace } from './product/AuditReadyWorkspace';
 import { SurveyWorkspace } from './product/SurveyWorkspace';
+import { DataReconciliationWorkspace } from './product/DataReconciliationWorkspace';
 import { AppearanceControls } from './theme/AppearanceControls';
 type Connection = 'loading' | 'available' | 'error';
 const content = localizedCopy("App_tsx_content");
@@ -56,6 +57,9 @@ export function App() {
         return <NotificationWorkspace />;
     if (window.location.pathname === '/app/offline-conflict-center')
         return <ConflictCenterWorkspace />;
+    // S11 WP-A DEV-070 pilot data reconciliation report and data owner sign-off.
+    if (/^\/app\/data-reconciliation\/[0-9a-fA-F-]{36}\/?$/.test(window.location.pathname))
+        return <DataReconciliationWorkspace />;
     const importer = /^\/app\/excel-migration\/([0-9a-fA-F-]{36})\/?$/.exec(window.location.pathname);
     if (importer)
         return <ImportWorkspace key={importer[1]} vessel={importer[1]}/>;

@@ -73,7 +73,8 @@ const labels: Record<string, {
     crew: { tr: sourceText("tr", "pairs.m_9c7ff80bf1b60400"), en: sourceText("en", "pairs.m_9c7ff80bf1b60400"), icon: Users, group: 'operations' },
     equipment: { tr: sourceText("tr", "pairs.m_77e9d3d4c2e4b44f"), en: sourceText("en", "pairs.m_77e9d3d4c2e4b44f"), icon: Wrench, group: 'operations' },
     maintenance: { tr: sourceText("tr", "pairs.m_21f68c2e5c640595"), en: sourceText("en", "pairs.m_21f68c2e5c640595"), icon: ClipboardList, group: 'operations' },
-    import: { tr: sourceText("tr", "pairs.m_f1779f35acec39d7"), en: sourceText("en", "pairs.m_f1779f35acec39d7"), icon: Upload, group: 'assurance' }
+    import: { tr: sourceText("tr", "pairs.m_f1779f35acec39d7"), en: sourceText("en", "pairs.m_f1779f35acec39d7"), icon: Upload, group: 'assurance' },
+    'data-reconciliation': { tr: sourceText("tr", "pairs.m_e5831d38d264db25"), en: sourceText("en", "pairs.m_e5831d38d264db25"), icon: FolderCheck, group: 'assurance' }
 };
 type Props = {
     session: Session | null;
