@@ -9,7 +9,7 @@ public sealed class FieldOperationsPolicyTests
 {
     private static readonly DateTimeOffset T0 = new(2026, 11, 20, 8, 0, 0, TimeSpan.Zero);
     private static TowageStartFacts Ready() => new("Submitted", false, true, true, true, true,
-        [new("briefing", TugReadinessEngine.Pass, "BriefingIssuedAndAcknowledgedByAllParticipants")], true, "GO", true, true);
+        [new("briefing", TugReadinessEngine.Pass, "BriefingIssuedAndAcknowledgedByAllParticipants")], true, "GO", true, true, true);
 
     [Fact]
     [Trait("Requirement", "DEV-089")]
@@ -23,6 +23,8 @@ public sealed class FieldOperationsPolicyTests
         Assert.Contains("readiness_go_missing", TowageExecutionPolicy.StartBlockers(Ready() with { Decision = null }));
         Assert.Contains("readiness_no_go_recorded", TowageExecutionPolicy.StartBlockers(Ready() with { Decision = "NO_GO" }));
         Assert.Contains("readiness_go_stale", TowageExecutionPolicy.StartBlockers(Ready() with { DecisionHashCurrent = false }));
+        // QA N2: a current-hash GO over a non-READY (CONDITIONAL/REVIEW_REQUIRED/NOT_READY) assessment never starts.
+        Assert.Equal(["readiness_not_ready"], TowageExecutionPolicy.StartBlockers(Ready() with { AssessmentReady = false }));
         Assert.Contains("tug_not_in_approved_plan", TowageExecutionPolicy.StartBlockers(Ready() with { TugInPlan = false }));
         Assert.Contains("execution_already_started", TowageExecutionPolicy.StartBlockers(Ready() with { ExecutionExists = true }));
     }

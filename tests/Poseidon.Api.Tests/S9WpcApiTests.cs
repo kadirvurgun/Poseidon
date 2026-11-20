@@ -148,6 +148,23 @@ public sealed partial class DirectoryWorkspaceTests
             var released = await CdOk(await CdSend(client, $"{CdPath}/{created.Id}/revisions/1/release", new { }, registered.Version));
             // Generic vessel-file access cannot bypass the controlled-document policy.
             await AssertCode(await client.PostAsync($"/api/v1/vessels/{SeedVessel.Id}/files/{staged.Id}/access", null, Ct), HttpStatusCode.Forbidden, "controlled_document_download_policy");
+            Assert.Contains((await client.GetFromJsonAsync<FileListDto>($"/api/v1/vessels/{SeedVessel.Id}/files", Ct))!.Items, x => x.Id == staged.Id);
+            // QA B1 (ISPS Code A/9.7): a file.read holder without document.isps.read cannot see or probe the SSP file on the
+            // generic routes: list omits it, detail/access/bytes answer exactly like a non-existent file (no oracle).
+            S9Actor(host.Services, Guid.NewGuid(), "Human"); await Token(client);
+            Assert.DoesNotContain((await client.GetFromJsonAsync<FileListDto>($"/api/v1/vessels/{SeedVessel.Id}/files", Ct))!.Items, x => x.Id == staged.Id);
+            foreach (var probe in new[] { staged.Id, Guid.NewGuid() })
+            {
+                await AssertCode(await client.GetAsync($"/api/v1/vessels/{SeedVessel.Id}/files/{probe}", Ct), HttpStatusCode.NotFound, "resource_not_found");
+                await AssertCode(await client.PostAsync($"/api/v1/vessels/{SeedVessel.Id}/files/{probe}/access", null, Ct), HttpStatusCode.NotFound, "resource_not_found");
+                using var bytes = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/vessels/{SeedVessel.Id}/files/{probe}/bytes");
+                bytes.Headers.Add("X-File-Capability", "probe");
+                await AssertCode(await client.SendAsync(bytes, Ct), HttpStatusCode.NotFound, "resource_not_found");
+            }
+            // With document.isps.read the same actor sees the stage again (the controlled-document policy still gates bytes).
+            S9Actor(host.Services, Guid.NewGuid(), "Human", "document.isps.read"); await Token(client);
+            Assert.Contains((await client.GetFromJsonAsync<FileListDto>($"/api/v1/vessels/{SeedVessel.Id}/files", Ct))!.Items, x => x.Id == staged.Id);
+            Assert.Equal(staged.Id, (await client.GetFromJsonAsync<FileDto>($"/api/v1/vessels/{SeedVessel.Id}/files/{staged.Id}", Ct))!.Id);
             S9Actor(host.Services, publisher, "Human", "document.publish", "document.isps.read"); await Token(client);
             var published = await CdOk(await CdSend(client, $"{CdPath}/{created.Id}/revisions/1/publish", new { }, released.Version));
             var hash = published.Revisions[0].ContentSha256;

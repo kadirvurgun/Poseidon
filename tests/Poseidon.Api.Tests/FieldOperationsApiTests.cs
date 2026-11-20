@@ -12,9 +12,10 @@ namespace Poseidon.Api.Tests;
 
 // S9 WP-D DEV-089 (18.01 row 90, T-TUG-010), DEV-090 (row 91, T-TUG-011), DEV-111 (row 112, T-PMS2-004):
 // real PostgreSQL + actual host. Synthetic identities, appointments and FICTIONAL content only. The readiness GO is
-// a Master human record that the product never creates; because the advisory engine cannot reach READY with
-// synthetic sources, the execution test inserts one clearly FICTIONAL GO stand-in row bound to the exact current
-// assessment hash (test database only, never a seed). AUTHORED; execution DEFERRED to CI (no local Docker).
+// a Master human record that the product never creates. Start requires a READY assessment, which is unreachable
+// while no whole-window weather source exists, so the execution test proves the start refusal with a CONDITIONAL GO
+// stand-in and exercises the ledger on a FICTIONAL ACTIVE execution stand-in (audited test context, test database
+// only, never a seed). AUTHORED; execution DEFERRED to CI (no local Docker).
 public sealed partial class DirectoryWorkspaceTests
 {
     private void FieldActor(IServiceProvider services, Guid actor, params string[] extra)
@@ -24,7 +25,7 @@ public sealed partial class DirectoryWorkspaceTests
         // The single fixture membership carries the synthetic Tug Master appointment; remember it per host so a
         // crew identity can be modelled without it and the Master identity gets it back.
         if (!fieldAppointments.TryGetValue(settings, out var appointments)) fieldAppointments[settings] = appointments = m.TugOperationsAuthorities;
-        settings.Memberships[0] = m with { ActorId = actor, TugOperationsAuthorities = appointments,
+        settings.Memberships[0] = m with { ActorId = actor, ActorKind = "Human", TugOperationsAuthorities = appointments,
             Permissions = [.. m.Permissions.Where(p => !p.StartsWith("hse.", StringComparison.Ordinal) && !owned.Contains(p)), .. RiskPermissions, .. extra] };
     }
     private readonly Dictionary<FederationSettings, TugOperationsAuthority[]> fieldAppointments = new(ReferenceEqualityComparer.Instance);
@@ -34,6 +35,14 @@ public sealed partial class DirectoryWorkspaceTests
         FieldActor(services, actor);
         var settings = services.GetRequiredService<FederationSettings>();
         settings.Memberships[0] = settings.Memberships[0] with { TugOperationsAuthorities = [] };
+    }
+    // Crew (Human without appointment) or a non-human principal that keeps the synthetic appointment rows.
+    private void FieldPrincipal(IServiceProvider services, Guid actor, string kind)
+    {
+        if (kind == "Human") { FieldCrew(services, actor); return; }
+        FieldActor(services, actor);
+        var settings = services.GetRequiredService<FederationSettings>();
+        settings.Memberships[0] = settings.Memberships[0] with { ActorKind = kind };
     }
     private async Task<T> FieldGet<T>(HttpClient c, string path) => (await c.GetFromJsonAsync<T>("/api/v1/" + path, Ct))!;
 
@@ -76,24 +85,53 @@ public sealed partial class DirectoryWorkspaceTests
         await AssertCode(await Send(c, $"towage-executions?vessel={Tug.Id}", new TowageExecutionStartCommand(executionId, job.Id, Tug.Id, TugMasterGrant, Guid.NewGuid(), null)),
             (HttpStatusCode)422, "towage_start_blocked");
 
+        // QA N2: start needs READY, not only an equal hash. No whole-window weather source exists (60.02 p196), so the
+        // advisory engine cannot reach READY and the product cannot record a GO (Decide writes GO only on READY). The
+        // stand-in GO below is bound to the exact current hash but recorded as CONDITIONAL, the only non-READY state the
+        // DB CHECK admits for a GO: the server must still refuse the start. It is never relabelled READY.
         var readiness = await TowageReadiness(c, proposal.Id);
+        Assert.NotEqual(TugReadinessEngine.Ready, readiness.State);
+        Assert.Contains("weather:WholeWindowWeatherSourceUnavailable", readiness.ReviewReasons);
         var go = Guid.NewGuid();
         await using (var db = Db()) {
             db.TugReadinessDecisions.Add(new() { TenantId = Tug.TenantId, VesselId = Tug.Id, Id = go, AssignmentId = proposal.Id, AssignmentRevision = proposal.Revision, TugId = Tug.Id,
-                Decision = "GO", AssessedState = "READY", AssessmentHash = readiness.AssessmentHash, Reason = "FICTIONAL test-only GO stand-in", ActorId = master,
+                Decision = "GO", AssessedState = TugReadinessEngine.Conditional, AssessmentHash = readiness.AssessmentHash, Reason = "FICTIONAL test-only CONDITIONAL GO stand-in", ActorId = master,
                 AuthorityId = TugMasterGrant, Duty = "TugMaster", RecordedAt = DateTimeOffset.UtcNow });
             await db.SaveChangesAsync(Ct);
         }
-        var ready = Assert.Single((await FieldGet<TowageExecutionJobView>(c, $"towage-executions?vessel={Tug.Id}&job={job.Id}")).Tugs);
-        Assert.True(ready.CanStart, string.Join(",", ready.Blockers)); Assert.Equal(go, ready.ReadinessDecisionId);
-        // A foreign or unappointed authority (shore/AI/system) is refused before any gate is read.
+        var notReady = Assert.Single((await FieldGet<TowageExecutionJobView>(c, $"towage-executions?vessel={Tug.Id}&job={job.Id}")).Tugs);
+        Assert.False(notReady.CanStart); Assert.Equal(["readiness_not_ready"], notReady.Blockers); Assert.Equal(go, notReady.ReadinessDecisionId);
         var start = new TowageExecutionStartCommand(executionId, job.Id, Tug.Id, TugMasterGrant, go, "FICTIONAL berth 3");
+        // A foreign or unappointed authority (shore/AI/system) is refused before any gate is read.
         await AssertCode(await Send(c, $"towage-executions?vessel={Tug.Id}", start with { AuthorityId = Guid.NewGuid() }), HttpStatusCode.Forbidden, "tug_authority_required");
-        var key = Guid.NewGuid().ToString();
-        var started = await RiskOk<TowageExecutionView>(await Send(c, $"towage-executions?vessel={Tug.Id}", start, key));
+        await AssertCode(await Send(c, $"towage-executions?vessel={Tug.Id}", start), (HttpStatusCode)422, "towage_start_blocked");
+        // QA B3: crew without an appointment, and AI/system principals even with the synthetic appointment, never start.
+        foreach (var (who, kind) in new[] { (crew, "Human"), (Guid.NewGuid(), "AI"), (Guid.NewGuid(), "System") }) {
+            FieldPrincipal(host.Services, who, kind); await Token(c);
+            await AssertCode(await Send(c, $"towage-executions?vessel={Tug.Id}", start), HttpStatusCode.Forbidden, "tug_authority_required");
+        }
+        await using (var none = Db()) Assert.False(await none.TowageExecutions.AnyAsync(x => x.Id == executionId, Ct));
+
+        // Ledger behaviour after a start is exercised on a FICTIONAL ACTIVE execution stand-in written through the audited
+        // test context (test database only, never a seed): it mirrors exactly what the start command appends (STARTED, seq 1).
+        var startedAt = DateTimeOffset.UtcNow.AddMinutes(-5);
+        await using (var db = Db()) {
+            var x = new TowageExecution { TenantId = Tug.TenantId, VesselId = Tug.Id, Id = executionId, JobId = job.Id, JobRevision = job.Revision, TugId = Tug.Id,
+                AssignmentId = proposal.Id, AssignmentRevision = proposal.Revision, PlanId = plan.Id, PlanRevision = submitted.Revision, BriefingId = briefing.Id,
+                BriefingRevision = issued.Revision, ReadinessDecisionId = go, StartedAt = startedAt, StartedBy = master, StartAuthorityId = TugMasterGrant,
+                StartPosition = "FICTIONAL berth 3", ActorId = master, SavedAt = startedAt, Sequence = 1 };
+            var payload = TowageExecutionPolicy.PayloadJson(null, position: x.StartPosition);
+            x.LastEventHash = TowageExecutionPolicy.EventHash("", x.Id, 1, "STARTED", startedAt, master, payload);
+            x.Hash = TowageExecutionPolicy.HeadHash(x.VesselId, x.Id, x.Revision, x.State, x.VerificationState, x.Sequence, x.LastEventHash);
+            db.TowageExecutionEvents.Add(new() { TenantId = x.TenantId, VesselId = x.VesselId, ExecutionId = x.Id, Sequence = 1, Kind = "STARTED", OccurredAt = startedAt,
+                RecordedAt = startedAt, ActorId = master, AuthorityId = TugMasterGrant, Duty = "TugMaster", PayloadJson = payload, PreviousHash = "", Hash = x.LastEventHash });
+            db.TowageExecutions.Add(x);
+            await db.SaveChangesAsync(Ct);
+        }
+        FieldActor(host.Services, master); await Token(c);
+        var started = await FieldGet<TowageExecutionView>(c, $"towage-executions/{executionId}?vessel={Tug.Id}");
         Assert.Equal(("ACTIVE", "PENDING", 1L, "STARTED"), (started.Execution.State, started.Execution.VerificationState, started.Execution.Sequence, started.Timeline.Single().Kind));
         Assert.Equal((plan.Id, briefing.Id, go), (started.Execution.PlanId, started.Execution.BriefingId, started.Execution.ReadinessDecisionId));
-        Assert.Equal(executionId, (await RiskOk<TowageExecutionView>(await Send(c, $"towage-executions?vessel={Tug.Id}", start, key))).Execution.Id);
         await AssertCode(await Send(c, $"towage-executions?vessel={Tug.Id}", start with { Id = Guid.NewGuid() }), (HttpStatusCode)422, "towage_start_blocked");
 
         // Crew record observations with their units; the ledger refuses an impossible towline sequence.
@@ -109,6 +147,13 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.False(released.Ledger.TowlineConnected); Assert.NotNull(released.Ledger.TowlineConnectedAt); Assert.NotNull(released.Ledger.TowlineReleasedAt);
         Assert.Equal(("42.5", "t"), (released.Ledger.MaxTowLoad.Single().Value, released.Ledger.MaxTowLoad.Single().Unit));
         Assert.Equal("UNKNOWN", released.Ledger.CommunicationState); Assert.False(released.CanTransition);
+        // QA B3: crew, AI and system principals record observations but never SUSPEND or ABORT the operation.
+        foreach (var (who, kind) in new[] { (crew, "Human"), (Guid.NewGuid(), "AI"), (Guid.NewGuid(), "System") }) {
+            FieldPrincipal(host.Services, who, kind); await Token(c);
+            foreach (var action in new[] { "SUSPEND", "ABORT" })
+                await AssertCode(await Send(c, $"towage-executions/{executionId}/transitions?vessel={Tug.Id}", new TowageExecutionTransitionCommand(released.Execution.Version, action,
+                    "FICTIONAL unauthorised stop", DateTimeOffset.UtcNow, TugMasterGrant, null)), HttpStatusCode.Forbidden, "tug_authority_required");
+        }
 
         // Tug Master transitions with reasons; COMPLETE needs an end position.
         FieldActor(host.Services, master); await Token(c);

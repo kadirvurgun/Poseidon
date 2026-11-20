@@ -105,14 +105,19 @@ public static class TowageExecutionEndpoints
             .OrderByDescending(x => x.ProposedAt).FirstOrDefaultAsync(ct);
         var d = p == null ? null : await db.TugReadinessDecisions.AsNoTracking().Where(x => x.VesselId == vessel && x.AssignmentId == p.Id)
             .OrderByDescending(x => x.RecordedAt).ThenByDescending(x => x.Id).FirstOrDefaultAsync(ct);
-        var hashCurrent = false;
-        if (assess && p != null && d?.Decision == TugReadinessDecisionPolicy.Go)
-            hashCurrent = (await TugReadinessAssessor.Assess(h, db, a, p, job, TugReadinessHttp.Now(h), ct)).Outcome.Hash == d.AssessmentHash;
+        var hashCurrent = false; var ready = false;
+        if (assess && p != null && d?.Decision == TugReadinessDecisionPolicy.Go) {
+            var outcome = (await TugReadinessAssessor.Assess(h, db, a, p, job, TugReadinessHttp.Now(h), ct)).Outcome;
+            hashCurrent = outcome.Hash == d.AssessmentHash;
+            // QA N2: a GO only opens the start when both the recorded and the recomputed assessment are READY; a
+            // CONDITIONAL/REVIEW_REQUIRED/NOT_READY state never starts an operation, whatever the stored row claims.
+            ready = outcome.State == TugReadinessEngine.Ready && d.AssessedState == TugReadinessEngine.Ready;
+        }
         var plan = s.Plan;
         var facts = new TowageStartFacts(job.Status, existing != null, plan != null,
             plan != null && plan.State == TowagePlanPolicy.Approved && plan.ApprovedRevision == plan.Revision, plan != null && plan.JobRevision == job.Revision,
             plan != null && plan.Content.Tugs.Any(t => t.TugId == tug), s.Briefing == null ? [] : TowageBriefingPolicy.Checks(s.Briefing, s.Plan, s.Risk, s.RiskReadable),
-            p != null, d?.Decision, d != null && p != null && d.AssignmentRevision == p.Revision, hashCurrent);
+            p != null, d?.Decision, d != null && p != null && d.AssignmentRevision == p.Revision, hashCurrent, ready);
         return new(facts, p, d, s, job, existing);
     }
 
