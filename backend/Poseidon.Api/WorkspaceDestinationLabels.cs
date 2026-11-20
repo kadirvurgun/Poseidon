@@ -25,6 +25,8 @@ internal static class WorkspaceDestinationLabels
         ["critical-spares"] = ["Kritik yedekler ve talepler", "Critical spares and requisitions"],
         ["pms-command-center"] = ["PMS komuta merkezi", "PMS command center"],
         ["service-engineer-report"] = ["Servis ve mühendis raporları", "Service and engineer reports"],
+        ["voice-event-draft"] = ["Sesli olay taslağı", "Voice event draft"],
+        ["document-compare"] = ["Doküman revizyon karşılaştırma", "Document revision compare"],
         ["operational-downtime"] = ["Operasyonel duruşlar", "Operational downtime"],
         ["risk-assessment"] = ["Risk değerlendirmesi", "Risk assessment"],
         ["risk-template-library"] = ["Risk şablon kütüphanesi", "Risk template library"],

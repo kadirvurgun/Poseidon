@@ -45,6 +45,8 @@ public static class SecurityEventCodes
         "CriticalSpareRead", "CriticalSpareCommand", "TechnicalRequisitionRead", "TechnicalRequisitionCommand",
         "CredentialVerificationRead", "CredentialVerificationCommand", "CrewCompetenceRead", "CrewCompetenceCommand", "SafeManningRead", "SafeManningCommand",
         "MeasurementRead", "MeasurementCommand", "MaintenancePostponementRead", "MaintenancePostponementCommand",
+        // S9 WP-C DEV-062 / DEV-114.
+        "VoiceDraftRead", "VoiceDraftCommand", "VoiceDraftTranscription", "ControlledDocumentContentAccess",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static IReadOnlySet<string> Results { get; } = new string[]
     {
@@ -112,6 +114,10 @@ public static class SecurityEventCodes
         "checklist_items_mismatch", "na_not_authorized", "port_call_unavailable", "template_unavailable", "verification_rejected",
         "required_evidence_missing", "required_evidence_unconfigured", "evidence_changed", "stock_not_low", "requisition_already_open", "quantity_required",
         "credential_document_required", "competence_requirement_unavailable", "evaluation_window_invalid", "manning_dispensation_required", "manning_dispensation_not_applicable", "manning_review_acknowledgement_required",
+        // S9 WP-C DEV-062 / DEV-114.
+        "speech_capability_unavailable", "speech_input_invalid", "speech_attestation_invalid", "voice_draft_incomplete",
+        "document_download_restricted", "controlled_document_download_policy", "acknowledgement_revision_stale", "already_acknowledged",
+        "content_access_required", "isps_classification_required",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static bool Allows(string action, string result) => Actions.Contains(action) && Results.Contains(result);
 }

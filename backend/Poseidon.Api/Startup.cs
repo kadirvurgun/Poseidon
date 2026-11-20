@@ -53,6 +53,10 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddDailyReferenceReaders();
         services.AddSingleton<ClamdScanner>();
         services.AddSingleton<FileCapabilities>();
+        // S9 WP-C DEV-062: local-only speech; no engine ships, so the default provider is explicitly unavailable.
+        services.AddSingleton(configuration.GetSection("SpeechTranscription").Get<SpeechTranscriptionSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
+        Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddSingleton<ISpeechTranscriptionProvider, UnavailableSpeechTranscriptionProvider>(services);
+        services.AddSingleton<SpeechAttestations>();
         services.AddFoundationIdentity(configuration, hostEnvironment);
         services.AddScoped<SecurityAudit>();
         // S7 WP-A: advisory crew eligibility (stable consumer contract ICrewEligibilityEvaluator).
@@ -224,6 +228,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapRiskTemplates();
             endpoints.MapDefectLifecycle();
             endpoints.MapServiceReports();
+            endpoints.MapVoiceEventDrafts();
             endpoints.MapPmsCommandCenter();
             endpoints.MapMaintenanceObservations();
             endpoints.MapMeasurementPoints();

@@ -24,6 +24,9 @@ public static class WorkspaceEndpoints
         // DEV-056/DEV-103: the same server predicates as their endpoints.
         if (PmsCommandCenterEndpoints.CanRead(actor)) destinations = [.. destinations, new("pms-command-center", "/app/pms-command-center")];
         if (ServiceReportEndpoints.CanRead(actor)) destinations = [.. destinations, new("service-engineer-report", "/app/service-engineer-report")];
+        // S9 WP-C DEV-062 / DEV-114: the same server predicates as their endpoints.
+        if (VoiceEventDraftEndpoints.CanRead(actor)) destinations = [.. destinations, new("voice-event-draft", "/app/voice-event-draft")];
+        if (ControlledDocumentEndpoints.CanReadDocuments(actor)) destinations = [.. destinations, new("document-compare", "/app/document-compare")];
         if (OperationalDowntimeEndpoints.CanRead(actor)) destinations = [.. destinations, new("operational-downtime", "/app/operational-downtime")];
         // DEV-105/DEV-106: the same server predicates as the risk endpoints.
         if (RiskAssessmentEndpoints.CanRead(actor)) destinations = [.. destinations, new("risk-assessment", "/app/risk-assessment")];

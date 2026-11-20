@@ -4818,6 +4818,38 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/vessels/{vessel}/controlled-documents/{document}/revisions/{revision}/acknowledgements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AcknowledgeControlledDocumentRevision"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/controlled-documents/{document}/revisions/{revision}/content-access": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AuthorizeControlledDocumentContent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/vessels/{vessel}/crew/position-catalog": {
         parameters: {
             query?: never;
@@ -6492,6 +6524,118 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["ServiceReportAmend"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/voice-event-drafts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["VoiceDraftList"];
+        put?: never;
+        post: operations["VoiceDraftCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/voice-event-drafts/capabilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["VoiceDraftCapabilities"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/voice-event-drafts/metrics": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["VoiceDraftMetrics"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/voice-event-drafts/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["VoiceDraftRead"];
+        put: operations["VoiceDraftUpdate"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/voice-event-drafts/transcriptions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["VoiceDraftTranscribe"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/voice-event-drafts/{id}/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["VoiceDraftConfirm"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/voice-event-drafts/{id}/reject": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["VoiceDraftReject"];
         delete?: never;
         options?: never;
         head?: never;
@@ -8480,10 +8624,61 @@ export interface components {
             /** Format: date-time */
             asOf: string;
         };
+        ControlledDocumentAcknowledgeCommand: {
+            displayedContentSha256: null | string;
+            statementAccepted: boolean;
+        };
+        ControlledDocumentAcknowledgementDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uuid */
+            actorId: string;
+            statement: string;
+            /** Format: date-time */
+            acknowledgedAt: string;
+        };
+        ControlledDocumentContentAccessCommand: {
+            purpose: null | string;
+        };
+        ControlledDocumentContentAccessDto: {
+            /** Format: uuid */
+            recordId: string;
+            /** Format: uuid */
+            documentId: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uuid */
+            fileId: string;
+            /** Format: int64 */
+            fileRevision: number;
+            mime: string;
+            contentSha256: string;
+            classification: string;
+            purpose: string;
+            policyBasis: string;
+            attribution: string;
+            print: string;
+            capability: string;
+            /** Format: date-time */
+            expiresAt: string;
+            /** Format: date-time */
+            issuedAt: string;
+        };
+        ControlledDocumentContentPolicyDto: {
+            classification: string;
+            download: string;
+            print: string;
+            basis: string;
+            attributionRequired: boolean;
+            ispsRestricted: boolean;
+        };
         ControlledDocumentCreateCommand: {
             code: null | string;
             title: null | string;
             classification: null | string;
+            ispsRestricted?: null | boolean;
         };
         ControlledDocumentCustodyDto: {
             /** Format: int64 */
@@ -8528,6 +8723,10 @@ export interface components {
             links: components["schemas"]["ControlledDocumentLinkDto"][];
             /** Format: date-time */
             asOf: string;
+            /** @default false */
+            ispsRestricted: boolean;
+            contentPolicy?: null | components["schemas"]["ControlledDocumentContentPolicyDto"];
+            acknowledgements?: null | components["schemas"]["ControlledDocumentAcknowledgementDto"][];
         };
         ControlledDocumentHoldCommand: {
             authorityRef: null | string;
@@ -8589,6 +8788,10 @@ export interface components {
             /** Format: date-time */
             publishedAt: null | string;
             verifications: components["schemas"]["ControlledDocumentVerificationDto"][];
+            /** Format: date-time */
+            acknowledgedByMeAt?: null | string;
+            /** @default false */
+            canAcknowledge: boolean;
         };
         ControlledDocumentSummaryDto: {
             /** Format: uuid */
@@ -8608,6 +8811,8 @@ export interface components {
             retentionState: string;
             disposalState: string;
             provenance: string;
+            /** @default false */
+            ispsRestricted: boolean;
         };
         ControlledDocumentVerificationCommand: {
             method: null | string;
@@ -13880,6 +14085,14 @@ export interface components {
             reasons: string[];
             qualification: string;
         };
+        SpeechSegment: {
+            /** Format: int32 */
+            start: number;
+            /** Format: int32 */
+            end: number;
+            /** Format: double */
+            confidence: number;
+        };
         StageFileCommand: {
             name: null | string;
             mime: null | string;
@@ -15200,6 +15413,229 @@ export interface components {
             name: null | string;
             /** Format: uint32 */
             expectedVersion: null | number;
+        };
+        VoiceDraftCandidate: {
+            protocol: string;
+            extractorVersion: string;
+            ruleSetVersion: string;
+            transcriptSha256: string;
+            fields: components["schemas"]["VoiceDraftCandidateField"][];
+            hints: components["schemas"]["VoiceDraftHint"][];
+        };
+        VoiceDraftCandidateField: {
+            key: string;
+            value: string;
+            spans: components["schemas"]["VoiceDraftSpan"][];
+            /** Format: double */
+            confidence: number;
+            rule: string;
+        };
+        VoiceDraftCapabilitiesDto: {
+            /** Format: uuid */
+            vesselId: string;
+            canRead: boolean;
+            canWrite: boolean;
+            canConfirm: boolean;
+            speechAvailable: boolean;
+            speechUnavailableReason: null | string;
+            speechEngineVersion: null | string;
+            /** Format: int32 */
+            maxAudioBytes: number;
+            audioRetention: string;
+            extractorVersion: string;
+            ruleSetVersion: string;
+            eventTypes: string[];
+            locations: string[];
+            rejectionReasons: string[];
+            requiredFields: string[];
+            canAttachEvidence: boolean;
+        };
+        VoiceDraftConfirmCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+        };
+        VoiceDraftCreateCommand: {
+            /** Format: uuid */
+            id: string;
+            transcript: string;
+            origin: string;
+            /** Format: date */
+            referenceDate: string;
+            speechAttestation: null | string;
+        };
+        VoiceDraftDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            state: string;
+            origin: string;
+            transcript: string;
+            transcriptSha256: string;
+            /** Format: date */
+            referenceDate: string;
+            speech: null | components["schemas"]["VoiceDraftSpeechDto"];
+            extractorVersion: string;
+            ruleSetVersion: string;
+            candidate: components["schemas"]["VoiceDraftCandidate"];
+            fields: components["schemas"]["VoiceDraftFields"];
+            fieldOrigins: {
+                [key: string]: string;
+            };
+            evidence: components["schemas"]["VoiceDraftEvidenceDto"][];
+            missing: string[];
+            hash: string;
+            corrections: null | components["schemas"]["VoiceDraftFieldCorrection"][];
+            /** Format: uuid */
+            confirmedBy: null | string;
+            /** Format: date-time */
+            confirmedAt: null | string;
+            rejection: null | components["schemas"]["VoiceDraftRejectionDto"];
+            revisions: components["schemas"]["VoiceDraftRevisionSummaryDto"][];
+            /** Format: uuid */
+            createdBy: string;
+            canEdit: boolean;
+            canConfirm: boolean;
+            handoff: string;
+            audioRetention: string;
+            provenance: string;
+            /** Format: date-time */
+            savedAt: string;
+        };
+        VoiceDraftEvidenceDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            currency: string;
+            state: string;
+        };
+        VoiceDraftFieldCorrection: {
+            key: string;
+            outcome: string;
+            required: boolean;
+        };
+        VoiceDraftFields: {
+            eventType: null | string;
+            occurredAt: null | string;
+            location: null | string;
+            locationDetail: null | string;
+            description: null | string;
+            immediateAction: null | string;
+        };
+        VoiceDraftHint: {
+            code: string;
+            span: components["schemas"]["VoiceDraftSpan"];
+        };
+        VoiceDraftListItemDto: {
+            /** Format: uuid */
+            id: string;
+            state: string;
+            origin: string;
+            eventType: null | string;
+            location: null | string;
+            occurredAt: null | string;
+            /** Format: int32 */
+            missingCount: number;
+            /** Format: int64 */
+            revision: number;
+            /** Format: date-time */
+            savedAt: string;
+        };
+        VoiceDraftMetricsDto: {
+            /** Format: uuid */
+            vesselId: string;
+            state: string;
+            /** Format: int32 */
+            confirmed: number;
+            /** Format: int32 */
+            rejected: number;
+            /** Format: int32 */
+            open: number;
+            /** Format: double */
+            fieldCompleteness: null | number;
+            /** Format: double */
+            correctionRate: null | number;
+            /** Format: double */
+            usability: null | number;
+            /** Format: double */
+            rejectionRate: null | number;
+            rejectionsByReason: {
+                [key: string]: number;
+            };
+            /** Format: int32 */
+            sampleLimit: number;
+            extractorVersion: string;
+        };
+        VoiceDraftPageDto: {
+            items: components["schemas"]["VoiceDraftListItemDto"][];
+            /** Format: int32 */
+            offset: number;
+            /** Format: int32 */
+            limit: number;
+            hasMore: boolean;
+            canWrite: boolean;
+        };
+        VoiceDraftRejectCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            reasonCode: string;
+            note: null | string;
+        };
+        VoiceDraftRejectionDto: {
+            reasonCode: string;
+            note: null | string;
+            /** Format: uuid */
+            rejectedBy: string;
+            /** Format: date-time */
+            rejectedAt: string;
+        };
+        VoiceDraftRevisionSummaryDto: {
+            /** Format: int64 */
+            revision: number;
+            state: string;
+            reasonCode: string;
+            hash: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            savedAt: string;
+        };
+        VoiceDraftSpan: {
+            /** Format: int32 */
+            start: number;
+            /** Format: int32 */
+            end: number;
+        };
+        VoiceDraftSpeechDto: {
+            engineVersion: string;
+            modelVersion: string;
+            /** Format: double */
+            meanConfidence: null | number;
+        };
+        VoiceDraftTranscriptionDto: {
+            transcript: string;
+            transcriptSha256: string;
+            engineVersion: string;
+            modelVersion: string;
+            /** Format: double */
+            meanConfidence: null | number;
+            segments: components["schemas"]["SpeechSegment"][];
+            attestation: string;
+            /** Format: date-time */
+            expiresAt: string;
+            audioRetained: boolean;
+        };
+        VoiceDraftUpdateCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            fields: components["schemas"]["VoiceDraftFields"];
+            evidenceFileIds: string[];
         };
         WinchFitmentReference: {
             /** Format: uuid */
@@ -22501,6 +22937,66 @@ export interface operations {
             };
         };
     };
+    AcknowledgeControlledDocumentRevision: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string;
+                "X-CSRF-TOKEN"?: string;
+                "If-Match"?: string;
+            };
+            path: {
+                vessel: string;
+                document: string;
+                revision: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ControlledDocumentAcknowledgeCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ControlledDocumentDto"];
+                };
+            };
+        };
+    };
+    AuthorizeControlledDocumentContent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                document: string;
+                revision: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ControlledDocumentContentAccessCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ControlledDocumentContentAccessDto"];
+                };
+            };
+        };
+    };
     CrewCatalogRead: {
         parameters: {
             query?: never;
@@ -25761,6 +26257,226 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ServiceReportDto"];
+                };
+            };
+        };
+    };
+    VoiceDraftList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoiceDraftPageDto"];
+                };
+            };
+        };
+    };
+    VoiceDraftCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VoiceDraftCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoiceDraftDto"];
+                };
+            };
+        };
+    };
+    VoiceDraftCapabilities: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoiceDraftCapabilitiesDto"];
+                };
+            };
+        };
+    };
+    VoiceDraftMetrics: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoiceDraftMetricsDto"];
+                };
+            };
+        };
+    };
+    VoiceDraftRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoiceDraftDto"];
+                };
+            };
+        };
+    };
+    VoiceDraftUpdate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VoiceDraftUpdateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoiceDraftDto"];
+                };
+            };
+        };
+    };
+    VoiceDraftTranscribe: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "audio/webm": string;
+                "audio/ogg": string;
+                "audio/wav": string;
+                "audio/mp4": string;
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoiceDraftTranscriptionDto"];
+                };
+            };
+        };
+    };
+    VoiceDraftConfirm: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VoiceDraftConfirmCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoiceDraftDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechnicalRecordFailure"];
+                };
+            };
+        };
+    };
+    VoiceDraftReject: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VoiceDraftRejectCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoiceDraftDto"];
                 };
             };
         };

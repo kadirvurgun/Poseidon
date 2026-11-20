@@ -11,6 +11,7 @@
     <Content Include="../../contracts/golden/applicability.predicate-cases.v1.json" Link="Fixtures/applicability.predicate-cases.v1.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="../../contracts/metrics.v1.json" Link="Fixtures/metrics.v1.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="../../contracts/parameters.v1.json" Link="Fixtures/parameters.v1.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../contracts/golden/voice-event-draft.golden-v1.json" Link="Fixtures/voice-event-draft.golden-v1.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="../../contracts/golden/pilot-dataset.v1.json" Link="Fixtures/pilot-dataset.v1.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="../fixtures/certificate-extraction/synthetic-masked-v1.json" Link="Fixtures/certificate-extraction.synthetic-masked-v1.json" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="../fixtures/certificate-extraction/golden-pdf-v1.json" Link="Fixtures/certificate-extraction.golden-pdf-v1.json" CopyToOutputDirectory="PreserveNewest" />
