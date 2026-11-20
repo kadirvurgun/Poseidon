@@ -66,6 +66,7 @@ def deadline_diagnostics(output, discovered):
 
 
 MARKER_VARIABLE = 'POSEIDON_TEST_MARKER_FILE'
+PERFORMANCE_TRAIT = 'Category=Performance'
 
 
 def marker_path(root, scope, index):
@@ -117,6 +118,8 @@ def command(scope):
             '--configuration', 'Release', '--no-build']
     if scope != 'all':
         args.extend(['--filter-trait' if scope == 'integration' else '--filter-not-trait', 'Category=Integration'])
+    # DEV-067: opt-in measurement (scripts/perf_baseline.py) never enters a gate scope or its counts.
+    args.extend(['--filter-not-trait', PERFORMANCE_TRAIT])
     return args
 
 

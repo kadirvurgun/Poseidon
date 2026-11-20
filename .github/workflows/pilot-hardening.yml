@@ -1,0 +1,81 @@
+name: Pilot hardening (manual)
+
+# DEV-067 / DEV-068 (S10 WP-D). Manual only: never part of push/pull_request CI, so the
+# Application foundation PostgreSQL step duration and api_test_gate counts are unchanged.
+on:
+  workflow_dispatch:
+    inputs:
+      api_evidence_run_id:
+        description: 'Application foundation run id whose api-test-counts artifact proves the mapped security tests (must be for this commit)'
+        required: false
+        default: ''
+      work_orders:
+        description: 'Synthetic FICTIONAL draft work orders for the performance fixture'
+        required: false
+        default: '1000'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: pilot-hardening-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  performance-baseline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-dotnet@v6.0.0
+        with:
+          global-json-file: global.json
+      - name: Restore and build
+        run: |
+          dotnet tool restore
+          dotnet restore Poseidon.slnx --locked-mode
+          dotnet build Poseidon.slnx --configuration Release --no-restore
+      - name: Measure pilot workload baseline (measured, no SLA claim)
+        run: python3 scripts/perf_baseline.py --work-orders "${{ inputs.work_orders }}"
+      - uses: actions/upload-artifact@v7.0.2
+        if: always()
+        with:
+          name: perf-baseline
+          path: .runtime/perf/perf-baseline-*.json
+          if-no-files-found: error
+
+  pre-pilot-security-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 26.13.0
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Build frontend production output for the client scan
+        run: |
+          npm ci --prefix frontend
+          npm run build --prefix frontend
+      - name: Fetch API gate evidence bound to this commit
+        if: inputs.api_evidence_run_id != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_ID: ${{ inputs.api_evidence_run_id }}
+        run: |
+          head=$(gh run view "$RUN_ID" -R "$GITHUB_REPOSITORY" --json headSha --jq .headSha)
+          if [ "$head" != "$GITHUB_SHA" ]; then echo "evidence run is for $head, not $GITHUB_SHA"; exit 1; fi
+          gh run download "$RUN_ID" -R "$GITHUB_REPOSITORY" -n api-test-counts -D .runtime/api-evidence
+          echo "EVIDENCE_ARGS=--api-evidence-dir .runtime/api-evidence --api-evidence-commit $GITHUB_SHA" >> "$GITHUB_ENV"
+      - name: Pre-pilot security gate (critical/high must be 0)
+        env:
+          POSEIDON_SOURCE_REVIEW_SHA256: ${{ vars.POSEIDON_SOURCE_REVIEW_SHA256 }}
+        run: python3 scripts/pre_pilot_security_gate.py $EVIDENCE_ARGS
+      - uses: actions/upload-artifact@v7.0.2
+        if: always()
+        with:
+          name: pre-pilot-security-gate
+          path: .runtime/security-gate/pre-pilot.json
+          if-no-files-found: error
