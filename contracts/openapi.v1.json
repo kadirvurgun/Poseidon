@@ -15660,7 +15660,7 @@
         "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
-    "/api/v1/safety-events/{id}/actions/{action}/steps": {
+    "/api/v1/safety-events/{id}/actions/{actionId}/steps": {
       "post": {
         "tags": [
           "Poseidon.Api"
@@ -15677,7 +15677,7 @@
             }
           },
           {
-            "name": "action",
+            "name": "actionId",
             "in": "path",
             "required": true,
             "schema": {

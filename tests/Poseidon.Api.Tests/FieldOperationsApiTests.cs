@@ -21,7 +21,19 @@ public sealed partial class DirectoryWorkspaceTests
     {
         var settings = services.GetRequiredService<FederationSettings>(); var m = settings.Memberships[0];
         string[] owned = ["tug.execution.verify", "drydock.read", "drydock.write", "drydock.verify"];
-        settings.Memberships[0] = m with { ActorId = actor, Permissions = [.. m.Permissions.Where(p => !p.StartsWith("hse.", StringComparison.Ordinal) && !owned.Contains(p)), .. RiskPermissions, .. extra] };
+        // The single fixture membership carries the synthetic Tug Master appointment; remember it per host so a
+        // crew identity can be modelled without it and the Master identity gets it back.
+        if (!fieldAppointments.TryGetValue(settings, out var appointments)) fieldAppointments[settings] = appointments = m.TugOperationsAuthorities;
+        settings.Memberships[0] = m with { ActorId = actor, TugOperationsAuthorities = appointments,
+            Permissions = [.. m.Permissions.Where(p => !p.StartsWith("hse.", StringComparison.Ordinal) && !owned.Contains(p)), .. RiskPermissions, .. extra] };
+    }
+    private readonly Dictionary<FederationSettings, TugOperationsAuthority[]> fieldAppointments = new(ReferenceEqualityComparer.Instance);
+    // Crew: same tug scope and permissions, but no Tug Master/Master appointment of their own.
+    private void FieldCrew(IServiceProvider services, Guid actor)
+    {
+        FieldActor(services, actor);
+        var settings = services.GetRequiredService<FederationSettings>();
+        settings.Memberships[0] = settings.Memberships[0] with { TugOperationsAuthorities = [] };
     }
     private async Task<T> FieldGet<T>(HttpClient c, string path) => (await c.GetFromJsonAsync<T>("/api/v1/" + path, Ct))!;
 
@@ -53,7 +65,7 @@ public sealed partial class DirectoryWorkspaceTests
             new TowagePlanDecisionCommand(submitted.Version, submitted.Hash, "APPROVE", "FICTIONAL Tug Master plan review", TugMasterGrant)));
         await RiskOk<RiskAssessmentDto>(await Send(c, RiskPath($"/{ra.Id}/review", Tug.Id), new RiskAssessmentReviewCommand(raSubmitted.Version, raSubmitted.Hash, "APPROVE", "FICTIONAL HSE review record")));
         var issued = await RiskOk<TowageBriefingDto>(await Send(c, TowagePath("towage-risk-briefings", $"/{briefing.Id}/issue"), new TowageBriefingIssueCommand(briefing.Version, briefing.Hash, TugMasterGrant)));
-        FieldActor(host.Services, crew); await Token(c);
+        FieldCrew(host.Services, crew); await Token(c);
         await RiskOk<TowageBriefingDto>(await Send(c, TowagePath("towage-risk-briefings", $"/{briefing.Id}/acknowledgements"), new TowageBriefingAcknowledgeCommand(issued.Revision, issued.Hash, "ACK")));
 
         // No GO human record yet: the start gate is blocked and the server refuses the start.
@@ -85,7 +97,7 @@ public sealed partial class DirectoryWorkspaceTests
         await AssertCode(await Send(c, $"towage-executions?vessel={Tug.Id}", start with { Id = Guid.NewGuid() }), (HttpStatusCode)422, "towage_start_blocked");
 
         // Crew record observations with their units; the ledger refuses an impossible towline sequence.
-        FieldActor(host.Services, crew); await Token(c);
+        FieldCrew(host.Services, crew); await Token(c);
         string Events() => $"towage-executions/{executionId}/events?vessel={Tug.Id}";
         TowageEventInput E(string kind, string? value = null, string? unit = null, string? result = null, string? text = null, string? reference = null) =>
             new(kind, DateTimeOffset.UtcNow, value, unit, result, text, reference, null);

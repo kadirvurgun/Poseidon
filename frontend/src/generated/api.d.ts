@@ -6482,7 +6482,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/v1/safety-events/{id}/actions/{action}/steps": {
+    "/api/v1/safety-events/{id}/actions/{actionId}/steps": {
         parameters: {
             query?: never;
             header?: never;
@@ -27753,7 +27753,7 @@ export interface operations {
             header?: never;
             path: {
                 id: string;
-                action: string;
+                actionId: string;
             };
             cookie?: never;
         };

@@ -45,7 +45,7 @@ public static class SafetyInvestigationEndpoints
         g.MapPost("/actions", (Guid id, HttpContext h, PoseidonDbContext db) => SafetyEventCommands.Run<SafetyActionCreateCommand>(h, db, "SafetyActionCreate", id, null,
                 (a, _) => SafetyEventAccess.ActionWriter(a), _ => id, CreateAction, SafetyEventEndpoints.Fresh))
             .WithName("SafetyActionCreate").Accepts<SafetyActionCreateCommand>("application/json").Produces<SafetyEventDto>().Produces<SafetyFailure>(422);
-        g.MapPost("/actions/{action:guid}/steps", (Guid id, Guid action, HttpContext h, PoseidonDbContext db) => Step(id, action, h, db))
+        g.MapPost("/actions/{actionId:guid}/steps", (Guid id, Guid actionId, HttpContext h, PoseidonDbContext db) => Step(id, actionId, h, db))
             .WithName("SafetyActionStep").Accepts<SafetyActionStepCommand>("application/json").Produces<SafetyEventDto>();
         g.MapPost("/close", (Guid id, HttpContext h, PoseidonDbContext db) => SafetyEventCommands.Run<SafetyEventReasonCommand>(h, db, "SafetyEventClose", id, null,
                 (a, _) => SafetyEventAccess.Reviewer(a), _ => id, Close, SafetyEventEndpoints.Fresh, humanOnly: true))
