@@ -33,6 +33,8 @@ public static partial class TugEndpoints
         g.MapPut("/tug-jobs/{id:guid}", Save).WithName("TugUpdate").Accepts<TugSaveCommand>("application/json").Produces<TugRequestDto>();
         app.MapTugAssignments(); // S7 WP-B DEV-083
         app.MapTugReadiness(); // S7 WP-B DEV-084..086
+        app.MapTowage(); // S8 WP-D DEV-087/088
+        app.MapHighRiskWork(); // S8 WP-D DEV-107
     }
     private static TrustedActor Actor(HttpContext h) => h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User)!;
     private static bool Write(TrustedActor a, Guid vessel) => a.CanReadTug && a.HasWriteAttribution && a.Permissions.Contains("tug.write") &&

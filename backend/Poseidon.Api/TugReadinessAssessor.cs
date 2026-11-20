@@ -156,8 +156,12 @@ internal static class TugReadinessAssessor
         checks.AddRange(crew.Checks.Where(c => c.Category == "crew_competence"));
         var equipment = await Equipment(h, db, a, p.TugId, p.PlannedEnd, ct);
         checks.AddRange(equipment.Checks.Select(c => c.Category == "pms" ? c : c with { Category = "tow_equipment" }));
-        // No typed communication or whole-window weather source exists yet (60.02 paragraph 196): UNKNOWN.
-        checks.Add(new("communication", TugReadinessEngine.Unknown, "CommunicationSourceUnavailable"));
+        // S8 DEV-087/088: the communication input comes only from a current approved towage plan that covers this
+        // tug (otherwise UNKNOWN); an incomplete towage risk briefing is a FAIL that blocks READY.
+        var towage = await TowageReader.Read(db, a, p.VesselId, p.JobId, ct);
+        checks.Add(TowagePlanPolicy.Communication(towage.Plan, p.TugId, job.Revision));
+        checks.AddRange(TowageBriefingPolicy.Checks(towage.Briefing, towage.Plan, towage.Risk, towage.RiskReadable));
+        // No whole-window weather source exists yet (60.02 paragraph 196): UNKNOWN.
         checks.Add(new("weather", TugReadinessEngine.Unknown, "WholeWindowWeatherSourceUnavailable"));
         var capacity = evidence.OwnedBp?.SingleOrDefault(c => c.TugId == p.TugId);
         decimal? available = capacity is { State: "CurrentPlanningCapacity", Tonnes: { } t } && decimal.TryParse(t, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out var v) ? v : null;

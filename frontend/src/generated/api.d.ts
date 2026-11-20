@@ -6738,6 +6738,182 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/towage-plans": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["TowagePlanRead"];
+        put?: never;
+        post: operations["TowagePlanCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/towage-plans/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["TowagePlanUpdate"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/towage-plans/{id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TowagePlanSubmit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/towage-plans/{id}/decisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TowagePlanDecide"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/towage-plans/{id}/amend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TowagePlanAmend"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/towage-risk-briefings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["TowageBriefingRead"];
+        put?: never;
+        post: operations["TowageBriefingCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/towage-risk-briefings/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["TowageBriefingUpdate"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/towage-risk-briefings/{id}/issue": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TowageBriefingIssue"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/towage-risk-briefings/{id}/amend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TowageBriefingAmend"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/towage-risk-briefings/{id}/acknowledgements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["TowageBriefingAcknowledge"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/hse/high-risk-work": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["HighRiskWorkList"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/parameter-definitions": {
         parameters: {
             query?: never;
@@ -10047,6 +10223,84 @@ export interface components {
             localBacklog: null | number;
             /** Format: date-time */
             lastCommittedAt?: null | string;
+        };
+        HighRiskCompanyOption: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+        };
+        HighRiskDimension: {
+            dimension: string;
+            state: string;
+            reason: string;
+            /** Format: uuid */
+            sourceId?: null | string;
+        };
+        HighRiskNextAction: {
+            kind: string;
+            dimension: null | string;
+            reason: null | string;
+        };
+        HighRiskOwnerDue: {
+            ownerRole: null | string;
+            /** Format: date-time */
+            dueAt: null | string;
+            sourceKind: null | string;
+        };
+        HighRiskVesselOption: {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            name: string;
+            kind: string;
+            /** Format: uuid */
+            companyId: string;
+        };
+        HighRiskWorkPage: {
+            items: components["schemas"]["HighRiskWorkRow"][];
+            /** Format: int32 */
+            offset: number;
+            /** Format: int32 */
+            limit: number;
+            hasMore: boolean;
+            coverage: string[];
+            workTypes: string[];
+            vessels: components["schemas"]["HighRiskVesselOption"][];
+            fleets: components["schemas"]["HighRiskCompanyOption"][];
+            /** Format: date-time */
+            evaluatedAt: string;
+            /** @default NoAggregateScore;EveryDimensionShown;CriticalFirst */
+            scoring: string;
+            /** @default 18.01:row108;50.01-Rev3:p230,431,1072-1076;50.02:KaynakAlanlar:40-51 */
+            sourceVersion: string;
+        };
+        HighRiskWorkRow: {
+            workKind: string;
+            /** Format: uuid */
+            workId: string;
+            workRef: string;
+            /** Format: uuid */
+            vesselId: string;
+            vesselCode: string;
+            vesselName: string;
+            vesselKind: string;
+            workType: string;
+            /** Format: date-time */
+            plannedStart: null | string;
+            responsibleRole: null | string;
+            riskState: string;
+            permitState: string;
+            criticalBarrierState: string;
+            crewReadiness: string;
+            equipmentReadiness: string;
+            nextAction: components["schemas"]["HighRiskNextAction"];
+            ownerDue: components["schemas"]["HighRiskOwnerDue"];
+            why: components["schemas"]["HighRiskDimension"][];
+            /** Format: int32 */
+            criticalBlockers: number;
+            /** Format: int32 */
+            reviewItems: number;
+            link: string;
         };
         HrActualEventCommand: {
             kind: null | string;
@@ -13407,6 +13661,287 @@ export interface components {
             id: string;
             /** Format: int64 */
             revision: null | number;
+        };
+        TowageAcknowledgementDto: {
+            /** Format: uuid */
+            actorId: string;
+            /** Format: int64 */
+            revision: number;
+            choice: string;
+            reason: null | string;
+            /** Format: date-time */
+            recordedAt: string;
+        };
+        TowageAmendCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            reason: string;
+        };
+        TowageBriefingAcknowledgeCommand: {
+            /** Format: int64 */
+            revision: number;
+            contentHash: string;
+            choice: string;
+            reason?: null | string;
+        };
+        TowageBriefingContent: {
+            weather: null | string;
+            current: null | string;
+            visibility: null | string;
+            hazards: components["schemas"]["TowageItem"][];
+            preventiveBarriers: components["schemas"]["TowageItem"][];
+            mitigatingBarriers: components["schemas"]["TowageItem"][];
+            stopWorkAuthority: null | string;
+            stopWorkTriggers: components["schemas"]["TowageItem"][];
+            emergencyArrangements: null | string;
+            /** Format: uuid */
+            riskAssessmentId: null | string;
+            participants: components["schemas"]["TowageParticipant"][];
+        };
+        TowageBriefingCreateCommand: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            jobId: string;
+            content: components["schemas"]["TowageBriefingContent"];
+        };
+        TowageBriefingDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: uuid */
+            jobId: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            state: string;
+            content: components["schemas"]["TowageBriefingContent"];
+            hash: string;
+            /** Format: int64 */
+            planRevision: null | number;
+            /** Format: int64 */
+            riskRevision: null | number;
+            provenance: string;
+            /** Format: date-time */
+            savedAt: string;
+        };
+        TowageBriefingIssueCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+            /** Format: uuid */
+            authorityId: string;
+        };
+        TowageBriefingUpdateCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            content: components["schemas"]["TowageBriefingContent"];
+        };
+        TowageBriefingView: {
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: uuid */
+            jobId: string;
+            briefing: null | components["schemas"]["TowageBriefingDto"];
+            blockers: string[];
+            acknowledgementState: string;
+            acknowledgements: components["schemas"]["TowageAcknowledgementDto"][];
+            risk: components["schemas"]["TowageRiskStateDto"];
+            planState: null | string;
+            /** Format: int64 */
+            planRevision: null | number;
+            readinessChecks: components["schemas"]["TugReadinessCheck"][];
+            revisions: components["schemas"]["TowageRevisionDto"][];
+            authorities: components["schemas"]["TugAuthorityDto"][];
+            canEdit: boolean;
+            canIssue: boolean;
+            canAmend: boolean;
+            canAcknowledge: boolean;
+            roles: string[];
+            /** @default IncompleteBriefingIsFailAndBlocksReady */
+            readinessEffect: string;
+            /** @default 18.01:row89;10.01:p101-102;08.02:p120-121 */
+            sourceVersion: string;
+        };
+        TowageCommunication: {
+            primaryChannel: null | string;
+            standbyChannel: null | string;
+            workingLanguage: null | string;
+            lostCommunicationProcedure: null | string;
+        };
+        TowageContingency: {
+            /** Format: uuid */
+            id: string;
+            scenario: string;
+            action: string;
+        };
+        TowageDecisionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: int64 */
+            resultRevision: number;
+            decision: string;
+            duty: string;
+            /** Format: uuid */
+            tugId: string;
+            /** Format: uuid */
+            actorId: string;
+            reason: string;
+            /** Format: date-time */
+            decidedAt: string;
+        };
+        TowageEmergencyRelease: {
+            procedure: null | string;
+            orderedBy: null | string;
+        };
+        TowageItem: {
+            /** Format: uuid */
+            id: string;
+            description: string;
+        };
+        TowageLimit: {
+            parameter: string;
+            value: null | string;
+            sourceRef: null | string;
+        };
+        TowageParticipant: {
+            /** Format: uuid */
+            actorId: string;
+            role: string;
+            /** Format: uuid */
+            tugId: null | string;
+        };
+        TowagePlanContent: {
+            tugs: components["schemas"]["TowageTugRole"][];
+            informationExchange: null | string;
+            limits: components["schemas"]["TowageLimit"][];
+            communication: components["schemas"]["TowageCommunication"];
+            emergencyRelease: components["schemas"]["TowageEmergencyRelease"];
+            contingencies: components["schemas"]["TowageContingency"][];
+            snapBack: components["schemas"]["TowageSnapBack"];
+        };
+        TowagePlanCreateCommand: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            jobId: string;
+            content: components["schemas"]["TowagePlanContent"];
+        };
+        TowagePlanDecisionCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+            decision: string;
+            reason: string;
+            /** Format: uuid */
+            authorityId: string;
+        };
+        TowagePlanDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: uuid */
+            jobId: string;
+            /** Format: int64 */
+            jobRevision: number;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            state: string;
+            content: components["schemas"]["TowagePlanContent"];
+            hash: string;
+            /** Format: int64 */
+            approvedRevision: null | number;
+            /** Format: uuid */
+            submittedBy: null | string;
+            provenance: string;
+            /** Format: date-time */
+            savedAt: string;
+        };
+        TowagePlanUpdateCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            content: components["schemas"]["TowagePlanContent"];
+        };
+        TowagePlanView: {
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: uuid */
+            jobId: string;
+            /** Format: int64 */
+            jobRevision: number;
+            requestState: string;
+            plan: null | components["schemas"]["TowagePlanDto"];
+            blockers: string[];
+            assignedTugs: string[];
+            decisions: components["schemas"]["TowageDecisionDto"][];
+            revisions: components["schemas"]["TowageRevisionDto"][];
+            authorities: components["schemas"]["TugAuthorityDto"][];
+            canEdit: boolean;
+            canSubmit: boolean;
+            canDecide: boolean;
+            canAmend: boolean;
+            positions: string[];
+            methods: string[];
+            lineSources: string[];
+            limitUnits: {
+                [key: string]: string;
+            };
+            scenarios: string[];
+            /** @default MasterOrTugMasterHumanRecord;AuthorNeverApprover;NotAGoDecision */
+            approvalAuthority: string;
+            /** @default 18.01:row88;10.01:p98-99;08.02:p117-118;harbour-towage-codes */
+            sourceVersion: string;
+        };
+        TowageRevisionDto: {
+            /** Format: int64 */
+            revision: number;
+            state: string;
+            reasonCode: string;
+            hash: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            savedAt: string;
+        };
+        TowageRiskStateDto: {
+            /** Format: uuid */
+            assessmentId: null | string;
+            state: string;
+            reason: string;
+            /** Format: int64 */
+            revision: null | number;
+            /** Format: int64 */
+            approvedRevision: null | number;
+            acknowledgementState: null | string;
+        };
+        TowageSnapBack: {
+            zonesMarked: null | boolean;
+            controls: components["schemas"]["TowageItem"][];
+        };
+        TowageSubmitCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
+        };
+        TowageTugRole: {
+            /** Format: uuid */
+            tugId: string;
+            position: null | string;
+            method: null | string;
+            coordinating: boolean;
+            lineSource: null | string;
+            connectionPoint: null | string;
+            /** Format: uuid */
+            towlineItemId: null | string;
+            /** Format: uuid */
+            emergencyReleaseItemId: null | string;
         };
         TowEquipmentAssessment: {
             /** Format: uuid */
@@ -25003,6 +25538,340 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TowEquipmentVerificationDto"];
+                };
+            };
+        };
+    };
+    TowagePlanRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowagePlanView"];
+                };
+            };
+        };
+    };
+    TowagePlanCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TowagePlanCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowagePlanDto"];
+                };
+            };
+        };
+    };
+    TowagePlanUpdate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TowagePlanUpdateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowagePlanDto"];
+                };
+            };
+        };
+    };
+    TowagePlanSubmit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TowageSubmitCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowagePlanDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskFailure"];
+                };
+            };
+        };
+    };
+    TowagePlanDecide: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TowagePlanDecisionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowagePlanDto"];
+                };
+            };
+        };
+    };
+    TowagePlanAmend: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TowageAmendCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowagePlanDto"];
+                };
+            };
+        };
+    };
+    TowageBriefingRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowageBriefingView"];
+                };
+            };
+        };
+    };
+    TowageBriefingCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TowageBriefingCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowageBriefingDto"];
+                };
+            };
+        };
+    };
+    TowageBriefingUpdate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TowageBriefingUpdateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowageBriefingDto"];
+                };
+            };
+        };
+    };
+    TowageBriefingIssue: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TowageBriefingIssueCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowageBriefingDto"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RiskFailure"];
+                };
+            };
+        };
+    };
+    TowageBriefingAmend: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TowageAmendCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowageBriefingDto"];
+                };
+            };
+        };
+    };
+    TowageBriefingAcknowledge: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TowageBriefingAcknowledgeCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TowageBriefingDto"];
+                };
+            };
+        };
+    };
+    HighRiskWorkList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HighRiskWorkPage"];
                 };
             };
         };
