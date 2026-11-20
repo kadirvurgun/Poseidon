@@ -63,10 +63,13 @@ internal static class TugReadinessAssessor
         var defects = await db.Defects.AsNoTracking().Where(d => d.VesselId == tug).OrderBy(d => d.Id).Take(Limit + 1).ToArrayAsync(ct);
         if (defects.Length > Limit) return [new("pms", TugReadinessEngine.Unknown, "DefectProjectionLimitExceeded")];
         var result = new List<TugReadinessCheck>();
+        // DEV-055: only a human-closed lifecycle for the current declaration revision is not open.
+        var closed = await DefectLifecycleReader.ClosedRevisions(db, tug, defects.Select(d => d.Id).ToArray(), ct);
         foreach (var d in defects) {
+            if (closed.TryGetValue(d.Id, out var closedRevision) && closedRevision == d.Revision) { result.Add(new("pms", TugReadinessEngine.Pass, "DefectClosed", false, d.Id, d.Revision)); continue; }
             SortedDictionary<string, DefectFact> fields;
             try { fields = DefectPolicy.ReadFields(d.FieldsJson); } catch (InvalidDataException) { result.Add(new("pms", TugReadinessEngine.Unknown, "DefectFieldsUnavailable", true, d.Id, d.Revision)); continue; }
-            // No defect closure/verification exists yet: every declaration is treated as open.
+            // Not closed through the DEV-055 lifecycle: the declaration is treated as open.
             var criticality = fields.TryGetValue("criticality", out var c) && c.State == "Known" ? c.Value : null;
             result.Add(criticality switch {
                 "Critical" => new("pms", TugReadinessEngine.Fail, "DeclaredCriticalDefectOpen", true, d.Id, d.Revision),

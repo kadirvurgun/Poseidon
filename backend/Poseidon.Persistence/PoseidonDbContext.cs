@@ -61,6 +61,12 @@ public sealed class PoseidonDbContext(
     public DbSet<Defect> Defects => Set<Defect>();
     public DbSet<DefectRevision> DefectRevisions => Set<DefectRevision>();
     public DbSet<DefectReceipt> DefectReceipts => Set<DefectReceipt>();
+    public DbSet<DefectLifecycle> DefectLifecycles => Set<DefectLifecycle>();
+    public DbSet<DefectLifecycleRecord> DefectLifecycleRecords => Set<DefectLifecycleRecord>();
+    public DbSet<ServiceReport> ServiceReports => Set<ServiceReport>();
+    public DbSet<ServiceReportRevision> ServiceReportRevisions => Set<ServiceReportRevision>();
+    public DbSet<ServiceReportVerification> ServiceReportVerifications => Set<ServiceReportVerification>();
+    public DbSet<TechnicalRecordReceipt> TechnicalRecordReceipts => Set<TechnicalRecordReceipt>();
     public DbSet<Company> Companies => Set<Company>();
     public DbSet<Vessel> Vessels => Set<Vessel>();
     public DbSet<VesselProfile> VesselProfiles => Set<VesselProfile>();
@@ -347,6 +353,13 @@ public sealed class PoseidonDbContext(
         model.Entity<Defect>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         model.Entity<DefectRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         model.Entity<DefectReceipt>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        TechnicalRecordStorage.Configure(model);
+        model.Entity<DefectLifecycle>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<DefectLifecycleRecord>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<ServiceReport>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<ServiceReportRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<ServiceReportVerification>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<TechnicalRecordReceipt>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         DowntimeStorage.Configure(model);
         model.Entity<Downtime>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         model.Entity<DowntimeRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
@@ -677,6 +690,7 @@ public sealed class PoseidonDbContext(
                 (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue!+1))))
             throw new InvalidOperationException("WorkOrder ownership is immutable; append one revision.");
         RiskStorage.Guard(changes);
+        TechnicalRecordStorage.Guard(changes);
         if(changes.Any(e=>e.Entity is DowntimeRevision or DowntimeReceipt && e.State!=EntityState.Added))
             throw new InvalidOperationException("Downtime history and outcomes are immutable.");
         if(changes.Any(e=>e.Entity is Downtime && (e.State==EntityState.Deleted || e.State==EntityState.Modified &&

@@ -14425,6 +14425,804 @@
         "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
+    "/api/v1/defects/{id}/lifecycle": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DefectLifecycleRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefectLifecycleDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/defects/{id}/lifecycle/start": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DefectLifecycleStart",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DefectLifecycleCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefectLifecycleDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TechnicalRecordFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/defects/{id}/lifecycle/assess": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DefectLifecycleAssess",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DefectLifecycleCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefectLifecycleDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TechnicalRecordFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/defects/{id}/lifecycle/safeguards": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DefectLifecycleSafeguard",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DefectLifecycleCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefectLifecycleDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TechnicalRecordFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/defects/{id}/lifecycle/safeguards/{measureId}/lift": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DefectLifecycleLift",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "measureId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DefectLifecycleCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefectLifecycleDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TechnicalRecordFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/defects/{id}/lifecycle/actions": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DefectLifecycleAction",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DefectLifecycleCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefectLifecycleDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TechnicalRecordFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/defects/{id}/lifecycle/verify": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DefectLifecycleVerify",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DefectLifecycleCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefectLifecycleDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TechnicalRecordFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/defects/{id}/lifecycle/effectiveness": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DefectLifecycleEffectiveness",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DefectLifecycleCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefectLifecycleDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TechnicalRecordFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/defects/{id}/lifecycle/close": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "DefectLifecycleClose",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DefectLifecycleCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DefectLifecycleDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TechnicalRecordFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/service-reports": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "ServiceReportList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceReportPageDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "ServiceReportCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceReportCreateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceReportDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/service-reports/capabilities": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "ServiceReportCapabilities",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceReportCapabilitiesDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/service-reports/{id}": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "ServiceReportRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceReportDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "ServiceReportUpdate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceReportUpdateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceReportDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/service-reports/{id}/revisions/{revision}": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "ServiceReportRevisionRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "revision",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceReportRevisionDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/service-reports/{id}/submit": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "ServiceReportSubmit",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceReportSubmitCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceReportDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TechnicalRecordFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/service-reports/{id}/verify": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "ServiceReportVerify",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceReportVerifyCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceReportDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/service-reports/{id}/amend": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "ServiceReportAmend",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceReportAmendCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceReportDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/pms/command-center": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "PmsCommandCenterRead",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PmsCommandCenterDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
     "/api/v1/equipment-hierarchy/{vessel}/{asset}/observations": {
       "get": {
         "tags": [
@@ -26372,6 +27170,373 @@
           }
         }
       },
+      "DefectLifecycleActionsDto": {
+        "required": [
+          "start",
+          "assess",
+          "safeguard",
+          "lift",
+          "action",
+          "verify",
+          "effectiveness",
+          "close"
+        ],
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "boolean"
+          },
+          "assess": {
+            "type": "boolean"
+          },
+          "safeguard": {
+            "type": "boolean"
+          },
+          "lift": {
+            "type": "boolean"
+          },
+          "action": {
+            "type": "boolean"
+          },
+          "verify": {
+            "type": "boolean"
+          },
+          "effectiveness": {
+            "type": "boolean"
+          },
+          "close": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DefectLifecycleAlert": {
+        "required": [
+          "code",
+          "blocking",
+          "measureId",
+          "at"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "blocking": {
+            "type": "boolean"
+          },
+          "measureId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "at": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "DefectLifecycleCommand": {
+        "required": [
+          "expectedRevision"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "criticality": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "measureKind": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "text": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "temporary": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "expiresAt": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "outcome": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "defectRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DefectLifecycleDto": {
+        "required": [
+          "defectId",
+          "vesselId",
+          "started",
+          "revision",
+          "stage",
+          "assessedCriticality",
+          "declaredCriticality",
+          "critical",
+          "defectRevision",
+          "records",
+          "measures",
+          "alerts",
+          "closeBlockers",
+          "actionOwners",
+          "closedBy",
+          "closedAt",
+          "assessedAt",
+          "can"
+        ],
+        "type": "object",
+        "properties": {
+          "defectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "started": {
+            "type": "boolean"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "stage": {
+            "type": "string"
+          },
+          "assessedCriticality": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "declaredCriticality": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "critical": {
+            "type": "boolean"
+          },
+          "defectRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DefectLifecycleRecordDto"
+            }
+          },
+          "measures": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DefectMeasureView"
+            }
+          },
+          "alerts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DefectLifecycleAlert"
+            }
+          },
+          "closeBlockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "actionOwners": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "closedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "closedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "assessedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "can": {
+            "$ref": "#/components/schemas/DefectLifecycleActionsDto"
+          }
+        }
+      },
+      "DefectLifecycleRecordDto": {
+        "required": [
+          "id",
+          "sequence",
+          "kind",
+          "stageAfter",
+          "defectRevision",
+          "criticality",
+          "measureKind",
+          "temporary",
+          "expiresAt",
+          "measureId",
+          "outcome",
+          "text",
+          "actorId",
+          "recordedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "stageAfter": {
+            "type": "string"
+          },
+          "defectRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "criticality": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "measureKind": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "temporary": {
+            "type": "boolean"
+          },
+          "expiresAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "measureId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "outcome": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "text": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "DefectMeasureView": {
+        "required": [
+          "id",
+          "kind",
+          "temporary",
+          "expiresAt",
+          "state",
+          "actorId",
+          "recordedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "temporary": {
+            "type": "boolean"
+          },
+          "expiresAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "state": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
       "DefectOfflineDto": {
         "required": [
           "supported",
@@ -33471,6 +34636,163 @@
           }
         }
       },
+      "PmsCommandCenterDto": {
+        "required": [
+          "vesselId",
+          "readinessState",
+          "lastRefreshAt",
+          "sections",
+          "advisory"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "readinessState": {
+            "type": "string"
+          },
+          "lastRefreshAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PmsSection"
+            }
+          },
+          "advisory": {
+            "type": "string"
+          }
+        }
+      },
+      "PmsCommandItem": {
+        "required": [
+          "kind",
+          "sourceId",
+          "sourceRevision",
+          "severity",
+          "why",
+          "observedAt",
+          "freshness"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "sourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "why": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PmsWhy"
+            }
+          },
+          "observedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "freshness": {
+            "type": "string"
+          },
+          "assetId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
+      },
+      "PmsSection": {
+        "required": [
+          "key",
+          "state",
+          "count",
+          "quietCount",
+          "items",
+          "asOf",
+          "freshness",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "count": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "quietCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PmsCommandItem"
+            }
+          },
+          "asOf": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "freshness": {
+            "type": "string"
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "PmsWhy": {
+        "required": [
+          "code"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "detail": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "PortTimelineAssessment": {
         "required": [
           "recordId",
@@ -38503,6 +39825,837 @@
         },
         "additionalProperties": false
       },
+      "ServiceMeasurement": {
+        "required": [
+          "name",
+          "value",
+          "unit",
+          "result"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unit": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "result": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "ServicePart": {
+        "required": [
+          "description",
+          "partNumber",
+          "quantity",
+          "unit"
+        ],
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "partNumber": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "quantity": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unit": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "ServiceReportAmendCommand": {
+        "required": [
+          "expectedVersion",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ServiceReportCapabilitiesDto": {
+        "required": [
+          "vesselId",
+          "canRead",
+          "canWrite",
+          "canVerify",
+          "canLinkWorkOrder",
+          "canLinkDefect",
+          "canAttachEvidence",
+          "measurementResults"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "canRead": {
+            "type": "boolean"
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "canVerify": {
+            "type": "boolean"
+          },
+          "canLinkWorkOrder": {
+            "type": "boolean"
+          },
+          "canLinkDefect": {
+            "type": "boolean"
+          },
+          "canAttachEvidence": {
+            "type": "boolean"
+          },
+          "measurementResults": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ServiceReportContent": {
+        "required": [
+          "serviceProvider",
+          "engineerName",
+          "serviceDate",
+          "reasonScope",
+          "workPerformed",
+          "parts",
+          "measurements",
+          "defectsFound",
+          "recommendations",
+          "nextActionDue"
+        ],
+        "type": "object",
+        "properties": {
+          "serviceProvider": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "engineerName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "serviceDate": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reasonScope": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "workPerformed": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "parts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServicePart"
+            }
+          },
+          "measurements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceMeasurement"
+            }
+          },
+          "defectsFound": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "recommendations": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nextActionDue": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "ServiceReportCreateCommand": {
+        "required": [
+          "id",
+          "reportNo",
+          "content",
+          "links"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reportNo": {
+            "type": "string"
+          },
+          "content": {
+            "$ref": "#/components/schemas/ServiceReportContent"
+          },
+          "links": {
+            "$ref": "#/components/schemas/ServiceReportLinks"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ServiceReportDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "reportNo",
+          "revision",
+          "version",
+          "state",
+          "content",
+          "equipment",
+          "workOrder",
+          "defects",
+          "evidence",
+          "missing",
+          "hash",
+          "verificationState",
+          "verifiedRevision",
+          "verifications",
+          "revisions",
+          "authors",
+          "canEdit",
+          "canSubmit",
+          "canVerify",
+          "canAmend",
+          "provenance",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reportNo": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "state": {
+            "type": "string"
+          },
+          "content": {
+            "$ref": "#/components/schemas/ServiceReportContent"
+          },
+          "equipment": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ServiceReportLinkDto"
+              }
+            ]
+          },
+          "workOrder": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ServiceReportLinkDto"
+              }
+            ]
+          },
+          "defects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceReportLinkDto"
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceReportEvidenceDto"
+            }
+          },
+          "missing": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "hash": {
+            "type": "string"
+          },
+          "verificationState": {
+            "type": "string"
+          },
+          "verifiedRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "verifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceReportVerificationDto"
+            }
+          },
+          "revisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceReportRevisionSummaryDto"
+            }
+          },
+          "authors": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canSubmit": {
+            "type": "boolean"
+          },
+          "canVerify": {
+            "type": "boolean"
+          },
+          "canAmend": {
+            "type": "boolean"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ServiceReportEvidenceDto": {
+        "required": [
+          "id",
+          "revision",
+          "currency",
+          "state"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      },
+      "ServiceReportEvidencePin": {
+        "required": [
+          "id",
+          "revision",
+          "checksum"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "checksum": {
+            "type": "string"
+          }
+        }
+      },
+      "ServiceReportLinkDto": {
+        "required": [
+          "kind",
+          "id",
+          "revision",
+          "currency"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "currency": {
+            "type": "string"
+          }
+        }
+      },
+      "ServiceReportLinkPin": {
+        "required": [
+          "id",
+          "revision"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "ServiceReportLinks": {
+        "required": [
+          "assetId",
+          "workOrderId",
+          "defectIds",
+          "evidenceFileIds"
+        ],
+        "type": "object",
+        "properties": {
+          "assetId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "workOrderId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "defectIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "evidenceFileIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "ServiceReportListItemDto": {
+        "required": [
+          "id",
+          "reportNo",
+          "serviceProvider",
+          "serviceDate",
+          "state",
+          "revision",
+          "assetId",
+          "workOrderId",
+          "verifiedRevision",
+          "savedAt",
+          "provenance"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reportNo": {
+            "type": "string"
+          },
+          "serviceProvider": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "serviceDate": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "state": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "assetId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "workOrderId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "verifiedRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "provenance": {
+            "type": "string"
+          }
+        }
+      },
+      "ServiceReportPageDto": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore",
+          "canWrite"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceReportListItemDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "canWrite": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ServiceReportRevisionDto": {
+        "required": [
+          "reportId",
+          "vesselId",
+          "revision",
+          "state",
+          "reasonCode",
+          "content",
+          "equipment",
+          "workOrder",
+          "defects",
+          "evidence",
+          "hash",
+          "actorId",
+          "savedAt",
+          "provenance"
+        ],
+        "type": "object",
+        "properties": {
+          "reportId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "content": {
+            "$ref": "#/components/schemas/ServiceReportContent"
+          },
+          "equipment": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ServiceReportLinkPin"
+              }
+            ]
+          },
+          "workOrder": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ServiceReportLinkPin"
+              }
+            ]
+          },
+          "defects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceReportLinkPin"
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceReportEvidencePin"
+            }
+          },
+          "hash": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "provenance": {
+            "type": "string"
+          }
+        }
+      },
+      "ServiceReportRevisionSummaryDto": {
+        "required": [
+          "revision",
+          "state",
+          "reasonCode",
+          "hash",
+          "actorId",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ServiceReportSubmitCommand": {
+        "required": [
+          "expectedVersion",
+          "contentHash"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "contentHash": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ServiceReportUpdateCommand": {
+        "required": [
+          "expectedVersion",
+          "content",
+          "links"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "content": {
+            "$ref": "#/components/schemas/ServiceReportContent"
+          },
+          "links": {
+            "$ref": "#/components/schemas/ServiceReportLinks"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ServiceReportVerificationDto": {
+        "required": [
+          "id",
+          "revision",
+          "resultRevision",
+          "decision",
+          "actorId",
+          "reason",
+          "decidedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "resultRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "decidedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ServiceReportVerifyCommand": {
+        "required": [
+          "expectedVersion",
+          "contentHash",
+          "decision",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "contentHash": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
       "SessionDto": {
         "required": [
           "authenticated",
@@ -39666,6 +41819,28 @@
             "type": "string"
           },
           "status": {
+            "type": "string"
+          }
+        }
+      },
+      "TechnicalRecordFailure": {
+        "required": [
+          "code",
+          "missing",
+          "correlationId"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "missing": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "correlationId": {
             "type": "string"
           }
         }

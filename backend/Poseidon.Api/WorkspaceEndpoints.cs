@@ -21,6 +21,9 @@ public static class WorkspaceEndpoints
         if (SyncConflictCenterEndpoints.CanOpen(actor)) destinations = [.. destinations, new("offline-conflict-center", "/app/offline-conflict-center")];
         if (DefectAssetContextReader.CanRead(actor)) destinations = [.. destinations, new("defects", "/app/defects")];
         if (WorkOrderEndpoints.CanRead(actor)) destinations = [.. destinations, new("work-order-center", "/app/work-order-center")];
+        // DEV-056/DEV-103: the same server predicates as their endpoints.
+        if (PmsCommandCenterEndpoints.CanRead(actor)) destinations = [.. destinations, new("pms-command-center", "/app/pms-command-center")];
+        if (ServiceReportEndpoints.CanRead(actor)) destinations = [.. destinations, new("service-engineer-report", "/app/service-engineer-report")];
         if (OperationalDowntimeEndpoints.CanRead(actor)) destinations = [.. destinations, new("operational-downtime", "/app/operational-downtime")];
         // DEV-105/DEV-106: the same server predicates as the risk endpoints.
         if (RiskAssessmentEndpoints.CanRead(actor)) destinations = [.. destinations, new("risk-assessment", "/app/risk-assessment")];

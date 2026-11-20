@@ -21,6 +21,9 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddSingleton(configuration.GetSection("TugPlanning").Get<TugPlanningPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<TimeProvider>(TimeProvider.System);
         services.AddSingleton<IProfileFreshnessPolicySource, UnconfiguredProfileFreshnessPolicy>();
+        // DEV-056: WorkOrder state and spare gap inputs are owned elsewhere; until wired they answer UNKNOWN.
+        Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddSingleton<IPmsWorkOrderStateSource, UnavailablePmsWorkOrderStateSource>(services);
+        Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddSingleton<IPmsSpareGapSource, UnavailablePmsSpareGapSource>(services);
         services.AddSingleton(configuration.GetSection("Notifications").Get<NotificationSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddScoped<NotificationEngine>();
         services.AddSingleton(configuration.GetSection("DailyOffline").Get<DailyOfflineSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
@@ -208,6 +211,9 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapDowntimeOrigins();
             endpoints.MapRiskAssessments();
             endpoints.MapRiskTemplates();
+            endpoints.MapDefectLifecycle();
+            endpoints.MapServiceReports();
+            endpoints.MapPmsCommandCenter();
             endpoints.MapMaintenanceObservations();
             endpoints.MapTug();
             endpoints.MapParameters();

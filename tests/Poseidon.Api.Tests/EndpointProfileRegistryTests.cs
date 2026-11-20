@@ -251,7 +251,7 @@ public sealed partial class DirectoryWorkspaceTests
         "crew.profile.contact.read", "crew.profile.contact.write", "crew.profile.employment.read", "crew.profile.employment.write",
         "crew.profile.identity.read", "crew.profile.identity.write", "crew.profile.medical.read", "crew.profile.medical.write",
         "crew.read", "crew.write", "daily.deck.read", "daily.deck.review", "daily.deck.write", "daily.engine.read", "daily.engine.review",
-        "daily.engine.write", "daily.noon.read", "daily.noon.review", "daily.noon.write", "defect.read", "defect.write",
+        "daily.engine.write", "daily.noon.read", "daily.noon.review", "daily.noon.write", "defect.read", "defect.write", "defect.verify", "defect.effectiveness", "defect.close", "service.report.read", "service.report.write", "service.report.verify",
         "directory.read", "directory.write", "equipment.history.read", "equipment.read", "equipment.write", "evidence.read",
         "evidence.write", "file.read", "file.write", "human.decide", "human.review.read", "human.review.submit", "human.trace.read",
         "human.verify", "import.legacy.convert", "import.read", "import.write", "maintenance.history.read",

@@ -29,6 +29,8 @@ export const lensLabels: Record<string, readonly [
     'operational-downtime': [sourceText("tr", "pairs.m_0208af14c2c3282e"), sourceText("en", "pairs.m_0208af14c2c3282e")],
     'risk-assessment': [sourceText("tr", "pairs.m_2ba46e791f65fb5f"), sourceText("en", "pairs.m_2ba46e791f65fb5f")],
     'risk-template-library': [sourceText("tr", "pairs.m_c086860d120fa851"), sourceText("en", "pairs.m_c086860d120fa851")],
+    'pms-command-center': [sourceText("tr", "pairs.m_8c3e1f0a5d2b7c41"), sourceText("en", "pairs.m_8c3e1f0a5d2b7c41")],
+    'service-engineer-report': [sourceText("tr", "pairs.m_8c3e1f0a5d2b7c42"), sourceText("en", "pairs.m_8c3e1f0a5d2b7c42")],
     'work-order-center': [sourceText("tr", "pairs.m_8b20599d8e3aae73"), sourceText("en", "pairs.m_8b20599d8e3aae73")],
     defects: [sourceText("tr", "pairs.m_e3d6ff22743649dc"), sourceText("en", "pairs.m_e3d6ff22743649dc")],
     'fuel-bunker-log': [sourceText("tr", "pairs.m_4409cb4e233ec268"), sourceText("en", "pairs.m_4409cb4e233ec268")], 'port-activity-sof': [sourceText("tr", "pairs.m_13875df296e09add"), sourceText("en", "pairs.m_13875df296e09add")],
@@ -50,7 +52,7 @@ const root: Record<string, string> = { crew: 'crew-roster', 'crew-certificates':
 export function lensHref(key: string, vessel: string | null) {
     if (!Object.hasOwn(lensLabels, key))
         return null;
-    if (['audit-ready', 'operational-downtime', 'risk-assessment', 'work-order-center', 'defects', 'fuel-bunker-log', 'port-activity-sof', 'noon-report', 'deck-daily-log', 'engine-daily-log', 'certificate-command-center', 'renewal-workflow', 'pre-survey-checklist'].includes(key))
+    if (['audit-ready', 'operational-downtime', 'risk-assessment', 'pms-command-center', 'service-engineer-report', 'work-order-center', 'defects', 'fuel-bunker-log', 'port-activity-sof', 'noon-report', 'deck-daily-log', 'engine-daily-log', 'certificate-command-center', 'renewal-workflow', 'pre-survey-checklist'].includes(key))
         return vessel ? `/app/${key}/${vessel}` : `/app/${key}`;
     if (Object.hasOwn(root, key))
         return vessel ? `/app/${root[key]}/${vessel}` : null;

@@ -58,6 +58,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
     private static AuditMetadata Project(EntityEntry entry, Guid? parentVessel)
     {
         if (RiskProjection(entry) is { } risk) return risk;
+        if (TechnicalRecordProjection(entry) is { } technical) return technical;
         if(entry.Entity is Defect defect)
             return new(defect.VesselId,defect.Id,"Defect",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,defect.Revision,
                 Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(defect.Revision)),Field("Binding",null,"OwnerReference")));
@@ -688,6 +689,44 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             _ => null
         };
     }
+    // DEV-055 / DEV-103: closed stage, kind, outcome and state codes and revisions only. Assessment,
+    // safeguard, action, verification and return-to-service statements, report content, engineer
+    // names and reasons are never copied (ValuesWithheld / RevisionReference).
+    private static AuditMetadata? TechnicalRecordProjection(EntityEntry entry)
+    {
+        long? Before(string property) => entry.State == EntityState.Added ? null : (long?)entry.Property(property).OriginalValue;
+        string? BeforeState(string property, string[] allowed) => entry.State == EntityState.Added ? null : Closed((string)entry.Property(property).OriginalValue!, allowed);
+        var stages = Poseidon.Domain.DefectLifecyclePolicy.Stages; var states = Poseidon.Domain.ServiceReportPolicy.States;
+        return entry.Entity switch
+        {
+            DefectLifecycle l => new(l.VesselId, l.DefectId, "DefectLifecycle", Before("Revision"), l.Revision, Fields(
+                Field("Revision", Before("Revision") is { } r ? Number(r) : null, Number(l.Revision)),
+                Field("Stage", BeforeState("Stage", stages), Closed(l.Stage, stages)), Field("Binding", null, "OwnerReference"))),
+            DefectLifecycleRecord r => new(r.VesselId, r.DefectId, "DefectLifecycleRecord", null, r.Sequence, Fields(
+                Field("Kind", null, Closed(r.Kind, Poseidon.Domain.DefectLifecyclePolicy.Kinds)), Field("StageAfter", null, Closed(r.StageAfter, stages)),
+                Field("Revision", null, Number(r.Sequence)), Field("DefectRevision", null, Number(r.DefectRevision)),
+                Field("Outcome", null, r.Outcome == null ? null : Closed(r.Outcome, [.. Poseidon.Domain.DefectLifecyclePolicy.VerifyOutcomes,
+                    .. Poseidon.Domain.DefectLifecyclePolicy.EffectivenessOutcomes, Poseidon.Domain.DefectLifecyclePolicy.ClosureOutcome])),
+                Field("Text", null, null, "ValuesWithheld"))),
+            ServiceReport s => new(s.VesselId, s.Id, "ServiceReport", Before("Revision"), s.Revision, Fields(
+                Field("Revision", Before("Revision") is { } r ? Number(r) : null, Number(s.Revision)),
+                Field("State", BeforeState("State", states), Closed(s.State, states)), Field("ContentJson", null, null, "RevisionReference"),
+                Field("Binding", null, "OwnerReference"))),
+            ServiceReportRevision v => new(v.VesselId, v.ReportId, "ServiceReportRevision", null, v.Revision, Fields(
+                Field("Revision", null, Number(v.Revision)), Field("State", null, Closed(v.State, states)),
+                Field("ReasonCode", null, Closed(v.ReasonCode, Poseidon.Domain.ServiceReportPolicy.ReasonCodes)), Field("ContentJson", null, null, "RevisionReference"))),
+            ServiceReportVerification d => new(d.VesselId, d.ReportId, "ServiceReportVerification", null, d.ResultRevision, Fields(
+                Field("Decision", null, Closed(d.Decision, Poseidon.Domain.ServiceReportPolicy.Decisions)), Field("Revision", null, Number(d.ResultRevision)),
+                Field("Reason", null, null, "ValuesWithheld"))),
+            TechnicalRecordReceipt c => new(c.VesselId, c.ResourceId, "TechnicalRecordReceipt", null, c.Revision, Fields(
+                Field("Operation", null, Closed(c.Action, TechnicalRecordOperations)), Field("Revision", null, Number(c.Revision)), Field("Binding", null, "CommittedResource"))),
+            _ => null
+        };
+    }
+    internal static readonly string[] TechnicalRecordOperations = ["DefectLifecycleStart", "DefectLifecycleAssess", "DefectLifecycleSafeguard", "DefectLifecycleLift",
+        "DefectLifecycleAction", "DefectLifecycleVerify", "DefectLifecycleEffectiveness", "DefectLifecycleClose",
+        "ServiceReportCreate", "ServiceReportUpdate", "ServiceReportSubmit", "ServiceReportVerify", "ServiceReportAmend"];
+
     internal static readonly string[] RiskOperations = ["RiskAssessmentCreate", "RiskAssessmentUpdate", "RiskAssessmentSubmit", "RiskAssessmentReview",
         "RiskAssessmentAmend", "RiskAssessmentAcknowledge", "RiskTemplateCreate", "RiskTemplateUpdate", "RiskTemplateSubmit", "RiskTemplateReview",
         "RiskTemplateRevise", "RiskTemplateSuggest", "RiskTemplateSuggestionReview", "RiskMethodCreate", "RiskMethodPublish"];

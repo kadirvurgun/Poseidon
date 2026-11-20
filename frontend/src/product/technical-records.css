@@ -1,0 +1,26 @@
+.technical-workspace { min-width:0; }
+.technical-workspace .technical-layout { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,2fr); gap:16px; align-items:start; }
+.technical-panel { margin-block:16px; padding:20px; border:1px solid var(--border); border-radius:10px; background:var(--card); min-width:0; }
+.technical-panel h3 { margin-block:16px 8px; }
+.technical-status, .technical-actions { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-block:8px; }
+.technical-list, .technical-records { padding-inline-start:0; list-style:none; display:grid; gap:8px; margin:0; }
+.technical-records li, .technical-list li { border:1px solid var(--border); border-radius:8px; padding:10px; min-width:0; }
+.technical-list li[aria-current="true"] { outline:2px solid var(--primary); outline-offset:2px; }
+.technical-text { white-space:pre-wrap; overflow-wrap:anywhere; margin-block:6px; }
+.technical-note { color:var(--muted-foreground); font-size:13px; }
+.technical-banner { margin-block:12px; padding:12px 16px; border:1px solid var(--warning-border); border-radius:8px; background:var(--warning-surface); }
+.technical-alerts { margin-block:12px; padding:12px 16px; border:1px solid var(--warning-border); border-radius:8px; background:var(--warning-surface); }
+.technical-field { display:grid; gap:6px; margin-block:10px; min-width:0; }
+.technical-field input, .technical-field select, .technical-field textarea { width:100%; min-width:0; }
+.technical-field small { color:var(--muted-foreground); }
+.technical-check { display:inline-flex; gap:6px; align-items:center; margin-block:8px; }
+.technical-form { border:1px dashed var(--border); border-radius:8px; padding:12px; margin-block:12px; }
+.technical-row { display:flex; flex-wrap:wrap; gap:8px; align-items:end; }
+.technical-row .technical-field { flex:1 1 140px; }
+.technical-facts { display:grid; grid-template-columns:max-content minmax(0,1fr); gap:6px 16px; }
+.technical-facts dd { margin:0; overflow-wrap:anywhere; white-space:pre-wrap; }
+/* Unknown / forbidden sources are dashed and muted, never a success tone. */
+.technical-section[data-state="UNKNOWN"], .technical-section[data-state="ACCESS_REQUIRED"] { border-style:dashed; color:var(--muted-foreground); }
+.technical-sections { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:12px; }
+.technical-workspace code { white-space:normal; overflow-wrap:anywhere; }
+@media(max-width:800px) { .technical-workspace .technical-layout { grid-template-columns:minmax(0,1fr); } .technical-panel { padding:14px; } }

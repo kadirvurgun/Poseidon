@@ -23,6 +23,8 @@ import { DefectWorkspace } from './product/DefectWorkspace';
 import { WorkOrderWorkspace } from './product/WorkOrderWorkspace';
 import { DowntimeWorkspace } from './product/DowntimeWorkspace';
 import { RiskAssessmentWorkspace } from './product/RiskAssessmentWorkspace';
+import { PmsCommandCenterWorkspace } from './product/PmsCommandCenterWorkspace';
+import { ServiceReportWorkspace } from './product/ServiceReportWorkspace';
 import { RiskTemplateLibraryWorkspace } from './product/RiskTemplateLibraryWorkspace';
 import { AuditReadyWorkspace } from './product/AuditReadyWorkspace';
 import { SurveyWorkspace } from './product/SurveyWorkspace';
@@ -57,6 +59,10 @@ export function App() {
         return <TechnicalWorkspace />;
     if (/^\/app\/defects(?:\/|$)/.test(window.location.pathname))
         return <DefectWorkspace />;
+    if (/^\/app\/pms-command-center(?:\/|$)/.test(window.location.pathname))
+        return <PmsCommandCenterWorkspace />;
+    if (/^\/app\/service-engineer-report(?:\/|$)/.test(window.location.pathname))
+        return <ServiceReportWorkspace />;
     if (/^\/app\/work-order-center(?:\/|$)/.test(window.location.pathname))
         return <WorkOrderWorkspace />;
     if (/^\/app\/operational-downtime(?:\/|$)/.test(window.location.pathname))
