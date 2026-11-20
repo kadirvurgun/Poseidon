@@ -217,6 +217,11 @@ public sealed class PoseidonDbContext(
     public DbSet<DrydockPackage> DrydockPackages => Set<DrydockPackage>();
     public DbSet<DrydockPackageRevision> DrydockPackageRevisions => Set<DrydockPackageRevision>();
     public DbSet<FieldOperationReceipt> FieldOperationReceipts => Set<FieldOperationReceipt>();
+    // S11 WP-C (DEV-073/093): regulatory SME review campaigns, items, append-only verdicts and receipts.
+    public DbSet<RegulatoryReviewCampaign> RegulatoryReviewCampaigns => Set<RegulatoryReviewCampaign>();
+    public DbSet<RegulatoryReviewItem> RegulatoryReviewItems => Set<RegulatoryReviewItem>();
+    public DbSet<RegulatoryReviewVerdict> RegulatoryReviewVerdicts => Set<RegulatoryReviewVerdict>();
+    public DbSet<RegulatoryReviewReceipt> RegulatoryReviewReceipts => Set<RegulatoryReviewReceipt>();
     public DbSet<TugOfflineEnrollment> TugOfflineEnrollments => Set<TugOfflineEnrollment>();
     public DbSet<TugOfflineOutcome> TugOfflineOutcomes => Set<TugOfflineOutcome>();
     public DbSet<TugOfflineLifecycle> TugOfflineLifecycles => Set<TugOfflineLifecycle>();
@@ -442,6 +447,12 @@ public sealed class PoseidonDbContext(
         model.Entity<DrydockPackage>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<DrydockPackageRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<FieldOperationReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        // S11 WP-C (DEV-073/093).
+        RegulatoryReviewStorage.Configure(model);
+        model.Entity<RegulatoryReviewCampaign>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<RegulatoryReviewItem>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<RegulatoryReviewVerdict>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<RegulatoryReviewReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         MaintenanceObservationStorage.Configure(model);
         model.Entity<MaintenanceObservation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<MaintenanceObservationRevocation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -939,6 +950,17 @@ public sealed class PoseidonDbContext(
         // DEV-059: the Master departure decision lineage and its receipts are append-only.
         if (changes.Any(e => e.Entity is DepartureDecision or DepartureReceipt && e.State != EntityState.Added))
             throw new InvalidOperationException("Departure decisions are immutable.");
+        // DEV-073/093: verdicts and receipts are append-only; an item changes only its current verdict columns, a campaign only
+        // its lifecycle columns, and a closed campaign never changes again. Nothing is deleted.
+        if (changes.Any(e => e.Entity is RegulatoryReviewVerdict or RegulatoryReviewReceipt && e.State != EntityState.Added))
+            throw new InvalidOperationException("Regulatory review verdicts are immutable.");
+        if (changes.Any(e => e.Entity is RegulatoryReviewItem && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            e.Properties.Any(p => p.IsModified && !RegulatoryReviewStorage.ItemVerdictColumns.Contains(p.Metadata.Name)))))
+            throw new InvalidOperationException("Regulatory review item pins are immutable.");
+        if (changes.Any(e => e.Entity is RegulatoryReviewCampaign && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            (e.Properties.Any(p => p.IsModified && !RegulatoryReviewStorage.CampaignMutableColumns.Contains(p.Metadata.Name)) ||
+             Poseidon.Domain.RegulatoryReviewPolicy.Terminal((string)e.Property("State").OriginalValue!)))))
+            throw new InvalidOperationException("Regulatory review campaign scope is immutable.");
         if (changes.Any(e => e.Entity is TugAssignmentProposal && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
             e.Properties.Any(p => p.IsModified && p.Metadata.Name is not ("State" or "MasterAck" or "CancelledAt" or "CancelledBy" or "CancelReason" or "Revision")))))
             throw new InvalidOperationException("Tug assignment scope is immutable.");

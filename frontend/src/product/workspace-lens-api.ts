@@ -30,6 +30,7 @@ export const lensLabels: Record<string, readonly [
     'risk-assessment': [sourceText("tr", "pairs.m_2ba46e791f65fb5f"), sourceText("en", "pairs.m_2ba46e791f65fb5f")],
     'risk-template-library': [sourceText("tr", "pairs.m_c086860d120fa851"), sourceText("en", "pairs.m_c086860d120fa851")],
     'departure-signoff': [sourceText("tr", "pairs.m_9d2a4c6e8f0b1d35"), sourceText("en", "pairs.m_9d2a4c6e8f0b1d35")],
+    'regulatory-review': [sourceText("tr", "pairs.m_3c8e1f5a7b2d9e40"), sourceText("en", "pairs.m_3c8e1f5a7b2d9e40")],
     'pms-command-center': [sourceText("tr", "pairs.m_8c3e1f0a5d2b7c41"), sourceText("en", "pairs.m_8c3e1f0a5d2b7c41")],
     'service-engineer-report': [sourceText("tr", "pairs.m_8c3e1f0a5d2b7c42"), sourceText("en", "pairs.m_8c3e1f0a5d2b7c42")],
     'safety-events': [sourceText("tr", "pairs.m_8a32195b2423b0ae"), sourceText("en", "pairs.m_8a32195b2423b0ae")],
@@ -63,7 +64,7 @@ const root: Record<string, string> = { crew: 'crew-roster', 'crew-certificates':
 export function lensHref(key: string, vessel: string | null) {
     if (!Object.hasOwn(lensLabels, key))
         return null;
-    if (['audit-ready', 'operational-downtime', 'risk-assessment', 'pms-command-center', 'departure-signoff', 'service-engineer-report', 'voice-event-draft', 'document-compare', 'work-order-center', 'defects', 'fuel-bunker-log', 'port-activity-sof', 'noon-report', 'deck-daily-log', 'engine-daily-log', 'certificate-command-center', 'renewal-workflow', 'pre-survey-checklist'].includes(key))
+    if (['audit-ready', 'operational-downtime', 'risk-assessment', 'pms-command-center', 'departure-signoff', 'regulatory-review', 'service-engineer-report', 'voice-event-draft', 'document-compare', 'work-order-center', 'defects', 'fuel-bunker-log', 'port-activity-sof', 'noon-report', 'deck-daily-log', 'engine-daily-log', 'certificate-command-center', 'renewal-workflow', 'pre-survey-checklist'].includes(key))
         return vessel ? `/app/${key}/${vessel}` : `/app/${key}`;
     if (Object.hasOwn(root, key))
         return vessel ? `/app/${root[key]}/${vessel}` : null;

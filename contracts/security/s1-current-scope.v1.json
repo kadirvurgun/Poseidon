@@ -30,9 +30,9 @@
     "TenantPerson",
     "Unresolved"
   ],
-  "mutationRouteTemplates": 260,
-  "criticalRouteTemplates": 251,
-  "criticalOperations": 271,
+  "mutationRouteTemplates": 263,
+  "criticalRouteTemplates": 254,
+  "criticalOperations": 274,
   "scopeMeaning": "Current exposed HTTP command surface, including aliases. Counts are authoring definitions until actual EndpointDataSource drift and real audit observations pass the phase gate. Technical codes describe accepted commands, never human justification or safety authority.",
   "operations": [
     {"operationId": "MeasurementPointSave", "method": "POST", "routePattern": "/api/v1/equipment-hierarchy/{vessel:guid}/measurement-points", "family": "Maintenance", "scope": "Vessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "MeasurementCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"]},
@@ -911,6 +911,9 @@
     { "operationId": "TugAssignmentRespond", "method": "POST", "routePattern": "/api/v1/tug-assignments/{id:guid}/respond", "family": "Tug", "scope": "ResolvedVessel", "kind": "CriticalWrite", "reasonCode": "HUMAN_REVIEW_WORKFLOW", "denialAction": "TugAssignmentCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "TugAssignmentWithdraw", "method": "POST", "routePattern": "/api/v1/tug-assignments/{id:guid}/withdraw", "family": "Tug", "scope": "ResolvedVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "TugAssignmentCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "DepartureSignoffRecord", "method": "POST", "routePattern": "/api/v1/departure-signoff", "family": "ShipOperations", "scope": "ResolvedVessel", "kind": "CriticalWrite", "reasonCode": "HUMAN_REVIEW_WORKFLOW", "denialAction": "DepartureSignoffCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "RegulatoryReviewCreate", "method": "POST", "routePattern": "/api/v1/regulatory-reviews", "family": "RegulatoryReview", "scope": "ResolvedVessel", "kind": "CriticalWrite", "reasonCode": "REGULATORY_WORKFLOW", "denialAction": "RegulatoryReviewCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "RegulatoryReviewVerdict", "method": "POST", "routePattern": "/api/v1/regulatory-reviews/{id:guid}/items/{item:guid}/verdicts", "family": "RegulatoryReview", "scope": "ResolvedVessel", "kind": "CriticalWrite", "reasonCode": "HUMAN_REVIEW_WORKFLOW", "denialAction": "RegulatoryReviewCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "RegulatoryReviewClose", "method": "POST", "routePattern": "/api/v1/regulatory-reviews/{id:guid}/close", "family": "RegulatoryReview", "scope": "ResolvedVessel", "kind": "CriticalWrite", "reasonCode": "REGULATORY_WORKFLOW", "denialAction": "RegulatoryReviewCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "TugReadinessDecide", "method": "POST", "routePattern": "/api/v1/tug-readiness/decisions", "family": "Tug", "scope": "ResolvedVessel", "kind": "CriticalWrite", "reasonCode": "HUMAN_REVIEW_WORKFLOW", "denialAction": "TugReadinessDecision", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "TugTowEquipmentSave", "method": "POST", "routePattern": "/api/v1/tug-tow-equipment", "family": "Tug", "scope": "ResolvedVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "TugEquipmentCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "TugTowEquipmentUpdate", "method": "PUT", "routePattern": "/api/v1/tug-tow-equipment/{id:guid}", "family": "Tug", "scope": "ResolvedVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "TugEquipmentCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },

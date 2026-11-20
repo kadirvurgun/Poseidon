@@ -25,6 +25,8 @@ public static class WorkspaceEndpoints
         if (PmsCommandCenterEndpoints.CanRead(actor)) destinations = [.. destinations, new("pms-command-center", "/app/pms-command-center")];
         // S9 DEV-058/059: the same server predicate as the departure readiness endpoint.
         if (DepartureAuthorities.CanRead(actor)) destinations = [.. destinations, new("departure-signoff", "/app/departure-signoff")];
+        // S11 DEV-073/093: the same server predicate as the regulatory review endpoints.
+        if (RegulatoryReviewAccess.CanRead(actor)) destinations = [.. destinations, new("regulatory-review", "/app/regulatory-review")];
         if (ServiceReportEndpoints.CanRead(actor)) destinations = [.. destinations, new("service-engineer-report", "/app/service-engineer-report")];
         // S9 WP-C DEV-062 / DEV-114: the same server predicates as their endpoints.
         if (VoiceEventDraftEndpoints.CanRead(actor)) destinations = [.. destinations, new("voice-event-draft", "/app/voice-event-draft")];
