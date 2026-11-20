@@ -5522,6 +5522,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/vessels/{vessel}/imports/{batch}/provenance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ImportProvenanceList"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/vessels/{vessel}/imports/{batch}/commit": {
         parameters: {
             query?: never;
@@ -8663,6 +8679,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/vessels/{vessel}/reconciliation-reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ReconciliationReportList"];
+        put?: never;
+        post: operations["ReconciliationReportCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/reconciliation-reports/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ReconciliationReportRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/reconciliation-reports/{id}/sign-off": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ReconciliationSignOff"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -11229,6 +11293,11 @@ export interface components {
             state: string;
             value: null | string;
         };
+        DataOwnerAuthorityDto: {
+            /** Format: uuid */
+            id: string;
+            duty: string;
+        };
         DataQualitySignal: {
             kind: string;
             reason: string;
@@ -12957,6 +13026,42 @@ export interface components {
             hasMore: boolean;
             rows: components["schemas"]["ImportValidationRowDto"][];
         };
+        ImportProvenanceDto: {
+            /** Format: uuid */
+            batchId: string;
+            /** Format: uuid */
+            previewId: string;
+            /** Format: int32 */
+            rowNumber: number;
+            category: string;
+            sourceHash: string;
+            templateVersion: string;
+            templateFingerprint: string;
+            targetKind: string;
+            /** Format: uuid */
+            targetId: string;
+            /** Format: int64 */
+            targetRevision: number;
+            revisionKind: string;
+            operation: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            recordedAt: string;
+        };
+        ImportProvenancePageDto: {
+            /** Format: uuid */
+            batchId: string;
+            state: string;
+            /** Format: int32 */
+            total: number;
+            /** Format: int32 */
+            offset: number;
+            /** Format: int32 */
+            limit: number;
+            hasMore: boolean;
+            items: components["schemas"]["ImportProvenanceDto"][];
+        };
         ImportRowIssueDto: {
             code: string;
             /** Format: int32 */
@@ -13537,6 +13642,17 @@ export interface components {
             unreadableSources: number;
             /** Format: int32 */
             notCollectedSources: number;
+        };
+        MissingCriticalItem: {
+            /** Format: uuid */
+            batchId: string;
+            /** Format: int32 */
+            rowNumber: number;
+            targetKind: string;
+            /** Format: uuid */
+            targetId: string;
+            field: string;
+            reason: string;
         };
         MsmdReference: {
             documentReference?: null | string;
@@ -14577,6 +14693,171 @@ export interface components {
             ruleRevision: null | number;
             sourceLocator: null | string;
             requireCredential?: null | boolean;
+        };
+        ReconciliationBatchFacts: {
+            /** Format: uuid */
+            batchId: string;
+            category: string;
+            /** Format: int64 */
+            revision: number;
+            state: string;
+            sourceHash: string;
+            templateFingerprint: string;
+            /** Format: uuid */
+            previewId: null | string;
+            /** Format: int32 */
+            sourceRows: number;
+            /** Format: int32 */
+            acceptedRows: number;
+            /** Format: int32 */
+            rejectedRows: number;
+            /** Format: int32 */
+            duplicateRows: number;
+            /** Format: uuid */
+            uploadedBy: string;
+        };
+        ReconciliationCandidateBatchDto: {
+            /** Format: uuid */
+            id: string;
+            category: string;
+            state: string;
+            /** Format: int32 */
+            rowCount: number;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            committedAt: null | string;
+            templateVersion: string;
+        };
+        ReconciliationCounts: {
+            /** Format: int32 */
+            source: number;
+            /** Format: int32 */
+            accepted: number;
+            /** Format: int32 */
+            rejected: number;
+            /** Format: int32 */
+            duplicate: number;
+            /** Format: int32 */
+            notCommitted: number;
+            /** Format: int32 */
+            missingCritical: number;
+        };
+        ReconciliationException: {
+            kind: string;
+            reference: string;
+            disposition: string;
+        };
+        ReconciliationListView: {
+            /** Format: uuid */
+            vesselId: string;
+            items: components["schemas"]["ReconciliationReportSummaryDto"][];
+            batches: components["schemas"]["ReconciliationCandidateBatchDto"][];
+            canCreate: boolean;
+            authorities: components["schemas"]["DataOwnerAuthorityDto"][];
+            templateVersions: {
+                [key: string]: string;
+            };
+            /** Format: int32 */
+            maxBatches: number;
+            /** Format: int32 */
+            maxSample: number;
+            /** @default 18.01/Backlog/row:71;18.03/paragraph:10,49-66,82,84-102 */
+            sourceLocator: string;
+        };
+        ReconciliationReportCreateCommand: {
+            /** Format: uuid */
+            id: string;
+            batchIds: string[];
+            /** Format: int32 */
+            sampleSize: number;
+        };
+        ReconciliationReportDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            state: string;
+            policyVersion: string;
+            criticalFieldVersion: string;
+            batches: components["schemas"]["ReconciliationBatchFacts"][];
+            counts: components["schemas"]["ReconciliationCounts"];
+            missingCritical: components["schemas"]["MissingCriticalItem"][];
+            missingCriticalTruncated: boolean;
+            sampleSeed: string;
+            sample: components["schemas"]["ReconciliationTarget"][];
+            hash: string;
+            /** Format: uuid */
+            createdBy: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            supersededAt: null | string;
+            provenance: string;
+        };
+        ReconciliationReportSummaryDto: {
+            /** Format: uuid */
+            id: string;
+            state: string;
+            /** Format: int64 */
+            revision: number;
+            counts: components["schemas"]["ReconciliationCounts"];
+            /** Format: date-time */
+            createdAt: string;
+            decision: null | string;
+            signOffValidity: string;
+        };
+        ReconciliationReportView: {
+            report: components["schemas"]["ReconciliationReportDto"];
+            signOff: null | components["schemas"]["ReconciliationSignOffDto"];
+            stale: boolean;
+            openItems: string[];
+            authorities: components["schemas"]["DataOwnerAuthorityDto"][];
+            canSignOff: boolean;
+            signOffBlockers: string[];
+            decisions: string[];
+            exceptionKinds: string[];
+            /** @default 18.01/Backlog/row:71;18.03/paragraph:10,49-66,82,84-102 */
+            sourceLocator: string;
+        };
+        ReconciliationSignOffCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            reportHash: string;
+            decision: string;
+            reason: string;
+            exceptions: null | components["schemas"]["ReconciliationException"][];
+            sampleVerified: null | string[];
+            /** Format: uuid */
+            authorityId: string;
+        };
+        ReconciliationSignOffDto: {
+            /** Format: uuid */
+            id: string;
+            decision: string;
+            reason: string;
+            exceptions: components["schemas"]["ReconciliationException"][];
+            sampleVerified: string[];
+            duty: string;
+            /** Format: uuid */
+            signedBy: string;
+            /** Format: date-time */
+            signedAt: string;
+            reportHash: string;
+            validity: string;
+        };
+        ReconciliationTarget: {
+            /** Format: uuid */
+            batchId: string;
+            /** Format: int32 */
+            rowNumber: number;
+            targetKind: string;
+            /** Format: uuid */
+            targetId: string;
         };
         RecordedDecision: {
             content: components["schemas"]["DecisionRecording"];
@@ -26956,6 +27237,29 @@ export interface operations {
             };
         };
     };
+    ImportProvenanceList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                batch: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImportProvenancePageDto"];
+                };
+            };
+        };
+    };
     ImportCommit: {
         parameters: {
             query?: never;
@@ -34517,6 +34821,104 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    ReconciliationReportList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReconciliationListView"];
+                };
+            };
+        };
+    };
+    ReconciliationReportCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReconciliationReportCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReconciliationReportView"];
+                };
+            };
+        };
+    };
+    ReconciliationReportRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReconciliationReportView"];
+                };
+            };
+        };
+    };
+    ReconciliationSignOff: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReconciliationSignOffCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReconciliationReportView"];
+                };
             };
         };
     };

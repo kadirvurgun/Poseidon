@@ -12851,6 +12851,47 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/vessels/{vessel}/imports/{batch}/provenance": {
+      "get": {
+        "tags": [
+          "ImportEndpoints"
+        ],
+        "operationId": "ImportProvenanceList",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "batch",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportProvenancePageDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
     "/api/v1/vessels/{vessel}/imports/{batch}/commit": {
       "post": {
         "tags": [
@@ -23091,6 +23132,170 @@
         },
         "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
+    },
+    "/api/v1/vessels/{vessel}/reconciliation-reports": {
+      "get": {
+        "tags": [
+          "ImportReconciliationEndpoints"
+        ],
+        "operationId": "ReconciliationReportList",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReconciliationListView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "ReconciliationReportCreate",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReconciliationReportCreateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReconciliationReportView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/vessels/{vessel}/reconciliation-reports/{id}": {
+      "get": {
+        "tags": [
+          "ImportReconciliationEndpoints"
+        ],
+        "operationId": "ReconciliationReportRead",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReconciliationReportView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/vessels/{vessel}/reconciliation-reports/{id}/sign-off": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "ReconciliationSignOff",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReconciliationSignOffCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReconciliationReportView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
     }
   },
   "components": {
@@ -32582,6 +32787,22 @@
           }
         }
       },
+      "DataOwnerAuthorityDto": {
+        "required": [
+          "id",
+          "duty"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "duty": {
+            "type": "string"
+          }
+        }
+      },
       "DataQualitySignal": {
         "required": [
           "kind",
@@ -39173,6 +39394,118 @@
           }
         }
       },
+      "ImportProvenanceDto": {
+        "required": [
+          "batchId",
+          "previewId",
+          "rowNumber",
+          "category",
+          "sourceHash",
+          "templateVersion",
+          "templateFingerprint",
+          "targetKind",
+          "targetId",
+          "targetRevision",
+          "revisionKind",
+          "operation",
+          "actorId",
+          "recordedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "batchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "previewId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "rowNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "category": {
+            "type": "string"
+          },
+          "sourceHash": {
+            "type": "string"
+          },
+          "templateVersion": {
+            "type": "string"
+          },
+          "templateFingerprint": {
+            "type": "string"
+          },
+          "targetKind": {
+            "type": "string"
+          },
+          "targetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "targetRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "revisionKind": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ImportProvenancePageDto": {
+        "required": [
+          "batchId",
+          "state",
+          "total",
+          "offset",
+          "limit",
+          "hasMore",
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "batchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImportProvenanceDto"
+            }
+          }
+        }
+      },
       "ImportRowIssueDto": {
         "required": [
           "code",
@@ -41319,6 +41652,40 @@
           "notCollectedSources": {
             "type": "integer",
             "format": "int32"
+          }
+        }
+      },
+      "MissingCriticalItem": {
+        "required": [
+          "batchId",
+          "rowNumber",
+          "targetKind",
+          "targetId",
+          "field",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "batchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "rowNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "targetKind": {
+            "type": "string"
+          },
+          "targetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "field": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
           }
         }
       },
@@ -45321,6 +45688,596 @@
           }
         },
         "additionalProperties": false
+      },
+      "ReconciliationBatchFacts": {
+        "required": [
+          "batchId",
+          "category",
+          "revision",
+          "state",
+          "sourceHash",
+          "templateFingerprint",
+          "previewId",
+          "sourceRows",
+          "acceptedRows",
+          "rejectedRows",
+          "duplicateRows",
+          "uploadedBy"
+        ],
+        "type": "object",
+        "properties": {
+          "batchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "category": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "sourceHash": {
+            "type": "string"
+          },
+          "templateFingerprint": {
+            "type": "string"
+          },
+          "previewId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "sourceRows": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "acceptedRows": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rejectedRows": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "duplicateRows": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "uploadedBy": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "ReconciliationCandidateBatchDto": {
+        "required": [
+          "id",
+          "category",
+          "state",
+          "rowCount",
+          "createdAt",
+          "committedAt",
+          "templateVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "category": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "rowCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "committedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "templateVersion": {
+            "type": "string"
+          }
+        }
+      },
+      "ReconciliationCounts": {
+        "required": [
+          "source",
+          "accepted",
+          "rejected",
+          "duplicate",
+          "notCommitted",
+          "missingCritical"
+        ],
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "accepted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rejected": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "duplicate": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "notCommitted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "missingCritical": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ReconciliationException": {
+        "required": [
+          "kind",
+          "reference",
+          "disposition"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string"
+          },
+          "disposition": {
+            "type": "string"
+          }
+        }
+      },
+      "ReconciliationListView": {
+        "required": [
+          "vesselId",
+          "items",
+          "batches",
+          "canCreate",
+          "authorities",
+          "templateVersions",
+          "maxBatches",
+          "maxSample"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReconciliationReportSummaryDto"
+            }
+          },
+          "batches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReconciliationCandidateBatchDto"
+            }
+          },
+          "canCreate": {
+            "type": "boolean"
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DataOwnerAuthorityDto"
+            }
+          },
+          "templateVersions": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "maxBatches": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxSample": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sourceLocator": {
+            "type": "string",
+            "default": "18.01/Backlog/row:71;18.03/paragraph:10,49-66,82,84-102"
+          }
+        }
+      },
+      "ReconciliationReportCreateCommand": {
+        "required": [
+          "id",
+          "batchIds",
+          "sampleSize"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "batchIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "sampleSize": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReconciliationReportDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "revision",
+          "version",
+          "state",
+          "policyVersion",
+          "criticalFieldVersion",
+          "batches",
+          "counts",
+          "missingCritical",
+          "missingCriticalTruncated",
+          "sampleSeed",
+          "sample",
+          "hash",
+          "createdBy",
+          "createdAt",
+          "supersededAt",
+          "provenance"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "state": {
+            "type": "string"
+          },
+          "policyVersion": {
+            "type": "string"
+          },
+          "criticalFieldVersion": {
+            "type": "string"
+          },
+          "batches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReconciliationBatchFacts"
+            }
+          },
+          "counts": {
+            "$ref": "#/components/schemas/ReconciliationCounts"
+          },
+          "missingCritical": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MissingCriticalItem"
+            }
+          },
+          "missingCriticalTruncated": {
+            "type": "boolean"
+          },
+          "sampleSeed": {
+            "type": "string"
+          },
+          "sample": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReconciliationTarget"
+            }
+          },
+          "hash": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "supersededAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "provenance": {
+            "type": "string"
+          }
+        }
+      },
+      "ReconciliationReportSummaryDto": {
+        "required": [
+          "id",
+          "state",
+          "revision",
+          "counts",
+          "createdAt",
+          "decision",
+          "signOffValidity"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "counts": {
+            "$ref": "#/components/schemas/ReconciliationCounts"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "decision": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "signOffValidity": {
+            "type": "string"
+          }
+        }
+      },
+      "ReconciliationReportView": {
+        "required": [
+          "report",
+          "signOff",
+          "stale",
+          "openItems",
+          "authorities",
+          "canSignOff",
+          "signOffBlockers",
+          "decisions",
+          "exceptionKinds"
+        ],
+        "type": "object",
+        "properties": {
+          "report": {
+            "$ref": "#/components/schemas/ReconciliationReportDto"
+          },
+          "signOff": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ReconciliationSignOffDto"
+              }
+            ]
+          },
+          "stale": {
+            "type": "boolean"
+          },
+          "openItems": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DataOwnerAuthorityDto"
+            }
+          },
+          "canSignOff": {
+            "type": "boolean"
+          },
+          "signOffBlockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "decisions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "exceptionKinds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sourceLocator": {
+            "type": "string",
+            "default": "18.01/Backlog/row:71;18.03/paragraph:10,49-66,82,84-102"
+          }
+        }
+      },
+      "ReconciliationSignOffCommand": {
+        "required": [
+          "expectedVersion",
+          "reportHash",
+          "decision",
+          "reason",
+          "exceptions",
+          "sampleVerified",
+          "authorityId"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "reportHash": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "exceptions": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ReconciliationException"
+            }
+          },
+          "sampleVerified": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReconciliationSignOffDto": {
+        "required": [
+          "id",
+          "decision",
+          "reason",
+          "exceptions",
+          "sampleVerified",
+          "duty",
+          "signedBy",
+          "signedAt",
+          "reportHash",
+          "validity"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "exceptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReconciliationException"
+            }
+          },
+          "sampleVerified": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "duty": {
+            "type": "string"
+          },
+          "signedBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "signedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reportHash": {
+            "type": "string"
+          },
+          "validity": {
+            "type": "string"
+          }
+        }
+      },
+      "ReconciliationTarget": {
+        "required": [
+          "batchId",
+          "rowNumber",
+          "targetKind",
+          "targetId"
+        ],
+        "type": "object",
+        "properties": {
+          "batchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "rowNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "targetKind": {
+            "type": "string"
+          },
+          "targetId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
       },
       "RecordedDecision": {
         "required": [
@@ -61484,6 +62441,9 @@
     },
     {
       "name": "ParameterEndpoints"
+    },
+    {
+      "name": "ImportReconciliationEndpoints"
     }
   ]
 }

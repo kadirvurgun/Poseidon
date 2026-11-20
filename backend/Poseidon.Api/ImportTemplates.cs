@@ -14,6 +14,9 @@ internal static class ImportTemplates
 {
     internal const string Version = "DEV-069-declaration-v3";
     internal static readonly string[] Categories = ["vessel", "crew", "certificate", "equipment"];
+    // S11 WP-A DEV-069: the single list of current template versions (category -> version); Describe/Definition read it.
+    internal static readonly IReadOnlyDictionary<string, string> Versions = new Dictionary<string, string>(StringComparer.Ordinal) {
+        ["vessel"] = Version + "/vessel", ["crew"] = "DEV-069-declaration-v4/crew", ["certificate"] = Version + "/certificate", ["equipment"] = Version + "/equipment" };
     internal static ImportTemplateDefinition? Definition(string category) {
         string[] fields = category switch {
             "vessel" => ["record_key", "base_version", "code", "name"],
@@ -26,7 +29,7 @@ internal static class ImportTemplates
                 "maker", "model", "serial_number", "location", "commission_date", "notes"],
             _ => []
         };
-        return fields.Length == 0 ? null : new((category == "crew" ? "DEV-069-declaration-v4" : Version) + "/" + category,
+        return fields.Length == 0 ? null : new(Versions[category],
             fields.Select(f => new ImportTemplateField(f, f == "record_key" || category == "vessel" && f is "code" or "name" or "base_version" ||
                 category == "equipment" && f == "level", true))
                 .Concat(category == "certificate" ? new[] { "person_id", "verification_status", "verified_by", "verified_at", "alert_state", "sync_state", "status" }

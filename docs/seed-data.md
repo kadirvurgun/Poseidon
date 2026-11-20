@@ -1,3 +1,7 @@
+## S11-WPA DEV-070 — reconciliation report fixture (optional)
+
+`ImportReconciliationFixtures.AddMissingAsync` is an explicit administrative fixture, not wired into normal startup/seed import (default seed and audit totals unchanged). Per vessel without a current report it adds one FICTIONAL, empty reconciliation report `AWAITING_SIGN_OFF` (`SyntheticUnverified`; no pinned batch, all counts zero, no sample). No import provenance, data owner sign-off or receipt is seeded; the DB CHECK rejects a synthetic report that carries a sign-off. Add-missing; operator reports are preserved. Real-PostgreSQL test `Reconciliation_fixture_is_opt_in_idempotent_fictional_and_seeds_no_sign_off` is AUTHORED, execution DEFERRED to CI.
+
 ## S9-WPB DEV-060 — safety event fixture (optional)
 
 `SafetyEventFixtures.AddMissingAsync` is an explicit administrative fixture, not wired into normal startup/seed import (default seed and audit totals unchanged). Per seeded vessel it adds one FICTIONAL incomplete NEAR_MISS draft (no occurrence time, context, narrative or immediate action) reported NAMED by a deterministic synthetic actor id without membership, with one `SYNTHETIC_INCOMPLETE_DRAFT` revision. No submission, triage, severity, investigation, action, verification, effectiveness, closure, identity vault entry or receipt is seeded; DB CHECKs reject a synthetic non-DRAFT event. Add-missing; operator edits are preserved. Real-PostgreSQL test `Safety_event_fixture_is_opt_in_idempotent_fictional_and_seeds_no_submission_or_decision` is AUTHORED, execution DEFERRED to CI.

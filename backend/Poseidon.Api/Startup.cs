@@ -257,6 +257,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapParameters();
             endpoints.MapHr();
             endpoints.MapMemberships();
+            endpoints.MapImportReconciliation(); // S11 WP-A DEV-070
             endpoints.MapGet("/health/live", () => Results.Text("alive"))
                 .WithName("GetLiveness")
                 .WithSummary("Process liveness only; does not indicate database or operational readiness.");

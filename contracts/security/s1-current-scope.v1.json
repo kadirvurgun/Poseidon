@@ -30,9 +30,9 @@
     "TenantPerson",
     "Unresolved"
   ],
-  "mutationRouteTemplates": 272,
-  "criticalRouteTemplates": 263,
-  "criticalOperations": 288,
+  "mutationRouteTemplates": 274,
+  "criticalRouteTemplates": 265,
+  "criticalOperations": 290,
   "scopeMeaning": "Current exposed HTTP command surface, including aliases. Counts are authoring definitions until actual EndpointDataSource drift and real audit observations pass the phase gate. Technical codes describe accepted commands, never human justification or safety authority.",
   "operations": [
     {"operationId": "MeasurementPointSave", "method": "POST", "routePattern": "/api/v1/equipment-hierarchy/{vessel:guid}/measurement-points", "family": "Maintenance", "scope": "Vessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "MeasurementCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"]},
@@ -965,6 +965,8 @@
     { "operationId": "DrydockUpdate", "method": "PUT", "routePattern": "/api/v1/drydock-packages/{id:guid}", "family": "Drydock", "scope": "ResolvedVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DrydockCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "DrydockTransition", "method": "POST", "routePattern": "/api/v1/drydock-packages/{id:guid}/transitions", "family": "Drydock", "scope": "ResolvedVessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "DrydockCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "DrydockVerify", "method": "POST", "routePattern": "/api/v1/drydock-packages/{id:guid}/verification", "family": "Drydock", "scope": "ResolvedVessel", "kind": "CriticalWrite", "reasonCode": "HUMAN_REVIEW_WORKFLOW", "denialAction": "DrydockCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "ReconciliationReportCreate", "method": "POST", "routePattern": "/api/v1/vessels/{vessel:guid}/reconciliation-reports", "family": "Import", "scope": "Vessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "ImportReconciliationCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "ReconciliationSignOff", "method": "POST", "routePattern": "/api/v1/vessels/{vessel:guid}/reconciliation-reports/{id:guid}/sign-off", "family": "Import", "scope": "Vessel", "kind": "CriticalWrite", "reasonCode": "HUMAN_REVIEW_WORKFLOW", "denialAction": "ImportReconciliationCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     {
       "operationId": "TugPlanSave",
       "method": "PUT",

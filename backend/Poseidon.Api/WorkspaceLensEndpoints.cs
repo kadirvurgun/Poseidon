@@ -37,6 +37,8 @@ public static class WorkspaceLensPolicy
         if (actor.Permissions.Contains("equipment.read") && actor.Permissions.Contains("maintenance.read"))
             items.Add(new("maintenance", $"/app/maintenance-plan/{vessel}", "daily"));
         if (actor.Permissions.Contains("import.read")) items.Add(new("import", $"/app/excel-migration/{vessel}", "review"));
+        // S11 WP-A DEV-070: same server predicate as /api/v1/vessels/{vessel}/reconciliation-reports.
+        if (ImportReconciliationEndpoints.CanRead(actor)) items.Add(new("data-reconciliation", $"/app/data-reconciliation/{vessel}", "review"));
         return items.ToArray();
     }
 
@@ -54,7 +56,7 @@ public static class WorkspaceLensPolicy
         var rows = catalog.GetSection("Mappings").GetChildren().Take(4097).ToArray();
         if (rows.Length > 4096) return Empty("Unavailable");
         var mappings = new Dictionary<Guid, (string[] Keys, string[] Modes)>();
-        string[] known = ["data-trust-center", "industry-assurance", "voice-event-draft", "document-compare", "operational-downtime", "risk-assessment", "pms-command-center", "departure-signoff", "service-engineer-report", "risk-template-library", "high-risk-work", "safety-events", "towage-plan", "towage-risk-briefing", "towage-execution", "tug-daily-log", "tug-operation-history", "tug-operations-offline", "tug-demo-journey", "drydock-planning", "work-order-center", "critical-spares", "defects", "today", "fleet", "companies", "crew", "crew-certificates", "crew-competence", "safe-manning", "equipment", "maintenance", "import", "audit", "audit-ready", "sources", "requirements", "tug-command", "tug-job-board", "tug-job-intake", "tug-assignment", "tug-readiness", "tug-equipment-readiness", "tug-crew-readiness", "noon-report", "deck-daily-log", "engine-daily-log", "certificate-command-center", "renewal-workflow", "pre-survey-checklist", "survey-planner", "fuel-bunker-log", "port-activity-sof"];
+        string[] known = ["data-trust-center", "industry-assurance", "voice-event-draft", "document-compare", "operational-downtime", "risk-assessment", "pms-command-center", "departure-signoff", "service-engineer-report", "risk-template-library", "high-risk-work", "safety-events", "towage-plan", "towage-risk-briefing", "towage-execution", "tug-daily-log", "tug-operation-history", "tug-operations-offline", "tug-demo-journey", "drydock-planning", "work-order-center", "critical-spares", "defects", "today", "fleet", "companies", "crew", "crew-certificates", "crew-competence", "safe-manning", "equipment", "maintenance", "import", "data-reconciliation", "audit", "audit-ready", "sources", "requirements", "tug-command", "tug-job-board", "tug-job-intake", "tug-assignment", "tug-readiness", "tug-equipment-readiness", "tug-crew-readiness", "noon-report", "deck-daily-log", "engine-daily-log", "certificate-command-center", "renewal-workflow", "pre-survey-checklist", "survey-planner", "fuel-bunker-log", "port-activity-sof"];
         foreach (var row in rows) {
             if (!Guid.TryParse(row["TenantId"], out var tenant) || tenant != actor.TenantId) continue;
             var keys = row.GetSection("Keys").GetChildren().Select(x => x.Value ?? "").ToArray();

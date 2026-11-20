@@ -55,6 +55,8 @@ public static class SecurityEventCodes
         "AuditPackRead", "AuditPackCommand", "DataTrustRead", "AssuranceRead", "AssuranceCommand",
         // S10 WP-C DEV-066 certificate renewal offline draft capture.
         "CertificateRenewalOfflineRead", "CertificateRenewalOfflineRequest",
+        // S11 WP-A DEV-069 / DEV-070.
+        "ImportProvenanceRead", "ImportReconciliationRead", "ImportReconciliationCommand",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static IReadOnlySet<string> Results { get; } = new string[]
     {
@@ -136,6 +138,9 @@ public static class SecurityEventCodes
         "diff_changed", "media_type_unavailable", "pack_scope_empty",
         // S10 WP-B DEV-092.
         "offline_snapshot_unavailable",
+        // S11 WP-A DEV-069 / DEV-070.
+        "invalid_decision", "invalid_exception", "invalid_sample", "reconciliation_superseded", "reconciliation_stale", "reconciliation_open_items",
+        "reconciliation_exceptions_required", "reconciliation_batch_unavailable", "data_owner_authority_required",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static bool Allows(string action, string result) => Actions.Contains(action) && Results.Contains(result);
 }
