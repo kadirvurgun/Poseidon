@@ -218,6 +218,16 @@ public sealed class PoseidonDbContext(
     public DbSet<DrydockPackage> DrydockPackages => Set<DrydockPackage>();
     public DbSet<DrydockPackageRevision> DrydockPackageRevisions => Set<DrydockPackageRevision>();
     public DbSet<FieldOperationReceipt> FieldOperationReceipts => Set<FieldOperationReceipt>();
+    // S10 WP-A (DEV-064/113): audit packs and industry assurance (SIRE 2.0 synthetic schema).
+    public DbSet<AuditPackManifest> AuditPackManifests => Set<AuditPackManifest>();
+    public DbSet<AuditPackItem> AuditPackItems => Set<AuditPackItem>();
+    public DbSet<AssuranceImportMapping> AssuranceImportMappings => Set<AssuranceImportMapping>();
+    public DbSet<AssuranceInspection> AssuranceInspections => Set<AssuranceInspection>();
+    public DbSet<AssuranceImport> AssuranceImports => Set<AssuranceImport>();
+    public DbSet<AssuranceInspectionItem> AssuranceInspectionItems => Set<AssuranceInspectionItem>();
+    public DbSet<AssuranceFinding> AssuranceFindings => Set<AssuranceFinding>();
+    public DbSet<AssuranceEvidence> AssuranceEvidence => Set<AssuranceEvidence>();
+    public DbSet<AssuranceReceipt> AssuranceReceipts => Set<AssuranceReceipt>();
     public DbSet<TugOfflineEnrollment> TugOfflineEnrollments => Set<TugOfflineEnrollment>();
     public DbSet<TugOfflineOutcome> TugOfflineOutcomes => Set<TugOfflineOutcome>();
     public DbSet<TugOfflineLifecycle> TugOfflineLifecycles => Set<TugOfflineLifecycle>();
@@ -443,6 +453,17 @@ public sealed class PoseidonDbContext(
         model.Entity<DrydockPackage>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<DrydockPackageRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<FieldOperationReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        // S10 WP-A (DEV-064/113).
+        AssuranceStorage.Configure(model);
+        model.Entity<AuditPackManifest>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<AuditPackItem>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<AssuranceImportMapping>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<AssuranceInspection>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<AssuranceImport>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<AssuranceInspectionItem>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<AssuranceFinding>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<AssuranceEvidence>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<AssuranceReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         MaintenanceObservationStorage.Configure(model);
         model.Entity<MaintenanceObservation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<MaintenanceObservationRevocation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -827,6 +848,7 @@ public sealed class PoseidonDbContext(
         FieldOperationsStorage.Guard(changes);
         if(changes.Any(e=>e.Entity is ShipOpsLifecycleEvent && e.State!=EntityState.Added))
             throw new InvalidOperationException("Ship operations lifecycle events are immutable.");
+        AssuranceStorage.Guard(changes);
         if(changes.Any(e=>e.Entity is DowntimeRevision or DowntimeReceipt && e.State!=EntityState.Added))
             throw new InvalidOperationException("Downtime history and outcomes are immutable.");
         if(changes.Any(e=>e.Entity is Downtime && (e.State==EntityState.Deleted || e.State==EntityState.Modified &&

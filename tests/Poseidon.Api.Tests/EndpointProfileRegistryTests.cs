@@ -269,7 +269,8 @@ public sealed partial class DirectoryWorkspaceTests
         "membership.read", "membership.manage", "membership.security.suspend",
         "document.publish", "document.isps.read", "document.restricted.download", "document.acknowledge", "voice.draft.read", "voice.draft.write", "evidence.verify", "record.hold", "record.retention.manage", "record.purge.request", "record.purge.approve",
         "hse.risk.read", "hse.risk.write", "hse.risk.approve", "hse.risk.acknowledge", "hse.risk_template.read", "hse.risk_template.write", "hse.risk_template.publish", "hse.risk_template.suggest", "hse.risk_method.write", "hse.risk_method.publish", "hse.high_risk_work.read", "departure.readiness.read", "departure.decide",
-        "hse.safety_event.read", "hse.safety_event.report", "hse.safety_event.triage", "hse.safety_event.identity.read", "hse.safety_event.investigate", "hse.safety_event.review", "hse.safety_action.write", "hse.safety_action.verify", "hse.safety_action.effectiveness"];
+        "hse.safety_event.read", "hse.safety_event.report", "hse.safety_event.triage", "hse.safety_event.identity.read", "hse.safety_event.investigate", "hse.safety_event.review", "hse.safety_action.write", "hse.safety_action.verify", "hse.safety_action.effectiveness",
+        "assurance.inspection.read", "assurance.inspection.import", "assurance.import.accept", "assurance.evidence.write", "assurance.finding.link", "assurance.mapping.write"];
 
     private async Task<HttpResponseMessage> ProfileSend(WebApplicationFactory<Program> host, HttpClient client, EndpointProfileEntry entry,
         string path, bool csrf, bool key)

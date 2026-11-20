@@ -30,6 +30,8 @@ const labels: Record<string, {
     'pms-command-center': { tr: sourceText("tr", "pairs.m_8c3e1f0a5d2b7c41"), en: sourceText("en", "pairs.m_8c3e1f0a5d2b7c41"), icon: Gauge, group: 'operations' },
     'service-engineer-report': { tr: sourceText("tr", "pairs.m_8c3e1f0a5d2b7c42"), en: sourceText("en", "pairs.m_8c3e1f0a5d2b7c42"), icon: FileCheck2, group: 'operations' },
     'safety-events': { tr: sourceText("tr", "pairs.m_8a32195b2423b0ae"), en: sourceText("en", "pairs.m_8a32195b2423b0ae"), icon: ShieldCheck, group: 'assurance' },
+    'data-trust-center': { tr: sourceText("tr", "pairs.m_a51d0c7e3f9b2481"), en: sourceText("en", "pairs.m_a51d0c7e3f9b2481"), icon: Gauge, group: 'assurance' },
+    'industry-assurance': { tr: sourceText("tr", "pairs.m_b62e1f8d4a0c3592"), en: sourceText("en", "pairs.m_b62e1f8d4a0c3592"), icon: FileCheck2, group: 'assurance' },
     'voice-event-draft': { tr: sourceText("tr", "pairs.m_9a7c51e0d3b2f461"), en: sourceText("en", "pairs.m_9a7c51e0d3b2f461"), icon: ClipboardList, group: 'assurance' },
     'document-compare': { tr: sourceText("tr", "pairs.m_9a7c51e0d3b2f462"), en: sourceText("en", "pairs.m_9a7c51e0d3b2f462"), icon: FolderCheck, group: 'assurance' },
     'high-risk-work': { tr: sourceText("tr", "pairs.m_04076d4cdaa5ec7d"), en: sourceText("en", "pairs.m_04076d4cdaa5ec7d"), icon: ShieldCheck, group: 'assurance' },

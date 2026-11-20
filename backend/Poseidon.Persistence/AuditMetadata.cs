@@ -63,6 +63,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if (S9WpcProjection(entry) is { } s9wpc) return s9wpc;
         if (TowageProjection(entry) is { } towage) return towage;
         if (SafetyEventProjection(entry) is { } safety) return safety;
+        if (AssuranceProjection(entry) is { } assurance) return assurance;
         if (FieldOperationsProjection(entry) is { } field) return field;
         if(entry.Entity is Defect defect)
             return new(defect.VesselId,defect.Id,"Defect",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,defect.Revision,
@@ -995,6 +996,46 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                 Field("ReasonCode", null, Closed(r.ReasonCode, FieldOperationsStorage.DrydockReasons)), Field("Note", null, null, "ValuesWithheld"))),
             FieldOperationReceipt c => new(c.VesselId, c.ResourceId, "FieldOperationReceipt", null, c.Revision, Fields(
                 Field("Action", null, Closed(c.Action, FieldOperationsStorage.ReceiptActions)), Field("Revision", null, Number(c.Revision)), Field("Binding", null, "CommittedResource"))),
+            _ => null
+        };
+    }
+    // S10 WP-A (DEV-064/065/113): pack/item kinds, states, revisions and hashes-as-references only. Observation text,
+    // inspector comments, column headers, reasons and file checksums are never copied; no actor identity in the summary.
+    private static AuditMetadata? AssuranceProjection(EntityEntry entry)
+    {
+        long? Before(string property) => entry.State == EntityState.Added ? null : (long?)entry.Property(property).OriginalValue;
+        string? BeforeState(string property, string[] allowed) => entry.State == EntityState.Added ? null : Closed((string)entry.Property(property).OriginalValue!, allowed);
+        return entry.Entity switch
+        {
+            AuditPackManifest m => new(m.VesselId, m.Id, "AuditPackManifest", null, 1, Fields(
+                Field("Label", null, Closed(m.Label, Poseidon.Domain.AuditPackPolicy.Label)), Field("ItemCount", null, Number(m.ItemCount)),
+                Field("ManifestHash", null, null, "RevisionReference"), Field("Binding", null, "OwnerReference"))),
+            AuditPackItem i => new(i.VesselId, i.PackId, "AuditPackItem", null, i.Revision, Fields(
+                Field("Kind", null, Closed(i.Kind, Poseidon.Domain.AuditPackPolicy.Kinds)), Field("State", null, Closed(i.State, Poseidon.Domain.AuditPackPolicy.States)),
+                Field("Revision", null, Number(i.Revision)), Field("Hash", null, null, "RevisionReference"))),
+            AssuranceImportMapping m => new(null, m.Id, "AssuranceImportMapping", null, m.Version, Fields(
+                Field("Version", null, Number(m.Version)), Field("Bindings", null, null, "ValuesWithheld"), Field("Hash", null, null, "RevisionReference"))),
+            AssuranceInspection x => new(x.VesselId, x.Id, "AssuranceInspection", Before("Revision"), x.Revision, Fields(
+                Field("Revision", Before("Revision") is { } r ? Number(r) : null, Number(x.Revision)),
+                Field("State", null, Closed(x.State, Poseidon.Domain.AssurancePolicy.InspectionStates)),
+                Field("Applicability", null, Closed(x.Applicability, Poseidon.Domain.AssurancePolicy.Applicable, Poseidon.Domain.AssurancePolicy.ReviewRequired)),
+                Field("Reference", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
+            AssuranceImport x => new(x.VesselId, x.InspectionId, "AssuranceImport", null, x.MappingVersion, Fields(
+                Field("ImportState", BeforeState("State", Poseidon.Domain.AssurancePolicy.ImportStates), Closed(x.State, Poseidon.Domain.AssurancePolicy.ImportStates)),
+                Field("MappingVersion", null, Number(x.MappingVersion)), Field("Content", null, null, "RevisionReference"), Field("Reason", null, null, "ValuesWithheld"))),
+            AssuranceInspectionItem x => new(x.VesselId, x.InspectionId, "AssuranceInspectionItem", null, x.Revision, Fields(
+                Field("Revision", null, Number(x.Revision)), Field("Change", null, Closed(x.ChangeKind, Poseidon.Domain.AssurancePolicy.New, Poseidon.Domain.AssurancePolicy.Changed)),
+                Field("ContentJson", null, null, "RevisionReference"))),
+            AssuranceFinding x => new(x.VesselId, x.Id, "AssuranceFinding", Before("Revision"), x.Revision, Fields(
+                Field("Revision", Before("Revision") is { } r ? Number(r) : null, Number(x.Revision)),
+                Field("FindingState", null, Closed(x.State, Poseidon.Domain.AssurancePolicy.FindingStates)),
+                Field("ActionLinkState", BeforeState("ActionLinkState", Poseidon.Domain.AssurancePolicy.LinkStates), Closed(x.ActionLinkState, Poseidon.Domain.AssurancePolicy.LinkStates)),
+                Field("Binding", null, "OwnerReference"))),
+            AssuranceEvidence x => new(x.VesselId, x.InspectionId, "AssuranceEvidence", null, x.FileRevision, Fields(
+                Field("MediaKind", null, Closed(x.MediaKind, Poseidon.Domain.AssurancePolicy.MediaKinds)), Field("Origin", null, Closed(x.Origin, Poseidon.Domain.AssurancePolicy.Origins)),
+                Field("Verification", null, Closed(x.Verification, "UNVERIFIED")), Field("File", null, null, "RevisionReference"))),
+            AssuranceReceipt c => new(c.VesselId, c.ResourceId, "AssuranceReceipt", null, c.Revision, Fields(
+                Field("Action", null, Closed(c.Action, AssuranceStorage.ReceiptActions)), Field("Revision", null, Number(c.Revision)), Field("Binding", null, "CommittedResource"))),
             _ => null
         };
     }

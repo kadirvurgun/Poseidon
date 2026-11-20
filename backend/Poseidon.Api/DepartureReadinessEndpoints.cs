@@ -66,6 +66,7 @@ internal static class DepartureReadinessAssessor
         // No emergency preparedness / drill source module exists yet: always UNKNOWN, never assumed ready.
         checks.Add(new("emergency", U, "EMERGENCY_SOURCE_UNAVAILABLE"));
         checks.AddRange(await Safety(h, db, a, vessel, now, ct));
+        checks.AddRange(await DataTrust(h, db, a, vessel, now, ct));
         var mode = DepartureReadinessEngine.Mode(from, to, DateOnly.FromDateTime(now.UtcDateTime));
         var all = checks.ToArray();
         return new(DepartureReadinessEngine.Evaluate(all, from, to, mode), all);
@@ -76,6 +77,18 @@ internal static class DepartureReadinessAssessor
     internal static async Task<DepartureCheck[]> Safety(HttpContext h, PoseidonDbContext db, TrustedActor a, Guid vessel, DateTimeOffset now, CancellationToken ct) {
         var snapshot = await h.RequestServices.GetRequiredService<ISafetyEventBlockerSource>().ForVessel(db, a, vessel, now, ct);
         return DepartureReadinessEngine.SafetyChecks(snapshot.State, snapshot.Items.Select(i => new DepartureSafetyItem(i.EventId, i.Reason, i.Blocking)), snapshot.Coverage);
+    }
+
+    // S10 WP-A DEV-065: material data quality signals degrade readiness through the read-only IDataTrustSignalSource
+    // (statutory evidence/control inputs). Each signalled kind is an UNKNOWN check, so the engine floors at REVIEW_REQUIRED;
+    // an unreadable source is UNKNOWN too. The engine itself is unchanged.
+    internal static async Task<DepartureCheck[]> DataTrust(HttpContext h, PoseidonDbContext db, TrustedActor a, Guid vessel, DateTimeOffset now, CancellationToken ct) {
+        var snapshot = await h.RequestServices.GetRequiredService<IDataTrustSignalSource>().ForVessel(db, a, vessel, now, ct);
+        if (snapshot.State != "AVAILABLE") return [new("statutory", U, "DATA_TRUST_UNAVAILABLE")];
+        var kinds = snapshot.Items.SelectMany(i => i.Signals).Where(s => s.Material).Select(s => s.Kind).Distinct(StringComparer.Ordinal).Order(StringComparer.Ordinal).ToArray();
+        var checks = kinds.Select(k => new DepartureCheck("statutory", U, "DATA_TRUST_" + k)).ToList();
+        if (snapshot.Truncated || snapshot.Withheld > 0) checks.Add(new("statutory", U, "DATA_TRUST_INCOMPLETE"));
+        return checks.ToArray();
     }
 
     // DEV-050 shared crew engine (SOLAS V/14, STCW): vessel safe manning evaluation over the voyage window, and the
