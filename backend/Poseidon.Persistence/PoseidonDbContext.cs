@@ -127,6 +127,12 @@ public sealed class PoseidonDbContext(
     public DbSet<ControlledDocumentCustodyEvent> ControlledDocumentCustodyEvents => Set<ControlledDocumentCustodyEvent>();
     public DbSet<ControlledDocumentVerification> ControlledDocumentVerifications => Set<ControlledDocumentVerification>();
     public DbSet<ControlledDocumentReceipt> ControlledDocumentReceipts => Set<ControlledDocumentReceipt>();
+    // S9 WP-C DEV-114 / DEV-062.
+    public DbSet<ControlledDocumentAcknowledgement> ControlledDocumentAcknowledgements => Set<ControlledDocumentAcknowledgement>();
+    public DbSet<ControlledDocumentAccessRecord> ControlledDocumentAccessRecords => Set<ControlledDocumentAccessRecord>();
+    public DbSet<VoiceEventDraft> VoiceEventDrafts => Set<VoiceEventDraft>();
+    public DbSet<VoiceEventDraftRevision> VoiceEventDraftRevisions => Set<VoiceEventDraftRevision>();
+    public DbSet<VoiceEventDraftReceipt> VoiceEventDraftReceipts => Set<VoiceEventDraftReceipt>();
     public DbSet<ControlledDocumentCertificateLink> ControlledDocumentCertificateLinks => Set<ControlledDocumentCertificateLink>();
     public DbSet<ControlledDocumentEvidenceLink> ControlledDocumentEvidenceLinks => Set<ControlledDocumentEvidenceLink>();
     public DbSet<ControlledDocumentCredentialLink> ControlledDocumentCredentialLinks => Set<ControlledDocumentCredentialLink>();
@@ -497,6 +503,14 @@ public sealed class PoseidonDbContext(
         model.Entity<ControlledDocumentCustodyEvent>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ControlledDocumentVerification>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ControlledDocumentReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        // S9 WP-C DEV-114 / DEV-062.
+        ControlledDocumentSecurityStorage.Configure(model);
+        model.Entity<ControlledDocumentAcknowledgement>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ControlledDocumentAccessRecord>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        VoiceEventDraftStorage.Configure(model);
+        model.Entity<VoiceEventDraft>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<VoiceEventDraftRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<VoiceEventDraftReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ControlledDocumentCertificateLink>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ControlledDocumentEvidenceLink>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ControlledDocumentCredentialLink>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -784,6 +798,8 @@ public sealed class PoseidonDbContext(
         PmsStorage.Guard(changes);
         WorkOrderExecutionStorage.Guard(changes);
         TechnicalRecordStorage.Guard(changes);
+        ControlledDocumentSecurityStorage.Guard(changes);
+        VoiceEventDraftStorage.Guard(changes);
         TowageStorage.Guard(changes);
         SafetyEventStorage.Guard(changes);
         if(changes.Any(e=>e.Entity is DowntimeRevision or DowntimeReceipt && e.State!=EntityState.Added))

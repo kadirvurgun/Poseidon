@@ -433,8 +433,9 @@ public static class CrewComplianceEndpoints
                     db.ControlEvidenceHeads.Any(x => x.VesselId == r.VesselId && x.Kind == r.Kind && x.Id == r.Id && x.Revision == r.Revision))
                 .OrderByDescending(r => r.SavedAt).ThenBy(r => r.Id).Take(25).Select(r => new { r.Id, r.Revision, r.Lifecycle }).ToArrayAsync(ct))
                 .Select(r => new ManningEvidenceOption("EVIDENCE", r.Id, r.Revision, r.Lifecycle + " r" + r.Revision)));
+        var isps = ControlledDocumentEndpoints.Isps(actor); // DEV-114: ISPS-sensitive documents stay hidden without document.isps.read.
         if (ControlledDocumentEndpoints.CanReadDocuments(actor))
-            options.AddRange((await db.ControlledDocuments.AsNoTracking().Where(d => d.VesselId == vessel && d.CurrentRevision != null && d.DisposalState == "NONE")
+            options.AddRange((await db.ControlledDocuments.AsNoTracking().Where(d => d.VesselId == vessel && d.CurrentRevision != null && d.DisposalState == "NONE" && (!d.IspsRestricted || isps))
                 .OrderBy(d => d.Code).Take(25).Select(d => new { d.Id, d.Code, Revision = d.CurrentRevision!.Value }).ToArrayAsync(ct))
                 .Select(d => new ManningEvidenceOption("CONTROLLED_DOCUMENT", d.Id, d.Revision, d.Code + " r" + d.Revision)));
         return options.ToArray();
@@ -444,7 +445,7 @@ public static class CrewComplianceEndpoints
         "EVIDENCE" => ControlEvidenceEndpoints.Read(actor) && await OperationEquipmentCommands.Visible(db, actor, db.ControlEvidenceRevisions.AsNoTracking())
             .AnyAsync(r => r.VesselId == vessel && r.Kind == "Evidence" && r.Id == d.EvidenceId && r.Revision == d.EvidenceRevision, ct),
         "CONTROLLED_DOCUMENT" => ControlledDocumentEndpoints.CanReadDocuments(actor) &&
-            await db.ControlledDocuments.AsNoTracking().AnyAsync(x => x.VesselId == vessel && x.Id == d.EvidenceId && x.DisposalState == "NONE", ct) &&
+            await db.ControlledDocuments.AsNoTracking().AnyAsync(x => x.VesselId == vessel && x.Id == d.EvidenceId && x.DisposalState == "NONE" && (!x.IspsRestricted || ControlledDocumentEndpoints.Isps(actor)), ct) &&
             await db.ControlledDocumentRevisions.AsNoTracking().AnyAsync(r => r.VesselId == vessel && r.DocumentId == d.EvidenceId && r.Revision == d.EvidenceRevision, ct),
         _ => false
     };

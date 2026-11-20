@@ -56,10 +56,11 @@ public sealed partial class DirectoryWorkspaceTests
         // team message/follow-up message, offline enroll + action (6 variants); DEV-061 investigation save/submit/review,
         // action create/step and closure.
         // S9 WP-A adds 1 (DEV-059 Master departure sign-off record).
-        Assert.Equal(241, observed.Count);
-        Assert.Equal(233, observed.Count(x => x.IsCritical));
-        Assert.Equal(253, S1SecurityContract.CriticalOperationIds.Count);
-        Assert.Equal(8, observed.Count(x => !x.IsCritical));
+        // S9 WP-C adds 7: DEV-062 voice draft create/update/confirm/reject + transcription observation; DEV-114 acknowledgement and content access.
+        Assert.Equal(248, observed.Count);
+        Assert.Equal(239, observed.Count(x => x.IsCritical));
+        Assert.Equal(259, S1SecurityContract.CriticalOperationIds.Count);
+        Assert.Equal(9, observed.Count(x => !x.IsCritical));
         var extra = new RouteEndpoint(_ => Task.CompletedTask, RoutePatternFactory.Parse("/api/v1/unclassified-write"), 0,
             new EndpointMetadataCollection(new HttpMethodMetadata(["POST"]), new AuthorizeAttribute("DirectoryRead")), "unclassified");
         Assert.Throws<InvalidOperationException>(() => S1SecurityContract.ValidateEndpointInventory(endpoints.Append(extra)));

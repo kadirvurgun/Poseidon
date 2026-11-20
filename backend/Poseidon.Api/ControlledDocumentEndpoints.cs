@@ -13,7 +13,13 @@ using Poseidon.Persistence;
 namespace Poseidon.Api;
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
-public sealed record ControlledDocumentCreateCommand(string? Code, string? Title, string? Classification);
+public sealed record ControlledDocumentCreateCommand(string? Code, string? Title, string? Classification)
+{
+    // DEV-114: ISPS-sensitive document (always RESTRICTED; creator needs document.isps.read).
+    public bool? IspsRestricted { get; init; }
+}
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
+public sealed record ControlledDocumentAcknowledgeCommand(string? DisplayedContentSha256, bool StatementAccepted);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record ControlledDocumentRevisionCommand(Guid FileId);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
@@ -30,18 +36,22 @@ public sealed record ControlledDocumentLinkCommand(string? TargetKind, Guid Targ
 public sealed record ControlledDocumentVerificationDto(Guid Id, Guid VerifierId, string Method, string Result, string? Basis, DateTimeOffset CheckedAt);
 public sealed record ControlledDocumentRevisionDto(long Revision, Guid FileId, string ContentSha256, long ContentLength, string Mime,
     string IntakeState, string PublicationState, string VerificationState, Guid UploadedBy, Guid RegisteredBy, DateTimeOffset RegisteredAt,
-    DateTimeOffset? ReleasedAt, Guid? PublishedBy, DateTimeOffset? PublishedAt, ControlledDocumentVerificationDto[] Verifications);
+    DateTimeOffset? ReleasedAt, Guid? PublishedBy, DateTimeOffset? PublishedAt, ControlledDocumentVerificationDto[] Verifications,
+    DateTimeOffset? AcknowledgedByMeAt = null, bool CanAcknowledge = false);
+public sealed record ControlledDocumentContentPolicyDto(string Classification, string Download, string Print, string Basis, bool AttributionRequired, bool IspsRestricted);
+public sealed record ControlledDocumentAcknowledgementDto(Guid Id, long Revision, Guid ActorId, string Statement, DateTimeOffset AcknowledgedAt);
 // Position is the 1-based order among the events visible to this reader (QA F3): the raw
 // chain sequence is not exposed because gaps would disclose hidden domain links.
 public sealed record ControlledDocumentCustodyDto(long Position, long? Revision, string EventType, string Source, Guid? SubjectActorId,
     DateTimeOffset OccurredAt, DateTimeOffset RecordedAt);
 public sealed record ControlledDocumentLinkDto(string TargetKind, Guid TargetId, DateTimeOffset LinkedAt);
 public sealed record ControlledDocumentSummaryDto(Guid Id, Guid VesselId, string Code, string Title, string Classification, long? CurrentRevision,
-    long LatestRevision, uint Version, bool HoldActive, string RetentionState, string DisposalState, string Provenance);
+    long LatestRevision, uint Version, bool HoldActive, string RetentionState, string DisposalState, string Provenance, bool IspsRestricted = false);
 public sealed record ControlledDocumentDto(Guid Id, Guid VesselId, string Code, string Title, string Classification, long? CurrentRevision,
     long LatestRevision, uint Version, bool HoldActive, DateTimeOffset? HoldPlacedAt, string RetentionState, string? RetentionPolicyRef, DateOnly? RetainUntil,
     string DisposalState, string PhysicalDeletion, string Provenance, ControlledDocumentRevisionDto[] Revisions, ControlledDocumentCustodyDto[] Custody,
-    ControlledDocumentLinkDto[] Links, DateTimeOffset AsOf);
+    ControlledDocumentLinkDto[] Links, DateTimeOffset AsOf, bool IspsRestricted = false, ControlledDocumentContentPolicyDto? ContentPolicy = null,
+    ControlledDocumentAcknowledgementDto[]? Acknowledgements = null);
 public sealed record ControlledDocumentListDto(ControlledDocumentSummaryDto[] Items, int Offset, bool HasMore, bool CanWrite);
 
 // PLAN-1511-5802 / 58.02 Rev4. Shared controlled document/evidence custody API over the
@@ -103,10 +113,16 @@ public static class ControlledDocumentEndpoints
                     (db, a, c, d, ct) => LinkTargetReadable(a, c.TargetKind) ? ControlledDocumentChain.LinkAsync(db, a.Id, d!, c.TargetKind, c.TargetId, ct)
                         : throw new ControlledDocumentException("permission_denied")))
             .WithName("LinkControlledDocument").Accepts<ControlledDocumentLinkCommand>("application/json").Produces<ControlledDocumentDto>();
+        // DEV-114: reader acknowledgement (append-only record; the receipt is only idempotency).
+        g.MapPost("/{document:guid}/revisions/{revision:long}/acknowledgements", (Guid vessel, Guid document, long revision, HttpContext h, [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey, [FromHeader(Name = "X-CSRF-TOKEN")] string? csrfToken, [FromHeader(Name = "If-Match")] string? ifMatch) =>
+                Command<ControlledDocumentAcknowledgeCommand>(h, vessel, document, "Acknowledge", (a, _) => Authority(a, ControlledDocumentSecurityPolicy.AcknowledgePermission),
+                    (db, a, c, d, ct) => ControlledDocumentAccessEndpoints.AcknowledgeAsync(h, db, a, d!, revision, c, ct)))
+            .WithName("AcknowledgeControlledDocumentRevision").Accepts<ControlledDocumentAcknowledgeCommand>("application/json").Produces<ControlledDocumentDto>();
+        ControlledDocumentAccessEndpoints.MapControlledDocumentAccess(g);
     }
 
-    private static TrustedActor? Actor(HttpContext h) => h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User);
-    private static bool Read(TrustedActor? a) => a != null && a.CanRead && a.Permissions.Contains("file.read");
+    internal static TrustedActor? Actor(HttpContext h) => h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User);
+    internal static bool Read(TrustedActor? a) => a != null && a.CanRead && a.Permissions.Contains("file.read");
     // S7 DEV-050: dispensation links pin a controlled document revision only when the actor may read documents.
     internal static bool CanReadDocuments(TrustedActor? a) => Read(a);
     private static bool Write(TrustedActor a, Guid vessel) => Read(a) && a.Permissions.Contains("file.write") && a.CanEditVessel(vessel);
@@ -122,9 +138,11 @@ public static class ControlledDocumentEndpoints
     };
     private static bool LinkTargetKnownAndReadable(TrustedActor a, string? kind) => kind != null && ControlledDocumentPolicy.LinkKinds.Contains(kind) && LinkTargetReadable(a, kind);
     private static Task Sync(Action action) { action(); return Task.CompletedTask; }
-    private static Task<bool> Scope(PoseidonDbContext db, TrustedActor a, Guid vessel, CancellationToken ct) => a.Scope(db.Vessels).AnyAsync(v => v.Id == vessel, ct);
+    internal static bool Isps(TrustedActor? a) => a != null && a.Permissions.Contains(ControlledDocumentSecurityPolicy.IspsReadPermission);
+    internal static bool RestrictedContent(TrustedActor? a) => a != null && a.Permissions.Contains(ControlledDocumentSecurityPolicy.RestrictedContentPermission);
+    internal static Task<bool> Scope(PoseidonDbContext db, TrustedActor a, Guid vessel, CancellationToken ct) => a.Scope(db.Vessels).AnyAsync(v => v.Id == vessel, ct);
 
-    private static async Task<IResult> Fail(HttpContext h, int status, string code, Guid? id = null)
+    internal static async Task<IResult> Fail(HttpContext h, int status, string code, Guid? id = null)
     {
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "ControlledDocument", code, resourceId: id);
         return Results.Problem(statusCode: status, title: code, extensions: new Dictionary<string, object?> { ["code"] = code, ["correlationId"] = h.TraceIdentifier });
@@ -133,7 +151,7 @@ public static class ControlledDocumentEndpoints
     private static int Status(string code) => code switch
     {
         "resource_not_found" => 404, "permission_denied" or "separation_of_duties" => 403, "version_conflict" => 412,
-        "invalid_request" => 400, _ => 409
+        "invalid_request" or "isps_classification_required" => 400, "content_access_required" or "document_download_restricted" or "human_actor_required" => 403, _ => 409
     };
 
     private static async Task<IResult> List(Guid vessel, HttpContext h, PoseidonDbContext db)
@@ -145,11 +163,12 @@ public static class ControlledDocumentEndpoints
             (!int.TryParse(h.Request.Query["offset"], NumberStyles.None, CultureInfo.InvariantCulture, out var parsed) || parsed > 100000)) return await Fail(h, 400, "invalid_query");
         if (!await Scope(db, a!, vessel, ct)) return await Fail(h, 404, "resource_not_found");
         var offset = h.Request.Query.ContainsKey("offset") ? int.Parse(h.Request.Query["offset"]!, CultureInfo.InvariantCulture) : 0;
-        var rows = await db.ControlledDocuments.AsNoTracking().Where(x => x.VesselId == vessel).OrderBy(x => x.Code).ThenBy(x => x.Id).Skip(offset).Take(26).ToArrayAsync(ct);
+        var isps = Isps(a);
+        var rows = await db.ControlledDocuments.AsNoTracking().Where(x => x.VesselId == vessel && (!x.IspsRestricted || isps)).OrderBy(x => x.Code).ThenBy(x => x.Id).Skip(offset).Take(26).ToArrayAsync(ct);
         var today = ControlledDocumentChain.Today(DateTimeOffset.UtcNow);
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "ControlledDocumentRead", "Success", resourceId: vessel);
         return Results.Ok(new ControlledDocumentListDto(rows.Take(25).Select(d => new ControlledDocumentSummaryDto(d.Id, d.VesselId, d.Code, d.Title, d.Classification,
-            d.CurrentRevision, d.LatestRevision, d.Version, d.HoldActive, ControlledDocumentPolicy.Retention(d.RetentionPolicyRef, d.RetainUntil, today), d.DisposalState, d.Provenance)).ToArray(),
+            d.CurrentRevision, d.LatestRevision, d.Version, d.HoldActive, ControlledDocumentPolicy.Retention(d.RetentionPolicyRef, d.RetainUntil, today), d.DisposalState, d.Provenance, d.IspsRestricted)).ToArray(),
             offset, rows.Length > 25, Write(a!, vessel)));
     }
 
@@ -160,7 +179,9 @@ public static class ControlledDocumentEndpoints
         if (!Read(a)) return await Fail(h, 403, "permission_denied", document);
         if (h.Request.Query.Count != 0) return await Fail(h, 400, "invalid_query", document);
         if (!await Scope(db, a!, vessel, ct)) return await Fail(h, 404, "resource_not_found", document);
-        var d = await db.ControlledDocuments.AsNoTracking().SingleOrDefaultAsync(x => x.Id == document && x.VesselId == vessel, ct);
+        var isps = Isps(a);
+        // DEV-114: an ISPS-sensitive document without document.isps.read is indistinguishable from a missing one.
+        var d = await db.ControlledDocuments.AsNoTracking().SingleOrDefaultAsync(x => x.Id == document && x.VesselId == vessel && (!x.IspsRestricted || isps), ct);
         if (d == null) return await Fail(h, 404, "resource_not_found", document);
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "ControlledDocumentRead", "Success", resourceId: document);
         h.Response.Headers.ETag = $"\"{d.Version}\"";
@@ -188,6 +209,12 @@ public static class ControlledDocumentEndpoints
             links.AddRange((await db.ControlledDocumentCredentialLinks.AsNoTracking().Where(x => x.DocumentId == d.Id && x.VesselId == d.VesselId).ToArrayAsync(ct))
                 .Select(x => new ControlledDocumentLinkDto("Credential", x.CredentialId, x.LinkedAt)));
         var showBasis = a.Permissions.Contains("evidence.verify");
+        // DEV-114: own acknowledgements always; the full reader list only for the document controller (document.publish).
+        var controller = a.Permissions.Contains("document.publish");
+        var acknowledgements = await db.ControlledDocumentAcknowledgements.AsNoTracking().Where(x => x.DocumentId == d.Id && x.VesselId == d.VesselId && (controller || x.ActorId == a.Id))
+            .OrderBy(x => x.Revision).ThenBy(x => x.AcknowledgedAt).ThenBy(x => x.Id).Take(500).ToArrayAsync(ct);
+        var policy = ControlledDocumentSecurityPolicy.Content(d.Classification, RestrictedContent(a));
+        var canAcknowledge = Authority(a, ControlledDocumentSecurityPolicy.AcknowledgePermission);
         var now = DateTimeOffset.UtcNow;
         return new(d.Id, d.VesselId, d.Code, d.Title, d.Classification, d.CurrentRevision, d.LatestRevision, d.Version, d.HoldActive, d.HoldActive ? d.HoldPlacedAt : null,
             ControlledDocumentPolicy.Retention(d.RetentionPolicyRef, d.RetainUntil, ControlledDocumentChain.Today(now)), d.RetentionPolicyRef, d.RetainUntil,
@@ -196,10 +223,15 @@ public static class ControlledDocumentEndpoints
                 var own = verifications.Where(v => v.Revision == r.Revision).ToArray();
                 return new ControlledDocumentRevisionDto(r.Revision, r.FileId, r.ContentSha256, r.ContentLength, r.Mime, r.IntakeState, r.PublicationState,
                     ControlledDocumentPolicy.Verification(own.LastOrDefault()?.Result), r.UploadedBy, r.RegisteredBy, r.RegisteredAt, r.ReleasedAt, r.PublishedBy, r.PublishedAt,
-                    own.Select(v => new ControlledDocumentVerificationDto(v.Id, v.VerifierId, v.Method, v.Result, showBasis ? v.Basis : null, v.CheckedAt)).ToArray());
+                    own.Select(v => new ControlledDocumentVerificationDto(v.Id, v.VerifierId, v.Method, v.Result, showBasis ? v.Basis : null, v.CheckedAt)).ToArray(),
+                    acknowledgements.FirstOrDefault(x => x.Revision == r.Revision && x.ActorId == a.Id)?.AcknowledgedAt,
+                    canAcknowledge && ControlledDocumentSecurityPolicy.AcknowledgeBlocker(r.PublicationState, r.IntakeState, d.DisposalState, d.Classification, RestrictedContent(a),
+                        r.ContentSha256, r.ContentSha256, true, acknowledgements.Any(x => x.Revision == r.Revision && x.ActorId == a.Id)) == null);
             }).ToArray(),
             custody.Select((c, i) => new ControlledDocumentCustodyDto(i + 1, c.Revision, c.EventType, c.Source, c.SubjectActorId, c.OccurredAt, c.RecordedAt)).ToArray(),
-            links.OrderBy(x => x.TargetKind, StringComparer.Ordinal).ThenBy(x => x.TargetId).ToArray(), now);
+            links.OrderBy(x => x.TargetKind, StringComparer.Ordinal).ThenBy(x => x.TargetId).ToArray(), now, d.IspsRestricted,
+            new(policy.Classification, policy.Download, policy.Print, policy.Basis, policy.AttributionRequired, d.IspsRestricted),
+            acknowledgements.Select(x => new ControlledDocumentAcknowledgementDto(x.Id, x.Revision, x.ActorId, x.Statement, x.AcknowledgedAt)).ToArray());
     }
 
     // The command vessel comes from the authorized route, never from the body.
@@ -207,7 +239,12 @@ public static class ControlledDocumentEndpoints
     {
         var code = c.Code?.Trim().ToUpperInvariant();
         if (code != null && await db.ControlledDocuments.AnyAsync(x => x.Code == code, ct)) throw new ControlledDocumentException("duplicate_code");
-        return ControlledDocumentChain.Create(db, a.Id, vessel, c.Code ?? "", c.Title ?? "", c.Classification ?? "");
+        var isps = c.IspsRestricted == true;
+        if (isps && c.Classification != "RESTRICTED") throw new ControlledDocumentException("isps_classification_required");
+        if (!ControlledDocumentSecurityPolicy.CreateAllowed(isps, c.Classification, Isps(a))) throw new ControlledDocumentException("permission_denied");
+        var created = ControlledDocumentChain.Create(db, a.Id, vessel, c.Code ?? "", c.Title ?? "", c.Classification ?? "");
+        created.IspsRestricted = isps;
+        return created;
     }
 
     private static Task<IResult> Command<T>(HttpContext h, Guid vessel, Guid? document, string action, Func<TrustedActor, Guid, bool> allowed,
@@ -256,7 +293,8 @@ public static class ControlledDocumentEndpoints
             var receipt = await db.ControlledDocumentReceipts.AsNoTracking().SingleOrDefaultAsync(r => r.ActorId == a.Id && r.Key == key, ct);
             if (receipt == null) return null;
             if (receipt.Fingerprint != fingerprint || receipt.Action != action || receipt.VesselId != vessel) return await Fail(h, 409, "idempotency_key_reused", document);
-            if (!await db.ControlledDocuments.AnyAsync(x => x.Id == receipt.DocumentId && x.VesselId == vessel, ct)) return await Fail(h, 404, "resource_not_found", document);
+            var visible = Isps(live);
+            if (!await db.ControlledDocuments.AnyAsync(x => x.Id == receipt.DocumentId && x.VesselId == vessel && (!x.IspsRestricted || visible), ct)) return await Fail(h, 404, "resource_not_found", document);
             await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "ControlledDocumentReplay", "Success", resourceId: receipt.DocumentId);
             return Results.Content(receipt.OutcomeJson, "application/json");
         }
@@ -265,6 +303,9 @@ public static class ControlledDocumentEndpoints
         await using var tx = await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable, ct);
         try
         {
+            // DEV-114: visibility precedes the version check so a hidden ISPS document never answers 412.
+            if (document != null && !Isps(a) && await db.ControlledDocuments.AnyAsync(x => x.Id == document && x.VesselId == vessel && x.IspsRestricted, ct))
+                throw new ControlledDocumentException("resource_not_found");
             var current = document == null ? null : await ControlledDocumentChain.LoadAsync(db, vessel, document.Value, expected, ct);
             var d = await apply(db, a, command, current, ct);
             await db.SaveChangesAsync(ct);

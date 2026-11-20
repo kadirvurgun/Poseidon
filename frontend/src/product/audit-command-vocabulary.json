@@ -1,6 +1,12 @@
 {
   "schemaVersion": "poseidon.s1-audit-vocabulary.v1",
   "operationReasons": {
+    "VoiceDraftCreate": "PREPARATION_COMMAND",
+    "VoiceDraftUpdate": "PREPARATION_COMMAND",
+    "VoiceDraftConfirm": "HUMAN_REVIEW_WORKFLOW",
+    "VoiceDraftReject": "HUMAN_REVIEW_WORKFLOW",
+    "AcknowledgeControlledDocumentRevision": "HUMAN_REVIEW_WORKFLOW",
+    "AuthorizeControlledDocumentContent": "FILE_TRANSPORT",
     "DefectLifecycleStart": "PREPARATION_COMMAND",
     "DefectLifecycleAssess": "PREPARATION_COMMAND",
     "DefectLifecycleSafeguard": "PREPARATION_COMMAND",

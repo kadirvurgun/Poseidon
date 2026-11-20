@@ -26,6 +26,8 @@ internal static class WorkspaceDestinationLabels
         ["pms-command-center"] = ["PMS komuta merkezi", "PMS command center"],
         ["departure-signoff"] = ["Kalkış hazırlığı ve Kaptan kararı", "Departure readiness and Master sign-off"],
         ["service-engineer-report"] = ["Servis ve mühendis raporları", "Service and engineer reports"],
+        ["voice-event-draft"] = ["Sesli olay taslağı", "Voice event draft"],
+        ["document-compare"] = ["Doküman revizyon karşılaştırma", "Document revision compare"],
         ["operational-downtime"] = ["Operasyonel duruşlar", "Operational downtime"],
         ["risk-assessment"] = ["Risk değerlendirmesi", "Risk assessment"],
         ["risk-template-library"] = ["Risk şablon kütüphanesi", "Risk template library"],

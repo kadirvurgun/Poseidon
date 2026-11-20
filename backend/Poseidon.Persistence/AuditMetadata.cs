@@ -60,6 +60,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if (RiskProjection(entry) is { } risk) return risk;
         if (PmsProjection(entry) is { } pms) return pms;
         if (TechnicalRecordProjection(entry) is { } technical) return technical;
+        if (S9WpcProjection(entry) is { } s9wpc) return s9wpc;
         if (TowageProjection(entry) is { } towage) return towage;
         if (SafetyEventProjection(entry) is { } safety) return safety;
         if(entry.Entity is Defect defect)
@@ -812,6 +813,37 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             _ => null
         };
     }
+    // S9 WP-C DEV-062 / DEV-114: closed state, origin, reason, purpose and basis codes plus revisions
+    // only. Transcript, field values, notes, attribution text and content hashes are never copied.
+    private static AuditMetadata? S9WpcProjection(EntityEntry entry)
+    {
+        long? Before(string property) => entry.State == EntityState.Added ? null : (long?)entry.Property(property).OriginalValue;
+        var states = Poseidon.Domain.VoiceEventDraftPolicy.States;
+        return entry.Entity switch
+        {
+            VoiceEventDraft d => new(d.VesselId, d.Id, "VoiceEventDraft", Before("Revision"), d.Revision, Fields(
+                Field("Revision", Before("Revision") is { } r ? Number(r) : null, Number(d.Revision)),
+                Field("State", entry.State == EntityState.Added ? null : Closed((string)entry.Property("State").OriginalValue!, states), Closed(d.State, states)),
+                Field("TranscriptOrigin", null, Closed(d.TranscriptOrigin, Poseidon.Domain.VoiceEventDraftPolicy.Origins)),
+                Field("ExtractorVersion", null, Closed(d.ExtractorVersion, Poseidon.Domain.VoiceEventDraftPolicy.ExtractorVersion)),
+                Field("RejectionReason", null, d.RejectionReason == null ? null : Closed(d.RejectionReason, Poseidon.Domain.VoiceEventDraftPolicy.RejectionReasons)),
+                Field("Content", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
+            VoiceEventDraftRevision v => new(v.VesselId, v.DraftId, "VoiceEventDraftRevision", null, v.Revision, Fields(
+                Field("Revision", null, Number(v.Revision)), Field("State", null, Closed(v.State, states)),
+                Field("ReasonCode", null, Closed(v.ReasonCode, Poseidon.Domain.VoiceEventDraftPolicy.ReasonCodes)), Field("FieldsJson", null, null, "RevisionReference"))),
+            VoiceEventDraftReceipt c => new(c.VesselId, c.ResourceId, "VoiceEventDraftReceipt", null, c.Revision, Fields(
+                Field("Operation", null, Closed(c.Action, VoiceEventDraftStorage.Operations)), Field("Revision", null, Number(c.Revision)), Field("Binding", null, "CommittedResource"))),
+            ControlledDocumentAcknowledgement a => new(a.VesselId, a.DocumentId, "ControlledDocumentAcknowledgement", null, a.Revision, Fields(
+                Field("Revision", null, Number(a.Revision)), Field("Statement", null, Closed(a.Statement, Poseidon.Domain.ControlledDocumentSecurityPolicy.AcknowledgementStatement)),
+                Field("ContentSha256", null, null, "ValuesWithheld"))),
+            ControlledDocumentAccessRecord x => new(x.VesselId, x.DocumentId, "ControlledDocumentAccess", null, x.Revision, Fields(
+                Field("Revision", null, Number(x.Revision)), Field("Purpose", null, Closed(x.Purpose, Poseidon.Domain.ControlledDocumentSecurityPolicy.Purposes)),
+                Field("Classification", null, Closed(x.Classification, Poseidon.Domain.ControlledDocumentPolicy.Classifications)),
+                Field("PolicyBasis", null, Closed(x.PolicyBasis, Poseidon.Domain.ControlledDocumentSecurityPolicy.Bases)), Field("Attribution", null, null, "ValuesWithheld"))),
+            _ => null
+        };
+    }
+
     internal static readonly string[] TechnicalRecordOperations = ["DefectLifecycleStart", "DefectLifecycleAssess", "DefectLifecycleSafeguard", "DefectLifecycleLift",
         "DefectLifecycleAction", "DefectLifecycleVerify", "DefectLifecycleEffectiveness", "DefectLifecycleClose",
         "ServiceReportCreate", "ServiceReportUpdate", "ServiceReportSubmit", "ServiceReportVerify", "ServiceReportAmend"];

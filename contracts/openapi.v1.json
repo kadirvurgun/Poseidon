@@ -10623,6 +10623,147 @@
         "x-poseidon-profile": "NATIVE-COMMAND-IF-MATCH-1"
       }
     },
+    "/api/v1/vessels/{vessel}/controlled-documents/{document}/revisions/{revision}/acknowledgements": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "AcknowledgeControlledDocumentRevision",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "document",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "revision",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-CSRF-TOKEN",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ControlledDocumentAcknowledgeCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ControlledDocumentDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-IF-MATCH-1"
+      }
+    },
+    "/api/v1/vessels/{vessel}/controlled-documents/{document}/revisions/{revision}/content-access": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "AuthorizeControlledDocumentContent",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "document",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "revision",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ControlledDocumentContentAccessCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ControlledDocumentContentAccessDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
     "/api/v1/vessels/{vessel}/crew/position-catalog": {
       "get": {
         "tags": [
@@ -16482,6 +16623,314 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ServiceReportDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/voice-event-drafts": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "VoiceDraftList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoiceDraftPageDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "VoiceDraftCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VoiceDraftCreateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoiceDraftDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/voice-event-drafts/capabilities": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "VoiceDraftCapabilities",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoiceDraftCapabilitiesDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/voice-event-drafts/metrics": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "VoiceDraftMetrics",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoiceDraftMetricsDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/voice-event-drafts/{id}": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "VoiceDraftRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoiceDraftDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "VoiceDraftUpdate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VoiceDraftUpdateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoiceDraftDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/voice-event-drafts/transcriptions": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "VoiceDraftTranscribe",
+        "requestBody": {
+          "content": {
+            "audio/webm": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            },
+            "audio/ogg": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            },
+            "audio/wav": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            },
+            "audio/mp4": {
+              "schema": {
+                "type": "string",
+                "format": "byte"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoiceDraftTranscriptionDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-OBSERVATION-COMMAND-1"
+      }
+    },
+    "/api/v1/voice-event-drafts/{id}/confirm": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "VoiceDraftConfirm",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VoiceDraftConfirmCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoiceDraftDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TechnicalRecordFailure"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/voice-event-drafts/{id}/reject": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "VoiceDraftReject",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VoiceDraftRejectCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoiceDraftDto"
                 }
               }
             }
@@ -24377,6 +24826,176 @@
           }
         }
       },
+      "ControlledDocumentAcknowledgeCommand": {
+        "required": [
+          "displayedContentSha256",
+          "statementAccepted"
+        ],
+        "type": "object",
+        "properties": {
+          "displayedContentSha256": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "statementAccepted": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ControlledDocumentAcknowledgementDto": {
+        "required": [
+          "id",
+          "revision",
+          "actorId",
+          "statement",
+          "acknowledgedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "statement": {
+            "type": "string"
+          },
+          "acknowledgedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ControlledDocumentContentAccessCommand": {
+        "required": [
+          "purpose"
+        ],
+        "type": "object",
+        "properties": {
+          "purpose": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "ControlledDocumentContentAccessDto": {
+        "required": [
+          "recordId",
+          "documentId",
+          "revision",
+          "fileId",
+          "fileRevision",
+          "mime",
+          "contentSha256",
+          "classification",
+          "purpose",
+          "policyBasis",
+          "attribution",
+          "print",
+          "capability",
+          "expiresAt",
+          "issuedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "recordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "documentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "fileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fileRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "mime": {
+            "type": "string"
+          },
+          "contentSha256": {
+            "type": "string"
+          },
+          "classification": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "policyBasis": {
+            "type": "string"
+          },
+          "attribution": {
+            "type": "string"
+          },
+          "print": {
+            "type": "string"
+          },
+          "capability": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "issuedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ControlledDocumentContentPolicyDto": {
+        "required": [
+          "classification",
+          "download",
+          "print",
+          "basis",
+          "attributionRequired",
+          "ispsRestricted"
+        ],
+        "type": "object",
+        "properties": {
+          "classification": {
+            "type": "string"
+          },
+          "download": {
+            "type": "string"
+          },
+          "print": {
+            "type": "string"
+          },
+          "basis": {
+            "type": "string"
+          },
+          "attributionRequired": {
+            "type": "boolean"
+          },
+          "ispsRestricted": {
+            "type": "boolean"
+          }
+        }
+      },
       "ControlledDocumentCreateCommand": {
         "required": [
           "code",
@@ -24401,6 +25020,12 @@
             "type": [
               "null",
               "string"
+            ]
+          },
+          "ispsRestricted": {
+            "type": [
+              "null",
+              "boolean"
             ]
           }
         },
@@ -24565,6 +25190,29 @@
           "asOf": {
             "type": "string",
             "format": "date-time"
+          },
+          "ispsRestricted": {
+            "type": "boolean",
+            "default": false
+          },
+          "contentPolicy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ControlledDocumentContentPolicyDto"
+              }
+            ]
+          },
+          "acknowledgements": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ControlledDocumentAcknowledgementDto"
+            }
           }
         }
       },
@@ -24794,6 +25442,17 @@
             "items": {
               "$ref": "#/components/schemas/ControlledDocumentVerificationDto"
             }
+          },
+          "acknowledgedByMeAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "canAcknowledge": {
+            "type": "boolean",
+            "default": false
           }
         }
       },
@@ -24857,6 +25516,10 @@
           },
           "provenance": {
             "type": "string"
+          },
+          "ispsRestricted": {
+            "type": "boolean",
+            "default": false
           }
         }
       },
@@ -46726,6 +47389,28 @@
           }
         }
       },
+      "SpeechSegment": {
+        "required": [
+          "start",
+          "end",
+          "confidence"
+        ],
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "end": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "confidence": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
       "StageFileCommand": {
         "required": [
           "name",
@@ -51755,6 +52440,868 @@
               "integer"
             ],
             "format": "uint32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "VoiceDraftCandidate": {
+        "required": [
+          "protocol",
+          "extractorVersion",
+          "ruleSetVersion",
+          "transcriptSha256",
+          "fields",
+          "hints"
+        ],
+        "type": "object",
+        "properties": {
+          "protocol": {
+            "type": "string"
+          },
+          "extractorVersion": {
+            "type": "string"
+          },
+          "ruleSetVersion": {
+            "type": "string"
+          },
+          "transcriptSha256": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VoiceDraftCandidateField"
+            }
+          },
+          "hints": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VoiceDraftHint"
+            }
+          }
+        }
+      },
+      "VoiceDraftCandidateField": {
+        "required": [
+          "key",
+          "value",
+          "spans",
+          "confidence",
+          "rule"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "spans": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VoiceDraftSpan"
+            }
+          },
+          "confidence": {
+            "type": "number",
+            "format": "double"
+          },
+          "rule": {
+            "type": "string"
+          }
+        }
+      },
+      "VoiceDraftCapabilitiesDto": {
+        "required": [
+          "vesselId",
+          "canRead",
+          "canWrite",
+          "canConfirm",
+          "speechAvailable",
+          "speechUnavailableReason",
+          "speechEngineVersion",
+          "maxAudioBytes",
+          "audioRetention",
+          "extractorVersion",
+          "ruleSetVersion",
+          "eventTypes",
+          "locations",
+          "rejectionReasons",
+          "requiredFields",
+          "canAttachEvidence"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "canRead": {
+            "type": "boolean"
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "canConfirm": {
+            "type": "boolean"
+          },
+          "speechAvailable": {
+            "type": "boolean"
+          },
+          "speechUnavailableReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "speechEngineVersion": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "maxAudioBytes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "audioRetention": {
+            "type": "string"
+          },
+          "extractorVersion": {
+            "type": "string"
+          },
+          "ruleSetVersion": {
+            "type": "string"
+          },
+          "eventTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "locations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rejectionReasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "requiredFields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "canAttachEvidence": {
+            "type": "boolean"
+          }
+        }
+      },
+      "VoiceDraftConfirmCommand": {
+        "required": [
+          "expectedVersion",
+          "contentHash"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "contentHash": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "VoiceDraftCreateCommand": {
+        "required": [
+          "id",
+          "transcript",
+          "origin",
+          "referenceDate",
+          "speechAttestation"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "transcript": {
+            "type": "string"
+          },
+          "origin": {
+            "type": "string"
+          },
+          "referenceDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "speechAttestation": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "VoiceDraftDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "revision",
+          "version",
+          "state",
+          "origin",
+          "transcript",
+          "transcriptSha256",
+          "referenceDate",
+          "speech",
+          "extractorVersion",
+          "ruleSetVersion",
+          "candidate",
+          "fields",
+          "fieldOrigins",
+          "evidence",
+          "missing",
+          "hash",
+          "corrections",
+          "confirmedBy",
+          "confirmedAt",
+          "rejection",
+          "revisions",
+          "createdBy",
+          "canEdit",
+          "canConfirm",
+          "handoff",
+          "audioRetention",
+          "provenance",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "state": {
+            "type": "string"
+          },
+          "origin": {
+            "type": "string"
+          },
+          "transcript": {
+            "type": "string"
+          },
+          "transcriptSha256": {
+            "type": "string"
+          },
+          "referenceDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "speech": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/VoiceDraftSpeechDto"
+              }
+            ]
+          },
+          "extractorVersion": {
+            "type": "string"
+          },
+          "ruleSetVersion": {
+            "type": "string"
+          },
+          "candidate": {
+            "$ref": "#/components/schemas/VoiceDraftCandidate"
+          },
+          "fields": {
+            "$ref": "#/components/schemas/VoiceDraftFields"
+          },
+          "fieldOrigins": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VoiceDraftEvidenceDto"
+            }
+          },
+          "missing": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "hash": {
+            "type": "string"
+          },
+          "corrections": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/VoiceDraftFieldCorrection"
+            }
+          },
+          "confirmedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "confirmedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "rejection": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/VoiceDraftRejectionDto"
+              }
+            ]
+          },
+          "revisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VoiceDraftRevisionSummaryDto"
+            }
+          },
+          "createdBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canConfirm": {
+            "type": "boolean"
+          },
+          "handoff": {
+            "type": "string"
+          },
+          "audioRetention": {
+            "type": "string"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "VoiceDraftEvidenceDto": {
+        "required": [
+          "id",
+          "revision",
+          "currency",
+          "state"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      },
+      "VoiceDraftFieldCorrection": {
+        "required": [
+          "key",
+          "outcome",
+          "required"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          }
+        }
+      },
+      "VoiceDraftFields": {
+        "required": [
+          "eventType",
+          "occurredAt",
+          "location",
+          "locationDetail",
+          "description",
+          "immediateAction"
+        ],
+        "type": "object",
+        "properties": {
+          "eventType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "occurredAt": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "location": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "locationDetail": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "immediateAction": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "VoiceDraftHint": {
+        "required": [
+          "code",
+          "span"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "span": {
+            "$ref": "#/components/schemas/VoiceDraftSpan"
+          }
+        }
+      },
+      "VoiceDraftListItemDto": {
+        "required": [
+          "id",
+          "state",
+          "origin",
+          "eventType",
+          "location",
+          "occurredAt",
+          "missingCount",
+          "revision",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "origin": {
+            "type": "string"
+          },
+          "eventType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "location": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "occurredAt": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "missingCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "VoiceDraftMetricsDto": {
+        "required": [
+          "vesselId",
+          "state",
+          "confirmed",
+          "rejected",
+          "open",
+          "fieldCompleteness",
+          "correctionRate",
+          "usability",
+          "rejectionRate",
+          "rejectionsByReason",
+          "sampleLimit",
+          "extractorVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "confirmed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rejected": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "open": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fieldCompleteness": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "correctionRate": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "usability": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rejectionRate": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rejectionsByReason": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "sampleLimit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "extractorVersion": {
+            "type": "string"
+          }
+        }
+      },
+      "VoiceDraftPageDto": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore",
+          "canWrite"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VoiceDraftListItemDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "canWrite": {
+            "type": "boolean"
+          }
+        }
+      },
+      "VoiceDraftRejectCommand": {
+        "required": [
+          "expectedVersion",
+          "reasonCode",
+          "note"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "VoiceDraftRejectionDto": {
+        "required": [
+          "reasonCode",
+          "note",
+          "rejectedBy",
+          "rejectedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "reasonCode": {
+            "type": "string"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "rejectedBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "rejectedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "VoiceDraftRevisionSummaryDto": {
+        "required": [
+          "revision",
+          "state",
+          "reasonCode",
+          "hash",
+          "actorId",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reasonCode": {
+            "type": "string"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "VoiceDraftSpan": {
+        "required": [
+          "start",
+          "end"
+        ],
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "end": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "VoiceDraftSpeechDto": {
+        "required": [
+          "engineVersion",
+          "modelVersion",
+          "meanConfidence"
+        ],
+        "type": "object",
+        "properties": {
+          "engineVersion": {
+            "type": "string"
+          },
+          "modelVersion": {
+            "type": "string"
+          },
+          "meanConfidence": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          }
+        }
+      },
+      "VoiceDraftTranscriptionDto": {
+        "required": [
+          "transcript",
+          "transcriptSha256",
+          "engineVersion",
+          "modelVersion",
+          "meanConfidence",
+          "segments",
+          "attestation",
+          "expiresAt",
+          "audioRetained"
+        ],
+        "type": "object",
+        "properties": {
+          "transcript": {
+            "type": "string"
+          },
+          "transcriptSha256": {
+            "type": "string"
+          },
+          "engineVersion": {
+            "type": "string"
+          },
+          "modelVersion": {
+            "type": "string"
+          },
+          "meanConfidence": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "segments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SpeechSegment"
+            }
+          },
+          "attestation": {
+            "type": "string"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "audioRetained": {
+            "type": "boolean"
+          }
+        }
+      },
+      "VoiceDraftUpdateCommand": {
+        "required": [
+          "expectedVersion",
+          "fields",
+          "evidenceFileIds"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "fields": {
+            "$ref": "#/components/schemas/VoiceDraftFields"
+          },
+          "evidenceFileIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         },
         "additionalProperties": false
