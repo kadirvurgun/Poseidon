@@ -39,7 +39,8 @@ test('demo journey deep-links every gate in order with a Why panel and writes no
     await expect(links.nth(0)).toHaveAttribute('href', `/app/tug-job-intake?vessel=${vessel}`);
     await expect(links.nth(5)).toHaveAttribute('href', `/app/tug-readiness?vessel=${vessel}&job=${job}`);
     await expect(links.nth(6)).toHaveAttribute('href', `/app/towage-execution?vessel=${vessel}&job=${job}`);
-    await page.getByText('Why').nth(5).click();
+    // Exact summary of step 6 (Master release); a substring 'Why' also matches the intro sentence.
+    await page.locator('summary').filter({ hasText: /^Why$/ }).nth(5).click();
     await expect(page.getByText(/GO is a human record bound to the current readiness assessment/)).toBeVisible();
     await expect(page.getByText(/Demo data is fictional and unverified/)).toBeVisible();
     expect(writes).toEqual([]);
