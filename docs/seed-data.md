@@ -250,3 +250,13 @@ SyntheticUnverified, deterministic IDs, add-missing only. One Tug adds ten attri
 writes. No assignment proposal, Tug Master acknowledgement, Chief Engineer verification,
 GO/NO_GO decision or receipt is ever seeded; every seeded item stays UNKNOWN (REVIEW_REQUIRED).
 Any exact seeded audit-count expectation in deferred PostgreSQL tests must add these ten writes.
+
+## S8 WP-B DEV-110 critical spare — optional fixture, AUTHORED / PG DEFERRED
+
+`CriticalSpareFixtures.AddMissingAsync` is an explicit administrative fixture and is not wired into
+`SeedImporter` (default seed audit counts are unchanged). It adds one FICTIONAL `SyntheticUnverified`
+critical spare per supplied vessel with criticality `UNKNOWN`, no stock count and no min/max, so its
+projection is `STOCK_UNKNOWN` (review required). No technical requisition, approval, work order
+release/execution, evidence or receipt is seeded: release, verification, closure and requisition
+decisions are attributed human records. DB CHECKs reject synthetic execution rows beyond
+RELEASED/IN_PROGRESS and synthetic requisition rows beyond PROPOSED.

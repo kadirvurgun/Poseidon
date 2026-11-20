@@ -58,6 +58,17 @@ public sealed class PoseidonDbContext(
     public DbSet<WorkOrder> WorkOrders => Set<WorkOrder>();
     public DbSet<WorkOrderRevision> WorkOrderRevisions => Set<WorkOrderRevision>();
     public DbSet<WorkOrderReceipt> WorkOrderReceipts => Set<WorkOrderReceipt>();
+    public DbSet<WorkOrderExecution> WorkOrderExecutions => Set<WorkOrderExecution>();
+    public DbSet<WorkOrderExecutionRevision> WorkOrderExecutionRevisions => Set<WorkOrderExecutionRevision>();
+    public DbSet<WorkOrderExecutionReceipt> WorkOrderExecutionReceipts => Set<WorkOrderExecutionReceipt>();
+    public DbSet<WorkOrderOfflineEnrollment> WorkOrderOfflineEnrollments => Set<WorkOrderOfflineEnrollment>();
+    public DbSet<WorkOrderOfflineLifecycle> WorkOrderOfflineLifecycles => Set<WorkOrderOfflineLifecycle>();
+    public DbSet<WorkOrderOfflineOutcome> WorkOrderOfflineOutcomes => Set<WorkOrderOfflineOutcome>();
+    public DbSet<CriticalSpare> CriticalSpares => Set<CriticalSpare>();
+    public DbSet<CriticalSpareRevision> CriticalSpareRevisions => Set<CriticalSpareRevision>();
+    public DbSet<TechnicalRequisition> TechnicalRequisitions => Set<TechnicalRequisition>();
+    public DbSet<TechnicalRequisitionRevision> TechnicalRequisitionRevisions => Set<TechnicalRequisitionRevision>();
+    public DbSet<TechnicalSupplyReceipt> TechnicalSupplyReceipts => Set<TechnicalSupplyReceipt>();
     public DbSet<Defect> Defects => Set<Defect>();
     public DbSet<DefectRevision> DefectRevisions => Set<DefectRevision>();
     public DbSet<DefectReceipt> DefectReceipts => Set<DefectReceipt>();
@@ -377,6 +388,19 @@ public sealed class PoseidonDbContext(
         model.Entity<WorkOrder>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         model.Entity<WorkOrderRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         model.Entity<WorkOrderReceipt>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        WorkOrderExecutionStorage.Configure(model);
+        TechnicalSupplyStorage.Configure(model);
+        model.Entity<WorkOrderExecution>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<WorkOrderExecutionRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<WorkOrderExecutionReceipt>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<WorkOrderOfflineEnrollment>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<WorkOrderOfflineLifecycle>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<WorkOrderOfflineOutcome>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<CriticalSpare>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<CriticalSpareRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<TechnicalRequisition>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<TechnicalRequisitionRevision>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
+        model.Entity<TechnicalSupplyReceipt>().HasQueryFilter(x=>IsAdministrativeImport || x.TenantId==TenantId);
         model.Entity<Asset>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<AssetRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<TechnicalOwner>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -689,6 +713,7 @@ public sealed class PoseidonDbContext(
             throw new InvalidOperationException("WorkOrder ownership is immutable; append one revision.");
         RiskStorage.Guard(changes);
         PmsStorage.Guard(changes);
+        WorkOrderExecutionStorage.Guard(changes);
         if(changes.Any(e=>e.Entity is DowntimeRevision or DowntimeReceipt && e.State!=EntityState.Added))
             throw new InvalidOperationException("Downtime history and outcomes are immutable.");
         if(changes.Any(e=>e.Entity is Downtime && (e.State==EntityState.Deleted || e.State==EntityState.Modified &&
@@ -902,6 +927,8 @@ public sealed class PoseidonDbContext(
                 EntityId = entry.Entity is CommandReceipt receipt ? receipt.ResourceId.ToString() :
                     entry.Entity is CertificateCommandReceipt certificateReceipt ? certificateReceipt.ResourceId.ToString() :
                     entry.Entity is PreSurveyReceipt preSurveyReceipt ? preSurveyReceipt.ChecklistId.ToString() :
+                    entry.Entity is WorkOrderExecutionReceipt executionReceipt ? executionReceipt.WorkOrderId.ToString() :
+                    entry.Entity is TechnicalSupplyReceipt supplyReceipt ? supplyReceipt.ResourceId.ToString() :
                     entry.Entity is DailyOperationReceipt dailyReceipt ? dailyReceipt.RecordId.ToString() :
                     entry.Entity is DailyReviewReceipt reviewReceipt ? reviewReceipt.RecordId.ToString() :
                     entry.Entity is ApplicabilityReceipt applicabilityReceipt ? applicabilityReceipt.ResourceId.ToString() :
@@ -949,6 +976,13 @@ public sealed class PoseidonDbContext(
             }
             if(entry.Entity is DefectReceipt defectOutcome) {
                 events[^1].AfterVersion=checked((uint)defectOutcome.RecordVersion);events[^1].AfterRevision=defectOutcome.Revision;
+            }
+            // DEV-054/DEV-057/DEV-110 receipts carry the committed revision/xmin of the owning head.
+            if(entry.Entity is WorkOrderExecutionReceipt executionOutcome) {
+                events[^1].AfterVersion=checked((uint)executionOutcome.RecordVersion);events[^1].AfterRevision=executionOutcome.Revision;
+            }
+            if(entry.Entity is TechnicalSupplyReceipt supplyOutcome) {
+                events[^1].AfterVersion=checked((uint)supplyOutcome.RecordVersion);events[^1].AfterRevision=supplyOutcome.Revision;
             }
             if(entry.Entity is WorkOrderReceipt work_orderOutcome) {
                 events[^1].AfterVersion=checked((uint)work_orderOutcome.RecordVersion);events[^1].AfterRevision=work_orderOutcome.Revision;

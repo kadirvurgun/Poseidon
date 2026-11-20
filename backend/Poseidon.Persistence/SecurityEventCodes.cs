@@ -39,6 +39,8 @@ public static class SecurityEventCodes
         "TugLifecycle",
         "RiskAssessmentRead", "RiskAssessmentCommand", "RiskTemplateRead", "RiskTemplateCommand",
         "PreSurveyRead", "PreSurveyCommand", "SurveyPlannerRead",
+        "WorkOrderExecutionRead", "WorkOrderExecutionCommand", "WorkOrderOfflineRead", "WorkOrderOfflineRequest",
+        "CriticalSpareRead", "CriticalSpareCommand", "TechnicalRequisitionRead", "TechnicalRequisitionCommand",
         "CredentialVerificationRead", "CredentialVerificationCommand", "CrewCompetenceRead", "CrewCompetenceCommand", "SafeManningRead", "SafeManningCommand",
         "MeasurementRead", "MeasurementCommand", "MaintenancePostponementRead", "MaintenancePostponementCommand",
     }.ToFrozenSet(StringComparer.Ordinal);
@@ -104,6 +106,7 @@ public static class SecurityEventCodes
         "renewal_state_locked", "certificate_already_superseded",
         "risk_record_incomplete", "method_matrix_incomplete", "template_not_effective", "risk_acknowledgement_exists",
         "checklist_items_mismatch", "na_not_authorized", "port_call_unavailable", "template_unavailable", "verification_rejected",
+        "required_evidence_missing", "required_evidence_unconfigured", "evidence_changed", "stock_not_low", "requisition_already_open", "quantity_required",
         "credential_document_required", "competence_requirement_unavailable", "evaluation_window_invalid", "manning_dispensation_required", "manning_dispensation_not_applicable", "manning_review_acknowledgement_required",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static bool Allows(string action, string result) => Actions.Contains(action) && Results.Contains(result);

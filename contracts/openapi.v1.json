@@ -13380,6 +13380,542 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/work-orders/{id}/execution": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "WorkOrderExecutionRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrderExecutionViewDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/work-orders/{id}/execution/history": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "WorkOrderExecutionHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrderExecutionHistoryDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/work-orders/{id}/execution/transitions": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "WorkOrderExecutionTransition",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkOrderExecutionTransitionCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrderExecutionDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/work-orders/{id}/execution/evidence": {
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "WorkOrderExecutionEvidence",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkOrderExecutionEvidenceCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrderExecutionDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/work-order-offline/{workOrder}": {
+      "get": {
+        "tags": [
+          "WorkOrderOfflineEndpoints"
+        ],
+        "operationId": "WorkOrderOfflineInventory",
+        "parameters": [
+          {
+            "name": "workOrder",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "WorkOrderOfflineEndpoints"
+        ],
+        "operationId": "WorkOrderOfflineEnroll",
+        "parameters": [
+          {
+            "name": "workOrder",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkOrderOfflineContextDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-OFFLINE-1"
+      }
+    },
+    "/api/v1/work-order-offline/{workOrder}/{enrollment}/{action}": {
+      "post": {
+        "tags": [
+          "WorkOrderOfflineEndpoints"
+        ],
+        "operationId": "WorkOrderOfflineAction",
+        "parameters": [
+          {
+            "name": "workOrder",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "enrollment",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "action",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-OFFLINE-1"
+      }
+    },
+    "/api/v1/work-order-offline/{workOrder}/{enrollment}/history": {
+      "get": {
+        "tags": [
+          "WorkOrderOfflineEndpoints"
+        ],
+        "operationId": "WorkOrderOfflineHistory",
+        "parameters": [
+          {
+            "name": "workOrder",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "enrollment",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/work-order-offline/{workOrder}/{enrollment}/conflicts/{command}": {
+      "get": {
+        "tags": [
+          "WorkOrderOfflineEndpoints"
+        ],
+        "operationId": "WorkOrderOfflineConflict",
+        "parameters": [
+          {
+            "name": "workOrder",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "enrollment",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "command",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/critical-spares": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "CriticalSpareList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CriticalSparePageDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "CriticalSpareCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CriticalSpareSaveCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CriticalSpareDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/critical-spares/{id}": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "CriticalSpareRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CriticalSpareDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "put": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "CriticalSpareUpdate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CriticalSpareSaveCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CriticalSpareDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/technical-requisitions": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TechnicalRequisitionList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TechnicalRequisitionPageDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TechnicalRequisitionPropose",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TechnicalRequisitionProposeCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TechnicalRequisitionDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/technical-requisitions/{id}/decisions": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "TechnicalRequisitionDecide",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TechnicalRequisitionDecisionCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TechnicalRequisitionDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
     "/api/v1/operational-downtime": {
       "get": {
         "tags": [
@@ -24737,6 +25273,277 @@
             "default": "SYSTEM_DERIVED;BA_DEFINITION_PENDING"
           }
         }
+      },
+      "CriticalSpareCount": {
+        "required": [
+          "quantity",
+          "countedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "quantity": {
+            "type": "string"
+          },
+          "countedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CriticalSpareDefinition": {
+        "required": [
+          "partNumber",
+          "name",
+          "unit",
+          "criticality"
+        ],
+        "type": "object",
+        "properties": {
+          "partNumber": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "criticality": {
+            "type": "string"
+          },
+          "assetId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "minQuantity": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "maxQuantity": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "location": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "CriticalSpareDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "revision",
+          "version",
+          "definition",
+          "count",
+          "stock",
+          "equipmentCriticality",
+          "openWorkOrderDemand",
+          "openRequisitionId",
+          "transition",
+          "sourceVersion",
+          "hash",
+          "savedAt",
+          "provenance",
+          "currentRevision",
+          "canEdit"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "definition": {
+            "$ref": "#/components/schemas/CriticalSpareDefinition"
+          },
+          "count": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/CriticalSpareCount"
+              }
+            ]
+          },
+          "stock": {
+            "$ref": "#/components/schemas/SpareStockProjection"
+          },
+          "equipmentCriticality": {
+            "type": "string"
+          },
+          "openWorkOrderDemand": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "openRequisitionId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "transition": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "currentRevision": {
+            "type": "boolean"
+          },
+          "canEdit": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CriticalSparePageDto": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore",
+          "lowStock",
+          "reviewRequired",
+          "canWrite",
+          "canPropose",
+          "canApprove",
+          "criticalities",
+          "rejectReasons",
+          "qualification",
+          "erpBoundary",
+          "sourceVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CriticalSpareDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "lowStock": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reviewRequired": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "canWrite": {
+            "type": "boolean"
+          },
+          "canPropose": {
+            "type": "boolean"
+          },
+          "canApprove": {
+            "type": "boolean"
+          },
+          "criticalities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rejectReasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "qualification": {
+            "type": "string"
+          },
+          "erpBoundary": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          }
+        }
+      },
+      "CriticalSpareSaveCommand": {
+        "required": [
+          "id",
+          "expectedVersion",
+          "expectedRevision",
+          "definition"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "definition": {
+            "$ref": "#/components/schemas/CriticalSpareDefinition"
+          },
+          "count": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/CriticalSpareCount"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
       },
       "CriticalStateBlocker": {
         "required": [
@@ -40099,6 +40906,78 @@
         },
         "additionalProperties": false
       },
+      "SpareStockProjection": {
+        "required": [
+          "state",
+          "counted",
+          "countedAt",
+          "consumedSinceCount",
+          "projected",
+          "minimum",
+          "maximum",
+          "proposedQuantity",
+          "reasons",
+          "qualification"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "counted": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "countedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "consumedSinceCount": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "projected": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "minimum": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "maximum": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "proposedQuantity": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "qualification": {
+            "type": "string"
+          }
+        }
+      },
       "StageFileCommand": {
         "required": [
           "name",
@@ -40852,6 +41731,306 @@
             "type": "string"
           }
         }
+      },
+      "TechnicalRequisitionDecisionCommand": {
+        "required": [
+          "id",
+          "expectedVersion",
+          "expectedRevision",
+          "decision"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "approvedQuantity": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reasonCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "TechnicalRequisitionDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "spareId",
+          "spareRevision",
+          "revision",
+          "version",
+          "state",
+          "proposedQuantity",
+          "basisState",
+          "basisProjected",
+          "basisMinimum",
+          "basisMaximum",
+          "spareCriticality",
+          "equipmentCriticality",
+          "openWorkOrderDemand",
+          "proposedAt",
+          "approvedQuantity",
+          "decidedAt",
+          "reasonCode",
+          "proposedByCurrentActor",
+          "decidedByCurrentActor",
+          "partNumber",
+          "name",
+          "unit",
+          "erpReference",
+          "transition",
+          "hash",
+          "savedAt",
+          "currentRevision",
+          "canDecide",
+          "erpBoundary"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "spareId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "spareRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "state": {
+            "type": "string"
+          },
+          "proposedQuantity": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "basisState": {
+            "type": "string"
+          },
+          "basisProjected": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "basisMinimum": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "basisMaximum": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "spareCriticality": {
+            "type": "string"
+          },
+          "equipmentCriticality": {
+            "type": "string"
+          },
+          "openWorkOrderDemand": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "proposedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "approvedQuantity": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "decidedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "reasonCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "proposedByCurrentActor": {
+            "type": "boolean"
+          },
+          "decidedByCurrentActor": {
+            "type": "boolean"
+          },
+          "partNumber": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "erpReference": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TechnicalRequisitionErpReferenceDto"
+              }
+            ]
+          },
+          "transition": {
+            "type": "string"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "currentRevision": {
+            "type": "boolean"
+          },
+          "canDecide": {
+            "type": "boolean"
+          },
+          "erpBoundary": {
+            "type": "string"
+          }
+        }
+      },
+      "TechnicalRequisitionErpReferenceDto": {
+        "required": [
+          "kind",
+          "referenceId",
+          "vesselId",
+          "partNumber",
+          "unit",
+          "quantity",
+          "sourceVersion",
+          "boundary"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "referenceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "partNumber": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "boundary": {
+            "type": "string"
+          }
+        }
+      },
+      "TechnicalRequisitionPageDto": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TechnicalRequisitionDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TechnicalRequisitionProposeCommand": {
+        "required": [
+          "id",
+          "spareId",
+          "spareRevision"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "spareId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "spareRevision": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
       },
       "TechnicalSaved": {
         "required": [
@@ -43884,6 +45063,475 @@
         },
         "additionalProperties": false
       },
+      "WorkOrderEvidence": {
+        "required": [
+          "readings",
+          "spares",
+          "files"
+        ],
+        "type": "object",
+        "properties": {
+          "readings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkOrderReading"
+            }
+          },
+          "spares": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkOrderSpareUse"
+            }
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkOrderEvidenceFile"
+            }
+          },
+          "workDone": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "findings": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkOrderEvidenceFile": {
+        "required": [
+          "kind",
+          "file"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "file": {
+            "$ref": "#/components/schemas/CertificateFilePin"
+          },
+          "caption": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkOrderEvidenceGate": {
+        "required": [
+          "state",
+          "required",
+          "present",
+          "missing"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "required": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "present": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "missing": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "WorkOrderExecutionCapabilitiesDto": {
+        "required": [
+          "canRelease",
+          "canExecute",
+          "canVerify",
+          "canClose",
+          "evidenceKinds",
+          "fileKinds",
+          "returnReasons",
+          "offline",
+          "sourceVersion",
+          "qualification"
+        ],
+        "type": "object",
+        "properties": {
+          "canRelease": {
+            "type": "boolean"
+          },
+          "canExecute": {
+            "type": "boolean"
+          },
+          "canVerify": {
+            "type": "boolean"
+          },
+          "canClose": {
+            "type": "boolean"
+          },
+          "evidenceKinds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "fileKinds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "returnReasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "offline": {
+            "$ref": "#/components/schemas/WorkOrderOfflineDto"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "qualification": {
+            "type": "string"
+          }
+        }
+      },
+      "WorkOrderExecutionDto": {
+        "required": [
+          "workOrderId",
+          "vesselId",
+          "revision",
+          "version",
+          "workOrderRevision",
+          "workOrderVersion",
+          "state",
+          "requiredEvidence",
+          "evidence",
+          "evidenceHash",
+          "gate",
+          "blockers",
+          "transition",
+          "releasedAt",
+          "startedAt",
+          "submittedAt",
+          "verifiedAt",
+          "closedAt",
+          "returnReason",
+          "returnedAt",
+          "releasedByCurrentActor",
+          "executedByCurrentActor",
+          "sourceVersion",
+          "hash",
+          "provenance",
+          "savedAt",
+          "currentRevision",
+          "qualification"
+        ],
+        "type": "object",
+        "properties": {
+          "workOrderId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "workOrderRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "workOrderVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "state": {
+            "type": "string"
+          },
+          "requiredEvidence": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidence": {
+            "$ref": "#/components/schemas/WorkOrderEvidence"
+          },
+          "evidenceHash": {
+            "type": "string"
+          },
+          "gate": {
+            "$ref": "#/components/schemas/WorkOrderEvidenceGate"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "transition": {
+            "type": "string"
+          },
+          "releasedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "startedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "submittedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "verifiedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "closedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "returnReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "returnedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "releasedByCurrentActor": {
+            "type": "boolean"
+          },
+          "executedByCurrentActor": {
+            "type": "boolean"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "hash": {
+            "type": "string"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "savedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "currentRevision": {
+            "type": "boolean"
+          },
+          "qualification": {
+            "type": "string"
+          }
+        }
+      },
+      "WorkOrderExecutionEvidenceCommand": {
+        "required": [
+          "workOrderId",
+          "expectedVersion",
+          "expectedRevision",
+          "evidence"
+        ],
+        "type": "object",
+        "properties": {
+          "workOrderId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "evidence": {
+            "$ref": "#/components/schemas/WorkOrderEvidence"
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkOrderExecutionHistoryDto": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkOrderExecutionDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
+      "WorkOrderExecutionTransitionCommand": {
+        "required": [
+          "workOrderId",
+          "action",
+          "expectedVersion",
+          "expectedRevision"
+        ],
+        "type": "object",
+        "properties": {
+          "workOrderId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "action": {
+            "type": "string"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "workOrderRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "workOrderVersion": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          },
+          "requiredEvidence": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "expectedEvidenceHash": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reasonCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "WorkOrderExecutionViewDto": {
+        "required": [
+          "workOrderId",
+          "vesselId",
+          "workOrderRevision",
+          "workOrderVersion",
+          "capabilities",
+          "current"
+        ],
+        "type": "object",
+        "properties": {
+          "workOrderId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "workOrderRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "workOrderVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "capabilities": {
+            "$ref": "#/components/schemas/WorkOrderExecutionCapabilitiesDto"
+          },
+          "current": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/WorkOrderExecutionDto"
+              }
+            ]
+          }
+        }
+      },
       "WorkOrderFact": {
         "required": [
           "state",
@@ -43971,6 +45619,156 @@
           }
         }
       },
+      "WorkOrderOfflineContextDto": {
+        "required": [
+          "id",
+          "tenantId",
+          "actorId",
+          "vesselId",
+          "workOrderId",
+          "deviceId",
+          "keyId",
+          "challenge",
+          "policyVersion",
+          "policyDigest",
+          "authorityDigest",
+          "sourceVersion",
+          "operation",
+          "allowedParts",
+          "baseVersion",
+          "baseRevision",
+          "baseEvidence",
+          "state",
+          "requiredEvidence",
+          "workOrderFields",
+          "spareOptions",
+          "serverTime",
+          "expiresAt",
+          "retainUntil",
+          "maxRecords",
+          "maxEncryptedBytes",
+          "maxDeviceRecords",
+          "maxDeviceEncryptedBytes"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tenantId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "workOrderId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "deviceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "keyId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "challenge": {
+            "type": "string"
+          },
+          "policyVersion": {
+            "type": "string"
+          },
+          "policyDigest": {
+            "type": "string"
+          },
+          "authorityDigest": {
+            "type": "string"
+          },
+          "sourceVersion": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string"
+          },
+          "allowedParts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "baseVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "baseRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "baseEvidence": {
+            "$ref": "#/components/schemas/WorkOrderEvidence"
+          },
+          "state": {
+            "type": "string"
+          },
+          "requiredEvidence": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "workOrderFields": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/WorkOrderFact"
+            }
+          },
+          "spareOptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkOrderOfflineSpareOption"
+            }
+          },
+          "serverTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "retainUntil": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "maxRecords": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxEncryptedBytes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxDeviceRecords": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxDeviceEncryptedBytes": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "WorkOrderOfflineDto": {
         "required": [
           "supported",
@@ -43982,6 +45780,35 @@
             "type": "boolean"
           },
           "state": {
+            "type": "string"
+          }
+        }
+      },
+      "WorkOrderOfflineSpareOption": {
+        "required": [
+          "id",
+          "revision",
+          "partNumber",
+          "name",
+          "unit"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "partNumber": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "unit": {
             "type": "string"
           }
         }
@@ -44127,6 +45954,41 @@
           }
         }
       },
+      "WorkOrderReading": {
+        "required": [
+          "code",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "unit": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "takenAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
       "WorkOrderRecordDto": {
         "required": [
           "id",
@@ -44211,6 +46073,40 @@
             "type": "boolean"
           }
         }
+      },
+      "WorkOrderSpareUse": {
+        "required": [
+          "spareId",
+          "spareRevision",
+          "quantity"
+        ],
+        "type": "object",
+        "properties": {
+          "spareId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "spareRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "quantity": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
       },
       "WorkspaceCompanyDto": {
         "required": [
@@ -44570,6 +46466,9 @@
     },
     {
       "name": "LegacyCrewImportEndpoints"
+    },
+    {
+      "name": "WorkOrderOfflineEndpoints"
     },
     {
       "name": "MaintenanceObservationEndpoints"

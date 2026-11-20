@@ -27,7 +27,7 @@ public static class SyncConflictCenterEndpoints
 {
     internal const int PageSize = 25;
     internal const int MaxOffset = 1000;
-    internal const string CrewSource = "crewAssignment", TugSource = "tugPlan", DailySource = "dailyRecord";
+    internal const string CrewSource = "crewAssignment", TugSource = "tugPlan", DailySource = "dailyRecord", WorkOrderSource = "workOrderEvidence";
 
     public static void MapSyncConflictCenter(this IEndpointRouteBuilder app) => app.MapGet("/api/v1/sync/conflicts", List)
         .RequireAuthorization("DirectoryRead").WithName("SyncConflictList").Produces<SyncConflictPageDto>()
@@ -36,10 +36,11 @@ public static class SyncConflictCenterEndpoints
     internal static bool CrewReadable(TrustedActor a) => a.CanRead && a.Permissions.Contains("crew.read");
     internal static bool TugReadable(TrustedActor a) => a.CanReadTug;
     internal static bool DailyReadable(TrustedActor a, string kind) => DailyOperationsEndpoints.CanRead(a, kind);
+    internal static bool WorkOrderReadable(TrustedActor a) => WorkOrderEndpoints.CanRead(a);
     // Navigation (DEV-022 pattern): the destination is projected only when the list endpoint can return
     // at least one source for this actor, i.e. the same CanRead gate plus one currently readable source.
     internal static bool CanOpen(TrustedActor a) => a.CanRead &&
-        (CrewReadable(a) || TugReadable(a) || DailyOperationsPolicy.Kinds.Any(k => DailyReadable(a, k)));
+        (CrewReadable(a) || TugReadable(a) || DailyOperationsPolicy.Kinds.Any(k => DailyReadable(a, k)) || WorkOrderReadable(a));
 
     // Closed query: exactly one vesselId (canonical "D" GUID) and an optional bounded offset. Any other
     // member (for example a forged actorId/tenantId) is rejected instead of ignored.
@@ -117,11 +118,25 @@ public static class SyncConflictCenterEndpoints
             successors.AddRange(await own.Where(o => o.ParentCommandId != null && parents.Contains(o.ParentCommandId.Value))
                 .Select(o => new SyncConflictSuccessor(o.EnrollmentId, o.ParentCommandId!.Value, o.CommandId, o.Result)).ToArrayAsync(ct));
         }
+        var workOrders = WorkOrderReadable(actor);
+        if (workOrders) {
+            // DEV-057: material field conflicts of offline work order evidence (own captures only).
+            var own = db.WorkOrderOfflineOutcomes.AsNoTracking().Where(o => o.ActorId == actor.Id && o.VesselId == vessel);
+            rows.AddRange(await own.Where(o => o.Result == "MaterialConflict")
+                .OrderBy(o => own.Any(s => s.EnrollmentId == o.EnrollmentId && s.ParentCommandId == o.CommandId) ? 1 : 0)
+                .ThenByDescending(o => o.ReceivedAt).ThenBy(o => o.CommandId).Take(bound)
+                .Select(o => new SyncConflictRow(WorkOrderSource, o.WorkOrderId, null, o.EnrollmentId, o.CommandId, o.BaseVersion, o.ServerVersion, (DateTimeOffset?)o.CapturedAt, o.ReceivedAt))
+                .ToArrayAsync(ct));
+            var parents = rows.Where(r => r.Source == WorkOrderSource).Select(r => r.CommandId).ToArray();
+            successors.AddRange(await own.Where(o => o.ParentCommandId != null && parents.Contains(o.ParentCommandId.Value))
+                .Select(o => new SyncConflictSuccessor(o.EnrollmentId, o.ParentCommandId!.Value, o.CommandId, o.Result)).ToArrayAsync(ct));
+        }
         var (items, more) = Project(rows, successors, offset);
         SyncConflictSourceDto[] sources = [
             new(CrewSource, crew ? "Included" : "NotPermitted"),
             new(TugSource, tug ? "Included" : "NotPermitted"),
-            new(DailySource, dailyKinds.Length == DailyOperationsPolicy.Kinds.Length ? "Included" : dailyKinds.Length > 0 ? "Partial" : "NotPermitted")];
+            new(DailySource, dailyKinds.Length == DailyOperationsPolicy.Kinds.Length ? "Included" : dailyKinds.Length > 0 ? "Partial" : "NotPermitted"),
+            new(WorkOrderSource, workOrders ? "Included" : "NotPermitted")];
         await audit.WriteAsync(h, "SyncConflictList", "Success", resourceId: vessel);
         return Results.Ok(new SyncConflictPageDto(vessel, time.GetUtcNow(), sources, items, offset, more));
     }

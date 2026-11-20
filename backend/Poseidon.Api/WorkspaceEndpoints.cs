@@ -25,6 +25,8 @@ public static class WorkspaceEndpoints
         // DEV-105/DEV-106: the same server predicates as the risk endpoints.
         if (RiskAssessmentEndpoints.CanRead(actor)) destinations = [.. destinations, new("risk-assessment", "/app/risk-assessment")];
         if (RiskTemplateEndpoints.CanRead(actor)) destinations = [.. destinations, new("risk-template-library", "/app/risk-template-library")];
+        // DEV-110: same server read authority as the critical spare endpoints (spare.read).
+        if (CriticalSpareEndpoints.CanRead(actor)) destinations = [.. destinations, new("critical-spares", "/app/critical-spares")];
         if (CertificateReader.Read(actor)) destinations = [.. destinations,
             new("certificate-command-center", "/app/certificate-command-center"), new("renewal-workflow", "/app/renewal-workflow"),
             // DEV-104/DEV-112: same server read authority as their endpoints (certificate.read).

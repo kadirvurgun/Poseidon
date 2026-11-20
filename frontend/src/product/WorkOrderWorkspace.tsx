@@ -12,6 +12,7 @@ import { workOrderApi, workOrderInputErrors, freezeWorkOrderCommand, type WorkOr
 import { readWorkOrderLocation, workOrderLocationPath, useWorkOrderLocation, type WorkOrderLocation } from './work-order-location';
 import { WorkOrderFieldsForm } from './WorkOrderFieldsForm';
 import { WorkOrderPlanAside, WorkOrderRecordHistory, WorkOrderRecordList, WorkOrderSourceSummary } from './WorkOrderRecordView';
+import { WorkOrderExecutionPanel } from './WorkOrderExecutionPanel';
 import { useWorkspaceRevalidation } from './use-workspace-revalidation';
 import { DowntimeSourceLaunch } from './DowntimeSourceLaunch';
 import { unsavedState, useUnsavedChangesSource } from './unsaved-changes';
@@ -268,6 +269,7 @@ function WorkOrderSurface({ route, language, onLanguage, onNavigate, onCanonical
           {snapshot && <WorkOrderSourceSummary value={sourceChanged ? { ...snapshot, currentRevision: false, canEdit: false } : snapshot} language={language}/>}
           {user && editor.record?.currentRevision && !editor.dirty && !sourceChanged && <DowntimeSourceLaunch session={user} vessel={route.vessel!} kind="WorkOrder" sourceId={editor.record.id} revision={editor.record.revision} language={language} disabled={busy || !!frozen || !sameOwner || !sameAttempt} onNavigate={href => onNavigate(href)}/>}
           {(editor.plan || route.plan) && <WorkOrderPlanAside value={planContext} retained={editor.plan} issue={current.planIssue ?? (editor.plan && current.planContext && !planContext ? 'stale' : undefined)} language={language} onNavigate={onNavigate}/>}
+          {route.vessel && editor.record && <WorkOrderExecutionPanel key={editor.record.id} vessel={route.vessel} workOrder={editor.record.id} language={language}/>}
           {planBlocked && !frozen && <div role="alert"><p>{localizedText(en, "pairs.m_ffc2647f7f2df21b")}</p>{current.planContext && <Button variant="outline" onClick={() => { if (editable && current.planContext) {
                                     setEditor({ ...editor, plan: current.planContext.pin, dirty: true });
                                     onDirty(true);
