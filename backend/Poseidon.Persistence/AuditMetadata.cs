@@ -1034,7 +1034,9 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                 Field("State", null, Closed(x.State, Poseidon.Domain.AssurancePolicy.InspectionStates)),
                 Field("Applicability", null, Closed(x.Applicability, Poseidon.Domain.AssurancePolicy.Applicable, Poseidon.Domain.AssurancePolicy.ReviewRequired)),
                 Field("Reference", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
-            AssuranceImport x => new(x.VesselId, x.InspectionId, "AssuranceImport", null, x.MappingVersion, Fields(
+            // A staged import has exactly two record revisions: 1 = PENDING_REVIEW (Added), 2 = decided once (Modified,
+            // AssuranceStorage.Guard). The decision row therefore proves before/after as 1 -> 2; the mapping version stays a summary field.
+            AssuranceImport x => new(x.VesselId, x.InspectionId, "AssuranceImport", entry.State == EntityState.Added ? null : 1, x.State == "PENDING_REVIEW" ? 1 : 2, Fields(
                 Field("ImportState", BeforeState("State", Poseidon.Domain.AssurancePolicy.ImportStates), Closed(x.State, Poseidon.Domain.AssurancePolicy.ImportStates)),
                 Field("MappingVersion", null, Number(x.MappingVersion)), Field("Content", null, null, "RevisionReference"), Field("Reason", null, null, "ValuesWithheld"))),
             AssuranceInspectionItem x => new(x.VesselId, x.InspectionId, "AssuranceInspectionItem", null, x.Revision, Fields(
