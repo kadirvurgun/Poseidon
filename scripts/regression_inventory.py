@@ -347,14 +347,14 @@ def main(argv=None):
         if check_snapshot(snapshot, surface):
             print(json.dumps({"status": "refused", "reason": "snapshot_regression_present"}))
             return 1
-        snapshot_path.write_text(json.dumps(snapshot_of(surface), indent=2) + "\n", encoding="utf-8")
-        snapshot = json.loads(snapshot_path.read_text(encoding="utf-8"))
+        snapshot_path.write_text(json.dumps(snapshot_of(surface), indent=2) + "\n", encoding="utf-8", newline="\n")
+        snapshot =json.loads(snapshot_path.read_text(encoding="utf-8"))
     report = build_report(load_sources(ROOT), surface, snapshot)
     output = (ROOT / args.output).resolve()
     if not output.is_relative_to((ROOT / ".runtime").resolve()):
         raise SystemExit("output must stay under .runtime/")
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    output.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
     failed = bool(report["sourceIntegrity"] or report["snapshot"]["regressions"])
     print(json.dumps({"status": "failed" if failed else "inventoried", "output": str(output.relative_to(ROOT)).replace("\\", "/"),
                       "screens": {k: report["screens"][k] for k in ("total", "routed", "apiOnly", "missing")},
