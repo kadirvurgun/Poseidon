@@ -1,5 +1,17 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
+## S8 kabul edildi — notlarla (20.11.2026)
+
+**Canonical ilerleme: 80 iş / 654 SP / 970 SP = %67,42** (önceki: 67 iş / 530 SP, %54,64). S0 13/53, S1 7/50, S2 6/42, S3 7/66, S4 6/58, S5 8/69, S6 7/71 (87 SP'nin), S7 13/121, **S8 13/124** kabul.
+
+- Hedef: PR #46 head `32197ae` → main `aba6e23`. CI push `44727495974` + pull_request `44727506220` yeşil; critical-write kapsama kapısı `PASS_ACTUAL_CURRENT_CRITICAL_SCOPE` 231/231.
+- Bağımsız S8 QA: 3 tur (fed55e6 RED; 6500490 kod düzeltmeleri doğru, kabul CI'a bağlı; 6500490..32197ae **ACCEPT-WITH-NOTES ×13**), engelleyici yok — [kanıt](evidence/s8-20261120-32197ae/qa/s8-gate-independent-review.md), [faz raporu](phases/S8-GATE-20261120.md).
+- Kabul: DEV-052, 053, 054, 055, 056, 057, 087, 088, 103, 107, 108, 109, 110.
+- Teslim: ekipman hiyerarşisi, bakım planı + tetik, ölçüm noktası modeli, iş emri erteleme yönetişimi (insan aktör zorunlu); iş emri yürütme + kanıt, offline yürütme, düşük stok/teknik otomatik talep (ERP dışa aktarım yalnız `APPROVED_FOR_ERP_EXPORT`); kritik arıza yaşam döngüsü, servis/mühendis raporu bağlantısı, PMS Command Center (`EQUIPMENT_CRITICALITY_UNKNOWN`); römorkaj operasyon planı, risk + brifing, filo High-Risk Work istisna görünümü (açık `QUIET`).
+- Notlar: `TestRunMarkers.cs:28` marker yazma hatası testi düşürüyordu (bu dalda ayrı commit ile düzeltildi); API kapı süresi 3000 s, pay ~1,5x — shard süreleri izlenmeli; PTW yoksa `UNKNOWN`; ölçüm eşikleri yalnız tenant yapılandırmalı, aksi `UNCONFIGURED`.
+- Açık insan/uzman kapıları: erteleme politikası/azami uzatma, kritiklik katalogları, ölçüm eşikleri, iş emri tipine göre zorunlu kanıt setleri, PTW kaynağı, gerçek ERP entegrasyonu. Hiçbir onay iddia edilmiyor.
+- Sıradaki: S9; S6 DEV-101/102 ayrı dalda devam.
+
 ## S8 entegrasyon paketi — yerelde doğrulandı, kabul edilmedi (20.11.2026)
 
 Dal `integration/s8-bundle-20261120` (main `021e8ed` üstüne S7 kabul kaydı + S8 WP-A/B/C/D). Canonical ilerleme değişmedi (67 iş / 530 SP / %54,64); S8 kapısı CI + bağımsız QA sonrası.
