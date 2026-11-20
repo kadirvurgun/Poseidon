@@ -29,6 +29,8 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             CommandReceipt r when r.Action is "CompanyCreate" or "CompanyUpdate" or "SourceDraftSave" or "RequirementDraftSave" => "Tenant",
             RiskTemplate or RiskTemplateRevision or RiskTemplateDecision or RiskTemplateSuggestion or RiskMethod => "Tenant",
             RiskCommandReceipt { VesselId: null } => "Tenant",
+            // S10 WP-A DEV-113: an import mapping is tenant configuration (no vessel); its receipt carries no vessel either.
+            AssuranceImportMapping or AssuranceReceipt { VesselId: null } => "Tenant",
             ApplicabilityReceipt r when r.Action is "author" or "review" => "Tenant",
             _ => "Unresolved"
         };
