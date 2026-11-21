@@ -2376,6 +2376,99 @@
           }
         },
         "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "summary": "CreateMembership",
+        "description": "Provisions a database membership for an IdP identity (issuer+subject; the account and its credentials stay in the IdP). Role bundles and individual permissions are limited to the trusted allow-list and to the caller's own permissions (400 exceeds_grantor_authority). An identity already provisioned or present in the operator configuration returns 409 identity_unavailable. Takes effect at the member's next login.",
+        "operationId": "CreateMembership",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-CSRF-TOKEN",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MembershipCreateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MembershipAccessDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
     "/api/v1/memberships/{id}": {
@@ -3207,6 +3300,292 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/DelegationDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/memberships/catalog": {
+      "get": {
+        "tags": [
+          "MembershipEndpoints"
+        ],
+        "summary": "Role bundles, the trusted permission allow-list grouped by module, tenant vessels/companies and what the caller may grant. Requires membership.read or membership.manage with tenant-wide scope.",
+        "operationId": "GetMembershipCatalog",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MembershipCatalogDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/memberships/access": {
+      "get": {
+        "tags": [
+          "MembershipEndpoints"
+        ],
+        "summary": "Tenant memberships with their grant source, bundles and scope. Filters: status, bundle, q (membership/account id prefix or exact IdP subject; subjects are never returned).",
+        "operationId": "ListMembershipAccess",
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bundle",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MembershipAccessPageDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/memberships/{id}/access": {
+      "get": {
+        "tags": [
+          "MembershipEndpoints"
+        ],
+        "summary": "Effective grant, scope and immutable grant revision history of one membership.",
+        "operationId": "GetMembershipAccess",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MembershipAccessDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/memberships/{id}/grant": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "summary": "UpdateMembershipGrant",
+        "description": "Appends a new immutable grant revision to an admin-provisioned membership. expectedVersion is the current grant revision (stale ⇒ 409 version_conflict). Own membership ⇒ 403 self_modification; configuration-managed ⇒ 409 configuration_managed; removing the last active administrator ⇒ 409 last_admin. Takes effect on the member's next request.",
+        "operationId": "UpdateMembershipGrant",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-CSRF-TOKEN",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MembershipGrantCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MembershipAccessDto"
                 }
               }
             }
@@ -27957,6 +28336,26 @@
           }
         }
       },
+      "CompanyOptionDto": {
+        "required": [
+          "id",
+          "code",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
       "CompanyUpdateCommand": {
         "required": [
           "code",
@@ -38288,6 +38687,68 @@
           }
         }
       },
+      "GrantRevisionDto": {
+        "required": [
+          "revision",
+          "bundles",
+          "individualPermissions",
+          "permissionCount",
+          "tenantWideRead",
+          "tenantWideManage",
+          "activeCompanyId",
+          "vesselGrantCount",
+          "grantedBy",
+          "createdAt"
+        ],
+        "type": "object",
+        "properties": {
+          "revision": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "bundles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "individualPermissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "permissionCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tenantWideRead": {
+            "type": "boolean"
+          },
+          "tenantWideManage": {
+            "type": "boolean"
+          },
+          "activeCompanyId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "vesselGrantCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "grantedBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
       "GraphPin": {
         "required": [
           "kind",
@@ -42492,6 +42953,330 @@
           }
         }
       },
+      "MembershipAccessDto": {
+        "required": [
+          "membership",
+          "individualPermissions",
+          "permissions",
+          "activeCompanyId",
+          "vesselGrants",
+          "editable",
+          "editBlockedReason",
+          "history"
+        ],
+        "type": "object",
+        "properties": {
+          "membership": {
+            "$ref": "#/components/schemas/MembershipAccessSummaryDto"
+          },
+          "individualPermissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "activeCompanyId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "vesselGrants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VesselGrant"
+            }
+          },
+          "editable": {
+            "type": "boolean"
+          },
+          "editBlockedReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GrantRevisionDto"
+            }
+          }
+        }
+      },
+      "MembershipAccessPageDto": {
+        "required": [
+          "items",
+          "offset",
+          "limit",
+          "hasMore",
+          "total"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MembershipAccessSummaryDto"
+            }
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "MembershipAccessSummaryDto": {
+        "required": [
+          "id",
+          "accountId",
+          "status",
+          "statusReason",
+          "source",
+          "managedBy",
+          "bundles",
+          "permissionCount",
+          "tenantWideRead",
+          "tenantWideManage",
+          "vesselGrantCount",
+          "administrator",
+          "self",
+          "statusChangedAt",
+          "version",
+          "accessRevision",
+          "grantRevision"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "accountId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string"
+          },
+          "statusReason": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "managedBy": {
+            "type": "string"
+          },
+          "bundles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "permissionCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tenantWideRead": {
+            "type": "boolean"
+          },
+          "tenantWideManage": {
+            "type": "boolean"
+          },
+          "vesselGrantCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "administrator": {
+            "type": "boolean"
+          },
+          "self": {
+            "type": "boolean"
+          },
+          "statusChangedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "accessRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "grantRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "MembershipCatalogDto": {
+        "required": [
+          "bundles",
+          "permissions",
+          "canManage",
+          "canSecuritySuspend",
+          "grantorTenantWideRead",
+          "grantorTenantWideManage",
+          "vessels",
+          "companies",
+          "delegationReasons",
+          "trustedIssuer",
+          "actorId"
+        ],
+        "type": "object",
+        "properties": {
+          "bundles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RoleBundleDto"
+            }
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PermissionOptionDto"
+            }
+          },
+          "canManage": {
+            "type": "boolean"
+          },
+          "canSecuritySuspend": {
+            "type": "boolean"
+          },
+          "grantorTenantWideRead": {
+            "type": "boolean"
+          },
+          "grantorTenantWideManage": {
+            "type": "boolean"
+          },
+          "vessels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VesselOptionDto"
+            }
+          },
+          "companies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CompanyOptionDto"
+            }
+          },
+          "delegationReasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "trustedIssuer": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "MembershipCreateCommand": {
+        "required": [
+          "issuer",
+          "subject",
+          "bundles",
+          "permissions",
+          "tenantWideRead",
+          "tenantWideManage",
+          "activeCompanyId",
+          "vesselGrants"
+        ],
+        "type": "object",
+        "properties": {
+          "issuer": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "subject": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "bundles": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "permissions": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "tenantWideRead": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "tenantWideManage": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "activeCompanyId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "vesselGrants": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/MembershipVesselGrantCommand"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
       "MembershipDto": {
         "required": [
           "id",
@@ -42556,6 +43341,74 @@
             "format": "uint32"
           }
         }
+      },
+      "MembershipGrantCommand": {
+        "required": [
+          "expectedVersion",
+          "bundles",
+          "permissions",
+          "tenantWideRead",
+          "tenantWideManage",
+          "activeCompanyId",
+          "vesselGrants"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "bundles": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "permissions": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "tenantWideRead": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "tenantWideManage": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "activeCompanyId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "vesselGrants": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/MembershipVesselGrantCommand"
+            }
+          }
+        },
+        "additionalProperties": false
       },
       "MembershipImportCommand": {
         "type": "object",
@@ -42655,6 +43508,23 @@
               "integer"
             ],
             "format": "uint32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MembershipVesselGrantCommand": {
+        "required": [
+          "vesselId"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "canEdit": {
+            "type": "boolean",
+            "default": false
           }
         },
         "additionalProperties": false
@@ -44819,6 +45689,33 @@
           },
           "href": {
             "type": "string"
+          }
+        }
+      },
+      "PermissionOptionDto": {
+        "required": [
+          "code",
+          "module",
+          "decisionAuthority",
+          "delegable",
+          "grantable"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "module": {
+            "type": "string"
+          },
+          "decisionAuthority": {
+            "type": "boolean"
+          },
+          "delegable": {
+            "type": "boolean"
+          },
+          "grantable": {
+            "type": "boolean"
           }
         }
       },
@@ -52831,6 +53728,37 @@
           }
         },
         "additionalProperties": false
+      },
+      "RoleBundleDto": {
+        "required": [
+          "code",
+          "roleId",
+          "locator",
+          "permissions",
+          "grantable"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "roleId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "locator": {
+            "type": "string"
+          },
+          "permissions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "grantable": {
+            "type": "boolean"
+          }
+        }
       },
       "RuleAuthorCommand": {
         "required": [
@@ -64633,6 +65561,30 @@
           "canEdit": {
             "type": "boolean",
             "default": false
+          }
+        }
+      },
+      "VesselOptionDto": {
+        "required": [
+          "id",
+          "code",
+          "name",
+          "kind"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
           }
         }
       },

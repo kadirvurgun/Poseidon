@@ -40,10 +40,14 @@ public sealed record EffectiveDelegation(Guid DelegationId, Guid DelegatorActorI
 internal static class DelegationAuthority
 {
     internal static DelegationSource? Current(FederationSettings settings, Guid tenant, Guid accountId, string issuer, string subject,
-        string persistedStatus, Guid? persistedCompany, IReadOnlyCollection<AccountMembershipVesselGrant> persistedGrants)
+        string persistedStatus, Guid? persistedCompany, IReadOnlyCollection<AccountMembershipVesselGrant> persistedGrants, ProvisionedGrant? provisioned = null)
     {
         if (persistedStatus != "Active") return null;
         var config = settings.Memberships.Where(m => m.Issuer == issuer && m.Subject == subject).ToArray();
+        // USER-ADMIN-01: an admin-provisioned source (no operator entry) uses its current database grant.
+        if (config.Length == 0 && provisioned != null)
+            return new DelegationSource(ActorResolver.TrustedPermissions(provisioned.Permissions), provisioned.ActiveCompanyId,
+                provisioned.VesselGrants.Select(v => new DelegatedVessel(v.VesselId, v.CanEdit)).ToArray());
         if (config.Length != 1 || config[0].ActorId != accountId || config[0].TenantId != tenant) return null;
         var m = config[0];
         var vessels = (m.VesselGrants ?? []).Where(g => g.VesselId != Guid.Empty && persistedGrants.Any(p => p.VesselId == g.VesselId))
@@ -55,7 +59,52 @@ internal static class DelegationAuthority
 }
 
 public sealed record MembershipSnapshot(Guid AccountId, Guid MembershipId, Guid TenantId, MembershipStatus Status, long AccessRevision,
-    string? RoleContext, Guid? ActiveCompanyId, VesselGrant[] VesselGrants, bool IdentityConflict);
+    string? RoleContext, Guid? ActiveCompanyId, VesselGrant[] VesselGrants, bool IdentityConflict, ProvisionedGrant? Grant = null);
+
+// USER-ADMIN-01: current (latest immutable revision) grant of an admin-provisioned membership. Permissions are the
+// effective snapshot stored at grant time (already bounded by the granting administrator); they still pass the
+// trusted allow-list at resolution. RoleContext is the canonical set of bundle role ids.
+public sealed record ProvisionedGrant(int Revision, string[] Bundles, string[] IndividualPermissions, string[] Permissions, bool TenantWideRead,
+    bool TenantWideManage, Guid? ActiveCompanyId, VesselGrant[] VesselGrants)
+{
+    public string? RoleContext => ActorResolver.TrustedRoleContext(Bundles.Select(b => MembershipRoleBundles.Find(b)?.RoleId.ToString("D")).OfType<string>().ToArray());
+}
+
+public static class ProvisionedGrants
+{
+    public const string Source = "AdminProvisioned";
+
+    public static async Task<Dictionary<Guid, ProvisionedGrant>> LoadAsync(PoseidonDbContext db, Guid[] membershipIds, CancellationToken ct)
+    {
+        if (membershipIds.Length == 0) return [];
+        var revisions = await db.MembershipGrantRevisions.AsNoTracking().Where(g => membershipIds.Contains(g.MembershipId)).ToArrayAsync(ct);
+        var latest = revisions.GroupBy(g => g.MembershipId).Select(g => g.MaxBy(x => x.Revision)!).ToArray();
+        var keys = latest.Select(g => g.MembershipId).ToArray();
+        var vessels = (await db.MembershipGrantVessels.AsNoTracking().Where(v => keys.Contains(v.MembershipId)).ToArrayAsync(ct))
+            .Where(v => latest.Any(l => l.MembershipId == v.MembershipId && l.Revision == v.Revision)).ToLookup(v => v.MembershipId);
+        return latest.ToDictionary(g => g.MembershipId, g => new ProvisionedGrant(g.Revision, MembershipGrantPolicy.Split(g.Bundles),
+            MembershipGrantPolicy.Split(g.IndividualPermissions), MembershipGrantPolicy.Split(g.Permissions), g.TenantWideRead, g.TenantWideManage,
+            g.ActiveCompanyId, vessels[g.MembershipId].OrderBy(v => v.VesselId).Select(v => new VesselGrant(v.VesselId, v.CanEdit)).ToArray()));
+    }
+}
+
+// USER-ADMIN-01 login lookup: the only cross-tenant read, keyed exclusively by the IdP-validated issuer+subject of
+// the ID token being accepted (never by request input). It returns the binding of an admin-provisioned account only;
+// its tenant is then stamped into the protected session cookie and every later request re-reads that tenant's state.
+public sealed class ProvisionedIdentityLocator(IConfiguration configuration, IHostEnvironment environment)
+{
+    public async Task<ConfiguredIdentity?> FindAsync(string issuer, string subject, string correlationId, CancellationToken ct)
+    {
+        var connection = OperatorSecretReferences.Database(configuration, environment);
+        if (string.IsNullOrWhiteSpace(connection)) throw new AuditUnavailableException();
+        await using var db = new PoseidonDbContext(new DbContextOptionsBuilder<PoseidonDbContext>().UseNpgsql(connection).Options,
+            Guid.Empty, new ActorContext("system:membership-resolver", "System", correlationId, Source: "MembershipResolver"));
+        var rows = await db.UserAccounts.IgnoreQueryFilters().AsNoTracking()
+            .Where(a => a.Issuer == issuer && a.Subject == subject && a.Source == ProvisionedGrants.Source)
+            .Select(a => new { a.TenantId, a.Id }).Take(2).ToArrayAsync(ct);
+        return rows.Length == 1 ? new ConfiguredIdentity(issuer, subject, rows[0].Id, rows[0].TenantId, Provisioned: true) : null;
+    }
+}
 
 internal sealed record MembershipOverlay(string Issuer, string Subject, MembershipSnapshot? Snapshot, bool Denied);
 
@@ -93,8 +142,10 @@ public sealed class MembershipStateReader(IConfiguration configuration, IHostEnv
         if (membership.Length != 1 || MembershipLifecyclePolicy.Parse(membership[0].Status) is not { } status) return Conflict(identity);
         var grants = await db.AccountMembershipVesselGrants.AsNoTracking().Where(g => g.MembershipId == membership[0].Id)
             .Select(g => new VesselGrant(g.VesselId, g.CanEdit)).ToArrayAsync(ct);
+        var provisioned = membership[0].Source == ProvisionedGrants.Source
+            ? (await ProvisionedGrants.LoadAsync(db, [membership[0].Id], ct)).GetValueOrDefault(membership[0].Id) : null;
         return new(identity.ActorId, membership[0].Id, identity.TenantId, status, membership[0].AccessRevision,
-            membership[0].RoleContext, membership[0].ActiveCompanyId, grants, false);
+            membership[0].RoleContext, membership[0].ActiveCompanyId, grants, false, provisioned);
     }
 
     private static MembershipSnapshot Conflict(ConfiguredIdentity identity) =>
@@ -113,7 +164,7 @@ public sealed class MembershipSessionGate(RequestDelegate next)
 
     public async Task InvokeAsync(HttpContext context, ActorResolver actors, MembershipStateReader reader, SecurityAudit audit)
     {
-        if (actors.ConfiguredIdentityFor(context.User) is { } identity)
+        if (actors.SessionIdentityFor(context.User) is { } identity)
         {
             MembershipSnapshot? snapshot;
             try { snapshot = await reader.ReadAsync(identity, context.TraceIdentifier, context.RequestAborted); }
@@ -126,7 +177,10 @@ public sealed class MembershipSessionGate(RequestDelegate next)
                 await context.Response.WriteAsJsonAsync(new { code = "service_unavailable", correlationId = context.TraceIdentifier }, context.RequestAborted);
                 return;
             }
-            var admitted = snapshot is null || !snapshot.IdentityConflict &&
+            // A provisioned session has no operator source to fall back to: missing state or grant denies.
+            var admitted = identity.Provisioned ? snapshot is { IdentityConflict: false, Grant: not null } &&
+                    MembershipLifecyclePolicy.AdmitsSession(snapshot.Status, snapshot.AccessRevision, MembershipSession.SessionAccessRevision(context.User))
+                : snapshot is null || !snapshot.IdentityConflict &&
                 MembershipLifecyclePolicy.AdmitsSession(snapshot.Status, snapshot.AccessRevision, MembershipSession.SessionAccessRevision(context.User));
             if (!admitted)
             {
@@ -157,8 +211,8 @@ public sealed class CurrentMembershipResolver(ActorResolver actors, FederationSe
             .Where(d => d.DelegateMembershipId == snapshot.MembershipId && d.Status == "Active" && d.ValidFrom <= now && d.ValidUntil > now &&
                 d.ReasonCode != DelegationPolicy.LegacyUnscoped)
             .Join(db.AccountMemberships.AsNoTracking().Where(m => m.Status == "Active"), d => d.DelegatorMembershipId, m => m.Id,
-                (d, m) => new { d, m.AccountId, m.Status, m.ActiveCompanyId })
-            .Join(db.UserAccounts.AsNoTracking(), x => x.AccountId, a => a.Id, (x, a) => new { x.d, x.Status, x.ActiveCompanyId, a.Id, a.Issuer, a.Subject })
+                (d, m) => new { d, m.AccountId, m.Status, m.ActiveCompanyId, m.Source })
+            .Join(db.UserAccounts.AsNoTracking(), x => x.AccountId, a => a.Id, (x, a) => new { x.d, x.Status, x.ActiveCompanyId, x.Source, a.Id, a.Issuer, a.Subject })
             .OrderBy(x => x.d.ValidUntil).ThenBy(x => x.d.Id).Take(64).ToArrayAsync(cancellationToken);
         var delegationIds = rows.Select(x => x.d.Id).ToArray();
         var sourceIds = rows.Select(x => x.d.DelegatorMembershipId).Distinct().ToArray();
@@ -166,12 +220,13 @@ public sealed class CurrentMembershipResolver(ActorResolver actors, FederationSe
             .ToLookup(v => v.DelegationId);
         var sourceGrants = (await db.AccountMembershipVesselGrants.AsNoTracking().Where(g => sourceIds.Contains(g.MembershipId)).ToArrayAsync(cancellationToken))
             .ToLookup(g => g.MembershipId);
+        var provisionedSources = await ProvisionedGrants.LoadAsync(db, rows.Where(x => x.Source == ProvisionedGrants.Source).Select(x => x.d.DelegatorMembershipId).Distinct().ToArray(), cancellationToken);
         var delegations = new List<EffectiveDelegation>();
         foreach (var row in rows)
         {
             // The delegator's CURRENT authority bounds both the permissions and the scope at request time.
             var source = DelegationAuthority.Current(settings, actor.TenantId, row.Id, row.Issuer, row.Subject, row.Status, row.ActiveCompanyId,
-                sourceGrants[row.d.DelegatorMembershipId].ToArray());
+                sourceGrants[row.d.DelegatorMembershipId].ToArray(), provisionedSources.GetValueOrDefault(row.d.DelegatorMembershipId));
             if (source == null) continue;
             var effective = DelegationPolicy.Effective(row.d.Permissions.Split(','), row.d.CompanyId,
                 scopes[row.d.Id].Select(v => new DelegatedVessel(v.VesselId, v.CanEdit)), source);

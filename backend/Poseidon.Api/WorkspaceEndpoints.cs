@@ -35,6 +35,8 @@ public static class WorkspaceEndpoints
         if (PilotAccess.UatRead(actor)) destinations = [.. destinations, new("role-uat", "/app/role-uat")];
         if (PilotAccess.GateRead(actor)) destinations = [.. destinations, new("pilot-gate", "/app/pilot-gate")];
         if (PilotProgramAccess.Read(actor)) destinations = [.. destinations, new("pilot-program", "/app/pilot-program")];
+        // USER-ADMIN-01: the same server predicate as the membership administration reads (membership.read/manage, tenant-wide).
+        if (MembershipEndpoints.CanReadMemberships(actor)) destinations = [.. destinations, new("user-admin", "/app/user-admin")];
         if (OperationalDowntimeEndpoints.CanRead(actor)) destinations = [.. destinations, new("operational-downtime", "/app/operational-downtime")];
         // DEV-105/DEV-106: the same server predicates as the risk endpoints.
         if (RiskAssessmentEndpoints.CanRead(actor)) destinations = [.. destinations, new("risk-assessment", "/app/risk-assessment")];

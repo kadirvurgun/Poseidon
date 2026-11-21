@@ -37,7 +37,7 @@ public sealed record DelegationVesselCommand(Guid VesselId, bool CanEdit = false
 // PLAN-1511-5202 / 52.02 ACC04-ACC05, §6, §9. Tenant-scoped membership lifecycle commands.
 // Exact controlled transitions only (no state PATCH); CSRF, Idempotency-Key, xmin CAS and
 // audited SaveChanges in one SERIALIZABLE transaction so the last-admin count cannot race.
-public static class MembershipEndpoints
+public static partial class MembershipEndpoints
 {
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { MaxDepth = 4 };
     private const string Description = "Requires antiforgery, a 16–80 character Idempotency-Key and server-provisioned membership.manage with tenant-wide manage scope and a trusted role. Transitions require expectedVersion; stale changes return 409. Voluntary removal of the last active identity administrator returns 409 last_admin. Replay returns the fresh representation.";
@@ -81,6 +81,7 @@ public static class MembershipEndpoints
         Command(app.MapPost("/api/v1/delegations/{id:guid}/revoke", (Guid id, HttpContext h, [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey, [FromHeader(Name = "X-CSRF-TOKEN")] string? csrfToken) =>
             RevokeDelegation(h, id)), "RevokeDelegation", Description)
             .Accepts<MembershipTransitionCommand>("application/json").Produces<DelegationDto>();
+        MapMembershipAdministration(app); // USER-ADMIN-01
     }
 
     private static RouteHandlerBuilder Command(RouteHandlerBuilder route, string name, string description) =>
@@ -110,7 +111,7 @@ public static class MembershipEndpoints
     {
         var configured = settings.Memberships.Where(m => IsConfiguredAdministrator(settings, m, tenant)).ToArray();
         var persisted = await db.UserAccounts.AsNoTracking().Join(db.AccountMemberships.AsNoTracking(), a => a.Id, m => m.AccountId,
-            (a, m) => new { a.Id, a.Issuer, a.Subject, m.Status, m.RoleContext }).ToArrayAsync(ct);
+            (a, m) => new { a.Id, a.Issuer, a.Subject, m.Status, m.RoleContext, m.Source, MembershipId = m.Id }).ToArrayAsync(ct);
         var result = new HashSet<Guid>();
         foreach (var m in configured)
         {
@@ -120,6 +121,14 @@ public static class MembershipEndpoints
                 rows[0].Status == "Active" && rows[0].RoleContext == ActorResolver.TrustedRoleContext(m.RoleReferences))
                 result.Add(m.ActorId);
         }
+        // USER-ADMIN-01: admin-provisioned memberships whose identity is not in the operator configuration
+        // (config governs its own identities) count with the same predicate on their current grant.
+        var provisioned = persisted.Where(x => x.Status == "Active" && x.Source == ProvisionedGrants.Source &&
+            !settings.Memberships.Any(c => c.Issuer == x.Issuer && c.Subject == x.Subject)).ToArray();
+        var grants = await ProvisionedGrants.LoadAsync(db, provisioned.Select(x => x.MembershipId).ToArray(), ct);
+        foreach (var x in provisioned)
+            if (grants.TryGetValue(x.MembershipId, out var g) && MembershipGrantPolicy.IsAdministrator(g.Permissions, g.TenantWideManage, g.Bundles.Length))
+                result.Add(x.Id);
         return result;
     }
 
@@ -130,7 +139,11 @@ public static class MembershipEndpoints
         var ids = rows.Select(x => x.m.Id).ToArray();
         var grants = await db.AccountMembershipVesselGrants.AsNoTracking().Where(g => ids.Contains(g.MembershipId))
             .GroupBy(g => g.MembershipId).Select(g => new { g.Key, Count = g.Count() }).ToDictionaryAsync(x => x.Key, x => x.Count, ct);
-        return rows.Select(x => new MembershipDto(x.m.Id, x.m.AccountId, x.m.Status, x.m.StatusReason, x.m.AccessRevision, x.m.ActiveCompanyId,
+        var provisioned = await ProvisionedGrants.LoadAsync(db, rows.Where(x => x.m.Source == ProvisionedGrants.Source).Select(x => x.m.Id).ToArray(), ct);
+        return rows.Select(x => provisioned.TryGetValue(x.m.Id, out var p)
+            ? new MembershipDto(x.m.Id, x.m.AccountId, x.m.Status, x.m.StatusReason, x.m.AccessRevision, p.ActiveCompanyId,
+                p.RoleContext != null, p.VesselGrants.Length, x.m.Source, admins.Contains(x.m.AccountId), x.m.StatusChangedAt, x.m.Version)
+            : new MembershipDto(x.m.Id, x.m.AccountId, x.m.Status, x.m.StatusReason, x.m.AccessRevision, x.m.ActiveCompanyId,
             x.m.RoleContext != null, grants.GetValueOrDefault(x.m.Id), x.m.Source, admins.Contains(x.m.AccountId),
             x.m.StatusChangedAt, x.m.Version)).ToArray();
     }
@@ -203,7 +216,7 @@ public static class MembershipEndpoints
 
     // Shared command prelude: attempt audit, authority, antiforgery, bounded body and key.
     private sealed record Prelude(TrustedActor Actor, string Key, byte[] Body);
-    private static async Task<(Prelude? Value, IResult? Failure)> Begin(HttpContext h, Guid? resource, Func<TrustedActor, bool> authorized)
+    private static async Task<(Prelude? Value, IResult? Failure)> Begin(HttpContext h, Guid? resource, Func<TrustedActor, bool> authorized, int limit = 4096)
     {
         var audit = h.RequestServices.GetRequiredService<SecurityAudit>();
         async Task<(Prelude?, IResult?)> Fail(int status, string code) { await audit.WriteAsync(h, "MembershipCommand", code, resourceId: resource); return (null, Problem(h, status, code)); }
@@ -212,12 +225,12 @@ public static class MembershipEndpoints
         if (!authorized(actor)) return await Fail(403, "permission_denied");
         try { await h.RequestServices.GetRequiredService<IAntiforgery>().ValidateRequestAsync(h); }
         catch (AntiforgeryValidationException) { return await Fail(403, "csrf_invalid"); }
-        if (!h.Request.HasJsonContentType() || h.Request.ContentLength is > 4096) return await Fail(400, "invalid_request");
+        if (!h.Request.HasJsonContentType() || h.Request.ContentLength > limit) return await Fail(400, "invalid_request");
         using var buffer = new MemoryStream();
         var bytes = new byte[1024]; int read;
         while ((read = await h.Request.Body.ReadAsync(bytes, h.RequestAborted)) > 0)
         {
-            if (buffer.Length + read > 4096) return await Fail(400, "invalid_request");
+            if (buffer.Length + read > limit) return await Fail(400, "invalid_request");
             buffer.Write(bytes, 0, read);
         }
         var keys = h.Request.Headers["Idempotency-Key"];
@@ -492,8 +505,10 @@ public static class MembershipEndpoints
             if (source.m.AccountId == actor.Id || target?.m.AccountId == actor.Id) return (Problem(h, 403, "separation_of_duties"), "separation_of_duties");
             // Source's CURRENT authority: operator grant narrowed by its persisted membership and grant snapshot.
             var sourceGrants = await db.AccountMembershipVesselGrants.AsNoTracking().Where(g => g.MembershipId == delegator).ToArrayAsync(h.RequestAborted);
+            var sourceProvisioned = source.m.Source == ProvisionedGrants.Source
+                ? (await ProvisionedGrants.LoadAsync(db, [delegator], h.RequestAborted)).GetValueOrDefault(delegator) : null;
             var current = DelegationAuthority.Current(settings, actor.TenantId, source.m.AccountId, source.Issuer, source.Subject, source.m.Status,
-                source.m.ActiveCompanyId, sourceGrants) ?? new DelegationSource([], null, []);
+                source.m.ActiveCompanyId, sourceGrants, sourceProvisioned) ?? new DelegationSource([], null, []);
             var errors = DelegationPolicy.Validate(new(delegator, command.DelegateMembershipId ?? Guid.Empty, command.Permissions, command.ValidFrom, command.ValidUntil,
                 command.ReasonCode, command.CompanyId, vesselScope), current, now);
             if (target != null && target.m.Status != "Active") errors["delegateMembershipId"] = ["membership_inactive"];

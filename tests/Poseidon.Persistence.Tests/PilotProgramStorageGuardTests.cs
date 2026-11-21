@@ -131,7 +131,10 @@ public sealed class PilotProgramStorageGuardTests
         foreach (var id in new[] { "20261124080000_PilotProgramKit", "20261124090000_PilotProgramDutySeparation", "20261124100000_PilotDecisionFeedbackSeparation" }) {
             var migration = assembly.CreateMigration(assembly.Migrations[id], "Npgsql.EntityFrameworkCore.PostgreSQL");
             var target = init.Initialize(migration.TargetModel!, designTime: true, validationLogger: null).GetRelationalModel();
-            Assert.False(differ.HasDifferences(target, snapshot), id);
+            // Later packages (USER-ADMIN-01 identity tables) legitimately extend the snapshot; the pilot schema must match.
+            var pilotDifferences = differ.GetDifferences(target, snapshot)
+                .Where(o => o.GetType().GetProperty("Schema")?.GetValue(o) as string == "pilot").ToArray();
+            Assert.True(pilotDifferences.Length == 0, id);
             if (id.EndsWith("DutySeparation", StringComparison.Ordinal)) {
                 var sql = string.Join('\n', migration.UpOperations.OfType<Microsoft.EntityFrameworkCore.Migrations.Operations.SqlOperation>().Select(o => o.Sql));
                 Assert.Contains("BEFORE INSERT ON pilot.\"PilotWeekCloses\"", sql);

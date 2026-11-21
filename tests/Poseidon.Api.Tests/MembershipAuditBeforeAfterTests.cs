@@ -149,4 +149,24 @@ public sealed class MembershipAuditBeforeAfterTests
         Assert.True(Proven(entry, "DelegationRevoke"));
         Assert.True(Proven(Added(db, Receipt("DelegationRevoke")), "DelegationRevoke"));
     }
+
+    // USER-ADMIN-01 CI gate regression (run 44939813106, AUDIT_BEFORE_AFTER_UNPROVEN): a grant change appends revision N
+    // as an Added row, which must not claim a before revision; create and grant-update rows all prove themselves.
+    [Fact]
+    [Trait("Requirement", "USER-ADMIN-01")]
+    public void Membership_create_and_grant_revision_rows_are_proven_without_permission_lists()
+    {
+        using var db = Db();
+        var membership = Guid.NewGuid();
+        Assert.True(Proven(Added(db, new UserAccount { TenantId = Tenant, Id = Guid.NewGuid(), Issuer = Issuer, Subject = Subject, Source = "AdminProvisioned", CreatedAt = T0 }), "MembershipCreate"));
+        Assert.True(Proven(Added(db, new AccountMembership { TenantId = Tenant, Id = membership, AccountId = Guid.NewGuid(), Status = "Active",
+            StatusReason = "AdminProvisioning", StatusChangedAt = T0, AccessRevision = 0, Source = "AdminProvisioned", CreatedAt = T0 }), "MembershipCreate"));
+        foreach (var (revision, command) in new[] { (1, "MembershipCreate"), (2, "MembershipGrantUpdate"), (3, "MembershipGrantUpdate") })
+        {
+            Assert.True(Proven(Added(db, new MembershipGrantRevision { TenantId = Tenant, MembershipId = membership, Revision = revision, Bundles = "read-only,tenant-admin",
+                IndividualPermissions = "crew.read", Permissions = "crew.read,directory.read,membership.manage", TenantWideManage = true, GrantedBy = Guid.NewGuid().ToString("D"), CreatedAt = T0 }), command));
+            Assert.True(Proven(Added(db, new MembershipGrantVessel { TenantId = Tenant, MembershipId = membership, Revision = revision, VesselId = Guid.NewGuid(), CanEdit = true }), command));
+            Assert.True(Proven(Added(db, Receipt(command)), command));
+        }
+    }
 }

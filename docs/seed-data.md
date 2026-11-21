@@ -322,3 +322,14 @@ program (`synthetic_program_not_decidable`) and refuses to link any `SyntheticUn
 Add-missing; operator edits are preserved. Real-PostgreSQL test
 `Pilot_program_readers_without_permission_are_denied_feedback_needs_retention_and_the_fixture_is_opt_in_fictional` is
 AUTHORED, execution DEFERRED to CI.
+
+## USER-ADMIN-01 — runtime membership administration — no new seed rows by design
+
+`identity.MembershipGrantRevisions` / `identity.MembershipGrantVessels` and admin-provisioned accounts/memberships
+(`Source = AdminProvisioned`) get **no seed fixture**. A grant revision is an attributed administrator decision that
+confers authority (role bundles, permissions, tenant-wide/vessel scope); seeding one would fabricate an authorization
+decision and, for a real IdP subject, a working login. No IdP account, password, hash, token or credential is seeded
+(the account stays in the IdP). The existing optional `AccountMembershipFixtures` (`.invalid` issuer,
+`SyntheticUnverified`, no grant) is unchanged and still confers nothing: only `AdminProvisioned` rows with a grant
+revision resolve to an actor. Demo use: an administrator creates memberships through `/app/user-admin`; every row is
+then attributed and EF-audited. Default seed import and its audit totals are unchanged.

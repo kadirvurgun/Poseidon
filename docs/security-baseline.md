@@ -68,3 +68,14 @@ Explicit file.read/file.write and real vessel scope gate staged transport. Produ
 ## OFFLINE-APPLICATION-01 — authored, not security acceptance
 
 Actual configurable Draft watch_group consumer now binds server-owned tenant/actor/vessel/object/device/noncredential context and source/policy fingerprint; missing policy denies capture/replay. Nonextractable AES256-GCM IndexedDB records and separate P256 enrollment/replay proof have explicit renew/revoke/loss/cleanup, quotas and retained-data controls. Current ordinary write rights precede receipt/conflict/history lookup; ordinary domain handler, receipt/conflict and scoped EF audit share a transaction. Closed audit summaries exclude values/reason/hash/key/proof; current-author conflict reason is separately protected. Static shell caching excludes API/provider/file/user data. This is neither XSS immunity, hardware attestation, instant disconnected revocation, approved production policy nor full HTTP/user-action/GDPR/DEV-011 acceptance. All security/model/browser/generation/QA execution remains DEFERRED. [Exact boundaries](tasks/offline-application-01.md).
+
+## USER-ADMIN-01 — runtime membership administration (authored; targeted tests run, see phase report)
+
+Tenant administrators (`membership.manage` + tenant-wide manage + role context) provision database memberships for IdP
+identities (issuer+subject only; accounts, passwords and MFA stay in the IdP). Operator configuration keeps precedence for
+its identities (bootstrap/break-glass). Grants are immutable revisions bounded by the granting administrator's own
+authority; no self-modification; last-admin guarded; decision-authority permissions never bundled and appointments never
+created. The login lookup is the single cross-tenant read, keyed only by the IdP-validated issuer+subject; the tenant is
+then carried in the protected session and every request revalidates the current grant. Audit records closed bundle
+codes/counts/flags and withholds permission lists and subjects. This is not production IAM rollout, IdP governance or
+GDPR/KVKK acceptance. [Decisions](tasks/USER-ADMIN-01.md).

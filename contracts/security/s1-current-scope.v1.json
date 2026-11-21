@@ -30,9 +30,9 @@
     "TenantPerson",
     "Unresolved"
   ],
-  "mutationRouteTemplates": 298,
-  "criticalRouteTemplates": 289,
-  "criticalOperations": 314,
+  "mutationRouteTemplates": 300,
+  "criticalRouteTemplates": 291,
+  "criticalOperations": 316,
   "scopeMeaning": "Current exposed HTTP command surface, including aliases. Counts are authoring definitions until actual EndpointDataSource drift and real audit observations pass the phase gate. Technical codes describe accepted commands, never human justification or safety authority.",
   "operations": [
     {"operationId": "MeasurementPointSave", "method": "POST", "routePattern": "/api/v1/equipment-hierarchy/{vessel:guid}/measurement-points", "family": "Maintenance", "scope": "Vessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "MeasurementCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"]},
@@ -1990,6 +1990,8 @@
     { "operationId": "MembershipSecuritySuspend", "method": "POST", "routePattern": "/api/v1/memberships/{id:guid}/security-suspend", "family": "Membership", "scope": "Tenant", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "MembershipCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "DelegationCreate", "method": "POST", "routePattern": "/api/v1/memberships/{id:guid}/delegations", "family": "Membership", "scope": "Tenant", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "MembershipCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "DelegationRevoke", "method": "POST", "routePattern": "/api/v1/delegations/{id:guid}/revoke", "family": "Membership", "scope": "Tenant", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "MembershipCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "MembershipCreate", "method": "POST", "routePattern": "/api/v1/memberships", "family": "Membership", "scope": "Tenant", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "MembershipCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "MembershipGrantUpdate", "method": "POST", "routePattern": "/api/v1/memberships/{id:guid}/grant", "family": "Membership", "scope": "Tenant", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "MembershipCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "CreateControlledDocument", "method": "POST", "routePattern": "/api/v1/vessels/{vessel:guid}/controlled-documents", "family": "ControlledDocument", "scope": "Vessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "ControlledDocument", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "RegisterControlledDocumentRevision", "method": "POST", "routePattern": "/api/v1/vessels/{vessel:guid}/controlled-documents/{document:guid}/revisions", "family": "ControlledDocument", "scope": "Vessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "ControlledDocument", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "ReleaseControlledDocumentRevision", "method": "POST", "routePattern": "/api/v1/vessels/{vessel:guid}/controlled-documents/{document:guid}/revisions/{revision:long}/release", "family": "ControlledDocument", "scope": "Vessel", "kind": "CriticalWrite", "reasonCode": "FILE_TRANSPORT", "denialAction": "ControlledDocument", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
