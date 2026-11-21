@@ -35,6 +35,12 @@ type Props = {
     onNavigate: (href: string) => void;
 };
 // A changed vessel must never render or reuse the previous vessel's snapshot/disclosure.
+// Stripe (enterprise.css) and badge share one meaning: Attention and Review (REVIEW_REQUIRED) are warning,
+// anything else is neutral. Never info/primary/green for a card that still needs a human decision.
+export function todayPriorityTone(priority: string): 'warning' | 'neutral' {
+  return priority === 'Attention' || priority === 'Review' ? 'warning' : 'neutral'
+}
+
 export function TodayWorkspace(props: Props) {
     const id = props.id?.toLowerCase() ?? null;
     return <TodayContext key={id ?? 'select'} {...props} id={id}/>;
@@ -136,7 +142,7 @@ function TodayContext({ id, language, offline, onNavigate }: Props) {
                 const open = expanded === card.key;
                 const disclosureId = card.key === 'regulatory-draft' ? 'today-why' : `today-why-${card.key.replace(/[^a-z0-9-]/g, '-')}`;
                 const PriorityIcon = card.priority === 'Attention' ? TriangleAlert : card.priority === 'Review' ? CircleHelp : Info;
-                return <article key={card.key} className="product-detail today-feed-card" data-priority={card.priority} aria-label={card.source === 'TugJob' ? `${t.TugJob} ${card.key.slice('tug-job:'.length)}` : `${t[card.priority as keyof typeof t]} · ${t[card.source as keyof typeof t]}`}><div className="today-feed-card-header"><h3>{t[card.priority as keyof typeof t]} · {t[card.source as keyof typeof t]}</h3><Badge tone={card.priority === 'Attention' ? 'warning' : card.priority === 'Review' ? 'neutral' : 'info'}><PriorityIcon aria-hidden="true"/>{t[card.priority as keyof typeof t]}</Badge></div>
+                return <article key={card.key} className="product-detail today-feed-card" data-priority={card.priority} aria-label={card.source === 'TugJob' ? `${t.TugJob} ${card.key.slice('tug-job:'.length)}` : `${t[card.priority as keyof typeof t]} · ${t[card.source as keyof typeof t]}`}><div className="today-feed-card-header"><h3>{t[card.priority as keyof typeof t]} · {t[card.source as keyof typeof t]}</h3><Badge tone={todayPriorityTone(card.priority)}><PriorityIcon aria-hidden="true"/>{t[card.priority as keyof typeof t]}</Badge></div>
           {card.source === 'TugJob' && <p>{t.jobReference}: {card.key.slice('tug-job:'.length)}</p>}
           <p>{t[card.reason as keyof typeof t]}</p>
           <TodayCardSource source={card.sourceRef} language={language} t={t}/>
