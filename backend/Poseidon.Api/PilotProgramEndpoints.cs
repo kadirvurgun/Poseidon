@@ -164,7 +164,9 @@ public static class PilotProgramEndpoints
         var decisions = await db.PilotProgramDecisions.AsNoTracking().Where(d => d.ProgramId == id).OrderByDescending(d => d.Sequence).Take(32).ToArrayAsync(ct);
         var grants = PilotProgramAccess.Resolve(Federation(h), a, now);
         var synthetic = s.Program.Provenance == "SyntheticUnverified";
-        var duty = await DutyFacts.Load(db, id, a!.Id, ct);
+        DutyFacts duty;
+        try { duty = await DutyFacts.Load(db, id, a!.Id, ct); }
+        catch (InvalidDataException) { return await Fail(h, ReadAction, 503, "service_unavailable", id); }
         var weeks = PilotProgramCatalog.WeekDefinitions.Select(w => {
             var outcome = s.Weeks.Single(o => o.Week == w.Week);
             var closes = s.Closes.Where(c => c.Week == w.Week).OrderByDescending(c => c.Sequence).ToArray();
@@ -402,7 +404,8 @@ public static class PilotProgramEndpoints
     }
 
     // Product Owner CONTINUE/EXPAND/FIX/STOP bound to the program hash. EXPAND only when expand-eligible. The decider
-    // must not have authored any active checklist link nor any measurement the readout uses or a link references
+    // must not have authored any active checklist link, any feedback of the program's weeks or linked from them, nor
+    // any measurement the readout uses or a link references
     // (separation of duties; re-read inside the transaction and enforced again by pilot.guard_pilot_duty()).
     private static async Task<IResult> Decide(HttpContext h, PoseidonDbContext db, Guid id) {
         var (a, denied) = await Writer(h, PilotProgramAccess.Decide);
@@ -458,7 +461,7 @@ public static class PilotProgramEndpoints
                 [.. measurements.Select(m => new PilotAuthoredRecord(m.Id, null, m.ActorId))]);
         }
         internal string[] Week(PilotWeekDefinition week, Guid actor) => PilotProgramPolicy.WeekCloseDutyConflicts(week, actor, Links, Feedback, Latest, Measurements);
-        internal string[] Decision(Guid actor) => PilotProgramPolicy.DecisionDutyConflicts(actor, Links, Latest, Measurements);
+        internal string[] Decision(Guid actor) => PilotProgramPolicy.DecisionDutyConflicts(actor, Links, Feedback, Latest, Measurements);
     }
 
     // SERIALIZABLE command path with a per-actor idempotency receipt; replays return the committed resource with
@@ -486,6 +489,11 @@ public static class PilotProgramEndpoints
                 recordId = id;
             } catch (Exception e) when (PostgresFailure.IsDatabase(e)) {
                 return await TugReadinessHttp.Database(h, db, tx, CommandAction, e, null);
+            } catch (InvalidDataException) {
+                // A projection limit inside the transaction (e.g. DutyFacts.Load) is the same 503 as on the read path;
+                // the transaction is disposed uncommitted.
+                db.ChangeTracker.Clear();
+                return await Fail(h, CommandAction, 503, "service_unavailable");
             }
         }
         db.ChangeTracker.Clear();
