@@ -193,7 +193,7 @@
 .enterprise-shell .today-card-toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 20px 0; }
 .enterprise-shell .today-feed-card { margin: 12px 0; padding: 20px 22px; border-inline-start: 3px solid var(--muted-foreground); }
 .enterprise-shell .today-feed-card[data-priority="Attention"] { border-inline-start-color: var(--warning-border); }
-.enterprise-shell .today-feed-card[data-priority="Review"] { border-inline-start-color: var(--info-text); }
+.enterprise-shell .today-feed-card[data-priority="Review"] { border-inline-start-color: var(--warning-border); border-inline-start-style: dashed; }
 .today-feed-card-header { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 12px; }
 .today-feed-card-header h3 { margin: 0; }
 .enterprise-shell .today-feed-card > p { color: var(--muted-foreground); font-size: 12px; }

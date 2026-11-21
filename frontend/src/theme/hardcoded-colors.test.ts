@@ -45,35 +45,35 @@ function blankComments(text: string, typescript: boolean): string {
 
 export function findColorLiterals(file: string, text: string): Finding[] {
   const typescript = !file.endsWith('.css')
-  const lines = blankComments(text, typescript).split('\n')
+  const clean = blankComments(text, typescript)
+  const lineAt = (offset: number) => clean.slice(0, offset).split('\n').length
   const findings: Finding[] = []
-  lines.forEach((line, index) => {
-    const hits: string[] = []
-    if (typescript) {
-      // Only string literals that are exactly a colour; ids/anchors such as "#main" never match.
-      hits.push(...Array.from(line.matchAll(/['"`]#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})['"`]/gi), m => m[0]))
-      if (colorFunction.test(line)) hits.push(colorFunction.exec(line)![0])
-      hits.push(...Array.from(line.matchAll(new RegExp(`(?:color|background|backgroundColor|borderColor|fill|stroke)\\s*:\\s*['"\`](?:${named})['"\`]`, 'gi')), m => m[0]))
-    } else {
-      // CSS: inspect declaration values only (selectors like #root or .white-space are not colours).
-      for (const declaration of line.split(/[;{}]/)) {
-        const separator = declaration.indexOf(':')
-        if (separator < 0) continue
-        const property = declaration.slice(0, separator).trim()
-        const value = declaration.slice(separator + 1)
-        if (!/^-{0,2}[a-z][\w-]*$/i.test(property)) continue
-        const hex = /#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})\b/i.exec(value)
-        if (hex) hits.push(hex[0])
-        if (colorFunction.test(value)) hits.push(colorFunction.exec(value)![0])
-        if (colorProperty.test(property)) {
-          const word = new RegExp(`(?:^|[\\s,(])(${named})(?=$|[\\s,)!])`, 'i').exec(value)
-          if (word) hits.push(word[1])
-        }
+  const add = (offset: number, hit: string) => findings.push({ file, line: lineAt(offset), text: hit })
+  if (typescript) {
+    // Only string literals that are exactly a colour; ids/anchors such as "#main" never match.
+    for (const m of clean.matchAll(/['"`]#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})['"`]/gi)) add(m.index!, m[0])
+    for (const m of clean.matchAll(new RegExp(colorFunction.source, 'gi'))) add(m.index!, m[0])
+    for (const m of clean.matchAll(new RegExp(`(?:color|background|backgroundColor|borderColor|fill|stroke)\\s*:\\s*['"\`](?:${named})['"\`]`, 'gi'))) add(m.index!, m[0])
+  } else {
+    // CSS: inspect declaration values only (selectors like #root or .white-space are not colours).
+    // Declarations are split on ; { } over the whole file, so multi-line values are scanned as one unit.
+    for (const m of clean.matchAll(/[^;{}]+/g)) {
+      const declaration = m[0]
+      const separator = declaration.indexOf(':')
+      if (separator < 0) continue
+      const property = declaration.slice(0, separator).trim()
+      if (!/^-{0,2}[a-z][\w-]*$/i.test(property)) continue
+      const valueStart = m.index! + separator + 1
+      const value = declaration.slice(separator + 1)
+      for (const hex of value.matchAll(/#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})\b/gi)) add(valueStart + hex.index!, hex[0])
+      for (const fn of value.matchAll(new RegExp(colorFunction.source, 'gi'))) add(valueStart + fn.index!, fn[0])
+      // Custom properties carry colours under any name, so they are checked for named colours too.
+      if (colorProperty.test(property) || property.startsWith('--')) {
+        for (const word of value.matchAll(new RegExp(`(?:^|[\\s,(])(${named})(?=$|[\\s,)!])`, 'gi'))) add(valueStart + word.index! + word[0].length - word[1].length, word[1])
       }
     }
-    for (const hit of hits) findings.push({ file, line: index + 1, text: hit })
-  })
-  return findings
+  }
+  return findings.sort((a, b) => a.line - b.line)
 }
 
 describe('THEME-TOKEN-GUARD-01 hard-coded colour guard', () => {
@@ -100,6 +100,8 @@ describe('THEME-TOKEN-GUARD-01 hard-coded colour guard', () => {
       '.e { outline: 2px solid oklch(0.5 0.1 200); }',
     ].join('\n')
     expect(findColorLiterals('x.css', css).map(f => `${f.line} ${f.text}`)).toEqual(['1 #63758c', '2 rgb(1', '3 white', '6 oklch(0'])
+    const multiline = ['.f {', '  box-shadow: 0 1px 2px var(--shadow-color),', '    0 4px 8px #10203345;', '  color: var(--foreground);', '}', ':root { --x: red; --y: var(--warning); --font: system-ui, sans-serif; }'].join('\n')
+    expect(findColorLiterals('y.css', multiline).map(f => `${f.line} ${f.text}`)).toEqual(['3 #10203345', '6 red'])
     const tsx = [
       "const a = { color: '#4381da' }",
       "const href = '#main'",
