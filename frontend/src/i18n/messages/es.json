@@ -3656,6 +3656,24 @@
       "duty_LINK_AUTHOR": "vínculos de la lista de verificación",
       "duty_FEEDBACK_AUTHOR": "comentarios",
       "duty_MEASUREMENT_AUTHOR": "mediciones"
+    },
+    "HelpPanel_tsx_copy": {
+      "open": "Abrir la guía de la página",
+      "dialog": "Ayuda",
+      "close": "Cerrar la ayuda",
+      "tabGuide": "Guía",
+      "tabWhy": "Por qué",
+      "tabAi": "IA",
+      "aiDisabled": "La ayuda de IA está desactivada en esta versión. Este panel no realiza ninguna llamada de IA.",
+      "whyHint": "Los registros de esta página tienen su propia vista «Por qué». Cierre este panel y abra el enlace Por qué del registro. El panel de ayuda nunca inicia esa lectura por sí mismo.",
+      "whyEmpty": "Esta página no tiene una vista Por qué propia.",
+      "draft": "Guía en borrador — pendiente de revisión experta",
+      "pending": "La guía de esta página está en preparación.",
+      "loading": "Cargando la guía…",
+      "failed": "No se pudo cargar la guía. Recargue la página e inténtelo de nuevo.",
+      "fallback": "Aún no hay guía en este idioma; se muestra la versión en inglés.",
+      "relatedNone": "No hay páginas relacionadas que mostrar.",
+      "shortcut": "Atajo: Mayús+?"
     }
   },
   "pairs": {

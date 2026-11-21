@@ -1,0 +1,36 @@
+/* USER-GUIDE-01 UG-1 help panel. Tokens only (theme/hardcoded-colors guard). */
+.help-trigger { min-width: 44px; min-height: 44px; }
+.help-panel {
+  position: fixed; z-index: 60; display: flex; flex-direction: column; gap: 12px;
+  background: var(--background); color: var(--foreground); border-left: 1px solid var(--border);
+  box-shadow: 0 12px 32px color-mix(in oklch, var(--foreground) 18%, transparent);
+  padding: 16px; overflow: hidden;
+}
+.help-panel--side { top: 0; right: 0; bottom: 0; width: min(440px, 100vw); }
+.help-panel--page { inset: 0; width: 100%; border-left: 0; box-shadow: none; }
+@media (max-width: 767px) { .help-panel { inset: 0; width: 100%; border-left: 0; } }
+.help-panel-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+.help-panel-header h2 { margin: 0; font-size: 1.05rem; line-height: 1.35; overflow-wrap: anywhere; }
+.help-panel-header h2 span { display: block; font-size: 0.75rem; color: var(--muted-foreground); text-transform: uppercase; letter-spacing: 0.04em; }
+.help-panel-close { min-width: 44px; min-height: 44px; }
+.help-panel-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); }
+.help-panel-tabs [role='tab'] {
+  min-height: 44px; min-width: 44px; padding: 0 14px; border: 0; border-bottom: 2px solid transparent;
+  background: transparent; color: var(--muted-foreground); font: inherit; cursor: pointer;
+}
+.help-panel-tabs [role='tab'][aria-selected='true'] { color: var(--foreground); border-bottom-color: var(--primary); font-weight: 600; }
+.help-panel-tabs [role='tab']:focus-visible { outline: 2px solid var(--ring); outline-offset: -2px; }
+.help-panel-body { flex: 1; overflow-y: auto; overflow-wrap: anywhere; padding-right: 4px; }
+.help-panel-body:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; }
+.help-panel-note { color: var(--muted-foreground); }
+.help-panel-shortcut { margin: 0; font-size: 0.75rem; color: var(--muted-foreground); }
+.help-guide h3 { font-size: 0.95rem; margin: 18px 0 6px; }
+.help-guide h4 { font-size: 0.9rem; margin: 12px 0 4px; }
+.help-guide p, .help-guide li { line-height: 1.55; }
+.help-guide ol, .help-guide ul { padding-left: 1.3rem; }
+.help-guide code { font-size: 0.85em; background: var(--muted); padding: 0 4px; border-radius: var(--radius-sm); }
+.help-guide a { color: var(--primary); text-decoration: underline; display: inline-flex; min-height: 44px; align-items: center; }
+.help-guide-draft {
+  margin: 0 0 8px; padding: 8px 10px; border: 1px solid var(--warning-border); background: var(--warning-surface);
+  color: var(--warning); border-radius: var(--radius-sm); font-weight: 600;
+}

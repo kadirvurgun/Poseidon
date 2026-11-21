@@ -3656,6 +3656,24 @@
       "duty_LINK_AUTHOR": "collegamenti della checklist",
       "duty_FEEDBACK_AUTHOR": "feedback",
       "duty_MEASUREMENT_AUTHOR": "misurazioni"
+    },
+    "HelpPanel_tsx_copy": {
+      "open": "Apri la guida della pagina",
+      "dialog": "Aiuto",
+      "close": "Chiudi l’aiuto",
+      "tabGuide": "Guida",
+      "tabWhy": "Perché",
+      "tabAi": "IA",
+      "aiDisabled": "L’aiuto IA è disattivato in questa versione. Questo pannello non effettua chiamate IA.",
+      "whyHint": "I record di questa pagina hanno una propria vista «Perché». Chiudi il pannello e apri il link Perché del record. Il pannello di aiuto non avvia mai questa lettura da solo.",
+      "whyEmpty": "Questa pagina non ha una vista Perché separata.",
+      "draft": "Guida in bozza — in attesa di revisione esperta",
+      "pending": "La guida di questa pagina è in preparazione.",
+      "loading": "Caricamento della guida…",
+      "failed": "Impossibile caricare la guida. Ricarica la pagina e riprova.",
+      "fallback": "Nessuna guida in questa lingua; viene mostrata la versione inglese.",
+      "relatedNone": "Nessuna pagina correlata da mostrare.",
+      "shortcut": "Scorciatoia: Maiusc+?"
     }
   },
   "pairs": {

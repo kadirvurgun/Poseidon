@@ -3656,6 +3656,24 @@
       "duty_LINK_AUTHOR": "liens de la liste de contrôle",
       "duty_FEEDBACK_AUTHOR": "retours",
       "duty_MEASUREMENT_AUTHOR": "mesures"
+    },
+    "HelpPanel_tsx_copy": {
+      "open": "Ouvrir le guide de la page",
+      "dialog": "Aide",
+      "close": "Fermer l’aide",
+      "tabGuide": "Guide",
+      "tabWhy": "Pourquoi",
+      "tabAi": "IA",
+      "aiDisabled": "L’aide IA est désactivée dans cette version. Ce panneau n’effectue aucun appel IA.",
+      "whyHint": "Les enregistrements de cette page ont leur propre vue « Pourquoi ». Fermez ce panneau et ouvrez le lien Pourquoi de l’enregistrement. Le panneau d’aide ne lance jamais cette lecture lui-même.",
+      "whyEmpty": "Cette page n’a pas de vue Pourquoi distincte.",
+      "draft": "Guide provisoire — en attente de validation par un expert",
+      "pending": "Le guide de cette page est en préparation.",
+      "loading": "Chargement du guide…",
+      "failed": "Le guide n’a pas pu être chargé. Rechargez la page et réessayez.",
+      "fallback": "Pas encore de guide dans cette langue ; la version anglaise est affichée.",
+      "relatedNone": "Aucune page associée à afficher.",
+      "shortcut": "Raccourci : Maj+?"
     }
   },
   "pairs": {

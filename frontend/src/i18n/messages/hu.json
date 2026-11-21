@@ -3656,6 +3656,24 @@
       "duty_LINK_AUTHOR": "ellenőrzőlista-hivatkozások",
       "duty_FEEDBACK_AUTHOR": "visszajelzések",
       "duty_MEASUREMENT_AUTHOR": "mérések"
+    },
+    "HelpPanel_tsx_copy": {
+      "open": "Oldalútmutató megnyitása",
+      "dialog": "Súgó",
+      "close": "Súgó bezárása",
+      "tabGuide": "Útmutató",
+      "tabWhy": "Miért",
+      "tabAi": "MI",
+      "aiDisabled": "Az MI-súgó ebben a kiadásban ki van kapcsolva. Ez a panel nem hív MI-t.",
+      "whyHint": "Az oldal rekordjainak saját „Miért” nézete van. Zárja be a panelt, és nyissa meg a rekord Miért hivatkozását. A súgópanel ezt a lekérést soha nem indítja el magától.",
+      "whyEmpty": "Ennek az oldalnak nincs külön Miért nézete.",
+      "draft": "Útmutató-tervezet — szakértői jóváhagyásra vár",
+      "pending": "Az oldal útmutatója készül.",
+      "loading": "Útmutató betöltése…",
+      "failed": "Az útmutatót nem sikerült betölteni. Töltse újra az oldalt, és próbálja újra.",
+      "fallback": "Ezen a nyelven még nincs útmutató; az angol változat látható.",
+      "relatedNone": "Nincs megjeleníthető kapcsolódó oldal.",
+      "shortcut": "Billentyűparancs: Shift+?"
     }
   },
   "pairs": {

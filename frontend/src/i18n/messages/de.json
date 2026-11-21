@@ -3656,6 +3656,24 @@
       "duty_LINK_AUTHOR": "Checklisten-Verknüpfungen",
       "duty_FEEDBACK_AUTHOR": "Rückmeldungen",
       "duty_MEASUREMENT_AUTHOR": "Messungen"
+    },
+    "HelpPanel_tsx_copy": {
+      "open": "Seitenanleitung öffnen",
+      "dialog": "Hilfe",
+      "close": "Hilfe schließen",
+      "tabGuide": "Anleitung",
+      "tabWhy": "Warum",
+      "tabAi": "KI",
+      "aiDisabled": "KI-Hilfe ist in dieser Version deaktiviert. Dieses Panel ruft keine KI auf.",
+      "whyHint": "Datensätze auf dieser Seite haben eine eigene „Warum“-Ansicht. Schließen Sie das Panel und öffnen Sie den Warum-Link des Datensatzes. Das Hilfe-Panel startet diesen Abruf nie selbst.",
+      "whyEmpty": "Diese Seite hat keine eigene Warum-Ansicht.",
+      "draft": "Anleitungsentwurf — Expertenprüfung ausstehend",
+      "pending": "Die Anleitung für diese Seite wird vorbereitet.",
+      "loading": "Anleitung wird geladen…",
+      "failed": "Die Anleitung konnte nicht geladen werden. Laden Sie die Seite neu und versuchen Sie es erneut.",
+      "fallback": "In dieser Sprache gibt es noch keine Anleitung; die englische Fassung wird angezeigt.",
+      "relatedNone": "Keine verwandten Seiten anzuzeigen.",
+      "shortcut": "Tastenkürzel: Umschalt+?"
     }
   },
   "pairs": {

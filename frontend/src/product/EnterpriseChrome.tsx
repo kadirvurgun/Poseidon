@@ -4,7 +4,7 @@ import { localizedLabel, localizedText, sourceText } from "../i18n/messages";
 import { type Locale as AppLocale } from "../i18n";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Anchor, ArrowLeft, ArrowUpRight, Building2, ChevronRight, ClipboardList, FileCheck2, FolderCheck, Gauge, LayoutDashboard, Menu, Search, ShieldCheck, Ship, Users, Wrench, Upload, Waves, X } from 'lucide-react';
+import { Anchor, ArrowLeft, ArrowUpRight, Building2, ChevronRight, CircleHelp, ClipboardList, FileCheck2, FolderCheck, Gauge, LayoutDashboard, Menu, Search, ShieldCheck, Ship, Users, Wrench, Upload, Waves, X } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import type { Session } from './directory-contract';
@@ -16,6 +16,9 @@ import { useEnterpriseNavigation } from './enterprise-navigation';
 import { enterpriseFocusTargets } from './enterprise-focus';
 import { EnterpriseSidebarNav } from './EnterpriseSidebarNav';
 import { AppearanceControls } from '../theme/AppearanceControls';
+import { HelpPanel } from '../help/HelpPanel';
+import { preloadHelp } from '../help/help-content';
+import { localizedCopy } from '../i18n/messages';
 import './enterprise.css';
 const labels: Record<string, {
     tr: string;
@@ -85,6 +88,16 @@ const labels: Record<string, {
     import: { tr: sourceText("tr", "pairs.m_f1779f35acec39d7"), en: sourceText("en", "pairs.m_f1779f35acec39d7"), icon: Upload, group: 'assurance' },
     'data-reconciliation': { tr: sourceText("tr", "pairs.m_e5831d38d264db25"), en: sourceText("en", "pairs.m_e5831d38d264db25"), icon: FolderCheck, group: 'assurance' }
 };
+const helpCopy = localizedCopy('HelpPanel_tsx_copy');
+/** Shift+? opens the page guide, except while typing or while another modal surface is open. */
+function isHelpShortcut(event: KeyboardEvent): boolean {
+    if (event.key !== '?' || event.ctrlKey || event.metaKey || event.altKey || event.defaultPrevented)
+        return false;
+    const target = event.target;
+    if (target instanceof HTMLElement && (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)))
+        return false;
+    return !document.querySelector('[aria-modal="true"], dialog[open]');
+}
 type Props = {
     session: Session | null;
     vessel?: string | null;
@@ -111,6 +124,25 @@ export function EnterpriseChrome({ session, vessel = null, language, onLanguageC
     // selecting a role lens never grants it or hides it from an assigned operator.
     const menuItems = currentLens ? [...currentLens.items, ...navigation.destinations.filter(item => ['system-health', 'notification-escalation', 'offline-conflict-center'].includes(item.key) && !currentLens.items.some(lens => lens.key === item.key))] : navigation.destinations;
     const menuButton = useRef<HTMLButtonElement>(null);
+    // USER-GUIDE-01 UG-1: page guide panel. Opening it issues no API request, command or AI call.
+    const helpButton = useRef<HTMLButtonElement>(null);
+    const [helpOpen, setHelpOpen] = useState(false);
+    const helpWasOpen = useRef(false);
+    useEffect(() => { preloadHelp(language); }, [language]);
+    useEffect(() => {
+        if (helpOpen) { helpWasOpen.current = true; return; }
+        if (helpWasOpen.current) { helpWasOpen.current = false; helpButton.current?.focus(); }
+    }, [helpOpen]);
+    useEffect(() => {
+        const key = (event: KeyboardEvent) => {
+            if (!isHelpShortcut(event))
+                return;
+            event.preventDefault();
+            setHelpOpen(true);
+        };
+        window.addEventListener('keydown', key);
+        return () => window.removeEventListener('keydown', key);
+    }, []);
     const header = useRef<HTMLElement>(null);
     // DEV-025 / 65.03 paragraph 90 + UX-013: scroll padding equals the real sticky bar height, so a
     // focused field is never hidden under it; a non-sticky bar (short viewport / zoom) needs none.
@@ -203,7 +235,7 @@ export function EnterpriseChrome({ session, vessel = null, language, onLanguageC
     <a className="skip-link" href={`#${mainId}`}>{localizedText(en, "pairs.m_c5380d7bc08b74cb")}</a>
     <header ref={header} className="product-header enterprise-topbar" inert={drawer}>
       <Button ref={menuButton} variant="ghost" size="icon" className="workspace-menu" aria-expanded={drawer} aria-controls="workspace-navigation" aria-label={localizedText(en, "pairs.m_489a9d5d52c1f266")} onClick={() => setDrawer(!drawer)}><Menu /></Button>
-      <div className="enterprise-breadcrumb">{vessel && <Button variant="ghost" size="icon-sm" asChild><a href={`/app/fleet/${vessel}`} aria-label={localizedText(en, "pairs.m_09d51047be4de855")} onClick={event => { event.preventDefault(); move(`/app/fleet/${vessel}`); }}><ArrowLeft aria-hidden="true"/></a></Button>}<span>POSEIDON</span><ChevronRight aria-hidden="true"/><strong>{title}</strong></div>
+      <div className="enterprise-breadcrumb">{vessel && <Button variant="ghost" size="icon-sm" asChild><a href={`/app/fleet/${vessel}`} aria-label={localizedText(en, "pairs.m_09d51047be4de855")} onClick={event => { event.preventDefault(); move(`/app/fleet/${vessel}`); }}><ArrowLeft aria-hidden="true"/></a></Button>}<span>POSEIDON</span><ChevronRight aria-hidden="true"/><strong>{title}</strong><Button ref={helpButton} variant="ghost" size="icon-sm" className="help-trigger" aria-label={helpCopy[language].open} aria-keyshortcuts="Shift+?" aria-haspopup="dialog" aria-expanded={helpOpen} onClick={() => setHelpOpen(true)}><CircleHelp aria-hidden="true"/></Button></div>
       <div className="enterprise-topbar-actions">
         <AppearanceControls language={language} />
         {navigation.canSearch && <Button variant="outline" className="enterprise-search-trigger" aria-keyshortcuts="Control+K Meta+K" aria-label={localizedText(en, "pairs.m_a959c1a640f4b9b6")} onClick={() => { if (session)
@@ -227,6 +259,7 @@ export function EnterpriseChrome({ session, vessel = null, language, onLanguageC
       </div>
       <div className="enterprise-sidebar-footer"><span className="enterprise-workspace-avatar">{session?.tenantName?.slice(0, 2).toLocaleUpperCase(language) ?? 'PO'}</span><div><strong>{session?.tenantName ?? (localizedText(en, "pairs.m_bdd972f1b143ec8b"))}</strong><span>{session?.authenticated ? (localizedText(en, "pairs.m_a8beb04804867ae3")) : (localizedText(en, "pairs.m_3a6354178aac6256"))}</span></div><ArrowUpRight aria-hidden="true"/></div>
     </nav>
+    {helpOpen && createPortal(<HelpPanel pageKey={currentKey} title={title} language={language} destinations={navigation.destinations.flatMap(item => { const label = labels[item.key]; return label ? [{ ...item, label: localizedLabel(label, en) }] : []; })} onNavigate={href => { setHelpOpen(false); move(href); }} onClose={() => setHelpOpen(false)}/>, document.querySelector('.product-shell') ?? document.body)}
     {searchOpen && createPortal(<WorkspaceSearch language={language} authorization={navigation.loading ? 'pending' : navigation.failed ? 'unavailable' : navigation.canSearch ? 'allowed' : 'denied'} grant={navigation.searchGrant} onRetryAuthorization={navigation.retry} onClose={() => setSearchOwner(null)} onNavigate={href => move(href, () => setSearchOwner(null))}/>, document.querySelector('.product-shell') ?? document.body)}
   </>;
 }

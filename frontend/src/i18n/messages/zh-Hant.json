@@ -3656,6 +3656,24 @@
       "duty_LINK_AUTHOR": "檢查清單連結",
       "duty_FEEDBACK_AUTHOR": "回饋",
       "duty_MEASUREMENT_AUTHOR": "量測"
+    },
+    "HelpPanel_tsx_copy": {
+      "open": "開啟頁面指南",
+      "dialog": "說明",
+      "close": "關閉說明",
+      "tabGuide": "指南",
+      "tabWhy": "原因",
+      "tabAi": "AI",
+      "aiDisabled": "此版本已關閉 AI 說明。此面板不會發出任何 AI 呼叫。",
+      "whyHint": "此頁面上的記錄有各自的「原因」檢視。請關閉此面板並開啟該記錄的原因連結。說明面板從不自行發起該讀取。",
+      "whyEmpty": "此頁面沒有單獨的原因檢視。",
+      "draft": "指南草稿 — 等待專家審核",
+      "pending": "此頁面的指南正在撰寫中。",
+      "loading": "正在載入指南…",
+      "failed": "無法載入指南。請重新整理頁面後再試。",
+      "fallback": "此語言尚無指南；顯示英文版本。",
+      "relatedNone": "沒有可顯示的相關頁面。",
+      "shortcut": "快捷鍵：Shift+?"
     }
   },
   "pairs": {

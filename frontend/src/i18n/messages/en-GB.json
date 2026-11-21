@@ -3656,6 +3656,24 @@
       "duty_LINK_AUTHOR": "checklist links",
       "duty_FEEDBACK_AUTHOR": "feedback",
       "duty_MEASUREMENT_AUTHOR": "measurements"
+    },
+    "HelpPanel_tsx_copy": {
+      "open": "Open page guide",
+      "dialog": "Help",
+      "close": "Close help",
+      "tabGuide": "Guide",
+      "tabWhy": "Why",
+      "tabAi": "AI",
+      "aiDisabled": "AI help is turned off in this release. This panel makes no AI call.",
+      "whyHint": "Records on this page have their own “Why” view. To see a reason, close this panel and open the Why link of that record. The help panel never starts that read itself.",
+      "whyEmpty": "This page has no separate Why view.",
+      "draft": "Draft guide — awaiting expert review",
+      "pending": "The guide for this page is being prepared.",
+      "loading": "Loading guide…",
+      "failed": "The guide could not be loaded. Reload the page and try again.",
+      "fallback": "No guide in this language yet; showing the English version.",
+      "relatedNone": "No related pages to show.",
+      "shortcut": "Shortcut: Shift+?"
     }
   },
   "pairs": {
