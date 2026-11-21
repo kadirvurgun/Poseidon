@@ -1,5 +1,11 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
+## Yönetim + yardım paketi — kullanıcı/yetki ekranı ve sayfa kılavuzu, QA notlarla, kapı CI bekleniyor (22.11.2026)
+- `integration/admin-help-bundle-20261122` (main 4d3b75c4 + USER-ADMIN-01 577e2f57 + UG-1 7246f69d + user-admin kılavuzu). Canonical sayım değişmez: 114/121 iş, 932/970 SP.
+- USER-ADMIN-01: üyelikler uygulama içinden (DB) yönetilir; 13.03 rol paketleri; karar yetkileri pakette yok; yetki verenin yetkisini aşamaz; kendi üyeliği ve son yönetici korunur; config kimlikleri config'den yönetilir. Açık: USER-ADMIN-02 (tenant'lar arası kimlik kapma → davet/kabul).
+- UG-1: her sayfada `?` / Shift+? yardım paneli (Kılavuz/Neden/AI kapalı), ağ çağrısı yok, çevrimdışı; 4 sayfa TR/EN kılavuz; kapsam koruması. Tüm içerik `reviewed:false` (insan SME onayı UG-REV-01).
+- Yerel: API birim 478/478, USER-ADMIN-01 PG entegrasyon 18/18, frontend 2284/2284, typecheck/lint 0. DEFERRED: gerçek IdP giriş yolculuğu, Playwright/axe.
+
 ## Polish paketi — saat kaynağı + tema tamamlama, QA notlarla, kapı CI bekleniyor (21.11.2026)
 - `integration/polish-bundle-20261121` (main 84d4cd6e + TimeProvider e37ed8c0 + tema 4dadc56f + N1). Canonical sayım değişmez: 114/121 iş, 932/970 SP, %96,08.
 - 142 doğrudan saat okuması → enjekte `TimeProvider` + `WallClockGuardTests`; tema token/grafik/radius + `hardcoded-colors` koruması. Ayrıntı: `docs/phases/POLISH-BUNDLE-20261121.md`.
