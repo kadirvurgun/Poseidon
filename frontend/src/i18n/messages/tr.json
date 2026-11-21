@@ -2795,7 +2795,9 @@
       "state_CONDITIONAL": "Koşullu",
       "state_PHOTO": "Fotoğraf",
       "state_AIS_OR_TIME": "AIS veya zaman kanıtı",
-      "state_DOCUMENT": "Belge"
+      "state_DOCUMENT": "Belge",
+      "blocker_job_not_submitted": "İş gönderilmedi: yalnızca gönderilmiş bir römorkör işi başlatılabilir.",
+      "blocker_job_cancelled": "İş iptal edildi: iptal edilmiş bir römorkör işi başlatılamaz."
     },
     "AuditPack_tsx_copy": {
       "title": "Denetim paketi",
@@ -3646,7 +3648,14 @@
       "decision_CONTINUE": "Devam",
       "decision_EXPAND": "Genişlet",
       "decision_FIX": "Düzelt",
-      "decision_STOP": "Durdur"
+      "decision_STOP": "Durdur",
+      "completionRequired": "Tamamlanma gerekli: bağlanan kayıt tamamlanmış durumda olmalıdır (örneğin kapatılmış iş emri veya arıza).",
+      "auditTraceMeaning": "Denetim izi kaydı bir kişinin yazdığını kanıtlar; kaydın veya akışın tamamlandığını kanıtlamaz.",
+      "closeDutyConflict": "Bu haftanın dayandığı kanıtları siz oluşturduğunuz için haftayı kapatamazsınız:",
+      "decisionDutyConflict": "Program kararının dayandığı kanıtları siz oluşturduğunuz için kararı kaydedemezsiniz:",
+      "duty_LINK_AUTHOR": "kontrol listesi bağlantıları",
+      "duty_FEEDBACK_AUTHOR": "geri bildirim",
+      "duty_MEASUREMENT_AUTHOR": "ölçümler"
     }
   },
   "pairs": {

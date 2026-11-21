@@ -2795,7 +2795,9 @@
       "state_CONDITIONAL": "有條件",
       "state_PHOTO": "照片",
       "state_AIS_OR_TIME": "AIS 或時間證據",
-      "state_DOCUMENT": "文件"
+      "state_DOCUMENT": "文件",
+      "blocker_job_not_submitted": "作業未提交：只有已提交的拖船作業才能開始。",
+      "blocker_job_cancelled": "作業已取消：已取消的拖船作業不能開始。"
     },
     "AuditPack_tsx_copy": {
       "title": "稽核資料包",
@@ -3646,7 +3648,14 @@
       "decision_CONTINUE": "繼續",
       "decision_EXPAND": "擴大",
       "decision_FIX": "修正",
-      "decision_STOP": "停止"
+      "decision_STOP": "停止",
+      "completionRequired": "需要完成：所連結的記錄必須處於已完成狀態（例如已關閉的工單或缺陷）。",
+      "auditTraceMeaning": "稽核軌跡證明記錄由人員寫入；它不證明記錄或流程已完成。",
+      "closeDutyConflict": "您不能關閉本週，因為您建立了其所依據的證據：",
+      "decisionDutyConflict": "您不能記錄專案決定，因為您建立了其所依據的證據：",
+      "duty_LINK_AUTHOR": "檢查清單連結",
+      "duty_FEEDBACK_AUTHOR": "回饋",
+      "duty_MEASUREMENT_AUTHOR": "量測"
     }
   },
   "pairs": {

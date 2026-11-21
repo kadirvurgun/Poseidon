@@ -2795,7 +2795,9 @@
       "state_CONDITIONAL": "مشروط",
       "state_PHOTO": "صورة",
       "state_AIS_OR_TIME": "دليل AIS أو دليل زمني",
-      "state_DOCUMENT": "مستند"
+      "state_DOCUMENT": "مستند",
+      "blocker_job_not_submitted": "المهمة غير مُرسلة: لا يمكن بدء إلا مهمة قاطرة مُرسلة.",
+      "blocker_job_cancelled": "المهمة ملغاة: لا يمكن بدء مهمة قاطرة ملغاة."
     },
     "AuditPack_tsx_copy": {
       "title": "حزمة التدقيق",
@@ -3646,7 +3648,14 @@
       "decision_CONTINUE": "متابعة",
       "decision_EXPAND": "توسيع",
       "decision_FIX": "إصلاح",
-      "decision_STOP": "إيقاف"
+      "decision_STOP": "إيقاف",
+      "completionRequired": "الإكمال مطلوب: يجب أن يكون السجل المرتبط في حالة مكتملة (مثل أمر عمل أو عيب مغلق).",
+      "auditTraceMeaning": "يثبت سجل التدقيق أن شخصًا كتب السجل؛ ولا يثبت أن السجل أو المسار مكتمل.",
+      "closeDutyConflict": "لا يمكنك إغلاق هذا الأسبوع لأنك أنشأت أدلة يستند إليها:",
+      "decisionDutyConflict": "لا يمكنك تسجيل قرار البرنامج لأنك أنشأت أدلة يستند إليها:",
+      "duty_LINK_AUTHOR": "روابط قائمة التحقق",
+      "duty_FEEDBACK_AUTHOR": "الملاحظات",
+      "duty_MEASUREMENT_AUTHOR": "القياسات"
     }
   },
   "pairs": {

@@ -49,13 +49,13 @@ public sealed record PilotWeekCloseDto(Guid Id, string Week, long Sequence, Guid
 public sealed record PilotProgramDecisionDto(Guid Id, long Sequence, Guid? PreviousDecisionId, string Decision, string Recommendation, string ProgramHash,
     string Rationale, string Duty, Guid ActorId, DateTimeOffset RecordedAt, string Validity);
 public sealed record PilotWeekView(PilotWeekDefinition Definition, DateOnly StartDate, DateOnly EndDateExclusive, PilotWeekOutcome Outcome, PilotLinkDto[] Links,
-    PilotWeekCloseDto[] Closes, long CloseSequence, int FeedbackCount, string[] AllowedOutcomes);
+    PilotWeekCloseDto[] Closes, long CloseSequence, int FeedbackCount, string[] AllowedOutcomes, string[] CloseDutyConflicts);
 public sealed record PilotReadoutView(PilotValueRow[] Metrics, string TelemetryState, string TelemetryBasis, string TelemetryRetention, int TelemetryWindowDays,
     PilotGateInput UatShip, PilotGateInput UatTug, PilotDefectSeverity[] Defects, int OpenP0);
 public sealed record PilotProgramView(PilotProgramDto Program, PilotWeekView[] Weeks, PilotIssueDto[] Issues, PilotFeedbackDto[] Feedback,
     PilotMeasurementDto[] Measurements, PilotReadoutView Readout, PilotProgramOutcome Review, PilotProgramDecisionDto[] Decisions, long DecisionSequence,
     PilotGateAuthorityDto[] Authorities, bool CanRecord, bool CanTriage, bool CanDecide, string[] AllowedDecisions, string FeedbackRetention,
-    PilotValueMetric[] MetricCatalog, string[] RecordTypes, DateTimeOffset AssessedAt, string Authority = PilotProgramPolicy.Authority,
+    PilotValueMetric[] MetricCatalog, string[] RecordTypes, DateTimeOffset AssessedAt, string[] DecisionDutyConflicts, string Authority = PilotProgramPolicy.Authority,
     string SourceLocator = PilotProgramEndpoints.SourceLocator);
 
 // Pilot program kit: DEV-076/077/078/079 (pilot weeks), DEV-095 (dual-mode proof), DEV-096 (tug value readout),
@@ -164,6 +164,7 @@ public static class PilotProgramEndpoints
         var decisions = await db.PilotProgramDecisions.AsNoTracking().Where(d => d.ProgramId == id).OrderByDescending(d => d.Sequence).Take(32).ToArrayAsync(ct);
         var grants = PilotProgramAccess.Resolve(Federation(h), a, now);
         var synthetic = s.Program.Provenance == "SyntheticUnverified";
+        var duty = await DutyFacts.Load(db, id, a!.Id, ct);
         var weeks = PilotProgramCatalog.WeekDefinitions.Select(w => {
             var outcome = s.Weeks.Single(o => o.Week == w.Week);
             var closes = s.Closes.Where(c => c.Week == w.Week).OrderByDescending(c => c.Sequence).ToArray();
@@ -171,7 +172,7 @@ public static class PilotProgramEndpoints
             return new PilotWeekView(w, PilotProgramPolicy.WeekStart(s.Program.StartDate, w.Number), PilotProgramPolicy.WeekStart(s.Program.StartDate, w.Number + 1), outcome,
                 s.Links.Where(l => l.Week == w.Week).Select(l => Dto(l, s.LinkRefusals[l.Id], true)).ToArray(),
                 closes.Select(c => Dto(c, c.WeekHash == outcome.Hash ? CurrentValidity : StaleValidity)).ToArray(), closes.FirstOrDefault()?.Sequence ?? 0,
-                feedbackCounts.SingleOrDefault(x => x.Key == w.Week)?.Count ?? 0, allowed);
+                feedbackCounts.SingleOrDefault(x => x.Key == w.Week)?.Count ?? 0, allowed, duty.Week(w, a.Id));
         }).ToArray();
         await TugReadinessHttp.Observe(h, ReadAction, "Success", id);
         return Results.Ok(new PilotProgramView(Dto(s.Program), weeks, s.Issues.Select(i => Dto(i, s.Timings[i.Id])).ToArray(), feedback.Select(Dto).ToArray(),
@@ -181,7 +182,7 @@ public static class PilotProgramEndpoints
             PilotAccess.Dto(grants), PilotProgramAccess.Record(a) && PilotAccess.Human(Federation(h), a),
             PilotProgramAccess.Triage(a) && PilotAccess.Human(Federation(h), a), grants.Length > 0 && !synthetic,
             synthetic ? [] : PilotProgramPolicy.Decisions.Where(d => PilotProgramPolicy.DecisionRefusal(d, s.Review) == null).ToArray(),
-            Settings(h).Configured ? "CONFIGURED" : "UNCONFIGURED", PilotProgramCatalog.ValueMetrics, PilotProgramCatalog.RecordTypes, now));
+            Settings(h).Configured ? "CONFIGURED" : "UNCONFIGURED", PilotProgramCatalog.ValueMetrics, PilotProgramCatalog.RecordTypes, now, duty.Decision(a.Id)));
     }
 
     private static async Task<PilotProgram?> Program(PoseidonDbContext db, Guid id, CancellationToken ct) =>
@@ -359,7 +360,9 @@ public static class PilotProgramEndpoints
     }
 
     // Product Owner week close. The server re-evaluates the week; a changed hash is 409 week_stale; ACCEPTED requires a
-    // ready week. The decider must not have authored any active link of that week (separation of duties).
+    // ready week. Separation of duties (re-read inside the SERIALIZABLE transaction, enforced again by the
+    // pilot.guard_pilot_duty() trigger): the decider must not have authored any active link of the week, feedback of
+    // or linked from the week, or a measurement the week rests on.
     private static async Task<IResult> CloseWeek(HttpContext h, PoseidonDbContext db, Guid id) {
         var (a, denied) = await Writer(h, PilotProgramAccess.Decide);
         if (denied != null) return denied;
@@ -378,8 +381,10 @@ public static class PilotProgramEndpoints
         if (s == null) return await Fail(h, CommandAction, 404, "resource_not_found", id);
         if (s.Program.Provenance == "SyntheticUnverified") return await Fail(h, CommandAction, 409, "synthetic_program_not_decidable", id);
         var week = s.Weeks.Single(w => w.Week == c.Week);
-        if (s.Links.Any(l => l.Week == c.Week && l.ActorId == a!.Id)) return await Fail(h, CommandAction, 403, "separation_of_duties_required", id);
+        var definition = PilotProgramCatalog.Week(c.Week)!;
         return await Commit(h, db, a!, "PilotWeekClose", key, new { id, c }, async ct => {
+            if ((await DutyFacts.Load(db, id, a!.Id, ct)).Week(definition, a.Id).Length > 0)
+                return (await Fail(h, CommandAction, 403, "separation_of_duties_required", id), Guid.Empty);
             var previous = await db.PilotWeekCloses.AsNoTracking().Where(x => x.ProgramId == id && x.Week == c.Week).OrderByDescending(x => x.Sequence)
                 .Select(x => new { x.Id, x.Sequence }).FirstOrDefaultAsync(ct);
             if ((previous?.Sequence ?? 0) != c.ExpectedSequence) return (await Fail(h, CommandAction, 409, "close_sequence_conflict", id), Guid.Empty);
@@ -397,7 +402,8 @@ public static class PilotProgramEndpoints
     }
 
     // Product Owner CONTINUE/EXPAND/FIX/STOP bound to the program hash. EXPAND only when expand-eligible. The decider
-    // must not have authored any measurement the readout uses (separation of duties).
+    // must not have authored any active checklist link nor any measurement the readout uses or a link references
+    // (separation of duties; re-read inside the transaction and enforced again by pilot.guard_pilot_duty()).
     private static async Task<IResult> Decide(HttpContext h, PoseidonDbContext db, Guid id) {
         var (a, denied) = await Writer(h, PilotProgramAccess.Decide);
         if (denied != null) return denied;
@@ -415,8 +421,9 @@ public static class PilotProgramEndpoints
         catch (InvalidDataException) { return await Fail(h, CommandAction, 503, "service_unavailable", id); }
         if (s == null) return await Fail(h, CommandAction, 404, "resource_not_found", id);
         if (s.Program.Provenance == "SyntheticUnverified") return await Fail(h, CommandAction, 409, "synthetic_program_not_decidable", id);
-        if (s.LatestMeasurements.Any(m => m.ActorId == a!.Id)) return await Fail(h, CommandAction, 403, "separation_of_duties_required", id);
         return await Commit(h, db, a!, "PilotProgramDecide", key, new { id, c }, async ct => {
+            if ((await DutyFacts.Load(db, id, a!.Id, ct)).Decision(a.Id).Length > 0)
+                return (await Fail(h, CommandAction, 403, "separation_of_duties_required", id), Guid.Empty);
             var previous = await db.PilotProgramDecisions.AsNoTracking().Where(x => x.ProgramId == id).OrderByDescending(x => x.Sequence)
                 .Select(x => new { x.Id, x.Sequence }).FirstOrDefaultAsync(ct);
             if ((previous?.Sequence ?? 0) != c.ExpectedSequence) return (await Fail(h, CommandAction, 409, "decision_sequence_conflict", id), Guid.Empty);
@@ -432,6 +439,26 @@ public static class PilotProgramEndpoints
             var saved = await db.PilotProgramDecisions.AsNoTracking().SingleAsync(x => x.Id == did, ct);
             return Dto(saved, saved.ProgramHash == s.Review.Hash ? CurrentValidity : StaleValidity);
         });
+    }
+
+    // Authorship facts for separation of duties: every active link (its references decide what the week rests on), all
+    // measurements (latest per metric/mode/phase is what the readout uses) and the actor's own feedback.
+    private sealed record DutyFacts(PilotLinkInput[] Links, PilotAuthoredRecord[] Feedback, PilotAuthoredRecord[] Latest, PilotAuthoredRecord[] Measurements) {
+        internal static async Task<DutyFacts> Load(PoseidonDbContext db, Guid programId, Guid actor, CancellationToken ct) {
+            var links = await db.PilotChecklistLinks.AsNoTracking().Where(l => l.ProgramId == programId && l.WithdrawnAt == null)
+                .Select(l => new { l.Id, l.ItemCode, l.RecordType, l.RecordId, l.ActorId }).Take(PilotProgramReader.MaxLinks + 1).ToArrayAsync(ct);
+            var measurements = await db.PilotMeasurements.AsNoTracking().Where(m => m.ProgramId == programId)
+                .Select(m => new { m.Id, m.MetricId, m.Mode, m.Phase, m.Sequence, m.ActorId }).Take(PilotProgramReader.MaxMeasurements + 1).ToArrayAsync(ct);
+            if (links.Length > PilotProgramReader.MaxLinks || measurements.Length > PilotProgramReader.MaxMeasurements) throw new InvalidDataException("pilot_program_projection_limit");
+            var feedback = await db.PilotFeedback.AsNoTracking().Where(f => f.ProgramId == programId && f.ActorId == actor)
+                .Select(f => new PilotAuthoredRecord(f.Id, f.Week, f.ActorId)).ToArrayAsync(ct);
+            var latest = measurements.GroupBy(m => (m.MetricId, m.Mode, m.Phase)).Select(g => g.OrderByDescending(m => m.Sequence).First())
+                .Select(m => new PilotAuthoredRecord(m.Id, null, m.ActorId)).ToArray();
+            return new([.. links.Select(l => new PilotLinkInput(l.Id, l.ItemCode, l.RecordType, l.RecordId, l.ActorId, null))], feedback, latest,
+                [.. measurements.Select(m => new PilotAuthoredRecord(m.Id, null, m.ActorId))]);
+        }
+        internal string[] Week(PilotWeekDefinition week, Guid actor) => PilotProgramPolicy.WeekCloseDutyConflicts(week, actor, Links, Feedback, Latest, Measurements);
+        internal string[] Decision(Guid actor) => PilotProgramPolicy.DecisionDutyConflicts(actor, Links, Latest, Measurements);
     }
 
     // SERIALIZABLE command path with a per-actor idempotency receipt; replays return the committed resource with

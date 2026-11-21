@@ -2795,7 +2795,9 @@
       "state_CONDITIONAL": "Podmienečne",
       "state_PHOTO": "Fotografia",
       "state_AIS_OR_TIME": "Doklad z AIS alebo časový doklad",
-      "state_DOCUMENT": "Dokument"
+      "state_DOCUMENT": "Dokument",
+      "blocker_job_not_submitted": "Zákazka neodoslaná: spustiť možno iba odoslanú zákazku remorkéra.",
+      "blocker_job_cancelled": "Zákazka zrušená: zrušenú zákazku remorkéra nemožno spustiť."
     },
     "AuditPack_tsx_copy": {
       "title": "Auditný balík",
@@ -3646,7 +3648,14 @@
       "decision_CONTINUE": "Pokračovať",
       "decision_EXPAND": "Rozšíriť",
       "decision_FIX": "Opraviť",
-      "decision_STOP": "Zastaviť"
+      "decision_STOP": "Zastaviť",
+      "completionRequired": "Vyžaduje sa dokončenie: prepojený záznam musí byť v stave dokončené (napr. uzavretý pracovný príkaz alebo porucha).",
+      "auditTraceMeaning": "Auditná stopa dokazuje, že záznam napísala osoba; nedokazuje, že záznam alebo postup je dokončený.",
+      "closeDutyConflict": "Tento týždeň nemôžete uzavrieť, pretože ste vytvorili dôkazy, na ktorých stojí:",
+      "decisionDutyConflict": "Rozhodnutie o programe nemôžete zaznamenať, pretože ste vytvorili dôkazy, na ktorých stojí:",
+      "duty_LINK_AUTHOR": "odkazy kontrolného zoznamu",
+      "duty_FEEDBACK_AUTHOR": "spätná väzba",
+      "duty_MEASUREMENT_AUTHOR": "merania"
     }
   },
   "pairs": {

@@ -2795,7 +2795,9 @@
       "state_CONDITIONAL": "Ehdollinen",
       "state_PHOTO": "Valokuva",
       "state_AIS_OR_TIME": "AIS- tai aikanäyttö",
-      "state_DOCUMENT": "Asiakirja"
+      "state_DOCUMENT": "Asiakirja",
+      "blocker_job_not_submitted": "Työtä ei ole lähetetty: vain lähetetty hinaajatyö voidaan aloittaa.",
+      "blocker_job_cancelled": "Työ peruttu: peruttua hinaajatyötä ei voi aloittaa."
     },
     "AuditPack_tsx_copy": {
       "title": "Auditointipaketti",
@@ -3646,7 +3648,14 @@
       "decision_CONTINUE": "Jatka",
       "decision_EXPAND": "Laajenna",
       "decision_FIX": "Korjaa",
-      "decision_STOP": "Lopeta"
+      "decision_STOP": "Lopeta",
+      "completionRequired": "Valmistuminen vaaditaan: linkitetyn tietueen on oltava valmis-tilassa (esimerkiksi suljettu työmääräys tai vika).",
+      "auditTraceMeaning": "Auditointijälki osoittaa, että henkilö kirjoitti tietueen; se ei osoita, että tietue tai prosessi on valmis.",
+      "closeDutyConflict": "Et voi sulkea tätä viikkoa, koska loit näyttöä, johon se perustuu:",
+      "decisionDutyConflict": "Et voi kirjata ohjelmapäätöstä, koska loit näyttöä, johon se perustuu:",
+      "duty_LINK_AUTHOR": "tarkistuslistan linkit",
+      "duty_FEEDBACK_AUTHOR": "palaute",
+      "duty_MEASUREMENT_AUTHOR": "mittaukset"
     }
   },
   "pairs": {

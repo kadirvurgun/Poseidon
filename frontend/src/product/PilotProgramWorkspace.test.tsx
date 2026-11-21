@@ -13,13 +13,13 @@ const H = 'C'.repeat(64), W = 'D'.repeat(64)
 const at = '2026-12-02T08:00:00Z'
 const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers: { 'Content-Type': 'application/json' } })
 const item = (code: string, week: string, area = 'SHIP', types = ['PILOT_FEEDBACK']) =>
-  ({ code, week, requirement: 'DEV-076', area, recordTypes: types, requiresAuditTrace: false, criterion: 'Daily feedback captured', locator: '18.01/sheet:Backlog/row:77' })
+  ({ code, week, requirement: 'DEV-076', area, recordTypes: types, requiresAuditTrace: false, requiresCompletion: false, criterion: 'Daily feedback captured', locator: '18.01/sheet:Backlog/row:77' })
 const weekView = (code: string, n: number, patch: Record<string, unknown> = {}, outcome: Record<string, unknown> = {}) => ({
   definition: { week: code, number: n, requirements: ['DEV-076'], locator: '18.01/sheet:Backlog/row:77', items: [item(code + '_DAILY_FEEDBACK', code)] },
   startDate: '2026-12-01', endDateExclusive: '2026-12-08',
   outcome: { week: code, phase: n === 1 ? 'IN_PROGRESS' : 'NOT_STARTED', recommendation: 'NOT_READY', items: [{ code: code + '_DAILY_FEEDBACK', state: 'MISSING', validLinks: 0, reasons: [] }],
     openP0: 0, overdueP0: 0, lateP0: 0, reasons: ['ITEM_MISSING:' + code + '_DAILY_FEEDBACK'], hash: W, ...outcome },
-  links: [], closes: [], closeSequence: 0, feedbackCount: 0, allowedOutcomes: n === 1 ? ['NOT_ACCEPTED'] : [], ...patch })
+  links: [], closes: [], closeSequence: 0, feedbackCount: 0, allowedOutcomes: n === 1 ? ['NOT_ACCEPTED'] : [], closeDutyConflicts: [], ...patch })
 const metric = (patch: Record<string, unknown> = {}) => ({ metricId: 'TUG_JOB_PREP_TIME', mode: 'TUG', unit: 'SECOND', direction: 'LOWER_BETTER', quality: 'UNKNOWN', baseline: 1800,
   current: null, delta: null, percentChange: null, comparison: 'NOT_COMPARABLE', reasons: ['PILOT_MEASUREMENT_MISSING'], baselineId: '77777777-7777-4777-8777-777777777777',
   currentId: null, telemetry: null, locator: '18.01/sheet:Backlog/row:97', ...patch })
@@ -38,7 +38,7 @@ const view = (patch: Record<string, unknown> = {}) => ({
   review: { recommendation: 'FIX_RECOMMENDED', reasons: ['WEEK_NOT_CLOSED:W1', 'VALUE_UNKNOWN:TUG_JOB_PREP_TIME'], hash: H, authority: 'x' },
   decisions: [], decisionSequence: 0, authorities: [{ id: grant, duty: 'ProductOwner' }], canRecord: true, canTriage: true, canDecide: true,
   allowedDecisions: ['CONTINUE', 'FIX', 'STOP'], feedbackRetention: 'UNCONFIGURED', metricCatalog: [{ id: 'TUG_JOB_PREP_TIME', mode: 'TUG', unit: 'SECOND', direction: 'LOWER_BETTER',
-    requirements: ['DEV-096'], telemetryMetricId: null, locator: 'x' }], recordTypes: ['PILOT_FEEDBACK'], assessedAt: at, authority: 'x', sourceLocator: 'synthetic', ...patch })
+    requirements: ['DEV-096'], telemetryMetricId: null, locator: 'x' }], recordTypes: ['PILOT_FEEDBACK'], assessedAt: at, authority: 'x', sourceLocator: 'synthetic', decisionDutyConflicts: [], ...patch })
 const fetcher = vi.fn()
 let commands: { url: string; init: RequestInit }[] = []
 let body: unknown = view()
@@ -124,6 +124,21 @@ it('links a record only with a GUID and an allowed type, and triages an issue wi
   await waitFor(() => expect(commands).toHaveLength(2))
   expect(commands[1].url).toBe(`/api/v1/pilot-programs/${programId}/issues/88888888-8888-4888-8888-888888888888/triage`)
   expect(JSON.parse(String(commands[1].init.body))).toEqual({ note: 'FICTIONAL import gap', expectedVersion: 3 })
+})
+
+it('hides week close and decision for an evidence author and says why; trace and completion requirements are explained', async () => {
+  const traced = { ...item('W1_DAILY_FEEDBACK', 'W1'), requiresAuditTrace: true, requiresCompletion: true }
+  body = view({ weeks: [weekView('W1', 1, { closeDutyConflicts: ['LINK_AUTHOR', 'FEEDBACK_AUTHOR'],
+    definition: { week: 'W1', number: 1, requirements: ['DEV-076'], locator: '18.01/sheet:Backlog/row:77', items: [traced] } }), weekView('W2', 2), weekView('W3', 3), weekView('W4', 4)],
+    decisionDutyConflicts: ['MEASUREMENT_AUTHOR'] })
+  render(<PilotProgramWorkspace/>)
+  expect(await screen.findByText(/You cannot close this week because you authored evidence it rests on: checklist links, feedback/)).toBeInTheDocument()
+  expect(screen.getByText(/You cannot record the program decision because you authored evidence it rests on: measurements/)).toBeInTheDocument()
+  expect(screen.queryByRole('form', { name: 'Close week W1' })).toBeNull()
+  expect(screen.queryByRole('form', { name: 'Record program decision' })).toBeNull()
+  expect(screen.getByText(/it does not prove the record or flow is completed/)).toBeInTheDocument()
+  expect(screen.getByText(/Completion required/)).toBeInTheDocument()
+  expect(() => decodeProgramView(view({ decisionDutyConflicts: ['SELF_APPROVED'] }), programId)).toThrow()
 })
 
 it('keeps closes and decisions read-only without an appointment and shows the empty program list with a create form', async () => {

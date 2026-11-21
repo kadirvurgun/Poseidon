@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Poseidon.Persistence.Seeding;
+using Poseidon.Domain;
 using Xunit;
 
 namespace Poseidon.Persistence.Tests;
@@ -113,4 +114,35 @@ public sealed class PilotProgramStorageGuardTests
                      typeof(PilotProgramDecision), typeof(PilotProgramReceipt) })
             Assert.Equal("pilot", model.FindEntityType(t)!.GetSchema());
     }
+
+    // Final-gate QA N4b: the pilot kit migrations' design-time target models equal the snapshot (QaNotes columns
+    // included), the model has no pending change, and the duty-separation trigger mirrors the domain rule.
+    [Fact]
+    [Trait("Requirement", "DEV-076")]
+    [Trait("Requirement", "DEV-121")]
+    public void Pilot_kit_migration_target_models_match_the_snapshot_and_the_duty_trigger_is_installed()
+    {
+        using var db = Context();
+        Assert.False(db.Database.HasPendingModelChanges());
+        var assembly = db.GetService<Microsoft.EntityFrameworkCore.Migrations.IMigrationsAssembly>();
+        var init = db.GetService<IModelRuntimeInitializer>();
+        var differ = db.GetService<Microsoft.EntityFrameworkCore.Migrations.IMigrationsModelDiffer>();
+        var snapshot = init.Initialize(assembly.ModelSnapshot!.Model, designTime: true, validationLogger: null).GetRelationalModel();
+        foreach (var id in new[] { "20261124080000_PilotProgramKit", "20261124090000_PilotProgramDutySeparation" }) {
+            var migration = assembly.CreateMigration(assembly.Migrations[id], "Npgsql.EntityFrameworkCore.PostgreSQL");
+            var target = init.Initialize(migration.TargetModel!, designTime: true, validationLogger: null).GetRelationalModel();
+            Assert.False(differ.HasDifferences(target, snapshot), id);
+            if (id.EndsWith("DutySeparation", StringComparison.Ordinal)) {
+                var sql = string.Join('\n', migration.UpOperations.OfType<Microsoft.EntityFrameworkCore.Migrations.Operations.SqlOperation>().Select(o => o.Sql));
+                Assert.Contains("BEFORE INSERT ON pilot.\"PilotWeekCloses\"", sql);
+                Assert.Contains("BEFORE INSERT ON pilot.\"PilotProgramDecisions\"", sql);
+                Assert.Contains("NEW.\"Week\" = 'W4'", sql);
+            }
+        }
+        // The trigger hard-codes W4 as the only week whose checklist uses the value readout.
+        Assert.Equal(["W4"], PilotProgramCatalog.WeekDefinitions.Where(PilotProgramPolicy.UsesReadout).Select(w => w.Week));
+        var tug = DesignModel(db).FindEntityType(typeof(TugDailyLogReview))!;
+        Assert.NotNull(tug.FindProperty("SubmittedBy")); Assert.NotNull(tug.FindProperty("AuthorsJson"));
+    }
+    private static IModel DesignModel(PoseidonDbContext db) => db.GetService<IDesignTimeModel>().Model;
 }

@@ -12,7 +12,8 @@ public sealed class PilotProgramPolicyTests
     private static readonly Guid Program = Guid.NewGuid(), Ship = Guid.NewGuid(), Tug = Guid.NewGuid();
     private static readonly PilotProgramVessels Vessels = new(Ship, Tug);
     private static readonly TimeZoneInfo Istanbul = TimeZoneInfo.FindSystemTimeZoneById("Europe/Istanbul");
-    private static PilotRecordProbe Probe(Guid? vessel, bool traced = true, string? provenance = "UserDeclaredUnverified") => new(vessel, provenance, traced, null, null, null);
+    private static PilotRecordProbe Probe(Guid? vessel, bool traced = true, string? provenance = "UserDeclaredUnverified", string? completion = PilotProgramPolicy.Completed) =>
+        new(vessel, provenance, traced, null, null, null, completion);
 
     [Fact]
     [Trait("Requirement", "DEV-076")]
@@ -58,6 +59,82 @@ public sealed class PilotProgramPolicyTests
         var shared = PilotProgramCatalog.Item("W2_DUAL_SHARED_EVIDENCE")!;
         Assert.Null(PilotProgramPolicy.LinkRefusal(shared, PilotProgramCatalog.AuditPack, Probe(Tug), Vessels, Program));
         Assert.Equal("record_vessel_mismatch", PilotProgramPolicy.LinkRefusal(shared, PilotProgramCatalog.AuditPack, Probe(Guid.NewGuid()), Vessels, Program));
+    }
+
+    [Fact]
+    [Trait("Requirement", "DEV-077")]
+    [Trait("Requirement", "DEV-078")]
+    public void Completed_flows_need_the_owner_completion_state_and_an_audit_trace_alone_never_completes_an_item()
+    {
+        // DEV-077 AC says "completed with audit trace" for the WO, defect/safeguard, departure review and offline flow.
+        var w2 = PilotProgramCatalog.Week("W2")!.Items;
+        Assert.Equal(["W2_WORK_ORDER", "W2_DEFECT_SAFEGUARD", "W2_DEPARTURE_REVIEW", "W2_OFFLINE_RECONNECT"],
+            PilotProgramCatalog.Items.Where(i => i.RequiresCompletion).Select(i => i.Code));
+        Assert.All(w2.Where(i => i.RequiresCompletion), i => Assert.True(i.RequiresAuditTrace));
+        var wo = PilotProgramCatalog.Item("W2_WORK_ORDER")!;
+        // A traced (human-written) but open work order is not a completed flow.
+        Assert.Equal("record_not_completed", PilotProgramPolicy.LinkRefusal(wo, PilotProgramCatalog.WorkOrder, Probe(Ship, completion: PilotProgramPolicy.NotCompleted), Vessels, Program));
+        // A record type with no completion state never satisfies a completion item.
+        Assert.Equal("record_not_completed", PilotProgramPolicy.LinkRefusal(wo, PilotProgramCatalog.WorkOrder, Probe(Ship, completion: null), Vessels, Program));
+        Assert.Equal("audit_trace_missing", PilotProgramPolicy.LinkRefusal(wo, PilotProgramCatalog.WorkOrder, Probe(Ship, traced: false), Vessels, Program));
+        // Items whose AC does not say "completed" (e.g. "at least one event flow") rest on the human-written trace only.
+        var events = PilotProgramCatalog.Item("W3_EVENT_FLOW")!;
+        Assert.False(events.RequiresCompletion);
+        Assert.Null(PilotProgramPolicy.LinkRefusal(events, PilotProgramCatalog.SafetyEvent, Probe(Ship, completion: null), Vessels, Program));
+        // Completion is re-evaluated on read: a link to a not-completed record leaves the item LINK_INVALID.
+        var week = PilotProgramPolicy.EvaluateWeek(PilotProgramCatalog.Week("W2")!, PilotProgramPolicy.InProgress,
+            [new(Guid.NewGuid(), wo.Code, PilotProgramCatalog.WorkOrder, Guid.NewGuid(), Guid.NewGuid(), Probe(Ship, completion: PilotProgramPolicy.NotCompleted))], [], Vessels, Program);
+        var item = week.Items.Single(i => i.Code == wo.Code);
+        Assert.Equal((PilotProgramPolicy.LinkInvalid, 0), (item.State, item.ValidLinks));
+        Assert.Contains("LINK_RECORD_NOT_COMPLETED", item.Reasons);
+    }
+
+    [Fact]
+    [Trait("Requirement", "DEV-076")]
+    [Trait("Requirement", "DEV-079")]
+    [Trait("Requirement", "DEV-121")]
+    public void Week_close_and_program_decision_exclude_the_authors_of_the_evidence_they_rest_on()
+    {
+        Guid po = Guid.NewGuid(), other = Guid.NewGuid();
+        var w1 = PilotProgramCatalog.Week("W1")!; var w2 = PilotProgramCatalog.Week("W2")!; var w4 = PilotProgramCatalog.Week("W4")!;
+        Assert.Equal([false, false, false, true], PilotProgramCatalog.WeekDefinitions.Select(PilotProgramPolicy.UsesReadout));
+        PilotLinkInput Link(string item, string type, Guid record, Guid actor) => new(Guid.NewGuid(), item, type, record, actor, null);
+        Assert.Empty(PilotProgramPolicy.WeekCloseDutyConflicts(w1, po, [], [], [], []));
+        Assert.Empty(PilotProgramPolicy.DecisionDutyConflicts(po, [], [], []));
+
+        // Link author of the week.
+        Assert.Equal([PilotProgramPolicy.LinkAuthor],
+            PilotProgramPolicy.WeekCloseDutyConflicts(w1, po, [Link("W1_SHIP_CREW", PilotProgramCatalog.CrewAssignment, Guid.NewGuid(), po)], [], [], []));
+        // A link in another week does not bind this week's close, but binds the program decision.
+        var w2Link = Link("W2_WORK_ORDER", PilotProgramCatalog.WorkOrder, Guid.NewGuid(), po);
+        Assert.Empty(PilotProgramPolicy.WeekCloseDutyConflicts(w1, po, [w2Link], [], [], []));
+        Assert.Equal([PilotProgramPolicy.LinkAuthor], PilotProgramPolicy.DecisionDutyConflicts(po, [w2Link], [], []));
+
+        // Feedback recorded for the week, or feedback of another week linked from it.
+        var own = new PilotAuthoredRecord(Guid.NewGuid(), "W1", po);
+        Assert.Equal([PilotProgramPolicy.FeedbackAuthor], PilotProgramPolicy.WeekCloseDutyConflicts(w1, po, [], [own], [], []));
+        Assert.Empty(PilotProgramPolicy.WeekCloseDutyConflicts(w2, po, [], [own], [], []));
+        var later = new PilotAuthoredRecord(Guid.NewGuid(), "W2", po);
+        Assert.Equal([PilotProgramPolicy.FeedbackAuthor],
+            PilotProgramPolicy.WeekCloseDutyConflicts(w1, po, [Link("W1_DAILY_FEEDBACK", PilotProgramCatalog.PilotFeedback, later.Id, other)], [later], [], []));
+
+        // Measurements: W4 uses the readout (latest per metric/mode/phase); other weeks only through a link.
+        var latest = new PilotAuthoredRecord(Guid.NewGuid(), null, po); var superseded = new PilotAuthoredRecord(Guid.NewGuid(), null, po);
+        Assert.Equal([PilotProgramPolicy.MeasurementAuthor], PilotProgramPolicy.WeekCloseDutyConflicts(w4, po, [], [], [latest], [latest, superseded]));
+        Assert.Empty(PilotProgramPolicy.WeekCloseDutyConflicts(w1, po, [], [], [latest], [latest, superseded]));
+        Assert.Empty(PilotProgramPolicy.WeekCloseDutyConflicts(w4, po, [], [], [], [superseded]));
+        var linked = Link("W4_BEFORE_AFTER_BASELINE", PilotProgramCatalog.PilotMeasurement, superseded.Id, other);
+        Assert.Equal([PilotProgramPolicy.MeasurementAuthor], PilotProgramPolicy.WeekCloseDutyConflicts(w4, po, [linked], [], [], [latest, superseded]));
+        Assert.Equal([PilotProgramPolicy.MeasurementAuthor], PilotProgramPolicy.DecisionDutyConflicts(po, [], [latest], [latest]));
+        Assert.Equal([PilotProgramPolicy.MeasurementAuthor], PilotProgramPolicy.DecisionDutyConflicts(po, [linked], [], [superseded]));
+        Assert.Empty(PilotProgramPolicy.DecisionDutyConflicts(po, [], [], [superseded]));
+        // Both sets at once; another person's records never bind the Product Owner.
+        Assert.Equal([PilotProgramPolicy.LinkAuthor, PilotProgramPolicy.MeasurementAuthor], PilotProgramPolicy.DecisionDutyConflicts(po, [w2Link], [latest], [latest]));
+        var log = Link("W4_TUG_DAILY_LOG", PilotProgramCatalog.TugDailyLog, Guid.NewGuid(), po);
+        Assert.Equal([PilotProgramPolicy.LinkAuthor, PilotProgramPolicy.FeedbackAuthor, PilotProgramPolicy.MeasurementAuthor],
+            PilotProgramPolicy.WeekCloseDutyConflicts(w4, po, [log], [new(Guid.NewGuid(), "W4", po)], [latest], [latest]));
+        Assert.Empty(PilotProgramPolicy.WeekCloseDutyConflicts(w4, other, [log], [], [latest], [latest]));
+        Assert.Empty(PilotProgramPolicy.DecisionDutyConflicts(other, [log], [latest], [latest]));
     }
 
     [Fact]

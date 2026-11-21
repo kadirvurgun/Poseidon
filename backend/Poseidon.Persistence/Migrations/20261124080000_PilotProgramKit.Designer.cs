@@ -14189,6 +14189,10 @@ namespace Poseidon.Persistence.Migrations
                     b.Property<Guid>("AuthorityId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("AuthorsJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("ContentHash")
                         .IsRequired()
                         .HasMaxLength(64)
@@ -14226,6 +14230,9 @@ namespace Poseidon.Persistence.Migrations
                     b.Property<long>("Revision")
                         .HasColumnType("bigint");
 
+                    b.Property<Guid>("SubmittedBy")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("VesselId")
                         .HasColumnType("uuid");
 
@@ -14236,7 +14243,7 @@ namespace Poseidon.Persistence.Migrations
 
                     b.ToTable("TugDailyLogReviews", "tug", t =>
                         {
-                            t.HasCheckConstraint("CK_TugDailyLogReview_Kind", "\"Decision\" IN ('VERIFY','RETURN') AND \"ResultRevision\"=\"Revision\"+1 AND length(\"Reason\")>=10 AND \"Duty\" IN ('TugMaster','Master') AND \"Reconciliation\" IN ('RECONCILED','REVIEW_REQUIRED','INCOMPLETE')");
+                            t.HasCheckConstraint("CK_TugDailyLogReview_Kind", "\"Decision\" IN ('VERIFY','RETURN') AND \"ResultRevision\"=\"Revision\"+1 AND length(\"Reason\")>=10 AND \"Duty\" IN ('TugMaster','Master') AND \"Reconciliation\" IN ('RECONCILED','REVIEW_REQUIRED','INCOMPLETE') AND \"ActorId\"<>\"SubmittedBy\" AND NOT (\"AuthorsJson\"::jsonb @> jsonb_build_array(\"ActorId\"::text))");
                         });
                 });
 
@@ -15985,7 +15992,7 @@ namespace Poseidon.Persistence.Migrations
 
                     b.ToTable("VoiceEventDraftRevisions", "intelligence", t =>
                         {
-                            t.HasCheckConstraint("CK_VoiceEventDraftRevision_State", "\"Revision\">0 AND \"State\" IN ('DRAFT','CONFIRMED','REJECTED') AND \"ReasonCode\" IN ('CREATE','EDIT','CONFIRM','REJECT')");
+                            t.HasCheckConstraint("CK_VoiceEventDraftRevision_State", "\"Revision\">0 AND \"State\" IN ('DRAFT','CONFIRMED','REJECTED') AND \"ReasonCode\" IN ('CREATE','EDIT','CONFIRM','REJECT','LINK')");
                         });
                 });
 

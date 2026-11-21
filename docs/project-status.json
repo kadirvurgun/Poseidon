@@ -18504,7 +18504,24 @@
     "note": "Software kit for the 30-day design partner pilot (PILOT-W1..W4). Software cannot complete these tasks: they stay open until a real pilot is executed, evidenced and signed off by humans (Product Owner week close/decision with separation of duties). No pilot result, measurement, UAT attestation or decision is claimed or seeded.",
     "ci": {
       "feature_e19d4ea6": "44858058538 failure (base NotificationTests.cs:291 time bomb, fixed in e0639fa7)",
-      "feature_9159e0de": "44862152432 in progress at integration time"
+      "feature_9159e0de": "44862152432 (feature branch run; superseded by integration/final-bundle-20261121 CI)"
+    },
+    "followup_20261121": {
+      "state": "AUTHORED_UNVERIFIED",
+      "branch": "fix/pilot-kit-followup-20261121",
+      "base": "integration/final-bundle-20261121@2b130354",
+      "migration": "20261124090000_PilotProgramDutySeparation",
+      "qa_notes_closed": [
+        "1a",
+        "1b",
+        "N3b",
+        "N3c",
+        "N3d",
+        "N4a",
+        "N4b"
+      ],
+      "note": "Separation of duties extended (close: link/feedback/measurement authors; decision: link + measurement authors), server-side in the SERIALIZABLE transaction and DB trigger pilot.guard_pilot_duty(). DEV-077 completed items require the owner completion state; the audit-trace check proves a human-written record, not completion. job_not_submitted labelled in 17 locales. PilotProgramKit Designer regenerated from the snapshot. No acceptance change.",
+      "s1_delta": "+0/+0/+0"
     }
   }
 }

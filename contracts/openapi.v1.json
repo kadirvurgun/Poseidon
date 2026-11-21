@@ -44861,6 +44861,10 @@
           },
           "locator": {
             "type": "string"
+          },
+          "requiresCompletion": {
+            "type": "boolean",
+            "default": false
           }
         }
       },
@@ -46293,7 +46297,8 @@
           "feedbackRetention",
           "metricCatalog",
           "recordTypes",
-          "assessedAt"
+          "assessedAt",
+          "decisionDutyConflicts"
         ],
         "type": "object",
         "properties": {
@@ -46379,6 +46384,12 @@
           "assessedAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "decisionDutyConflicts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "authority": {
             "type": "string",
@@ -46934,7 +46945,8 @@
           "closes",
           "closeSequence",
           "feedbackCount",
-          "allowedOutcomes"
+          "allowedOutcomes",
+          "closeDutyConflicts"
         ],
         "type": "object",
         "properties": {
@@ -46973,6 +46985,12 @@
             "format": "int32"
           },
           "allowedOutcomes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "closeDutyConflicts": {
             "type": "array",
             "items": {
               "type": "string"

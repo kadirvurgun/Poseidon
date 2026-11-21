@@ -2795,7 +2795,9 @@
       "state_CONDITIONAL": "Condicional",
       "state_PHOTO": "Foto",
       "state_AIS_OR_TIME": "Evidência AIS ou de horário",
-      "state_DOCUMENT": "Documento"
+      "state_DOCUMENT": "Documento",
+      "blocker_job_not_submitted": "Trabalho não enviado: somente um trabalho de rebocador enviado pode iniciar.",
+      "blocker_job_cancelled": "Trabalho cancelado: um trabalho de rebocador cancelado não pode iniciar."
     },
     "AuditPack_tsx_copy": {
       "title": "Pacote de auditoria",
@@ -3646,7 +3648,14 @@
       "decision_CONTINUE": "Continuar",
       "decision_EXPAND": "Expandir",
       "decision_FIX": "Corrigir",
-      "decision_STOP": "Parar"
+      "decision_STOP": "Parar",
+      "completionRequired": "Conclusão obrigatória: o registro vinculado deve estar no estado concluído (por exemplo, uma ordem de serviço ou um defeito encerrado).",
+      "auditTraceMeaning": "A trilha de auditoria comprova que uma pessoa escreveu o registro; não comprova que o registro ou o fluxo foi concluído.",
+      "closeDutyConflict": "Você não pode fechar esta semana porque criou evidências em que ela se baseia:",
+      "decisionDutyConflict": "Você não pode registrar a decisão do programa porque criou evidências em que ela se baseia:",
+      "duty_LINK_AUTHOR": "vínculos da lista de verificação",
+      "duty_FEEDBACK_AUTHOR": "feedback",
+      "duty_MEASUREMENT_AUTHOR": "medições"
     }
   },
   "pairs": {

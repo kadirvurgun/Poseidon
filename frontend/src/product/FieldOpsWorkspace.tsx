@@ -44,8 +44,10 @@ function AuthorityPicker({ id, authorities, value, onChange, t, disabled }: { id
     <select id={id} required value={value} disabled={disabled} onChange={e => onChange(e.target.value)}>
       <option value="">—</option>{authorities.map(a => <option key={a.id} value={a.id}>{label(t, 'duty_' + a.duty)}</option>)}</select></>;
 }
-function Codes({ items, empty }: { items: string[]; empty: string }) {
-  return items.length === 0 ? <p>{empty}</p> : <ul>{items.map(b => <li key={b}><code>{b}</code></li>)}</ul>;
+// Codes stay visible verbatim; a code with a localized label (prefix + code in the copy) also shows that label.
+function Codes({ items, empty, t, prefix }: { items: string[]; empty: string; t?: Copy; prefix?: string }) {
+  const text = (b: string) => t && prefix ? (t as Record<string, string>)[prefix + b] : undefined;
+  return items.length === 0 ? <p>{empty}</p> : <ul>{items.map(b => <li key={b} data-code={b}><code>{b}</code>{text(b) && <> · {text(b)}</>}</li>)}</ul>;
 }
 // Verified/reviewed states are informational, never a green "safe" tone; open or unknown states warn.
 function StateBadge({ state, t }: { state: string; t: Copy }) {
@@ -185,7 +187,7 @@ function StartGatePanel({ gate, job, vessel, t, disabled, run, open }: { gate: J
   return <article aria-label={`${t.tug} ${gate.tugId.slice(0, 8)}`} data-tug={gate.tugId}>
     <h2>{t.tug} {gate.tugId.slice(0, 8)}</h2>
     <p>{t.readinessDecision}: {gate.decision ? label(t, 'decision_' + gate.decision) : t.unknownValue}</p>
-    <h3>{t.blockers}</h3><Codes items={gate.blockers} empty={t.noBlockers}/>
+    <h3>{t.blockers}</h3><Codes items={gate.blockers} empty={t.noBlockers} t={t} prefix="blocker_"/>
     {gate.executionId && <p><a href={fieldOpsHref('towage-execution', vessel, { id: gate.executionId })} onClick={e => { e.preventDefault(); open(gate.executionId!); }}>{t.openExecution}</a>
       {' '}{gate.executionState && <StateBadge state={gate.executionState} t={t}/>}</p>}
     {gate.canStart && !gate.executionId && <form aria-label={t.start} onSubmit={e => { e.preventDefault(); if (authority) void run(fieldOpsApi.start(vessel, id, job, gate, authority, position), { screen: 'towage-execution', extra: { id } }); }}>

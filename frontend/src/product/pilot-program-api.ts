@@ -32,8 +32,11 @@ export const qualities = ['COMPLETE', 'UNKNOWN'] as const
 export const comparisons = ['IMPROVED', 'WORSENED', 'UNCHANGED', 'NOT_COMPARABLE'] as const
 export const units = ['SECOND', 'COUNT', 'PERCENT', 'PERSON'] as const
 export const gateStates = ['PASS', 'FAIL', 'UNKNOWN', 'DEFERRED'] as const
+export const dutyConflicts = ['LINK_AUTHOR', 'FEEDBACK_AUTHOR', 'MEASUREMENT_AUTHOR'] as const
+export type DutyConflict = typeof dutyConflicts[number]
 
-export type ChecklistItem = { code: string; week: WeekCode; requirement: string; area: typeof areas[number]; recordTypes: string[]; requiresAuditTrace: boolean; criterion: string; locator: string }
+export type ChecklistItem = { code: string; week: WeekCode; requirement: string; area: typeof areas[number]; recordTypes: string[]; requiresAuditTrace: boolean; criterion: string; locator: string
+  requiresCompletion: boolean }
 export type WeekDefinition = { week: WeekCode; number: number; requirements: string[]; locator: string; items: ChecklistItem[] }
 export type ItemOutcome = { code: string; state: typeof itemStates[number]; validLinks: number; reasons: string[] }
 export type WeekOutcome = { week: WeekCode; phase: typeof phases[number]; recommendation: typeof weekRecommendations[number]; items: ItemOutcome[]; openP0: number; overdueP0: number
@@ -43,7 +46,7 @@ export type Link = { id: string; week: WeekCode; itemCode: string; recordType: s
 export type WeekClose = { id: string; week: WeekCode; sequence: number; previousCloseId: string | null; outcome: CloseOutcome; recommendation: typeof weekRecommendations[number]
   weekHash: string; rationale: string; duty: 'ProductOwner'; actorId: string; recordedAt: string; validity: 'CURRENT' | 'STALE' }
 export type WeekView = { definition: WeekDefinition; startDate: string; endDateExclusive: string; outcome: WeekOutcome; links: Link[]; closes: WeekClose[]; closeSequence: number
-  feedbackCount: number; allowedOutcomes: CloseOutcome[] }
+  feedbackCount: number; allowedOutcomes: CloseOutcome[]; closeDutyConflicts: DutyConflict[] }
 export type Issue = { id: string; week: WeekCode; area: string; category: string; severity: typeof issueSeverities[number]; title: string; state: typeof issueStates[number]
   reportedBy: string; reportedAt: string; triagedBy: string | null; triagedAt: string | null; triageNote: string | null; resolvedBy: string | null; resolvedAt: string | null
   resolution: string | null; resolutionReference: string | null; timing: typeof timingStates[number]; reportedLocalDate: string; version: number }
@@ -68,7 +71,7 @@ export type Program = { id: string; name: string; shipVesselId: string; tugVesse
 export type ProgramView = { program: Program; weeks: WeekView[]; issues: Issue[]; feedback: Feedback[]; measurements: Measurement[]; readout: Readout; review: Review
   decisions: Decision[]; decisionSequence: number; authorities: { id: string; duty: 'ProductOwner' }[]; canRecord: boolean; canTriage: boolean; canDecide: boolean
   allowedDecisions: ProgramDecision[]; feedbackRetention: 'CONFIGURED' | 'UNCONFIGURED'; metricCatalog: ValueMetric[]; recordTypes: string[]; assessedAt: string; authority: string
-  sourceLocator: string }
+  sourceLocator: string; decisionDutyConflicts: DutyConflict[] }
 export type VesselOption = { id: string; code: string; name: string; kind: 'SHIP' | 'TUG' }
 export type ProgramList = { programs: Program[]; vessels: VesselOption[]; canCreate: boolean; catalogVersion: string }
 
@@ -88,6 +91,7 @@ const date = (v: unknown) => typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test
 const hash = (v: unknown) => typeof v === 'string' && /^[0-9A-F]{64}$/.test(v)
 const codes = (v: unknown, max = 512) => list(v, max) && v.every(x => text(x, 160))
 const validity = (v: unknown) => oneOf(v, ['CURRENT', 'STALE'] as const)
+const conflicts = (v: unknown) => list(v, 3) && v.every(x => oneOf(x, dutyConflicts))
 
 function program(v: unknown): Program {
   if (!object(v) || !isGuid(v.id) || !text(v.name, 120) || !isGuid(v.shipVesselId) || !optGuid(v.tugVesselId) || !date(v.startDate) || !text(v.timeZone, 64) ||
@@ -113,11 +117,12 @@ function close(v: unknown): WeekClose {
 }
 function week(v: unknown): WeekView {
   if (!object(v) || !object(v.definition) || !date(v.startDate) || !date(v.endDateExclusive) || !object(v.outcome) || !list(v.links, 512) || !list(v.closes, 256) ||
-    !int(v.closeSequence) || !int(v.feedbackCount) || !list(v.allowedOutcomes, 2) || !(v.allowedOutcomes as unknown[]).every(o => oneOf(o, closeOutcomes))) fail()
+    !int(v.closeSequence) || !int(v.feedbackCount) || !list(v.allowedOutcomes, 2) || !(v.allowedOutcomes as unknown[]).every(o => oneOf(o, closeOutcomes)) ||
+    !conflicts(v.closeDutyConflicts)) fail()
   const d = v.definition, o = v.outcome
   if (!oneOf(d.week, weeks) || !int(d.number, 1) || !codes(d.requirements, 8) || !text(d.locator, 400) || !list(d.items, 32)) fail()
   if ((d.items as unknown[]).some(i => !object(i) || !text(i.code, 40) || i.week !== d.week || !text(i.requirement, 16) || !oneOf(i.area, areas) || !codes(i.recordTypes, 16) ||
-    typeof i.requiresAuditTrace !== 'boolean' || !text(i.criterion, 300) || !text(i.locator, 200))) fail()
+    typeof i.requiresAuditTrace !== 'boolean' || typeof i.requiresCompletion !== 'boolean' || !text(i.criterion, 300) || !text(i.locator, 200))) fail()
   if (o.week !== d.week || !oneOf(o.phase, phases) || !oneOf(o.recommendation, weekRecommendations) || !list(o.items, 32) || !int(o.openP0) || !int(o.overdueP0) || !int(o.lateP0) ||
     !codes(o.reasons, 256) || !hash(o.hash)) fail()
   // A satisfied item needs at least one verified link; a ready week has every item satisfied and no reason.
@@ -176,7 +181,7 @@ export function decodeProgramView(v: unknown, id: string): ProgramView {
   if (!object(v) || !object(v.program) || !list(v.weeks, 4) || !list(v.issues, 1000) || !list(v.feedback, 200) || !list(v.measurements, 200) || !object(v.readout) ||
     !object(v.review) || !list(v.decisions, 32) || !int(v.decisionSequence) || !list(v.authorities, 64) || typeof v.canRecord !== 'boolean' || typeof v.canTriage !== 'boolean' ||
     typeof v.canDecide !== 'boolean' || !list(v.allowedDecisions, 4) || !oneOf(v.feedbackRetention, ['CONFIGURED', 'UNCONFIGURED'] as const) || !list(v.metricCatalog, 64) ||
-    !codes(v.recordTypes, 64) || !time(v.assessedAt) || !text(v.sourceLocator, 400)) fail()
+    !codes(v.recordTypes, 64) || !time(v.assessedAt) || !text(v.sourceLocator, 400) || !conflicts(v.decisionDutyConflicts)) fail()
   if (program(v.program).id !== id) fail()
   if ((v.weeks as unknown[]).length !== 4) fail()
   ;(v.weeks as unknown[]).forEach(week)

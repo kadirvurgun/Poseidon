@@ -2795,7 +2795,9 @@
       "state_CONDITIONAL": "Conditional",
       "state_PHOTO": "Photo",
       "state_AIS_OR_TIME": "AIS or time evidence",
-      "state_DOCUMENT": "Document"
+      "state_DOCUMENT": "Document",
+      "blocker_job_not_submitted": "Job not submitted: only a submitted tug job can start.",
+      "blocker_job_cancelled": "Job cancelled: a cancelled tug job cannot start."
     },
     "AuditPack_tsx_copy": {
       "title": "Audit pack",
@@ -3646,7 +3648,14 @@
       "decision_CONTINUE": "Continue",
       "decision_EXPAND": "Expand",
       "decision_FIX": "Fix",
-      "decision_STOP": "Stop"
+      "decision_STOP": "Stop",
+      "completionRequired": "Completion required: the linked record must be in its completed state (for example a closed work order or defect).",
+      "auditTraceMeaning": "Audit trace proves that a person wrote the record; it does not prove the record or flow is completed.",
+      "closeDutyConflict": "You cannot close this week because you authored evidence it rests on:",
+      "decisionDutyConflict": "You cannot record the programme decision because you authored evidence it rests on:",
+      "duty_LINK_AUTHOR": "checklist links",
+      "duty_FEEDBACK_AUTHOR": "feedback",
+      "duty_MEASUREMENT_AUTHOR": "measurements"
     }
   },
   "pairs": {

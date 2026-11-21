@@ -2795,7 +2795,9 @@
       "state_CONDITIONAL": "Condizionato",
       "state_PHOTO": "Foto",
       "state_AIS_OR_TIME": "Prova AIS o temporale",
-      "state_DOCUMENT": "Documento"
+      "state_DOCUMENT": "Documento",
+      "blocker_job_not_submitted": "Lavoro non inviato: può iniziare solo un lavoro di rimorchio inviato.",
+      "blocker_job_cancelled": "Lavoro annullato: un lavoro di rimorchio annullato non può iniziare."
     },
     "AuditPack_tsx_copy": {
       "title": "Pacchetto di audit",
@@ -3646,7 +3648,14 @@
       "decision_CONTINUE": "Continua",
       "decision_EXPAND": "Espandi",
       "decision_FIX": "Correggi",
-      "decision_STOP": "Interrompi"
+      "decision_STOP": "Interrompi",
+      "completionRequired": "Completamento richiesto: il record collegato deve essere nello stato completato (ad esempio un ordine di lavoro o un difetto chiuso).",
+      "auditTraceMeaning": "La traccia di audit prova che una persona ha scritto il record; non prova che il record o il flusso sia completato.",
+      "closeDutyConflict": "Non puoi chiudere questa settimana perché hai prodotto evidenze su cui si basa:",
+      "decisionDutyConflict": "Non puoi registrare la decisione del programma perché hai prodotto evidenze su cui si basa:",
+      "duty_LINK_AUTHOR": "collegamenti della checklist",
+      "duty_FEEDBACK_AUTHOR": "feedback",
+      "duty_MEASUREMENT_AUTHOR": "misurazioni"
     }
   },
   "pairs": {

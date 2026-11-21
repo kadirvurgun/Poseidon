@@ -138,7 +138,9 @@ function Week({ ctx, view, week }: { ctx: Ctx; view: ProgramView; week: WeekView
         const state = o.items.find(i => i.code === item.code)!
         const links = week.links.filter(l => l.itemCode === item.code)
         return <tr key={item.code} data-item={item.code} data-item-state={state.state}>
-          <td><code>{item.code}</code></td><td><q>{item.criterion}</q> <small><code>{item.locator}</code></small></td><td>{word(t, 'area_' + item.area)}</td>
+          <td><code>{item.code}</code></td><td><q>{item.criterion}</q> <small><code>{item.locator}</code></small>
+            {item.requiresCompletion && <p data-requires="completion">{t.completionRequired}</p>}
+            {item.requiresAuditTrace && <p data-requires="audit-trace">{t.auditTraceMeaning}</p>}</td><td>{word(t, 'area_' + item.area)}</td>
           <td><Badge tone={state.state === 'SATISFIED' ? 'info' : state.state === 'LINK_INVALID' ? 'danger' : 'warning'}>{word(t, 'item_' + state.state)}</Badge>
             {state.reasons.length > 0 && <ul>{state.reasons.map(r => <li key={r}><code>{r}</code></li>)}</ul>}</td>
           <td>{links.length === 0 ? <span data-state="empty">{t.noLinks}</span> :
@@ -147,7 +149,9 @@ function Week({ ctx, view, week }: { ctx: Ctx; view: ProgramView; week: WeekView
     {view.canRecord && <LinkForm ctx={ctx} programId={view.program.id} week={week}/>}
     {week.closes.length > 0 && <><h3>{t.closes}</h3><ul>{week.closes.map(c => <li key={c.id} data-close={c.outcome} data-validity={c.validity}>
       #{c.sequence} · {word(t, 'outcome_' + c.outcome)} · <Badge tone={c.validity === 'STALE' ? 'warning' : 'neutral'}>{pilotWord(n, 'validity_' + c.validity)}</Badge> · {c.rationale}</li>)}</ul></>}
-    {view.canDecide && o.phase !== 'NOT_STARTED' && <CloseForm key={o.hash + week.closeSequence} ctx={ctx} view={view} week={week}/>}
+    {view.canDecide && week.closeDutyConflicts.length > 0 && <p role="status" data-state="duty-conflict">{t.closeDutyConflict}{' '}
+      {week.closeDutyConflicts.map(c => word(t, 'duty_' + c)).join(', ')}</p>}
+    {view.canDecide && o.phase !== 'NOT_STARTED' && week.closeDutyConflicts.length === 0 && <CloseForm key={o.hash + week.closeSequence} ctx={ctx} view={view} week={week}/>}
   </section>
 }
 
@@ -322,7 +326,9 @@ function DecisionSection({ ctx, view }: { ctx: Ctx; view: ProgramView }) {
     {view.decisions.length === 0 ? <p data-state="empty">{n.noDecisions}</p> :
       <ul>{view.decisions.map(d => <li key={d.id} data-decision={d.decision} data-validity={d.validity}>#{d.sequence} · {word(t, 'decision_' + d.decision)} ·
         {' '}<Badge tone={d.validity === 'STALE' ? 'warning' : 'neutral'}>{pilotWord(n, 'validity_' + d.validity)}</Badge> · {d.rationale}</li>)}</ul>}
-    {view.canDecide && <form key={view.review.hash + view.decisionSequence} aria-label={t.decide} onSubmit={e => { e.preventDefault(); if (ok && decision && !disabled)
+    {view.canDecide && view.decisionDutyConflicts.length > 0 && <p role="status" data-state="duty-conflict">{t.decisionDutyConflict}{' '}
+      {view.decisionDutyConflicts.map(c => word(t, 'duty_' + c)).join(', ')}</p>}
+    {view.canDecide && view.decisionDutyConflicts.length === 0 && <form key={view.review.hash + view.decisionSequence} aria-label={t.decide} onSubmit={e => { e.preventDefault(); if (ok && decision && !disabled)
       void run(pilotProgramApi.decide(view, decision, rationale.trim(), authority)) }}>
       <fieldset><legend>{t.decide}</legend>
         {(['CONTINUE', 'FIX', 'STOP', 'EXPAND'] as const).map(d => <label key={d}><input type="radio" name="pp-decision" value={d} checked={decision === d}

@@ -86,6 +86,19 @@ it('shows the start gate blockers and never offers a start without a current GO'
   expect(screen.queryByRole('button', { name: 'Start operation' })).not.toBeInTheDocument()
 })
 
+it('labels the unsubmitted-job start blocker in English and Turkish while keeping the code visible', async () => {
+  bodies.job = jobView({ tugs: [{ ...jobView().tugs[0], blockers: ['job_not_submitted', 'readiness_go_missing'] }] })
+  history.replaceState(null, '', `/app/towage-execution?vessel=${vessel}&job=${job}`)
+  const { unmount } = render(<FieldOpsWorkspace/>)
+  expect(await screen.findByText('job_not_submitted')).toBeInTheDocument()
+  expect(screen.getByText(/Job not submitted: only a submitted tug job can start\./)).toBeInTheDocument()
+  unmount()
+  await changeAppLanguage('tr', false)
+  render(<FieldOpsWorkspace/>)
+  expect(await screen.findByText(/İş gönderilmedi: yalnızca gönderilmiş bir römorkör işi başlatılabilir\./)).toBeInTheDocument()
+  expect(screen.getByText('job_not_submitted')).toBeInTheDocument()
+})
+
 it('records a Tug Master abort with appointment and reason on the exact execution version', async () => {
   history.replaceState(null, '', `/app/towage-execution?vessel=${vessel}&id=${exe}`)
   const user = userEvent.setup()

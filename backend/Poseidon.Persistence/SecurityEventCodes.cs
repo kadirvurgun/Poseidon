@@ -157,7 +157,7 @@ public static class SecurityEventCodes
         "pilot_gate_unknown", "pilot_gate_deferred", "conditions_required", "pilot_gate_authority_required",
         // Pilot program kit DEV-076/077/078/079/095/096/121.
         "record_type_not_allowed", "record_not_found", "synthetic_record_not_linkable", "uat_run_not_attested", "record_scope_mismatch", "tug_vessel_unset",
-        "record_vessel_mismatch", "audit_trace_missing", "link_exists", "link_withdrawn", "pii_suspected", "issue_not_open",
+        "record_vessel_mismatch", "audit_trace_missing", "record_not_completed", "link_exists", "link_withdrawn", "pii_suspected", "issue_not_open",
         "issue_not_triaged", "measurement_sequence_conflict", "close_sequence_conflict", "week_stale", "week_not_started", "week_not_ready",
         "program_stale", "expand_not_eligible", "synthetic_program_not_decidable", "invalid_vessel", "invalid_time_zone", "mode_not_visible",
         // QA S9/S10 notes hardening (N7 late voice hand-off).
