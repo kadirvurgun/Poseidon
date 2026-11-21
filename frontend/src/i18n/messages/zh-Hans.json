@@ -3818,6 +3818,24 @@
       "field_reasonCode": "Reason",
       "field_companyId": "Company",
       "field_vesselScope": "Vessel scope"
+    },
+    "HelpPanel_tsx_copy": {
+      "open": "打开页面指南",
+      "dialog": "帮助",
+      "close": "关闭帮助",
+      "tabGuide": "指南",
+      "tabWhy": "原因",
+      "tabAi": "AI",
+      "aiDisabled": "此版本已关闭 AI 帮助。此面板不会发起任何 AI 调用。",
+      "whyHint": "此页面上的记录有各自的“原因”视图。请关闭此面板并打开该记录的原因链接。帮助面板从不自行发起该读取。",
+      "whyEmpty": "此页面没有单独的原因视图。",
+      "draft": "指南草稿 — 等待专家审核",
+      "pending": "此页面的指南正在编写中。",
+      "loading": "正在加载指南…",
+      "failed": "无法加载指南。请刷新页面后重试。",
+      "fallback": "此语言暂无指南；显示英文版本。",
+      "relatedNone": "没有可显示的相关页面。",
+      "shortcut": "快捷键：Shift+?"
     }
   },
   "pairs": {

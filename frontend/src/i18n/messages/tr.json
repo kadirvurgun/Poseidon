@@ -3818,6 +3818,24 @@
       "field_reasonCode": "Gerekçe",
       "field_companyId": "Şirket",
       "field_vesselScope": "Gemi kapsamı"
+    },
+    "HelpPanel_tsx_copy": {
+      "open": "Sayfa kılavuzunu aç",
+      "dialog": "Yardım",
+      "close": "Yardımı kapat",
+      "tabGuide": "Kılavuz",
+      "tabWhy": "Neden",
+      "tabAi": "AI",
+      "aiDisabled": "AI yardımı bu sürümde kapalı. Bu panel hiçbir AI çağrısı yapmaz.",
+      "whyHint": "Bu sayfadaki kayıtların yanında bir “Neden” görünümü var. Gerekçeyi görmek için paneli kapatıp ilgili kaydın Neden bağlantısını açın. Yardım paneli bu okumayı kendisi başlatmaz.",
+      "whyEmpty": "Bu sayfa için ayrı bir Neden görünümü yok.",
+      "draft": "Taslak kılavuz — uzman onayı bekliyor",
+      "pending": "Bu sayfanın kılavuzu hazırlanıyor.",
+      "loading": "Kılavuz yükleniyor…",
+      "failed": "Kılavuz yüklenemedi. Sayfayı yenileyip tekrar deneyin.",
+      "fallback": "Bu dilde kılavuz henüz yok; İngilizce sürüm gösteriliyor.",
+      "relatedNone": "Gösterilecek ilgili sayfa yok.",
+      "shortcut": "Kısayol: Shift+?"
     }
   },
   "pairs": {

@@ -3818,6 +3818,24 @@
       "field_reasonCode": "Reason",
       "field_companyId": "Company",
       "field_vesselScope": "Vessel scope"
+    },
+    "HelpPanel_tsx_copy": {
+      "open": "Otevřít návod ke stránce",
+      "dialog": "Nápověda",
+      "close": "Zavřít nápovědu",
+      "tabGuide": "Návod",
+      "tabWhy": "Proč",
+      "tabAi": "AI",
+      "aiDisabled": "Nápověda AI je v této verzi vypnutá. Tento panel nevolá žádnou AI.",
+      "whyHint": "Záznamy na této stránce mají vlastní zobrazení „Proč“. Zavřete panel a otevřete odkaz Proč u daného záznamu. Panel nápovědy toto čtení nikdy sám nespouští.",
+      "whyEmpty": "Tato stránka nemá samostatné zobrazení Proč.",
+      "draft": "Koncept návodu — čeká na kontrolu odborníkem",
+      "pending": "Návod k této stránce se připravuje.",
+      "loading": "Načítání návodu…",
+      "failed": "Návod se nepodařilo načíst. Obnovte stránku a zkuste to znovu.",
+      "fallback": "V tomto jazyce zatím návod není; zobrazuje se anglická verze.",
+      "relatedNone": "Žádné související stránky k zobrazení.",
+      "shortcut": "Zkratka: Shift+?"
     }
   },
   "pairs": {

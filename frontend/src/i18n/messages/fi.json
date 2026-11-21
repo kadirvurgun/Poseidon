@@ -3818,6 +3818,24 @@
       "field_reasonCode": "Reason",
       "field_companyId": "Company",
       "field_vesselScope": "Vessel scope"
+    },
+    "HelpPanel_tsx_copy": {
+      "open": "Avaa sivun opas",
+      "dialog": "Ohje",
+      "close": "Sulje ohje",
+      "tabGuide": "Opas",
+      "tabWhy": "Miksi",
+      "tabAi": "Tekoäly",
+      "aiDisabled": "Tekoälyohje on poissa käytöstä tässä versiossa. Tämä paneeli ei tee tekoälykutsuja.",
+      "whyHint": "Tämän sivun tietueilla on oma ”Miksi”-näkymä. Sulje paneeli ja avaa tietueen Miksi-linkki. Ohjepaneeli ei koskaan käynnistä tätä hakua itse.",
+      "whyEmpty": "Tällä sivulla ei ole erillistä Miksi-näkymää.",
+      "draft": "Oppaan luonnos — odottaa asiantuntijan tarkastusta",
+      "pending": "Tämän sivun opasta valmistellaan.",
+      "loading": "Ladataan opasta…",
+      "failed": "Opasta ei voitu ladata. Lataa sivu uudelleen ja yritä uudelleen.",
+      "fallback": "Tällä kielellä ei vielä ole opasta; näytetään englanninkielinen versio.",
+      "relatedNone": "Ei näytettäviä liittyviä sivuja.",
+      "shortcut": "Pikanäppäin: Vaihto+?"
     }
   },
   "pairs": {

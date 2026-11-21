@@ -3818,6 +3818,24 @@
       "field_reasonCode": "Reason",
       "field_companyId": "Company",
       "field_vesselScope": "Vessel scope"
+    },
+    "HelpPanel_tsx_copy": {
+      "open": "Abrir o guia da página",
+      "dialog": "Ajuda",
+      "close": "Fechar a ajuda",
+      "tabGuide": "Guia",
+      "tabWhy": "Por quê",
+      "tabAi": "IA",
+      "aiDisabled": "A ajuda de IA está desativada nesta versão. Este painel não faz nenhuma chamada de IA.",
+      "whyHint": "Os registros desta página têm sua própria visão “Por quê”. Feche este painel e abra o link Por quê do registro. O painel de ajuda nunca inicia essa leitura sozinho.",
+      "whyEmpty": "Esta página não tem uma visão Por quê própria.",
+      "draft": "Guia em rascunho — aguardando revisão de especialista",
+      "pending": "O guia desta página está em preparação.",
+      "loading": "Carregando o guia…",
+      "failed": "Não foi possível carregar o guia. Recarregue a página e tente novamente.",
+      "fallback": "Ainda não há guia neste idioma; exibindo a versão em inglês.",
+      "relatedNone": "Nenhuma página relacionada para mostrar.",
+      "shortcut": "Atalho: Shift+?"
     }
   },
   "pairs": {

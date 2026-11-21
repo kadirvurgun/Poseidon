@@ -39,3 +39,6 @@ export function useEnterpriseNavigation(session: Session | null) {
     searchGrant: current?.canSearch && !current.failed ? current : null,
     epoch, loading: !!session?.authenticated && session.canRead && !current, failed: current?.failed ?? false, retry: () => retry(n => n + 1) }
 }
+
+/** Every navigation destination key the client contract accepts (USER-GUIDE-01 help coverage guard). */
+export const enterpriseDestinationKeys: readonly string[] = Object.freeze(Object.keys(destinations))
