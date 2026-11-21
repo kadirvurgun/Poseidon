@@ -20,7 +20,7 @@ public static class CertificateRenewalFixtures
             var json=JsonSerializer.Serialize(new CertificateRenewalContent(),new JsonSerializerOptions(JsonSerializerDefaults.Web));
             db.CertificateRenewalRevisions.Add(new(){TenantId=vessel.TenantId,VesselId=vessel.Id,RenewalId=id,CertificateId=certificateId,CertificateRevision=source.Revision,
                 CertificateVersion=source.Version,Revision=1,RecordVersion=head.Version,ContentJson=json,Hash=RegisterStorage.Hash(json),SourceVersion=VesselCertificatePolicy.SourceVersion,
-                Provenance="SyntheticUnverified",SavedAt=DateTimeOffset.UtcNow});await db.SaveChangesAsync(ct);
+                Provenance="SyntheticUnverified",SavedAt=db.Clock.GetUtcNow()});await db.SaveChangesAsync(ct);
         }
         // No owner, survey completion, verified file, replacement or receipt is seeded.
     }

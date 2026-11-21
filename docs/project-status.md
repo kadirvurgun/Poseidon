@@ -1,5 +1,10 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
+## Polish paketi — saat kaynağı + tema tamamlama, QA notlarla, kapı CI bekleniyor (21.11.2026)
+- `integration/polish-bundle-20261121` (main 84d4cd6e + TimeProvider e37ed8c0 + tema 4dadc56f + N1). Canonical sayım değişmez: 114/121 iş, 932/970 SP, %96,08.
+- 142 doğrudan saat okuması → enjekte `TimeProvider` + `WallClockGuardTests`; tema token/grafik/radius + `hardcoded-colors` koruması. Ayrıntı: `docs/phases/POLISH-BUNDLE-20261121.md`.
+- DEFERRED: yerel PG entegrasyon (Docker yok), gerçek tarayıcı tema kapısı, preset font/ikon.
+
 ## Pilot program yazılım kiti — YAZILDI, DOĞRULANMADI, KABUL DEĞİL (21.11.2026)
 
 **Canonical ilerleme değişmedi: 114 iş / 932 SP / 970 SP = %96,08.**

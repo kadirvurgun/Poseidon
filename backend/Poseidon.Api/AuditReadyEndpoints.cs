@@ -57,7 +57,7 @@ public static class AuditReadyEndpoints
         if (h.Request.Query.Count != 1 || h.Request.Query["vesselId"].Count != 1 ||
             !Guid.TryParseExact(h.Request.Query["vesselId"], "D", out var vessel) || vessel == Guid.Empty) return await Fail(h, 400, "invalid_query");
         if (!await a.Scope(db.Vessels.AsNoTracking()).AnyAsync(v => v.Id == vessel, ct)) return await Fail(h, 404, "resource_not_found");
-        var now = DateTimeOffset.UtcNow;
+        var now = h.UtcNow();
         var readers = Readers(settings.Memberships, a, vessel, now);
         var accessHash = AccessHash(a, readers);
         var pairs = readers.Select(g => (g.EvidenceId, g.ControlId)).Distinct().ToArray();
@@ -95,7 +95,7 @@ public static class AuditReadyEndpoints
         }
         // Withdrawn appointments during the awaits deny the response bytes.
         var live = actors.Resolve(h.User);
-        if (live == null || live.Id != a.Id || live.TenantId != a.TenantId || AccessHash(live, Readers(settings.Memberships, live, vessel, DateTimeOffset.UtcNow)) != accessHash)
+        if (live == null || live.Id != a.Id || live.TenantId != a.TenantId || AccessHash(live, Readers(settings.Memberships, live, vessel, h.UtcNow())) != accessHash)
             return await Fail(h, 403, "trace_reader_required");
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "HumanTraceRead", "Success", resourceId: vessel);
         return Results.Ok(new AuditReadyChains(vessel, now, items.ToArray(), unavailable, pairs.Length > MaxChains));

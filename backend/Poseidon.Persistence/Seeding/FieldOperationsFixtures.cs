@@ -23,7 +23,7 @@ public static class FieldOperationsFixtures
     {
         if (!db.IsAdministrativeImport || db.Database.CurrentTransaction == null)
             throw new UnauthorizedAccessException("Synthetic field-operation fixtures require an administrative audited transaction.");
-        var now = DateTimeOffset.UtcNow;
+        var now = db.Clock.GetUtcNow();
         foreach (var v in vessels)
         {
             if (v.Kind == VesselKind.Tug && !await db.TugDailyLogs.AnyAsync(l => l.TenantId == v.TenantId && l.Id == DailyLogId(v.Id), ct))

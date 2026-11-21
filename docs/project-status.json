@@ -5938,7 +5938,8 @@
     "docs/phases/S9-GATE-20261120.md",
     "docs/phases/S10-GATE-20261121.md",
     "docs/phases/S11-GATE-20261122.md",
-    "docs/phases/PILOT-KIT-20261121.md"
+    "docs/phases/PILOT-KIT-20261121.md",
+    "docs/phases/POLISH-BUNDLE-20261121.md"
   ],
   "active_source": "docs/sources/active.json",
   "current_package": {
@@ -18523,5 +18524,26 @@
       "note": "Separation of duties extended (close: link/feedback/measurement authors; decision: link + measurement authors), server-side in the SERIALIZABLE transaction and DB trigger pilot.guard_pilot_duty(). DEV-077 completed items require the owner completion state; the audit-trace check proves a human-written record, not completion. job_not_submitted labelled in 17 locales. PilotProgramKit Designer regenerated from the snapshot. No acceptance change.",
       "s1_delta": "+0/+0/+0"
     }
+  },
+  "polish_bundle_20261121": {
+    "status": "AUTHORED_QA_ACCEPT_WITH_NOTES_GATE_CI_PENDING",
+    "branch": "integration/polish-bundle-20261121",
+    "base": "84d4cd6e",
+    "scope": "software quality: injected TimeProvider (142 sites, WallClockGuardTests) + theme token/chart/radius completion (hardcoded-colors guard)",
+    "canonical_effect": "none; 114/121 tasks, 932/970 SP unchanged",
+    "qa": [
+      "timeprovider e37ed8c0 ACCEPT-WITH-NOTES (N1 fixed in bundle)",
+      "theme 8e270264 ACCEPT-WITH-NOTES (notes fixed 4dadc56f)"
+    ],
+    "ci": {
+      "timeprovider_push": "44906148772 success",
+      "theme_push": "44907632197 success"
+    },
+    "deferred": [
+      "local PostgreSQL integration (Docker unavailable)",
+      "real-browser theme visual/contrast gate",
+      "preset fonts/icons/style"
+    ],
+    "phase_report": "docs/phases/POLISH-BUNDLE-20261121.md"
   }
 }

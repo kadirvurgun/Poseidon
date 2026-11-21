@@ -144,7 +144,7 @@ public static class ImportEndpoints
         var b = new ImportBatch { TenantId = Actor(h).TenantId, ActorId = Actor(h).Id, SessionHash = Session(h), VesselId = vessel, Id = Guid.NewGuid(),
             AssignmentId = assignment, Category = category, TemplateVersion = t.Version, TemplateFingerprint = t.Fingerprint,
             SourceName = "name-withheld.xlsx", SourceHash = Convert.ToHexString(SHA256.HashData(bytes)), TableJson = JsonSerializer.Serialize(table, Json),
-            RowCount = table.Rows.Length, CreatedAt = DateTimeOffset.UtcNow };
+            RowCount = table.Rows.Length, CreatedAt = h.UtcNow() };
         if (category == "crew") {
             var protection = h.RequestServices.GetRequiredService<CrewProfileProtection>();
             if (!protection.Available) return await Fail(h, 503, "protected_storage_unavailable");
@@ -246,7 +246,7 @@ public static class ImportEndpoints
                         if (stored == null && personal.BaseVersion != null || stored != null && stored.Version != personal.BaseVersion) Issue("conflict", "profile_base_version");
                     }
                     if (!h.RequestServices.GetRequiredService<CrewAssignmentPolicy>().CanDeclare(c.DeclaredStatus, c.AssignmentPolicyVersion, Actor(h))) Issue("unsupported_value");
-                    if (!CrewEndpoints.ValidInput(c)) Issue("domain_validation");
+                    if (!CrewEndpoints.ValidInput(c, h.UtcNow())) Issue("domain_validation");
                     var identityPolicy = h.RequestServices.GetRequiredService<CrewIdentityPolicy>();
                     if (old != null && r.HasIdentity) {
                         if (r.Reference("person_id") != old.PersonId) Issue("unresolved_reference", "person_id");
@@ -260,7 +260,7 @@ public static class ImportEndpoints
                         } catch (CryptographicException) { Issue("unsupported_value"); }
                     } else if (old == null && c.PersonId == null && (!identityPolicy.Allows(Actor(h), true) || c.IdentityPolicyVersion != identityPolicy.Version || c.IdentityPurpose != identityPolicy.Purpose)) Issue("unsupported_value");
                     if (old != null && c.PersonId != old.PersonId || old == null && c.PersonId != null && (r.HasIdentity || !assignments.Any(x => x.PersonId == c.PersonId))) Issue("unresolved_reference", "person_id");
-                    if (!(await CrewPositionPolicy.Current(h, db, b.VesselId)).AllowsReference(Actor(h).TenantId, b.VesselId, c.PositionId, c.PositionPolicyVersion, await db.CrewPositions.AsNoTracking().Where(x => x.VesselId == b.VesselId).ToArrayAsync(h.RequestAborted))) Issue("unresolved_reference", "position_ref");
+                    if (!(await CrewPositionPolicy.Current(h, db, b.VesselId)).AllowsReference(Actor(h).TenantId, b.VesselId, c.PositionId, c.PositionPolicyVersion, await db.CrewPositions.AsNoTracking().Where(x => x.VesselId == b.VesselId).ToArrayAsync(h.RequestAborted), h.UtcNow())) Issue("unresolved_reference", "position_ref");
                     if (c.PositionId != null && !await db.CrewPositions.AnyAsync(x => x.Id == c.PositionId && x.VesselId == b.VesselId, h.RequestAborted)) Issue("unresolved_reference", "position_ref");
                     if (c.From != null && old != null && await db.CrewAssignments.AnyAsync(x => x.PersonId == old.PersonId && x.Id != id && x.From != null &&
                         (x.To == null || c.From < x.To) && (c.To == null || x.From < c.To), h.RequestAborted)) Issue("conflict");
@@ -305,7 +305,7 @@ public static class ImportEndpoints
         var rows = await Validate(b, table, mapping.Mapping, h, db);
         var p = new ImportPreview { Id = Guid.NewGuid(), TenantId = db.TenantId, VesselId = vessel, BatchId = batch, BatchRevision = b.Revision,
             TemplateFingerprint = b.TemplateFingerprint, BindingsJson = b.BindingsJson, TotalRows = rows.Length, ValidRows = rows.Count(x => x.Outcome == "valid"),
-            RejectedRows = rows.Count(x => x.Outcome == "rejected"), CreatedAt = DateTimeOffset.UtcNow };
+            RejectedRows = rows.Count(x => x.Outcome == "rejected"), CreatedAt = h.UtcNow() };
         db.ImportPreviews.Add(p);
         foreach (var row in rows) db.ImportRowResults.Add(new() { TenantId = db.TenantId, VesselId = vessel, PreviewId = p.Id, RowNumber = row.RowNumber,
             Outcome = row.Outcome, IssuesJson = JsonSerializer.Serialize(row.Issues, Json) });
@@ -391,7 +391,7 @@ public static class ImportEndpoints
                     var assignment = await db.CrewAssignments.AsNoTracking().SingleOrDefaultAsync(x => x.VesselId == vessel && x.Id == row.Id("record_key", true), h.RequestAborted);
                     var crewCommand = row.Crew(assignment);
                     if (!(await CrewPositionPolicy.Current(h, db, vessel)).AllowsReference(a.TenantId, vessel, crewCommand.PositionId, crewCommand.PositionPolicyVersion,
-                        await db.CrewPositions.AsNoTracking().Where(x => x.VesselId == vessel).ToArrayAsync(h.RequestAborted))) return await Fail(h, 403, "field_policy_denied");
+                        await db.CrewPositions.AsNoTracking().Where(x => x.VesselId == vessel).ToArrayAsync(h.RequestAborted), h.UtcNow())) return await Fail(h, 403, "field_policy_denied");
                     var personal = row.PersonalProfile();
                     if (personal != null && !CrewProfileEndpoints.Valid(personal with { Purpose = profilePolicy.ImportPurpose }, a, profilePolicy)) return await Fail(h, 403, "field_policy_denied");
                     if (!h.RequestServices.GetRequiredService<CrewAssignmentPolicy>().CanDeclare(row.Get("assignment_status"), row.Get("assignment_policy_version"), a)) return await Fail(h, 403, "assignment_policy_denied");
@@ -460,7 +460,7 @@ public static class ImportEndpoints
                     return ExactActionAccess.RevokedBeforeCommit(h) ? await Fail(h, 403, "permission_denied") : await Fail(h, 409, "version_conflict");
                 }
             }
-            b.State = "Committed"; b.CommittedAt = DateTimeOffset.UtcNow; b.CommittedPreviewId = p.Id;
+            b.State = "Committed"; b.CommittedAt = h.UtcNow(); b.CommittedPreviewId = p.Id;
             // DEV-069: one insert-only provenance row per committed row, in this same audited transaction.
             await ImportLineage.Record(db, a, b, p, lineage, b.CommittedAt.Value, h.RequestAborted);
             // DEV-070: a new committed import supersedes the vessel's current reconciliation report (and so invalidates

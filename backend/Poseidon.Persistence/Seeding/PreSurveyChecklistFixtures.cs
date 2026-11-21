@@ -26,7 +26,7 @@ public static class PreSurveyChecklistFixtures
             var head=new PreSurveyChecklist{TenantId=vessel.TenantId,VesselId=vessel.Id,Id=id,CertificateId=certificateId};db.PreSurveyChecklists.Add(head);await db.SaveChangesAsync(ct);
             var content=PreSurveyChecklistPolicy.Instantiate(id,template,new PreSurveyPlan());
             var json=JsonSerializer.Serialize(content,new JsonSerializerOptions(JsonSerializerDefaults.Web));
-            var now=DateTimeOffset.UtcNow;
+            var now=db.Clock.GetUtcNow();
             db.PreSurveyChecklistRevisions.Add(new(){TenantId=vessel.TenantId,VesselId=vessel.Id,ChecklistId=id,CertificateId=certificateId,CertificateRevision=source.Revision,
                 CertificateVersion=source.RecordVersion,Revision=1,RecordVersion=head.Version,TemplateCode=template.Code,ContentJson=json,Hash=RegisterStorage.Hash(json),
                 SourceVersion=PreSurveyChecklistPolicy.SourceVersion,Provenance="SyntheticUnverified",Transition="CREATE",

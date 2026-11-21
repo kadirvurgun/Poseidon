@@ -16,7 +16,7 @@ public static class PmsFixtures
     {
         if (!db.IsAdministrativeImport || db.Database.CurrentTransaction == null)
             throw new UnauthorizedAccessException("Synthetic PMS fixtures require an administrative audited transaction.");
-        var now = DateTimeOffset.UtcNow;
+        var now = db.Clock.GetUtcNow();
         foreach (var vessel in vessels)
         {
             if (!await db.Assets.AnyAsync(a => a.TenantId == vessel.TenantId && a.VesselId == vessel.Id && a.Id == vessel.Id, ct)) continue;

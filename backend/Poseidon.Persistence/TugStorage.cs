@@ -45,12 +45,12 @@ public sealed class TugJob : ITenantEntity
     public TugRequestInputs Inputs() => new(CustomerRef, AssistedVessel, AssistedVesselImo, JobType, RequestedStart, RequestedEnd,
         OperationArea, PickupPoint, DestinationPoint, RequiredBollardPull?.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture),
         RequiredTugCount, SpecialRequirements, Priority, RequestOwner, Notes, RequestSource);
-    public void Apply(TugRequestInputs x) {
+    public void Apply(TugRequestInputs x, DateTimeOffset savedAt) {
         SourceVersion = TugRequestPolicy.SourceVersion; RequestSource = x.RequestSource; CustomerRef = x.CustomerRef; AssistedVessel = x.AssistedVessel; AssistedVesselImo = x.AssistedVesselImo;
         JobType = x.JobType; RequestedStart = TugRequestPolicy.StoragePrecision(x.RequestedStart); RequestedEnd = TugRequestPolicy.StoragePrecision(x.RequestedEnd); OperationArea = x.OperationArea;
         PickupPoint = x.PickupPoint; DestinationPoint = x.DestinationPoint; TugRequestPolicy.TryBp(x.RequiredBollardPull, out var bp);
         RequiredBollardPull = bp; RequiredTugCount = x.RequiredTugCount; SpecialRequirements = x.SpecialRequirements;
-        Priority = x.Priority; RequestOwner = x.RequestOwner; Notes = x.Notes; SavedAt = DateTimeOffset.UtcNow;
+        Priority = x.Priority; RequestOwner = x.RequestOwner; Notes = x.Notes; SavedAt = savedAt;
     }
     public TugJobRevision Snapshot() => new() { TenantId = TenantId, VesselId = VesselId, JobId = Id, Revision = Revision,
         JobNumber = JobNumber, SourceVersion = SourceVersion, ContentJson = JsonSerializer.Serialize(Inputs()), Provenance = Provenance, SavedAt = SavedAt, JobState = Status, CancelReason = CancelReason };

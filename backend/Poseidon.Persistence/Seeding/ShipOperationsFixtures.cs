@@ -30,7 +30,7 @@ public static class ShipOperationsFixtures
             var id=Id(vessel.Id,slot);if(await db.ShipOperations.AnyAsync(r=>r.TenantId==vessel.TenantId && r.Id==id,ct))continue;
             if(!await db.Vessels.AnyAsync(v=>v.TenantId==vessel.TenantId && v.Id==vessel.Id && v.Kind==VesselKind.Ship,ct))throw new InvalidOperationException("Synthetic ship scope is unavailable.");
             if(!ShipOperationsPolicy.TryNormalize(kind,declared,out var fields,out _))throw new InvalidOperationException("Synthetic draft schema unavailable.");
-            var json=JsonSerializer.Serialize(fields,new JsonSerializerOptions(JsonSerializerDefaults.Web));var now=DateTimeOffset.UtcNow;
+            var json=JsonSerializer.Serialize(fields,new JsonSerializerOptions(JsonSerializerDefaults.Web));var now=db.Clock.GetUtcNow();
             var row=new ShipOperation{TenantId=vessel.TenantId,VesselId=vessel.Id,Id=id,Kind=kind,FieldsJson=json,SourceVersion=ShipOperationsPolicy.SourceVersion,
                 Hash=RegisterStorage.Hash("SyntheticUnverified:"+vessel.TenantId+":"+vessel.Id+":"+slot+":"+json),Provenance="SyntheticUnverified",SavedAt=now,
                 OccurredAt=fields.TryGetValue("record_date",out var date) && ShipOperationsPolicy.TryInstant(date.Value,out var at)?at:null};

@@ -10,7 +10,7 @@
 .pms-badge { display: inline-block; padding: 0 0.5rem; border-radius: 999px; font-size: 0.75rem; border: 1px solid var(--border); }
 .pms-badge-open { background: var(--muted); color: var(--foreground); }
 .pms-badge-muted { background: transparent; color: var(--muted-foreground); }
-.pms-badge-alert { background: var(--destructive); color: var(--destructive-foreground, #fff); }
+.pms-badge-alert { background: var(--danger-surface); color: var(--danger-text); border-color: var(--danger-border); }
 .pms-badge-recorded { background: var(--secondary); color: var(--secondary-foreground); }
 .pms-banner { border: 1px solid var(--border); border-radius: var(--radius, 0.5rem); padding: 0.5rem 0.75rem; display: flex; gap: 0.75rem; align-items: center; }
 @media (max-width: 40rem) { .pms-table { display: block; overflow-x: auto; } }

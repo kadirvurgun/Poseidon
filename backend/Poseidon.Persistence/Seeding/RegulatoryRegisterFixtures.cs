@@ -28,7 +28,7 @@ public static class RegulatoryRegisterFixtures
                     Locator = new("Known", "synthetic-demo/reg-source-draft-v1"), Declaration = new("Unknown"), ObservedAt = new("Unknown") }
                     : new RegisterContent { Instrument = new("Known", "FICTIONAL preparation example"), Declaration = new("Unknown"), ObservedAt = new("Unknown") };
                 var draft = new RegisterDraft { TenantId = tenant.Id, Id = id, Kind = kind, ContentJson = RegisterStorage.Serialize(content),
-                    Revision = 1, SavedAt = DateTimeOffset.UtcNow, Provenance = "SyntheticUnverified" };
+                    Revision = 1, SavedAt = db.Clock.GetUtcNow(), Provenance = "SyntheticUnverified" };
                 db.RegisterDrafts.Add(draft);
                 db.RegisterRevisions.Add(draft.Snapshot(kind == "Source" ? null : sourceId, kind == "Source" ? null : 1));
             }

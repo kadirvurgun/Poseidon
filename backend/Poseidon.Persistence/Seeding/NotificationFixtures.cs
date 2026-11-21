@@ -19,7 +19,7 @@ public static class NotificationFixtures
             if (await db.Notifications.FindAsync([vessel.TenantId, vessel.Id], ct) != null) continue;
             if (!await db.MaintenancePlanRevisions.AnyAsync(p => p.TenantId == vessel.TenantId && p.VesselId == vessel.Id && p.PlanId == vessel.Id && p.Revision == 1, ct))
                 throw new InvalidOperationException("Synthetic source revision is unavailable.");
-            var now = DateTimeOffset.UtcNow;
+            var now = db.Clock.GetUtcNow();
             db.Notifications.Add(new() { TenantId = vessel.TenantId, Id = vessel.Id, VesselId = vessel.Id, PlanId = vessel.Id, PlanRevision = 1,
                 RuleKey = "synthetic.fixture", PolicyVersion = "synthetic-incomplete-v1", PolicyDigest = RegisterStorage.Hash("synthetic-incomplete-notification-fixture"),
                 SourceContextHash = RegisterStorage.Hash("synthetic-incomplete-source-context"),

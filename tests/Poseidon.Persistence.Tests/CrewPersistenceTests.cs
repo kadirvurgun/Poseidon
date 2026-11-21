@@ -51,7 +51,7 @@ public sealed class CrewPersistenceTests : IAsyncLifetime
         await using (var db = Db()) {
             var p = await db.Persons.SingleAsync(x => x.Id == vessel.Id, Ct); p.FullName = "FICTIONAL operator edit";
             var c = await db.CrewAssignments.SingleAsync(x => x.Id == vessel.Id, Ct); c.WatchGroup = "Synthetic operator group";
-            c.Revision++; db.CrewAssignmentRevisions.Add(c.Snapshot()); await db.SaveChangesAsync(Ct);
+            c.Revision++; db.CrewAssignmentRevisions.Add(c.Snapshot(DateTimeOffset.UtcNow)); await db.SaveChangesAsync(Ct);
         }
         int count;
         await using (var db = Import()) { count = await db.AuditEvents.CountAsync(Ct); await SeedImporter.ImportAsync(db, SeedValidationTests.Demo(), Ct); }
@@ -83,9 +83,10 @@ public sealed class CrewPersistenceTests : IAsyncLifetime
         var vessel = data.Vessels.First(v => v.TenantId == data.Tenants[0].Id);
         async Task<bool> Reserve() {
             await using var db = Db(); var c = Assignment(vessel.Id, vessel.Id);
-            db.CrewAssignments.Add(c); db.CrewAssignmentRevisions.Add(c.Snapshot());
+            db.CrewAssignments.Add(c); db.CrewAssignmentRevisions.Add(c.Snapshot(DateTimeOffset.UtcNow));
             try { await db.SaveChangesAsync(Ct); return true; } catch (DbUpdateException e) {
-                Assert.Equal("23P01", Assert.IsType<Npgsql.PostgresException>(e.InnerException).SqlState); return false;
+                // Exclusion violation, or PostgreSQL's deadlock break when both insertions precede either conflict check.
+                Assert.Contains(Assert.IsType<Npgsql.PostgresException>(e.InnerException).SqlState, new[] { "23P01", "40P01" }); return false;
             }
         }
         var results = await Task.WhenAll(Reserve(), Reserve()); Assert.Single(results, x => x);
@@ -99,9 +100,9 @@ public sealed class CrewPersistenceTests : IAsyncLifetime
         await using var first = Db(); await using var stale = Db();
         var a = await first.CrewAssignments.SingleAsync(x => x.Id == vessel.Id, Ct);
         var b = await stale.CrewAssignments.SingleAsync(x => x.Id == vessel.Id, Ct);
-        a.Revision++; a.From = new(2026, 11, 1); first.CrewAssignmentRevisions.Add(a.Snapshot()); await first.SaveChangesAsync(Ct);
+        a.Revision++; a.From = new(2026, 11, 1); first.CrewAssignmentRevisions.Add(a.Snapshot(DateTimeOffset.UtcNow)); await first.SaveChangesAsync(Ct);
         var auditCount = await first.AuditEvents.CountAsync(Ct);
-        b.Revision += 2; b.From = new(2026, 11, 2); stale.CrewAssignmentRevisions.Add(b.Snapshot());
+        b.Revision += 2; b.From = new(2026, 11, 2); stale.CrewAssignmentRevisions.Add(b.Snapshot(DateTimeOffset.UtcNow));
         await Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => stale.SaveChangesAsync(Ct));
         await using var verify = Db(); Assert.Equal(auditCount, await verify.AuditEvents.CountAsync(Ct));
         Assert.Equal(2, await verify.CrewAssignmentRevisions.CountAsync(x => x.VesselId == vessel.Id, Ct));
@@ -115,7 +116,7 @@ public sealed class CrewPersistenceTests : IAsyncLifetime
         await using var db = Db(); var count = await db.AuditEvents.CountAsync(Ct);
         await using (var tx = await db.Database.BeginTransactionAsync(Ct)) {
             db.Persons.Add(new() { TenantId = db.TenantId, Id = person });
-            var c = Assignment(vessel.Id, person); db.CrewAssignments.Add(c); db.CrewAssignmentRevisions.Add(c.Snapshot());
+            var c = Assignment(vessel.Id, person); db.CrewAssignments.Add(c); db.CrewAssignmentRevisions.Add(c.Snapshot(DateTimeOffset.UtcNow));
             await db.SaveChangesAsync(Ct); await tx.RollbackAsync(Ct);
         }
         await using var verify = Db(); Assert.False(await verify.Persons.AnyAsync(x => x.Id == person, Ct));

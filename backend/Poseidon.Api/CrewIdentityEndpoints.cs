@@ -81,10 +81,10 @@ public static class CrewIdentityEndpoints
             await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "CrewSave", "Attempted", resourceId: vessel);
             CrewIdentityStorage.Capture(person, name, employee, protection);
             db.CrewIdentityRevisions.Add(new() { TenantId = a.TenantId, PersonId = person.Id, Revision = person.IdentityRevision,
-                PolicyVersion = policy.Version, Purpose = policy.Purpose, Operation = conversion ? "LegacyConversion" : imported ? "ImportedDeclaration" : "Declaration", SavedAt = DateTimeOffset.UtcNow });
+                PolicyVersion = policy.Version, Purpose = policy.Purpose, Operation = conversion ? "LegacyConversion" : imported ? "ImportedDeclaration" : "Declaration", SavedAt = h.UtcNow() });
             await db.SaveChangesAsync(ct);
             db.CommandReceipts.Add(new() { TenantId = a.TenantId, ActorId = a.Id, Key = key, Action = action, Fingerprint = fingerprint,
-                ResourceId = person.Id, RegisterVersion = person.Version, RegisterRevision = person.IdentityRevision, CommittedAt = DateTimeOffset.UtcNow });
+                ResourceId = person.Id, RegisterVersion = person.Version, RegisterRevision = person.IdentityRevision, CommittedAt = h.UtcNow() });
             await db.SaveChangesAsync(ct); if (tx != null) await tx.CommitAsync(ct);
             return Results.Ok(new { person.Version, revision = person.IdentityRevision, replayed = false });
         } catch (CryptographicException) { return await Fail(h, 503, "protected_storage_unavailable"); }

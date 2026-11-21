@@ -30,7 +30,7 @@ public sealed partial class DirectoryWorkspaceTests
             var person = Guid.NewGuid();
             db.Persons.Add(new() { TenantId = tenant, Id = person });
             var assignment = new CrewAssignment { TenantId = tenant, Id = Guid.NewGuid(), VesselId = vessel, PersonId = person };
-            db.CrewAssignments.Add(assignment); db.CrewAssignmentRevisions.Add(assignment.Snapshot());
+            db.CrewAssignments.Add(assignment); db.CrewAssignmentRevisions.Add(assignment.Snapshot(DateTimeOffset.UtcNow));
         }
         await db.SaveChangesAsync(Ct);
     }

@@ -14,7 +14,7 @@ public sealed class MigrationIdOrderingTests
     [Fact]
     public void Future_history_is_appended_and_names_round_trip()
     {
-        var generator = new AppendOnlyMigrationIds(new History("29990101000000_Previous"));
+        var generator = new AppendOnlyMigrationIds(new History("29990101000000_Previous"), TimeProvider.System);
         var id = generator.GenerateId("Capacity_With_Underscore");
         Assert.Equal("29990101000001_Capacity_With_Underscore", id);
         Assert.True(generator.IsValidId(id));
@@ -24,7 +24,7 @@ public sealed class MigrationIdOrderingTests
     [Fact]
     public void Concurrent_requests_never_reuse_an_id_or_precede_history()
     {
-        var generator = new AppendOnlyMigrationIds(new History("29990101000000_Previous"));
+        var generator = new AppendOnlyMigrationIds(new History("29990101000000_Previous"), TimeProvider.System);
         var ids = new string[32];
         Parallel.For(0, ids.Length, i => ids[i] = generator.GenerateId("Change"));
         Assert.Equal(ids.Length, ids.Distinct(StringComparer.Ordinal).Count());
@@ -39,7 +39,7 @@ public sealed class MigrationIdOrderingTests
     [InlineData("29990101000000_")]
     public void Malformed_ids_are_rejected(string id)
     {
-        var generator = new AppendOnlyMigrationIds(new History(id));
+        var generator = new AppendOnlyMigrationIds(new History(id), TimeProvider.System);
         Assert.False(generator.IsValidId(id));
         Assert.Throws<ArgumentException>(() => generator.GetName(id));
     }
@@ -47,7 +47,7 @@ public sealed class MigrationIdOrderingTests
     [Fact]
     public void Fixed_width_capacity_cannot_silently_overflow()
     {
-        var generator = new AppendOnlyMigrationIds(new History("99999999999999_Previous"));
+        var generator = new AppendOnlyMigrationIds(new History("99999999999999_Previous"), TimeProvider.System);
         Assert.Throws<InvalidOperationException>(() => generator.GenerateId("Change"));
     }
 

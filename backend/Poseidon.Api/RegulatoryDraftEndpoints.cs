@@ -208,7 +208,7 @@ public static class RegulatoryDraftEndpoints
             draft.ConstructionFileChecksum = content.ConstructionRecord?.Checksum;
             // PostgreSQL timestamps have microsecond precision. Return the same timestamp a
             // subsequent history/read/replay will observe, without a sub-microsecond drift.
-            var savedAt = DateTimeOffset.UtcNow;
+            var savedAt = http.UtcNow();
             draft.SavedAt = savedAt.AddTicks(-(savedAt.Ticks % 10));
             draft.Provenance = content.Declaration.State == "Known" || content.SourceReference.State == "Known" ? "DeclaredUnverified" :
                 content.Declaration.State == "Unknown" || content.SourceReference.State == "Unknown" ? "Unknown" : "Missing";

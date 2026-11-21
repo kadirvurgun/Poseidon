@@ -19,7 +19,7 @@ public static class ControlledDocumentFixtures
             var id = Id(vessel.Id);
             if (db.ControlledDocuments.Local.Any(x => x.TenantId == vessel.TenantId && x.Id == id) ||
                 await db.ControlledDocuments.FindAsync([vessel.TenantId, id], ct) is not null) continue;
-            var now = DateTimeOffset.UtcNow;
+            var now = db.Clock.GetUtcNow();
             db.ControlledDocuments.Add(new() { TenantId = vessel.TenantId, Id = id, VesselId = vessel.Id,
                 Code = "FICTIONAL-" + id.ToString("N")[..12].ToUpperInvariant(), Title = "FICTIONAL controlled document shell (no content)",
                 Classification = "INTERNAL", Sequence = 1, CreatedBy = db.AuditActorId, CreatedAt = now, Provenance = "SyntheticUnverified" });

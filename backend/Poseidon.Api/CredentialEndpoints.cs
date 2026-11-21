@@ -41,7 +41,7 @@ public static class CredentialEndpoints
         foreach (var row in rows)
             if (row.DocumentReference == null || await CrewFileEndpoints.AuthorizedDocument(vessel, assignment, row.DocumentReference.Value, h, db)) visible.Add(row);
         // Explicit UTC calendar observation, disclosed with the response; no legal cutoff policy.
-        var reference = DateOnly.FromDateTime(DateTime.UtcNow);
+        var reference = DateOnly.FromDateTime(h.UtcNow().UtcDateTime);
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "CredentialRead", "Success", resourceId: vessel);
         return Results.Ok(visible.Select(x => new CredentialDto(x.Id, x.Version, x.Revision, x.Metadata(), x.VerificationState,
             x.Provenance, x.LegacyDocumentReference != null && x.DocumentReference == null ? "LegacyDocumentReferenceUnavailable" : "ControlledLookupAndSignatureRequired", CredentialDeclarationDates.Evaluate(x.Metadata().Declaration, reference), reference)).ToArray());
@@ -82,10 +82,10 @@ public static class CredentialEndpoints
             } else row.Revision = checked(row.Revision + 1);
             row.Capture(command.Metadata); row.Provenance = imported ? "ImportedDeclaredUnverified" : "UserDeclaredUnverified";
             db.CredentialRevisions.Add(new() { TenantId = a.TenantId, CredentialId = row.Id, VesselId = vessel,
-                Revision = row.Revision, SavedAt = DateTimeOffset.UtcNow, Provenance = row.Provenance, ActorId = a.Id });
+                Revision = row.Revision, SavedAt = h.UtcNow(), Provenance = row.Provenance, ActorId = a.Id });
             await db.SaveChangesAsync(ct);
             db.CommandReceipts.Add(new() { TenantId = a.TenantId, ActorId = a.Id, Key = key, Action = "CredentialSave", Fingerprint = fingerprint,
-                ResourceId = row.Id, RegisterRevision = row.Revision, RegisterVersion = row.Version, CommittedAt = DateTimeOffset.UtcNow });
+                ResourceId = row.Id, RegisterRevision = row.Revision, RegisterVersion = row.Version, CommittedAt = h.UtcNow() });
             await db.SaveChangesAsync(ct); if (tx != null) await tx.CommitAsync(ct);
             return Results.Ok(new CrewSavedDto(row.Id, row.Revision, row.Version, false));
         } catch (Exception e) when (e is DbUpdateException || PostgresFailure.IsSerialization(e)) {

@@ -20,7 +20,7 @@ public static class VoiceEventDraftFixtures
     {
         if (!db.IsAdministrativeImport || db.Database.CurrentTransaction == null)
             throw new UnauthorizedAccessException("Synthetic voice draft fixtures require an administrative audited transaction.");
-        var now = DateTimeOffset.UtcNow;
+        var now = db.Clock.GetUtcNow();
         var sha = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(Transcript))).ToLowerInvariant();
         foreach (var vessel in vessels)
         {

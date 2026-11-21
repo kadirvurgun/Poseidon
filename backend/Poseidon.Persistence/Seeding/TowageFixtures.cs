@@ -21,7 +21,7 @@ public static class TowageFixtures
     {
         if (!db.IsAdministrativeImport || db.Database.CurrentTransaction == null)
             throw new UnauthorizedAccessException("Synthetic towage fixtures require an administrative audited transaction.");
-        var now = DateTimeOffset.UtcNow;
+        var now = db.Clock.GetUtcNow();
         foreach (var v in vessels.Where(v => v.Kind == VesselKind.Tug))
         {
             var job = await db.TugJobs.AsNoTracking().SingleOrDefaultAsync(j => j.TenantId == v.TenantId && j.VesselId == v.Id && j.Id == v.Id && j.Provenance == "SyntheticUnverified", ct);

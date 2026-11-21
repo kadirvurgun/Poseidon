@@ -17,7 +17,7 @@ public static class RegulatoryQualificationFixtures
             var json = JsonSerializer.Serialize(new QualificationContent(), new JsonSerializerOptions(JsonSerializerDefaults.Web));
             db.RegulatoryQualificationEvents.Add(new() { TenantId = tenant.Id, RuleId = rule, Revision = 1, RuleRevision = 1, State = "DRAFT",
                 ContentJson = json, SourceHash = "", Hash = RegisterStorage.Hash(JsonSerializer.Serialize(new { tenant.Id, rule, revision = 1, json })), AuthorId = Guid.Empty, ActorId = Guid.Empty,
-                AuthorityId = Guid.Empty, RoleId = Guid.Empty, AuthorityHash = "", ContractJson = "null", PolicyVersion = RegulatoryQualificationPolicy.Version, SavedAt = DateTimeOffset.UtcNow });
+                AuthorityId = Guid.Empty, RoleId = Guid.Empty, AuthorityHash = "", ContractJson = "null", PolicyVersion = RegulatoryQualificationPolicy.Version, SavedAt = db.Clock.GetUtcNow() });
         }
     }
 }

@@ -29,7 +29,7 @@ public static class PilotProgramFixtures
             var tug = await db.Vessels.Where(v => v.TenantId == tenant && v.Kind == VesselKind.Tug).OrderBy(v => v.Code).Select(v => (Guid?)v.Id).FirstOrDefaultAsync(ct);
             db.PilotPrograms.Add(new PilotProgram { TenantId = tenant, Id = id, Name = "FICTIONAL pilot program (synthetic, not a real pilot)", ShipVesselId = ship.Value,
                 TugVesselId = tug, StartDate = new DateOnly(2026, 12, 1), TimeZone = "UTC", CatalogVersion = PilotProgramCatalog.Version,
-                CreatedBy = SyntheticCreator(tenant), CreatedAt = DateTimeOffset.UtcNow, Provenance = "SyntheticUnverified" });
+                CreatedBy = SyntheticCreator(tenant), CreatedAt = db.Clock.GetUtcNow(), Provenance = "SyntheticUnverified" });
             await db.SaveChangesAsync(ct);
         }
         // Caller commits.

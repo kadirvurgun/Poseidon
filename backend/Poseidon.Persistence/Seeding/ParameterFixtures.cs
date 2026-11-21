@@ -29,7 +29,7 @@ public static class ParameterFixtures
             // Any operator root for the same key/scope keeps precedence; the fixture never competes with it.
             if (await db.ParameterRoots.AnyAsync(x => x.TenantId == tenant.Id && x.Key == Key && x.ScopeKind == "TENANT" &&
                 x.ScopeId == tenant.Id && x.SelectorHash == selector.Hash, ct)) continue;
-            var now = ParameterValuePolicy.Micro(DateTimeOffset.UtcNow);
+            var now = ParameterValuePolicy.Micro(db.Clock.GetUtcNow());
             var revision = RevisionId(tenant.Id);
             db.ParameterRoots.Add(new() { TenantId = tenant.Id, Id = id, Key = Key, ScopeKind = "TENANT", ScopeId = tenant.Id,
                 SelectorJson = selector.Json, SelectorHash = selector.Hash, Revision = 1, PendingRevisionId = revision, CreatedAt = now });

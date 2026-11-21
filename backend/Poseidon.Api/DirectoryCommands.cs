@@ -193,7 +193,7 @@ public static class DirectoryCommands
             }
             await db.SaveChangesAsync(http.RequestAborted);
             db.CommandReceipts.Add(new CommandReceipt { TenantId = actor.TenantId, ActorId = actor.Id, Key = key, Action = action,
-                Fingerprint = fingerprint, ResourceId = resource, CommittedAt = DateTimeOffset.UtcNow });
+                Fingerprint = fingerprint, ResourceId = resource, CommittedAt = http.UtcNow() });
             await db.SaveChangesAsync(http.RequestAborted);
             // Commit-time revalidation (54.02 A03-007 step 8) for the migrated vessel update: the exact action
             // AND the live actor's vessel scope (tenant/grant/kind visibility via mode.tug/mode.cross), as in

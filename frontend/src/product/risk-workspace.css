@@ -1,15 +1,15 @@
 .risk-workspace { min-width:0; }
 .risk-workspace .risk-layout { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,2fr); gap:16px; align-items:start; }
-.risk-workspace .risk-panel { margin-block:16px; padding:20px; border:1px solid var(--border); border-radius:10px; background:var(--card); min-width:0; }
+.risk-workspace .risk-panel { margin-block:16px; padding:20px; border:1px solid var(--border); border-radius:max(0px, calc(10px + var(--radius-delta))); background:var(--card); min-width:0; }
 .risk-workspace .risk-list { list-style:none; padding:0; margin:0; display:grid; gap:8px; }
-.risk-workspace .risk-list li[aria-current="true"] { outline:2px solid var(--primary); outline-offset:2px; border-radius:6px; }
+.risk-workspace .risk-list li[aria-current="true"] { outline:2px solid var(--primary); outline-offset:2px; border-radius:max(0px, calc(6px + var(--radius-delta))); }
 .risk-workspace .risk-badge { display:inline-flex; align-items:center; gap:4px; padding:1px 8px; border-radius:999px; border:1px solid var(--border); font-size:12px; }
 /* "Recorded" means a human record exists; it is deliberately not a success/green state. */
 .risk-workspace .risk-badge-recorded { background:var(--muted); color:var(--foreground); font-weight:600; }
 .risk-workspace .risk-badge-open { background:var(--warning-surface); border-color:var(--warning-border); }
 .risk-workspace .risk-badge-unknown { border-style:dashed; color:var(--muted-foreground); }
 .risk-workspace .risk-badge-muted { color:var(--muted-foreground); }
-.risk-workspace .risk-banner { margin-block:12px; padding:12px 16px; border:1px solid var(--warning-border); border-radius:8px; background:var(--warning-surface); }
+.risk-workspace .risk-banner { margin-block:12px; padding:12px 16px; border:1px solid var(--warning-border); border-radius:max(0px, calc(8px + var(--radius-delta))); background:var(--warning-surface); }
 .risk-workspace .risk-gate-notice, .risk-workspace .risk-note { color:var(--muted-foreground); font-size:13px; }
 .risk-workspace .risk-field { display:grid; gap:6px; margin-block:10px; min-width:0; }
 .risk-workspace .risk-field input, .risk-workspace .risk-field select, .risk-workspace .risk-field textarea { width:100%; min-width:0; }
@@ -17,9 +17,9 @@
 .risk-workspace .risk-check { display:inline-flex; gap:6px; align-items:center; margin-inline-end:12px; }
 .risk-workspace .risk-facts { display:grid; grid-template-columns:max-content minmax(0,1fr); gap:6px 16px; }
 .risk-workspace .risk-facts dd { margin:0; overflow-wrap:anywhere; white-space:pre-wrap; }
-.risk-workspace .risk-hazard-edit, .risk-workspace .risk-rating { border:1px solid var(--border); border-radius:8px; padding:12px; margin-block:12px; min-width:0; }
+.risk-workspace .risk-hazard-edit, .risk-workspace .risk-rating { border:1px solid var(--border); border-radius:max(0px, calc(8px + var(--radius-delta))); padding:12px; margin-block:12px; min-width:0; }
 .risk-workspace .risk-control-edit, .risk-workspace .risk-link-edit { display:flex; flex-wrap:wrap; gap:8px; align-items:end; }
 .risk-workspace .risk-revision { border-top:1px solid var(--border); padding-top:12px; margin-top:12px; }
-.risk-workspace .risk-decision { margin-block:12px; padding:12px; border:1px dashed var(--border); border-radius:8px; }
+.risk-workspace .risk-decision { margin-block:12px; padding:12px; border:1px dashed var(--border); border-radius:max(0px, calc(8px + var(--radius-delta))); }
 .risk-workspace code { white-space:normal; overflow-wrap:anywhere; }
 @media(max-width:800px) { .risk-workspace .risk-layout { grid-template-columns:minmax(0,1fr); } .risk-workspace .risk-panel { padding:14px; } }
