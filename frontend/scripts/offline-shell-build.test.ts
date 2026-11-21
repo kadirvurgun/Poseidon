@@ -168,4 +168,14 @@ describe('public offline shell build and safe update lifecycle', () => {
     await expect(h.request('/assets/app-a1.js', 'GET', 'cors')).rejects.toThrow('static_shell_integrity')
     expect(cache.has('/assets/app-a1.js')).toBe(false); expect(cache.has('/index.html')).toBe(true)
   })
+
+  it('precaches the lazily loaded per-locale help guide chunks with the shell (USER-GUIDE-01 D1, UG-DOC-04)', () => {
+    const help = [{ fileName: 'assets/help-tr-c3.js', bytes: 'export default {}' }, { fileName: 'assets/help-en-d4.js', bytes: 'export default {}' }]
+    const worker = source([...fixtures, ...help])
+    for (const path of ['/assets/help-tr-c3.js', '/assets/help-en-d4.js']) {
+      expect(worker).toContain(JSON.stringify(path))
+    }
+    // Adding guide content changes the help chunk bytes and therefore the cache version.
+    expect(cacheName(source([...fixtures, help[0], { ...help[1], bytes: 'export default { changed: 1 }' }]))).not.toBe(cacheName(worker))
+  })
 })
