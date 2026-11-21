@@ -8,6 +8,7 @@
 - Kit, gerçek pilot ekibine şunları verir: haftalık kontrol listeleri, yapılandırılmış geri bildirim, P0/P1/P2 issue triage, ölçülmüş taban çizgisi ve pilot değer okuması, hafta kapanışı ve CONTINUE/EXPAND/FIX/STOP kararı (bu karar yalnız atanmış Product Owner verir, görev ayrılığıyla).
 - Durum **AUTHORED_UNVERIFIED / NOT ACCEPTED**. Bu işler gerçek dünya pilot faaliyetleridir ve yazılım bunları tamamlayamaz. Gerçek pilot koşulup kanıtlanana ve insanlar imzalayana kadar açık kalırlar. Hiçbir pilot sonucu, ölçüm, UAT onayı veya karar iddia edilmiyor ya da seed edilmiyor.
 - S1 kapsam farkı +10/+10/+10. Feature CI `44862152432` entegrasyon sırasında hâlâ koşuyordu.
+- Final kapı QA notları takibi (`fix/pilot-kit-followup-20261121`, YAZILDI): hafta kapanışı ve program kararında genişletilmiş görev ayrılığı (sunucu + DB tetikleyicisi `20261124090000_PilotProgramDutySeparation`), DEV-077 "completed" maddelerinde sahip modülün tamamlanma durumu zorunlu (denetim izi yalnız insanın yazdığını kanıtlar, tamamlanmayı değil), `job_not_submitted` etiketi 17 dilde, PilotProgramKit Designer yeniden üretildi. Kabul durumu değişmedi.
 
 ## S11 kabul edildi — notlarla, YALNIZ YAZILIM KAPSAMI (21.11.2026)
 
@@ -18,7 +19,7 @@
 - Bağımsız S11 QA: 2 tur (53dd7845 RED, B1 DEV-072 telemetri ürüne bağlı değil; PR CI `44851819969` kırmızı — `NotificationTests.cs:291` tarih bombası; 53dd7845..e0639fa7 yeniden kontrol B1/N1/N2/N5 çözüldü, **ACCEPT**), engelleyici yok — [kanıt](evidence/s11-20261122-e0639fa7/qa/s11-gate-independent-review.md), [faz raporu](phases/S11-GATE-20261122.md).
 - Kabul: DEV-069, 070, 071, 072, 073, 074, 075, 093, 094, 117, 118.
 - Teslim: pilot veri import şablonları + satır kökeni, mutabakat raporu (UNKNOWN korunur, imza yalnız insan veri sahibi), DR yedek/geri yükleme/prova betikleri, gizlilik güvenli pilot metrikleri (<5 katılımcı bastırılır, gözlem yok → UNKNOWN), gemi/römorkör regülasyon SME inceleme iş akışı, gemi/römorkör rol UAT kayıtları, go/no-go incelemesi (motor GO üretmez; GO/CONDITIONAL_GO yalnız tüm kapılar PASS + P0=0), PMS type approval ve ISO 27001/27701 yol haritası taslakları.
-- Açık insan/operasyon kapıları: DEV-070 veri sahibi sign-off; DEV-071 gerçek DR provası + ölçülmüş RPO/RTO + imzalı rollback; DEV-073/093 SME sign-off; DEV-074/094 UAT eşikleri/koşuları; DEV-075 Product Owner go/no-go (SECURITY/OFFLINE/DR/TRACE DEFERRED → GO imkânsız); DEV-117/118 yol haritası onayları. Hiçbir onay iddia edilmiyor.
+- Açık insan/operasyon kapıları: DEV-070 veri sahibi sign-off; DEV-071 gerçek DR provası + ölçülmüş RPO/RTO + imzalı rollback; DEV-072 saklama süresi/politika referansı (DPO) ve MinContributors=5 onayı; DEV-073/093 SME sign-off; DEV-074/094 UAT eşikleri/koşuları; DEV-075 Product Owner go/no-go (SECURITY/OFFLINE/DR/TRACE DEFERRED → GO imkânsız); DEV-117/118 yol haritası onayları. Hiçbir onay iddia edilmiyor.
 - Sıradaki: kalan 7 iş / 38 SP pilot haftası (DEV-076–079, 095, 096, 121) — gerçek pilot gerektirir.
 
 ## S10 kabul edildi — notlarla; S6 DEV-101/102 kabul (20.11.2026)

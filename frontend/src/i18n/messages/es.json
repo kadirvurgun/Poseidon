@@ -2795,7 +2795,9 @@
       "state_CONDITIONAL": "Condicional",
       "state_PHOTO": "Foto",
       "state_AIS_OR_TIME": "Evidencia AIS o de hora",
-      "state_DOCUMENT": "Documento"
+      "state_DOCUMENT": "Documento",
+      "blocker_job_not_submitted": "Trabajo no enviado: solo puede iniciarse un trabajo de remolcador enviado.",
+      "blocker_job_cancelled": "Trabajo cancelado: un trabajo de remolcador cancelado no puede iniciarse."
     },
     "AuditPack_tsx_copy": {
       "title": "Paquete de auditoría",
@@ -3646,7 +3648,14 @@
       "decision_CONTINUE": "Continuar",
       "decision_EXPAND": "Ampliar",
       "decision_FIX": "Corregir",
-      "decision_STOP": "Detener"
+      "decision_STOP": "Detener",
+      "completionRequired": "Finalización requerida: el registro vinculado debe estar en estado finalizado (por ejemplo, una orden de trabajo o un defecto cerrados).",
+      "auditTraceMeaning": "La traza de auditoría prueba que una persona escribió el registro; no prueba que el registro o el flujo estén finalizados.",
+      "closeDutyConflict": "No puede cerrar esta semana porque usted creó evidencias en las que se basa:",
+      "decisionDutyConflict": "No puede registrar la decisión del programa porque usted creó evidencias en las que se basa:",
+      "duty_LINK_AUTHOR": "vínculos de la lista de verificación",
+      "duty_FEEDBACK_AUTHOR": "comentarios",
+      "duty_MEASUREMENT_AUTHOR": "mediciones"
     }
   },
   "pairs": {

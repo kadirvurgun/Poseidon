@@ -2795,7 +2795,9 @@
       "state_CONDITIONAL": "Conditionnel",
       "state_PHOTO": "Photo",
       "state_AIS_OR_TIME": "Preuve AIS ou horaire",
-      "state_DOCUMENT": "Document"
+      "state_DOCUMENT": "Document",
+      "blocker_job_not_submitted": "Mission non soumise : seule une mission de remorquage soumise peut démarrer.",
+      "blocker_job_cancelled": "Mission annulée : une mission de remorquage annulée ne peut pas démarrer."
     },
     "AuditPack_tsx_copy": {
       "title": "Dossier d’audit",
@@ -3646,7 +3648,14 @@
       "decision_CONTINUE": "Continuer",
       "decision_EXPAND": "Étendre",
       "decision_FIX": "Corriger",
-      "decision_STOP": "Arrêter"
+      "decision_STOP": "Arrêter",
+      "completionRequired": "Achèvement requis : l'enregistrement lié doit être à l'état achevé (par exemple un ordre de travail ou un défaut clôturé).",
+      "auditTraceMeaning": "La piste d'audit prouve qu'une personne a rédigé l'enregistrement ; elle ne prouve pas que l'enregistrement ou le flux est achevé.",
+      "closeDutyConflict": "Vous ne pouvez pas clôturer cette semaine car vous avez créé des preuves sur lesquelles elle repose :",
+      "decisionDutyConflict": "Vous ne pouvez pas enregistrer la décision du programme car vous avez créé des preuves sur lesquelles elle repose :",
+      "duty_LINK_AUTHOR": "liens de la liste de contrôle",
+      "duty_FEEDBACK_AUTHOR": "retours",
+      "duty_MEASUREMENT_AUTHOR": "mesures"
     }
   },
   "pairs": {

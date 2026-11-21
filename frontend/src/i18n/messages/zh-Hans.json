@@ -2795,7 +2795,9 @@
       "state_CONDITIONAL": "有条件",
       "state_PHOTO": "照片",
       "state_AIS_OR_TIME": "AIS 或时间证据",
-      "state_DOCUMENT": "文件"
+      "state_DOCUMENT": "文件",
+      "blocker_job_not_submitted": "作业未提交：只有已提交的拖轮作业才能开始。",
+      "blocker_job_cancelled": "作业已取消：已取消的拖轮作业不能开始。"
     },
     "AuditPack_tsx_copy": {
       "title": "审核资料包",
@@ -3646,7 +3648,14 @@
       "decision_CONTINUE": "继续",
       "decision_EXPAND": "扩展",
       "decision_FIX": "修复",
-      "decision_STOP": "停止"
+      "decision_STOP": "停止",
+      "completionRequired": "需要完成：所链接的记录必须处于已完成状态（例如已关闭的工单或缺陷）。",
+      "auditTraceMeaning": "审计痕迹证明记录由人员写入；它不证明记录或流程已完成。",
+      "closeDutyConflict": "您不能关闭本周，因为您创建了其所依据的证据：",
+      "decisionDutyConflict": "您不能记录项目决定，因为您创建了其所依据的证据：",
+      "duty_LINK_AUTHOR": "检查清单链接",
+      "duty_FEEDBACK_AUTHOR": "反馈",
+      "duty_MEASUREMENT_AUTHOR": "测量"
     }
   },
   "pairs": {

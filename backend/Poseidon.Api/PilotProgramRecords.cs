@@ -42,7 +42,10 @@ internal static class PilotProgramAccess
 
 // Server-side probe of a linked record: exists in this tenant (query filters + explicit tenant), carries the record
 // type the item allows, its vessel (or tug) binding and provenance. The audit trace is the existence of an attributed
-// user audit event for the record, checked once at link time (audit events are immutable).
+// user audit event for the record, checked once at link time (audit events are immutable): it proves that a human
+// wrote the record, never that the record or flow is complete. Completion is read live from the record owner's
+// lifecycle on every probe (work order execution CLOSED, defect lifecycle CLOSED, a recorded Master departure
+// decision, an offline outcome that is not an unresolved MaterialConflict).
 internal static class PilotRecordProbes
 {
     private sealed record Spec(Type Entity, string IdProperty, string? TraceProperty);
@@ -77,11 +80,12 @@ internal static class PilotRecordProbes
         PilotProgramCatalog.PilotMeasurement => Measurement(db, id, ct),
         _ when Specs.TryGetValue(recordType, out var spec) => (Task<PilotRecordProbe?>)typeof(PilotRecordProbes).GetMethod(nameof(Operational),
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!.MakeGenericMethod(spec.Entity)
-            .Invoke(null, [db, id, spec.IdProperty, spec.TraceProperty, checkAudit, ct])!,
+            .Invoke(null, [db, recordType, id, spec.IdProperty, spec.TraceProperty, checkAudit, ct])!,
         _ => Task.FromResult<PilotRecordProbe?>(null)
     };
 
-    private static async Task<PilotRecordProbe?> Operational<T>(PoseidonDbContext db, Guid id, string idProperty, string? traceProperty, bool checkAudit, CancellationToken ct)
+    private static async Task<PilotRecordProbe?> Operational<T>(PoseidonDbContext db, string recordType, Guid id, string idProperty, string? traceProperty, bool checkAudit,
+        CancellationToken ct)
         where T : class, ITenantEntity {
         var tenant = db.TenantId;
         var entity = await db.Set<T>().AsNoTracking().Where(e => e.TenantId == tenant && EF.Property<Guid>(e, idProperty) == id).FirstOrDefaultAsync(ct);
@@ -96,7 +100,21 @@ internal static class PilotRecordProbes
             var traceId = traceProperty == null ? id : (Guid)entry.Property(traceProperty).CurrentValue!;
             traced = await db.AuditEvents.AsNoTracking().AnyAsync(a => a.TenantId == tenant && a.ActorType == "User" && (a.ResourceId == traceId || a.EntityId == key), ct);
         }
-        return new(vessel, provenance, traced, null, null, null);
+        return new(vessel, provenance, traced, null, null, null, await Completion(db, recordType, id, entry, ct));
+    }
+
+    private static async Task<string?> Completion(PoseidonDbContext db, string recordType, Guid id, Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry entry,
+        CancellationToken ct) {
+        var tenant = db.TenantId;
+        static string State(bool done) => done ? PilotProgramPolicy.Completed : PilotProgramPolicy.NotCompleted;
+        return recordType switch {
+            PilotProgramCatalog.WorkOrder => State(await db.WorkOrderExecutions.AsNoTracking().AnyAsync(e => e.TenantId == tenant && e.WorkOrderId == id && e.State == "CLOSED", ct)),
+            PilotProgramCatalog.Defect => State(await db.DefectLifecycles.AsNoTracking().AnyAsync(l => l.TenantId == tenant && l.DefectId == id && l.Stage == DefectLifecyclePolicy.Closed, ct)),
+            // The row is the Master's recorded RELEASE/HOLD/DENY decision: the departure review is complete once it exists.
+            PilotProgramCatalog.DepartureDecision => PilotProgramPolicy.Completed,
+            _ when entry.Metadata.FindProperty("Result") != null => State(entry.Property("Result").CurrentValue as string is { Length: > 0 } r && r != "MaterialConflict"),
+            _ => null
+        };
     }
 
     private static async Task<PilotRecordProbe?> Uat(PoseidonDbContext db, Guid id, CancellationToken ct) {

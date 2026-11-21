@@ -2795,7 +2795,9 @@
       "state_CONDITIONAL": "Feltételes",
       "state_PHOTO": "Fénykép",
       "state_AIS_OR_TIME": "AIS- vagy időbizonyíték",
-      "state_DOCUMENT": "Dokumentum"
+      "state_DOCUMENT": "Dokumentum",
+      "blocker_job_not_submitted": "A munka nincs beküldve: csak beküldött vontatóhajó-munka indítható.",
+      "blocker_job_cancelled": "A munka törölve: törölt vontatóhajó-munka nem indítható."
     },
     "AuditPack_tsx_copy": {
       "title": "Auditcsomag",
@@ -3646,7 +3648,14 @@
       "decision_CONTINUE": "Folytatás",
       "decision_EXPAND": "Bővítés",
       "decision_FIX": "Javítás",
-      "decision_STOP": "Leállítás"
+      "decision_STOP": "Leállítás",
+      "completionRequired": "Befejezés szükséges: a kapcsolt rekordnak befejezett állapotban kell lennie (például lezárt munkautasítás vagy hiba).",
+      "auditTraceMeaning": "Az auditnyom azt igazolja, hogy egy személy írta a rekordot; nem igazolja, hogy a rekord vagy a folyamat befejeződött.",
+      "closeDutyConflict": "Nem zárhatja le ezt a hetet, mert Ön hozta létre azokat a bizonyítékokat, amelyeken alapul:",
+      "decisionDutyConflict": "Nem rögzítheti a programdöntést, mert Ön hozta létre azokat a bizonyítékokat, amelyeken alapul:",
+      "duty_LINK_AUTHOR": "ellenőrzőlista-hivatkozások",
+      "duty_FEEDBACK_AUTHOR": "visszajelzések",
+      "duty_MEASUREMENT_AUTHOR": "mérések"
     }
   },
   "pairs": {

@@ -16,8 +16,12 @@ namespace Poseidon.Domain;
 // missing baseline or measurement stays UNKNOWN (never 0). Week close and the CONTINUE/EXPAND/FIX/STOP decision are
 // the appointed Product Owner's human records; the engine only recommends.
 public sealed record PilotWeekDefinition(string Week, int Number, string[] Requirements, string Locator, PilotChecklistItem[] Items);
+// RequiresAuditTrace: the linked record must carry a User-attributed write audit event. That proves a human wrote the
+// record; it is NOT a completion proof. RequiresCompletion: the source AC says the flow must be "completed", so the
+// record's own owner lifecycle must be in its completion state (work order execution CLOSED, defect lifecycle CLOSED,
+// a recorded Master departure decision, an offline outcome that is not an unresolved conflict).
 public sealed record PilotChecklistItem(string Code, string Week, string Requirement, string Area, string[] RecordTypes, bool RequiresAuditTrace,
-    string Criterion, string Locator);
+    string Criterion, string Locator, bool RequiresCompletion = false);
 public sealed record PilotValueMetric(string Id, string Mode, string Unit, string Direction, string[] Requirements, string? TelemetryMetricId, string Locator);
 
 public static class PilotProgramCatalog
@@ -43,8 +47,8 @@ public static class PilotProgramCatalog
     public static readonly string[] ProgramOwnedRecordTypes = [UatRun, PilotFeedback, PilotMeasurement];
 
     private const string Backlog = "18.01/sheet:Backlog/row:", Plan = "19.01/paragraph:";
-    private static PilotChecklistItem I(string code, string week, string dev, string area, string[] types, bool traced, string criterion, string locator) =>
-        new(code, week, dev, area, types, traced, criterion, locator);
+    private static PilotChecklistItem I(string code, string week, string dev, string area, string[] types, bool traced, string criterion, string locator,
+        bool completed = false) => new(code, week, dev, area, types, traced, criterion, locator, completed);
 
     // Criterion texts are the source acceptance criteria (18.01 column G) or the 19.01 week plan cell, verbatim.
     public static readonly PilotWeekDefinition[] WeekDefinitions = [
@@ -56,11 +60,11 @@ public static class PilotProgramCatalog
             I("W1_TUG_JOB_INTAKE", W1, "DEV-076", Tug, [TugJob], true, "Tug Today/job intake/job board", Plan + "54"),
         ]),
         new(W2, 2, ["DEV-077", "DEV-095"], Backlog + "78;" + Backlog + "96;18.01/sheet:Sprint Plan/row:15;" + Plan + "56-59", [
-            I("W2_WORK_ORDER", W2, "DEV-077", Ship, [WorkOrder], true, "At least one WO ... completed with audit trace", Backlog + "78"),
-            I("W2_DEFECT_SAFEGUARD", W2, "DEV-077", Ship, [Defect], true, "one defect/safeguard ... completed with audit trace", Backlog + "78"),
-            I("W2_DEPARTURE_REVIEW", W2, "DEV-077", Ship, [DepartureDecision], true, "one departure review ... completed with audit trace", Backlog + "78"),
+            I("W2_WORK_ORDER", W2, "DEV-077", Ship, [WorkOrder], true, "At least one WO ... completed with audit trace", Backlog + "78", true),
+            I("W2_DEFECT_SAFEGUARD", W2, "DEV-077", Ship, [Defect], true, "one defect/safeguard ... completed with audit trace", Backlog + "78", true),
+            I("W2_DEPARTURE_REVIEW", W2, "DEV-077", Ship, [DepartureDecision], true, "one departure review ... completed with audit trace", Backlog + "78", true),
             I("W2_OFFLINE_RECONNECT", W2, "DEV-077", Ship, [OfflineOutcome, WorkOrderOfflineOutcome, DailyOfflineOutcome, SafetyEventOfflineOutcome], true,
-                "one offline/reconnect flow completed with audit trace", Backlog + "78"),
+                "one offline/reconnect flow completed with audit trace", Backlog + "78", true),
             I("W2_DUAL_SHIP_SAFETY", W2, "DEV-095", Ship, [SafetyEvent, RiskAssessment], true, "1 ship departure/safety flow", Backlog + "96"),
             I("W2_DUAL_TUG_JOB", W2, "DEV-095", Tug, [TugJob], true, "1 tug job/towage flow", Backlog + "96"),
             I("W2_DUAL_TUG_TOWAGE", W2, "DEV-095", Tug, [TowageExecution], true, "1 tug job/towage flow", Backlog + "96"),
@@ -188,7 +192,10 @@ public static class PilotMeasurementPolicy
 }
 
 // Live probe of one linked record. Null = not found in this tenant (cross-tenant is indistinguishable by design).
-public sealed record PilotRecordProbe(Guid? VesselId, string? Provenance, bool AuditTraced, string? Scope, string? State, Guid? ProgramId);
+// Completion: COMPLETED / NOT_COMPLETED from the record owner's lifecycle; null when the record type has no completion state.
+public sealed record PilotRecordProbe(Guid? VesselId, string? Provenance, bool AuditTraced, string? Scope, string? State, Guid? ProgramId, string? Completion = null);
+// A program-owned human record and its author, for separation of duties (feedback carries its week; measurements do not).
+public sealed record PilotAuthoredRecord(Guid Id, string? Week, Guid ActorId);
 public sealed record PilotLinkInput(Guid Id, string ItemCode, string RecordType, Guid RecordId, Guid ActorId, PilotRecordProbe? Probe);
 public sealed record PilotIssueInput(Guid Id, string Week, string Severity, string Category, string State, PilotIssueTiming Timing);
 public sealed record PilotItemOutcome(string Code, string State, int ValidLinks, string[] Reasons);
@@ -223,6 +230,8 @@ public static class PilotProgramPolicy
     public const string Improved = "IMPROVED", Worsened = "WORSENED", Unchanged = "UNCHANGED", NotComparable = "NOT_COMPARABLE";
     public const int RationaleMin = 10, RationaleMax = 2000, NameMin = 3, NameMax = 120, NoteMax = 500, ReasonMin = 10;
     public const string ProductOwnerDuty = "ProductOwner";
+    public const string Completed = "COMPLETED", NotCompleted = "NOT_COMPLETED";
+    public const string LinkAuthor = "LINK_AUTHOR", FeedbackAuthor = "FEEDBACK_AUTHOR", MeasurementAuthor = "MEASUREMENT_AUTHOR";
 
     public static bool ValidText(string? value, int min, int max) => value is { } v && v.Trim() == v && v.Length >= min && v.Length <= max && !v.Any(char.IsControl);
     public static bool ValidOptionalText(string? value, int max) => value == null || ValidText(value, 1, max);
@@ -254,9 +263,43 @@ public static class PilotProgramPolicy
             };
             if (!vesselOk) return item.Area == PilotProgramCatalog.Tug && vessels.TugVesselId == null ? "tug_vessel_unset" : "record_vessel_mismatch";
         }
+        if (item.RequiresCompletion && probe.Completion != Completed) return "record_not_completed";
         if (item.RequiresAuditTrace && !probe.AuditTraced) return "audit_trace_missing";
         return null;
     }
+
+    // Separation of duties for a week close: the Product Owner must not have authored the evidence the week rests on —
+    // any active link of the week, feedback recorded for the week or linked from it, or a measurement linked from it or
+    // (for a week whose checklist uses the value readout, W4) any measurement the readout currently uses.
+    // Mirrored by the PostgreSQL trigger pilot.guard_pilot_duty().
+    public static string[] WeekCloseDutyConflicts(PilotWeekDefinition week, Guid actor, IReadOnlyCollection<PilotLinkInput> activeLinks,
+        IReadOnlyCollection<PilotAuthoredRecord> feedback, IReadOnlyCollection<PilotAuthoredRecord> latestMeasurements, IReadOnlyCollection<PilotAuthoredRecord> linkedMeasurements)
+    {
+        var own = activeLinks.Where(l => week.Items.Any(i => i.Code == l.ItemCode)).ToArray();
+        var linked = own.Select(l => l.RecordId).ToHashSet();
+        var usesReadout = UsesReadout(week);
+        var conflicts = new List<string>();
+        if (own.Any(l => l.ActorId == actor)) conflicts.Add(LinkAuthor);
+        if (feedback.Any(f => f.ActorId == actor && (f.Week == week.Week || linked.Contains(f.Id)))) conflicts.Add(FeedbackAuthor);
+        if (linkedMeasurements.Any(m => m.ActorId == actor && linked.Contains(m.Id)) || usesReadout && latestMeasurements.Any(m => m.ActorId == actor))
+            conflicts.Add(MeasurementAuthor);
+        return conflicts.ToArray();
+    }
+
+    // Separation of duties for the program decision: the Product Owner must not have authored any active checklist link
+    // nor any measurement the readout uses or a link references. Mirrored by pilot.guard_pilot_duty().
+    public static string[] DecisionDutyConflicts(Guid actor, IReadOnlyCollection<PilotLinkInput> activeLinks, IReadOnlyCollection<PilotAuthoredRecord> latestMeasurements,
+        IReadOnlyCollection<PilotAuthoredRecord> linkedMeasurements)
+    {
+        var linked = activeLinks.Select(l => l.RecordId).ToHashSet();
+        var conflicts = new List<string>();
+        if (activeLinks.Any(l => l.ActorId == actor)) conflicts.Add(LinkAuthor);
+        if (latestMeasurements.Any(m => m.ActorId == actor) || linkedMeasurements.Any(m => m.ActorId == actor && linked.Contains(m.Id))) conflicts.Add(MeasurementAuthor);
+        return conflicts.ToArray();
+    }
+
+    public static bool UsesReadout(PilotWeekDefinition week) =>
+        week.Items.Any(i => i.RecordTypes.Contains(PilotProgramCatalog.PilotMeasurement, StringComparer.Ordinal));
 
     public static PilotWeekOutcome EvaluateWeek(PilotWeekDefinition week, string phase, IReadOnlyCollection<PilotLinkInput> links, IReadOnlyCollection<PilotIssueInput> issues,
         PilotProgramVessels vessels, Guid programId)

@@ -2795,7 +2795,9 @@
       "state_CONDITIONAL": "सशर्त",
       "state_PHOTO": "फ़ोटो",
       "state_AIS_OR_TIME": "AIS या समय साक्ष्य",
-      "state_DOCUMENT": "दस्तावेज़"
+      "state_DOCUMENT": "दस्तावेज़",
+      "blocker_job_not_submitted": "कार्य सबमिट नहीं हुआ: केवल सबमिट किया गया टग कार्य शुरू हो सकता है।",
+      "blocker_job_cancelled": "कार्य रद्द: रद्द किया गया टग कार्य शुरू नहीं हो सकता।"
     },
     "AuditPack_tsx_copy": {
       "title": "ऑडिट पैक",
@@ -3646,7 +3648,14 @@
       "decision_CONTINUE": "जारी रखें",
       "decision_EXPAND": "विस्तार करें",
       "decision_FIX": "सुधारें",
-      "decision_STOP": "रोकें"
+      "decision_STOP": "रोकें",
+      "completionRequired": "पूर्णता आवश्यक: लिंक किया गया रिकॉर्ड पूर्ण स्थिति में होना चाहिए (उदाहरण के लिए बंद कार्य आदेश या दोष)।",
+      "auditTraceMeaning": "ऑडिट ट्रेल सिद्ध करता है कि रिकॉर्ड किसी व्यक्ति ने लिखा; यह सिद्ध नहीं करता कि रिकॉर्ड या प्रवाह पूर्ण है।",
+      "closeDutyConflict": "आप यह सप्ताह बंद नहीं कर सकते क्योंकि आपने वे साक्ष्य बनाए जिन पर यह आधारित है:",
+      "decisionDutyConflict": "आप कार्यक्रम निर्णय दर्ज नहीं कर सकते क्योंकि आपने वे साक्ष्य बनाए जिन पर यह आधारित है:",
+      "duty_LINK_AUTHOR": "चेकलिस्ट लिंक",
+      "duty_FEEDBACK_AUTHOR": "प्रतिक्रिया",
+      "duty_MEASUREMENT_AUTHOR": "माप"
     }
   },
   "pairs": {

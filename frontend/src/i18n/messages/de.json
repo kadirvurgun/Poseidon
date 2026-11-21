@@ -2795,7 +2795,9 @@
       "state_CONDITIONAL": "Bedingt",
       "state_PHOTO": "Foto",
       "state_AIS_OR_TIME": "AIS- oder Zeitnachweis",
-      "state_DOCUMENT": "Dokument"
+      "state_DOCUMENT": "Dokument",
+      "blocker_job_not_submitted": "Auftrag nicht eingereicht: Nur ein eingereichter Schlepperauftrag kann starten.",
+      "blocker_job_cancelled": "Auftrag storniert: Ein stornierter Schlepperauftrag kann nicht starten."
     },
     "AuditPack_tsx_copy": {
       "title": "Auditpaket",
@@ -3646,7 +3648,14 @@
       "decision_CONTINUE": "Fortsetzen",
       "decision_EXPAND": "Erweitern",
       "decision_FIX": "Korrigieren",
-      "decision_STOP": "Stoppen"
+      "decision_STOP": "Stoppen",
+      "completionRequired": "Abschluss erforderlich: Der verknüpfte Datensatz muss abgeschlossen sein (z. B. ein geschlossener Arbeitsauftrag oder Mangel).",
+      "auditTraceMeaning": "Der Prüfpfad belegt, dass eine Person den Datensatz geschrieben hat; er belegt nicht, dass der Datensatz oder Ablauf abgeschlossen ist.",
+      "closeDutyConflict": "Sie können diese Woche nicht abschließen, weil Sie Nachweise erstellt haben, auf denen sie beruht:",
+      "decisionDutyConflict": "Sie können die Programmentscheidung nicht erfassen, weil Sie Nachweise erstellt haben, auf denen sie beruht:",
+      "duty_LINK_AUTHOR": "Checklisten-Verknüpfungen",
+      "duty_FEEDBACK_AUTHOR": "Rückmeldungen",
+      "duty_MEASUREMENT_AUTHOR": "Messungen"
     }
   },
   "pairs": {

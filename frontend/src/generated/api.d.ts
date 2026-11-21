@@ -14707,6 +14707,8 @@ export interface components {
             requiresAuditTrace: boolean;
             criterion: string;
             locator: string;
+            /** @default false */
+            requiresCompletion: boolean;
         };
         PilotDefectSeverity: {
             mode: string;
@@ -15116,6 +15118,7 @@ export interface components {
             recordTypes: string[];
             /** Format: date-time */
             assessedAt: string;
+            decisionDutyConflicts: string[];
             /** @default ProductOwnerHumanDecisionRequired;EngineRecommendsOnly;AiCannotDecide;SoftwareCannotCompletePilot */
             authority: string;
             /** @default 18.01/sheet:Backlog/row:77-80,96,97,122;18.01/sheet:Sprint Plan/row:14-17;19.01/paragraph:43-67,137-161,255-278;63.05/paragraph:142-156 */
@@ -15273,6 +15276,7 @@ export interface components {
             /** Format: int32 */
             feedbackCount: number;
             allowedOutcomes: string[];
+            closeDutyConflicts: string[];
         };
         PmsCommandCenterDto: {
             /** Format: uuid */
