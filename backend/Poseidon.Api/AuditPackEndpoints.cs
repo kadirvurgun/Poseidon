@@ -42,7 +42,7 @@ public static class AuditPackEndpoints
     }
 
     private static HumanTraceReader[] Readers(HttpContext h, TrustedActor a, Guid vessel) =>
-        AuditReadyEndpoints.Readers(h.RequestServices.GetRequiredService<FederationSettings>().Memberships, a, vessel, DateTimeOffset.UtcNow);
+        AuditReadyEndpoints.Readers(h.RequestServices.GetRequiredService<FederationSettings>().Memberships, a, vessel, h.UtcNow());
 
     private static async Task<IResult> List(HttpContext h, PoseidonDbContext db)
     {
@@ -201,6 +201,6 @@ public static class AuditPackEndpoints
         await SafetyEventCommands.Audit(h, "AuditPackRead", "Success", id);
         if (!export) return Results.Json(pack, AssuranceCommands.Json);
         h.Response.Headers.ContentDisposition = $"attachment; filename=\"audit-pack-{id:D}.json\"";
-        return Results.Json(new AuditPackExportDto("poseidon.audit-pack-export.v1", AuditPackPolicy.Label, Notice, DateTimeOffset.UtcNow, pack), AssuranceCommands.Json);
+        return Results.Json(new AuditPackExportDto("poseidon.audit-pack-export.v1", AuditPackPolicy.Label, Notice, h.UtcNow(), pack), AssuranceCommands.Json);
     }
 }

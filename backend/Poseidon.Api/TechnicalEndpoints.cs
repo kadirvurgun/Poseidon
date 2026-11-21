@@ -131,7 +131,7 @@ public static class TechnicalEndpoints
     }
     private static async Task Receipt(PoseidonDbContext db, HttpContext h, string key, string fingerprint, string action, Guid id, long revision, uint version) {
         db.CommandReceipts.Add(new() { TenantId = db.TenantId, ActorId = Actor(h).Id, Key = key, Fingerprint = fingerprint,
-            Action = action, ResourceId = id, RegisterRevision = revision, RegisterVersion = version, CommittedAt = DateTimeOffset.UtcNow });
+            Action = action, ResourceId = id, RegisterRevision = revision, RegisterVersion = version, CommittedAt = h.UtcNow() });
         await db.SaveChangesAsync(h.RequestAborted);
     }
     private static bool Texts(params string?[] values) => values.All(x => x == null || x.Length <= 2000 && !x.Any(char.IsControl));
@@ -175,7 +175,7 @@ public static class TechnicalEndpoints
     }
     private static async Task<IResult> Plans(Guid vessel, HttpContext h, PoseidonDbContext db) {
         var failure = await Gate(h, db, vessel, "maintenance"); if (failure != null) return failure;
-        var rows = await MaintenanceCurrentReader.Read(vessel, h, db, Actor(h), DateTimeOffset.UtcNow);
+        var rows = await MaintenanceCurrentReader.Read(vessel, h, db, Actor(h), h.UtcNow());
         if (rows == null) return await Fail(h, 403, "permission_denied");
         await Observe(h, vessel);
         return Results.Ok(new MaintenancePage(rows.Select(x => x.Row).ToArray(), Write(Actor(h), vessel, "maintenance"), Actor(h).Permissions.Contains("maintenance.history.read")));
@@ -208,7 +208,7 @@ public static class TechnicalEndpoints
     }
     private static async Task<IResult> SavePlan(Guid vessel, MaintenanceCommand command, HttpContext h, PoseidonDbContext db) {
         var failure = await Gate(h, db, vessel, "maintenance", true); if (failure != null) return failure;
-        if (command.Id == Guid.Empty || command.Inputs == null || command.ReferenceAt == default || command.ReferenceAt > DateTimeOffset.UtcNow ||
+        if (command.Id == Guid.Empty || command.Inputs == null || command.ReferenceAt == default || command.ReferenceAt > h.UtcNow() ||
             command.Inputs.GetType().GetProperties().Where(p => p.PropertyType == typeof(string)).Any(p => !Texts((string?)p.GetValue(command.Inputs))))
             return await Fail(h, 400, "validation_failed");
         foreach (var number in new[] { command.Inputs.IntervalValue, command.Inputs.LastDoneMeter, command.Inputs.CurrentMeter })

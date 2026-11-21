@@ -225,7 +225,7 @@ public static class LifecycleApplicabilityEndpoints
                     var vesselHead = await db.Vessels.SingleAsync(x => x.Id == vessel.Id, ct);
                     db.Entry(vesselHead).Property(x => x.Name).IsModified = true;
                     await db.SaveChangesAsync(ct);
-                    var owningProvenance = await OperationEquipmentContext.Provenance(db, vessel.Id, evaluate.OwningInputs, ct, resource);
+                    var owningProvenance = await OperationEquipmentContext.Provenance(db, vessel.Id, evaluate.OwningInputs, now, ct, resource);
                     snapshot = JsonSerializer.SerializeToElement(new { adapterVersion = ApplicabilityEngine.AdapterVersion, vesselId = vessel.Id,
                         vesselVersion = vesselHead.Version, vesselContextHash = CurrentRegulatoryContext.VesselHash(vesselHead), profileRevision, asOf, facts, qualifications, owningInputs = evaluate.OwningInputs, owningProvenance }, Json);
                     snapshotJson = JsonSerializer.Serialize(snapshot, Json);

@@ -165,7 +165,7 @@ public static class ControlledDocumentEndpoints
         var offset = h.Request.Query.ContainsKey("offset") ? int.Parse(h.Request.Query["offset"]!, CultureInfo.InvariantCulture) : 0;
         var isps = Isps(a);
         var rows = await db.ControlledDocuments.AsNoTracking().Where(x => x.VesselId == vessel && (!x.IspsRestricted || isps)).OrderBy(x => x.Code).ThenBy(x => x.Id).Skip(offset).Take(26).ToArrayAsync(ct);
-        var today = ControlledDocumentChain.Today(DateTimeOffset.UtcNow);
+        var today = ControlledDocumentChain.Today(h.UtcNow());
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "ControlledDocumentRead", "Success", resourceId: vessel);
         return Results.Ok(new ControlledDocumentListDto(rows.Take(25).Select(d => new ControlledDocumentSummaryDto(d.Id, d.VesselId, d.Code, d.Title, d.Classification,
             d.CurrentRevision, d.LatestRevision, d.Version, d.HoldActive, ControlledDocumentPolicy.Retention(d.RetentionPolicyRef, d.RetainUntil, today), d.DisposalState, d.Provenance, d.IspsRestricted)).ToArray(),
@@ -185,10 +185,10 @@ public static class ControlledDocumentEndpoints
         if (d == null) return await Fail(h, 404, "resource_not_found", document);
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "ControlledDocumentRead", "Success", resourceId: document);
         h.Response.Headers.ETag = $"\"{d.Version}\"";
-        return Results.Ok(await Dto(db, a!, d, ct));
+        return Results.Ok(await Dto(db, a!, d, h.UtcNow(), ct));
     }
 
-    internal static async Task<ControlledDocumentDto> Dto(PoseidonDbContext db, TrustedActor a, ControlledDocument d, CancellationToken ct)
+    internal static async Task<ControlledDocumentDto> Dto(PoseidonDbContext db, TrustedActor a, ControlledDocument d, DateTimeOffset now, CancellationToken ct)
     {
         var revisions = await db.ControlledDocumentRevisions.AsNoTracking().Where(x => x.DocumentId == d.Id && x.VesselId == d.VesselId).OrderBy(x => x.Revision).ToArrayAsync(ct);
         var verifications = await db.ControlledDocumentVerifications.AsNoTracking().Where(x => x.DocumentId == d.Id && x.VesselId == d.VesselId)
@@ -215,7 +215,6 @@ public static class ControlledDocumentEndpoints
             .OrderBy(x => x.Revision).ThenBy(x => x.AcknowledgedAt).ThenBy(x => x.Id).Take(500).ToArrayAsync(ct);
         var policy = ControlledDocumentSecurityPolicy.Content(d.Classification, RestrictedContent(a));
         var canAcknowledge = Authority(a, ControlledDocumentSecurityPolicy.AcknowledgePermission);
-        var now = DateTimeOffset.UtcNow;
         return new(d.Id, d.VesselId, d.Code, d.Title, d.Classification, d.CurrentRevision, d.LatestRevision, d.Version, d.HoldActive, d.HoldActive ? d.HoldPlacedAt : null,
             ControlledDocumentPolicy.Retention(d.RetentionPolicyRef, d.RetainUntil, ControlledDocumentChain.Today(now)), d.RetentionPolicyRef, d.RetainUntil,
             d.DisposalState, "NOT_STARTED", d.Provenance,
@@ -309,9 +308,9 @@ public static class ControlledDocumentEndpoints
             var current = document == null ? null : await ControlledDocumentChain.LoadAsync(db, vessel, document.Value, expected, ct);
             var d = await apply(db, a, command, current, ct);
             await db.SaveChangesAsync(ct);
-            var outcome = JsonSerializer.Serialize(await Dto(db, a, d, ct), Output);
+            var outcome = JsonSerializer.Serialize(await Dto(db, a, d, h.UtcNow(), ct), Output);
             db.ControlledDocumentReceipts.Add(new() { TenantId = a.TenantId, ActorId = a.Id, Key = key, VesselId = vessel, DocumentId = d.Id, Action = action,
-                Fingerprint = fingerprint, OutcomeJson = outcome, SavedAt = DateTimeOffset.UtcNow });
+                Fingerprint = fingerprint, OutcomeJson = outcome, SavedAt = h.UtcNow() });
             await db.SaveChangesAsync(ct);
             var live = Actor(h);
             if (live == null || live.Id != a.Id || live.TenantId != a.TenantId || !allowed(live, vessel) || !await Scope(db, live, vessel, ct))

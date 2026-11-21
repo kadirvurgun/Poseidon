@@ -91,7 +91,7 @@ internal static class CurrentRegulatoryContext
                 var currentIds = ComplianceInputContext.DocumentIds(refs);
                 var available = await db.ControlEvidenceHeads.CountAsync(b => b.VesselId == vessel && b.Kind == "Evidence" && currentIds.Contains(b.Id), ct);
                 if (available != currentIds.Length) causes.Add("OWNING_INPUT_CHANGED");
-                else if (!MatchesCapturedJson(JsonSerializer.SerializeToElement(await OperationEquipmentContext.Provenance(db, vessel, refs, ct), RegulatoryQualificationEndpoints.Json), provenance)) causes.Add("OWNING_INPUT_CHANGED");
+                else if (!MatchesCapturedJson(JsonSerializer.SerializeToElement(await OperationEquipmentContext.Provenance(db, vessel, refs, now, ct), RegulatoryQualificationEndpoints.Json), provenance)) causes.Add("OWNING_INPUT_CHANGED");
             }
             foreach (var capture in snapshot.RootElement.GetProperty("qualifications").EnumerateArray()) {
                 var q = await db.RegulatoryQualificationEvents.AsNoTracking().SingleAsync(x => x.RuleId == capture.GetProperty("ruleId").GetGuid() && x.Revision == capture.GetProperty("revision").GetInt64(), ct);

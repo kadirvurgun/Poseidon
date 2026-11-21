@@ -71,8 +71,10 @@ public sealed partial class DirectoryWorkspaceTests
     }
     [Fact]
     public async Task Defect_temporal_projection_refreshes_after_expiry_while_exact_durable_outcome_and_safety_qualification_stay_unchanged() {
-        var clock=new DefectClock(new(2026,1,1,0,0,0,TimeSpan.Zero));await using var host=Host().WithWebHostBuilder(b=>b.ConfigureTestServices(s=>s.AddSingleton<TimeProvider>(clock)));
-        using var client=Client(host);DefectPermissions(host.Services);var command=DefectDraft() with{Fields=new(){["temporary_measure"]=new("Known","FICTIONAL declared measure"),["temporary_measure_expires_at"]=new("Known","2026-01-02T00:00:00Z")}};var key=Guid.NewGuid().ToString("D");
+        // Anchor the fake clock to the real date (yesterday 00:00Z): every endpoint now reads this clock, so a
+        // fixed past date would disagree with seeded/real-time fixtures.
+        var start=new DateTimeOffset(DateTime.UtcNow.Date,TimeSpan.Zero).AddDays(-1);var clock=new DefectClock(start);await using var host=Host().WithWebHostBuilder(b=>b.ConfigureTestServices(s=>s.AddSingleton<TimeProvider>(clock)));
+        using var client=Client(host);DefectPermissions(host.Services);var command=DefectDraft() with{Fields=new(){["temporary_measure"]=new("Known","FICTIONAL declared measure"),["temporary_measure_expires_at"]=new("Known",start.AddDays(1).ToString("yyyy-MM-dd'T'HH:mm:ss'Z'",System.Globalization.CultureInfo.InvariantCulture))}};var key=Guid.NewGuid().ToString("D");
         using var first=await DefectSend(client,command,key);var before=(await first.Content.ReadFromJsonAsync<DefectRecordDto>(Ct))!;Assert.Equal("NOT_DUE_DECLARED",before.Temporal.TemporaryMeasureState);
         await using var db=Db();var receiptBefore=(await db.DefectReceipts.AsNoTracking().SingleAsync(r=>r.DefectId==command.Id,Ct)).OutcomeJson;
         clock.Value=clock.Value.AddDays(2);using var replay=await DefectSend(client,command,key);Assert.Equal(HttpStatusCode.OK,replay.StatusCode);var after=(await replay.Content.ReadFromJsonAsync<DefectRecordDto>(Ct))!;

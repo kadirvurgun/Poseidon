@@ -18,13 +18,13 @@ public sealed class CrewLookupPolicyTests
         Assert.True(policy.Allows(position, new(2026, 11, 1))); Assert.False(policy.Allows(position, new(2026, 12, 1)));
         position.Department = "invented"; Assert.False(policy.Allows(position, new(2026, 11, 1))); position.Department = null;
         position.TenantId = Guid.NewGuid(); Assert.False(policy.Allows(position, new(2026, 11, 1))); position.TenantId = tenant;
-        Assert.False(policy.AllowsReference(tenant, vessel, id, "old", [position]));
+        Assert.False(policy.AllowsReference(tenant, vessel, id, "old", [position], DateTimeOffset.UtcNow));
         policy.Positions = [rule, rule]; Assert.False(policy.Configured);
     }
     [Fact]
     public void Missing_timezone_period_or_policy_is_unavailable_but_an_incomplete_draft_may_keep_position_unknown() {
         var policy = new CrewPositionPolicy();
-        Assert.False(policy.Configured); Assert.True(policy.AllowsReference(Guid.NewGuid(), Guid.NewGuid(), null, null, []));
+        Assert.False(policy.Configured); Assert.True(policy.AllowsReference(Guid.NewGuid(), Guid.NewGuid(), null, null, [], DateTimeOffset.UtcNow));
         policy.Version = "synthetic"; policy.SourceReference = "synthetic-test"; Assert.False(policy.Configured);
         policy.TimeZone = "UTC"; Assert.False(policy.Configured);
         policy.PeriodSemantics = "StartInclusiveEndExclusive"; Assert.True(policy.Configured);

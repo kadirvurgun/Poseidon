@@ -39,7 +39,7 @@ public static class ControlledDocumentAccessEndpoints
                 r.ContentSha256, c.DisplayedContentSha256, c.StatementAccepted, already) is { } blocked)
             throw new ControlledDocumentException(blocked);
         db.ControlledDocumentAcknowledgements.Add(new() { TenantId = d.TenantId, Id = Guid.NewGuid(), VesselId = d.VesselId, DocumentId = d.Id, Revision = revision, ActorId = a.Id,
-            ContentSha256 = r.ContentSha256, Statement = ControlledDocumentSecurityPolicy.AcknowledgementStatement, AcknowledgedAt = DateTimeOffset.UtcNow });
+            ContentSha256 = r.ContentSha256, Statement = ControlledDocumentSecurityPolicy.AcknowledgementStatement, AcknowledgedAt = h.UtcNow() });
     }
 
     // Live policy for the bytes route; null = not a controlled-document file.
@@ -100,7 +100,7 @@ public static class ControlledDocumentAccessEndpoints
                     if (ControlledDocumentSecurityPolicy.ContentBlocker(d.Classification, restricted, r.IntakeState, d.DisposalState) is { } blocked)
                     { await tx.RollbackAsync(CancellationToken.None); return await ControlledDocumentEndpoints.Fail(h, blocked == "document_download_restricted" ? 403 : 409, blocked, document); }
                     var policy = ControlledDocumentSecurityPolicy.Content(d.Classification, restricted);
-                    var now = DateTimeOffset.UtcNow; recordId = Guid.NewGuid();
+                    var now = h.UtcNow(); recordId = Guid.NewGuid();
                     db.ControlledDocumentAccessRecords.Add(new() { TenantId = a.TenantId, Id = recordId, VesselId = vessel, DocumentId = d.Id, Revision = r.Revision, FileId = r.FileId,
                         ActorId = a.Id, Classification = d.Classification, Purpose = command.Purpose!, PolicyBasis = policy.Basis,
                         Attribution = ControlledDocumentSecurityPolicy.Attribution(d.Code, r.Revision, recordId, a.Id, now, d.Classification), ContentSha256 = r.ContentSha256, IssuedAt = now });
@@ -130,7 +130,7 @@ public static class ControlledDocumentAccessEndpoints
         var file = await db.StoredFiles.AsNoTracking().SingleOrDefaultAsync(f => f.Id == record.FileId && f.VesselId == vessel, ct);
         if (file == null || !string.Equals(file.Checksum, record.ContentSha256, StringComparison.OrdinalIgnoreCase))
             return await ControlledDocumentEndpoints.Fail(h, 409, "clean_file_unavailable", document);
-        var expires = DateTimeOffset.UtcNow.AddSeconds(h.RequestServices.GetRequiredService<SecureFileSettings>().CapabilitySeconds);
+        var expires = h.UtcNow().AddSeconds(h.RequestServices.GetRequiredService<SecureFileSettings>().CapabilitySeconds);
         var token = h.RequestServices.GetRequiredService<FileCapabilities>().Issue(a.TenantId, a.Id, vessel, file.Id, file.Revision, expires);
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, AuditAction, "Authorized", resourceId: document);
         var print = ControlledDocumentSecurityPolicy.Content(record.Classification, ControlledDocumentEndpoints.RestrictedContent(live)).Print;

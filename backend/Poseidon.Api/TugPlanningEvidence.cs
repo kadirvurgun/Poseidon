@@ -22,7 +22,7 @@ public static class TugPlanningEvidenceAdapter
     public static async Task<TugPlanningEvidence> Read(PoseidonDbContext db, TrustedActor actor, TugPlanningPolicy policy, MaintenanceObservationSettings observationSettings,
         Guid jobId, TugPlanInputs plan, CancellationToken ct, FederationSettings? federation = null, CrewFilePolicy? files = null,
         HttpContext? http = null, DateTimeOffset? readAt = null) {
-        var now = readAt ?? DateTimeOffset.UtcNow; var bp = new List<TugBpEvidence>();
+        var now = readAt ?? http?.UtcNow() ?? throw new ArgumentException("A request clock or explicit read time is required."); var bp = new List<TugBpEvidence>();
         var visible = await actor.Scope(db.Vessels).Where(v => v.Kind == VesselKind.Tug).Select(v => v.Id).ToArrayAsync(ct);
         foreach (var tug in plan.AssignedTugs.Where(visible.Contains)) {
             var source = policy.Current(now) ? policy.BpSources.SingleOrDefault(s => s.TenantId == actor.TenantId && s.VesselId == tug) : null;

@@ -93,7 +93,7 @@ public static partial class TugEndpoints
                     "validation_failed" => await LifecycleFail(h, 400, "validation_failed", id),
                     _ => await LifecycleFail(h, 409, "invalid_state", id)
                 };
-            var now = DateTimeOffset.UtcNow;
+            var now = h.UtcNow();
             job.Status = transition.ToState; job.Revision = checked(job.Revision + 1); job.SavedAt = now;
             if (operation == TugJobCommand.Submit) job.SubmittedAt = now;
             else { job.CancelledAt = now; job.CancelReason = command.Reason; }

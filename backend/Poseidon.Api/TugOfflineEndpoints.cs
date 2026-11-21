@@ -44,10 +44,10 @@ public static partial class TugEndpoints
     private static void TugOfflineEvent(PoseidonDbContext db, TugOfflineEnrollment e, string action, DateTimeOffset now) => db.TugOfflineLifecycles.Add(new() {
         TenantId = e.TenantId, Id = Guid.NewGuid(), EnrollmentId = e.Id, ActorId = e.ActorId, VesselId = e.VesselId, JobId = e.JobId, Action = action, RecordedAt = now });
     private static bool TugOfflineCurrent(HttpContext h, TugOfflineEnrollment e) => e.RevokedAt == null && Planning(h).Offline.Configured &&
-        Planning(h).Scope(Actor(h), e.VesselId) != null && e.PolicyDigest == Planning(h).Offline.Digest(Planning(h));
+        Planning(h).Scope(Actor(h), e.VesselId, h.UtcNow()) != null && e.PolicyDigest == Planning(h).Offline.Digest(Planning(h));
     // Ordinary current write, job, vessel, mode, policy and every assigned reference precede inventory/recovery/history.
     private static async Task<(TugJob Job, TugDraftPlan Plan)?> TugOfflineOwner(Guid id, Guid vessel, HttpContext h, PoseidonDbContext db) {
-        if (!PlanWrite(Actor(h), vessel) || Planning(h).Scope(Actor(h), vessel) == null) return null;
+        if (!PlanWrite(Actor(h), vessel) || Planning(h).Scope(Actor(h), vessel, h.UtcNow()) == null) return null;
         var job = await db.TugJobs.SingleOrDefaultAsync(j => j.Id == id && j.VesselId == vessel, h.RequestAborted);
         var plan = await db.TugDraftPlans.SingleOrDefaultAsync(p => p.JobId == id && p.VesselId == vessel, h.RequestAborted);
         if (job == null || plan == null) return null;

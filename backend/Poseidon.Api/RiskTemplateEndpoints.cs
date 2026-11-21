@@ -70,19 +70,19 @@ public static class RiskTemplateEndpoints
         g.MapGet("/risk-templates/applicable", (HttpContext h, PoseidonDbContext db) => Applicable(h, db)).WithName("RiskTemplateApplicable").Produces<RiskApplicableTemplatesDto>();
         g.MapGet("/risk-templates/{id:guid}", (Guid id, HttpContext h, PoseidonDbContext db) => Detail(id, h, db)).WithName("RiskTemplateRead").Produces<RiskTemplateDetailDto>();
         g.MapPost("/risk-templates", (HttpContext h, PoseidonDbContext db) => RiskCommands.Run<RiskTemplateCreateCommand>(h, db, "RiskTemplateCreate", Command, false, null, null,
-                (a, _) => CanWrite(a), c => c.Id, Create, Fresh)).WithName("RiskTemplateCreate").Accepts<RiskTemplateCreateCommand>("application/json").Produces<RiskTemplateDetailDto>();
+                (a, _) => CanWrite(a), c => c.Id, Create, Fresh(h))).WithName("RiskTemplateCreate").Accepts<RiskTemplateCreateCommand>("application/json").Produces<RiskTemplateDetailDto>();
         g.MapPut("/risk-templates/{id:guid}", (Guid id, HttpContext h, PoseidonDbContext db) => RiskCommands.Run<RiskTemplateUpdateCommand>(h, db, "RiskTemplateUpdate", Command, false, id, null,
-                (a, _) => CanWrite(a), _ => id, Update, Fresh)).WithName("RiskTemplateUpdate").Accepts<RiskTemplateUpdateCommand>("application/json").Produces<RiskTemplateDetailDto>();
+                (a, _) => CanWrite(a), _ => id, Update, Fresh(h))).WithName("RiskTemplateUpdate").Accepts<RiskTemplateUpdateCommand>("application/json").Produces<RiskTemplateDetailDto>();
         g.MapPost("/risk-templates/{id:guid}/submit", (Guid id, HttpContext h, PoseidonDbContext db) => RiskCommands.Run<RiskTemplateSubmitCommand>(h, db, "RiskTemplateSubmit", Command, false, id, null,
-                (a, _) => CanWrite(a), _ => id, Submit, Fresh)).WithName("RiskTemplateSubmit").Accepts<RiskTemplateSubmitCommand>("application/json").Produces<RiskTemplateDetailDto>().Produces<RiskFailure>(422);
+                (a, _) => CanWrite(a), _ => id, Submit, Fresh(h))).WithName("RiskTemplateSubmit").Accepts<RiskTemplateSubmitCommand>("application/json").Produces<RiskTemplateDetailDto>().Produces<RiskFailure>(422);
         g.MapPost("/risk-templates/{id:guid}/review", (Guid id, HttpContext h, PoseidonDbContext db) => RiskCommands.Run<RiskTemplateReviewCommand>(h, db, "RiskTemplateReview", Command, false, id, null,
-                (a, _) => CanPublish(a), _ => id, Review, Fresh)).WithName("RiskTemplateReview").Accepts<RiskTemplateReviewCommand>("application/json").Produces<RiskTemplateDetailDto>();
+                (a, _) => CanPublish(a), _ => id, Review, Fresh(h))).WithName("RiskTemplateReview").Accepts<RiskTemplateReviewCommand>("application/json").Produces<RiskTemplateDetailDto>();
         g.MapPost("/risk-templates/{id:guid}/revise", (Guid id, HttpContext h, PoseidonDbContext db) => RiskCommands.Run<RiskTemplateReviseCommand>(h, db, "RiskTemplateRevise", Command, false, id, null,
-                (a, _) => CanWrite(a), _ => id, Revise, Fresh)).WithName("RiskTemplateRevise").Accepts<RiskTemplateReviseCommand>("application/json").Produces<RiskTemplateDetailDto>();
+                (a, _) => CanWrite(a), _ => id, Revise, Fresh(h))).WithName("RiskTemplateRevise").Accepts<RiskTemplateReviseCommand>("application/json").Produces<RiskTemplateDetailDto>();
         g.MapPost("/risk-templates/{id:guid}/suggestions", (Guid id, HttpContext h, PoseidonDbContext db) => RiskCommands.Run<RiskTemplateSuggestCommand>(h, db, "RiskTemplateSuggest", Command, false, id, null,
-                (a, _) => CanSuggest(a), _ => id, Suggest, FreshForSuggester)).WithName("RiskTemplateSuggest").Accepts<RiskTemplateSuggestCommand>("application/json").Produces<RiskTemplateDetailDto>();
+                (a, _) => CanSuggest(a), _ => id, Suggest, FreshForSuggester(h))).WithName("RiskTemplateSuggest").Accepts<RiskTemplateSuggestCommand>("application/json").Produces<RiskTemplateDetailDto>();
         g.MapPost("/risk-templates/{id:guid}/suggestions/{suggestionId:guid}/review", (Guid id, Guid suggestionId, HttpContext h, PoseidonDbContext db) =>
-                RiskCommands.Run<RiskTemplateSuggestionReviewCommand>(h, db, "RiskTemplateSuggestionReview", Command, false, id, suggestionId, (a, _) => CanWrite(a), _ => id, SuggestionReview, Fresh))
+                RiskCommands.Run<RiskTemplateSuggestionReviewCommand>(h, db, "RiskTemplateSuggestionReview", Command, false, id, suggestionId, (a, _) => CanWrite(a), _ => id, SuggestionReview, Fresh(h)))
             .WithName("RiskTemplateSuggestionReview").Accepts<RiskTemplateSuggestionReviewCommand>("application/json").Produces<RiskTemplateDetailDto>();
         g.MapGet("/risk-methods", (HttpContext h, PoseidonDbContext db) => Methods(h, db)).WithName("RiskMethodList").Produces<RiskMethodListDto>();
         g.MapPost("/risk-methods", (HttpContext h, PoseidonDbContext db) => RiskCommands.Run<RiskMethodCreateCommand>(h, db, "RiskMethodCreate", Command, false, null, null,
@@ -303,11 +303,10 @@ public static class RiskTemplateEndpoints
         return Results.Json(dto, RiskCommands.Json);
     }
 
-    private static async Task<object?> Fresh(PoseidonDbContext db, TrustedActor actor, Guid? _, Guid id, CancellationToken ct) =>
-        CanRead(actor) ? await Describe(db, actor, id, DateTimeOffset.UtcNow, ct) : null;
+    private static Func<PoseidonDbContext, TrustedActor, Guid?, Guid, CancellationToken, Task<object?>> Fresh(HttpContext h) =>
+        async (db, actor, _, id, ct) => CanRead(actor) ? await Describe(db, actor, id, h.UtcNow(), ct) : null;
     // A suggester may lack template read; the receipt then confirms only the template identity.
-    private static async Task<object?> FreshForSuggester(PoseidonDbContext db, TrustedActor actor, Guid? vessel, Guid id, CancellationToken ct) =>
-        await Fresh(db, actor, vessel, id, ct);
+    private static Func<PoseidonDbContext, TrustedActor, Guid?, Guid, CancellationToken, Task<object?>> FreshForSuggester(HttpContext h) => Fresh(h);
 
     internal static async Task<RiskTemplateDetailDto?> Describe(PoseidonDbContext db, TrustedActor actor, Guid id, DateTimeOffset now, CancellationToken ct)
     {

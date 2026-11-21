@@ -89,10 +89,10 @@ public static class CrewProfileEndpoints
             else row.Revision = checked(row.Revision + 1);
             foreach (var field in command.Fields) row.Capture(field, protection.Encrypt(db.TenantId, owner.PersonId, field, command.Data.Lexical(field)));
             db.CrewPersonalProfileRevisions.Add(new() { TenantId = db.TenantId, PersonId = owner.PersonId, Revision = row.Revision,
-                PolicyVersion = policy.Version, Provenance = imported ? "ImportedDeclaredUnverified" : "UserDeclaredUnverified", SavedAt = DateTimeOffset.UtcNow });
+                PolicyVersion = policy.Version, Provenance = imported ? "ImportedDeclaredUnverified" : "UserDeclaredUnverified", SavedAt = h.UtcNow() });
             await db.SaveChangesAsync(h.RequestAborted);
             db.CommandReceipts.Add(new() { TenantId = db.TenantId, ActorId = a.Id, Key = key, Action = "CrewProfileSave", Fingerprint = fingerprint,
-                ResourceId = owner.PersonId, RegisterRevision = row.Revision, RegisterVersion = row.Version, CommittedAt = DateTimeOffset.UtcNow });
+                ResourceId = owner.PersonId, RegisterRevision = row.Revision, RegisterVersion = row.Version, CommittedAt = h.UtcNow() });
             await db.SaveChangesAsync(h.RequestAborted); if (tx != null) await tx.CommitAsync(h.RequestAborted);
             await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "CrewProfileSave", "Success", resourceId: owner.PersonId);
             return Results.Ok(new CrewSavedDto(owner.PersonId, row.Revision, row.Version, false));

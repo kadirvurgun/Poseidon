@@ -15,7 +15,7 @@ public sealed class CrewAssignmentPolicy
     public string[] PlannedStatuses { get; set; } = [];
     public string[] Provenances { get; set; } = [];
     public bool RequireSourceObservation { get; set; } = true;
-    public bool Configured => Version.Length is > 0 and <= 80 && ReferenceDate(DateTimeOffset.UtcNow) != null && EffectiveStatuses.Length > 0 && Provenances.Length > 0 &&
+    public bool Configured => Version.Length is > 0 and <= 80 && ReferenceDate(DateTimeOffset.UnixEpoch) != null /* zone resolvability only; no clock read */ && EffectiveStatuses.Length > 0 && Provenances.Length > 0 &&
         EffectiveStatuses.Concat(PlannedStatuses).All(x => x.Length is > 0 and <= 32 && x != "Draft") &&
         EffectiveStatuses.Intersect(PlannedStatuses, StringComparer.Ordinal).Any() == false;
     public bool CanDeclare(string? status, string? version, TrustedActor a) => status == null || Configured && version == Version &&
@@ -42,7 +42,7 @@ public static class CrewAssignmentSelectionEndpoints
         TimeZoneInfo zone;
         try { zone = TimeZoneInfo.FindSystemTimeZoneById(policy.TimeZone); }
         catch (Exception e) when (e is TimeZoneNotFoundException or InvalidTimeZoneException or ArgumentException) { return Results.Ok(new { state = "PolicyUnavailable" }); }
-        var now = DateTimeOffset.UtcNow;
+        var now = h.UtcNow();
         var date = DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(now, zone).DateTime);
         var visible = a.Scope(db.Vessels).Select(x => x.Id);
         var fingerprint = policy.Fingerprint();
@@ -59,7 +59,7 @@ public static class CrewAssignmentSelectionEndpoints
         if (position != null) {
             var declaration = await db.CrewAssignments.AsNoTracking().SingleAsync(x => x.Id == selection.AssignmentId, h.RequestAborted);
             var lookup = await CrewPositionPolicy.Current(h, db, vessel);
-            if (!lookup.Allows(position) || declaration.PositionPolicyVersion != lookup.Version || declaration.PositionPolicyFingerprint != lookup.Fingerprint()) position = null;
+            if (!lookup.AllowsAt(position, now) || declaration.PositionPolicyVersion != lookup.Version || declaration.PositionPolicyFingerprint != lookup.Fingerprint()) position = null;
         }
         return Results.Ok(new { selection.State, selection.AssignmentId, selection.VesselId, position = position == null ? null : new { position.Id, position.Rank, position.Capacity, position.Department, position.Provenance }, policyVersion = policy.Version, referenceDate = date, timeZone = zone.Id,
             authority = "UnverifiedDeclaration;NoQualificationOrSafetyDecision" });

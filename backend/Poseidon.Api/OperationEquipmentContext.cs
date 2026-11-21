@@ -45,7 +45,7 @@ internal static class OperationEquipmentContext
         }
         return true;
     }
-    internal static async Task<object[]> Provenance(PoseidonDbContext db, Guid vessel, OwningInputReferences? refs, CancellationToken ct, Guid? evaluation = null) {
+    internal static async Task<object[]> Provenance(PoseidonDbContext db, Guid vessel, OwningInputReferences? refs, DateTimeOffset now, CancellationToken ct, Guid? evaluation = null) {
         if (refs == null) return [];
         var ids = new HashSet<(Guid Id, long? Revision)>(new[] { refs.OperationId, refs.CargoPlanId, refs.WinchFitmentId, refs.ClassPackId, refs.MsmdId }.Concat(refs.RoleAssessmentIds?.Select(x => (Guid?)x) ?? []).Where(x => x != null).Select(x => (x!.Value, (long?)null)));
         var result = new List<object>();
@@ -67,7 +67,7 @@ internal static class OperationEquipmentContext
                     binding.JobId, binding.JobRevision, binding.PlanRevision, binding.AssetId, binding.AssetRevision, binding.ServiceId, binding.ServiceRevision, reviews });
             }
         }
-        result.AddRange(await ComplianceInputContext.Provenance(db, vessel, refs, ct, evaluation));
+        result.AddRange(await ComplianceInputContext.Provenance(db, vessel, refs, now, ct, evaluation));
         return result.ToArray();
     }
     internal static async Task Apply(PoseidonDbContext db, FederationSettings settings, Guid vessel, RegulatoryQualificationEvent qualification,
