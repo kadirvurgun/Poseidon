@@ -19,7 +19,7 @@ public static class AssuranceFixtures
     {
         if (!db.IsAdministrativeImport || db.Database.CurrentTransaction == null)
             throw new UnauthorizedAccessException("Synthetic assurance fixtures require an administrative audited transaction.");
-        var now = DateTimeOffset.UtcNow;
+        var now = db.Clock.GetUtcNow();
         foreach (var v in vessels.Where(v => v.Kind == VesselKind.Ship))
         {
             var id = InspectionId(v.Id);

@@ -28,7 +28,7 @@ internal static class OperationEquipmentCommands
             var rule = await db.RuleRevisions.AsNoTracking().SingleOrDefaultAsync(r => r.Id == pin.RuleId && r.Revision == pin.RuleRevision, ct);
             var q = rule == null ? null : await CurrentRegulatoryContext.Qualification(db, rule, ct);
             var policy = q == null ? null : RegulatoryQualificationEndpoints.Content(q).OwningDocuments?.SingleOrDefault(p => p.DocumentKind == OperationEquipmentInputs.Kind(content));
-            if (policy == null || q?.State != "IN_FORCE" || !TugOwnedCapacityConsumer.CurrentQualifier(settings, q, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow) || a.RoleContext?.Split(',').Contains(policy.AuthorRole.GetValueOrDefault().ToString("D")) != true || policy.AuthorRole != content.OwnerRole) return false;
+            if (policy == null || q?.State != "IN_FORCE" || !TugOwnedCapacityConsumer.CurrentQualifier(settings, q, db.Clock.GetUtcNow(), db.Clock.GetUtcNow()) || a.RoleContext?.Split(',').Contains(policy.AuthorRole.GetValueOrDefault().ToString("D")) != true || policy.AuthorRole != content.OwnerRole) return false;
         }
         return pins.Length > 0;
     }

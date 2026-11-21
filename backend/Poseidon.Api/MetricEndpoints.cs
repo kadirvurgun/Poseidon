@@ -102,7 +102,7 @@ public static class MetricEndpoints
         // One read-only snapshot for scope and every source row of this scalar.
         await using (var tx = await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.RepeatableRead, ct))
         {
-            var asOf = DateTimeOffset.UtcNow;
+            var asOf = h.UtcNow();
             var vessels = actor.Scope(db.Vessels.AsNoTracking());
             if (vesselId is { } selected)
             {

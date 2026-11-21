@@ -84,9 +84,9 @@ public static partial class TugEndpoints
         var bp = await db.TugProfiles.AsNoTracking().SingleOrDefaultAsync(p => p.VesselId == vessel, h.RequestAborted);
         var assets = a.Permissions.Contains("equipment.read") ? await db.Assets.AsNoTracking().Where(x => x.VesselId == vessel)
             .Select(x => new { x.Id, x.Level, x.EquipmentType, x.Revision, x.Provenance }).ToArrayAsync(h.RequestAborted) : null;
-        var policy = Planning(h); var configuredContext = policy.Scope(a, vessel) != null;
+        var policy = Planning(h); var configuredContext = policy.Scope(a, vessel, h.UtcNow()) != null;
         var bindings = configuredContext ? policy.Contexts.Where(x => x.TenantId == a.TenantId && x.VesselId == vessel).Take(2).ToArray() : [];
-        var binding = configuredContext && bindings.Length == 1 && bindings[0].ObservedAt <= DateTimeOffset.UtcNow && bindings[0].SourceRevision > 0 &&
+        var binding = configuredContext && bindings.Length == 1 && bindings[0].ObservedAt <= h.UtcNow() && bindings[0].SourceRevision > 0 &&
             policy.Types.Any(t => t.Code == bindings[0].Code) ? bindings[0] : null;
         // DEV-080 role lens: server-provisioned role labels and Tug-mode lens references only;
         // Ship Mode screens appear only when the server lens policy grants mode.cross.
@@ -121,7 +121,7 @@ public static partial class TugEndpoints
             return await Fail(h, 400, "invalid_request");
         // DEV-082 short/frequent board: default excludes only explicit Cancelled requests. A relative
         // window uses the server clock and keeps requests whose start is still UNKNOWN visible.
-        var now = DateTimeOffset.UtcNow; var horizon = window == "" ? now : now.AddHours(TugBoardWindows.Hours[window]);
+        var now = h.UtcNow(); var horizon = window == "" ? now : now.AddHours(TugBoardWindows.Hours[window]);
         var jobs = await db.TugJobs.AsNoTracking().Where(j => j.VesselId == vessel && (priority == "" || j.Priority == priority) &&
             (state == "" ? j.Status != TugJobLifecycle.Cancelled : j.Status == state) &&
             (window == "" || j.RequestedStart == null || j.RequestedStart < horizon && (j.RequestedEnd ?? j.RequestedStart) >= now) &&
@@ -210,7 +210,7 @@ public static partial class TugEndpoints
                 db.TugJobs.Add(job);
             } else job.Revision = checked(job.Revision + 1);
             if (command.Inputs.RequestOwner is Guid role && !await db.TugOwners.AnyAsync(o => o.VesselId == vessel && o.Id == role, ct)) db.TugOwners.Add(new() { TenantId = a.TenantId, VesselId = vessel, Id = role });
-            job.Apply(command.Inputs); job.Provenance = "UserDeclaredUnverified";
+            job.Apply(command.Inputs, h.UtcNow()); job.Provenance = "UserDeclaredUnverified";
             var snapshot = job.Snapshot(); db.TugJobRevisions.Add(snapshot); await db.SaveChangesAsync(ct);
             db.CommandReceipts.Add(new() { TenantId = a.TenantId, ActorId = a.Id, Key = key, Action = "TugSave", Fingerprint = fingerprint,
                 ResourceId = job.Id, RegisterRevision = job.Revision, RegisterVersion = job.Version, CommittedAt = job.SavedAt });

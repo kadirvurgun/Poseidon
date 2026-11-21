@@ -10,19 +10,19 @@ internal static class TechnicalFixtures
             if (await db.Assets.FindAsync([v.TenantId, v.Id], ct) == null) {
                 var a = new Asset { TenantId = v.TenantId, VesselId = v.Id, Id = v.Id,
                     Code = "SYNTHETIC-UNVERIFIED", Name = "FICTIONAL equipment", Provenance = "SyntheticUnverified" };
-                db.Assets.Add(a); db.AssetRevisions.Add(a.Snapshot());
+                db.Assets.Add(a); db.AssetRevisions.Add(a.Snapshot(db.Clock.GetUtcNow()));
             }
             if (await db.MaintenanceObservations.FindAsync([v.TenantId, v.Id], ct) == null)
                 db.MaintenanceObservations.Add(new() { TenantId = v.TenantId, Id = v.Id, VesselId = v.Id, AssetId = v.Id,
                     Source = "synthetic-unconfigured", PolicyVersion = "synthetic-empty-v1", SourceRevision = 1, Kind = "Meter", Unit = "Unknown",
-                    RecordedAt = DateTimeOffset.UtcNow, Provenance = "SyntheticUnverified" });
+                    RecordedAt = db.Clock.GetUtcNow(), Provenance = "SyntheticUnverified" });
             if (await db.MaintenanceJobs.FindAsync([v.TenantId, v.Id, v.Id], ct) == null)
                 db.MaintenanceJobs.Add(new() { TenantId = v.TenantId, VesselId = v.Id, Id = v.Id,
                     Code = "SYNTHETIC-UNVERIFIED", Title = "FICTIONAL draft job", Provenance = "SyntheticUnverified" });
             if (await db.MaintenancePlans.FindAsync([v.TenantId, v.Id], ct) == null) {
                 var plan = new MaintenancePlan { TenantId = v.TenantId, VesselId = v.Id, Id = v.Id, AssetId = v.Id,
                     JobId = v.Id, Provenance = "SyntheticUnverified" };
-                db.MaintenancePlans.Add(plan); db.MaintenancePlanRevisions.Add(plan.Snapshot(DateTimeOffset.UnixEpoch, 1));
+                db.MaintenancePlans.Add(plan); db.MaintenancePlanRevisions.Add(plan.Snapshot(DateTimeOffset.UnixEpoch, 1, db.Clock.GetUtcNow()));
             }
         }
     }

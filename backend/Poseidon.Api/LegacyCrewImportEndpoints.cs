@@ -96,7 +96,7 @@ public static class LegacyCrewImportEndpoints
             b.TableJson = protection.SealHistoricalImport(b, source);
             if (protection.OpenHistoricalImport(b) != source) throw new CryptographicException("protected_storage_unavailable");
             b.BindingsJson = "[]"; b.SourceHash = ""; b.SourceName = "name-withheld.xlsx"; b.SourceLocator = "protected-history";
-            b.LegacyProtectedAt = DateTimeOffset.UtcNow;
+            b.LegacyProtectedAt = h.UtcNow();
             // State/revision/template/capture policy/preview/committed facts remain exactly as captured.
             await db.SaveChangesAsync(ct);
             db.CommandReceipts.Add(new() { TenantId = a.TenantId, ActorId = a.Id, Key = key, Action = "CrewImportLegacyConvert",

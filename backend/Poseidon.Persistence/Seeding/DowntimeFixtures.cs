@@ -17,7 +17,7 @@ public static class DowntimeFixtures
             var id=Id(vessel.Id);if(await db.Downtimes.AnyAsync(r=>r.TenantId==vessel.TenantId && r.Id==id,ct))continue;
             if(!await db.Vessels.AnyAsync(v=>v.TenantId==vessel.TenantId && v.Id==vessel.Id,ct))throw new InvalidOperationException("Synthetic downtime scope is unavailable.");
             if(!DowntimePolicy.TryNormalize(new Dictionary<string,DowntimeFact>(),out var fields,out _))throw new InvalidOperationException("Synthetic downtime schema unavailable.");
-            var json=JsonSerializer.Serialize(fields,new JsonSerializerOptions(JsonSerializerDefaults.Web));var now=DateTimeOffset.UtcNow;
+            var json=JsonSerializer.Serialize(fields,new JsonSerializerOptions(JsonSerializerDefaults.Web));var now=db.Clock.GetUtcNow();
             var row=new Downtime{TenantId=vessel.TenantId,VesselId=vessel.Id,Id=id,FieldsJson=json,SourceVersion=DowntimePolicy.SourceVersion,
                 Hash=RegisterStorage.Hash("SyntheticUnverified:"+vessel.TenantId+":"+vessel.Id+":"+json),Provenance="SyntheticUnverified",SavedAt=now};db.Downtimes.Add(row);await db.SaveChangesAsync(ct);
             db.DowntimeRevisions.Add(new(){TenantId=row.TenantId,VesselId=row.VesselId,DowntimeId=id,Revision=1,RecordVersion=row.Version,FieldsJson=json,SourceVersion=row.SourceVersion,

@@ -104,10 +104,10 @@ public static class CrewPhotoEndpoints
             row.PhotoPolicyVersion = policy.Version; row.PhotoPurpose = policy.Purpose;
             db.CrewPersonalProfileRevisions.Add(new() { TenantId = db.TenantId, PersonId = owner.PersonId, Revision = row.Revision,
                 PolicyVersion = policy.Version!, PhotoPurpose = policy.Purpose, IsPhotoSelection = true,
-                PhotoFileId = command.FileId, PhotoVesselId = row.PhotoVesselId, Provenance = "UserDeclaredUnverified", SavedAt = DateTimeOffset.UtcNow });
+                PhotoFileId = command.FileId, PhotoVesselId = row.PhotoVesselId, Provenance = "UserDeclaredUnverified", SavedAt = h.UtcNow() });
             await db.SaveChangesAsync(h.RequestAborted);
             db.CommandReceipts.Add(new() { TenantId = db.TenantId, ActorId = actor.Id, Key = key, Action = "CrewPhotoSave", Fingerprint = fingerprint,
-                ResourceId = owner.PersonId, RegisterRevision = row.Revision, RegisterVersion = row.Version, CommittedAt = DateTimeOffset.UtcNow });
+                ResourceId = owner.PersonId, RegisterRevision = row.Revision, RegisterVersion = row.Version, CommittedAt = h.UtcNow() });
             await db.SaveChangesAsync(h.RequestAborted); await tx.CommitAsync(h.RequestAborted);
             await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "CrewProfileSave", "Success", resourceId: owner.PersonId);
             return Results.Ok(new CrewSavedDto(owner.PersonId, row.Revision, row.Version, false));

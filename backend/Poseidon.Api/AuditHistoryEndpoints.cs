@@ -90,12 +90,12 @@ public static class AuditHistoryEndpoints
             var action = q["action"].ToString(); if (action is not ("Added" or "Modified" or "Deleted")) return await Invalid();
             rows = rows.Where(x => x.Action == action);
         }
-        var cutoff = DateTimeOffset.UtcNow; DateTimeOffset? lastTime = null; Guid lastId = default;
+        var cutoff = h.UtcNow(); DateTimeOffset? lastTime = null; Guid lastId = default;
         if (q.ContainsKey("cursor")) {
             var parts = q["cursor"].ToString().Split('~');
             if (parts.Length != 3 || !long.TryParse(parts[0], NumberStyles.None, CultureInfo.InvariantCulture, out var upper) ||
                 !long.TryParse(parts[1], NumberStyles.None, CultureInfo.InvariantCulture, out var last) ||
-                upper < DateTimeOffset.UnixEpoch.Ticks || upper > DateTimeOffset.UtcNow.Ticks || last < DateTimeOffset.UnixEpoch.Ticks || last > upper ||
+                upper < DateTimeOffset.UnixEpoch.Ticks || upper > h.UtcNow().Ticks || last < DateTimeOffset.UnixEpoch.Ticks || last > upper ||
                 parts[2].Length != 36 || !Guid.TryParseExact(parts[2], "D", out lastId) || lastId == Guid.Empty) return await Invalid();
             cutoff = new(upper, TimeSpan.Zero); lastTime = new(last, TimeSpan.Zero);
         }

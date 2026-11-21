@@ -259,7 +259,8 @@ public static class FoundationIdentity
                     ], Oidc));
                     // Cookie must expire no later than the validated ID token, with a 30 minute ceiling.
                     var expiry = new DateTimeOffset(c.SecurityToken.ValidTo, TimeSpan.Zero);
-                    c.Properties!.ExpiresUtc = expiry < DateTimeOffset.UtcNow.AddMinutes(30) ? expiry : DateTimeOffset.UtcNow.AddMinutes(30);
+                    var ceiling = c.HttpContext.UtcNow().AddMinutes(30);
+                    c.Properties!.ExpiresUtc = expiry < ceiling ? expiry : ceiling;
                     c.Properties.IsPersistent = false;
                 },
                 OnTicketReceived = async c => await c.HttpContext.RequestServices.GetRequiredService<SecurityAudit>()

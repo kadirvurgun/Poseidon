@@ -29,9 +29,9 @@ public static partial class TugEndpoints
     }
     internal static bool PlanWrite(TrustedActor a, Guid vessel) => Write(a, vessel) && a.Permissions.Contains("tug.plan.write");
     // Same gate as the plan write endpoints: permission + vessel write AND a current configured planning scope.
-    internal static bool PlanWriteScoped(HttpContext h, TrustedActor a, Guid vessel) => PlanWrite(a, vessel) && Planning(h).Scope(a, vessel) != null;
+    internal static bool PlanWriteScoped(HttpContext h, TrustedActor a, Guid vessel) => PlanWrite(a, vessel) && Planning(h).Scope(a, vessel, h.UtcNow()) != null;
     private static async Task<Guid[]> Eligible(HttpContext h, PoseidonDbContext db, Guid vessel) {
-        var a = Actor(h); var scope = Planning(h).Scope(a, vessel);
+        var a = Actor(h); var scope = Planning(h).Scope(a, vessel, h.UtcNow());
         if (scope == null || !PlanWrite(a, vessel)) return [];
         // Both explicit configured eligibility and actual current editable Tug membership are required.
         var configured = scope.EligibleTugs;
@@ -47,7 +47,7 @@ public static partial class TugEndpoints
     private static async Task<IResult> PlanOptions(Guid id, HttpContext h, PoseidonDbContext db) {
         var (vessel, failure) = await PlanningGate(h, db); if (failure != null) return failure;
         if (!await db.TugJobs.AnyAsync(j => j.Id == id && j.VesselId == vessel, h.RequestAborted)) return await Fail(h, 404, "resource_not_found");
-        var policy = Planning(h); var scope = policy.Scope(Actor(h), vessel);
+        var policy = Planning(h); var scope = policy.Scope(Actor(h), vessel, h.UtcNow());
         var ids = await Eligible(h, db, vessel);
         var tugs = await Tugs(db, Actor(h)).Where(v => ids.Contains(v.Id)).Select(v => new { v.Id, v.Code }).ToArrayAsync(h.RequestAborted);
         await Observe(h, "Success", id);
@@ -86,7 +86,7 @@ public static partial class TugEndpoints
     private static async Task<IResult> PlanSave(Guid id, HttpContext h, PoseidonDbContext db) {
         var (vessel, failure) = await PlanningGate(h, db, true); if (failure != null) return failure;
         var a = Actor(h); var policy = Planning(h);
-        if (!PlanWrite(a, vessel) || policy.Scope(a, vessel) == null) return await Fail(h, 403, "permission_denied");
+        if (!PlanWrite(a, vessel) || policy.Scope(a, vessel, h.UtcNow()) == null) return await Fail(h, 403, "permission_denied");
         if (h.Request.Headers["X-CSRF-TOKEN"].Count != 1) return await Fail(h, 400, "csrf_invalid");
         try { await h.RequestServices.GetRequiredService<IAntiforgery>().ValidateRequestAsync(h); }
         catch (AntiforgeryValidationException) { return await Fail(h, 400, "csrf_invalid"); }
@@ -110,7 +110,7 @@ public static partial class TugEndpoints
     // so mutation, revision, receipt and replay outcome roll back together.
     internal static async Task<IResult> ApplyPlan(Guid id, Guid vessel, TugPlanCommand command, Guid keyId, HttpContext h, PoseidonDbContext db) {
         var a = Actor(h); var policy = Planning(h);
-        if (!PlanWrite(a, vessel) || policy.Scope(a, vessel) == null || !await Tugs(db, a).AnyAsync(v => v.Id == vessel, h.RequestAborted))
+        if (!PlanWrite(a, vessel) || policy.Scope(a, vessel, h.UtcNow()) == null || !await Tugs(db, a).AnyAsync(v => v.Id == vessel, h.RequestAborted))
             return await Fail(h, 403, "permission_denied");
         if (command.Change == null || command.RequestVersion == 0 || command.BaseVersion == 0 || command.PolicyVersion != policy.Version) return await Fail(h, 409, "version_conflict");
         var eligible = await Eligible(h, db, vessel);
@@ -143,7 +143,7 @@ public static partial class TugEndpoints
             else plan.Revision = checked(plan.Revision + 1);
             plan.PlannedStart = next.PlannedStart?.ToUniversalTime(); plan.PlannedEnd = next.PlannedEnd?.ToUniversalTime();
             next = next with { PlannedStart = plan.PlannedStart, PlannedEnd = plan.PlannedEnd };
-            plan.RequestRevision = job.Revision; plan.PolicyVersion = policy.Version; plan.SavedAt = DateTimeOffset.UtcNow;
+            plan.RequestRevision = job.Revision; plan.PolicyVersion = policy.Version; plan.SavedAt = h.UtcNow();
             var revision = new TugDraftPlanRevision { TenantId = a.TenantId, VesselId = vessel, JobId = id, Revision = plan.Revision,
                 RequestRevision = job.Revision, PolicyVersion = policy.Version, ContentJson = JsonSerializer.Serialize(next), Operation = command.Change.Operation, SavedAt = plan.SavedAt };
             db.TugDraftPlanRevisions.Add(revision);

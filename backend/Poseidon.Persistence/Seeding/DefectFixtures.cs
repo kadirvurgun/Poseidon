@@ -17,7 +17,7 @@ public static class DefectFixtures
             var id=Id(vessel.Id);if(await db.Defects.AnyAsync(r=>r.TenantId==vessel.TenantId && r.Id==id,ct))continue;
             if(!await db.Vessels.AnyAsync(v=>v.TenantId==vessel.TenantId && v.Id==vessel.Id,ct))throw new InvalidOperationException("Synthetic defect scope is unavailable.");
             if(!DefectPolicy.TryNormalize(new Dictionary<string,DefectFact>(),out var fields,out _))throw new InvalidOperationException("Synthetic defect schema unavailable.");
-            var json=JsonSerializer.Serialize(fields,new JsonSerializerOptions(JsonSerializerDefaults.Web));var now=DateTimeOffset.UtcNow;
+            var json=JsonSerializer.Serialize(fields,new JsonSerializerOptions(JsonSerializerDefaults.Web));var now=db.Clock.GetUtcNow();
             var row=new Defect{TenantId=vessel.TenantId,VesselId=vessel.Id,Id=id,FieldsJson=json,SourceVersion=DefectPolicy.SourceVersion,
                 Hash=RegisterStorage.Hash("SyntheticUnverified:"+vessel.TenantId+":"+vessel.Id+":"+json),Provenance="SyntheticUnverified",SavedAt=now};db.Defects.Add(row);await db.SaveChangesAsync(ct);
             db.DefectRevisions.Add(new(){TenantId=row.TenantId,VesselId=row.VesselId,DefectId=id,Revision=1,RecordVersion=row.Version,FieldsJson=json,SourceVersion=row.SourceVersion,

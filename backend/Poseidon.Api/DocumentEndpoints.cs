@@ -96,12 +96,12 @@ public static class DocumentEndpoints
             if (etag != $"\"{existing.Version}\"") return await Replay() ?? await Failure(h, 409, "file_attempt_conflict");
             d = existing; d.Revision = checked(d.Revision + 1);
         }
-        var version = new DocumentVersion { TenantId = a.TenantId, DocumentId = d.Id, VesselId = vessel, Revision = d.Revision, Title = command.Title, CreatedAt = DateTimeOffset.UtcNow };
+        var version = new DocumentVersion { TenantId = a.TenantId, DocumentId = d.Id, VesselId = vessel, Revision = d.Revision, Title = command.Title, CreatedAt = h.UtcNow() };
         db.DocumentVersions.Add(version);
         try {
             await using var tx = await db.Database.BeginTransactionAsync(ct);
             await db.SaveChangesAsync(ct);
-            db.CommandReceipts.Add(new() { TenantId = a.TenantId, ActorId = a.Id, Key = key, Action = "DocumentDraftSave", Fingerprint = fingerprint, ResourceId = d.Id, RegisterRevision = d.Revision, RegisterVersion = d.Version, CommittedAt = DateTimeOffset.UtcNow });
+            db.CommandReceipts.Add(new() { TenantId = a.TenantId, ActorId = a.Id, Key = key, Action = "DocumentDraftSave", Fingerprint = fingerprint, ResourceId = d.Id, RegisterRevision = d.Revision, RegisterVersion = d.Version, CommittedAt = h.UtcNow() });
             await db.SaveChangesAsync(ct); await tx.CommitAsync(ct);
             return Results.Ok(Dto(d, version));
         } catch (DbUpdateException) { db.ChangeTracker.Clear(); return await Replay() ?? await Failure(h, 409, "file_attempt_conflict"); }

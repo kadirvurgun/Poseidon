@@ -13,7 +13,7 @@ public sealed class ControlledDocumentException(string code) : Exception(code)
 // Actor IDs are server-resolved; never pass request-supplied identities.
 public static class ControlledDocumentChain
 {
-    private static DateTimeOffset Now() { var now = DateTimeOffset.UtcNow; return now.AddTicks(-(now.Ticks % 10)); }
+    private static DateTimeOffset Now(PoseidonDbContext db) { var now = db.Clock.GetUtcNow(); return now.AddTicks(-(now.Ticks % 10)); }
     public static DateOnly Today(DateTimeOffset now) => DateOnly.FromDateTime(now.UtcDateTime);
 
     private static ControlledDocumentCustodyEvent Append(PoseidonDbContext db, ControlledDocument d, string type, DateTimeOffset now,
@@ -47,7 +47,7 @@ public static class ControlledDocumentChain
         Actor(db, actor);
         if (!ControlledDocumentPolicy.Code(code) || !ControlledDocumentPolicy.Text(title, 200) || !ControlledDocumentPolicy.Classifications.Contains(classification))
             throw new ControlledDocumentException("invalid_request");
-        var now = Now();
+        var now = Now(db);
         var d = new ControlledDocument { TenantId = db.TenantId, Id = Guid.NewGuid(), VesselId = vessel, Code = code.Trim().ToUpperInvariant(), Title = title.Trim(),
             Classification = classification, CreatedBy = db.AuditActorId, CreatedAt = now };
         db.ControlledDocuments.Add(d);
@@ -64,7 +64,7 @@ public static class ControlledDocumentChain
         var stage = await db.FileStages.AsNoTracking().SingleOrDefaultAsync(x => x.Id == fileId && x.VesselId == d.VesselId && x.PersonId == null && x.DocumentId == null, ct)
             ?? throw new ControlledDocumentException("clean_file_unavailable");
         if (await db.ControlledDocumentRevisions.AnyAsync(x => x.FileId == fileId, ct)) throw new ControlledDocumentException("immutable_file_reference");
-        var now = Now();
+        var now = Now(db);
         d.LatestRevision = checked(d.LatestRevision + 1);
         var r = new ControlledDocumentRevision { TenantId = d.TenantId, DocumentId = d.Id, Revision = d.LatestRevision, VesselId = d.VesselId, FileId = stage.Id,
             ContentSha256 = stage.ExpectedChecksum, ContentLength = stage.ExpectedLength, Mime = stage.Mime, UploadedBy = stage.ActorId, RegisteredBy = actor, RegisteredAt = now };
@@ -89,7 +89,7 @@ public static class ControlledDocumentChain
             db.FileStages.Any(s => s.Id == x.Id && s.VesselId == d.VesselId && s.State == "CleanTransport"), ct);
         var matches = file != null && file.Checksum == r.ContentSha256 && file.Length == r.ContentLength && file.Mime == r.Mime;
         if (ControlledDocumentPolicy.ReleaseBlocker(r.IntakeState, d.DisposalState, matches) is { } blocked) throw new ControlledDocumentException(blocked);
-        var now = Now();
+        var now = Now(db);
         Append(db, d, "SCANNED_CLEAN", now, revision, basis: file!.ScannerReference, subject: r.UploadedBy, occurredAt: file.ScannedAt, source: "SECURE_FILE_PIPELINE");
         r.IntakeState = "RELEASED"; r.ReleasedAt = now; r.ObjectGeneration = file.ProviderVersion;
         Append(db, d, "RELEASED", now, revision);
@@ -103,7 +103,7 @@ public static class ControlledDocumentChain
         var r = await RevisionAsync(db, d, revision, ct);
         if (ControlledDocumentPolicy.PublishBlocker(r.IntakeState, r.PublicationState, d.DisposalState, actor, r.UploadedBy, r.RegisteredBy, revision, d.CurrentRevision) is { } blocked)
             throw new ControlledDocumentException(blocked);
-        var now = Now();
+        var now = Now(db);
         if (d.CurrentRevision is long current && current != revision)
         {
             var prior = await RevisionAsync(db, d, current, ct);
@@ -122,7 +122,7 @@ public static class ControlledDocumentChain
         var r = await RevisionAsync(db, d, revision, ct);
         if (ControlledDocumentPolicy.VerifyBlocker(r.IntakeState, d.DisposalState, actor, r.UploadedBy, r.RegisteredBy, method, result, basis) is { } blocked)
             throw new ControlledDocumentException(blocked);
-        var now = Now();
+        var now = Now(db);
         var v = new ControlledDocumentVerification { TenantId = d.TenantId, Id = Guid.NewGuid(), DocumentId = d.Id, Revision = revision, VesselId = d.VesselId,
             VerifierId = actor, Method = method!, Result = result!, Basis = basis!.Trim(), ContentSha256 = r.ContentSha256, CheckedAt = now };
         db.ControlledDocumentVerifications.Add(v);
@@ -134,7 +134,7 @@ public static class ControlledDocumentChain
     {
         Actor(db, actor);
         if (ControlledDocumentPolicy.PlaceHoldBlocker(d.HoldActive, authorityRef, reason) is { } blocked) throw new ControlledDocumentException(blocked);
-        var now = Now();
+        var now = Now(db);
         d.HoldActive = true; d.HoldAuthorityRef = authorityRef!.Trim(); d.HoldPlacedBy = actor; d.HoldPlacedAt = now;
         d.HoldReleasedBy = null; d.HoldReleasedAt = null;
         Append(db, d, "HOLD_PLACED", now, basis: reason!.Trim());
@@ -161,7 +161,7 @@ public static class ControlledDocumentChain
     {
         Actor(db, actor);
         if (ControlledDocumentPolicy.ReleaseHoldBlocker(d.HoldActive, d.HoldPlacedBy, actor, reason) is { } blocked) throw new ControlledDocumentException(blocked);
-        var now = Now();
+        var now = Now(db);
         d.HoldActive = false; d.HoldReleasedBy = actor; d.HoldReleasedAt = now;
         Append(db, d, "HOLD_RELEASED", now, basis: reason!.Trim());
     }
@@ -169,7 +169,7 @@ public static class ControlledDocumentChain
     public static void SetRetention(PoseidonDbContext db, Guid actor, ControlledDocument d, string? policyRef, DateOnly? retainUntil)
     {
         Actor(db, actor);
-        var now = Now();
+        var now = Now(db);
         if (ControlledDocumentPolicy.RetentionBlocker(d.DisposalState, policyRef, retainUntil, Today(now)) is { } blocked) throw new ControlledDocumentException(blocked);
         d.RetentionPolicyRef = policyRef; d.RetainUntil = retainUntil;
         Append(db, d, "RETENTION_SET", now, basis: policyRef + "@" + retainUntil!.Value.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture));
@@ -178,7 +178,7 @@ public static class ControlledDocumentChain
     public static async Task RequestDisposalAsync(PoseidonDbContext db, Guid actor, ControlledDocument d, string? reason, CancellationToken ct)
     {
         Actor(db, actor);
-        var now = Now();
+        var now = Now(db);
         if (ControlledDocumentPolicy.DisposalRequestBlocker(d.HoldActive, d.RetentionPolicyRef, d.RetainUntil, Today(now), d.DisposalState, reason,
             await ActiveUseOpenAsync(db, d, ct)) is { } blocked)
             throw new ControlledDocumentException(blocked);
@@ -191,7 +191,7 @@ public static class ControlledDocumentChain
     public static async Task ApproveDisposalAsync(PoseidonDbContext db, Guid actor, ControlledDocument d, string? reason, CancellationToken ct)
     {
         Actor(db, actor);
-        var now = Now();
+        var now = Now(db);
         if (ControlledDocumentPolicy.DisposalApproveBlocker(d.HoldActive, d.RetentionPolicyRef, d.RetainUntil, Today(now), d.DisposalState, d.DisposalRequestedBy, actor, reason,
             await ActiveUseOpenAsync(db, d, ct)) is { } blocked)
             throw new ControlledDocumentException(blocked);
@@ -206,7 +206,7 @@ public static class ControlledDocumentChain
         Actor(db, actor);
         if (kind == null || !ControlledDocumentPolicy.LinkKinds.Contains(kind) || target == Guid.Empty) throw new ControlledDocumentException("invalid_request");
         if (d.DisposalState == "APPROVED") throw new ControlledDocumentException("document_disposed");
-        var now = Now();
+        var now = Now(db);
         switch (kind)
         {
             case "VesselCertificate":

@@ -57,7 +57,7 @@ public static class MaintenanceObservationEndpoints
             .OrderByDescending(x => x.RecordedAt).ThenBy(x => x.Id).Take(100).Select(x => new { x.Id, x.Source, x.PolicyVersion, x.SourceRevision, x.Kind, x.Unit, x.Value, x.ObservedAt, x.Provenance,
                 revoked = db.MaintenanceObservationRevocations.Any(r => r.ObservationId == x.Id) }).ToArrayAsync(h.RequestAborted);
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "MaintenanceObservationRead", "Success", resourceId: asset);
-        var now = DateTimeOffset.UtcNow;
+        var now = h.UtcNow();
         foreach (var row in rows) {
             var rule = settings.Rule(db.TenantId, vessel, asset, row.Source);
             var age = rule != null && rule.Version == row.PolicyVersion && !row.revoked ? TimeSpan.FromSeconds(rule.FreshnessSeconds) : (TimeSpan?)null;
@@ -74,7 +74,7 @@ public static class MaintenanceObservationEndpoints
         var rule = settings.Rule(db.TenantId, vessel, asset, command.Source);
         if (rule == null || rule.Version != command.PolicyVersion || rule.Kind != command.Kind || rule.Unit != command.Unit || rule.FreshnessSeconds <= 0 || rule.MaxScale is null or < 0 or > 28)
             return await Fail(h, 403, "observation_policy_denied");
-        if (command.Id == Guid.Empty || command.SourceRevision <= 0 || command.ObservedAt > DateTimeOffset.UtcNow || command.Source.Length is 0 or > 80 ||
+        if (command.Id == Guid.Empty || command.SourceRevision <= 0 || command.ObservedAt > h.UtcNow() || command.Source.Length is 0 or > 80 ||
             command.PolicyVersion.Length is 0 or > 80 || command.Unit.Length is 0 or > 40 || command.Kind is not ("Meter" or "Condition") ||
             command.Kind == "Meter" && !CertificateMetadataPolicy.ExactNumeric(command.Value) || command.Kind == "Condition" && command.Value is not (null or "True" or "False")) return await Fail(h, 400, "validation_failed");
         // Validate future instants above at the original precision, then use
@@ -90,7 +90,7 @@ public static class MaintenanceObservationEndpoints
             return Results.Ok(new { old.Id, replayed = true });
         }
         var row = new MaintenanceObservation { TenantId = db.TenantId, Id = command.Id, VesselId = vessel, AssetId = asset, Source = command.Source, PolicyVersion = command.PolicyVersion,
-            SourceRevision = command.SourceRevision, Kind = command.Kind, Unit = command.Unit, Value = command.Value, ObservedAt = command.ObservedAt?.ToUniversalTime(), RecordedAt = DateTimeOffset.UtcNow };
+            SourceRevision = command.SourceRevision, Kind = command.Kind, Unit = command.Unit, Value = command.Value, ObservedAt = command.ObservedAt?.ToUniversalTime(), RecordedAt = h.UtcNow() };
         db.MaintenanceObservations.Add(row);
         try { await db.SaveChangesAsync(h.RequestAborted); }
         catch (DbUpdateException) { return await Fail(h, 409, "version_conflict"); }
@@ -102,7 +102,7 @@ public static class MaintenanceObservationEndpoints
         try { await h.RequestServices.GetRequiredService<IAntiforgery>().ValidateRequestAsync(h); }
         catch (AntiforgeryValidationException) { return await Fail(h, 400, "csrf_invalid"); }
         if (!await db.MaintenanceObservationRevocations.AnyAsync(x => x.ObservationId == id, h.RequestAborted)) {
-            db.MaintenanceObservationRevocations.Add(new() { TenantId = db.TenantId, ObservationId = id, RecordedAt = DateTimeOffset.UtcNow });
+            db.MaintenanceObservationRevocations.Add(new() { TenantId = db.TenantId, ObservationId = id, RecordedAt = h.UtcNow() });
             try { await db.SaveChangesAsync(h.RequestAborted); } catch (DbUpdateException) { return await Fail(h, 409, "version_conflict"); }
         }
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "MaintenanceObservationRevoke", "Success", resourceId: asset); return Results.Ok(new { id, state = "Revoked" });
@@ -111,7 +111,7 @@ public static class MaintenanceObservationEndpoints
         (await ResolveCurrent(vessel, asset, inputs, h, db, serverNow)).Assessment;
 
     internal static Task<CurrentMaintenanceObservation> ResolveCurrent(Guid vessel, Guid asset, MaintenanceInputs inputs, HttpContext h, PoseidonDbContext db, DateTimeOffset? serverNow = null) =>
-        ResolveOwned(vessel, asset, inputs, db, h.RequestServices.GetRequiredService<MaintenanceObservationSettings>(), serverNow ?? DateTimeOffset.UtcNow, h.RequestAborted);
+        ResolveOwned(vessel, asset, inputs, db, h.RequestServices.GetRequiredService<MaintenanceObservationSettings>(), serverNow ?? h.UtcNow(), h.RequestAborted);
 
     internal static async Task<CurrentMaintenanceObservation> ResolveOwned(Guid vessel, Guid asset, MaintenanceInputs inputs, PoseidonDbContext db,
         MaintenanceObservationSettings settings, DateTimeOffset serverNow, CancellationToken ct) {

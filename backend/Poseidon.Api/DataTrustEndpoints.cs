@@ -130,7 +130,7 @@ public static class DataTrustEndpoints
             h.Request.Query.ContainsKey("limit") && (!int.TryParse(h.Request.Query["limit"], NumberStyles.None, CultureInfo.InvariantCulture, out limit) || limit is < 1 or > DataQualityPolicy.MaxPage))
             return await AssuranceCommands.Fail(h, "DataTrustRead", 400, "invalid_query");
         if (!await SafetyEventCommands.Vessels(db, a!, vessel).AnyAsync(ct)) return await AssuranceCommands.Fail(h, "DataTrustRead", 404, "resource_not_found");
-        var now = DateTimeOffset.UtcNow;
+        var now = h.UtcNow();
         DataTrustSnapshot snapshot;
         try { snapshot = await h.RequestServices.GetRequiredService<IDataTrustSignalSource>().ForVessel(db, a!, vessel, now, ct); }
         catch (Exception ex) when (PostgresFailure.IsDatabase(ex)) { return await AssuranceCommands.Fail(h, "DataTrustRead", 503, "service_unavailable"); }

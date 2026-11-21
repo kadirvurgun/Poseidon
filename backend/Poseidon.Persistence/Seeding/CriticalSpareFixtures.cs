@@ -20,7 +20,7 @@ public static class CriticalSpareFixtures
             if(!await db.Vessels.AnyAsync(v=>v.TenantId==vessel.TenantId && v.Id==vessel.Id,ct))throw new InvalidOperationException("Synthetic critical spare scope is unavailable.");
             var content=new CriticalSpareContent(new("FICTIONAL-SP-0001","FICTIONAL spare declaration (not a real part)","pcs","UNKNOWN"),null);
             if(!CriticalSparePolicy.ValidDefinition(content.Definition))throw new InvalidOperationException("Synthetic critical spare definition unavailable.");
-            var json=JsonSerializer.Serialize(content,new JsonSerializerOptions(JsonSerializerDefaults.Web));var now=DateTimeOffset.UtcNow;
+            var json=JsonSerializer.Serialize(content,new JsonSerializerOptions(JsonSerializerDefaults.Web));var now=db.Clock.GetUtcNow();
             var head=new CriticalSpare{TenantId=vessel.TenantId,VesselId=vessel.Id,Id=id};db.CriticalSpares.Add(head);await db.SaveChangesAsync(ct);
             db.CriticalSpareRevisions.Add(new(){TenantId=vessel.TenantId,VesselId=vessel.Id,SpareId=id,Revision=1,RecordVersion=head.Version,Transition="CREATE",ContentJson=json,
                 SourceVersion=CriticalSparePolicy.SourceVersion,Provenance="SyntheticUnverified",SavedAt=now,

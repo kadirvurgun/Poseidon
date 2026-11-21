@@ -28,8 +28,8 @@ public sealed class Asset : ITenantEntity
     public string Provenance { get; set; } = "UserDeclaredUnverified";
     public long Revision { get; set; } = 1;
     public uint Version { get; set; }
-    public AssetRevision Snapshot() => new() { TenantId = TenantId, VesselId = VesselId, AssetId = Id,
-        Revision = Revision, ContentJson = JsonSerializer.Serialize(this), SavedAt = DateTimeOffset.UtcNow };
+    public AssetRevision Snapshot(DateTimeOffset savedAt) => new() { TenantId = TenantId, VesselId = VesselId, AssetId = Id,
+        Revision = Revision, ContentJson = JsonSerializer.Serialize(this), SavedAt = savedAt };
 }
 public sealed class AssetRevision : ITenantEntity
 {
@@ -70,7 +70,7 @@ public sealed class MaintenancePlan : ITenantEntity
     public string Provenance { get; set; } = "UserDeclaredUnverified";
     public long Revision { get; set; } = 1;
     public uint Version { get; set; }
-    public MaintenancePlanRevision Snapshot(DateTimeOffset reference, long assetRevision, MaintenanceDue? evaluated = null) {
+    public MaintenancePlanRevision Snapshot(DateTimeOffset reference, long assetRevision, DateTimeOffset savedAt, MaintenanceDue? evaluated = null) {
         var inputs = JsonSerializer.Deserialize<MaintenanceInputs>(ContentJson)!;
         var due = evaluated ?? MaintenanceCalculation.Evaluate(inputs, reference);
         if (JobId == null || OwnerRoleId == null || (string.IsNullOrWhiteSpace(inputs.Criticality) || inputs.Criticality == "Unknown"))
@@ -78,7 +78,7 @@ public sealed class MaintenancePlan : ITenantEntity
         return new() { TenantId = TenantId, VesselId = VesselId, PlanId = Id, AssetId = AssetId,
             AssetRevision = assetRevision, ObservationId = ObservationId, JobId = JobId, OwnerRoleId = OwnerRoleId, Revision = Revision,
             ContentJson = ContentJson, CalculationJson = JsonSerializer.Serialize(due),
-            ReferenceAt = reference, SavedAt = DateTimeOffset.UtcNow, Provenance = Provenance };
+            ReferenceAt = reference, SavedAt = savedAt, Provenance = Provenance };
     }
 }
 public sealed class MaintenancePlanRevision : ITenantEntity

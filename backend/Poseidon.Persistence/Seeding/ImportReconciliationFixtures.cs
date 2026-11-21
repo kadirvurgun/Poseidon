@@ -17,7 +17,7 @@ public static class ImportReconciliationFixtures
     {
         if (!db.IsAdministrativeImport || db.Database.CurrentTransaction == null)
             throw new UnauthorizedAccessException("Synthetic reconciliation fixtures require an administrative audited transaction.");
-        var now = DateTimeOffset.UtcNow;
+        var now = db.Clock.GetUtcNow();
         foreach (var v in vessels)
         {
             var id = ReportId(v.Id);

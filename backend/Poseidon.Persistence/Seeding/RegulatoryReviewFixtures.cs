@@ -20,7 +20,7 @@ public static class RegulatoryReviewFixtures
     {
         if (!db.IsAdministrativeImport || db.Database.CurrentTransaction == null)
             throw new UnauthorizedAccessException("Synthetic regulatory review fixtures require an administrative audited transaction.");
-        var now = DateTimeOffset.UtcNow;
+        var now = db.Clock.GetUtcNow();
         foreach (var v in vessels)
         {
             var scope = v.Kind == VesselKind.Tug ? RegulatoryReviewPolicy.Tug : RegulatoryReviewPolicy.Ship;

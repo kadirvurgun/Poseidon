@@ -89,7 +89,7 @@ public static class RegulatoryQualificationEndpoints
         var events = await db.RegulatoryQualificationEvents.AsNoTracking().Where(x => x.RuleId == rule && x.Revision < before).OrderByDescending(x => x.Revision).Take(101).ToArrayAsync(h.RequestAborted);
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "RegulatoryQualificationRead", "Success", resourceId: rule);
         var actions = new[] { "draft", "review", "qualify", "attest" }.Where(action => Grant(h, a, rule, action, action == "attest" ? vessel : null) != null).ToArray();
-        var now = DateTimeOffset.UtcNow;
+        var now = h.UtcNow();
         var owners = h.RequestServices.GetRequiredService<FederationSettings>().Memberships.Where(m => m.TenantId == a.TenantId && m.ActorKind == "Human" && m.ActorId != Guid.Empty && ActorResolver.TrustedRoleContext(m.RoleReferences) != null)
             .SelectMany(m => m.RegulatoryAuthorities.Where(g => g.RuleId == rule && g.Actions.Contains("own") && g.ValidFrom <= now && now < g.ValidUntil && m.RoleReferences!.Contains(g.RoleId.ToString("D"))).Select(g => new { actorId = m.ActorId, roleId = g.RoleId })).Distinct().Take(100).ToArray();
         return Results.Ok(new { items = events.Take(100).Select(e => Dto(e, head!.Version)), hasMore = events.Length > 100, actions, owners,

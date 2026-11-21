@@ -100,13 +100,13 @@ public static class ControlEvidenceEndpoints
     private static bool Reviewer(TrustedActor a, Guid vessel) => Read(a) && a.CanEditVessel(vessel) && a.Permissions.Contains("control.approve");
     private static bool Query(HttpContext h, bool history, out Guid vessel, out int offset, out DateTimeOffset asOf)
     {
-        vessel = Guid.Empty; offset = 0; asOf = DateTimeOffset.UtcNow;
+        vessel = Guid.Empty; offset = 0; asOf = h.UtcNow();
         if (h.Request.Query.Any(x => x.Value.Count != 1 || x.Key is not ("vesselId" or "offset" or "asOf")) ||
             !Guid.TryParseExact(h.Request.Query["vesselId"], "D", out vessel) || vessel == Guid.Empty) return false;
         if (h.Request.Query.ContainsKey("offset") && (!int.TryParse(h.Request.Query["offset"], NumberStyles.None, CultureInfo.InvariantCulture, out offset) || offset is < 0 or > 100000)) return false;
         if (h.Request.Query.ContainsKey("asOf")) {
             var raw = h.Request.Query["asOf"].ToString();
-            if (!history || !OffsetTimestamp(raw) || !DateTimeOffset.TryParse(raw, CultureInfo.InvariantCulture, DateTimeStyles.None, out asOf) || asOf > DateTimeOffset.UtcNow) return false;
+            if (!history || !OffsetTimestamp(raw) || !DateTimeOffset.TryParse(raw, CultureInfo.InvariantCulture, DateTimeStyles.None, out asOf) || asOf > h.UtcNow()) return false;
             asOf = asOf.ToUniversalTime();
         }
         return true;
@@ -216,7 +216,7 @@ public static class ControlEvidenceEndpoints
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "ControlOrphans", "Success", resourceId: vessel);
         var evaluation = await OperationEquipmentCommands.Evaluations(db, a).Where(e => e.VesselId == vessel && db.EvaluationQualifications.Any(q => q.EvaluationId == e.Id))
             .OrderByDescending(e => e.SavedAt).ThenBy(e => e.Id).FirstOrDefaultAsync(h.RequestAborted);
-        var causes = evaluation == null ? new[] { "AUTHORITATIVE_APPLICABILITY_UNAVAILABLE" } : await CurrentRegulatoryContext.Stale(db, evaluation.Id, vessel, DateTimeOffset.UtcNow, h.RequestAborted, h.RequestServices.GetRequiredService<FederationSettings>());
+        var causes = evaluation == null ? new[] { "AUTHORITATIVE_APPLICABILITY_UNAVAILABLE" } : await CurrentRegulatoryContext.Stale(db, evaluation.Id, vessel, h.UtcNow(), h.RequestAborted, h.RequestServices.GetRequiredService<FederationSettings>());
         var result = evaluation == null ? null : JsonSerializer.Deserialize<EvaluationDto>(evaluation.ResultJson, Json);
         var eligible = await db.RegulatoryQualificationEvents.AsNoTracking().Where(q => q.State == "IN_FORCE" && db.RegulatoryQualificationHeads.Any(head => head.RuleId == q.RuleId && head.Revision == q.Revision) &&
             db.RuleDrafts.Any(rule => rule.Id == q.RuleId && rule.Revision == q.RuleRevision)).Select(q => q.RuleId).ToArrayAsync(h.RequestAborted);
@@ -274,7 +274,7 @@ public static class ControlEvidenceEndpoints
                         (value.ValueKind != JsonValueKind.String || !OffsetTimestamp(value.GetString()!))) throw new JsonException();
             command = JsonSerializer.Deserialize<ControlEvidenceCommand>(body, Json) ?? throw new JsonException();
             if (command.Content == null || command.Requirements == null || command.Links == null || command.Requirements.Length > 32 || command.Links.Length > 32 || command.Requirements.Any(x => x == null) || command.Links.Any(x => x == null)) throw new JsonException();
-            ControlEvidencePolicy.Validate(kind, command.Content, DateTimeOffset.UtcNow);
+            ControlEvidencePolicy.Validate(kind, command.Content, h.UtcNow());
             if (command.ReasonCode != (action == "submit" ? "SUBMIT" : action == "complete" ? "COMPLETE" : id == null ? "INITIAL_AUTHORING" : "AUTHORING_CORRECTION") || kind == "Control" && (command.File != null || command.Links.Length != 0)) throw new JsonException();
         } catch (Exception e) when (e is JsonException or ArgumentException or InvalidDataException) { return await Fail(h, 400, "invalid_request"); }
         if (command.Content.CrewRoleAssessment != null && !ComplianceInputContext.CrewRead(a)) return await Fail(h, 403, "permission_denied");
@@ -347,7 +347,7 @@ public static class ControlEvidenceEndpoints
             if (head == null) { head = new() { TenantId = a.TenantId, VesselId = vessel, Kind = kind, Id = Guid.NewGuid() }; db.ControlEvidenceHeads.Add(head); }
             else { db.Entry(head).Property(x => x.Version).OriginalValue = command.ExpectedVersion; db.Entry(head).Property(x => x.Revision).IsModified = true; }
             head.Revision++;
-            var now = DateTimeOffset.UtcNow;
+            var now = h.UtcNow();
             if (action != "save") {
                 if (!await OperationEquipmentCommands.SubmissionAllowed(db, h.RequestServices.GetRequiredService<FederationSettings>(), a, command.Content, command.Requirements, ct)) return await Fail(h, 403, "owning_document_author_required");
                 var basic = ControlEvidencePolicy.Blockers(kind, command.Content, command.Requirements.Length, file != null, command.Requirements.Count(p => p.RuleId != null))
@@ -432,7 +432,7 @@ public static class ControlEvidenceEndpoints
         var rows = await CurrentVisible(db, vessel, a).Where(r => r.Kind == "Evidence" && db.ControlEvidenceEdges.Any(e => e.VesselId == vessel && e.Kind == "Evidence" &&
                 e.Id == r.Id && e.Revision == r.Revision && e.TargetKind == "Control" && e.TargetId == id))
             .OrderBy(r => r.Id).Skip(offset).Take(26).ToArrayAsync(ct);
-        var settings = h.RequestServices.GetRequiredService<FederationSettings>(); var now = DateTimeOffset.UtcNow;
+        var settings = h.RequestServices.GetRequiredService<FederationSettings>(); var now = h.UtcNow();
         var items = new List<SupportingEvidenceItem>();
         foreach (var r in rows.Take(25)) {
             var version = await db.ControlEvidenceHeads.AsNoTracking().Where(x => x.VesselId == vessel && x.Kind == "Evidence" && x.Id == r.Id).Select(x => x.Version).SingleAsync(ct);
@@ -499,7 +499,7 @@ public static class ControlEvidenceEndpoints
             var content = JsonSerializer.Deserialize<ControlEvidenceContent>(current.ContentJson, Json)!;
             var pins = await db.ControlEvidenceRequirements.AsNoTracking().Where(x => x.VesselId == vessel && x.Kind == "Control" && x.Id == id && x.Revision == head.Revision)
                 .Select(x => new RequirementPin(x.RequirementId, x.RequirementRevision, x.SourceId, x.SourceRevision, x.RuleId, x.RuleRevision)).ToArrayAsync(ct);
-            var now = DateTimeOffset.UtcNow;
+            var now = h.UtcNow();
             var basic = ControlEvidencePolicy.Blockers("Control", content, pins.Length, false, pins.Count(p => p.RuleId != null))
                 .Where(x => x is not ("SOURCE_ADMISSION_UNAVAILABLE" or "VERIFICATION_NOT_PERFORMED" or "CLEAN_FILE_MISSING")).ToArray();
             var recordReady = current.Lifecycle is "SUBMITTED" or "COMPLETED" && basic.Length == 0;

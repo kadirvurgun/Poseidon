@@ -18,7 +18,7 @@ public static class ApplicabilityOverrideFixtures
     {
         if (!db.IsAdministrativeImport) throw new UnauthorizedAccessException();
         var added = new List<ApplicabilityOverride>();
-        var now = DateTimeOffset.UtcNow;
+        var now = db.Clock.GetUtcNow();
         foreach (var vessel in vessels) {
             var id = Id(vessel.Id);
             if (await db.ApplicabilityOverrides.FindAsync([vessel.TenantId, vessel.Id, id], ct) != null) continue;
