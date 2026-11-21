@@ -1,5 +1,17 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
+## S11 kabul edildi — notlarla, YALNIZ YAZILIM KAPSAMI (21.11.2026)
+
+**Canonical ilerleme: 114 iş / 932 SP / 970 SP = %96,08** (önceki: 103 iş / 861 SP, %88,76). S0 13/53, S1 7/50, S2 6/42, S3 7/66, S4 6/58, S5 8/69, S6 9/87, S7 13/121, S8 13/124, S9 10/92, S10 11/99, **S11 11/71** kabul.
+
+- **Kabul kapsamı: yazılım.** Pilot hazır DEĞİL: S11'in insan/operasyon kısımları açık kapı (aşağıda); go/no-go motoru bugün GO üretemez (SECURITY/OFFLINE/DR/TRACE kapıları DEFERRED).
+- Hedef: PR #49 head `e0639fa7` → main `c6a7036`. CI push `44856983692` + pull_request `44856990162` yeşil; critical-write kapsama kapısı `PASS_ACTUAL_CURRENT_CRITICAL_SCOPE` 303/303 (278 kritik rota şablonu, 0 geçersiz satır).
+- Bağımsız S11 QA: 2 tur (53dd7845 RED, B1 DEV-072 telemetri ürüne bağlı değil; PR CI `44851819969` kırmızı — `NotificationTests.cs:291` tarih bombası; 53dd7845..e0639fa7 yeniden kontrol B1/N1/N2/N5 çözüldü, **ACCEPT**), engelleyici yok — [kanıt](evidence/s11-20261122-e0639fa7/qa/s11-gate-independent-review.md), [faz raporu](phases/S11-GATE-20261122.md).
+- Kabul: DEV-069, 070, 071, 072, 073, 074, 075, 093, 094, 117, 118.
+- Teslim: pilot veri import şablonları + satır kökeni, mutabakat raporu (UNKNOWN korunur, imza yalnız insan veri sahibi), DR yedek/geri yükleme/prova betikleri, gizlilik güvenli pilot metrikleri (<5 katılımcı bastırılır, gözlem yok → UNKNOWN), gemi/römorkör regülasyon SME inceleme iş akışı, gemi/römorkör rol UAT kayıtları, go/no-go incelemesi (motor GO üretmez; GO/CONDITIONAL_GO yalnız tüm kapılar PASS + P0=0), PMS type approval ve ISO 27001/27701 yol haritası taslakları.
+- Açık insan/operasyon kapıları: DEV-070 veri sahibi sign-off; DEV-071 gerçek DR provası + ölçülmüş RPO/RTO + imzalı rollback; DEV-073/093 SME sign-off; DEV-074/094 UAT eşikleri/koşuları; DEV-075 Product Owner go/no-go (SECURITY/OFFLINE/DR/TRACE DEFERRED → GO imkânsız); DEV-117/118 yol haritası onayları. Hiçbir onay iddia edilmiyor.
+- Sıradaki: kalan 7 iş / 38 SP pilot haftası (DEV-076–079, 095, 096, 121) — gerçek pilot gerektirir.
+
 ## S10 kabul edildi — notlarla; S6 DEV-101/102 kabul (20.11.2026)
 
 **Canonical ilerleme: 103 iş / 861 SP / 970 SP = %88,76** (önceki: 90 iş / 746 SP, %76,91). S0 13/53, S1 7/50, S2 6/42, S3 7/66, S4 6/58, S5 8/69, **S6 9/87**, S7 13/121, S8 13/124, S9 10/92, **S10 11/99** kabul.
