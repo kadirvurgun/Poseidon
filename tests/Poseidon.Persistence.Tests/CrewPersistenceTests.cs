@@ -85,7 +85,8 @@ public sealed class CrewPersistenceTests : IAsyncLifetime
             await using var db = Db(); var c = Assignment(vessel.Id, vessel.Id);
             db.CrewAssignments.Add(c); db.CrewAssignmentRevisions.Add(c.Snapshot(DateTimeOffset.UtcNow));
             try { await db.SaveChangesAsync(Ct); return true; } catch (DbUpdateException e) {
-                Assert.Equal("23P01", Assert.IsType<Npgsql.PostgresException>(e.InnerException).SqlState); return false;
+                // Exclusion violation, or PostgreSQL's deadlock break when both insertions precede either conflict check.
+                Assert.Contains(Assert.IsType<Npgsql.PostgresException>(e.InnerException).SqlState, new[] { "23P01", "40P01" }); return false;
             }
         }
         var results = await Task.WhenAll(Reserve(), Reserve()); Assert.Single(results, x => x);

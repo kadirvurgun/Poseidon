@@ -320,7 +320,10 @@ public sealed class HrPersistenceTests(HrPostgresFixture fixture) : IClassFixtur
         }
         var results = await Task.WhenAll(Task.Run(() => Approve(Approved(0, 30)), Ct), Task.Run(() => Approve(Approved(10, 40)), Ct));
         Assert.Single(results, x => x == null);
-        Assert.Single(results, x => x == "23P01");
+        // The loser is rejected by the exclusion constraint itself (23P01), or — when both index insertions land before
+        // either conflict check — PostgreSQL breaks the mutual wait as a deadlock (40P01). Either way it is aborted and
+        // the API maps it to 409; no other outcome (and never a second approval) is acceptable.
+        Assert.Single(results, x => x is "23P01" or "40P01");
         await using var check = fixture.Db();
         Assert.Equal(1, await check.HrAssignments.CountAsync(x => x.EmploymentId == employment && x.State == "Approved", Ct));
     }
