@@ -207,6 +207,9 @@ function VoiceDetail({ record, caps, t, busy, onCommand }: { record: VoiceDraft;
       {t.vdHandoffCreated} <a href={`/app/safety-events?vessel=${encodeURIComponent(record.vesselId)}&event=${encodeURIComponent(record.safetyEventId)}`}>{t.vdOpenEventDraft}</a></p>}
     {record.state === 'CONFIRMED' && record.handoff !== 'EVENT_DRAFT_CREATED' && <p role="status" data-testid="voice-handoff" data-handoff="PENDING_EVENT_DRAFT_INTEGRATION">
       {t.vdConfirmed} {record.handoffReason === 'SAFETY_EVENT_REPORT_PERMISSION_REQUIRED' && t.vdHandoffPermission}</p>}
+    {/* QA S9 N7: the confirming human hands a pending candidate off once the report permission is granted. */}
+    {record.state === 'CONFIRMED' && record.handoff !== 'EVENT_DRAFT_CREATED' && record.canLinkSafetyEvent === true && <div className="technical-actions">
+      <Button disabled={busy} onClick={() => onCommand('POST', `/${record.id}/safety-event-link`, { expectedVersion: record.version, contentHash: record.hash })}>{t.vdLinkEventDraft}</Button></div>}
     {record.state === 'REJECTED' && record.rejection && <p role="status">{t.vdRejected.replace('{reason}', s9Label(t, 'rr_', record.rejection.reasonCode))}</p>}
     {editable && <div className="technical-actions">
       <Button disabled={busy || !dirty} onClick={() => onCommand('PUT', '/' + record.id, { expectedVersion: record.version, fields, evidenceFileIds: record.evidence.map(e => e.id) })}>{t.save}</Button>

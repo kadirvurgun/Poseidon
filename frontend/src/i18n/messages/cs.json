@@ -2441,6 +2441,7 @@
       "vdHandoffCreated": "Potvrzeno osobou. Byl pro vás vytvořen jmenný koncept bezpečnostní události; dokončete jej a odešlete v sekci Bezpečnostní události. Nic nebylo odesláno.",
       "vdOpenEventDraft": "Otevřít koncept bezpečnostní události",
       "vdHandoffPermission": "Koncept bezpečnostní události nebyl vytvořen, protože nemáte oprávnění hlásit bezpečnostní události.",
+      "vdLinkEventDraft": "Vytvořit nyní koncept bezpečnostní události",
       "vdRejected": "Zamítnuto: {reason}. Zamítnutí je zaznamenáno pro hodnocení.",
       "vdConfirm": "Potvrdit koncept",
       "vdConfirmNote": "Nejprve uložte. Potvrzení zaznamená kontrolu každého pole; nic neodesílá.",

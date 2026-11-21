@@ -153,6 +153,8 @@ public static class SecurityEventCodes
         "separation_of_duties_required", "uat_finding_not_open", "blocker_risk_acceptance_not_permitted", "threshold_sequence_conflict",
         "support_sequence_conflict", "review_stale", "pilot_gate_failed", "pilot_gate_p0_open_or_unknown", "pilot_gate_not_passed",
         "pilot_gate_unknown", "conditions_required", "pilot_gate_authority_required",
+        // QA S9/S10 notes hardening (N7 late voice hand-off).
+        "voice_handoff_confirmer_required",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static bool Allows(string action, string result) => Actions.Contains(action) && Results.Contains(result);
 }

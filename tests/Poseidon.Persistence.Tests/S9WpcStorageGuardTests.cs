@@ -49,6 +49,26 @@ public sealed class S9WpcStorageGuardTests
     }
 
     [Fact]
+    public void Late_safety_event_hand_off_changes_only_the_link_of_a_pending_confirmed_draft()
+    {
+        // QA S9 N7: the late link may set SafetyEventId and clear the pending reason; nothing else on a CONFIRMED draft.
+        using var db = Context();
+        VoiceEventDraft Pending() { var d = Draft("CONFIRMED"); d.HandoffReason = "SAFETY_EVENT_REPORT_PERMISSION_REQUIRED"; return d; }
+        var rewritten = Pending(); db.Attach(rewritten);
+        rewritten.SafetyEventId = Guid.NewGuid(); rewritten.HandoffReason = null; rewritten.FieldsJson = "{\"tampered\":true}"; rewritten.Revision++;
+        Assert.Throws<InvalidOperationException>(() => db.SaveChanges());
+        db.ChangeTracker.Clear();
+        var notPending = Draft("CONFIRMED"); db.Attach(notPending); notPending.SafetyEventId = Guid.NewGuid(); notPending.Revision++;
+        Assert.Throws<InvalidOperationException>(() => db.SaveChanges());
+        db.ChangeTracker.Clear();
+        var relinked = Pending(); relinked.SafetyEventId = Guid.NewGuid(); db.Attach(relinked); relinked.SafetyEventId = Guid.NewGuid(); relinked.HandoffReason = null; relinked.Revision++;
+        Assert.Throws<InvalidOperationException>(() => db.SaveChanges());
+        db.ChangeTracker.Clear();
+        var reopened = Pending(); db.Attach(reopened); reopened.SafetyEventId = Guid.NewGuid(); reopened.HandoffReason = null; reopened.State = "DRAFT"; reopened.Revision++;
+        Assert.Throws<InvalidOperationException>(() => db.SaveChanges());
+    }
+
+    [Fact]
     public void Acknowledgements_and_access_records_are_append_only()
     {
         using var db = Context();

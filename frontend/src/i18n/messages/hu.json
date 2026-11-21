@@ -2441,6 +2441,7 @@
       "vdHandoffCreated": "Egy személy megerősítette. Névre szóló biztonsági esemény-tervezet jött létre Önnek; egészítse ki és küldje be a Biztonsági események között. Semmi sem lett beküldve.",
       "vdOpenEventDraft": "Biztonsági esemény-tervezet megnyitása",
       "vdHandoffPermission": "Nem jött létre biztonsági esemény-tervezet, mert nincs jogosultsága biztonsági események bejelentésére.",
+      "vdLinkEventDraft": "Biztonsági esemény tervezetének létrehozása most",
       "vdRejected": "Elutasítva: {reason}. Az elutasítás rögzítve az értékeléshez.",
       "vdConfirm": "Tervezet megerősítése",
       "vdConfirmNote": "Előbb mentsen. A megerősítés rögzíti, hogy minden mezőt ellenőrzött; semmit sem küld be.",

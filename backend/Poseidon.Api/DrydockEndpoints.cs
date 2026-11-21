@@ -124,7 +124,9 @@ public static class DrydockEndpoints
             if (f.CurrentRevision != l.PinnedRevision) return TowageOutcome.Fail(409, "version_conflict");
         }
         var equipment = c.Items.Where(i => i.EquipmentId != null).Select(i => i.EquipmentId!.Value).Distinct().ToArray();
-        if (equipment.Length > 0 && await db.Assets.CountAsync(e => e.VesselId == vessel && equipment.Contains(e.Id), ct) != equipment.Length)
+        // QA S9 N9: the existence check is itself an equipment read; without equipment.read the link is unavailable.
+        if (equipment.Length > 0 && (!a.Permissions.Contains("equipment.read") ||
+            await db.Assets.CountAsync(e => e.VesselId == vessel && equipment.Contains(e.Id), ct) != equipment.Length))
             return TowageOutcome.Fail(422, "linked_resource_unavailable");
         return null;
     }

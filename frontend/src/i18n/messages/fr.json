@@ -2441,6 +2441,7 @@
       "vdHandoffCreated": "Confirmé par une personne. Un brouillon d'événement de sécurité nominatif a été créé pour vous ; complétez-le et soumettez-le dans Événements de sécurité. Rien n'a été soumis.",
       "vdOpenEventDraft": "Ouvrir le brouillon d'événement de sécurité",
       "vdHandoffPermission": "Aucun brouillon d'événement de sécurité n'a été créé, car vous n'êtes pas autorisé à signaler des événements de sécurité.",
+      "vdLinkEventDraft": "Créer maintenant le brouillon d'événement de sécurité",
       "vdRejected": "Rejeté : {reason}. Le rejet est enregistré pour l’évaluation.",
       "vdConfirm": "Confirmer le brouillon",
       "vdConfirmNote": "Enregistrez d’abord. La confirmation atteste que vous avez vérifié chaque champ ; elle ne soumet rien.",

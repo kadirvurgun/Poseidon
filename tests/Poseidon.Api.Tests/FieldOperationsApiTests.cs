@@ -138,9 +138,12 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.False(released.Ledger.TowlineConnected); Assert.NotNull(released.Ledger.TowlineConnectedAt); Assert.NotNull(released.Ledger.TowlineReleasedAt);
         Assert.Equal(("42.5", "t"), (released.Ledger.MaxTowLoad.Single().Value, released.Ledger.MaxTowLoad.Single().Unit));
         Assert.Equal("UNKNOWN", released.Ledger.CommunicationState); Assert.False(released.CanTransition);
-        // QA B3: crew, AI and system principals record observations but never SUSPEND or ABORT the operation.
+        // QA B3: crew record observations, but crew, AI and system principals never SUSPEND or ABORT the operation.
+        // QA S9 N4: an AI/system principal does not write ledger observations either (a person's record, 60.02 p228).
         foreach (var (who, kind) in new[] { (crew, "Human"), (Guid.NewGuid(), "AI"), (Guid.NewGuid(), "System") }) {
             FieldPrincipal(host.Services, who, kind); await Token(c);
+            if (kind != "Human")
+                await AssertCode(await Send(c, Events(), new TowageExecutionEventCommand(E("NOTE", text: "FICTIONAL machine note"))), HttpStatusCode.Forbidden, "human_actor_required");
             foreach (var action in new[] { "SUSPEND", "ABORT" })
                 await AssertCode(await Send(c, $"towage-executions/{executionId}/transitions?vessel={Tug.Id}", new TowageExecutionTransitionCommand(released.Execution.Version, action,
                     "FICTIONAL unauthorised stop", DateTimeOffset.UtcNow, TugMasterGrant, null)), HttpStatusCode.Forbidden, "tug_authority_required");
@@ -230,6 +233,17 @@ public sealed partial class DirectoryWorkspaceTests
         var audit = await db.AuditEvents.Where(e => e.ResourceId == create.Id).ToArrayAsync(Ct);
         Assert.DoesNotContain("FICTIONAL", JsonSerializer.Serialize(audit));
         Assert.Contains(audit, e => e.EntityType == nameof(TugDailyLogReview) && e.ActorId == master.ToString());
+        // QA S9 N5: the database itself refuses a review row whose reviewer submitted or authored the revision.
+        var stored = await db.TugDailyLogReviews.AsNoTracking().SingleAsync(r => r.LogId == create.Id, Ct);
+        Assert.Equal((author, false), (stored.SubmittedBy, stored.AuthorsJson.Contains(master.ToString("D"), StringComparison.Ordinal)));
+        foreach (var (reviewer, submitter, authors) in new[] { (author, author, "[]"), (master, Guid.NewGuid(), "[\"" + master.ToString("D") + "\"]") }) {
+            db.ChangeTracker.Clear();
+            db.TugDailyLogReviews.Add(new() { TenantId = stored.TenantId, VesselId = stored.VesselId, Id = Guid.NewGuid(), LogId = create.Id, Revision = 1, ResultRevision = 2,
+                Decision = "RETURN", ContentHash = stored.ContentHash, Reconciliation = stored.Reconciliation, ActorId = reviewer, SubmittedBy = submitter, AuthorsJson = authors,
+                AuthorityId = stored.AuthorityId, Duty = stored.Duty, Reason = "FICTIONAL self review attempt" });
+            var failure = await Assert.ThrowsAsync<DbUpdateException>(() => db.SaveChangesAsync(Ct));
+            Assert.Equal(("23514", "CK_TugDailyLogReview_Kind"), (PostgresFailure.Provider(failure)?.SqlState, PostgresFailure.Provider(failure)?.ConstraintName));
+        }
     }
 
     [Fact]
@@ -253,6 +267,13 @@ public sealed partial class DirectoryWorkspaceTests
         await AssertCode(await Send(c, route, new DrydockCreateCommand(id, Content(2))), HttpStatusCode.Conflict, "version_conflict");
         await AssertCode(await Send(c, route, new DrydockCreateCommand(id, Content(1) with { Items = [new(Guid.NewGuid(), "DEFECT_REPAIR", "FICTIONAL", null, null, null, null, null,
             [new("DEFECT", Guid.NewGuid(), 1)])] })), (HttpStatusCode)422, "linked_resource_unavailable");
+        // QA S9 N9: an equipment link needs equipment.read even when the asset exists on this vessel.
+        var asset = Guid.NewGuid();
+        await using (var db = Db()) { db.Assets.Add(new() { TenantId = db.TenantId, Id = asset, VesselId = vessel, Level = "Equipment" }); await db.SaveChangesAsync(Ct); }
+        DrydockContent WithEquipment() => Content(1) with { Items = [new(Guid.NewGuid(), "OTHER", "FICTIONAL winch overhaul", asset, null, null, null, null, [])] };
+        FieldActor(host.Services, planner, "drydock.read", "drydock.write", "drydock.verify", "workorder.read", "maintenance.read"); await Token(c);
+        await AssertCode(await Send(c, route, new DrydockCreateCommand(Guid.NewGuid(), WithEquipment())), (HttpStatusCode)422, "linked_resource_unavailable");
+        FieldActor(host.Services, planner, "drydock.read", "drydock.write", "drydock.verify", "workorder.read", "equipment.read", "maintenance.read"); await Token(c);
         var created = await RiskOk<DrydockView>(await Send(c, route, new DrydockCreateCommand(id, Content(1))));
         Assert.Equal(("DRAFT", DrydockPolicy.Attention, 1, 1), (created.Package.State, created.Readiness.State, created.Readiness.Unlinked, created.Readiness.Overdue));
         Assert.Contains(created.Readiness.Items.SelectMany(i => i.Links), l => l.State == "OVERDUE" && l.Reason == "WorkOrderDuePassed");

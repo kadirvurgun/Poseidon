@@ -18,6 +18,9 @@ public sealed record VoiceDraftUpdateCommand([property: JsonRequired] uint Expec
 { public override string ToString() => nameof(VoiceDraftUpdateCommand); }
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record VoiceDraftConfirmCommand([property: JsonRequired] uint ExpectedVersion, [property: JsonRequired] string ContentHash);
+// QA S9 N7: a confirmed candidate left pending for the missing report permission is handed off later by the same human.
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
+public sealed record VoiceDraftLinkSafetyEventCommand([property: JsonRequired] uint ExpectedVersion, [property: JsonRequired] string ContentHash);
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record VoiceDraftRejectCommand([property: JsonRequired] uint ExpectedVersion, [property: JsonRequired] string ReasonCode, string? Note)
 { public override string ToString() => nameof(VoiceDraftRejectCommand); }
@@ -31,7 +34,8 @@ public sealed record VoiceDraftDto(Guid Id, Guid VesselId, long Revision, uint V
     DateOnly ReferenceDate, VoiceDraftSpeechDto? Speech, string ExtractorVersion, string RuleSetVersion, VoiceDraftCandidate Candidate, VoiceDraftFields Fields,
     Dictionary<string, string> FieldOrigins, VoiceDraftEvidenceDto[] Evidence, string[] Missing, string Hash, VoiceDraftFieldCorrection[]? Corrections,
     Guid? ConfirmedBy, DateTimeOffset? ConfirmedAt, VoiceDraftRejectionDto? Rejection, VoiceDraftRevisionSummaryDto[] Revisions, Guid CreatedBy,
-    bool CanEdit, bool CanConfirm, string Handoff, string AudioRetention, string Provenance, DateTimeOffset SavedAt, Guid? SafetyEventId = null, string? HandoffReason = null);
+    bool CanEdit, bool CanConfirm, string Handoff, string AudioRetention, string Provenance, DateTimeOffset SavedAt, Guid? SafetyEventId = null, string? HandoffReason = null,
+    bool CanLinkSafetyEvent = false);
 public sealed record VoiceDraftListItemDto(Guid Id, string State, string Origin, string? EventType, string? Location, string? OccurredAt, int MissingCount, long Revision, DateTimeOffset SavedAt);
 public sealed record VoiceDraftPageDto(VoiceDraftListItemDto[] Items, int Offset, int Limit, bool HasMore, bool CanWrite);
 public sealed record VoiceDraftCapabilitiesDto(Guid VesselId, bool CanRead, bool CanWrite, bool CanConfirm, bool SpeechAvailable, string? SpeechUnavailableReason,
@@ -74,6 +78,9 @@ public static class VoiceEventDraftEndpoints
             .WithName("VoiceDraftConfirm").Accepts<VoiceDraftConfirmCommand>("application/json").Produces<VoiceDraftDto>().Produces<TechnicalRecordFailure>(422);
         g.MapPost("/{id:guid}/reject", (Guid id, HttpContext h, PoseidonDbContext db) => Run<VoiceDraftRejectCommand>(h, db, "VoiceDraftReject", id, _ => id, Reject, humanOnly: true))
             .WithName("VoiceDraftReject").Accepts<VoiceDraftRejectCommand>("application/json").Produces<VoiceDraftDto>();
+        g.MapPost("/{id:guid}/safety-event-link", (Guid id, HttpContext h, PoseidonDbContext db) => Run<VoiceDraftLinkSafetyEventCommand>(h, db, "VoiceDraftLinkSafetyEvent", id, _ => id,
+                LinkSafetyEvent, humanOnly: true))
+            .WithName("VoiceDraftLinkSafetyEvent").Accepts<VoiceDraftLinkSafetyEventCommand>("application/json").Produces<VoiceDraftDto>();
     }
 
     private static VoiceDraftCandidate Candidate(string json) => JsonSerializer.Deserialize<VoiceDraftCandidate>(json, Json) ?? throw new InvalidDataException("voice_candidate_unavailable");
@@ -163,6 +170,28 @@ public static class VoiceEventDraftEndpoints
         return TechnicalOutcome.Ok(row.Id, row.Revision);
     }
 
+    // QA S9 N7: once the confirming human holds hse.safety_event.report, the pending candidate becomes the NAMED event
+    // DRAFT exactly as at confirmation (reporter = confirmer, same mapping, never submitted). Only that confirmer links it.
+    internal static bool CanLink(VoiceEventDraft d, TrustedActor a, Guid vessel, bool human) => human && CanWrite(a, vessel) && SafetyEventAccess.Reporter(a) &&
+        d.State == VoiceEventDraftPolicy.Confirmed && d.SafetyEventId == null && d.HandoffReason == VoiceSafetyEventHandoff.ReportPermissionRequired && d.ConfirmedBy == a.Id;
+
+    private static async Task<TechnicalOutcome> LinkSafetyEvent(TechnicalContext<VoiceDraftLinkSafetyEventCommand> c, HttpContext h)
+    {
+        var row = await Head(c); if (row == null) return TechnicalOutcome.Fail(404, "resource_not_found");
+        if (row.Version != c.Command.ExpectedVersion || row.Hash != c.Command.ContentHash) return TechnicalOutcome.Fail(409, "version_conflict");
+        if (row.State != VoiceEventDraftPolicy.Confirmed || row.SafetyEventId != null || row.HandoffReason != VoiceSafetyEventHandoff.ReportPermissionRequired)
+            return TechnicalOutcome.Fail(409, "invalid_state");
+        if (row.ConfirmedBy != c.Actor.Id) return TechnicalOutcome.Fail(403, "voice_handoff_confirmer_required");
+        if (!SafetyEventAccess.Reporter(c.Actor)) return TechnicalOutcome.Fail(403, "permission_denied");
+        var eventId = Guid.NewGuid();
+        var created = await SafetyEventEndpoints.CreateDraft(c.Db, c.Actor, c.Vessel, eventId, SafetyEventPolicy.Named,
+            VoiceSafetyEventHandoff.Map(Fields(row.FieldsJson), c.Now), null, "ONLINE", c.Now, c.Ct);
+        if (created.Status != 200) return TechnicalOutcome.Fail(created.Status, created.Code!, created.Missing);
+        row.Revision++; row.SafetyEventId = eventId; row.HandoffReason = null; Stamp(row, c.Actor.Id, c.Now);
+        await c.Db.SaveChangesAsync(c.Ct); Append(c.Db, row, "LINK", c.Now); await c.Db.SaveChangesAsync(c.Ct);
+        return TechnicalOutcome.Ok(row.Id, row.Revision);
+    }
+
     private static async Task<TechnicalOutcome> Reject(TechnicalContext<VoiceDraftRejectCommand> c, HttpContext h)
     {
         var cmd = c.Command;
@@ -198,7 +227,7 @@ public static class VoiceEventDraftEndpoints
             d.CorrectionsJson == null ? null : JsonSerializer.Deserialize<VoiceDraftFieldCorrection[]>(d.CorrectionsJson, Json), d.ConfirmedBy, d.ConfirmedAt,
             d.RejectionReason == null ? null : new(d.RejectionReason, d.RejectionNote, d.RejectedBy!.Value, d.RejectedAt!.Value), revisions, d.CreatedBy,
             editable, editable && human && missing.Length == 0,
-            VoiceSafetyEventHandoff.State(d.State, d.SafetyEventId), d.AudioRetention, d.Provenance, d.SavedAt, d.SafetyEventId, d.HandoffReason);
+            VoiceSafetyEventHandoff.State(d.State, d.SafetyEventId), d.AudioRetention, d.Provenance, d.SavedAt, d.SafetyEventId, d.HandoffReason, CanLink(d, actor, vessel, human));
     }
 
     private static async Task<IResult> List(HttpContext h, PoseidonDbContext db)
@@ -367,7 +396,14 @@ public static class VoiceEventDraftEndpoints
             }
         }
         if (failure != null) return await TechnicalRecordCommands.Fail(h, CommandAction, failure.Status, failure.Code!, resource, failure.Missing);
-        try { return await Fresh(committed!.Value); }
+        try
+        {
+            // QA S9 N7: an event DRAFT created through the voice hand-off is also recorded as a safety event command outcome.
+            if (operation is "VoiceDraftConfirm" or "VoiceDraftLinkSafetyEvent" &&
+                await db.VoiceEventDrafts.AsNoTracking().Where(d => d.VesselId == vessel && d.Id == committed!.Value).Select(d => d.SafetyEventId).SingleOrDefaultAsync(ct) is { } safetyEvent)
+                await SafetyEventCommands.Audit(h, SafetyEventCommands.CommandAction, "Success", safetyEvent);
+            return await Fresh(committed!.Value);
+        }
         catch (Exception ex) when (ex is AuditUnavailableException || PostgresFailure.IsDatabase(ex))
         { return Results.Json(new { code = "command_outcome_withheld", correlationId = h.TraceIdentifier }, statusCode: 503); }
     }

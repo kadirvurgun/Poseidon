@@ -7250,6 +7250,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/voice-event-drafts/{id}/safety-event-link": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["VoiceDraftLinkSafetyEvent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/pms/command-center": {
         parameters: {
             query?: never;
@@ -19365,6 +19381,8 @@ export interface components {
             /** Format: uuid */
             safetyEventId?: null | string;
             handoffReason?: null | string;
+            /** @default false */
+            canLinkSafetyEvent: boolean;
         };
         VoiceDraftEvidenceDto: {
             /** Format: uuid */
@@ -19390,6 +19408,11 @@ export interface components {
         VoiceDraftHint: {
             code: string;
             span: components["schemas"]["VoiceDraftSpan"];
+        };
+        VoiceDraftLinkSafetyEventCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            contentHash: string;
         };
         VoiceDraftListItemDto: {
             /** Format: uuid */
@@ -31624,6 +31647,32 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["VoiceDraftRejectCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VoiceDraftDto"];
+                };
+            };
+        };
+    };
+    VoiceDraftLinkSafetyEvent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["VoiceDraftLinkSafetyEventCommand"];
             };
         };
         responses: {

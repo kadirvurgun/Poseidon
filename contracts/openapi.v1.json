@@ -17832,6 +17832,48 @@
         "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
+    "/api/v1/voice-event-drafts/{id}/safety-event-link": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "VoiceDraftLinkSafetyEvent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VoiceDraftLinkSafetyEventCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoiceDraftDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
     "/api/v1/pms/command-center": {
       "get": {
         "tags": [
@@ -63027,6 +63069,10 @@
               "null",
               "string"
             ]
+          },
+          "canLinkSafetyEvent": {
+            "type": "boolean",
+            "default": false
           }
         }
       },
@@ -63138,6 +63184,23 @@
             "$ref": "#/components/schemas/VoiceDraftSpan"
           }
         }
+      },
+      "VoiceDraftLinkSafetyEventCommand": {
+        "required": [
+          "expectedVersion",
+          "contentHash"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "contentHash": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
       },
       "VoiceDraftListItemDto": {
         "required": [

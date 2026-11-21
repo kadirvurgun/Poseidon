@@ -2441,6 +2441,7 @@
       "vdHandoffCreated": "Von einer Person bestätigt. Ein namentlicher Sicherheitsereignis-Entwurf wurde für Sie angelegt; vervollständigen und übermitteln Sie ihn unter Sicherheitsereignisse. Nichts wurde übermittelt.",
       "vdOpenEventDraft": "Sicherheitsereignis-Entwurf öffnen",
       "vdHandoffPermission": "Es wurde kein Sicherheitsereignis-Entwurf angelegt, da Sie keine Berechtigung zum Melden von Sicherheitsereignissen haben.",
+      "vdLinkEventDraft": "Sicherheitsereignis-Entwurf jetzt erstellen",
       "vdRejected": "Abgelehnt: {reason}. Die Ablehnung ist für die Auswertung erfasst.",
       "vdConfirm": "Entwurf bestätigen",
       "vdConfirmNote": "Zuerst speichern. Die Bestätigung hält fest, dass Sie jedes Feld geprüft haben; sie reicht nichts ein.",
