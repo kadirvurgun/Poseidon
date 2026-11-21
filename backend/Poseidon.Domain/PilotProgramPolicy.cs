@@ -286,18 +286,24 @@ public static class PilotProgramPolicy
         return conflicts.ToArray();
     }
 
-    // Separation of duties for the program decision: the Product Owner must not have authored any active checklist link
-    // nor any measurement the readout uses or a link references. Mirrored by pilot.guard_pilot_duty().
-    public static string[] DecisionDutyConflicts(Guid actor, IReadOnlyCollection<PilotLinkInput> activeLinks, IReadOnlyCollection<PilotAuthoredRecord> latestMeasurements,
-        IReadOnlyCollection<PilotAuthoredRecord> linkedMeasurements)
+    // Separation of duties for the program decision: the Product Owner must not have authored any active checklist link,
+    // any feedback of the program's weeks or linked from any week (the decision rests on every week, mirroring the
+    // week-close rule across W1-W4), nor any measurement the readout uses or a link references.
+    // Mirrored by pilot.guard_pilot_duty() (migration 20261124100000_PilotDecisionFeedbackSeparation).
+    public static string[] DecisionDutyConflicts(Guid actor, IReadOnlyCollection<PilotLinkInput> activeLinks, IReadOnlyCollection<PilotAuthoredRecord> feedback,
+        IReadOnlyCollection<PilotAuthoredRecord> latestMeasurements, IReadOnlyCollection<PilotAuthoredRecord> linkedMeasurements)
     {
         var linked = activeLinks.Select(l => l.RecordId).ToHashSet();
         var conflicts = new List<string>();
         if (activeLinks.Any(l => l.ActorId == actor)) conflicts.Add(LinkAuthor);
+        if (feedback.Any(f => f.ActorId == actor && (f.Week is { } w && PilotProgramCatalog.Week(w) != null || linked.Contains(f.Id)))) conflicts.Add(FeedbackAuthor);
         if (latestMeasurements.Any(m => m.ActorId == actor) || linkedMeasurements.Any(m => m.ActorId == actor && linked.Contains(m.Id))) conflicts.Add(MeasurementAuthor);
         return conflicts.ToArray();
     }
 
+    // True exactly for W4 in the current catalog. The pilot.guard_pilot_duty() trigger hard-codes NEW."Week" = 'W4' for
+    // this rule; PilotProgramPolicyTests.Uses_readout_is_true_exactly_for_w4_as_the_duty_trigger_hard_codes pins it so
+    // catalog drift fails a test (a catalog change needs a new trigger migration).
     public static bool UsesReadout(PilotWeekDefinition week) =>
         week.Items.Any(i => i.RecordTypes.Contains(PilotProgramCatalog.PilotMeasurement, StringComparer.Ordinal));
 

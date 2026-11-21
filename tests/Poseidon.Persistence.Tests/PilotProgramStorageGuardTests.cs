@@ -128,7 +128,7 @@ public sealed class PilotProgramStorageGuardTests
         var init = db.GetService<IModelRuntimeInitializer>();
         var differ = db.GetService<Microsoft.EntityFrameworkCore.Migrations.IMigrationsModelDiffer>();
         var snapshot = init.Initialize(assembly.ModelSnapshot!.Model, designTime: true, validationLogger: null).GetRelationalModel();
-        foreach (var id in new[] { "20261124080000_PilotProgramKit", "20261124090000_PilotProgramDutySeparation" }) {
+        foreach (var id in new[] { "20261124080000_PilotProgramKit", "20261124090000_PilotProgramDutySeparation", "20261124100000_PilotDecisionFeedbackSeparation" }) {
             var migration = assembly.CreateMigration(assembly.Migrations[id], "Npgsql.EntityFrameworkCore.PostgreSQL");
             var target = init.Initialize(migration.TargetModel!, designTime: true, validationLogger: null).GetRelationalModel();
             Assert.False(differ.HasDifferences(target, snapshot), id);
@@ -137,6 +137,16 @@ public sealed class PilotProgramStorageGuardTests
                 Assert.Contains("BEFORE INSERT ON pilot.\"PilotWeekCloses\"", sql);
                 Assert.Contains("BEFORE INSERT ON pilot.\"PilotProgramDecisions\"", sql);
                 Assert.Contains("NEW.\"Week\" = 'W4'", sql);
+            }
+            if (id.EndsWith("FeedbackSeparation", StringComparison.Ordinal)) {
+                var sql = string.Join('\n', migration.UpOperations.OfType<Microsoft.EntityFrameworkCore.Migrations.Operations.SqlOperation>().Select(o => o.Sql));
+                var down = string.Join('\n', migration.DownOperations.OfType<Microsoft.EntityFrameworkCore.Migrations.Operations.SqlOperation>().Select(o => o.Sql));
+                Assert.Contains("CREATE OR REPLACE FUNCTION pilot.guard_pilot_duty()", sql);
+                Assert.Contains("f.\"Week\" IN ('W1', 'W2', 'W3', 'W4')", sql);
+                Assert.Contains("NEW.\"Week\" = 'W4'", sql);
+                Assert.Contains("CREATE OR REPLACE FUNCTION pilot.guard_pilot_duty()", down);
+                Assert.DoesNotContain("IN ('W1', 'W2', 'W3', 'W4')", down);
+                Assert.DoesNotContain("DROP", sql + down);
             }
         }
         // The trigger hard-codes W4 as the only week whose checklist uses the value readout.

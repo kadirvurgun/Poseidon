@@ -100,7 +100,7 @@ public sealed class PilotProgramPolicyTests
         Assert.Equal([false, false, false, true], PilotProgramCatalog.WeekDefinitions.Select(PilotProgramPolicy.UsesReadout));
         PilotLinkInput Link(string item, string type, Guid record, Guid actor) => new(Guid.NewGuid(), item, type, record, actor, null);
         Assert.Empty(PilotProgramPolicy.WeekCloseDutyConflicts(w1, po, [], [], [], []));
-        Assert.Empty(PilotProgramPolicy.DecisionDutyConflicts(po, [], [], []));
+        Assert.Empty(PilotProgramPolicy.DecisionDutyConflicts(po, [], [], [], []));
 
         // Link author of the week.
         Assert.Equal([PilotProgramPolicy.LinkAuthor],
@@ -108,7 +108,7 @@ public sealed class PilotProgramPolicyTests
         // A link in another week does not bind this week's close, but binds the program decision.
         var w2Link = Link("W2_WORK_ORDER", PilotProgramCatalog.WorkOrder, Guid.NewGuid(), po);
         Assert.Empty(PilotProgramPolicy.WeekCloseDutyConflicts(w1, po, [w2Link], [], [], []));
-        Assert.Equal([PilotProgramPolicy.LinkAuthor], PilotProgramPolicy.DecisionDutyConflicts(po, [w2Link], [], []));
+        Assert.Equal([PilotProgramPolicy.LinkAuthor], PilotProgramPolicy.DecisionDutyConflicts(po, [w2Link], [], [], []));
 
         // Feedback recorded for the week, or feedback of another week linked from it.
         var own = new PilotAuthoredRecord(Guid.NewGuid(), "W1", po);
@@ -125,16 +125,53 @@ public sealed class PilotProgramPolicyTests
         Assert.Empty(PilotProgramPolicy.WeekCloseDutyConflicts(w4, po, [], [], [], [superseded]));
         var linked = Link("W4_BEFORE_AFTER_BASELINE", PilotProgramCatalog.PilotMeasurement, superseded.Id, other);
         Assert.Equal([PilotProgramPolicy.MeasurementAuthor], PilotProgramPolicy.WeekCloseDutyConflicts(w4, po, [linked], [], [], [latest, superseded]));
-        Assert.Equal([PilotProgramPolicy.MeasurementAuthor], PilotProgramPolicy.DecisionDutyConflicts(po, [], [latest], [latest]));
-        Assert.Equal([PilotProgramPolicy.MeasurementAuthor], PilotProgramPolicy.DecisionDutyConflicts(po, [linked], [], [superseded]));
-        Assert.Empty(PilotProgramPolicy.DecisionDutyConflicts(po, [], [], [superseded]));
+        Assert.Equal([PilotProgramPolicy.MeasurementAuthor], PilotProgramPolicy.DecisionDutyConflicts(po, [], [], [latest], [latest]));
+        Assert.Equal([PilotProgramPolicy.MeasurementAuthor], PilotProgramPolicy.DecisionDutyConflicts(po, [linked], [], [], [superseded]));
+        Assert.Empty(PilotProgramPolicy.DecisionDutyConflicts(po, [], [], [], [superseded]));
         // Both sets at once; another person's records never bind the Product Owner.
-        Assert.Equal([PilotProgramPolicy.LinkAuthor, PilotProgramPolicy.MeasurementAuthor], PilotProgramPolicy.DecisionDutyConflicts(po, [w2Link], [latest], [latest]));
+        Assert.Equal([PilotProgramPolicy.LinkAuthor, PilotProgramPolicy.MeasurementAuthor], PilotProgramPolicy.DecisionDutyConflicts(po, [w2Link], [], [latest], [latest]));
         var log = Link("W4_TUG_DAILY_LOG", PilotProgramCatalog.TugDailyLog, Guid.NewGuid(), po);
         Assert.Equal([PilotProgramPolicy.LinkAuthor, PilotProgramPolicy.FeedbackAuthor, PilotProgramPolicy.MeasurementAuthor],
             PilotProgramPolicy.WeekCloseDutyConflicts(w4, po, [log], [new(Guid.NewGuid(), "W4", po)], [latest], [latest]));
         Assert.Empty(PilotProgramPolicy.WeekCloseDutyConflicts(w4, other, [log], [], [latest], [latest]));
-        Assert.Empty(PilotProgramPolicy.DecisionDutyConflicts(other, [log], [latest], [latest]));
+        Assert.Empty(PilotProgramPolicy.DecisionDutyConflicts(other, [log], [], [latest], [latest]));
+    }
+
+    // Independent QA of 2177c023 (Medium): A writes W1 feedback, B links it, C closes W1 -- A must not then record the
+    // program decision resting on that feedback. Mirrored by migration 20261124100000_PilotDecisionFeedbackSeparation.
+    [Fact]
+    [Trait("Requirement", "DEV-079")]
+    [Trait("Requirement", "DEV-121")]
+    public void Program_decision_excludes_feedback_authors_of_any_program_week_or_linked_feedback()
+    {
+        Guid a = Guid.NewGuid(), b = Guid.NewGuid();
+        var feedback = new PilotAuthoredRecord(Guid.NewGuid(), "W1", a);
+        var link = new PilotLinkInput(Guid.NewGuid(), "W1_DAILY_FEEDBACK", PilotProgramCatalog.PilotFeedback, feedback.Id, b, null);
+        Assert.Equal([PilotProgramPolicy.FeedbackAuthor], PilotProgramPolicy.DecisionDutyConflicts(a, [link], [feedback], [], []));
+        // Unlinked feedback of any program week binds the decision too (it rests on every week).
+        foreach (var week in PilotProgramCatalog.WeekDefinitions)
+            Assert.Equal([PilotProgramPolicy.FeedbackAuthor], PilotProgramPolicy.DecisionDutyConflicts(a, [], [new(Guid.NewGuid(), week.Week, a)], [], []));
+        // Linked feedback binds even without a catalog week.
+        var orphan = new PilotAuthoredRecord(Guid.NewGuid(), null, a);
+        Assert.Equal([PilotProgramPolicy.FeedbackAuthor],
+            PilotProgramPolicy.DecisionDutyConflicts(a, [link with { RecordId = orphan.Id }], [orphan], [], []));
+        Assert.Empty(PilotProgramPolicy.DecisionDutyConflicts(a, [], [orphan], [], []));
+        // The linker is bound as link author only; another person's feedback never binds.
+        Assert.Equal([PilotProgramPolicy.LinkAuthor], PilotProgramPolicy.DecisionDutyConflicts(b, [link], [feedback], [], []));
+        Assert.Empty(PilotProgramPolicy.DecisionDutyConflicts(Guid.NewGuid(), [link], [feedback], [], []));
+        var m = new PilotAuthoredRecord(Guid.NewGuid(), null, a);
+        Assert.Equal([PilotProgramPolicy.LinkAuthor, PilotProgramPolicy.FeedbackAuthor, PilotProgramPolicy.MeasurementAuthor],
+            PilotProgramPolicy.DecisionDutyConflicts(a, [link with { ActorId = a }], [feedback], [m], [m]));
+    }
+
+    // The pilot.guard_pilot_duty() trigger hard-codes NEW."Week" = 'W4' for the readout rule and f."Week" IN
+    // ('W1','W2','W3','W4') for decision feedback; a catalog change must fail here and ship a new trigger migration.
+    [Fact]
+    [Trait("Requirement", "DEV-079")]
+    public void Uses_readout_is_true_exactly_for_w4_as_the_duty_trigger_hard_codes()
+    {
+        Assert.Equal(["W1", "W2", "W3", "W4"], PilotProgramCatalog.WeekDefinitions.Select(w => w.Week));
+        Assert.Equal(["W4"], PilotProgramCatalog.WeekDefinitions.Where(PilotProgramPolicy.UsesReadout).Select(w => w.Week));
     }
 
     [Fact]

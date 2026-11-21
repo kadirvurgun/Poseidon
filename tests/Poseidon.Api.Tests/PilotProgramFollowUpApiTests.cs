@@ -81,9 +81,9 @@ public sealed partial class DirectoryWorkspaceTests
         var view = await View();
         var w1 = view.Weeks.Single(w => w.Definition.Week == "W1");
         Assert.Equal(new[] { PilotProgramPolicy.LinkAuthor, PilotProgramPolicy.FeedbackAuthor }, w1.CloseDutyConflicts);
-        Assert.Equal(new[] { PilotProgramPolicy.LinkAuthor }, view.DecisionDutyConflicts);
+        Assert.Equal(new[] { PilotProgramPolicy.LinkAuthor, PilotProgramPolicy.FeedbackAuthor }, view.DecisionDutyConflicts);
         await PilotCode(await Send(c, root + "/week-closes", Close("W1", w1.Outcome.Hash)), HttpStatusCode.Forbidden, "separation_of_duties_required");
-        // A link author (no measurement) cannot record the program decision either.
+        // A link and feedback author (no measurement) cannot record the program decision either.
         await PilotCode(await Send(c, root + "/decisions", Decide(view.Review.Hash)), HttpStatusCode.Forbidden, "separation_of_duties_required");
         PilotActor(host.Services, commenter); await Token(c);
         Assert.Equal(new[] { PilotProgramPolicy.FeedbackAuthor }, (await View()).Weeks.Single(w => w.Definition.Week == "W1").CloseDutyConflicts);
@@ -99,6 +99,12 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Empty(view.Weeks.Single(w => w.Definition.Week == "W1").CloseDutyConflicts);
         var closed = await PilotOk<PilotWeekCloseDto>(await Send(c, root + "/week-closes", Close("W1", w1.Outcome.Hash)));
         Assert.Equal((measurer, "CURRENT"), (closed.ActorId, closed.Validity));
+        // Independent QA of 2177c023: with W1 closed by someone else, the commenter (author of W1 feedback only) still
+        // cannot record the program decision that rests on that feedback.
+        PilotActor(host.Services, commenter); await Token(c);
+        view = await View();
+        Assert.Equal(new[] { PilotProgramPolicy.FeedbackAuthor }, view.DecisionDutyConflicts);
+        await PilotCode(await Send(c, root + "/decisions", Decide(view.Review.Hash)), HttpStatusCode.Forbidden, "separation_of_duties_required");
 
         // Database level: the same rule holds for a direct insert that bypasses the API.
         var tenant = ship.TenantId.ToString("D");
@@ -116,6 +122,14 @@ public sealed partial class DirectoryWorkspaceTests
               'FICTIONAL direct insert', '{measurer:D}', gen_random_uuid(), gen_random_uuid(), 'ProductOwner', repeat('A', 64), now())
             """));
         Assert.Equal(("23514", "Pilot program decision requires separation of duties"), (decisionInsert.SqlState, decisionInsert.MessageText));
+        // Migration 20261124100000_PilotDecisionFeedbackSeparation: a feedback-only author is refused by the trigger too.
+        var feedbackDecisionInsert = await Assert.ThrowsAsync<Npgsql.PostgresException>(() => Sql($"""
+            INSERT INTO pilot."PilotProgramDecisions" ("TenantId","Id","ProgramId","Sequence","PreviousDecisionId","Decision","Recommendation","ProgramHash","SnapshotJson",
+              "Rationale","ActorId","AuthorityId","RoleId","Duty","AuthorityHash","RecordedAt")
+            VALUES ('{tenant}', gen_random_uuid(), '{program.Id:D}', 1, NULL, 'CONTINUE', 'FIX_RECOMMENDED', repeat('A', 64), '{"{}"}',
+              'FICTIONAL direct insert', '{commenter:D}', gen_random_uuid(), gen_random_uuid(), 'ProductOwner', repeat('A', 64), now())
+            """));
+        Assert.Equal(("23514", "Pilot program decision requires separation of duties"), (feedbackDecisionInsert.SqlState, feedbackDecisionInsert.MessageText));
 
         // An independent Product Owner (no authorship) records the decision.
         PilotActor(host.Services, owner); await Token(c);
