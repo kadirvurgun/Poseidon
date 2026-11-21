@@ -263,3 +263,7 @@ Main: #16 #17 #18 #20 #23 #36 + **#37 paket 2** birleşik (`2995f70`, 19.11 ~08:
 ### 21.11 04:41 zamanlanmış oturum
 - Önceki koordinatör 01:19'dan beri sessiz; işçiler qa-notes/i18n/pilot-plan hiç başlamamış (worktree/dal/sonuç yok). 53dd7845 push CI 44827968239 **yeşil**. Bu oturum koordinatörlüğü devraldı: S11 PR + bağımsız S11 kapı QA + qa-notes + i18n alt-ajanlarda.
 - **PR #49** açıldı = `integration/s11-bundle-20261122` 53dd7845 (S11 11 iş / 71 SP + S10 kayıt + status-reconcile). Alt-ajanlar: bağımsız S11 kapı QA (→ `scheduled\workers\s11-gate-qa.result.md`), qa-notes (`fix/qa-notes-s9-s10-20261121`, taban s11-bundle), i18n (`fix/i18n-fill-20261121`, taban s11-bundle). Pilot haftaları (DEV-076–079/095/096/121) S11 sonrası.
+
+### 21.11 ~05:10 etkileşimli koordinatör geri döndü (kilit PID 4188)
+- 04:41 zamanlanmış oturum PR #49'u açtı (53dd7845; push CI 44827968239 yeşil) ama print modunda bittiği için alt-ajanları (S11 kapı QA, qa-notes, i18n) durdurdu; 22:27 işçi shell'leri (qa-notes, i18n, pilot-plan) hiç başlamamıştı. **Ders:** işçi shell'i açtıktan sonra 2–3 dk içinde worktree/sonuç dosyası oluştuğunu doğrula; zamanlanmış görev çalışırken run.lock'un geçerli olduğundan emin ol.
+- Yeniden başlatıldı (bu oturumun alt-ajanları): bağımsız S11 kapı QA (`workers\s11-gate-qa.md` → result), qa-notes (`fix/qa-notes-s9-s10-20261121`, taban s11-bundle), i18n (`fix/i18n-fill-20261121`, taban s11-bundle), pilot kiti (`workers\pilot-kit.md`, `feature/pilot-kit-20261121`, DEV-076–079/095/096/121 yazılım kiti; görevler AUTHORED_UNVERIFIED kalır).
