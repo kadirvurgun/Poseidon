@@ -76,6 +76,19 @@
   --sidebar-muted-foreground: var(--muted-foreground);
   --warning-background: var(--warning-surface);
   --warning-foreground: var(--warning);
+  /* THEME-TOKEN-SWEEP-01: shared surface/elevation tokens consumed by domain CSS instead of literals.
+     Selection follows the active palette; shadows/backdrops use one mode-aware ink. */
+  --shadow-color: oklch(0.147 0.004 49.25);
+  /* Builder radius delta (0 at preset 0.625rem); domain radii add it so the radius choice reaches every surface. */
+  --radius-delta: calc(var(--radius) - 0.625rem);
+  --selection-surface: color-mix(in srgb, var(--primary) 10%, var(--card));
+  --selection-border: color-mix(in srgb, var(--primary) 40%, var(--border));
+  /* THEME-PRESET-01: typography tokens. The preset records Oxanium (body) and Geist (heading) by name
+     only; no licensed font files are vendored, so the offline-safe system stacks stay active (gap
+     documented in docs/tasks/theme-foundation-01.md). No remote font request is made. */
+  --font-sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-heading: var(--font-sans);
+  --font-mono: ui-monospace, SFMono-Regular, "Cascadia Code", Consolas, monospace;
   color-scheme: light;
 }
 :root.dark {
@@ -120,6 +133,7 @@
   --info-surface: #162a46;
   --info-border: #3d6598;
   --focus-ring: #a5d8ff;
+  --shadow-color: oklch(0 0 0);
   color-scheme: dark;
 }
 
@@ -128,7 +142,8 @@
 :root[data-palette="graphite"] { --primary: #292524; --primary-foreground: #fafaf9; --ring: #78716c; --sidebar-primary: #292524; --sidebar-primary-foreground: #fafaf9; }
 :root.dark[data-palette="graphite"] { --primary: #e7e5e4; --primary-foreground: #1c1917; --ring: #a8a29e; --sidebar-primary: #e7e5e4; --sidebar-primary-foreground: #1c1917; }
 :root { color: var(--foreground); background: var(--background); }
-body { background: var(--background); color: var(--foreground); }
+body { background: var(--background); color: var(--foreground); font-family: var(--font-sans); }
+h1, h2, h3 { font-family: var(--font-heading); }
 .product-shell { color-scheme: inherit; }
 /* DEV-025-AC-10: shell UI focus indicators never use the builder/palette --ring (it can fall below
    3:1). Portal-rendered shell UI (theme builder backdrop on <body>) and the appearance controls
@@ -139,7 +154,8 @@ body { background: var(--background); color: var(--foreground); }
 :root[dir="rtl"] .enterprise-breadcrumb > svg,
 :root[dir="rtl"] .enterprise-breadcrumb a > svg { transform: rotate(180deg); }
 :root[dir="rtl"] [data-inline-navigation-icon] { transform: rotate(180deg); }
-:root[dir="rtl"] .enterprise-sidebar.is-open { box-shadow: -12px 0 60px #10203345; }
+:root[dir="rtl"] .enterprise-sidebar.is-open { box-shadow: -12px 0 60px color-mix(in srgb, var(--shadow-color) 27%, transparent); }
+code, pre, kbd, samp { font-family: var(--font-mono); }
 code, pre, [data-canonical-value] { direction: ltr; unicode-bidi: isolate; }
 input[type="number"], .ops-countdown { direction: ltr; unicode-bidi: isolate; }
 

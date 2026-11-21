@@ -1,4 +1,4 @@
-.workspace-role-navigation { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; min-width: 0; overflow-wrap: anywhere; padding: .75rem; border: 1px solid var(--border, #667788); }
+.workspace-role-navigation { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; min-width: 0; overflow-wrap: anywhere; padding: .75rem; border: 1px solid var(--border); }
 .workspace-role-navigation p { margin: 0; }
 .product-shell > .workspace-role-navigation { grid-column: 1; grid-row: 2; align-self: start; }
 .workspace-role-navigation nav { flex-basis: 100%; }
