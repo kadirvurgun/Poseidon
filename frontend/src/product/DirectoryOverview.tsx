@@ -27,8 +27,8 @@ export function DirectoryOverview({ records, fleet, language, offset, hasMore }:
     const tugs = records.filter(row => 'kind' in row && row.kind === 'Tug').length;
     const editable = records.filter(row => row.canEdit).length;
     const distribution = useMemo(() => [
-        { name: localizedText(en, "pairs.m_f4e590c972fc1627"), value: ships, color: '#4381da' },
-        { name: localizedText(en, "pairs.m_8bf3e321f0d6edc1"), value: tugs, color: '#74a4c4' }
+        { name: localizedText(en, "pairs.m_f4e590c972fc1627"), value: ships },
+        { name: localizedText(en, "pairs.m_8bf3e321f0d6edc1"), value: tugs }
     ], [en, ships, tugs]);
     const scope = localizedText(en, "pairs.m_f3cb3356a44532c8");
     return <section className="enterprise-page-summary" aria-label={localizedText(en, "pairs.m_99e0941a15c137c4")}>
