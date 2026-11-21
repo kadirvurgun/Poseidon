@@ -73,6 +73,39 @@ Locators are 1-based paragraph indices as returned by `py scripts/query_sources.
   manage + role context (existing `CanReadMemberships`/`CanManageMemberships`).
 - **UA-D09 — seed.** No seed rows (see `docs/seed-data.md` USER-ADMIN-01).
 
+- **UA-D10 — QA notes on 2e61f7a3 (ACCEPT-WITH-NOTES).**
+  - *N2 grantor authority.* Create and grant-update re-read the grantor's current authority inside the same
+    SERIALIZABLE transaction as the write (`CurrentGrantor`): a provisioned grantor's latest grant revision; a
+    configured grantor's static operator grant plus the existing persisted-lifecycle fence of `Run`. A concurrent
+    demotion either serializes before the read (⇒ 409 `conflict_changed` or a narrower grantor) or aborts with
+    40001/40P01, classified by `Run` through `PostgresFailure` (`SerializableTransactionGuardTests`). No deterministic
+    race test was added (a two-writer interleaving is not cheaply forceable); suspend/resume/revoke and delegation
+    commands by a provisioned admin still use the request-start grant (the gate re-reads it on every request).
+  - *N3 narrowing by a less-privileged admin.* An administrator may narrow (or replace) the grant of a member who
+    holds more than the administrator does; only the NEW grant is bounded by the grantor. Accepted under 13.03 §9
+    paragraph:103 (the tenant admin assigns scopes with least privilege); the last-admin guard still applies.
+  - *N4 shadowing.* Any operator entry for a provisioned identity (any tenant, any actor id) shadows the database grant:
+    configuration governs the identity entirely. The screen shows `ManagedBy = Configuration` with
+    `editBlockedReason = configuration_shadowed`, no grant values (the entry may belong to another tenant), the bundle
+    filter excludes it, and grant edits return 409 `configuration_managed`.
+  - *N5 paging.* Status, search and bundle filters, the total and paging are evaluated in the database (tenant query
+    filters on every set; bundle = latest revision of a governing, unshadowed `AdminProvisioned` grant).
+  - *N6 privacy register.* Exact-subject search lets a `membership.read` holder confirm that a given IdP subject has a
+    membership in their own tenant (never another tenant's). Recorded as a privacy-register entry: purpose =
+    administrator lookup; data = IdP subject (pseudonymous identifier); audience = tenant membership readers; the subject
+    is never returned or logged (query strings are not audited).
+  - *N8 immutability.* Grant revisions and their vessel rows are append-only through the EF SaveChanges guard only;
+    there is no database trigger (as for the 5202 grant snapshots). A database administrator can still alter rows.
+  - *N9 navigation.* The `user-admin` destination is projected only with explicit `membership.read` and tenant-wide
+    scope (`ShowsUserAdministration`); manage-only callers keep the API routes. The frontend contract is unchanged.
+- **USER-ADMIN-02 (open follow-up, N1) — cross-tenant identity squatting.** `IX_Accounts_IssuerSubject` is global, so the
+  first tenant administrator to provision an issuer+subject claims it: a tenant-2 admin who knows a tenant-1 user's
+  subject could bind that identity to tenant 2 first (that user would then log into tenant 2, and tenant 1 receives
+  `identity_unavailable`). Fix options: invitation + acceptance by the identity holder at login, or a per-tenant
+  trusted-issuer binding (each tenant provisions only subjects of its own issuer/realm). Interim mitigation: operators
+  deploy membership provisioning single-tenant per issuer, or tenant administrators are trusted parties; the operator
+  configuration remains the authoritative source for any contested identity (it shadows the database grant).
+
 ## API
 
 | Method | Route | Operation |
@@ -113,6 +146,9 @@ loading/empty/error/forbidden/offline/conflict states. TR/EN copy; the other 15 
 | UA-AC-13 | Delegation from a provisioned source bounded by and narrowed with its current grant | API `Delegation_from_a_provisioned_source_…` |
 | UA-AC-14 | Login lookup returns only AdminProvisioned bindings | API `Admin_provisions_…` (`ProvisionedIdentityLocator`) |
 | UA-AC-15 | Contracts: S1 (+2), endpoint profiles (+5), OpenAPI/api.d.ts, audit vocabulary, navigation label sync | `S1ScopeCoverageTests`, `EndpointProfileRegistryTests`, `DiagnosticsTests.OpenApi_*`, `WorkspaceMenuAuthorizationTests.Dev022_search_label_map_*` |
+| UA-AC-17 | Filters/total/paging in the database beyond 2000 rows | API `Access_list_filters_counts_and_pages_in_the_database_beyond_two_thousand_rows` |
+| UA-AC-18 | Config entry shadows a DB grant: read-only, 409, governed by config | API `A_configuration_entry_shadows_a_provisioned_grant_which_becomes_read_only` |
+| UA-AC-19 | Navigation destination needs membership.read | API `User_admin_destination_needs_membership_read` |
 | UA-AC-16 | UI: list/filter, create body, non-grantable disabled, field errors, self block, conflict, forbidden hides permission names | `frontend/src/product/UserAdminWorkspace.test.tsx` |
 
 ## Open items
@@ -122,4 +158,5 @@ loading/empty/error/forbidden/offline/conflict states. TR/EN copy; the other 15 
 - No person link/display name (privacy decision); members are identified by account id + bundles + exact-subject search.
 - Bundles and decision-authority classification are technical and need an approved role catalog review.
 - 15 locales use English fallback text for the new screen.
+- USER-ADMIN-02: cross-tenant identity squatting (see UA-D10 / N1).
 - Invitation/activation flows of 52.02 G, IdP account creation and MFA enforcement remain in the IdP (13.03 paragraph:104).
