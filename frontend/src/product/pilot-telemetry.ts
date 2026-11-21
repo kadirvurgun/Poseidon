@@ -140,3 +140,125 @@ export class PilotTelemetryQueue {
     }
   }
 }
+
+// ---------------------------------------------------------------------------------------------
+// S11 gate B1 (DEV-072 AC: role adoption, journey completion, AI correction, sync conflicts and
+// evidence search time measurable). The app-shell host (PilotTelemetryHost) starts ONE queue per
+// enrolled session; product screens report closed-code observations through the helpers below.
+// Every helper is a no-op unless the host started telemetry for an enrolled membership with a
+// configured retention (capabilities.canContribute), never throws and never awaits the network on
+// the caller's path: telemetry is best effort and cannot block, delay or fail a user action.
+// No helper accepts a record id, name, query or free text; a vessel id is used only locally to
+// classify SHIP/TUG through the authorized directory read and is never queued or sent.
+// ---------------------------------------------------------------------------------------------
+export const pilotFlushIntervalMs = 60000
+type PilotRuntime = { queue: PilotTelemetryQueue; session: PilotSession; flush: () => void; stop: () => void }
+let runtime: PilotRuntime | null = null
+const vesselAreas = new Map<string, Promise<PilotArea | null>>()
+const openJourneys = new Set<string>()
+
+export const pilotTelemetryActive = () => runtime !== null
+export const pilotFlushNow = () => runtime?.flush()
+
+export function pilotRecord(event: Omit<PilotEvent, 'occurredAt'>): boolean {
+  try { return runtime?.queue.record(event) ?? false } catch { return false }
+}
+
+// Path -> pilot area for screens that belong to exactly one operating mode (19.01 p139-140).
+// Shared screens (audit, system health, pilot gate, directory) carry no area and emit no adoption.
+const tugPaths = /^\/app\/(tug-[a-z-]+|towage-[a-z-]+|drydock-planning)(?:\/|$)/
+const shipPaths = /^\/app\/(ship-demo|fuel-bunker-log|port-activity-sof|certificate-command-center|renewal-workflow|pre-survey-checklist|survey-planner|noon-report|deck-daily-log|engine-daily-log|crew-roster|crew-certificates|training-position-matrix|safe-manning|departure-signoff|pms-command-center|defects|work-order-center|equipment-hierarchy|maintenance-plan|critical-spares)(?:\/|$)/
+export function pilotAreaForPath(pathname: string): PilotArea | null {
+  return tugPaths.test(pathname) ? 'TUG' : shipPaths.test(pathname) ? 'SHIP' : null
+}
+
+// Role adoption (19.01 p159-161): at most one ROLE_ACTIVE per actor, area and UTC day in this
+// browser. The server derives the role group from the trusted actor; the client sends no role.
+export function pilotRoleActive(area: PilotArea | null, now = new Date()): boolean {
+  if (!runtime || !area) return false
+  const key = `poseidon.pilot-telemetry.v1:role:${runtime.session.tenantId}:${runtime.session.actorId}:${area}`, day = now.toISOString().slice(0, 10)
+  try { if (localStorage.getItem(key) === day) return false } catch { return false }
+  const recorded = pilotRecord({ kind: 'ROLE_ACTIVE', area, journey: null, aiSource: null, durationMs: null })
+  if (recorded) try { localStorage.setItem(key, day) } catch { /* best effort */ }
+  return recorded
+}
+
+// Task success (19.01 p141-143): a journey is STARTED when the user first attempts its terminal
+// command, COMPLETED when the server confirms it and ABANDONED when the page is left after an
+// attempt without a confirmed completion. A never-attempted journey is not observed (not a failure).
+export function pilotJourneyAttempt(area: PilotArea, journey: PilotJourney) {
+  const key = `${area}:${journey}`
+  if (!runtime || openJourneys.has(key)) return
+  if (pilotRecord({ kind: 'JOURNEY_STARTED', area, journey, aiSource: null, durationMs: null })) openJourneys.add(key)
+}
+export function pilotJourneyCompleted(area: PilotArea, journey: PilotJourney) {
+  if (!openJourneys.delete(`${area}:${journey}`)) return
+  pilotRecord({ kind: 'JOURNEY_COMPLETED', area, journey, aiSource: null, durationMs: null })
+}
+export function pilotAbandonOpenJourneys() {
+  for (const key of [...openJourneys]) {
+    const [area, journey] = key.split(':') as [PilotArea, PilotJourney]
+    pilotRecord({ kind: 'JOURNEY_ABANDONED', area, journey, aiSource: null, durationMs: null })
+  }
+  openJourneys.clear()
+}
+
+// AI quality (19.01 p156-158): one observation per human decision on an AI suggestion.
+export type PilotAiOutcome = 'ACCEPTED' | 'CORRECTED' | 'REJECTED'
+export const pilotAiOutcome = (area: PilotArea, aiSource: PilotAiSource, outcome: PilotAiOutcome) =>
+  pilotRecord({ kind: `AI_SUGGESTION_${outcome}`, area, journey: null, aiSource, durationMs: null })
+// Offline (19.01 p153-155): one observation per sync conflict a human resolved in the conflict center.
+export const pilotSyncConflict = (area: PilotArea) => pilotRecord({ kind: 'SYNC_CONFLICT', area, journey: null, aiSource: null, durationMs: null })
+// Evidence prep (19.01 p150-152): elapsed time of one evidence search until its result is shown.
+export const pilotEvidenceSearch = (area: PilotArea, durationMs: number) =>
+  Number.isFinite(durationMs) && durationMs >= 0 &&
+  pilotRecord({ kind: 'EVIDENCE_SEARCH', area, journey: null, aiSource: null, durationMs: Math.min(Math.round(durationMs), 600000) })
+
+// Resolves a vessel's operating mode through the existing authorized directory read, only while
+// telemetry is active (no extra request otherwise). The id stays in this module's memory.
+export function pilotVesselArea(vesselId: string): Promise<PilotArea | null> {
+  if (!runtime || !vesselId) return Promise.resolve(null)
+  const id = vesselId.toLowerCase()
+  let found = vesselAreas.get(id)
+  if (!found) {
+    const c = new AbortController(), timer = setTimeout(() => c.abort(), 10000)
+    found = request<{ kind?: unknown }>(`vessels/${encodeURIComponent(id)}`, c.signal)
+      .then(v => v?.kind === 'Tug' ? 'TUG' as const : v?.kind === 'Ship' ? 'SHIP' as const : null)
+      .catch(() => { vesselAreas.delete(id); return null })
+      .finally(() => clearTimeout(timer))
+    vesselAreas.set(id, found)
+  }
+  return found
+}
+export function pilotForVessel(vesselId: string, emit: (area: PilotArea) => void) {
+  if (!runtime) return
+  void pilotVesselArea(vesselId).then(area => { if (area) emit(area) }).catch(() => undefined)
+}
+
+// Starts the shell runtime for an enrolled session and returns its stop function. Flushes every
+// intervalMs, when the browser comes online and when the page is hidden or left; a pending batch
+// survives offline periods and reloads in localStorage (bounded queue, original idempotency key).
+export function startPilotTelemetry(session: PilotSession, options: { intervalMs?: number; newKey?: () => string } = {}): () => void {
+  runtime?.stop()
+  const queue = new PilotTelemetryQueue(session, () => true, options.newKey)
+  let flushing = false, stopped = false
+  const flush = () => {
+    if (flushing || stopped) return
+    flushing = true
+    const c = new AbortController(), timer = setTimeout(() => c.abort(), 10000)
+    void queue.flush(c.signal).catch(() => 'RETRY').finally(() => { clearTimeout(timer); flushing = false })
+  }
+  const hidden = () => { if (document.visibilityState === 'hidden') flush() }
+  const pagehide = () => { pilotAbandonOpenJourneys(); flush() }
+  const interval = setInterval(flush, options.intervalMs ?? pilotFlushIntervalMs)
+  window.addEventListener('online', flush)
+  window.addEventListener('pagehide', pagehide)
+  document.addEventListener('visibilitychange', hidden)
+  const current: PilotRuntime = { queue, session, flush, stop: () => {
+    stopped = true; clearInterval(interval)
+    window.removeEventListener('online', flush); window.removeEventListener('pagehide', pagehide); document.removeEventListener('visibilitychange', hidden)
+    if (runtime === current) { runtime = null; openJourneys.clear(); vesselAreas.clear() }
+  } }
+  runtime = current
+  return current.stop
+}

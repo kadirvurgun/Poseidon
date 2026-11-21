@@ -23,7 +23,7 @@ public sealed record PilotGateView(PilotGateReviewOutcome Review, PilotSupportIt
 
 // DEV-075 pilot go/no-go review (18.01 row 76; DoR DoD Gates row 4; 23.03 §5). GET aggregates the gate readers into
 // an advisory recommendation bound to a hash; POST records the Product Owner's human decision against that exact hash.
-// The engine never emits GO; GO on a failed/unknown review is 409; AI, automation and administrators never decide.
+// The engine never emits GO; GO/CONDITIONAL_GO on a failed/unknown review is 409, on a deferred gate 422; AI, automation and administrators never decide.
 public static class PilotGateEndpoints
 {
     private const string ReadAction = "PilotGateRead", CommandAction = "PilotGateCommand";
@@ -109,7 +109,7 @@ public static class PilotGateEndpoints
             if ((previous?.Sequence ?? 0) != c.ExpectedSequence) return (await TugReadinessHttp.Fail(h, CommandAction, 409, "decision_sequence_conflict"), Guid.Empty);
             if (!string.Equals(review.Hash, c.ExpectedReviewHash, StringComparison.Ordinal)) return (await TugReadinessHttp.Fail(h, CommandAction, 409, "review_stale"), Guid.Empty);
             if (PilotGatePolicy.Refusal(c.Decision, review, conditions) is { } refusal)
-                return (await TugReadinessHttp.Fail(h, CommandAction, refusal is "validation_failed" or "conditions_required" ? 400 : 409, refusal), Guid.Empty);
+                return (await TugReadinessHttp.Fail(h, CommandAction, PilotGatePolicy.RefusalStatus(refusal), refusal), Guid.Empty);
             var d = new PilotGateDecision { TenantId = a.TenantId, Id = Guid.NewGuid(), Sequence = (previous?.Sequence ?? 0) + 1, PreviousDecisionId = previous?.Id,
                 Decision = c.Decision, Recommendation = review.Recommendation, ReviewHash = review.Hash, SnapshotJson = PilotGateReviewer.Snapshot(review),
                 ConditionsJson = JsonSerializer.Serialize(conditions), Rationale = c.Rationale, ActorId = a.Id, AuthorityId = grant.Id, RoleId = grant.RoleId,

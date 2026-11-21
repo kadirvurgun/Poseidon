@@ -269,7 +269,10 @@ public sealed partial class DirectoryWorkspaceTests
     public async Task Quiet_hours_defer_only_optional_notices_raised_inside_the_window_and_reject_equal_or_partial_settings()
     {
         // 58.01 PL-035/PL-036: recipient zone, start=end 422, mandatory route immediate. Fake clock.
-        var clock = new NotificationClock { Current = new DateTimeOffset(2026, 11, 19, 20, 30, 0, TimeSpan.Zero) }; // 23:30 Istanbul
+        // The calendar fixture is due relative to the real date (last done today-2, 1-day interval -> due yesterday), so the
+        // fake clock is anchored to yesterday 20:30Z (23:30 Istanbul) instead of a fixed date that silently expires.
+        var day = new DateTimeOffset(DateTime.UtcNow.Date, TimeSpan.Zero).AddDays(-1);
+        var clock = new NotificationClock { Current = day.AddHours(20).AddMinutes(30) }; // 23:30 Istanbul
         await using var host = NotificationHost(clock); using var c = Client(host); NotificationPermissions(host.Services); await Token(c);
         using var equal = await Send(c, NotificationPath("/preference"), new NotificationPreferenceCommand(0, false, "22:00", "22:00", "Europe/Istanbul"), update: true);
         Assert.Equal(HttpStatusCode.UnprocessableEntity, equal.StatusCode); Assert.Contains("quiet_hours_invalid", await equal.Content.ReadAsStringAsync(Ct));
@@ -287,11 +290,11 @@ public sealed partial class DirectoryWorkspaceTests
         await RefreshNotifications(c);
         var quiet = await Inbox(c);
         Assert.Equal("Active", quiet.QuietHoursState);
-        Assert.Equal(new DateTimeOffset(2026, 11, 20, 4, 0, 0, TimeSpan.Zero), quiet.QuietUntil);
+        Assert.Equal(day.AddDays(1).AddHours(4), quiet.QuietUntil);
         var mandatory = Assert.Single(quiet.Items); Assert.Equal("Critical", mandatory.Severity); Assert.True(mandatory.Mandatory);
         // The deferred advisory still exists as an immutable record; only its in-app visibility waits.
         await using (var db = Db()) Assert.Equal(2, await db.Notifications.CountAsync(n => n.State == "Open", Ct));
-        clock.Current = new DateTimeOffset(2026, 11, 20, 4, 0, 0, TimeSpan.Zero);
+        clock.Current = day.AddDays(1).AddHours(4);
         var morning = await Inbox(c);
         Assert.Equal("Inactive", morning.QuietHoursState); Assert.Null(morning.QuietUntil); Assert.Equal(2, morning.Items.Length);
         using var cleared = await Send(c, NotificationPath("/preference"), new NotificationPreferenceCommand(preference.Version, false, null, null, null), update: true);
