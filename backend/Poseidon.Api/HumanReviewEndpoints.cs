@@ -49,7 +49,7 @@ public static class HumanReviewEndpoints
         if (!a.CanRead || !a.Permissions.Contains("human.trace.read") || !a.CanReadAudit || a.RoleContext == null) return null;
         var members = h.RequestServices.GetRequiredService<FederationSettings>().Memberships.Where(m => m.ActorId == a.Id && m.TenantId == a.TenantId).ToArray();
         if (members.Length != 1 || members[0].ActorKind != "Human") return null;
-        var now = DateTimeOffset.UtcNow;
+        var now = h.UtcNow();
         var grants = members[0].HumanTraceReaders.Where(g => g.Id != Guid.Empty && members[0].HumanTraceReaders.Count(x => x.Id == g.Id) == 1 &&
             g.VesselId == vessel && g.EvidenceId == evidence && g.ControlId == control && g.RoleId != Guid.Empty && a.RoleContext.Split(',').Contains(g.RoleId.ToString("D")) &&
             g.ValidFrom <= now && now < g.ValidUntil && g.Kinds.Length > 0 && g.Kinds.All(k => k is "Verification" or "Decision") && g.DecisionTypes.Length <= 32).ToArray();
@@ -132,7 +132,7 @@ public static class HumanReviewEndpoints
             h.Request.Query.ContainsKey("offset") && (!int.TryParse(h.Request.Query["offset"], NumberStyles.None, CultureInfo.InvariantCulture, out offset) || offset is < 0 or > 100000))
             return await Fail(h, 400, "invalid_query");
         if (!await a.Scope(db.Vessels).AnyAsync(v => v.Id == vessel, ct)) return await Fail(h, 404, "resource_not_found");
-        var now = DateTimeOffset.UtcNow; var settings = h.RequestServices.GetRequiredService<FederationSettings>();
+        var now = h.UtcNow(); var settings = h.RequestServices.GetRequiredService<FederationSettings>();
         var grants = ReviewAppointments(h, a, vessel, now);
         var visible = Visible(db, vessel, a);
         // Current revision of each review stream; Verification only (decisions stay with DEV-031).
@@ -206,20 +206,20 @@ public static class HumanReviewEndpoints
         if (h.Request.Query.Any(x => x.Value.Count != 1 || x.Key is not ("vesselId" or "evidenceId" or "evidenceRevision" or "controlId" or "controlRevision" or "asOf" or "offset")) ||
             !GuidQuery(h, "vesselId", out var vessel) || !GuidQuery(h, "evidenceId", out var evidence) || !GuidQuery(h, "controlId", out var control) ||
             !RevisionQuery(h, "evidenceRevision", out var er) || !RevisionQuery(h, "controlRevision", out var cr)) return await Fail(h, 400, "invalid_query");
-        var asOf = DateTimeOffset.UtcNow; var historical = h.Request.Query.ContainsKey("asOf"); var offset = 0;
+        var asOf = h.UtcNow(); var historical = h.Request.Query.ContainsKey("asOf"); var offset = 0;
         if (historical && (!System.Text.RegularExpressions.Regex.IsMatch(h.Request.Query["asOf"].ToString(), @"\A\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,7})?(?:Z|[+-]\d{2}:\d{2})\z") ||
-            !DateTimeOffset.TryParse(h.Request.Query["asOf"], CultureInfo.InvariantCulture, DateTimeStyles.None, out asOf) || asOf > DateTimeOffset.UtcNow) ||
+            !DateTimeOffset.TryParse(h.Request.Query["asOf"], CultureInfo.InvariantCulture, DateTimeStyles.None, out asOf) || asOf > h.UtcNow()) ||
             h.Request.Query.ContainsKey("offset") && (!int.TryParse(h.Request.Query["offset"], NumberStyles.None, CultureInfo.InvariantCulture, out offset) || offset is < 0 or > 100000)) return await Fail(h, 400, "invalid_query");
         asOf = asOf.ToUniversalTime();
         var reader = Reader(h, a, vessel, evidence, control);
-        var grants = Authorities(h, a, vessel, evidence, control, DateTimeOffset.UtcNow);
+        var grants = Authorities(h, a, vessel, evidence, control, h.UtcNow());
         if (reader == null && grants.Length == 0) return await Fail(h, 403, "trace_reader_required");
         var accessHash = TraceAccessHash(a, reader, grants);
         bool AccessCurrent() {
             var live = h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User);
             return live != null && live.Id == a.Id && live.TenantId == a.TenantId &&
                 TraceAccessHash(live, Reader(h, live, vessel, evidence, control),
-                    Authorities(h, live, vessel, evidence, control, DateTimeOffset.UtcNow)) == accessHash;
+                    Authorities(h, live, vessel, evidence, control, h.UtcNow())) == accessHash;
         }
         if (!await a.Scope(db.Vessels).AnyAsync(v => v.Id == vessel, ct)) return await Fail(h, 404, "resource_not_found");
         var ev = await Visible(db, vessel, a, reader != null).SingleOrDefaultAsync(x => x.Kind == "Evidence" && x.Id == evidence && x.Revision == er && x.SavedAt <= asOf, ct);
@@ -245,7 +245,7 @@ public static class HumanReviewEndpoints
         var owningDocument = OperationEquipmentInputs.Present(JsonSerializer.Deserialize<ControlEvidenceContent>(ev.ContentJson, Json)!);
         var latestEvaluation = await OperationEquipmentCommands.Evaluations(db, a).Where(e => e.VesselId == vessel && e.SavedAt <= asOf && (!owningDocument || !e.IncludesOwningInputs) && db.EvaluationQualifications.Any(q => q.EvaluationId == e.Id && traceRuleIds.Contains(q.RuleId)))
             .OrderByDescending(e => e.SavedAt).ThenBy(e => e.Id).FirstOrDefaultAsync(ct);
-        var evaluationCauses = latestEvaluation == null ? new[] { "AUTHORITATIVE_EVALUATION_UNAVAILABLE" } : await CurrentRegulatoryContext.Stale(db, latestEvaluation.Id, vessel, DateTimeOffset.UtcNow, ct, h.RequestServices.GetRequiredService<FederationSettings>());
+        var evaluationCauses = latestEvaluation == null ? new[] { "AUTHORITATIVE_EVALUATION_UNAVAILABLE" } : await CurrentRegulatoryContext.Stale(db, latestEvaluation.Id, vessel, h.UtcNow(), ct, h.RequestServices.GetRequiredService<FederationSettings>());
         segments.Add(latestEvaluation == null ? new("Applicability", null, null, "Unavailable", "REVIEW_REQUIRED", "AUTHORITATIVE_EVALUATION_UNAVAILABLE", null, null) :
             new("Applicability", latestEvaluation.Id, null, "Available", evaluationCauses.Length == 0 ? "RETAINED" : "REVIEW_REQUIRED", "HISTORICAL_INPUTS_ONLY", latestEvaluation.SnapshotHash, latestEvaluation.SavedAt));
         segments.Add(new("Control", co.Id, co.Revision, "Available", co.Lifecycle, "COMPLETION_AND_EFFECTIVENESS_UNKNOWN", co.Hash, co.SavedAt));
@@ -301,10 +301,10 @@ public static class HumanReviewEndpoints
         var chainBlockers = new List<string>(evaluationCauses);
         if (pins.Length == 0) chainBlockers.Add("REQUIREMENT_LINK_MISSING");
         if (co.Lifecycle != "COMPLETED") chainBlockers.Add("CONTROL_COMPLETION_PENDING");
-        if (controlRetired || !currentEvents.Any(v => v.Kind == "Verification" && v.State == "VERIFIED" && v.ValidUntil > DateTimeOffset.UtcNow && v.EvaluationId == latestEvaluation?.Id)) chainBlockers.Add("VERIFICATION_PENDING_OR_STALE");
+        if (controlRetired || !currentEvents.Any(v => v.Kind == "Verification" && v.State == "VERIFIED" && v.ValidUntil > h.UtcNow() && v.EvaluationId == latestEvaluation?.Id)) chainBlockers.Add("VERIFICATION_PENDING_OR_STALE");
         if (!currentEvents.Any(d => d.Kind == "Decision" && d.State == "RECORDED" && d.EvaluationId == latestEvaluation?.Id)) chainBlockers.Add("DECISION_RECORDING_PENDING");
         var recordedChain = evaluationCauses.Length == 0 && pins.Length > 0 && co.Lifecycle == "COMPLETED" && !historicalSuperseded && !controlRetired &&
-            currentEvents.Any(v => v.Kind == "Verification" && v.State == "VERIFIED" && v.ValidUntil > DateTimeOffset.UtcNow && v.EvaluationId == latestEvaluation?.Id &&
+            currentEvents.Any(v => v.Kind == "Verification" && v.State == "VERIFIED" && v.ValidUntil > h.UtcNow() && v.EvaluationId == latestEvaluation?.Id &&
                 currentEvents.Any(d => d.Kind == "Decision" && d.State == "RECORDED" && d.VerificationId == v.Id && d.VerificationRevision == v.Revision && d.EvaluationId == v.EvaluationId));
         var profileRevision = await db.RegulatoryDraftRevisions.Where(x => x.VesselId == vessel && x.SavedAt <= asOf)
             .OrderByDescending(x => x.Revision).Select(x => (long?)x.Revision).FirstOrDefaultAsync(ct);
@@ -354,14 +354,14 @@ public static class HumanReviewEndpoints
         HumanAuthority? Grant() {
             var live = h.RequestServices.GetRequiredService<ActorResolver>().Resolve(h.User);
             return live == null || live.Id != a.Id || live.TenantId != a.TenantId || !live.CanAccessKind(scopedVessel.Kind) ? null :
-                Authorities(h, live, vessel, cmd.EvidenceId, cmd.ControlId, DateTimeOffset.UtcNow).SingleOrDefault(g => g.Id == cmd.AuthorityId && g.OperationId == cmd.OperationId && g.Capability == capability &&
+                Authorities(h, live, vessel, cmd.EvidenceId, cmd.ControlId, h.UtcNow()).SingleOrDefault(g => g.Id == cmd.AuthorityId && g.OperationId == cmd.OperationId && g.Capability == capability &&
                     (cmd.Recording == null || RecordingScope(g, cmd.Recording) &&
                         (g.Recording!.AuthorityRole == "DPA" || g.Recording.AuthorityRole == "Tug Master" && scopedVessel.Kind == VesselKind.Tug || g.Recording.AuthorityRole == "Master" && scopedVessel.Kind == VesselKind.Ship)));
         }
         var grant = Grant(); if (grant == null) return await Fail(h, 403, "human_authority_required");
         // DEV-031: AI/automation/service principals and tenant-wide admins never create a final decision.
         if (HumanDecisionAuthority.IsFinal(kind, capability) && HumanDecisionAuthority.FinalDecisionDenial(h.RequestServices.GetRequiredService<FederationSettings>().Memberships,
-            a, grant, scopedVessel.Kind, cmd.State, DateTimeOffset.UtcNow) != null) return await Fail(h, 403, "human_authority_required");
+            a, grant, scopedVessel.Kind, cmd.State, h.UtcNow()) != null) return await Fail(h, 403, "human_authority_required");
         var authorizedHash = AuthorityHash(grant, a);
         if (kind == "Decision" && cmd.State == "RECORDED") {
             if (cmd.Recording == null) return await Fail(h, 400, "decision_content_required");
@@ -418,7 +418,7 @@ public static class HumanReviewEndpoints
         }
         async Task<bool> RecordingChanged() =>
             await db.ControlEvidenceHeads.AnyAsync(x => x.VesselId == vessel && (x.Kind == "Evidence" && x.Id == ev.Id && x.Revision != ev.Revision || x.Kind == "Control" && x.Id == co.Id && (x.ControlState == "RETIRED" || (x.PublishedRevision ?? x.Revision) != co.Revision)), ct) ||
-            await LineageChanged(db, vessel, co.Id, co.Revision, cmd.EvaluationId, DateTimeOffset.UtcNow, ct, h.RequestServices.GetRequiredService<FederationSettings>()) ||
+            await LineageChanged(db, vessel, co.Id, co.Revision, cmd.EvaluationId, h.UtcNow(), ct, h.RequestServices.GetRequiredService<FederationSettings>()) ||
             await db.HumanReviewHeads.AnyAsync(x => x.VesselId == vessel && x.Id == cmd.VerificationId && x.Revision != cmd.VerificationRevision, ct);
         var replay = await Replay(); if (replay != null) return replay;
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "HumanReviewCommand", "Attempted", resourceId: id);
@@ -441,7 +441,7 @@ public static class HumanReviewEndpoints
             if (eh.Version != cmd.EvidenceVersion || ch.Version != cmd.ControlVersion) return await Fail(h, 409, "input_version_conflict");
             // DEV-028: a retired control has no current implementation; it cannot be newly verified.
             if (cmd.State == "VERIFIED" && ch.ControlState == "RETIRED") return await Fail(h, 409, "control_retired");
-            var content = JsonSerializer.Deserialize<ControlEvidenceContent>(ev.ContentJson, Json)!; var now = DateTimeOffset.UtcNow;
+            var content = JsonSerializer.Deserialize<ControlEvidenceContent>(ev.ContentJson, Json)!; var now = h.UtcNow();
             if (OperationEquipmentInputs.Present(content) && cmd.EvaluationId != null && await db.ApplicabilityEvaluations.AnyAsync(e => e.Id == cmd.EvaluationId && e.IncludesOwningInputs, ct)) return await Fail(h, 409, "owning_verification_requires_independent_evaluation");
             if (OperationEquipmentInputs.Present(content) && (!await OperationEquipmentCommands.Check(db, a, vessel, ev.Id, content, ct) ||
                 (content.Operation?.JobId ?? content.ServiceAuthorization?.JobId) is { } owningJob && owningJob != cmd.OperationId)) return await Fail(h, 409, "owning_context_changed");
@@ -515,7 +515,7 @@ public static class HumanReviewEndpoints
             var commitGrant = Grant();
             if (commitGrant == null || AuthorityHash(commitGrant, a) != e.AuthorityHash) return await Fail(h, 403, "human_authority_required");
             if (OperationEquipmentInputs.Present(content) && (!await OperationEquipmentCommands.Check(db, Actor(h), vessel, ev.Id, content, ct) ||
-                cmd.State == "VERIFIED" && !await OperationEquipmentCommands.VerificationAllowed(db, h.RequestServices.GetRequiredService<FederationSettings>(), content, owningVerificationPins, commitGrant.RoleId, DateTimeOffset.UtcNow, ct))) return await Fail(h, 403, "owning_document_verifier_required");
+                cmd.State == "VERIFIED" && !await OperationEquipmentCommands.VerificationAllowed(db, h.RequestServices.GetRequiredService<FederationSettings>(), content, owningVerificationPins, commitGrant.RoleId, h.UtcNow(), ct))) return await Fail(h, 403, "owning_document_verifier_required");
             await tx.CommitAsync(ct); return Results.Content(outcome, "application/json");
         } catch (DbUpdateConcurrencyException) {
             await tx.RollbackAsync(CancellationToken.None); db.ChangeTracker.Clear(); return await Replay() ?? await Fail(h, 409, "version_conflict");

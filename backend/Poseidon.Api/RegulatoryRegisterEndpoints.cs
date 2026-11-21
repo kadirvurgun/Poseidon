@@ -166,7 +166,7 @@ public static class RegulatoryRegisterEndpoints
                 db.Entry(draft).Property(x => x.ContentJson).IsModified = true; // No-op saves also test xmin.
             }
             draft.ContentJson = json; draft.Provenance = "DeclaredUnverified"; draft.Revision++;
-            var now = DateTimeOffset.UtcNow; draft.SavedAt = now.AddTicks(-(now.Ticks % 10));
+            var now = h.UtcNow(); draft.SavedAt = now.AddTicks(-(now.Ticks % 10));
             var revision = draft.Snapshot(command.SourceId, command.SourceRevision); db.RegisterRevisions.Add(revision);
             await db.SaveChangesAsync(h.RequestAborted);
             db.CommandReceipts.Add(new() { TenantId = actor.TenantId, ActorId = actor.Id, Key = key, Action = action, Fingerprint = fingerprint, ResourceId = draft.Id, CommittedAt = draft.SavedAt, RegisterRevision = revision.Revision, RegisterVersion = draft.Version });

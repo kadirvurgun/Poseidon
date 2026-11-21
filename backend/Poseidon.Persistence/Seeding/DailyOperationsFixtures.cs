@@ -21,7 +21,7 @@ public static class DailyOperationsFixtures
             if(!await db.Vessels.AnyAsync(v=>v.TenantId==vessel.TenantId && v.Id==vessel.Id && v.Kind==VesselKind.Ship,ct))
                 throw new InvalidOperationException("Synthetic daily vessel is unavailable.");
             DailyOperationsPolicy.TryNormalize(kind,new Dictionary<string,DailyValue>(),out var fields,out _);
-            var json=JsonSerializer.Serialize(fields); var now=DateTimeOffset.UtcNow;
+            var json=JsonSerializer.Serialize(fields); var now=db.Clock.GetUtcNow();
             var row=new DailyOperation {TenantId=vessel.TenantId,VesselId=vessel.Id,Id=id,Kind=kind,SourceVersion=DailyOperationsPolicy.SourceVersion,
                 FieldsJson=json,Hash=RegisterStorage.Hash("SyntheticUnverified:"+vessel.Id+":"+kind+":"+json),Provenance="SyntheticUnverified",SavedAt=now};
             db.DailyOperations.Add(row); await db.SaveChangesAsync(ct);

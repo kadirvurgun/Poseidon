@@ -16,7 +16,7 @@ public static class ApplicabilityFixtures
             db.RuleDrafts.Add(new() { TenantId = tenant.Id, Id = id, Revision = 1 });
             var revision = new RuleRevision { TenantId = tenant.Id, Id = id, Revision = 1, Contract = ApplicabilityEngine.Contract, RuleJson = null,
                 Hash = "", ActorId = Guid.Empty, RoleContext = "SystemSyntheticFixture",
-                ReasonCode = "SYNTHETIC_INCOMPLETE_DRAFT", RequestedLifecycle = "DRAFT", SavedAt = DateTimeOffset.UtcNow };
+                ReasonCode = "SYNTHETIC_INCOMPLETE_DRAFT", RequestedLifecycle = "DRAFT", SavedAt = db.Clock.GetUtcNow() };
             revision.Hash = ApplicabilityStorage.Hash(revision); db.RuleRevisions.Add(revision);
         }
     }

@@ -24,7 +24,7 @@ public static class DailyEngineReferenceFixtures
             var target=await db.WorkOrders.SingleOrDefaultAsync(r=>r.TenantId==vessel.TenantId && r.VesselId==vessel.Id && r.Id==workOrderId,ct);
             if(record==null || target==null || target.SourceVersion!=WorkOrderPolicy.SourceVersion) continue;
             if(await db.DailyEngineReferenceHeads.AnyAsync(h=>h.TenantId==vessel.TenantId && h.RecordId==recordId,ct)) continue;
-            var now=DateTimeOffset.UtcNow;
+            var now=db.Clock.GetUtcNow();
             db.DailyEngineReferenceHeads.Add(new(){TenantId=vessel.TenantId,VesselId=vessel.Id,RecordId=recordId,Sequence=1});
             await db.SaveChangesAsync(ct);
             db.DailyEngineReferenceEvents.Add(new(){TenantId=vessel.TenantId,VesselId=vessel.Id,RecordId=recordId,Id=id,Sequence=1,

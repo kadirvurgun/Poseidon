@@ -19,7 +19,7 @@ public static class OperationEquipmentFixtures
                 if (await db.ControlEvidenceHeads.AnyAsync(h => h.TenantId == vessel.TenantId && h.VesselId == vessel.Id && h.Kind == "Evidence" && h.Id == id, ct)) continue;
                 var json = JsonSerializer.Serialize(content with { Title = "FICTIONAL incomplete " + kind, Provenance = "SyntheticUnverified" }, new JsonSerializerOptions(JsonSerializerDefaults.Web));
                 db.ControlEvidenceHeads.Add(new() { TenantId = vessel.TenantId, VesselId = vessel.Id, Kind = "Evidence", Id = id, Revision = 1 });
-                db.ControlEvidenceRevisions.Add(new() { TenantId = vessel.TenantId, VesselId = vessel.Id, Kind = "Evidence", Id = id, Revision = 1, ContentJson = json, Hash = RegisterStorage.Hash(json), ReasonCode = "SYNTHETIC_INCOMPLETE_DRAFT", SavedAt = DateTimeOffset.UtcNow });
+                db.ControlEvidenceRevisions.Add(new() { TenantId = vessel.TenantId, VesselId = vessel.Id, Kind = "Evidence", Id = id, Revision = 1, ContentJson = json, Hash = RegisterStorage.Hash(json), ReasonCode = "SYNTHETIC_INCOMPLETE_DRAFT", SavedAt = db.Clock.GetUtcNow() });
                 db.OperationEquipmentBindings.Add(OperationEquipmentBinding.From(vessel.TenantId, vessel.Id, id, 1, content));
             }
         }

@@ -19,7 +19,7 @@ public static class VesselCertificateFixtures
             var head=new VesselCertificate{TenantId=vessel.TenantId,VesselId=vessel.Id,Id=id};db.VesselCertificates.Add(head);await db.SaveChangesAsync(ct);
             var json=JsonSerializer.Serialize(new VesselCertificateContent(new(new()),DocumentName:"FICTIONAL incomplete certificate draft"),new JsonSerializerOptions(JsonSerializerDefaults.Web));
             db.VesselCertificateRevisions.Add(new(){TenantId=vessel.TenantId,VesselId=vessel.Id,CertificateId=id,Revision=1,RecordVersion=head.Version,
-                ContentJson=json,Hash=RegisterStorage.Hash(json),SourceVersion=VesselCertificatePolicy.SourceVersion,Provenance="SyntheticUnverified",SavedAt=DateTimeOffset.UtcNow});
+                ContentJson=json,Hash=RegisterStorage.Hash(json),SourceVersion=VesselCertificatePolicy.SourceVersion,Provenance="SyntheticUnverified",SavedAt=db.Clock.GetUtcNow()});
             await db.SaveChangesAsync(ct);
         }
     }

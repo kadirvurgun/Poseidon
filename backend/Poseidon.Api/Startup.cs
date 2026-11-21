@@ -96,7 +96,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             if (string.IsNullOrWhiteSpace(connection)) throw new AuditUnavailableException();
             return new PoseidonDbContext(new DbContextOptionsBuilder<PoseidonDbContext>().UseNpgsql(connection).Options,
                 actor.TenantId, new ActorContext(actor.Id.ToString(), "User", http.TraceIdentifier, actor.AuditCapabilities, "WebCommand", actor.RoleContext,
-                    S1SecurityContract.Command(http)), qualifiedInputs: sp.GetRequiredService<IQualifiedInputRuntime>());
+                    S1SecurityContract.Command(http)), qualifiedInputs: sp.GetRequiredService<IQualifiedInputRuntime>(), timeProvider: sp.GetRequiredService<TimeProvider>());
         });
         services.AddProblemDetails();
         services.AddOpenApi(options =>

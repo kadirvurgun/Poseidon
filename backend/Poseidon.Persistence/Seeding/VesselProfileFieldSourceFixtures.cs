@@ -27,7 +27,7 @@ public static class VesselProfileFieldSourceFixtures
                 TenantId = vessel.TenantId, VesselId = vessel.Id, FieldPath = Field, Sequence = 1, ValueRevision = 1,
                 ValueState = state, ValueHash = VesselProfileFieldPolicy.ValueHash(state, value), SourceKind = "UNKNOWN",
                 ReferenceState = "Unknown", ObservedAtState = "Unknown", DeclaredBy = Guid.Empty, StewardCompanyId = vessel.CompanyId,
-                RecordedAt = VesselProfileFieldPolicy.Truncate(DateTimeOffset.UtcNow), Provenance = "SyntheticUnverified"
+                RecordedAt = VesselProfileFieldPolicy.Truncate(db.Clock.GetUtcNow()), Provenance = "SyntheticUnverified"
             });
             added++;
         }

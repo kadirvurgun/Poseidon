@@ -1,28 +1,37 @@
 import { act, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
+import { readFileSync } from 'node:fs'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { ScopedDistribution } from './ScopedDistribution'
 
-const engine = vi.hoisted(() => ({ load: vi.fn(), render: vi.fn(), resize: vi.fn(), dispose: vi.fn() }))
+const engine = vi.hoisted(() => ({ load: vi.fn(), render: vi.fn(), resize: vi.fn(), update: vi.fn(), dispose: vi.fn() }))
 vi.mock('./scope-chart-loader', () => ({ loadScopeChartRenderer: engine.load }))
 
+// The real token stylesheet supplies chart colours (THEME-CHART-01); Tailwind-only at-rules are stripped.
+const tokens = readFileSync(join(dirname(fileURLToPath(import.meta.url)), '../design-system.css'), 'utf8')
+  .replace(/@import[^;]+;/g, '').replace(/@custom-variant[^;]+;/g, '').replace(/@theme inline \{[^}]*\}/g, '')
+let style: HTMLStyleElement
 beforeEach(() => {
+  style = document.createElement('style'); style.textContent = tokens; document.head.append(style)
+  document.documentElement.className = 'light'
   engine.load.mockResolvedValue({ renderScopeChart: engine.render })
-  engine.render.mockReturnValue({ resize: engine.resize, dispose: engine.dispose })
+  engine.render.mockReturnValue({ resize: engine.resize, update: engine.update, dispose: engine.dispose })
 })
-afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); engine.load.mockReset(); engine.render.mockReset(); engine.dispose.mockReset(); engine.resize.mockReset() })
+afterEach(() => { style.remove(); document.documentElement.className = ''; vi.restoreAllMocks(); vi.unstubAllGlobals(); engine.load.mockReset(); engine.render.mockReset(); engine.dispose.mockReset(); engine.resize.mockReset(); engine.update.mockReset() })
 
 it('provides source counts as accessible text even when SVG initialization is unavailable', () => {
-  render(<ScopedDistribution label="This page only" data={[{ name: 'Ships', value: 2, color: '#4381da' }, { name: 'Tugs', value: 1, color: '#74a4c4' }]} />)
+  render(<ScopedDistribution label="This page only" data={[{ name: 'Ships', value: 2 }, { name: 'Tugs', value: 1 }]} />)
   expect(screen.getByRole('figure', { name: 'This page only' })).toHaveTextContent('Ships: 2 · Tugs: 1')
   expect(engine.load).not.toHaveBeenCalled()
 })
 
 it('disposes the old scope chart before a new data scope is mounted and on unmount', async () => {
-  engine.render.mockReturnValue({ resize: engine.resize, dispose: engine.dispose })
+  engine.render.mockReturnValue({ resize: engine.resize, update: engine.update, dispose: engine.dispose })
   vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({ width: 600, height: 200, x: 0, y: 0, top: 0, left: 0, bottom: 200, right: 600, toJSON: () => ({}) })
   vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} })
-  const first = [{ name: 'Ships', value: 2, color: '#4381da' }]
-  const second = [{ name: 'Tugs', value: 1, color: '#74a4c4' }]
+  const first = [{ name: 'Ships', value: 2 }]
+  const second = [{ name: 'Tugs', value: 1 }]
   const mounted = render(<ScopedDistribution label="Authorized page" data={first} />)
   await waitFor(() => expect(engine.render).toHaveBeenCalledTimes(1))
   mounted.rerender(<ScopedDistribution label="Authorized page" data={second} />)
@@ -38,7 +47,7 @@ it('loads no engine while hidden and shares one pending import until a visible c
   engine.load.mockReturnValue(new Promise(resolve => { finish = resolve }))
   vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(() => ({ width, height: 200, x: 0, y: 0, top: 0, left: 0, bottom: 200, right: width, toJSON: () => ({}) }))
   vi.stubGlobal('ResizeObserver', class { constructor(callback: ResizeObserverCallback) { notify = callback } observe() {} disconnect() {} })
-  render(<ScopedDistribution label="Authorized page" data={[{ name: 'Ships', value: 2, color: '#4381da' }]} />)
+  render(<ScopedDistribution label="Authorized page" data={[{ name: 'Ships', value: 2 }]} />)
   await act(async () => { await Promise.resolve() })
   expect(engine.load).not.toHaveBeenCalled()
   expect(engine.render).not.toHaveBeenCalled()
@@ -60,7 +69,7 @@ it('ignores an engine import resolving after unmount and disconnects its observe
   engine.load.mockReturnValue(new Promise(resolve => { finish = resolve }))
   vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({ width: 600, height: 200, x: 0, y: 0, top: 0, left: 0, bottom: 200, right: 600, toJSON: () => ({}) })
   vi.stubGlobal('ResizeObserver', class { observe() {} disconnect = disconnect })
-  const mounted = render(<ScopedDistribution label="Authorized page" data={[{ name: 'Ships', value: 2, color: '#4381da' }]} />)
+  const mounted = render(<ScopedDistribution label="Authorized page" data={[{ name: 'Ships', value: 2 }]} />)
   expect(engine.load).toHaveBeenCalledTimes(1)
   mounted.unmount(); expect(disconnect).toHaveBeenCalledTimes(1)
   await act(async () => finish({ renderScopeChart: engine.render }))
@@ -72,10 +81,41 @@ it('retains authoritative text when a visible chart engine fails without retryin
   engine.load.mockRejectedValue(new Error('Synthetic optional engine unavailable'))
   vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({ width: 600, height: 200, x: 0, y: 0, top: 0, left: 0, bottom: 200, right: 600, toJSON: () => ({}) })
   vi.stubGlobal('ResizeObserver', class { constructor(callback: ResizeObserverCallback) { notify = callback } observe() {} disconnect() {} })
-  render(<ScopedDistribution label="Authorized page" data={[{ name: 'Ships', value: 2, color: '#4381da' }]} />)
+  render(<ScopedDistribution label="Authorized page" data={[{ name: 'Ships', value: 2 }]} />)
   await act(async () => { await Promise.resolve() })
   await act(async () => { notify([], {} as ResizeObserver); notify([], {} as ResizeObserver) })
   expect(engine.load).toHaveBeenCalledTimes(1)
   expect(engine.render).not.toHaveBeenCalled()
   expect(screen.getByRole('figure', { name: 'Authorized page' })).toHaveTextContent('Ships: 2')
+})
+
+const visible = () => {
+  vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue({ width: 600, height: 200, x: 0, y: 0, top: 0, left: 0, bottom: 200, right: 600, toJSON: () => ({}) })
+  vi.stubGlobal('ResizeObserver', class { observe() {} disconnect() {} })
+}
+
+it('THEME-CHART-01 renders with theme tokens and re-themes the same chart on a mode switch', async () => {
+  visible()
+  render(<ScopedDistribution label="Authorized page" data={[{ name: 'Ships', value: 2 }, { name: 'Tugs', value: 1 }]} />)
+  await waitFor(() => expect(engine.render).toHaveBeenCalledTimes(1))
+  const light = engine.render.mock.calls[0][2]
+  expect(light.series[0]).toMatch(/^#[0-9a-f]{6}$/)
+  await act(async () => { document.documentElement.className = 'dark'; await Promise.resolve() })
+  expect(engine.update).toHaveBeenCalledTimes(1)
+  expect(engine.update.mock.calls[0][0].surface).not.toBe(light.surface)
+  expect(engine.render).toHaveBeenCalledTimes(1)
+  expect(engine.dispose).not.toHaveBeenCalled()
+})
+
+it('THEME-CHART-01 legend swatches use chart/status tokens and missing tokens keep only the text legend', async () => {
+  style.remove()
+  visible()
+  render(<ScopedDistribution label="Authorized page" data={[{ name: 'Ships', value: 2 }, { name: 'Unverified', value: 1, status: 'unknown' }]} />)
+  await waitFor(() => expect(engine.load).toHaveBeenCalledTimes(1))
+  await act(async () => { await Promise.resolve() })
+  expect(engine.render).not.toHaveBeenCalled()
+  const swatches = screen.getByRole('figure').querySelectorAll('i')
+  expect(swatches[0].getAttribute('style')).toContain('var(--chart-2)')
+  expect(swatches[1].getAttribute('style')).toContain('var(--muted-foreground)')
+  expect(screen.getByRole('figure')).toHaveTextContent('Ships: 2 · Unverified: 1')
 })

@@ -72,9 +72,8 @@ internal static class PilotMetricsStorage
     }
 
     // Insert-only; the retention purge is the only deletion and may remove only expired rows.
-    internal static void Guard(IReadOnlyCollection<EntityEntry> changes)
+    internal static void Guard(IReadOnlyCollection<EntityEntry> changes, DateTimeOffset now)
     {
-        var now = DateTimeOffset.UtcNow;
         if (changes.Any(e => e.Entity is PilotMetricBatch or PilotMetricTenantSalt or PilotMetricReceipt && e.State == EntityState.Modified))
             throw new InvalidOperationException("Pilot metric batches, salts and receipts are immutable.");
         if (changes.Any(e => e.State == EntityState.Deleted && (e.Entity is PilotMetricTenantSalt ||

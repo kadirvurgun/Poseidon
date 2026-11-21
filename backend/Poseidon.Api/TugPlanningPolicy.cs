@@ -24,7 +24,7 @@ public sealed class TugPlanningPolicy
         Contexts.Select(c => (c.TenantId, c.VesselId)).Distinct().Count() == Contexts.Length &&
         BpSources.Length <= 1000 && BpSources.All(s => s != null && s.Source is { Length: > 0 and <= 80 } && s.PolicyVersion is { Length: > 0 and <= 80 } && s.MaxAgeSeconds is >= 1 and <= 31536000) &&
         BpSources.Select(s => (s.TenantId, s.VesselId)).Distinct().Count() == BpSources.Length;
-    public TugPlanningScope? Scope(TrustedActor a, Guid vessel) => Current(DateTimeOffset.UtcNow) ?
+    public TugPlanningScope? Scope(TrustedActor a, Guid vessel, DateTimeOffset now) => Current(now) ?
         Scopes.SingleOrDefault(s => s.TenantId == a.TenantId && s.ActorId == a.Id && s.VesselId == vessel) : null;
 }
 public sealed record TugPlanningScope(Guid TenantId, Guid ActorId, Guid VesselId, Guid[] EligibleTugs);

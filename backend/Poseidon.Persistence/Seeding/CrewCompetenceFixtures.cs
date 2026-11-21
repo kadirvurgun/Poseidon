@@ -33,7 +33,7 @@ public static class CrewCompetenceFixtures
                 if (await db.CrewCompetenceRequirements.AnyAsync(r => r.TenantId == vessel.TenantId && r.VesselId == vessel.Id && r.PositionId == vessel.Id &&
                     r.RequirementType == type && r.Reference == reference, ct)) continue;
                 db.CrewCompetenceRequirements.Add(new() { TenantId = vessel.TenantId, Id = id, VesselId = vessel.Id, PositionId = vessel.Id,
-                    RequirementType = type, Reference = reference, Mandatory = true, Provenance = "SyntheticUnverified", ActorId = Guid.Empty, SavedAt = DateTimeOffset.UtcNow });
+                    RequirementType = type, Reference = reference, Mandatory = true, Provenance = "SyntheticUnverified", ActorId = Guid.Empty, SavedAt = db.Clock.GetUtcNow() });
                 await db.SaveChangesAsync(ct);
             }
         }

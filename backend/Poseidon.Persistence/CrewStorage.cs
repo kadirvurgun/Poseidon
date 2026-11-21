@@ -70,10 +70,10 @@ public sealed class CrewAssignment : ITenantEntity
     public DateTimeOffset? SourceObservedAt { get; set; }
     public long Revision { get; set; } = 1;
     public uint Version { get; set; }
-    public CrewAssignmentRevision Snapshot() => new() {
+    public CrewAssignmentRevision Snapshot(DateTimeOffset savedAt) => new() {
         TenantId = TenantId, AssignmentId = Id, VesselId = VesselId, PersonId = PersonId,
         PositionId = PositionId, From = From, To = To, ContractEndDate = ContractEndDate,
-        Revision = Revision, Status = Status, Provenance = Provenance, SourceObservedAt = SourceObservedAt, SavedAt = DateTimeOffset.UtcNow,
+        Revision = Revision, Status = Status, Provenance = Provenance, SourceObservedAt = SourceObservedAt, SavedAt = savedAt,
         AssignmentPolicyVersion = AssignmentPolicyVersion, AssignmentPolicyFingerprint = AssignmentPolicyFingerprint,
         PositionPolicyVersion = PositionPolicyVersion, PositionPolicyFingerprint = PositionPolicyFingerprint
     };

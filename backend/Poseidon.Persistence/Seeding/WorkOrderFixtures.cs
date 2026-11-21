@@ -17,7 +17,7 @@ public static class WorkOrderFixtures
             var id=Id(vessel.Id);if(await db.WorkOrders.AnyAsync(r=>r.TenantId==vessel.TenantId && r.Id==id,ct))continue;
             if(!await db.Vessels.AnyAsync(v=>v.TenantId==vessel.TenantId && v.Id==vessel.Id,ct))throw new InvalidOperationException("Synthetic work_order scope is unavailable.");
             if(!WorkOrderPolicy.TryNormalize(new Dictionary<string,WorkOrderFact>(),out var fields,out _))throw new InvalidOperationException("Synthetic work_order schema unavailable.");
-            var json=JsonSerializer.Serialize(fields,new JsonSerializerOptions(JsonSerializerDefaults.Web));var now=DateTimeOffset.UtcNow;
+            var json=JsonSerializer.Serialize(fields,new JsonSerializerOptions(JsonSerializerDefaults.Web));var now=db.Clock.GetUtcNow();
             var row=new WorkOrder{TenantId=vessel.TenantId,VesselId=vessel.Id,Id=id,FieldsJson=json,SourceVersion=WorkOrderPolicy.SourceVersion,
                 Hash=RegisterStorage.Hash("SyntheticUnverified:"+vessel.TenantId+":"+vessel.Id+":"+json),Provenance="SyntheticUnverified",SavedAt=now};db.WorkOrders.Add(row);await db.SaveChangesAsync(ct);
             db.WorkOrderRevisions.Add(new(){TenantId=row.TenantId,VesselId=row.VesselId,WorkOrderId=id,Revision=1,RecordVersion=row.Version,FieldsJson=json,SourceVersion=row.SourceVersion,

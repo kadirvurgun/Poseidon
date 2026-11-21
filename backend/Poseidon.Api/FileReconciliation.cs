@@ -15,7 +15,7 @@ public static class FileReconciliation
 
     private static async Task<int> AbandonCoreAsync(PoseidonDbContext db, Func<Guid, Guid, CancellationToken, Task> remove, DateTimeOffset cutoff, int batch, CancellationToken ct, Func<FileStage, bool>? owns = null)
     {
-        if (batch is < 1 or > 100 || cutoff >= DateTimeOffset.UtcNow || db.IsAdministrativeImport)
+        if (batch is < 1 or > 100 || cutoff >= db.Clock.GetUtcNow() || db.IsAdministrativeImport)
             throw new ArgumentException("Explicit tenant, bounded batch and elapsed policy cutoff required.");
         var stages = await db.FileStages.Where(x => (x.State == "Pending" || x.State == "Receiving" || x.State == "Abandoned") && x.CreatedAt < cutoff)
             .OrderBy(x => x.CreatedAt).Take(batch).ToArrayAsync(ct);

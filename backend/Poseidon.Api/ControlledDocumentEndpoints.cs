@@ -165,7 +165,7 @@ public static class ControlledDocumentEndpoints
         var offset = h.Request.Query.ContainsKey("offset") ? int.Parse(h.Request.Query["offset"]!, CultureInfo.InvariantCulture) : 0;
         var isps = Isps(a);
         var rows = await db.ControlledDocuments.AsNoTracking().Where(x => x.VesselId == vessel && (!x.IspsRestricted || isps)).OrderBy(x => x.Code).ThenBy(x => x.Id).Skip(offset).Take(26).ToArrayAsync(ct);
-        var today = ControlledDocumentChain.Today(DateTimeOffset.UtcNow);
+        var today = ControlledDocumentChain.Today(h.UtcNow());
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "ControlledDocumentRead", "Success", resourceId: vessel);
         return Results.Ok(new ControlledDocumentListDto(rows.Take(25).Select(d => new ControlledDocumentSummaryDto(d.Id, d.VesselId, d.Code, d.Title, d.Classification,
             d.CurrentRevision, d.LatestRevision, d.Version, d.HoldActive, ControlledDocumentPolicy.Retention(d.RetentionPolicyRef, d.RetainUntil, today), d.DisposalState, d.Provenance, d.IspsRestricted)).ToArray(),
@@ -215,7 +215,7 @@ public static class ControlledDocumentEndpoints
             .OrderBy(x => x.Revision).ThenBy(x => x.AcknowledgedAt).ThenBy(x => x.Id).Take(500).ToArrayAsync(ct);
         var policy = ControlledDocumentSecurityPolicy.Content(d.Classification, RestrictedContent(a));
         var canAcknowledge = Authority(a, ControlledDocumentSecurityPolicy.AcknowledgePermission);
-        var now = DateTimeOffset.UtcNow;
+        var now = db.Clock.GetUtcNow();
         return new(d.Id, d.VesselId, d.Code, d.Title, d.Classification, d.CurrentRevision, d.LatestRevision, d.Version, d.HoldActive, d.HoldActive ? d.HoldPlacedAt : null,
             ControlledDocumentPolicy.Retention(d.RetentionPolicyRef, d.RetainUntil, ControlledDocumentChain.Today(now)), d.RetentionPolicyRef, d.RetainUntil,
             d.DisposalState, "NOT_STARTED", d.Provenance,
@@ -311,7 +311,7 @@ public static class ControlledDocumentEndpoints
             await db.SaveChangesAsync(ct);
             var outcome = JsonSerializer.Serialize(await Dto(db, a, d, ct), Output);
             db.ControlledDocumentReceipts.Add(new() { TenantId = a.TenantId, ActorId = a.Id, Key = key, VesselId = vessel, DocumentId = d.Id, Action = action,
-                Fingerprint = fingerprint, OutcomeJson = outcome, SavedAt = DateTimeOffset.UtcNow });
+                Fingerprint = fingerprint, OutcomeJson = outcome, SavedAt = h.UtcNow() });
             await db.SaveChangesAsync(ct);
             var live = Actor(h);
             if (live == null || live.Id != a.Id || live.TenantId != a.TenantId || !allowed(live, vessel) || !await Scope(db, live, vessel, ct))

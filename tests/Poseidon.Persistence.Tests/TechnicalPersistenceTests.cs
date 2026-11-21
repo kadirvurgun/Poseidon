@@ -29,10 +29,10 @@ public sealed class TechnicalPersistenceTests : IAsyncLifetime
     public async Task Current_migration_seed_is_idempotent_and_preserves_operator_hierarchy_and_plan_inputs() {
         await using (var db = Db()) {
             var a = await db.Assets.SingleAsync(x => x.Id == Vessel.Id, Ct); a.Location = "Synthetic operator edit"; a.Revision++;
-            db.AssetRevisions.Add(a.Snapshot());
+            db.AssetRevisions.Add(a.Snapshot(DateTimeOffset.UtcNow));
             var p = await db.MaintenancePlans.SingleAsync(x => x.Id == Vessel.Id, Ct); p.Revision++;
             p.ContentJson = JsonSerializer.Serialize(new MaintenanceInputs(IntervalValue: "0.123456789012345678"));
-            db.MaintenancePlanRevisions.Add(p.Snapshot(DateTimeOffset.UnixEpoch, a.Revision)); await db.SaveChangesAsync(Ct);
+            db.MaintenancePlanRevisions.Add(p.Snapshot(DateTimeOffset.UnixEpoch, a.Revision, DateTimeOffset.UtcNow)); await db.SaveChangesAsync(Ct);
         }
         int audits;
         await using (var db = Import()) { audits = await db.AuditEvents.CountAsync(Ct); await SeedImporter.ImportAsync(db, SeedValidationTests.Demo(), Ct); }
@@ -58,7 +58,7 @@ public sealed class TechnicalPersistenceTests : IAsyncLifetime
     [Fact]
     public async Task Serializable_two_connection_reparent_race_cannot_commit_a_cycle() {
         var a = Asset(); var b = Asset();
-        await using (var db = Db()) { db.Assets.AddRange(a,b); db.AssetRevisions.AddRange(a.Snapshot(),b.Snapshot()); await db.SaveChangesAsync(Ct); }
+        await using (var db = Db()) { db.Assets.AddRange(a,b); db.AssetRevisions.AddRange(a.Snapshot(DateTimeOffset.UtcNow),b.Snapshot(DateTimeOffset.UtcNow)); await db.SaveChangesAsync(Ct); }
         var ready = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously); var count = 0;
         async Task<bool> Reparent(Guid id, Guid parent) {
             await using var db = Db(); await using var tx = await db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable, Ct);
@@ -67,7 +67,7 @@ public sealed class TechnicalPersistenceTests : IAsyncLifetime
                 var nodes = rows.Select(x => new EquipmentHierarchyNode(x.TenantId, x.VesselId, x.Id, x.ParentId)).ToArray();
                 Assert.Equal(EquipmentHierarchyValidation.Valid, EquipmentHierarchyPolicy.ValidateReparent(Vessel.TenantId, Vessel.Id, nodes, id, parent));
                 if (Interlocked.Increment(ref count) == 2) ready.SetResult(); await ready.Task.WaitAsync(TimeSpan.FromSeconds(20), Ct);
-                var row = rows.Single(x => x.Id == id); row.ParentId = parent; row.Revision++; db.AssetRevisions.Add(row.Snapshot());
+                var row = rows.Single(x => x.Id == id); row.ParentId = parent; row.Revision++; db.AssetRevisions.Add(row.Snapshot(DateTimeOffset.UtcNow));
                 await db.SaveChangesAsync(Ct); await tx.CommitAsync(Ct); return true;
             } catch (Exception e) when (SerializationFailure(e)) { await tx.RollbackAsync(Ct); return false; }
         }
@@ -82,8 +82,8 @@ public sealed class TechnicalPersistenceTests : IAsyncLifetime
     [Fact]
     public async Task Direct_SaveChanges_cycle_and_orphan_are_rejected_by_database_not_just_api_policy() {
         await using var db = Db(); var a = Asset(); var b = Asset(); b.ParentId = a.Id;
-        db.Assets.AddRange(a,b); db.AssetRevisions.AddRange(a.Snapshot(),b.Snapshot()); await db.SaveChangesAsync(Ct);
-        var before = await db.AuditEvents.CountAsync(Ct); a.ParentId = b.Id; a.Revision++; db.AssetRevisions.Add(a.Snapshot());
+        db.Assets.AddRange(a,b); db.AssetRevisions.AddRange(a.Snapshot(DateTimeOffset.UtcNow),b.Snapshot(DateTimeOffset.UtcNow)); await db.SaveChangesAsync(Ct);
+        var before = await db.AuditEvents.CountAsync(Ct); a.ParentId = b.Id; a.Revision++; db.AssetRevisions.Add(a.Snapshot(DateTimeOffset.UtcNow));
         var error = await Assert.ThrowsAsync<DbUpdateException>(() => db.SaveChangesAsync(Ct));
         Assert.Equal("23514", Assert.IsType<Npgsql.PostgresException>(error.InnerException).SqlState);
         await using var verify = Db(); Assert.Equal(before, await verify.AuditEvents.CountAsync(Ct));
@@ -92,11 +92,11 @@ public sealed class TechnicalPersistenceTests : IAsyncLifetime
     [Fact]
     public async Task Database_trigger_arbitrates_two_direct_read_committed_reparents_without_API_precheck() {
         var a = Asset(); var b = Asset();
-        await using (var db = Db()) { db.Assets.AddRange(a,b); db.AssetRevisions.AddRange(a.Snapshot(),b.Snapshot()); await db.SaveChangesAsync(Ct); }
+        await using (var db = Db()) { db.Assets.AddRange(a,b); db.AssetRevisions.AddRange(a.Snapshot(DateTimeOffset.UtcNow),b.Snapshot(DateTimeOffset.UtcNow)); await db.SaveChangesAsync(Ct); }
         await using var first = Db(); await using var second = Db();
         var left = await first.Assets.SingleAsync(x => x.Id == a.Id, Ct); var right = await second.Assets.SingleAsync(x => x.Id == b.Id, Ct);
         left.ParentId = b.Id; right.ParentId = a.Id; left.Revision++; right.Revision++;
-        first.AssetRevisions.Add(left.Snapshot()); second.AssetRevisions.Add(right.Snapshot());
+        first.AssetRevisions.Add(left.Snapshot(DateTimeOffset.UtcNow)); second.AssetRevisions.Add(right.Snapshot(DateTimeOffset.UtcNow));
         async Task<bool> Commit(PoseidonDbContext db) {
             try { await db.SaveChangesAsync(Ct); return true; }
             catch (DbUpdateException error) {
@@ -113,11 +113,11 @@ public sealed class TechnicalPersistenceTests : IAsyncLifetime
     public async Task Stale_xmin_cannot_append_history_and_explicit_rollback_removes_all_writes() {
         await using var a = Db(); await using var b = Db();
         var first = await a.Assets.SingleAsync(x => x.Id == Vessel.Id, Ct); var stale = await b.Assets.SingleAsync(x => x.Id == Vessel.Id, Ct);
-        first.Name = "Synthetic new name"; first.Revision++; a.AssetRevisions.Add(first.Snapshot()); await a.SaveChangesAsync(Ct);
-        var audits = await a.AuditEvents.CountAsync(Ct); stale.Revision++; stale.Location = "stale"; b.AssetRevisions.Add(stale.Snapshot());
+        first.Name = "Synthetic new name"; first.Revision++; a.AssetRevisions.Add(first.Snapshot(DateTimeOffset.UtcNow)); await a.SaveChangesAsync(Ct);
+        var audits = await a.AuditEvents.CountAsync(Ct); stale.Revision++; stale.Location = "stale"; b.AssetRevisions.Add(stale.Snapshot(DateTimeOffset.UtcNow));
         await Assert.ThrowsAnyAsync<DbUpdateException>(() => b.SaveChangesAsync(Ct));
         await using (var tx = await a.Database.BeginTransactionAsync(Ct)) {
-            var added = Asset(); a.Assets.Add(added); a.AssetRevisions.Add(added.Snapshot()); await a.SaveChangesAsync(Ct); await tx.RollbackAsync(Ct);
+            var added = Asset(); a.Assets.Add(added); a.AssetRevisions.Add(added.Snapshot(DateTimeOffset.UtcNow)); await a.SaveChangesAsync(Ct); await tx.RollbackAsync(Ct);
         }
         await using var verify = Db(); Assert.Equal(audits, await verify.AuditEvents.CountAsync(Ct));
         Assert.Single(await verify.Assets.Where(x => x.VesselId == Vessel.Id).ToArrayAsync(Ct)); Assert.Equal(2, await verify.AssetRevisions.CountAsync(x => x.VesselId == Vessel.Id, Ct));

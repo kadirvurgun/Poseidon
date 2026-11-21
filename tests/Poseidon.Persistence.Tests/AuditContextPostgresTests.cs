@@ -65,7 +65,7 @@ public sealed class AuditContextPostgresTests : IAsyncLifetime
             var previous = asset.Version;
             asset.Name = "FICTIONAL withheld equipment change";
             asset.Revision++;
-            db.AssetRevisions.Add(asset.Snapshot());
+            db.AssetRevisions.Add(asset.Snapshot(DateTimeOffset.UtcNow));
             await db.SaveChangesAsync(Ct);
             Assert.NotEqual(previous, asset.Version);
             db.CommandReceipts.Add(new()

@@ -1,4 +1,4 @@
-:root{font-family:Inter,"Segoe UI",sans-serif;color:var(--foreground);background:var(--background);font-synthesis:none;font-weight:400;line-height:1.5;color-scheme:inherit;font-size:15px}
+:root{font-family:var(--font-sans);color:var(--foreground);background:var(--background);font-synthesis:none;font-weight:400;line-height:1.5;color-scheme:inherit;font-size:15px}
 *{box-sizing:border-box}
 body{margin:0}
 button,a{-webkit-tap-highlight-color:transparent}
@@ -19,10 +19,10 @@ h1,h2,p{margin:0}
 .brand-mark span{position:absolute;width:23px;border-top:1px solid var(--primary);transform:rotate(-32deg);bottom:1px;inset-inline-start:-1px}
 .sidebar-rule{height:1px;background:var(--border);margin:34px 0}
 .sidebar-section{font-size:10px;letter-spacing:2px;color:var(--muted-foreground);margin:0 12px 14px}
-.nav-item{display:flex;align-items:center;gap:11px;background:var(--accent);border:1px solid var(--border);color:var(--primary);border-radius:7px;padding:12px;font-size:13px}
+.nav-item{display:flex;align-items:center;gap:11px;background:var(--accent);border:1px solid var(--border);color:var(--primary);border-radius:max(0px, calc(7px + var(--radius-delta)));padding:12px;font-size:13px}
 .nav-item span{font-size:19px;line-height:1}
 .sidebar-bottom{margin-top:auto;padding:30px 12px 0}
-.compass{display:block;font-size:65px;color:#294356;line-height:1.3}
+.compass{display:block;font-size:65px;color:var(--foreground);line-height:1.3}
 .sidebar-bottom p{color:var(--muted-foreground);font-size:12px;margin-top:14px}
 .sidebar-bottom small{color:var(--muted-foreground);font-size:9px;letter-spacing:1.4px}
 .workspace{margin-inline-start:250px;width:calc(100% - 250px);display:flex;flex-direction:column;min-height:100dvh}
@@ -31,7 +31,7 @@ h1,h2,p{margin:0}
 .breadcrumb span{color:var(--muted-foreground);margin:0 12px}
 .topbar-actions{display:flex;align-items:center;gap:26px}
 .environment{font-size:9px;letter-spacing:1.1px;color:var(--warning);display:flex;align-items:center;gap:8px}
-.environment>span{width:5px;height:5px;background:#c7ad77;border-radius:50%}
+.environment>span{width:5px;height:5px;background:var(--warning-border);border-radius:50%}
 .languages{display:flex;border:1px solid var(--border);padding:3px;border-radius:5px;gap:1px}
 .languages button{border:0;background:transparent;color:var(--muted-foreground);font-size:10px;padding:5px 8px;border-radius:3px}
 .languages button[aria-pressed=true]{background:var(--accent);color:var(--foreground)}
@@ -40,24 +40,24 @@ main{padding:56px 48px 38px;width:100%;max-width:1180px;margin:0 auto;flex:1}
 h1{font-size:clamp(25px,3vw,36px);font-weight:500;letter-spacing:-1.05px;line-height:1.25;color:var(--foreground)}
 .intro{color:var(--muted-foreground);font-size:13px;margin-top:14px}
 .page-heading{margin-bottom:36px}
-.connection-card{background:linear-gradient(115deg,var(--card),var(--card) 72%);border:1px solid var(--border);padding:29px 32px 28px;border-radius:12px;position:relative;overflow:hidden}
+.connection-card{background:linear-gradient(115deg,var(--card),var(--card) 72%);border:1px solid var(--border);padding:29px 32px 28px;border-radius:max(0px, calc(12px + var(--radius-delta)));position:relative;overflow:hidden}
 .connection-card:after{content:"";position:absolute;width:260px;height:260px;inset-inline-end:-80px;top:-120px;border:1px solid var(--border);border-radius:50%;pointer-events:none}
 .connection-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
-.connection-icon{display:grid;place-items:center;width:44px;height:44px;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:11px;font-size:25px}
+.connection-icon{display:grid;place-items:center;width:44px;height:44px;background:var(--card);color:var(--foreground);border:1px solid var(--border);border-radius:max(0px, calc(11px + var(--radius-delta)));font-size:25px}
 .card-tag{font-size:9px;color:var(--muted-foreground);letter-spacing:1.8px}
 .connection-card h2{font-size:23px;letter-spacing:-.5px;font-weight:500;color:var(--foreground)}
 .connection-detail{font-size:13px;color:var(--muted-foreground);margin-top:9px;max-width:560px;min-height:40px}
 .endpoint{display:flex;flex-wrap:wrap;gap:8px 30px;align-items:center;border-top:1px solid var(--border);margin-top:20px;padding-top:18px;font-size:11px;color:var(--muted-foreground)}
-.endpoint code{font-family:"Cascadia Code",Consolas,monospace;font-size:11px;color:var(--foreground)}
-.primary-button{display:flex;align-items:center;justify-content:space-between;gap:30px;margin-top:24px;border:1px solid var(--primary);background:var(--primary);color:var(--primary-foreground);border-radius:6px;padding:10px 15px;font-size:12px;font-weight:650;min-width:170px}
+.endpoint code{font-family:var(--font-mono);font-size:11px;color:var(--foreground)}
+.primary-button{display:flex;align-items:center;justify-content:space-between;gap:30px;margin-top:24px;border:1px solid var(--primary);background:var(--primary);color:var(--primary-foreground);border-radius:max(0px, calc(6px + var(--radius-delta)));padding:10px 15px;font-size:12px;font-weight:650;min-width:170px}
 .primary-button:hover:not(:disabled){background:var(--primary)}
 .primary-button:disabled{opacity:.6}
 .primary-button span{font-size:17px}
-.connection-error .connection-icon{background:#3e3030;border-color:#735951;color:#f0c7ad}
-.connection-error{border-color:#6a5148}
+.connection-error .connection-icon{background:var(--danger-surface);border-color:var(--danger-border);color:var(--danger-text)}
+.connection-error{border-color:var(--danger-border)}
 .context-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:28px;margin-top:25px}
 .scope-note{display:flex;gap:12px;padding:19px 0}
-.info-mark{display:grid;place-items:center;border:1px solid #61778b;border-radius:50%;width:17px;height:17px;flex-shrink:0;color:var(--muted-foreground);font-size:10px;font-family:Georgia,serif;margin-top:3px}
+.info-mark{display:grid;place-items:center;border:1px solid var(--muted-foreground);border-radius:50%;width:17px;height:17px;flex-shrink:0;color:var(--muted-foreground);font-size:10px;font-family:Georgia,serif;margin-top:3px}
 .context-grid h2{font-size:12px;color:var(--foreground);font-weight:550}
 .scope-note p{font-size:12px;line-height:1.8;color:var(--muted-foreground);margin-top:7px;max-width:400px}
 .contract{border-inline-start:1px solid var(--border);padding-block:19px;padding-inline:26px 0}

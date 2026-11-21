@@ -20,7 +20,7 @@ public static class UatFixtures
     {
         if (!db.IsAdministrativeImport || db.Database.CurrentTransaction == null)
             throw new UnauthorizedAccessException("Synthetic UAT fixtures require an administrative audited transaction.");
-        var now = DateTimeOffset.UtcNow;
+        var now = db.Clock.GetUtcNow();
         foreach (var tenant in tenants.Distinct())
             foreach (var (scope, role) in new[] { (UatScenarioCatalog.Ship, "MASTER"), (UatScenarioCatalog.Tug, "TUG_MASTER") })
             {

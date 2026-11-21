@@ -183,7 +183,7 @@ public static class SecureFileEndpoints
             PersonalRevision = Personal(h) ? PersonalRevision(h) : null, PersonalExpiresOn = command.ExpiresOn,
             PersonalPolicyVersion = personalPolicy?.Version, PersonalPurpose = personalPolicy?.Purpose, PersonalSourceVersion = personalPolicy?.SourceVersion, TenantId = a.TenantId, Id = Guid.NewGuid(), DocumentId = DocumentId(h), DocumentRevision = DocumentRevision(h), VesselId = vessel, ActorId = a.Id, Key = key, Fingerprint = fingerprint,
             StorageReference = settings.Adapter == "S3" ? settings.S3.ContextHash() : null,
-            Name = command.Name!, Mime = command.Mime!, ExpectedLength = command.Length, ExpectedChecksum = command.Checksum!.ToUpperInvariant(), CreatedAt = DateTimeOffset.UtcNow };
+            Name = command.Name!, Mime = command.Mime!, ExpectedLength = command.Length, ExpectedChecksum = command.Checksum!.ToUpperInvariant(), CreatedAt = h.UtcNow() };
         db.FileStages.Add(stage);
         try { await db.SaveChangesAsync(ct); }
         catch (DbUpdateException) { return await Failure(h, 409, "file_attempt_conflict"); }
@@ -253,9 +253,9 @@ public static class SecureFileEndpoints
             stage.State = "CleanTransport";
             var file = new StoredFile { TenantId = a.TenantId, Id = id, VesselId = vessel, Name = stage.Name, Mime = stage.Mime, ProviderVersion = provider.Version, ProviderETag = provider.ETag,
                 ProviderReference = stage.StorageReference,
-                Checksum = stage.ExpectedChecksum, Length = stage.ExpectedLength, RetentionReference = retentionReference!, ScannerReference = scannerReference!, ScannedAt = DateTimeOffset.UtcNow };
+                Checksum = stage.ExpectedChecksum, Length = stage.ExpectedLength, RetentionReference = retentionReference!, ScannerReference = scannerReference!, ScannedAt = h.UtcNow() };
             db.StoredFiles.Add(file); await db.SaveChangesAsync(ct);
-            db.CommandReceipts.Add(new() { TenantId = a.TenantId, ActorId = a.Id, Key = stage.Key, Action = "FileFinalize", Fingerprint = stage.Fingerprint, ResourceId = id, RegisterRevision = 1, RegisterVersion = file.Version, CommittedAt = DateTimeOffset.UtcNow });
+            db.CommandReceipts.Add(new() { TenantId = a.TenantId, ActorId = a.Id, Key = stage.Key, Action = "FileFinalize", Fingerprint = stage.Fingerprint, ResourceId = id, RegisterRevision = 1, RegisterVersion = file.Version, CommittedAt = h.UtcNow() });
             await db.SaveChangesAsync(ct); await transaction.CommitAsync(ct);
             return Results.Ok(Dto(stage, file));
         }
@@ -286,7 +286,7 @@ public static class SecureFileEndpoints
         if (f == null) return await Failure(h, 404, "resource_not_found", id);
         // DEV-114: bytes of a controlled document revision are issued only by its classification-aware content-access route.
         if (await ControlledDocumentAccessEndpoints.FileAllowedAsync(db, a, vessel, id, h.RequestAborted) != null) return await Failure(h, 403, "controlled_document_download_policy", id);
-        var expires = DateTimeOffset.UtcNow.AddSeconds(h.RequestServices.GetRequiredService<SecureFileSettings>().CapabilitySeconds);
+        var expires = h.UtcNow().AddSeconds(h.RequestServices.GetRequiredService<SecureFileSettings>().CapabilitySeconds);
         var token = h.RequestServices.GetRequiredService<FileCapabilities>().Issue(a.TenantId, a.Id, vessel, id, f.Revision, expires);
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "FileAccessIssue", "Success", resourceId: id);
         // Capability is sent in a header, never a URL/query/referrer or log.
@@ -300,7 +300,7 @@ public static class SecureFileEndpoints
         if (!Ready(h)) return await Failure(h, 503, "file_settings_unavailable", id);
         var file = await OwnedFiles(db, h, vessel).AsNoTracking().SingleOrDefaultAsync(x => x.Id == id && x.VesselId == vessel, ct);
         if (file == null) return await Failure(h, 404, "resource_not_found", id);
-        if (h.Request.Headers["X-File-Capability"].Count != 1 || !h.RequestServices.GetRequiredService<FileCapabilities>().Valid(h.Request.Headers["X-File-Capability"], a.TenantId, a.Id, vessel, id, file.Revision, DateTimeOffset.UtcNow))
+        if (h.Request.Headers["X-File-Capability"].Count != 1 || !h.RequestServices.GetRequiredService<FileCapabilities>().Valid(h.Request.Headers["X-File-Capability"], a.TenantId, a.Id, vessel, id, file.Revision, h.UtcNow()))
             return await Failure(h, 403, "file_capability_invalid", id);
         FileStream? stream = null;
         try {

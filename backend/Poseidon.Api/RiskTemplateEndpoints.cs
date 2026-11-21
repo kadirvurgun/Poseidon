@@ -304,7 +304,7 @@ public static class RiskTemplateEndpoints
     }
 
     private static async Task<object?> Fresh(PoseidonDbContext db, TrustedActor actor, Guid? _, Guid id, CancellationToken ct) =>
-        CanRead(actor) ? await Describe(db, actor, id, DateTimeOffset.UtcNow, ct) : null;
+        CanRead(actor) ? await Describe(db, actor, id, db.Clock.GetUtcNow(), ct) : null;
     // A suggester may lack template read; the receipt then confirms only the template identity.
     private static async Task<object?> FreshForSuggester(PoseidonDbContext db, TrustedActor actor, Guid? vessel, Guid id, CancellationToken ct) =>
         await Fresh(db, actor, vessel, id, ct);

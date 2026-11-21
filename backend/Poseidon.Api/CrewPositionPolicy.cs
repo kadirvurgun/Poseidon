@@ -33,7 +33,7 @@ public sealed class CrewPositionPolicy
     public string PeriodSemantics { get; set; } = "";
     public CrewPositionRule[] Positions { get; set; } = [];
     public bool Configured => Version?.Length is > 0 and <= 80 && SourceReference?.Length is > 0 and <= 512 && Positions != null &&
-        PeriodSemantics == "StartInclusiveEndExclusive" && ReferenceDate() != null &&
+        PeriodSemantics == "StartInclusiveEndExclusive" && ReferenceDate(DateTimeOffset.UnixEpoch) != null &&
         Positions.All(p => p != null && p.TenantId != Guid.Empty && p.VesselId != Guid.Empty && p.PositionId != Guid.Empty &&
             p.Code?.Length is > 0 and <= 64 && p.Provenance?.Length is > 0 and <= 32 &&
             (p.Rank == null || p.Rank.Length <= 100) && (p.Capacity == null || p.Capacity.Length <= 100) &&
@@ -42,13 +42,14 @@ public sealed class CrewPositionPolicy
     public static Task<CrewPositionPolicy> Current(HttpContext h, PoseidonDbContext db, Guid vessel) => CrewCatalogEndpoints.Resolve(db,
         h.RequestServices.GetRequiredService<FederationSettings>(), h.RequestServices.GetRequiredService<CrewPositionPolicy>(), vessel,
         h.RequestServices.GetRequiredService<TimeProvider>().GetUtcNow(), h.RequestAborted);
-    public DateOnly? ReferenceDate() {
-        try { return DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(DateTimeOffset.UtcNow, TimeZoneInfo.FindSystemTimeZoneById(TimeZone)).DateTime); }
+    public DateOnly? ReferenceDate(DateTimeOffset now) {
+        try { return DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(now, TimeZoneInfo.FindSystemTimeZoneById(TimeZone)).DateTime); }
         catch (Exception e) when (e is TimeZoneNotFoundException or InvalidTimeZoneException or ArgumentException) { return null; }
     }
-    public bool Allows(CrewPosition p, DateOnly? date = null) => Configured && Positions.Any(r => r.Matches(p) && r.Effective(date ?? ReferenceDate()!.Value));
-    public bool AllowsReference(Guid tenant, Guid vessel, Guid? position, string? version, IEnumerable<CrewPosition> stored) => position == null ||
-        Configured && version == Version && stored.Any(p => p.TenantId == tenant && p.VesselId == vessel && p.Id == position && Allows(p));
+    public bool Allows(CrewPosition p, DateOnly date) => Configured && Positions.Any(r => r.Matches(p) && r.Effective(date));
+    public bool AllowsAt(CrewPosition p, DateTimeOffset now) => Configured && Allows(p, ReferenceDate(now)!.Value);
+    public bool AllowsReference(Guid tenant, Guid vessel, Guid? position, string? version, IEnumerable<CrewPosition> stored, DateTimeOffset now) => position == null ||
+        Configured && version == Version && stored.Any(p => p.TenantId == tenant && p.VesselId == vessel && p.Id == position && AllowsAt(p, now));
 }
 
 public static class CrewPositionPolicyEndpoints
@@ -60,9 +61,10 @@ public static class CrewPositionPolicyEndpoints
         if (!await a.Scope(db.Vessels).AnyAsync(x => x.Id == vessel, h.RequestAborted)) return Results.NotFound();
         policy = await CrewPositionPolicy.Current(h, db, vessel);
         var rows = await db.CrewPositions.AsNoTracking().Where(x => x.VesselId == vessel).ToArrayAsync(h.RequestAborted);
-        var options = rows.Where(x => policy.Allows(x)).OrderBy(x => x.Code).Select(x => new { x.Id, x.Code, x.Rank, x.Capacity, x.Department, x.Provenance }).ToArray();
+        var now = h.UtcNow();
+        var options = rows.Where(x => policy.AllowsAt(x, now)).OrderBy(x => x.Code).Select(x => new { x.Id, x.Code, x.Rank, x.Capacity, x.Department, x.Provenance }).ToArray();
         await h.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(h, "CrewPositions", "Success", resourceId: vessel);
         return Results.Ok(new { state = policy.Configured ? "ConfiguredUnverified" : "Unavailable", version = policy.Configured ? policy.Version : null,
-            referenceDate = policy.Configured ? policy.ReferenceDate() : null, timeZone = policy.Configured ? policy.TimeZone : null, items = options });
+            referenceDate = policy.Configured ? policy.ReferenceDate(now) : null, timeZone = policy.Configured ? policy.TimeZone : null, items = options });
     }
 }

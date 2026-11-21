@@ -16,7 +16,7 @@ public static class TugCapabilityFixtures
                 TugCapability: new("BollardPullTest")), new JsonSerializerOptions(JsonSerializerDefaults.Web));
             db.ControlEvidenceHeads.Add(new() { TenantId = v.TenantId, VesselId = v.Id, Kind = "Evidence", Id = id, Revision = 1 });
             db.ControlEvidenceRevisions.Add(new() { TenantId = v.TenantId, VesselId = v.Id, Kind = "Evidence", Id = id, Revision = 1,
-                ContentJson = content, Hash = RegisterStorage.Hash(content), ReasonCode = "SYNTHETIC_INCOMPLETE_DRAFT", SavedAt = DateTimeOffset.UtcNow });
+                ContentJson = content, Hash = RegisterStorage.Hash(content), ReasonCode = "SYNTHETIC_INCOMPLETE_DRAFT", SavedAt = db.Clock.GetUtcNow() });
             db.TugCapabilityBindings.Add(new() { TenantId = v.TenantId, VesselId = v.Id, Id = id, Revision = 1 });
         }
     }

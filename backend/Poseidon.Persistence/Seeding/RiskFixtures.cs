@@ -23,7 +23,7 @@ public static class RiskFixtures
     {
         if (!db.IsAdministrativeImport || db.Database.CurrentTransaction == null)
             throw new UnauthorizedAccessException("Synthetic risk fixtures require an administrative audited transaction.");
-        var now = DateTimeOffset.UtcNow;
+        var now = db.Clock.GetUtcNow();
         foreach (var vessel in vessels)
         {
             if (!await db.Vessels.AnyAsync(v => v.TenantId == vessel.TenantId && v.Id == vessel.Id, ct)) throw new InvalidOperationException("Synthetic risk scope is unavailable.");
