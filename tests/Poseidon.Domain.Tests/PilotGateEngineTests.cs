@@ -146,10 +146,31 @@ public sealed class PilotGateEngineTests
         Assert.Equal("pilot_gate_p0_open_or_unknown", PilotGatePolicy.Refusal("GO", p0, []));
 
         var deferred = PilotGatePolicy.Evaluate(AllPass().Select(g => g.Gate == "DR" ? g with { State = "DEFERRED" } : g).ToArray(), 0);
-        Assert.Equal("pilot_gate_not_passed", PilotGatePolicy.Refusal("GO", deferred, []));
-        Assert.Equal("conditions_required", PilotGatePolicy.Refusal("CONDITIONAL_GO", deferred, []));
-        Assert.Null(PilotGatePolicy.Refusal("CONDITIONAL_GO", deferred, ["DR rehearsal evidence before production cutover"]));
+        // S11 gate QA N1: a DEFERRED gate was never evaluated, so neither GO nor CONDITIONAL_GO is recordable (422).
+        Assert.Equal("pilot_gate_deferred", PilotGatePolicy.Refusal("GO", deferred, []));
+        Assert.Equal("pilot_gate_deferred", PilotGatePolicy.Refusal("CONDITIONAL_GO", deferred, []));
+        Assert.Equal("pilot_gate_deferred", PilotGatePolicy.Refusal("CONDITIONAL_GO", deferred, ["DR rehearsal evidence before production cutover"]));
+        Assert.Null(PilotGatePolicy.Refusal("NO_GO", deferred, []));
         Assert.Equal("validation_failed", PilotGatePolicy.Refusal("NO_GO", deferred, ["no conditions on NO_GO"]));
+
+        // CONDITIONAL_GO only on an all-PASS review, with explicit non-gate conditions.
+        Assert.Equal("conditions_required", PilotGatePolicy.Refusal("CONDITIONAL_GO", eligible, []));
+        Assert.Null(PilotGatePolicy.Refusal("CONDITIONAL_GO", eligible, ["Hypercare call at 08:00 on day 1"]));
+        Assert.Equal("validation_failed", PilotGatePolicy.Refusal("GO", eligible, ["GO carries no conditions"]));
+        var allDeferred = PilotGatePolicy.Evaluate(AllPass().Select(g => g with { State = "DEFERRED" }).ToArray(), 0);
+        Assert.All(new[] { "GO", "CONDITIONAL_GO" }, d => Assert.Equal("pilot_gate_deferred", PilotGatePolicy.Refusal(d, allDeferred, ["Condition"])));
+    }
+
+    [Fact]
+    [Trait("Requirement", "DEV-075")]
+    public void Refusal_status_maps_deferred_gate_to_422_other_gate_states_to_409_and_malformed_to_400()
+    {
+        Assert.Equal(422, PilotGatePolicy.RefusalStatus("pilot_gate_deferred"));
+        Assert.Equal(409, PilotGatePolicy.RefusalStatus("pilot_gate_failed"));
+        Assert.Equal(409, PilotGatePolicy.RefusalStatus("pilot_gate_unknown"));
+        Assert.Equal(409, PilotGatePolicy.RefusalStatus("pilot_gate_p0_open_or_unknown"));
+        Assert.Equal(400, PilotGatePolicy.RefusalStatus("conditions_required"));
+        Assert.Equal(400, PilotGatePolicy.RefusalStatus("validation_failed"));
     }
 
     [Fact]

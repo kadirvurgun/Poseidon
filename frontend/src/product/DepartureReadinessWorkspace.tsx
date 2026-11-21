@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { pilotJourneyAttempt, pilotJourneyCompleted } from './pilot-telemetry'
 import { localizedCopy, localizedText } from '../i18n/messages'
 import { useAppLanguage, type Locale as AppLocale } from '../i18n'
 import { Badge } from '../components/ui/badge'
@@ -85,7 +86,9 @@ export function DepartureReadinessWorkspace() {
       const s = await readSession(c.signal)
       if (!s.authenticated || !s.csrfToken || user && `${s.tenantId}/${s.actorId}` !== `${user.tenantId}/${user.actorId}`) throw new ApiError(403, 'identity_boundary_changed')
       sent = true
+      pilotJourneyAttempt('SHIP', 'SHIP_DEPARTURE')
       await send(command, s.csrfToken, c.signal)
+      pilotJourneyCompleted('SHIP', 'SHIP_DEPARTURE')
       if (!mounted.current) return
       setRetained(null); setNotice('done'); setReload(n => n + 1)
     } catch (e) {

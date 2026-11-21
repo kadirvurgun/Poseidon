@@ -1,4 +1,5 @@
 import { localizedCopy, localizedText } from "../i18n/messages";
+import { pilotJourneyAttempt, pilotJourneyCompleted } from './pilot-telemetry';
 import { useAppLanguage } from "../i18n";
 import { EnterpriseChrome } from './EnterpriseChrome';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -241,8 +242,10 @@ export function TugWorkspace() {
         try {
             const currentCsrf = await checkIdentity();
             sent = true;
+            if (!next.update) pilotJourneyAttempt('TUG', 'TUG_JOB');
             const r = await tugApi.save(route.vessel, next, currentCsrf, c.signal);
             responseReceived = true;
+            if (!next.update) pilotJourneyCompleted('TUG', 'TUG_JOB');
             // A successful HTTP response is shown only to the same currently authorized editor.
             await checkIdentity();
             if (!active.current)

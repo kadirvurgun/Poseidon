@@ -10,6 +10,16 @@ import { isGuid } from './identifiers'
 import { decodeVoiceDraft, freezeS9Command, s9Api, s9Failure, sendS9Command, textOrNull, voiceFieldKeys, voicePath,
   type S9Attempt, type S9Issue, type VoiceDraft, type VoiceDraftCapabilities, type VoiceDraftFields, type VoiceDraftMetrics, type VoiceDraftPage, type VoiceFieldKey } from './s9-wpc-api'
 import './technical-records.css'
+import { pilotAiOutcome, pilotForVessel } from './pilot-telemetry'
+
+// S11 gate B1 (DEV-072, 19.01 p157-158): a confirmed draft whose fields the user edited or entered is
+// a CORRECTED suggestion, an unchanged confirmation ACCEPTED, a rejection REJECTED. Codes only.
+function reportVoiceOutcome(path: string, saved: VoiceDraft) {
+  const outcome = /\/confirm\?/.test(path) && saved.state === 'CONFIRMED'
+    ? (Object.values(saved.fieldOrigins).some(o => o === 'USER_EDITED' || o === 'USER_ENTERED') ? 'CORRECTED' as const : 'ACCEPTED' as const)
+    : /\/reject\?/.test(path) && saved.state === 'REJECTED' ? 'REJECTED' as const : null
+  if (outcome) pilotForVessel(saved.vesselId, area => pilotAiOutcome(area, 'VOICE', outcome))
+}
 
 // DEV-062 / T-S9-005 voice-to-event draft and DEV-063 / T-S9-006 measured usability (18.01 rows 63-64).
 // Suggestions are traced to the user's own words; the user edits and confirms. Nothing is submitted,
@@ -84,6 +94,7 @@ function VoiceSurface({ route, language, onLanguage, onNavigate }: { route: Voic
     try {
       const saved = decodeVoiceDraft(await sendS9Command<unknown>(frozen, loaded.user.csrfToken, new AbortController().signal), route.vessel)
       setPending(null); setNote(null)
+      reportVoiceOutcome(frozen.path, saved)
       // Receipt confirmed: keep the canonical resource identity in the URL before any re-read.
       onNavigate(href({ vessel: route.vessel, id: saved.id })); setLoaded(current => current ? { ...current, record: saved } : current); setAttempt(n => n + 1)
     } catch (error) {

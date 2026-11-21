@@ -10,6 +10,7 @@ import { decodeTodayVessels } from './today-api';
 import { auditReadyHref, auditReadyTrace, chains as loadChains, readAuditReadyLocation, type AuditReadyChain, type AuditReadyChains, type AuditReadyRoute } from './audit-ready-api';
 import type { Anchor, AuditTraceEvent, Review, Segment, Trace } from './human-review-api';
 import { AuditPackPanel } from './AuditPackPanel';
+import { pilotEvidenceSearch, pilotForVessel } from './pilot-telemetry';
 import './offline-enterprise.css';
 import './product.css';
 
@@ -97,7 +98,10 @@ function ChainList({ vessel, anchor, online, t, language, csrf, onOpen }: { vess
     useEffect(() => {
         if (!online) return;
         const c = new AbortController(); let active = true; const timer = setTimeout(() => c.abort(), 10000);
-        loadChains(vessel, c.signal).then(data => { if (active) setResult({ data, loadedAt: new Date().toISOString() }); })
+        // S11 gate B1 (DEV-072, 19.01 p150-152): evidence search time = request start to the readable chain
+        // list. Only the duration and the vessel's SHIP/TUG mode are reported.
+        const started = performance.now();
+        loadChains(vessel, c.signal).then(data => { if (active) { setResult({ data, loadedAt: new Date().toISOString() }); const elapsed = performance.now() - started; pilotForVessel(vessel, area => pilotEvidenceSearch(area, elapsed)); } })
             .catch(e => { if (active) setResult({ error: e instanceof api.ApiError ? e.status : 0 }); }).finally(() => clearTimeout(timer));
         return () => { active = false; c.abort(); clearTimeout(timer); };
     }, [vessel, online]);
