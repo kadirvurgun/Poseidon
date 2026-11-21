@@ -271,7 +271,11 @@ public sealed partial class DirectoryWorkspaceTests
         var asset = Guid.NewGuid();
         await using (var db = Db()) { db.Assets.Add(new() { TenantId = db.TenantId, Id = asset, VesselId = vessel, Level = "Equipment" }); await db.SaveChangesAsync(Ct); }
         DrydockContent WithEquipment() => Content(1) with { Items = [new(Guid.NewGuid(), "OTHER", "FICTIONAL winch overhaul", asset, null, null, null, null, [])] };
-        FieldActor(host.Services, planner, "drydock.read", "drydock.write", "drydock.verify", "workorder.read", "maintenance.read"); await Token(c);
+        // FieldActor keeps the fixture's base permissions, so equipment.read is removed from the membership explicitly.
+        FieldActor(host.Services, planner, "drydock.read", "drydock.write", "drydock.verify", "workorder.read", "maintenance.read");
+        var fieldSettings = host.Services.GetRequiredService<FederationSettings>();
+        fieldSettings.Memberships[0] = fieldSettings.Memberships[0] with { Permissions = [.. fieldSettings.Memberships[0].Permissions.Where(p => p != "equipment.read")] };
+        await Token(c);
         await AssertCode(await Send(c, route, new DrydockCreateCommand(Guid.NewGuid(), WithEquipment())), (HttpStatusCode)422, "linked_resource_unavailable");
         FieldActor(host.Services, planner, "drydock.read", "drydock.write", "drydock.verify", "workorder.read", "equipment.read", "maintenance.read"); await Token(c);
         var created = await RiskOk<DrydockView>(await Send(c, route, new DrydockCreateCommand(id, Content(1))));
