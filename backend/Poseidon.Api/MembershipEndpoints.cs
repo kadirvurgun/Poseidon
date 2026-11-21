@@ -82,6 +82,7 @@ public static partial class MembershipEndpoints
             RevokeDelegation(h, id)), "RevokeDelegation", Description)
             .Accepts<MembershipTransitionCommand>("application/json").Produces<DelegationDto>();
         MapMembershipAdministration(app); // USER-ADMIN-01
+        MapMembershipInvitations(app); // USER-ADMIN-02
     }
 
     private static RouteHandlerBuilder Command(RouteHandlerBuilder route, string name, string description) =>
@@ -453,6 +454,10 @@ public static partial class MembershipEndpoints
                     d.RevocationReason = transition == MembershipTransition.Revoke ? "MembershipRevoked" : "MembershipSuspended";
                 }
             }
+            if (status == MembershipStatus.Invited)
+                // USER-ADMIN-02: revoking an unaccepted membership closes its pending invitation in the same transaction.
+                foreach (var open in await db.MembershipInvitations.Where(i => i.MembershipId == id && i.Status == "Pending").ToArrayAsync(h.RequestAborted))
+                { open.Status = MembershipInvitationPolicy.Wire(InvitationStatus.Revoked); open.ClosedAt = now; }
             if (decision.RecoveryRequired)
                 db.TenantAccessRecoveries.Add(new TenantAccessRecovery { TenantId = actor.TenantId, Id = Guid.NewGuid(), MembershipId = id,
                     Cause = "SecuritySuspension", RaisedAt = now });

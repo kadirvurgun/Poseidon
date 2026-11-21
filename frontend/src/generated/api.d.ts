@@ -855,7 +855,7 @@ export interface paths {
         put?: never;
         /**
          * CreateMembership
-         * @description Provisions a database membership for an IdP identity (issuer+subject; the account and its credentials stay in the IdP). Role bundles and individual permissions are limited to the trusted allow-list and to the caller's own permissions (400 exceeds_grantor_authority). An identity already provisioned or present in the operator configuration returns 409 identity_unavailable. Takes effect at the member's next login.
+         * @description Invites an IdP identity to a database membership (USER-ADMIN-02). The membership starts Invited and grants nothing; it binds an identity only when the identity holder, signed in through the trusted issuer, accepts the single-use invitation token returned once in this response (expiry 24 hours: the 54.01 account.invite_hours default). subject is optional and, when given, is the only identity allowed to accept; it reserves nothing. Role bundles and individual permissions are limited to the trusted allow-list and to the caller's own permissions (400 exceeds_grantor_authority). A subject present in the operator configuration, already bound in this tenant or with a pending invitation here returns 409 identity_unavailable.
          */
         post: operations["CreateMembership"];
         delete?: never;
@@ -1086,6 +1086,66 @@ export interface paths {
          * @description Appends a new immutable grant revision to an admin-provisioned membership. expectedVersion is the current grant revision (stale ⇒ 409 version_conflict). Own membership ⇒ 403 self_modification; configuration-managed ⇒ 409 configuration_managed; removing the last active administrator ⇒ 409 last_admin. Takes effect on the member's next request.
          */
         post: operations["UpdateMembershipGrant"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/memberships/{id}/invitation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * ReissueMembershipInvitation
+         * @description Issues a new single-use invitation link for an Invited membership (the previous pending link stops working). The token is returned only in this response. expectedVersion is the membership version; a membership that is no longer Invited returns 409 invalid_transition.
+         */
+        post: operations["ReissueMembershipInvitation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/invitations/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * PreviewMembershipInvitation
+         * @description Shows the signed-in identity what a pending invitation grants in its tenant. No change is made. Every refusal (unknown, expired, used, revoked, another identity, identity already bound or configured) returns the same 409 invitation_unavailable; repeated attempts return 429 request_limit.
+         */
+        post: operations["PreviewMembershipInvitation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/invitations/accept": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * AcceptMembershipInvitation
+         * @description Binds the signed-in IdP identity (validated issuer+subject) to the invited membership and activates its grant. One identity holds at most one accepted membership. The invitation session ends; the grant applies at the next sign-in. Every refusal returns the same 409 invitation_unavailable; repeated attempts return 429 request_limit.
+         */
+        post: operations["AcceptMembershipInvitation"];
         delete?: never;
         options?: never;
         head?: never;
@@ -13750,6 +13810,28 @@ export interface components {
             capabilities: components["schemas"]["IndustryAssuranceCapabilitiesDto"];
             notice: string;
         };
+        InvitationAcceptedDto: {
+            /** Format: uuid */
+            membershipId: string;
+            grant: components["schemas"]["InvitationGrantDto"];
+            signInRequired: boolean;
+        };
+        InvitationGrantDto: {
+            tenantName: null | string;
+            bundles: string[];
+            /** Format: int32 */
+            permissionCount: number;
+            tenantWideRead: boolean;
+            tenantWideManage: boolean;
+            /** Format: int32 */
+            vesselGrantCount: number;
+            companyScoped: boolean;
+            /** Format: date-time */
+            expiresAt: string;
+        };
+        InvitationTokenCommand: {
+            token: null | string;
+        };
         JsonElement: unknown;
         LegacyCrewImportCommand: {
             /** Format: uint32 */
@@ -14194,6 +14276,11 @@ export interface components {
             accessRevision: number;
             /** Format: int32 */
             grantRevision: null | number;
+            invitationState?: null | string;
+            /** Format: date-time */
+            invitationExpiresAt?: null | string;
+            /** @default false */
+            invitationSubjectExpected: boolean;
         };
         MembershipCatalogDto: {
             bundles: components["schemas"]["RoleBundleDto"][];
@@ -14266,6 +14353,12 @@ export interface components {
             /** Format: uuid */
             actorId: string;
             reason: string;
+        };
+        MembershipInvitationIssueDto: {
+            membership: components["schemas"]["MembershipAccessDto"];
+            invitationToken: null | string;
+            /** Format: date-time */
+            expiresAt: null | string;
         };
         MembershipPageDto: {
             items: components["schemas"]["MembershipDto"][];
@@ -17814,6 +17907,8 @@ export interface components {
             canCreate: boolean;
             /** @default false */
             canSearch: boolean;
+            /** @default false */
+            invitationSession: boolean;
         };
         ShipOperationOriginPin: {
             kind: string;
@@ -22830,7 +22925,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["MembershipAccessDto"];
+                    "application/json": components["schemas"]["MembershipInvitationIssueDto"];
                 };
             };
             /** @description Bad Request */
@@ -23762,6 +23857,238 @@ export interface operations {
             };
             /** @description Conflict */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ReissueMembershipInvitation: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string;
+                "X-CSRF-TOKEN"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MembershipTransitionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MembershipInvitationIssueDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PreviewMembershipInvitation: {
+        parameters: {
+            query?: never;
+            header?: {
+                "X-CSRF-TOKEN"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InvitationTokenCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvitationGrantDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AcceptMembershipInvitation: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string;
+                "X-CSRF-TOKEN"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InvitationTokenCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvitationAcceptedDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
                 headers: {
                     [name: string]: unknown;
                 };

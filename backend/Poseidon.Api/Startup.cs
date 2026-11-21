@@ -160,8 +160,13 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             var operation = S1SecurityContract.Match(context);
             if (operation?.IsCritical == true)
             {
-                var actor = context.RequestServices.GetRequiredService<ActorResolver>().Resolve(context.User);
-                if (actor?.HasWriteAttribution != true)
+                var actors = context.RequestServices.GetRequiredService<ActorResolver>();
+                var actor = actors.Resolve(context.User);
+                // USER-ADMIN-02: invitation acceptance is the one critical write by an identity WITHOUT an actor. Its write
+                // attribution is server-derived by the handler (the invited account and its grant's role context, inside the
+                // token's tenant); only an invitation session is admitted, and only to this exact operation.
+                var invitationAcceptance = actor == null && operation.OperationId == "MembershipInvitationAccept" && actors.InvitationIdentityFor(context.User) != null;
+                if (actor?.HasWriteAttribution != true && !invitationAcceptance)
                 {
                     await context.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(context,
                         operation.DenialAction, actor == null ? "Unauthenticated" : "Denied");

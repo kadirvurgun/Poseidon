@@ -21,7 +21,9 @@ public sealed record MembershipCatalogDto(RoleBundleDto[] Bundles, PermissionOpt
 // (persisted lifecycle row without any grant source: grants nothing).
 public sealed record MembershipAccessSummaryDto(Guid Id, Guid AccountId, string Status, string StatusReason, string Source, string ManagedBy,
     string[] Bundles, int PermissionCount, bool TenantWideRead, bool TenantWideManage, int VesselGrantCount, bool Administrator, bool Self,
-    DateTimeOffset StatusChangedAt, uint Version, long AccessRevision, int? GrantRevision);
+    DateTimeOffset StatusChangedAt, uint Version, long AccessRevision, int? GrantRevision,
+    // USER-ADMIN-02: latest invitation of an admin-provisioned membership (Pending | Expired | Accepted | Revoked | Superseded).
+    string? InvitationState = null, DateTimeOffset? InvitationExpiresAt = null, bool InvitationSubjectExpected = false);
 public sealed record MembershipAccessPageDto(MembershipAccessSummaryDto[] Items, int Offset, int Limit, bool HasMore, int Total);
 public sealed record GrantRevisionDto(int Revision, string[] Bundles, string[] IndividualPermissions, int PermissionCount, bool TenantWideRead,
     bool TenantWideManage, Guid? ActiveCompanyId, int VesselGrantCount, Guid GrantedBy, DateTimeOffset CreatedAt);
@@ -31,6 +33,8 @@ public sealed record MembershipAccessDto(MembershipAccessSummaryDto Membership, 
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record MembershipVesselGrantCommand(Guid VesselId, bool CanEdit = false);
+// USER-ADMIN-02: Subject is optional. When present it is the EXPECTED IdP subject: only that identity can accept the
+// invitation. It never reserves the identity; the account binds only when its holder accepts.
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record MembershipCreateCommand(string? Issuer, string? Subject, string[]? Bundles, string[]? Permissions, bool? TenantWideRead,
     bool? TenantWideManage, Guid? ActiveCompanyId, MembershipVesselGrantCommand[]? VesselGrants);
@@ -56,8 +60,8 @@ public static partial class MembershipEndpoints
             .WithSummary("Effective grant, scope and immutable grant revision history of one membership.")
             .Produces<MembershipAccessDto>().Produces(401).ProducesProblem(403).ProducesProblem(404).Produces(503);
         Command(app.MapPost("/api/v1/memberships", (HttpContext h, [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey, [FromHeader(Name = "X-CSRF-TOKEN")] string? csrfToken) =>
-            CreateMembership(h)), "CreateMembership", "Provisions a database membership for an IdP identity (issuer+subject; the account and its credentials stay in the IdP). Role bundles and individual permissions are limited to the trusted allow-list and to the caller's own permissions (400 exceeds_grantor_authority). An identity already provisioned or present in the operator configuration returns 409 identity_unavailable. Takes effect at the member's next login.")
-            .Accepts<MembershipCreateCommand>("application/json").Produces<MembershipAccessDto>();
+            CreateMembership(h)), "CreateMembership", "Invites an IdP identity to a database membership (USER-ADMIN-02). The membership starts Invited and grants nothing; it binds an identity only when the identity holder, signed in through the trusted issuer, accepts the single-use invitation token returned once in this response (expiry 24 hours: the 54.01 account.invite_hours default). subject is optional and, when given, is the only identity allowed to accept; it reserves nothing. Role bundles and individual permissions are limited to the trusted allow-list and to the caller's own permissions (400 exceeds_grantor_authority). A subject present in the operator configuration, already bound in this tenant or with a pending invitation here returns 409 identity_unavailable.")
+            .Accepts<MembershipCreateCommand>("application/json").Produces<MembershipInvitationIssueDto>();
         Command(app.MapPost("/api/v1/memberships/{id:guid}/grant", (Guid id, HttpContext h, [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey, [FromHeader(Name = "X-CSRF-TOKEN")] string? csrfToken) =>
             UpdateGrant(h, id)), "UpdateMembershipGrant", "Appends a new immutable grant revision to an admin-provisioned membership. expectedVersion is the current grant revision (stale ⇒ 409 version_conflict). Own membership ⇒ 403 self_modification; configuration-managed ⇒ 409 configuration_managed; removing the last active administrator ⇒ 409 last_admin. Takes effect on the member's next request.")
             .Accepts<MembershipGrantCommand>("application/json").Produces<MembershipAccessDto>();
@@ -65,22 +69,34 @@ public static partial class MembershipEndpoints
 
     // Shadowed (QA N4): the operator configuration has an entry for this identity that is not this exact tenant/actor
     // binding. Configuration always governs the identity (ActorResolver), so a database grant on it never applies.
-    private sealed record AccessRow(AccountMembership Membership, string Issuer, string Subject, ProvisionedGrant? Grant, Membership? Config, bool Shadowed);
+    private sealed record AccessRow(AccountMembership Membership, string Issuer, string? Subject, ProvisionedGrant? Grant, Membership? Config, bool Shadowed,
+        MembershipInvitation? Invitation = null);
 
     private static async Task<AccessRow[]> AccessRows(PoseidonDbContext db, FederationSettings settings, Guid tenant, IQueryable<AccountMembership> query, CancellationToken ct)
     {
         var rows = await query.Join(db.UserAccounts.AsNoTracking(), m => m.AccountId, a => a.Id, (m, a) => new { m, a.Issuer, a.Subject })
             .ToArrayAsync(ct);
-        var grants = await ProvisionedGrants.LoadAsync(db, rows.Where(r => r.m.Source == ProvisionedGrants.Source).Select(r => r.m.Id).ToArray(), ct);
+        var provisionedIds = rows.Where(r => r.m.Source == ProvisionedGrants.Source).Select(r => r.m.Id).ToArray();
+        var grants = await ProvisionedGrants.LoadAsync(db, provisionedIds, ct);
+        var invitations = provisionedIds.Length == 0 ? [] : (await db.MembershipInvitations.AsNoTracking().Where(i => provisionedIds.Contains(i.MembershipId)).ToArrayAsync(ct))
+            .GroupBy(i => i.MembershipId).ToDictionary(g => g.Key, g => g.OrderByDescending(i => i.CreatedAt).ThenBy(i => i.Id).First());
         return rows.Select(r =>
         {
-            var config = settings.Memberships.Where(c => c.Issuer == r.Issuer && c.Subject == r.Subject).ToArray();
+            var config = r.Subject == null ? [] : settings.Memberships.Where(c => c.Issuer == r.Issuer && c.Subject == r.Subject).ToArray();
             var exact = config.Length == 1 && config[0].TenantId == tenant && config[0].ActorId == r.m.AccountId ? config[0] : null;
-            return new AccessRow(r.m, r.Issuer, r.Subject, grants.GetValueOrDefault(r.m.Id), exact, exact == null && config.Length > 0);
+            return new AccessRow(r.m, r.Issuer, r.Subject, grants.GetValueOrDefault(r.m.Id), exact, exact == null && config.Length > 0, invitations.GetValueOrDefault(r.m.Id));
         }).ToArray();
     }
 
-    private static MembershipAccessSummaryDto Summary(AccessRow r, HashSet<Guid> admins, Guid self)
+    private static MembershipAccessSummaryDto Summary(AccessRow r, HashSet<Guid> admins, Guid self, DateTimeOffset now) =>
+        InvitationSummary(SummaryCore(r, admins, self), r.Invitation, now);
+
+    private static MembershipAccessSummaryDto InvitationSummary(MembershipAccessSummaryDto summary, MembershipInvitation? invitation, DateTimeOffset now) =>
+        invitation == null || MembershipInvitationPolicy.Parse(invitation.Status) is not { } status ? summary
+            : summary with { InvitationState = MembershipInvitationPolicy.State(status, invitation.ExpiresAt, now), InvitationExpiresAt = invitation.ExpiresAt,
+                InvitationSubjectExpected = invitation.ExpectedSubject != null };
+
+    private static MembershipAccessSummaryDto SummaryCore(AccessRow r, HashSet<Guid> admins, Guid self)
     {
         var m = r.Membership;
         if (r.Config is { } c)
@@ -104,7 +120,7 @@ public static partial class MembershipEndpoints
         var row = (await AccessRows(db, settings, actor.TenantId, db.AccountMemberships.AsNoTracking().Where(m => m.Id == id), ct)).SingleOrDefault();
         if (row == null) return null;
         var admins = await ActiveAdministrators(db, settings, actor.TenantId, ct);
-        var summary = Summary(row, admins, actor.Id);
+        var summary = Summary(row, admins, actor.Id, db.Clock.GetUtcNow());
         var history = await db.MembershipGrantRevisions.AsNoTracking().Where(g => g.MembershipId == id).OrderByDescending(g => g.Revision).Take(100).ToArrayAsync(ct);
         var counts = await db.MembershipGrantVessels.AsNoTracking().Where(v => v.MembershipId == id).GroupBy(v => v.Revision)
             .Select(g => new { g.Key, Count = g.Count() }).ToDictionaryAsync(x => x.Key, x => x.Count, ct);
@@ -163,14 +179,15 @@ public static partial class MembershipEndpoints
         if (q?.Trim() is { } needle)
         {
             var prefix = needle.ToLowerInvariant();
-            query = query.Where(x => x.m.Id.ToString().StartsWith(prefix) || x.m.AccountId.ToString().StartsWith(prefix) || x.a.Subject == needle);
+            query = query.Where(x => x.m.Id.ToString().StartsWith(prefix) || x.m.AccountId.ToString().StartsWith(prefix) || x.a.Subject == needle ||
+                db.MembershipInvitations.Any(i => i.MembershipId == x.m.Id && i.ExpectedSubject == needle));
         }
         if (bundle != null)
         {
             // Only governing database grants: AdminProvisioned, not shadowed by any operator entry, bundle in the LATEST revision.
             var configured = settings.Memberships.Select(c => c.Issuer + "\n" + c.Subject).Distinct().ToArray();
             var token = "," + bundle + ",";
-            query = query.Where(x => x.m.Source == ProvisionedGrants.Source && !configured.Contains(x.a.Issuer + "\n" + x.a.Subject) &&
+            query = query.Where(x => x.m.Source == ProvisionedGrants.Source && (x.a.Subject == null || !configured.Contains(x.a.Issuer + "\n" + x.a.Subject)) &&
                 db.MembershipGrantRevisions.Any(g => g.MembershipId == x.m.Id && ("," + g.Bundles + ",").Contains(token) &&
                     g.Revision == db.MembershipGrantRevisions.Where(r => r.MembershipId == x.m.Id).Max(r => r.Revision)));
         }
@@ -179,7 +196,8 @@ public static partial class MembershipEndpoints
         var rows = (await AccessRows(db, settings, actor.TenantId, db.AccountMemberships.AsNoTracking().Where(m => ids.Contains(m.Id)), h.RequestAborted))
             .ToDictionary(r => r.Membership.Id);
         var admins = await ActiveAdministrators(db, settings, actor.TenantId, h.RequestAborted);
-        var page = ids.Where(rows.ContainsKey).Select(id => Summary(rows[id], admins, actor.Id)).ToArray();
+        var now = db.Clock.GetUtcNow();
+        var page = ids.Where(rows.ContainsKey).Select(id => Summary(rows[id], admins, actor.Id, now)).ToArray();
         await audit.WriteAsync(h, "MembershipRead", "Success");
         return Results.Ok(new MembershipAccessPageDto(page, skip, take, total > skip + take, total));
     }
@@ -278,38 +296,37 @@ public static partial class MembershipEndpoints
                 h.Response.Headers["Idempotency-Replayed"] = "true";
                 var replayId = (await db.MembershipCommandReceipts.AsNoTracking().SingleAsync(r => r.ActorId == actor.Id && r.Key == prelude.Key, h.RequestAborted)).ResourceId;
                 var replay = await AccessView(db, settings, actor, replayId, h.RequestAborted);
-                return replay == null ? (Problem(h, 409, "conflict_changed"), "conflict_changed") : (Results.Ok(replay), "Success");
+                // The token is never stored: a replay returns the membership without it (reissue for a new link).
+                return replay == null ? (Problem(h, 409, "conflict_changed"), "conflict_changed") : (Results.Ok(new MembershipInvitationIssueDto(replay, null, null)), "Success");
             }
             var errors = new Dictionary<string, string[]>(StringComparer.Ordinal);
             if (!ValidIssuer(command.Issuer, settings)) errors["issuer"] = [command.Issuer is { Length: > 0 } ? "issuer_not_trusted" : "required"];
-            if (!ValidSubject(command.Subject)) errors["subject"] = [command.Subject is { Length: > 0 } ? "invalid" : "required"];
+            if (command.Subject != null && !MembershipInvitationPolicy.ValidExpectedSubject(command.Subject)) errors["subject"] = ["invalid"];
             if (await CurrentGrantor(db, h, actor, h.RequestAborted) is not { } grantor) return (Problem(h, 409, "conflict_changed"), "conflict_changed");
             var (outcome, grantErrors) = await CheckGrant(db, grantor, command.Bundles, command.Permissions, read, manage, command.ActiveCompanyId, command.VesselGrants, h.RequestAborted);
             foreach (var (k, v) in grantErrors) errors[k] = v;
             if (errors.Count > 0) return (Problem(h, 400, "validation_failed", errors), "validation_failed");
-            // The operator configuration stays the bootstrap/break-glass source for its identities; a provisioned
-            // duplicate (same tenant or bound elsewhere) is reported with one code that reveals no other tenant.
-            if (settings.Memberships.Any(m => m.Issuer == command.Issuer && m.Subject == command.Subject) ||
-                await db.UserAccounts.AsNoTracking().AnyAsync(a => a.Issuer == command.Issuer && a.Subject == command.Subject, h.RequestAborted))
+            // USER-ADMIN-02: only TENANT-LOCAL facts are checked (no global reservation, no cross-tenant query). The operator
+            // configuration stays the bootstrap/break-glass source for its identities; an expected subject already bound or
+            // already invited (pending, unexpired) in this tenant is a duplicate. One code, no detail.
+            if (command.Subject is { } expected && (settings.Memberships.Any(m => m.Issuer == command.Issuer && m.Subject == expected) ||
+                await db.UserAccounts.AsNoTracking().AnyAsync(a => a.Issuer == command.Issuer && a.Subject == expected, h.RequestAborted) ||
+                await db.MembershipInvitations.AsNoTracking().AnyAsync(i => i.ExpectedSubject == expected && i.Status == "Pending" && i.ExpiresAt > now, h.RequestAborted)))
                 return (Problem(h, 409, "identity_unavailable"), "identity_unavailable");
             var account = Guid.NewGuid();
             var membership = MembershipIdFor(actor.TenantId, account);
-            db.UserAccounts.Add(new UserAccount { TenantId = actor.TenantId, Id = account, Issuer = command.Issuer!, Subject = command.Subject!,
+            // The account has no subject until its holder accepts: it reserves no identity in any tenant.
+            db.UserAccounts.Add(new UserAccount { TenantId = actor.TenantId, Id = account, Issuer = command.Issuer!, Subject = null,
                 Source = ProvisionedGrants.Source, CreatedAt = now });
-            db.AccountMemberships.Add(new AccountMembership { TenantId = actor.TenantId, Id = membership, AccountId = account, Status = "Active",
-                StatusReason = "AdminProvisioning", StatusChangedAt = now, AccessRevision = 0, Source = ProvisionedGrants.Source, CreatedAt = now });
+            db.AccountMemberships.Add(new AccountMembership { TenantId = actor.TenantId, Id = membership, AccountId = account, Status = "Invited",
+                StatusReason = "AdminInvitation", StatusChangedAt = now, AccessRevision = 0, Source = ProvisionedGrants.Source, CreatedAt = now });
             AddRevision(db, actor, membership, 1, outcome, read, manage, command.ActiveCompanyId, now);
-            try { await db.SaveChangesAsync(h.RequestAborted); }
-            catch (DbUpdateException ex) when (PostgresFailure.Provider(ex) is { SqlState: PostgresErrorCodes.UniqueViolation } unique &&
-                unique.ConstraintName is "IX_Accounts_IssuerSubject")
-            {
-                // Identity bound in another tenant (invisible through the tenant filter): no cross-tenant query, no detail.
-                db.ChangeTracker.Clear();
-                return (Problem(h, 409, "identity_unavailable"), "identity_unavailable");
-            }
+            var invitation = NewInvitation(actor.TenantId, membership, command.Subject, actor.Id.ToString("D"), now, out var token);
+            db.MembershipInvitations.Add(invitation);
+            await db.SaveChangesAsync(h.RequestAborted);
             AddReceipt(db, actor, prelude.Key, action, fingerprint, membership, now);
             await db.SaveChangesAsync(h.RequestAborted);
-            return (Results.Ok(await AccessView(db, settings, actor, membership, h.RequestAborted)), "Success");
+            return (Results.Ok(new MembershipInvitationIssueDto((await AccessView(db, settings, actor, membership, h.RequestAborted))!, token, invitation.ExpiresAt)), "Success");
         });
     }
 

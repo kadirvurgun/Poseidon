@@ -2382,7 +2382,7 @@
           "Poseidon.Api"
         ],
         "summary": "CreateMembership",
-        "description": "Provisions a database membership for an IdP identity (issuer+subject; the account and its credentials stay in the IdP). Role bundles and individual permissions are limited to the trusted allow-list and to the caller's own permissions (400 exceeds_grantor_authority). An identity already provisioned or present in the operator configuration returns 409 identity_unavailable. Takes effect at the member's next login.",
+        "description": "Invites an IdP identity to a database membership (USER-ADMIN-02). The membership starts Invited and grants nothing; it binds an identity only when the identity holder, signed in through the trusted issuer, accepts the single-use invitation token returned once in this response (expiry 24 hours: the 54.01 account.invite_hours default). subject is optional and, when given, is the only identity allowed to accept; it reserves nothing. Role bundles and individual permissions are limited to the trusted allow-list and to the caller's own permissions (400 exceeds_grantor_authority). A subject present in the operator configuration, already bound in this tenant or with a pending invitation here returns 409 identity_unavailable.",
         "operationId": "CreateMembership",
         "parameters": [
           {
@@ -2462,7 +2462,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MembershipAccessDto"
+                  "$ref": "#/components/schemas/MembershipInvitationIssueDto"
                 }
               }
             }
@@ -3589,6 +3589,293 @@
                 }
               }
             }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/memberships/{id}/invitation": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "summary": "ReissueMembershipInvitation",
+        "description": "Issues a new single-use invitation link for an Invited membership (the previous pending link stops working). The token is returned only in this response. expectedVersion is the membership version; a membership that is no longer Invited returns 409 invalid_transition.",
+        "operationId": "ReissueMembershipInvitation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-CSRF-TOKEN",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MembershipTransitionCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MembershipInvitationIssueDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/invitations/preview": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "summary": "PreviewMembershipInvitation",
+        "description": "Shows the signed-in identity what a pending invitation grants in its tenant. No change is made. Every refusal (unknown, expired, used, revoked, another identity, identity already bound or configured) returns the same 409 invitation_unavailable; repeated attempts return 429 request_limit.",
+        "operationId": "PreviewMembershipInvitation",
+        "parameters": [
+          {
+            "name": "X-CSRF-TOKEN",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvitationTokenCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvitationGrantDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-OBSERVATION-COMMAND-1"
+      }
+    },
+    "/api/v1/invitations/accept": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "summary": "AcceptMembershipInvitation",
+        "description": "Binds the signed-in IdP identity (validated issuer+subject) to the invited membership and activates its grant. One identity holds at most one accepted membership. The invitation session ends; the grant applies at the next sign-in. Every refusal returns the same 409 invitation_unavailable; repeated attempts return 429 request_limit.",
+        "operationId": "AcceptMembershipInvitation",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-CSRF-TOKEN",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvitationTokenCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvitationAcceptedDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
           }
         },
         "x-poseidon-profile": "NATIVE-COMMAND-1"
@@ -41491,6 +41778,89 @@
           }
         }
       },
+      "InvitationAcceptedDto": {
+        "required": [
+          "membershipId",
+          "grant",
+          "signInRequired"
+        ],
+        "type": "object",
+        "properties": {
+          "membershipId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "grant": {
+            "$ref": "#/components/schemas/InvitationGrantDto"
+          },
+          "signInRequired": {
+            "type": "boolean"
+          }
+        }
+      },
+      "InvitationGrantDto": {
+        "required": [
+          "tenantName",
+          "bundles",
+          "permissionCount",
+          "tenantWideRead",
+          "tenantWideManage",
+          "vesselGrantCount",
+          "companyScoped",
+          "expiresAt"
+        ],
+        "type": "object",
+        "properties": {
+          "tenantName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "bundles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "permissionCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tenantWideRead": {
+            "type": "boolean"
+          },
+          "tenantWideManage": {
+            "type": "boolean"
+          },
+          "vesselGrantCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "companyScoped": {
+            "type": "boolean"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "InvitationTokenCommand": {
+        "required": [
+          "token"
+        ],
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
       "JsonElement": { },
       "LegacyCrewImportCommand": {
         "required": [
@@ -43130,6 +43500,23 @@
               "integer"
             ],
             "format": "int32"
+          },
+          "invitationState": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "invitationExpiresAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "invitationSubjectExpected": {
+            "type": "boolean",
+            "default": false
           }
         }
       },
@@ -43456,6 +43843,32 @@
           },
           "reason": {
             "type": "string"
+          }
+        }
+      },
+      "MembershipInvitationIssueDto": {
+        "required": [
+          "membership",
+          "invitationToken",
+          "expiresAt"
+        ],
+        "type": "object",
+        "properties": {
+          "membership": {
+            "$ref": "#/components/schemas/MembershipAccessDto"
+          },
+          "invitationToken": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "expiresAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
           }
         }
       },
@@ -56992,6 +57405,10 @@
             "default": false
           },
           "canSearch": {
+            "type": "boolean",
+            "default": false
+          },
+          "invitationSession": {
             "type": "boolean",
             "default": false
           }

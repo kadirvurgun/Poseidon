@@ -542,6 +542,8 @@ public sealed partial class DirectoryWorkspaceTests
             // USER-ADMIN-01: the binding the OIDC login stamps for an admin-provisioned identity ("tenant/actor").
             if (Request.Headers.TryGetValue("X-Membership-Provisioned", out var binding) && binding.ToString().Split('/') is [var tenant, var actor])
                 claims.AddRange([new(ActorResolver.ProvisionedTenantClaim, tenant), new(ClaimTypes.NameIdentifier, actor), new(ActorResolver.SessionSourceClaim, ActorResolver.ProvisionedSource)]);
+            // USER-ADMIN-02: the short invitation session the OIDC login issues for an identity without membership.
+            if (Request.Headers.ContainsKey("X-Membership-Invitee")) claims.Add(new(ActorResolver.SessionSourceClaim, ActorResolver.InvitationSource));
             return Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(new ClaimsPrincipal(new ClaimsIdentity(claims, Scheme.Name)), Scheme.Name)));
         }
     }

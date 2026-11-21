@@ -5,7 +5,9 @@ using Poseidon.Persistence;
 
 namespace Poseidon.Api;
 
-public sealed record SessionDto(bool Authenticated, bool SetupRequired, string? ActorId, Guid? TenantId, bool CanRead, string CsrfToken, string? TenantName = null, bool CanReadCompanies = false, bool CanCreate = false, bool CanSearch = false);
+public sealed record SessionDto(bool Authenticated, bool SetupRequired, string? ActorId, Guid? TenantId, bool CanRead, string CsrfToken, string? TenantName = null, bool CanReadCompanies = false, bool CanCreate = false, bool CanSearch = false,
+    // USER-ADMIN-02: an IdP-validated identity without membership signed in only to accept an invitation (grants nothing).
+    bool InvitationSession = false);
 public sealed record CompanyDto(Guid Id, string Code, string Name, uint Version, bool CanEdit);
 public sealed record VesselDto(Guid Id, Guid CompanyId, string Code, string Name, string Kind, uint Version, bool CanEdit);
 public sealed record PageDto<T>(T[] Items, int Offset, int Limit, bool HasMore);
@@ -22,9 +24,10 @@ public static class FoundationEndpoints
                 tenantName = await http.RequestServices.GetRequiredService<PoseidonDbContext>().Tenants.AsNoTracking()
                     .Select(x => x.Name).SingleOrDefaultAsync(http.RequestAborted);
             if (http.User.Identity?.IsAuthenticated == true) await audit.WriteAsync(http, "Session", actor == null ? "Denied" : "Success");
-            var token = actor == null ? "" : csrf.GetAndStoreTokens(http).RequestToken!;
+            var invitation = actor == null && actors.InvitationIdentityFor(http.User) != null;
+            var token = actor == null && !invitation ? "" : csrf.GetAndStoreTokens(http).RequestToken!;
             return TypedResults.Ok(new SessionDto(http.User.Identity?.IsAuthenticated == true, !settings.Configured,
-                actor?.Id.ToString(), actor?.TenantId, actor?.CanRead == true, token, tenantName, actor?.CanRead == true && (actor.TenantWideRead || actor.TenantWideManage), actor?.CanManage == true, actor?.CanSearch == true));
+                actor?.Id.ToString(), actor?.TenantId, actor?.CanRead == true, token, tenantName, actor?.CanRead == true && (actor.TenantWideRead || actor.TenantWideManage), actor?.CanManage == true, actor?.CanSearch == true, invitation));
         }).WithName("GetSession");
 
         app.MapGet("/api/v1/auth/login", async (HttpContext http, FederationSettings settings, SecurityAudit audit, string? returnUrl) =>
