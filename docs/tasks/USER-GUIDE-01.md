@@ -1,6 +1,10 @@
 # USER-GUIDE-01 — Kullanım kılavuzu ve sayfa içi yardım (analiz + plan)
 
-Durum: **ANALİZ / PLAN** (21.11.2026). Kod yok. Kullanıcı isteği: "uygulama bitince resimli, adım adım kullanım dokümanı; ayrıca her sayfada o sayfanın kullanım kılavuzu. Uygulamayı hiç bilmiyoruz." Türetilmiş ek gereksinim kimliğidir; canonical iş/SP değildir (121 iş / 970 SP değişmez).
+Durum: **ANALİZ / PLAN** (21.11.2026). Kullanıcı isteği: "uygulama bitince resimli, adım adım kullanım dokümanı; ayrıca her sayfada o sayfanın kullanım kılavuzu. Uygulamayı hiç bilmiyoruz." Türetilmiş ek gereksinim kimliğidir; canonical iş/SP değildir (121 iş / 970 SP değişmez).
+
+Faz durumu: **UG-1 — AUTHORED_UNVERIFIED** (21.11.2026, dal `feature/help-panel-20261121`; yerel typecheck/lint/vitest çalıştı, CI ve bağımsız QA bekliyor; rapor `docs/phases/USER-GUIDE-01-UG1.md`). UG-2…UG-5 başlamadı; UG-6 insan kapısı.
+
+UG-1 Markdown kararı: yeni bağımlılık eklenmedi. Frontend'de Markdown kütüphanesi yoktu; içerik repo içinde yazılan sabit bir alt kümedir (paragraf, liste, `###`, kalın, kod, bağlantı). `frontend/src/help/HelpMarkdown.tsx` bunu doğrudan React öğelerine çevirir: HTML yolu hiç yoktur (`dangerouslySetInnerHTML` yok, ham HTML metin olarak kaçışlanır), bağlantı yalnız kullanıcının navigasyonundaki `/app/...` rotasına veya panel içi `#çapa`ya verilir. Bir unified/remark ağacı (~20 paket) eklemek, aynı güvenliği daha büyük tedarik zinciri ve advisory yüzeyiyle sağlardı.
 
 ## 1. Sorun
 
