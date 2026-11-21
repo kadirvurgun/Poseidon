@@ -47,7 +47,7 @@ public static class FleetCatalogDraftWriter
             if (head is not null && prior is null) throw new InvalidOperationException("CATALOG_DRAFT_HISTORY_UNAVAILABLE");
             if (head is null) { head = new() { TenantId = db.TenantId, Id = catalogId }; db.FleetCatalogDrafts.Add(head); }
             head.Revision = expectedRevision + 1;
-            var now = DateTimeOffset.UtcNow;
+            var now = db.Clock.GetUtcNow();
             var revision = new FleetCatalogDraftRevision {
                 TenantId = db.TenantId, Id = Guid.NewGuid(), CatalogId = catalogId, Revision = head.Revision,
                 PriorRevisionId = prior?.Id, CommandId = commandId, ExpectedRevision = expectedRevision,

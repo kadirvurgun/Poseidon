@@ -18,7 +18,7 @@ public static class ControlEvidenceFixtures
             // (ControlLifecyclePolicy.State). No review/approval/publication event is seeded.
             db.ControlEvidenceHeads.Add(new() { TenantId = vessel.TenantId, VesselId = vessel.Id, Kind = kind, Id = id, Revision = 1 });
             db.ControlEvidenceRevisions.Add(new() { TenantId = vessel.TenantId, VesselId = vessel.Id, Kind = kind, Id = id, Revision = 1,
-                ContentJson = content, Hash = RegisterStorage.Hash(content), ReasonCode = "SYNTHETIC_INCOMPLETE_DRAFT", SavedAt = DateTimeOffset.UtcNow });
+                ContentJson = content, Hash = RegisterStorage.Hash(content), ReasonCode = "SYNTHETIC_INCOMPLETE_DRAFT", SavedAt = db.Clock.GetUtcNow() });
         }
         // No file, observed time, actor appointment, evidence existence, verification,
         // completed control, policy, receipt or human decision is invented.

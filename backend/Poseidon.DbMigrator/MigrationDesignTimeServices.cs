@@ -9,11 +9,14 @@ namespace Poseidon.DbMigrator;
 // scaffolded migration must append to that history, including its target model.
 public sealed class MigrationDesignTimeServices : IDesignTimeServices
 {
-    public void ConfigureDesignTimeServices(IServiceCollection services) =>
+    public void ConfigureDesignTimeServices(IServiceCollection services)
+    {
+        services.AddSingleton<TimeProvider>(TimeProvider.System); // Design-time tooling clock (migration id prefix only).
         services.AddSingleton<IMigrationsIdGenerator, AppendOnlyMigrationIds>();
+    }
 }
 
-public sealed class AppendOnlyMigrationIds(IMigrationsAssembly migrations) : IMigrationsIdGenerator
+public sealed class AppendOnlyMigrationIds(IMigrationsAssembly migrations, TimeProvider clock) : IMigrationsIdGenerator
 {
     private readonly object sync = new();
     private long last;
@@ -22,10 +25,10 @@ public sealed class AppendOnlyMigrationIds(IMigrationsAssembly migrations) : IMi
     {
         lock (sync) {
             ArgumentException.ThrowIfNullOrWhiteSpace(name);
-            var clock = long.Parse(DateTime.UtcNow.ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture), CultureInfo.InvariantCulture);
+            var now = long.Parse(clock.GetUtcNow().UtcDateTime.ToString("yyyyMMddHHmmss", CultureInfo.InvariantCulture), CultureInfo.InvariantCulture);
             var prior = migrations.Migrations.Keys.Where(IsValidId)
                 .Select(id => long.Parse(id[..14], CultureInfo.InvariantCulture)).DefaultIfEmpty(0).Max();
-            last = Math.Max(clock, checked(Math.Max(prior, last) + 1));
+            last = Math.Max(now, checked(Math.Max(prior, last) + 1));
             var prefix = last.ToString("D14", CultureInfo.InvariantCulture);
             if (prefix.Length != 14) throw new InvalidOperationException("Migration sequence capacity exceeded.");
             return prefix + "_" + name;

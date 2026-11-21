@@ -19,7 +19,7 @@ public static class TechnicalRecordFixtures
     {
         if (!db.IsAdministrativeImport || db.Database.CurrentTransaction == null)
             throw new UnauthorizedAccessException("Synthetic technical record fixtures require an administrative audited transaction.");
-        var now = DateTimeOffset.UtcNow;
+        var now = db.Clock.GetUtcNow();
         foreach (var vessel in vessels)
         {
             if (!await db.Vessels.AnyAsync(v => v.TenantId == vessel.TenantId && v.Id == vessel.Id, ct)) throw new InvalidOperationException("Synthetic technical record scope is unavailable.");

@@ -19,7 +19,7 @@ public static class FleetCatalogDraftFixtures
             db.FleetCatalogDrafts.Add(new() { TenantId = tenant.Id, Id = id, Revision = 1 });
             db.FleetCatalogDraftRevisions.Add(new() { TenantId = tenant.Id, Id = Id(id), CatalogId = id, Revision = 1,
                 ExpectedRevision = 0, ActorId = db.AuditActorId, ContentJson = json, ContentHash = FleetCatalogDraftWriter.Hash(json),
-                IntentHash = FleetCatalogDraftWriter.Hash("SYNTHETIC_INCOMPLETE_DRAFT"), RecordedAt = DateTimeOffset.UtcNow,
+                IntentHash = FleetCatalogDraftWriter.Hash("SYNTHETIC_INCOMPLETE_DRAFT"), RecordedAt = db.Clock.GetUtcNow(),
                 Provenance = "SyntheticUnverified" });
         }
         // Caller owns audited SaveChanges/transaction; no members, approvals,

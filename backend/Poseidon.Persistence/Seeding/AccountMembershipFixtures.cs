@@ -23,12 +23,12 @@ public static class AccountMembershipFixtures
             var account = AccountId(tenant.Id);
             if (await db.UserAccounts.FindAsync([tenant.Id, account], ct) is null)
                 db.UserAccounts.Add(new UserAccount { TenantId = tenant.Id, Id = account, Issuer = SyntheticIssuer,
-                    Subject = "synthetic-member-" + tenant.Id.ToString("N"), Source = "SyntheticUnverified", CreatedAt = DateTimeOffset.UtcNow });
+                    Subject = "synthetic-member-" + tenant.Id.ToString("N"), Source = "SyntheticUnverified", CreatedAt = db.Clock.GetUtcNow() });
             var membership = MembershipId(tenant.Id);
             if (await db.AccountMemberships.FindAsync([tenant.Id, membership], ct) is null)
                 db.AccountMemberships.Add(new AccountMembership { TenantId = tenant.Id, Id = membership, AccountId = account,
-                    Status = "Active", StatusReason = "SyntheticFixture", StatusChangedAt = DateTimeOffset.UtcNow, AccessRevision = 0,
-                    Source = "SyntheticUnverified", CreatedAt = DateTimeOffset.UtcNow });
+                    Status = "Active", StatusReason = "SyntheticFixture", StatusChangedAt = db.Clock.GetUtcNow(), AccessRevision = 0,
+                    Source = "SyntheticUnverified", CreatedAt = db.Clock.GetUtcNow() });
         }
         // Caller owns the audited SaveChanges/transaction. No role context, company,
         // vessel grant, delegation or administrator status is seeded.

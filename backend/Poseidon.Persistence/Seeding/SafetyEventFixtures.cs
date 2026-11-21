@@ -21,7 +21,7 @@ public static class SafetyEventFixtures
     {
         if (!db.IsAdministrativeImport || db.Database.CurrentTransaction == null)
             throw new UnauthorizedAccessException("Synthetic safety event fixtures require an administrative audited transaction.");
-        var now = DateTimeOffset.UtcNow;
+        var now = db.Clock.GetUtcNow();
         var json = new JsonSerializerOptions(JsonSerializerDefaults.Web);
         foreach (var v in vessels)
         {

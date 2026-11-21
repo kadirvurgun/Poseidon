@@ -28,7 +28,7 @@ public static class LegacyCrewBrowserFixture
             ActorId = Guid.Empty, SessionHash = "synthetic-expired-session", Category = "crew", TemplateVersion = "synthetic-legacy-unsupported-v0",
             TemplateFingerprint = "synthetic-unsupported-schema", TableJson = " {\"obsoleteHeaders\":[\"FICTIONAL\"],\"obsoleteRows\":[[\"FICTIONAL LEGACY CELL\"]]} ",
             BindingsJson = "[]", SourceHash = "synthetic-unavailable-original-bytes", SourceName = "synthetic-legacy.xlsx",
-            SourceLocator = "SyntheticFixture/legacy-format-v0/original-capture-unknown", RowCount = 1, CreatedAt = DateTimeOffset.UtcNow });
+            SourceLocator = "SyntheticFixture/legacy-format-v0/original-capture-unknown", RowCount = 1, CreatedAt = db.Clock.GetUtcNow() });
         await db.SaveChangesAsync(); // Attributed ordinary tenant-scoped audit, no raw SQL/admin context.
     }
 }

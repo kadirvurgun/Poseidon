@@ -72,7 +72,7 @@ public static class TodayEndpoints
             await audit.WriteAsync(http, action, "NotFound");
             return Results.NotFound();
         }
-        var readAt = DateTimeOffset.UtcNow;
+        var readAt = http.UtcNow();
         if (why && jobId != null) {
             var source = await TodayTugReader.Read(id, http, db, actor, readAt, jobId);
             if (source == null) {
