@@ -38,6 +38,16 @@ reads the new `ActorResolver.KnownPermissions` array instead of regex-parsing th
 `PilotProgramStorageGuardTests.Pilot_kit_migration_target_models_match_the_snapshot_…` compares only the `pilot` schema
 (it compared every historical target model with the latest snapshot and broke on any later migration).
 
+## CI
+- Run 44939813106 (840a2410, push): all 1175 API integration tests and 130 persistence integration tests passed, but the
+  critical-write coverage gate failed with `AUDIT_BEFORE_AFTER_UNPROVEN` for `UserAdministrationTests.cs:54` and `:208`
+  (both perform a grant update). Cause: the `MembershipGrantRevision` audit projection set `BeforeRevision = N-1` on an
+  `Added` row, which `CriticalWriteCoverageCapture.BeforeAfter` (CriticalWriteCoverageCapture.cs:199) rejects. Fix: no
+  before revision on the Added row (prior revision stays in the `Revision` field). Reproduced and proven by
+  `MembershipAuditBeforeAfterTests.Membership_create_and_grant_revision_rows_are_proven_without_permission_lists`
+  (failed before the fix at MembershipAuditBeforeAfterTests.cs:166, 7/7 after); new integration tests 3/3 and
+  persistence unit 155/155 re-run green.
+
 ## Open items
 See task contract: P5202-OPEN-01 eligibility lists, no display name, bundle catalog approval, 14 locales English
 fallback (`i18n_untranslated.py` will report them), IdP-side invitation/MFA.

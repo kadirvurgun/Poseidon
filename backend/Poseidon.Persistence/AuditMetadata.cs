@@ -347,7 +347,8 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         }
         // USER-ADMIN-01: closed bundle codes, counts and flags only; the permission list itself is withheld.
         if (entry.Entity is MembershipGrantRevision grantRevision)
-            return new(null, grantRevision.MembershipId, "MembershipGrant", grantRevision.Revision > 1 ? grantRevision.Revision - 1 : null, grantRevision.Revision, Fields(
+            // Always an Added row: the prior revision is recorded in the Revision field, never as a before revision.
+            return new(null, grantRevision.MembershipId, "MembershipGrant", null, grantRevision.Revision, Fields(
                 Field("Revision", grantRevision.Revision > 1 ? Number(grantRevision.Revision - 1) : null, Number(grantRevision.Revision)),
                 Field("Bundles", null, string.Join(',', Poseidon.Domain.MembershipGrantPolicy.Split(grantRevision.Bundles).Select(b => Closed(b, [.. Poseidon.Domain.MembershipRoleBundles.Codes])))),
                 Field("Permissions", null, null, "ValuesWithheld"),
