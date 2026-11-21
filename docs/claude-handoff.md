@@ -1,8 +1,8 @@
 # Claude handoff
 
 STATUS: IN_PROGRESS
-Güncelleme: 2026-11-21 04:45 (04:41 zamanlanmış oturum)
-in_progress: 2026-11-21 04:41 zamanlanmış oturum (claude/loop)
+Güncelleme: 2026-11-21 14:45 (14:41 zamanlanmış oturum)
+in_progress: 2026-11-21 14:41 zamanlanmış oturum (claude/loop)
 
 ## KOTA KURALI (zorunlu)
 Her büyük adımdan önce `C:\Users\avurgun\.claude-poseidon\statusline\cache\usage.json` oku (`fiveHourPct`, `resetsAt`). `fiveHourPct >= 97` ise yeni iş başlatma, durumu bu dosyaya yaz, commit et ve çık. `>= 90` ise yeni alt-ajan başlatma, yalnız mevcut işi bitir. Alt-ajanları aynı anda en fazla 3 tut.
@@ -284,3 +284,6 @@ Main: #16 #17 #18 #20 #23 #36 + **#37 paket 2** birleşik (`2995f70`, 19.11 ~08:
 - **Takip 2177c023** `fix/pilot-kit-followup-20261121` (SoD tam: hafta kapanışı/karar bağlantı+geri bildirim+ölçüm yazarlarını dışlar, DB tetikleyici migration 20261124090000; gerçek kayıt/yanlış tip/açık WO/silinen hedef testleri; çapraz kiracı 422 record_not_found = rastgele id ile aynı (kahin yok, kabul); DEV-077 tamamlanma durumu `record_not_completed`; job_not_submitted/job_cancelled 17 dil; Designer; status md). CI 44871888344 koşuyor → sonraki PR.
 - 2b130354 CI push 44868661233 + PR 44868664589 **yeşil** + son kapı QA ACCEPT-WITH-NOTES → **#50 birleşti, main c970581** → main'de **114/121 iş, 932/970 SP, %96,08** (S0–S11 kabul; S11 yalnız yazılım kapsamı). Kalan 7 pilot işi (38 SP) AUTHORED_UNVERIFIED — gerçek pilot gerekli.
 - Sıradaki: takip dalı `fix/pilot-kit-followup-20261121` 2177c023 (CI 44871888344) → main'e PR (main tabanlı değil: 2b130354 tabanlı = main'in parent'ı; PR doğrudan açılabilir) + kısa QA.
+
+### 21.11 14:41 zamanlanmış oturum
+- Önceki kilit bayat (son iş 08:54). Takip 2177c023 CI 44871888344 yeşil → **PR #51** açıldı (main c9705816 tabanına); bağımsız QA alt-ajanda.
