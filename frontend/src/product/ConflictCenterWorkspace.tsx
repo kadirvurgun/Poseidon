@@ -1,4 +1,5 @@
 import { localizedCopy } from '../i18n/messages'
+import { pilotForVessel, pilotSyncConflict } from './pilot-telemetry'
 import { useAppLanguage, type Locale } from '../i18n'
 import { useEffect, useId, useRef, useState } from 'react'
 import { Badge } from '../components/ui/badge'
@@ -173,9 +174,12 @@ function ConflictReviewPane({ vessel, item, language, online, onClose }: { vesse
       if (classifyReviewFailure(error) === 'denied') setState({ failure: 'denied' })
     }
   }
-  const resolve = (resolution: OfflineConflictResolution) => void run((s, signal) => s.resolve(resolution, signal))
+  // S11 gate B1 (DEV-072, 19.01 p154-155): one SYNC_CONFLICT observation per conflict a human resolved here
+  // (committed resolution or explicit local discard). Only the closed code and the vessel's mode are reported.
+  const observed = <T extends Receipt>(receipt: T): T => { if (receipt.kind === 'committed' || receipt.kind === 'discarded') pilotForVessel(vessel, pilotSyncConflict); return receipt }
+  const resolve = (resolution: OfflineConflictResolution) => void run(async (s, signal) => observed(await s.resolve(resolution, signal)))
   const recheck = () => void run((s, signal) => s.recheck(signal))
-  const discard = () => void run(async s => { await s.discardLocal(confirmDiscard); return { kind: 'discarded' } })
+  const discard = () => void run(async s => { await s.discardLocal(confirmDiscard); return observed({ kind: 'discarded' } as const) })
   const detail = state?.session?.detail
   const conflict = detail ? { ...detail, fields: detail.fields.map(field => field.key === 'watch_group' ? { ...field, before: asValue(detail.base) } : field) } : null
   return <section ref={region} tabIndex={-1} className="conflict-center__review" aria-labelledby={heading} onKeyDown={event => { if (event.key === 'Escape' && operation !== 'submitting' && operation !== 'outcomeUnknown') onClose(receipt !== null) }}>

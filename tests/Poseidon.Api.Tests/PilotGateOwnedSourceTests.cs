@@ -90,6 +90,30 @@ public sealed class PilotGateOwnedSourceTests
 
     [Fact]
     [Trait("Requirement", "DEV-075")]
+    public void A_pilot_vessel_without_a_campaign_or_report_keeps_regulatory_and_data_unknown()
+    {
+        // S11 gate QA N2: a tenant vessel without any record is not ignored.
+        var vesselC = Guid.NewGuid();
+        Campaign[] closed = [C(VesselA, "SHIP", RegulatoryReviewPolicy.Closed), C(VesselB, "TUG", RegulatoryReviewPolicy.Closed)];
+        var covered = RegulatoryReviewPilotGateSource.Evaluate(closed, [new(VesselA, "SHIP"), new(VesselB, "TUG")]);
+        Assert.Equal(PilotGatePolicy.Pass, covered.State);
+        var unreviewed = RegulatoryReviewPilotGateSource.Evaluate(closed, [new(VesselA, "SHIP"), new(VesselB, "TUG"), new(vesselC, "SHIP")]);
+        Assert.Equal(PilotGatePolicy.Unknown, unreviewed.State);
+        Assert.Equal(new[] { "REGULATORY_VESSEL_UNREVIEWED:SHIP" }, unreviewed.Reasons);
+        // A vessel reviewed only in another scope does not count for its own scope.
+        Assert.Equal(PilotGatePolicy.Unknown, RegulatoryReviewPilotGateSource.Evaluate(closed, [new(VesselA, "TUG")]).State);
+
+        Report[] signed = [new Report(ImportReconciliationPolicy.SignedOff, ImportReconciliationPolicy.Accepted)];
+        Assert.Equal(PilotGatePolicy.Pass, DataReconciliationPilotGateSource.Evaluate(signed, 0).State);
+        var unreported = DataReconciliationPilotGateSource.Evaluate(signed, 1);
+        Assert.Equal(PilotGatePolicy.Unknown, unreported.State);
+        Assert.Equal(new[] { "DATA_RECONCILIATION_MISSING_FOR_VESSEL" }, unreported.Reasons);
+        // A rejection still fails even when another vessel has no report.
+        Assert.Equal(PilotGatePolicy.Fail, DataReconciliationPilotGateSource.Evaluate([new Report(ImportReconciliationPolicy.SignedOff, ImportReconciliationPolicy.Rejected)], 1).State);
+    }
+
+    [Fact]
+    [Trait("Requirement", "DEV-075")]
     public void Every_pilot_gate_has_exactly_one_registered_reader_in_the_bundle()
     {
         IPilotGateSource[] sources = [.. DeferredPilotGateSource.Defaults(), new UatPilotGateSource(UatScenarioCatalog.Ship), new UatPilotGateSource(UatScenarioCatalog.Tug),

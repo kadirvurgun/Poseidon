@@ -197,18 +197,32 @@ public static class PilotGatePolicy
         return new(recommendation, gates, openP0, reasons.ToArray(), hash);
     }
 
-    // GO only on GO_ELIGIBLE (every gate PASS, P0 known zero). CONDITIONAL_GO only with no FAIL/UNKNOWN gate, P0
-    // known zero and explicit conditions (a DEFERRED gate may be carried as a condition). NO_GO is always recordable.
+    // 18.01 row 76 AC "Security/regulatory/offline/DR/UAT/data/trace gates PASS; P0=0" and 23.03 p97-111 (every NO-GO
+    // trigger stops the release; only an approved safe degraded mode, which is not modelled, could relax one): GO and
+    // CONDITIONAL_GO both require GO_ELIGIBLE (every gate PASS, P0 known zero). CONDITIONAL_GO only adds explicit
+    // non-gate conditions; a FAIL, UNKNOWN or DEFERRED gate can never be carried as a condition (S11 gate QA N1).
+    // NO_GO is always recordable.
+    public const string GateDeferredRefusal = "pilot_gate_deferred";
     public static string? Refusal(string decision, PilotGateReviewOutcome review, IReadOnlyCollection<string> conditions)
     {
         if (!Decisions.Contains(decision, StringComparer.Ordinal)) return "validation_failed";
         if (decision == NoGo) return conditions.Count == 0 ? null : "validation_failed";
         if (review.Gates.Any(g => g.State == Fail)) return "pilot_gate_failed";
         if (review.OpenP0 is not 0) return "pilot_gate_p0_open_or_unknown";
-        if (decision == Go) return review.Recommendation == GoEligible && conditions.Count == 0 ? null : review.Recommendation == GoEligible ? "validation_failed" : "pilot_gate_not_passed";
-        if (review.Gates.Any(g => g.State == Unknown)) return "pilot_gate_unknown";
+        if (review.Gates.Any(g => g.State == Unknown)) return decision == Go ? "pilot_gate_not_passed" : "pilot_gate_unknown";
+        if (review.Gates.Any(g => g.State == Deferred)) return GateDeferredRefusal;
+        if (review.Recommendation != GoEligible || review.Gates.Any(g => g.State != Pass)) return "pilot_gate_not_passed";
+        if (decision == Go) return conditions.Count == 0 ? null : "validation_failed";
         return conditions.Count is > 0 and <= MaxConditions ? null : "conditions_required";
     }
+
+    // HTTP status of a refusal: malformed request 400; a deferred (never evaluated) gate 422; other gate states 409.
+    public static int RefusalStatus(string refusal) => refusal switch
+    {
+        "validation_failed" or "conditions_required" => 400,
+        GateDeferredRefusal => 422,
+        _ => 409,
+    };
 
     public static bool ValidRationale(string? value) => UatPolicy.ValidText(value, RationaleMin, RationaleMax);
     public static bool ValidCondition(string? value) => UatPolicy.ValidText(value, 3, ConditionMax);

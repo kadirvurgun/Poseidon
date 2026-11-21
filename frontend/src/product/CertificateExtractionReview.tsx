@@ -1,4 +1,5 @@
 import { sourceText, localizedTuple } from "../i18n/messages";
+import { pilotAiOutcome, pilotForVessel } from './pilot-telemetry';
 import { localizedText } from "../i18n/messages";
 import { type Locale as AppLocale } from "../i18n";
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
@@ -155,6 +156,11 @@ export function CertificateExtractionReview({ vessel, certificateId, expectedVer
                     setFailure(new ApiError(0, 'identity_boundary_changed'));
                 return;
             }
+            // S11 gate B1 (DEV-072, 19.01 p157): confirmed OCR candidates the user changed are a CORRECTED
+            // suggestion, otherwise ACCEPTED. Only the closed outcome code is reported.
+            const candidates = current?.candidates ?? [];
+            const corrected = selected.some(key => (values[key] ?? '') !== (candidates.find(f => f.key === key)?.value ?? ''));
+            pilotForVessel(vessel, area => pilotAiOutcome(area, 'OCR', corrected ? 'CORRECTED' : 'ACCEPTED'));
             setPending(null);
             setPreview(null);
             setValues({});
@@ -203,7 +209,7 @@ export function CertificateExtractionReview({ vessel, certificateId, expectedVer
           <label><input type="checkbox" checked={contextConfirmed} disabled={busy || !!pending || !current.canConfirm} onChange={event => setContextConfirmed(event.target.checked)}/>{localizedText(en, "pairs.m_9d84a9a0d7b3c19b")}</label>
           {validation && <p role="alert">{localizedText(en, "pairs.m_cd4bff0e9163b914")}</p>}
           {!current.canConfirm && <p>{localizedText(en, "pairs.m_533caf37ad49ba61")}</p>}
-          <EnterpriseActions><Button type="button" variant="outline" disabled={busy || !!pending} onClick={() => { setPreview(null); setValues({}); setSelected([]); setContextConfirmed(false); setFailure(null); setValidation(false); }}>{localizedText(en, "pairs.m_c29e33a3537102d5")}</Button><Button type="submit" disabled={busy || !current.canConfirm || !!pending && !samePending}>{pending ? (localizedText(en, "pairs.m_21646f70a1e8e004")) : (localizedText(en, "pairs.m_9f8203c2bde11b22"))}</Button></EnterpriseActions>
+          <EnterpriseActions><Button type="button" variant="outline" disabled={busy || !!pending} onClick={() => { if (current) pilotForVessel(vessel, area => pilotAiOutcome(area, 'OCR', 'REJECTED')); setPreview(null); setValues({}); setSelected([]); setContextConfirmed(false); setFailure(null); setValidation(false); }}>{localizedText(en, "pairs.m_c29e33a3537102d5")}</Button><Button type="submit" disabled={busy || !current.canConfirm || !!pending && !samePending}>{pending ? (localizedText(en, "pairs.m_21646f70a1e8e004")) : (localizedText(en, "pairs.m_9f8203c2bde11b22"))}</Button></EnterpriseActions>
         </form>
         <details><summary>{localizedText(en, "pairs.m_3bc25afd3fc60eff")}</summary><dl><dt>{localizedText(en, "pairs.m_548b333bda9137be")}</dt><dd>{current.modelVersion} / {current.promptVersion}</dd><dt>{localizedText(en, "pairs.m_6979312f892b4c80")}</dt><dd>{current.policyVersion} / <time dateTime={current.expiresAt}>{current.expiresAt}</time></dd><dt>{localizedText(en, "pairs.m_7bb902c2524638fe")}</dt><dd><code>{current.sourceVersion}</code></dd></dl></details>
       </>}

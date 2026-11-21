@@ -154,7 +154,7 @@ public static class SecurityEventCodes
         "facilitator_required", "uat_run_not_open", "uat_run_not_submitted", "scenario_out_of_scope", "synthetic_record_not_submittable",
         "separation_of_duties_required", "uat_finding_not_open", "blocker_risk_acceptance_not_permitted", "threshold_sequence_conflict",
         "support_sequence_conflict", "review_stale", "pilot_gate_failed", "pilot_gate_p0_open_or_unknown", "pilot_gate_not_passed",
-        "pilot_gate_unknown", "conditions_required", "pilot_gate_authority_required",
+        "pilot_gate_unknown", "pilot_gate_deferred", "conditions_required", "pilot_gate_authority_required",
         // Pilot program kit DEV-076/077/078/079/095/096/121.
         "record_type_not_allowed", "record_not_found", "synthetic_record_not_linkable", "uat_run_not_attested", "record_scope_mismatch", "tug_vessel_unset",
         "record_vessel_mismatch", "audit_trace_missing", "link_exists", "link_withdrawn", "pii_suspected", "issue_not_open",
