@@ -1,8 +1,8 @@
 # Claude handoff
 
 STATUS: IN_PROGRESS
-Güncelleme: 2026-11-19 ~08:30 (07:41 zamanlanmış oturum)
-in_progress: 2026-11-19 07:41 zamanlanmış oturum (claude/loop)
+Güncelleme: 2026-11-21 04:45 (04:41 zamanlanmış oturum)
+in_progress: 2026-11-21 04:41 zamanlanmış oturum (claude/loop)
 
 ## KOTA KURALI (zorunlu)
 Her büyük adımdan önce `C:\Users\avurgun\.claude-poseidon\statusline\cache\usage.json` oku (`fiveHourPct`, `resetsAt`). `fiveHourPct >= 97` ise yeni iş başlatma, durumu bu dosyaya yaz, commit et ve çık. `>= 90` ise yeni alt-ajan başlatma, yalnız mevcut işi bitir. Alt-ajanları aynı anda en fazla 3 tut.
@@ -259,3 +259,6 @@ Main: #16 #17 #18 #20 #23 #36 + **#37 paket 2** birleşik (`2995f70`, 19.11 ~08:
 - İşçi **s11-wpd** DONE `feature/s11-wpd-uat-gonogo-20261122` 212e0aea (CI yeşil; DEV-074/094/075; migration 20261124064000) → entegratör birleştiriyor (ee3fa670 CI bitince push). Kalan: qa-notes, i18n, pilot-plan işçileri.
 - **53dd7845** (yerel, ee3fa670 CI 44821388755 bitince otomatik push — arka plan): S11 WP-D birleşimi + `PilotGateOwnedSources.cs` (REGULATORY ← WP-C kampanyaları, DATA ← WP-A owner sign-off; SECURITY/OFFLINE/DR/TRACE DEFERRED — insan kaydı yok). S1 287/278/303; OpenAPI 481; profil 592. Domain 1613, API 459, Persistence 144.
 - ee3fa670 CI **yeşil**; **53dd7845 push edildi**, CI koşuyor.
+
+### 21.11 04:41 zamanlanmış oturum
+- Önceki koordinatör 01:19'dan beri sessiz; işçiler qa-notes/i18n/pilot-plan hiç başlamamış (worktree/dal/sonuç yok). 53dd7845 push CI 44827968239 **yeşil**. Bu oturum koordinatörlüğü devraldı: S11 PR + bağımsız S11 kapı QA + qa-notes + i18n alt-ajanlarda.
