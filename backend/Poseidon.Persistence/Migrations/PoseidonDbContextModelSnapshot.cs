@@ -85,7 +85,7 @@ namespace Poseidon.Persistence.Migrations
 
                     b.ToTable("Memberships", "identity", t =>
                         {
-                            t.HasCheckConstraint("CK_Memberships_Closed", "\"Status\" IN ('Active','Suspended','Revoked') AND \"AccessRevision\" >= 0 AND \"Source\" IN ('ConfigurationImport','SyntheticUnverified','AdminProvisioned') AND \"StatusReason\" IN ('ConfigurationImport','SyntheticFixture','AdministrativeSuspension','AdministrativeResume','AdministrativeRevocation','SecuritySuspension','SecurityResume','AdminProvisioning')");
+                            t.HasCheckConstraint("CK_Memberships_Closed", "\"Status\" IN ('Active','Suspended','Revoked','Invited') AND \"AccessRevision\" >= 0 AND \"Source\" IN ('ConfigurationImport','SyntheticUnverified','AdminProvisioned') AND \"StatusReason\" IN ('ConfigurationImport','SyntheticFixture','AdministrativeSuspension','AdministrativeResume','AdministrativeRevocation','SecuritySuspension','SecurityResume','AdminProvisioning','AdminInvitation','InvitationAccepted','InvitationRevoked') AND (\"Status\" <> 'Invited' OR \"Source\" = 'AdminProvisioned')");
                         });
                 });
 
@@ -7452,7 +7452,7 @@ namespace Poseidon.Persistence.Migrations
 
                     b.ToTable("MembershipCommandReceipts", "identity", t =>
                         {
-                            t.HasCheckConstraint("CK_MembershipCommandReceipts_Action", "\"Action\" IN ('MembershipImport','MembershipSuspend','MembershipResume','MembershipRevoke','MembershipSecuritySuspend','DelegationCreate','DelegationRevoke','MembershipCreate','MembershipGrantUpdate')");
+                            t.HasCheckConstraint("CK_MembershipCommandReceipts_Action", "\"Action\" IN ('MembershipImport','MembershipSuspend','MembershipResume','MembershipRevoke','MembershipSecuritySuspend','DelegationCreate','DelegationRevoke','MembershipCreate','MembershipGrantUpdate','MembershipInvitationReissue','MembershipInvitationAccept')");
                         });
                 });
 
@@ -7606,6 +7606,68 @@ namespace Poseidon.Persistence.Migrations
                     b.HasIndex("TenantId", "VesselId");
 
                     b.ToTable("MembershipGrantVessels", "identity");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.MembershipInvitation", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("ClosedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("ExpectedSubject")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("MembershipId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "MembershipId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_MembershipInvitations_Pending")
+                        .HasFilter("\"Status\" = 'Pending'");
+
+                    b.HasIndex("TenantId", "TokenHash")
+                        .IsUnique()
+                        .HasDatabaseName("IX_MembershipInvitations_TokenHash");
+
+                    b.ToTable("MembershipInvitations", "identity", t =>
+                        {
+                            t.HasCheckConstraint("CK_MembershipInvitations_Closed", "\"Status\" IN ('Pending','Accepted','Revoked','Superseded') AND \"ExpiresAt\" > \"CreatedAt\" AND length(\"TokenHash\") = 64 AND length(\"CreatedBy\") > 0 AND (\"ExpectedSubject\" IS NULL OR length(\"ExpectedSubject\") > 0) AND ((\"Status\" = 'Pending' AND \"ClosedAt\" IS NULL) OR (\"Status\" <> 'Pending' AND \"ClosedAt\" IS NOT NULL))");
+                        });
                 });
 
             modelBuilder.Entity("Poseidon.Persistence.MsmdRoleBinding", b =>
@@ -15498,7 +15560,6 @@ namespace Poseidon.Persistence.Migrations
                         .HasColumnType("character varying(32)");
 
                     b.Property<string>("Subject")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
@@ -15515,11 +15576,12 @@ namespace Poseidon.Persistence.Migrations
 
                     b.HasIndex("Issuer", "Subject")
                         .IsUnique()
-                        .HasDatabaseName("IX_Accounts_IssuerSubject");
+                        .HasDatabaseName("IX_Accounts_IssuerSubject")
+                        .HasFilter("\"Subject\" IS NOT NULL");
 
                     b.ToTable("Accounts", "identity", t =>
                         {
-                            t.HasCheckConstraint("CK_Accounts_Closed", "\"AccountType\" = 'Human' AND \"Source\" IN ('ConfigurationImport','SyntheticUnverified','AdminProvisioned') AND length(\"Issuer\") > 0 AND length(\"Subject\") > 0");
+                            t.HasCheckConstraint("CK_Accounts_Closed", "\"AccountType\" = 'Human' AND \"Source\" IN ('ConfigurationImport','SyntheticUnverified','AdminProvisioned') AND length(\"Issuer\") > 0 AND (length(\"Subject\") > 0 OR \"Subject\" IS NULL AND \"Source\" = 'AdminProvisioned')");
                         });
                 });
 
@@ -18445,6 +18507,16 @@ namespace Poseidon.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("FK_MembershipGrantVessels_Revision");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.MembershipInvitation", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.AccountMembership", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "MembershipId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_MembershipInvitations_Membership");
                 });
 
             modelBuilder.Entity("Poseidon.Persistence.MsmdRoleBinding", b =>

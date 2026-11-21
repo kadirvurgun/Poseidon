@@ -11,7 +11,9 @@ public sealed class UserAccount : ITenantEntity
     // Equal to the trusted actor id so historical audit attribution stays stable.
     public Guid Id { get; set; }
     public required string Issuer { get; set; }
-    public required string Subject { get; set; }
+    // USER-ADMIN-02: null while an admin-provisioned account awaits invitation acceptance (it reserves no identity);
+    // set exactly once to the IdP-validated subject of the identity holder who accepted the invitation.
+    public string? Subject { get; set; }
     public string AccountType { get; set; } = "Human";
     public required string Source { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
@@ -124,6 +126,24 @@ public sealed class MembershipGrantVessel : ITenantEntity
     public bool CanEdit { get; set; }
 }
 
+// USER-ADMIN-02: single-use invitation for an Invited membership. Only the SHA-256 of the token secret is stored; the
+// token itself is shown once to the creating administrator. ExpectedSubject (optional, pseudonymous IdP subject) narrows
+// who may accept. Expiry is derived from server time (Pending past ExpiresAt = expired, never acceptable).
+public sealed class MembershipInvitation : ITenantEntity
+{
+    public Guid TenantId { get; set; }
+    public Guid Id { get; set; }
+    public Guid MembershipId { get; set; }
+    public required string TokenHash { get; set; }
+    public string? ExpectedSubject { get; set; }
+    public required string Status { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
+    public DateTimeOffset ExpiresAt { get; set; }
+    public required string CreatedBy { get; set; }
+    public DateTimeOffset? ClosedAt { get; set; }
+    public uint Version { get; set; }
+}
+
 public sealed class MembershipCommandReceipt : ITenantEntity
 {
     public Guid TenantId { get; set; }
@@ -140,25 +160,29 @@ public sealed class MembershipCommandReceipt : ITenantEntity
 public static class AccountMembershipStorage
 {
     public const string IdentitySchema = "identity";
-    internal static readonly string[] Statuses = ["Active", "Suspended", "Revoked"];
+    internal static readonly string[] Statuses = ["Active", "Suspended", "Revoked", "Invited"];
     internal static readonly string[] Reasons = ["ConfigurationImport", "SyntheticFixture", "AdministrativeSuspension", "AdministrativeResume",
-        "AdministrativeRevocation", "SecuritySuspension", "SecurityResume", "AdminProvisioning"];
+        "AdministrativeRevocation", "SecuritySuspension", "SecurityResume", "AdminProvisioning", "AdminInvitation", "InvitationAccepted", "InvitationRevoked"];
+    internal static readonly string[] InvitationStatuses = ["Pending", "Accepted", "Revoked", "Superseded"];
     internal static readonly string[] DelegationReasons = ["PlannedAbsence", "UnplannedAbsence", "WorkloadCover", "Handover"];
     internal static readonly string[] RecoveryResolutions = ["SecuritySuspensionResumed"];
     internal static readonly string[] Sources = ["ConfigurationImport", "SyntheticUnverified", "AdminProvisioned"];
     internal static readonly string[] Actions = ["MembershipImport", "MembershipSuspend", "MembershipResume", "MembershipRevoke",
-        "MembershipSecuritySuspend", "DelegationCreate", "DelegationRevoke", "MembershipCreate", "MembershipGrantUpdate"];
+        "MembershipSecuritySuspend", "DelegationCreate", "DelegationRevoke", "MembershipCreate", "MembershipGrantUpdate",
+        "MembershipInvitationReissue", "MembershipInvitationAccept"];
 
     internal static void Configure(ModelBuilder model)
     {
         model.Entity<UserAccount>(b =>
         {
             b.ToTable("Accounts", IdentitySchema, t => t.HasCheckConstraint("CK_Accounts_Closed",
-                "\"AccountType\" = 'Human' AND \"Source\" IN ('ConfigurationImport','SyntheticUnverified','AdminProvisioned') AND length(\"Issuer\") > 0 AND length(\"Subject\") > 0"));
+                "\"AccountType\" = 'Human' AND \"Source\" IN ('ConfigurationImport','SyntheticUnverified','AdminProvisioned') AND length(\"Issuer\") > 0 AND " +
+                "(length(\"Subject\") > 0 OR \"Subject\" IS NULL AND \"Source\" = 'AdminProvisioned')"));
             b.HasKey(x => new { x.TenantId, x.Id });
             b.HasAlternateKey(x => x.Id).HasName("AK_Accounts_Id");
-            // One federated identity maps to exactly one account across all tenants.
-            b.HasIndex(x => new { x.Issuer, x.Subject }).IsUnique().HasDatabaseName("IX_Accounts_IssuerSubject");
+            // USER-ADMIN-02 (UA2-D03): one federated identity holds at most one ACCEPTED (bound) account across all tenants.
+            // An unaccepted invitation account has no subject and reserves nothing, so no tenant can squat an identity.
+            b.HasIndex(x => new { x.Issuer, x.Subject }).IsUnique().HasFilter("\"Subject\" IS NOT NULL").HasDatabaseName("IX_Accounts_IssuerSubject");
             b.Property(x => x.Issuer).HasMaxLength(1024);
             b.Property(x => x.Subject).HasMaxLength(255);
             b.Property(x => x.AccountType).HasMaxLength(16);
@@ -169,8 +193,9 @@ public static class AccountMembershipStorage
         model.Entity<AccountMembership>(b =>
         {
             b.ToTable("Memberships", IdentitySchema, t => t.HasCheckConstraint("CK_Memberships_Closed",
-                "\"Status\" IN ('Active','Suspended','Revoked') AND \"AccessRevision\" >= 0 AND \"Source\" IN ('ConfigurationImport','SyntheticUnverified','AdminProvisioned') AND " +
-                "\"StatusReason\" IN ('ConfigurationImport','SyntheticFixture','AdministrativeSuspension','AdministrativeResume','AdministrativeRevocation','SecuritySuspension','SecurityResume','AdminProvisioning')"));
+                "\"Status\" IN ('Active','Suspended','Revoked','Invited') AND \"AccessRevision\" >= 0 AND \"Source\" IN ('ConfigurationImport','SyntheticUnverified','AdminProvisioned') AND " +
+                "\"StatusReason\" IN ('ConfigurationImport','SyntheticFixture','AdministrativeSuspension','AdministrativeResume','AdministrativeRevocation','SecuritySuspension','SecurityResume','AdminProvisioning'," +
+                "'AdminInvitation','InvitationAccepted','InvitationRevoked') AND (\"Status\" <> 'Invited' OR \"Source\" = 'AdminProvisioned')"));
             b.HasKey(x => new { x.TenantId, x.Id });
             b.HasIndex(x => new { x.TenantId, x.AccountId }).IsUnique().HasDatabaseName("IX_Memberships_Account");
             b.HasIndex(x => new { x.TenantId, x.Status }).HasDatabaseName("IX_Memberships_Status");
@@ -249,10 +274,28 @@ public static class AccountMembershipStorage
             b.HasOne<MembershipGrantRevision>().WithMany().HasForeignKey(x => new { x.TenantId, x.MembershipId, x.Revision }).HasConstraintName("FK_MembershipGrantVessels_Revision").OnDelete(DeleteBehavior.Restrict);
             b.HasOne<Vessel>().WithMany().HasForeignKey(x => new { x.TenantId, x.VesselId }).HasConstraintName("FK_MembershipGrantVessels_Vessel").OnDelete(DeleteBehavior.Restrict);
         });
+        model.Entity<MembershipInvitation>(b =>
+        {
+            b.ToTable("MembershipInvitations", IdentitySchema, t => t.HasCheckConstraint("CK_MembershipInvitations_Closed",
+                "\"Status\" IN ('Pending','Accepted','Revoked','Superseded') AND \"ExpiresAt\" > \"CreatedAt\" AND length(\"TokenHash\") = 64 AND " +
+                "length(\"CreatedBy\") > 0 AND (\"ExpectedSubject\" IS NULL OR length(\"ExpectedSubject\") > 0) AND " +
+                "((\"Status\" = 'Pending' AND \"ClosedAt\" IS NULL) OR (\"Status\" <> 'Pending' AND \"ClosedAt\" IS NOT NULL))"));
+            b.HasKey(x => new { x.TenantId, x.Id });
+            b.HasIndex(x => new { x.TenantId, x.TokenHash }).IsUnique().HasDatabaseName("IX_MembershipInvitations_TokenHash");
+            // At most one usable invitation per membership: a reissue supersedes the previous one in the same transaction.
+            b.HasIndex(x => new { x.TenantId, x.MembershipId }).IsUnique().HasFilter("\"Status\" = 'Pending'").HasDatabaseName("IX_MembershipInvitations_Pending");
+            b.Property(x => x.TokenHash).HasMaxLength(64);
+            b.Property(x => x.ExpectedSubject).HasMaxLength(255);
+            b.Property(x => x.Status).HasMaxLength(16);
+            b.Property(x => x.CreatedBy).HasMaxLength(200);
+            b.Property(x => x.Version).IsRowVersion();
+            b.HasOne<AccountMembership>().WithMany().HasForeignKey(x => new { x.TenantId, x.MembershipId }).HasConstraintName("FK_MembershipInvitations_Membership").OnDelete(DeleteBehavior.Restrict);
+        });
         model.Entity<MembershipCommandReceipt>(b =>
         {
             b.ToTable("MembershipCommandReceipts", IdentitySchema, t => t.HasCheckConstraint("CK_MembershipCommandReceipts_Action",
-                "\"Action\" IN ('MembershipImport','MembershipSuspend','MembershipResume','MembershipRevoke','MembershipSecuritySuspend','DelegationCreate','DelegationRevoke','MembershipCreate','MembershipGrantUpdate')"));
+                "\"Action\" IN ('MembershipImport','MembershipSuspend','MembershipResume','MembershipRevoke','MembershipSecuritySuspend','DelegationCreate','DelegationRevoke','MembershipCreate','MembershipGrantUpdate'," +
+                "'MembershipInvitationReissue','MembershipInvitationAccept')"));
             b.HasKey(x => new { x.TenantId, x.ActorId, x.Key });
             b.Property(x => x.Key).HasMaxLength(80);
             b.Property(x => x.Action).HasMaxLength(32);
@@ -269,8 +312,25 @@ public static class AccountMembershipStorage
         {
             switch (entry.Entity)
             {
-                case UserAccount:
-                    if (entry.State != EntityState.Added) throw new InvalidOperationException("Federated account identity is immutable.");
+                case UserAccount account:
+                    // USER-ADMIN-02: the only change ever allowed is binding an unaccepted admin-provisioned account to the
+                    // accepting identity's subject, exactly once (null -> value). Issuer, source and id never change.
+                    if (entry.State == EntityState.Added && account.Subject == null && account.Source != "AdminProvisioned")
+                        throw new InvalidOperationException("Only an admin-provisioned invitation account starts without a subject.");
+                    if (entry.State != EntityState.Added && !(entry.State == EntityState.Modified && account.Source == "AdminProvisioned" &&
+                            entry.Property(nameof(UserAccount.Subject)).OriginalValue == null && account.Subject is { Length: > 0 } &&
+                            entry.Properties.All(p => !p.IsModified || p.Metadata.Name is nameof(UserAccount.Subject) or nameof(UserAccount.Version))))
+                        throw new InvalidOperationException("Federated account identity is immutable.");
+                    break;
+                case MembershipInvitation invitation:
+                    if (!InvitationStatuses.Contains(invitation.Status)) throw new InvalidOperationException("Invitation state is outside its closed contract.");
+                    if (entry.State == EntityState.Deleted) throw new InvalidOperationException("Invitation history cannot be removed.");
+                    if (entry.State == EntityState.Added && (invitation.Status != "Pending" || invitation.ClosedAt != null))
+                        throw new InvalidOperationException("An invitation starts pending.");
+                    if (entry.State == EntityState.Modified && ((string)entry.Property(nameof(MembershipInvitation.Status)).OriginalValue! != "Pending" ||
+                        invitation.Status == "Pending" || invitation.ClosedAt == null ||
+                        entry.Properties.Any(p => p.IsModified && p.Metadata.Name is not (nameof(MembershipInvitation.Status) or nameof(MembershipInvitation.ClosedAt) or nameof(MembershipInvitation.Version)))))
+                        throw new InvalidOperationException("An invitation closes exactly once; its token, subject and expiry are immutable.");
                     break;
                 case MembershipGrantRevision r:
                     if (entry.State != EntityState.Added) throw new InvalidOperationException("Membership grant revisions are immutable; a change appends a revision.");
@@ -295,8 +355,9 @@ public static class AccountMembershipStorage
                     if (!Statuses.Contains(m.Status) || !Reasons.Contains(m.StatusReason) || !Sources.Contains(m.Source))
                         throw new InvalidOperationException("Membership state is outside its closed contract.");
                     if (entry.State == EntityState.Deleted) throw new InvalidOperationException("Membership history cannot be removed.");
-                    if (entry.State == EntityState.Added && (m.Status != "Active" || m.AccessRevision != 0))
-                        throw new InvalidOperationException("A membership starts active at access revision zero.");
+                    if (entry.State == EntityState.Added && (m.AccessRevision != 0 || m.Status != "Active" &&
+                            !(m.Status == "Invited" && m.Source == "AdminProvisioned" && m.StatusReason == "AdminInvitation")))
+                        throw new InvalidOperationException("A membership starts active (or, admin-provisioned, invited) at access revision zero.");
                     if (entry.State == EntityState.Modified)
                     {
                         if (entry.Properties.Any(p => p.IsModified && p.Metadata.Name is not (nameof(AccountMembership.Status) or nameof(AccountMembership.StatusReason) or
@@ -304,6 +365,10 @@ public static class AccountMembershipStorage
                             throw new InvalidOperationException("Membership ownership and grant snapshot are immutable.");
                         var before = (string)entry.Property(nameof(AccountMembership.Status)).OriginalValue!;
                         if (before == "Revoked") throw new InvalidOperationException("A revoked membership is terminal.");
+                        // USER-ADMIN-02: Invited only leaves by acceptance (-> Active) or revocation; nothing returns to Invited.
+                        if (m.Status == "Invited" || before == "Invited" && !(m.Status == "Active" && m.StatusReason == "InvitationAccepted" ||
+                                m.Status == "Revoked" && m.StatusReason == "InvitationRevoked"))
+                            throw new InvalidOperationException("An invitation membership is accepted or revoked, never reopened.");
                         if (before == m.Status || m.AccessRevision != (long)entry.Property(nameof(AccountMembership.AccessRevision)).OriginalValue! + 1)
                             throw new InvalidOperationException("A membership change advances exactly one access revision.");
                     }
