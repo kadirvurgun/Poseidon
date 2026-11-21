@@ -8581,6 +8581,182 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/pilot-programs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PilotProgramList"];
+        put?: never;
+        post: operations["PilotProgramCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot-programs/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PilotProgramRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot-programs/{id}/links": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["PilotChecklistLink"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot-programs/{id}/links/{link}/withdraw": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["PilotChecklistWithdraw"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot-programs/{id}/feedback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["PilotFeedbackRecord"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot-programs/{id}/issues": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["PilotIssueReport"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot-programs/{id}/issues/{issue}/triage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["PilotIssueTriage"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot-programs/{id}/issues/{issue}/resolve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["PilotIssueResolve"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot-programs/{id}/measurements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["PilotMeasurementRecord"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot-programs/{id}/week-closes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["PilotWeekClose"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot-programs/{id}/decisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["PilotProgramDecide"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/parameter-definitions": {
         parameters: {
             query?: never;
@@ -14506,6 +14682,58 @@ export interface components {
             blockers: string[];
             href: string;
         };
+        PilotChecklistItem: {
+            code: string;
+            week: string;
+            requirement: string;
+            area: string;
+            recordTypes: string[];
+            requiresAuditTrace: boolean;
+            criterion: string;
+            locator: string;
+        };
+        PilotDefectSeverity: {
+            mode: string;
+            state: string;
+            /** Format: int32 */
+            critical: number;
+            /** Format: int32 */
+            high: number;
+            /** Format: int32 */
+            medium: number;
+            /** Format: int32 */
+            low: number;
+            /** Format: int32 */
+            unassessed: number;
+            /** Format: int32 */
+            syntheticExcluded: number;
+        };
+        PilotFeedbackCommand: {
+            week: string;
+            area: string;
+            category: string;
+            sentiment: string;
+            role: string;
+            summary: string;
+            participantPseudonym: string;
+        };
+        PilotFeedbackDto: {
+            /** Format: uuid */
+            id: string;
+            week: string;
+            area: string;
+            category: string;
+            sentiment: string;
+            role: string;
+            summary: string;
+            participantPseudonym: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            recordedAt: string;
+            /** Format: date-time */
+            expiresAt: string;
+        };
         PilotGateAuthorityDto: {
             /** Format: uuid */
             id: string;
@@ -14572,6 +14800,139 @@ export interface components {
             sourceLocator: string;
             /** @default ProductOwnerHumanDecisionRequired;EngineNeverDecidesGo;AiCannotDecide */
             authority: string;
+        };
+        PilotIssueCommand: {
+            week: string;
+            area: string;
+            category: string;
+            severity: string;
+            title: string;
+        };
+        PilotIssueDto: {
+            /** Format: uuid */
+            id: string;
+            week: string;
+            area: string;
+            category: string;
+            severity: string;
+            title: string;
+            state: string;
+            /** Format: uuid */
+            reportedBy: string;
+            /** Format: date-time */
+            reportedAt: string;
+            /** Format: uuid */
+            triagedBy: null | string;
+            /** Format: date-time */
+            triagedAt: null | string;
+            triageNote: null | string;
+            /** Format: uuid */
+            resolvedBy: null | string;
+            /** Format: date-time */
+            resolvedAt: null | string;
+            resolution: null | string;
+            resolutionReference: null | string;
+            timing: string;
+            /** Format: date */
+            reportedLocalDate: string;
+            /** Format: int64 */
+            version: number;
+        };
+        PilotIssueResolveCommand: {
+            resolution: string;
+            resolutionReference: null | string;
+            /** Format: int64 */
+            expectedVersion: number;
+        };
+        PilotIssueTriageCommand: {
+            note: string;
+            /** Format: int64 */
+            expectedVersion: number;
+        };
+        PilotItemOutcome: {
+            code: string;
+            state: string;
+            /** Format: int32 */
+            validLinks: number;
+            reasons: string[];
+        };
+        PilotLinkCommand: {
+            itemCode: string;
+            recordType: string;
+            /** Format: uuid */
+            recordId: string;
+            note: null | string;
+        };
+        PilotLinkDto: {
+            /** Format: uuid */
+            id: string;
+            week: string;
+            itemCode: string;
+            recordType: string;
+            /** Format: uuid */
+            recordId: string;
+            auditTracedAtLink: boolean;
+            note: null | string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            linkedAt: string;
+            /** Format: uuid */
+            withdrawnBy: null | string;
+            /** Format: date-time */
+            withdrawnAt: null | string;
+            withdrawalReason: null | string;
+            /** Format: int64 */
+            version: number;
+            validity: string;
+            refusal: null | string;
+        };
+        PilotLinkWithdrawCommand: {
+            reason: string;
+            /** Format: int64 */
+            expectedVersion: number;
+        };
+        PilotMeasurementCommand: {
+            metricId: string;
+            phase: string;
+            /** Format: double */
+            value: number;
+            /** Format: int32 */
+            sampleSize: number;
+            /** Format: date */
+            periodFrom: string;
+            /** Format: date */
+            periodTo: string;
+            evidenceReference: string;
+            method: string;
+            /** Format: int64 */
+            expectedSequence: number;
+        };
+        PilotMeasurementDto: {
+            /** Format: uuid */
+            id: string;
+            metricId: string;
+            mode: string;
+            phase: string;
+            /** Format: int64 */
+            sequence: number;
+            /** Format: uuid */
+            previousMeasurementId: null | string;
+            /** Format: double */
+            value: number;
+            unit: string;
+            /** Format: int32 */
+            sampleSize: number;
+            /** Format: date */
+            periodFrom: string;
+            /** Format: date */
+            periodTo: string;
+            evidenceReference: string;
+            method: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            recordedAt: string;
         };
         PilotMetricCapabilitiesDto: {
             canContribute: boolean;
@@ -14648,6 +15009,115 @@ export interface components {
             areas: string[];
             items: components["schemas"]["PilotMetricResult"][];
         };
+        PilotProgramCreateCommand: {
+            name: string;
+            /** Format: uuid */
+            shipVesselId: string;
+            /** Format: uuid */
+            tugVesselId: null | string;
+            /** Format: date */
+            startDate: string;
+            timeZone: string;
+        };
+        PilotProgramDecisionCommand: {
+            decision: string;
+            rationale: string;
+            expectedProgramHash: string;
+            /** Format: int64 */
+            expectedSequence: number;
+            /** Format: uuid */
+            authorityId: string;
+        };
+        PilotProgramDecisionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            sequence: number;
+            /** Format: uuid */
+            previousDecisionId: null | string;
+            decision: string;
+            recommendation: string;
+            programHash: string;
+            rationale: string;
+            duty: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            recordedAt: string;
+            validity: string;
+        };
+        PilotProgramDto: {
+            /** Format: uuid */
+            id: string;
+            name: string;
+            /** Format: uuid */
+            shipVesselId: string;
+            /** Format: uuid */
+            tugVesselId: null | string;
+            /** Format: date */
+            startDate: string;
+            timeZone: string;
+            catalogVersion: string;
+            /** Format: uuid */
+            createdBy: string;
+            /** Format: date-time */
+            createdAt: string;
+            provenance: string;
+        };
+        PilotProgramListView: {
+            programs: components["schemas"]["PilotProgramDto"][];
+            vessels: components["schemas"]["PilotVesselOption"][];
+            canCreate: boolean;
+            catalogVersion: string;
+            /** @default ProductOwnerHumanDecisionRequired;EngineRecommendsOnly;AiCannotDecide;SoftwareCannotCompletePilot */
+            authority: string;
+        };
+        PilotProgramOutcome: {
+            recommendation: string;
+            reasons: string[];
+            hash: string;
+            /** @default ProductOwnerHumanDecisionRequired;EngineRecommendsOnly;AiCannotDecide;SoftwareCannotCompletePilot */
+            authority: string;
+        };
+        PilotProgramView: {
+            program: components["schemas"]["PilotProgramDto"];
+            weeks: components["schemas"]["PilotWeekView"][];
+            issues: components["schemas"]["PilotIssueDto"][];
+            feedback: components["schemas"]["PilotFeedbackDto"][];
+            measurements: components["schemas"]["PilotMeasurementDto"][];
+            readout: components["schemas"]["PilotReadoutView"];
+            review: components["schemas"]["PilotProgramOutcome"];
+            decisions: components["schemas"]["PilotProgramDecisionDto"][];
+            /** Format: int64 */
+            decisionSequence: number;
+            authorities: components["schemas"]["PilotGateAuthorityDto"][];
+            canRecord: boolean;
+            canTriage: boolean;
+            canDecide: boolean;
+            allowedDecisions: string[];
+            feedbackRetention: string;
+            metricCatalog: components["schemas"]["PilotValueMetric"][];
+            recordTypes: string[];
+            /** Format: date-time */
+            assessedAt: string;
+            /** @default ProductOwnerHumanDecisionRequired;EngineRecommendsOnly;AiCannotDecide;SoftwareCannotCompletePilot */
+            authority: string;
+            /** @default 18.01/sheet:Backlog/row:77-80,96,97,122;18.01/sheet:Sprint Plan/row:14-17;19.01/paragraph:43-67,137-161,255-278;63.05/paragraph:142-156 */
+            sourceLocator: string;
+        };
+        PilotReadoutView: {
+            metrics: components["schemas"]["PilotValueRow"][];
+            telemetryState: string;
+            telemetryBasis: string;
+            telemetryRetention: string;
+            /** Format: int32 */
+            telemetryWindowDays: number;
+            uatShip: components["schemas"]["PilotGateInput"];
+            uatTug: components["schemas"]["PilotGateInput"];
+            defects: components["schemas"]["PilotDefectSeverity"][];
+            /** Format: int32 */
+            openP0: number;
+        };
         PilotSupportCheckCommand: {
             item: string;
             state: string;
@@ -14675,6 +15145,118 @@ export interface components {
         PilotSupportItemView: {
             item: string;
             latest: null | components["schemas"]["PilotSupportCheckDto"];
+        };
+        PilotTelemetryCell: {
+            state: string;
+            value: null | string;
+            unitCode: string;
+        };
+        PilotValueMetric: {
+            id: string;
+            mode: string;
+            unit: string;
+            direction: string;
+            requirements: string[];
+            telemetryMetricId: null | string;
+            locator: string;
+        };
+        PilotValueRow: {
+            metricId: string;
+            mode: string;
+            unit: string;
+            direction: string;
+            quality: string;
+            /** Format: double */
+            baseline: null | number;
+            /** Format: double */
+            current: null | number;
+            /** Format: double */
+            delta: null | number;
+            /** Format: double */
+            percentChange: null | number;
+            comparison: string;
+            reasons: string[];
+            /** Format: uuid */
+            baselineId: null | string;
+            /** Format: uuid */
+            currentId: null | string;
+            telemetry: null | components["schemas"]["PilotTelemetryCell"];
+            locator: string;
+        };
+        PilotVesselOption: {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            name: string;
+            kind: string;
+        };
+        PilotWeekCloseCommand: {
+            week: string;
+            outcome: string;
+            rationale: string;
+            expectedWeekHash: string;
+            /** Format: int64 */
+            expectedSequence: number;
+            /** Format: uuid */
+            authorityId: string;
+        };
+        PilotWeekCloseDto: {
+            /** Format: uuid */
+            id: string;
+            week: string;
+            /** Format: int64 */
+            sequence: number;
+            /** Format: uuid */
+            previousCloseId: null | string;
+            outcome: string;
+            recommendation: string;
+            weekHash: string;
+            rationale: string;
+            duty: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            recordedAt: string;
+            validity: string;
+        };
+        PilotWeekDefinition: {
+            week: string;
+            /** Format: int32 */
+            number: number;
+            requirements: string[];
+            locator: string;
+            items: components["schemas"]["PilotChecklistItem"][];
+        };
+        PilotWeekOutcome: {
+            week: string;
+            phase: string;
+            recommendation: string;
+            items: components["schemas"]["PilotItemOutcome"][];
+            /** Format: int32 */
+            openP0: number;
+            /** Format: int32 */
+            overdueP0: number;
+            /** Format: int32 */
+            lateP0: number;
+            reasons: string[];
+            hash: string;
+            /** @default ProductOwnerHumanDecisionRequired;EngineRecommendsOnly;AiCannotDecide;SoftwareCannotCompletePilot */
+            authority: string;
+        };
+        PilotWeekView: {
+            definition: components["schemas"]["PilotWeekDefinition"];
+            /** Format: date */
+            startDate: string;
+            /** Format: date */
+            endDateExclusive: string;
+            outcome: components["schemas"]["PilotWeekOutcome"];
+            links: components["schemas"]["PilotLinkDto"][];
+            closes: components["schemas"]["PilotWeekCloseDto"][];
+            /** Format: int64 */
+            closeSequence: number;
+            /** Format: int32 */
+            feedbackCount: number;
+            allowedOutcomes: string[];
         };
         PmsCommandCenterDto: {
             /** Format: uuid */
@@ -34053,6 +34635,309 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PilotGateDecisionDto"];
+                };
+            };
+        };
+    };
+    PilotProgramList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotProgramListView"];
+                };
+            };
+        };
+    };
+    PilotProgramCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PilotProgramCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotProgramDto"];
+                };
+            };
+        };
+    };
+    PilotProgramRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotProgramView"];
+                };
+            };
+        };
+    };
+    PilotChecklistLink: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PilotLinkCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotLinkDto"];
+                };
+            };
+        };
+    };
+    PilotChecklistWithdraw: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                link: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PilotLinkWithdrawCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotLinkDto"];
+                };
+            };
+        };
+    };
+    PilotFeedbackRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PilotFeedbackCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotFeedbackDto"];
+                };
+            };
+        };
+    };
+    PilotIssueReport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PilotIssueCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotIssueDto"];
+                };
+            };
+        };
+    };
+    PilotIssueTriage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                issue: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PilotIssueTriageCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotIssueDto"];
+                };
+            };
+        };
+    };
+    PilotIssueResolve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                issue: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PilotIssueResolveCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotIssueDto"];
+                };
+            };
+        };
+    };
+    PilotMeasurementRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PilotMeasurementCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotMeasurementDto"];
+                };
+            };
+        };
+    };
+    PilotWeekClose: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PilotWeekCloseCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotWeekCloseDto"];
+                };
+            };
+        };
+    };
+    PilotProgramDecide: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PilotProgramDecisionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotProgramDecisionDto"];
                 };
             };
         };

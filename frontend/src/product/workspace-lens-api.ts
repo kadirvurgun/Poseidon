@@ -40,6 +40,7 @@ export const lensLabels: Record<string, readonly [
     'document-compare': [sourceText("tr", "pairs.m_9a7c51e0d3b2f462"), sourceText("en", "pairs.m_9a7c51e0d3b2f462")],
     'role-uat': [sourceText("tr", "pairs.m_5b1e7c9d3a2f4e60"), sourceText("en", "pairs.m_5b1e7c9d3a2f4e60")],
     'pilot-gate': [sourceText("tr", "pairs.m_5b1e7c9d3a2f4e61"), sourceText("en", "pairs.m_5b1e7c9d3a2f4e61")],
+    'pilot-program': [sourceText("tr", "pairs.m_5b1e7c9d3a2f4e62"), sourceText("en", "pairs.m_5b1e7c9d3a2f4e62")],
     'high-risk-work': [sourceText("tr", "pairs.m_04076d4cdaa5ec7d"), sourceText("en", "pairs.m_04076d4cdaa5ec7d")],
     'work-order-center': [sourceText("tr", "pairs.m_8b20599d8e3aae73"), sourceText("en", "pairs.m_8b20599d8e3aae73")],
     'critical-spares': [sourceText("tr", "pairs.m_5e7a1c0d2b4f9b10"), sourceText("en", "pairs.m_5e7a1c0d2b4f9b10")],

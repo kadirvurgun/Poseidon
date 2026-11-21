@@ -31,6 +31,7 @@ internal static class WorkspaceDestinationLabels
         ["document-compare"] = ["Doküman revizyon karşılaştırma", "Document revision compare"],
         ["role-uat"] = ["Rol UAT kayıtları", "Role UAT records"],
         ["pilot-gate"] = ["Pilot go/no-go incelemesi", "Pilot go/no-go review"],
+        ["pilot-program"] = ["Pilot program haftaları ve değer raporu", "Pilot program weeks and value readout"],
         ["operational-downtime"] = ["Operasyonel duruşlar", "Operational downtime"],
         ["risk-assessment"] = ["Risk değerlendirmesi", "Risk assessment"],
         ["risk-template-library"] = ["Risk şablon kütüphanesi", "Risk template library"],

@@ -23,6 +23,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         // S11 WP-B DEV-072: operator retention configuration; unset = no pilot telemetry is collected.
         services.AddSingleton(configuration.GetSection("PilotTelemetry").Get<PilotTelemetrySettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<PilotTelemetryRateLimiter>();
+        // Pilot program kit: absent operator retention configuration leaves pilot feedback capture unavailable.
+        services.AddSingleton(configuration.GetSection("PilotProgram").Get<PilotProgramSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<IProfileFreshnessPolicySource, UnconfiguredProfileFreshnessPolicy>();
         // DEV-056 x DEV-054/DEV-110 (S8 integration): real WorkOrder state and spare gap sources, registered
         // before the UNKNOWN fallbacks below. A denied/unavailable source still answers UNKNOWN / ACCESS_REQUIRED.
@@ -269,6 +271,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapPilotMetrics(); // S11 WP-B DEV-072
             endpoints.MapUat(); // S11 WP-D DEV-074/094
             endpoints.MapPilotGate(); // S11 WP-D DEV-075
+            endpoints.MapPilotPrograms(); // Pilot kit DEV-076/077/078/079/095/096/121
             endpoints.MapParameters();
             endpoints.MapHr();
             endpoints.MapMemberships();
