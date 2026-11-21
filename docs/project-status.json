@@ -5939,7 +5939,9 @@
     "docs/phases/S10-GATE-20261121.md",
     "docs/phases/S11-GATE-20261122.md",
     "docs/phases/PILOT-KIT-20261121.md",
-    "docs/phases/POLISH-BUNDLE-20261121.md"
+    "docs/phases/POLISH-BUNDLE-20261121.md",
+    "docs/phases/USER-ADMIN-01.md",
+    "docs/phases/USER-GUIDE-01-UG1.md"
   ],
   "active_source": "docs/sources/active.json",
   "current_package": {
@@ -18545,5 +18547,26 @@
       "preset fonts/icons/style"
     ],
     "phase_report": "docs/phases/POLISH-BUNDLE-20261121.md"
+  },
+  "admin_help_bundle_20261122": {
+    "status": "AUTHORED_QA_ACCEPT_WITH_NOTES_GATE_CI_PENDING",
+    "branch": "integration/admin-help-bundle-20261122",
+    "base": "4d3b75c4",
+    "scope": "USER-ADMIN-01 in-app membership administration (DB-provisioned grants, 13.03 role bundles, delegations, lifecycle) + USER-GUIDE-01 UG-1 page help panel (TR/EN guides: today, tug-job-board, companies, user-admin)",
+    "canonical_effect": "none; 114/121 tasks, 932/970 SP unchanged",
+    "qa": [
+      "user-admin 2e61f7a3 security QA ACCEPT-WITH-NOTES; N2/N4/N5/N9 fixed 577e2f57; N1 cross-tenant identity squatting open as USER-ADMIN-02",
+      "help panel bd906386 ACCEPT-WITH-NOTES; N1-N4 fixed 7246f69d"
+    ],
+    "deferred": [
+      "real OIDC login journey for provisioned identity",
+      "Playwright/axe/320px/offline help checks",
+      "UG-2..UG-6",
+      "14 locales untranslated for user-admin screen"
+    ],
+    "phase_reports": [
+      "docs/phases/USER-ADMIN-01.md",
+      "docs/phases/USER-GUIDE-01-UG1.md"
+    ]
   }
 }

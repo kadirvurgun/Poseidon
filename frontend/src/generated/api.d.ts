@@ -853,7 +853,11 @@ export interface paths {
         /** Tenant memberships (persisted lifecycle state). Issuer/subject are never returned. */
         get: operations["ListMemberships"];
         put?: never;
-        post?: never;
+        /**
+         * CreateMembership
+         * @description Provisions a database membership for an IdP identity (issuer+subject; the account and its credentials stay in the IdP). Role bundles and individual permissions are limited to the trusted allow-list and to the caller's own permissions (400 exceeds_grantor_authority). An identity already provisioned or present in the operator configuration returns 409 identity_unavailable. Takes effect at the member's next login.
+         */
+        post: operations["CreateMembership"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1011,6 +1015,77 @@ export interface paths {
          * @description Requires antiforgery, a 16–80 character Idempotency-Key and server-provisioned membership.manage with tenant-wide manage scope and a trusted role. Transitions require expectedVersion; stale changes return 409. Voluntary removal of the last active identity administrator returns 409 last_admin. Replay returns the fresh representation.
          */
         post: operations["RevokeDelegation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/memberships/catalog": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Role bundles, the trusted permission allow-list grouped by module, tenant vessels/companies and what the caller may grant. Requires membership.read or membership.manage with tenant-wide scope. */
+        get: operations["GetMembershipCatalog"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/memberships/access": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Tenant memberships with their grant source, bundles and scope. Filters: status, bundle, q (membership/account id prefix or exact IdP subject; subjects are never returned). */
+        get: operations["ListMembershipAccess"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/memberships/{id}/access": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Effective grant, scope and immutable grant revision history of one membership. */
+        get: operations["GetMembershipAccess"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/memberships/{id}/grant": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * UpdateMembershipGrant
+         * @description Appends a new immutable grant revision to an admin-provisioned membership. expectedVersion is the current grant revision (stale ⇒ 409 version_conflict). Own membership ⇒ 403 self_modification; configuration-managed ⇒ 409 configuration_managed; removing the last active administrator ⇒ 409 last_admin. Takes effect on the member's next request.
+         */
+        post: operations["UpdateMembershipGrant"];
         delete?: never;
         options?: never;
         head?: never;
@@ -10188,6 +10263,12 @@ export interface components {
             version: number;
             canEdit: boolean;
         };
+        CompanyOptionDto: {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            name: string;
+        };
         CompanyUpdateCommand: {
             code: null | string;
             name: null | string;
@@ -12930,6 +13011,24 @@ export interface components {
             record: components["schemas"]["ShipOpsRecordDto"];
             assessment: components["schemas"]["FuelLedgerAssessment"];
         };
+        GrantRevisionDto: {
+            /** Format: int32 */
+            revision: number;
+            bundles: string[];
+            individualPermissions: string[];
+            /** Format: int32 */
+            permissionCount: number;
+            tenantWideRead: boolean;
+            tenantWideManage: boolean;
+            /** Format: uuid */
+            activeCompanyId: null | string;
+            /** Format: int32 */
+            vesselGrantCount: number;
+            /** Format: uuid */
+            grantedBy: string;
+            /** Format: date-time */
+            createdAt: string;
+        };
         GraphPin: {
             kind: string;
             /** Format: uuid */
@@ -14048,6 +14147,79 @@ export interface components {
             items: components["schemas"]["MeasurementReadingDto"][];
             canWrite: boolean;
         };
+        MembershipAccessDto: {
+            membership: components["schemas"]["MembershipAccessSummaryDto"];
+            individualPermissions: string[];
+            permissions: string[];
+            /** Format: uuid */
+            activeCompanyId: null | string;
+            vesselGrants: components["schemas"]["VesselGrant"][];
+            editable: boolean;
+            editBlockedReason: null | string;
+            history: components["schemas"]["GrantRevisionDto"][];
+        };
+        MembershipAccessPageDto: {
+            items: components["schemas"]["MembershipAccessSummaryDto"][];
+            /** Format: int32 */
+            offset: number;
+            /** Format: int32 */
+            limit: number;
+            hasMore: boolean;
+            /** Format: int32 */
+            total: number;
+        };
+        MembershipAccessSummaryDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            accountId: string;
+            status: string;
+            statusReason: string;
+            source: string;
+            managedBy: string;
+            bundles: string[];
+            /** Format: int32 */
+            permissionCount: number;
+            tenantWideRead: boolean;
+            tenantWideManage: boolean;
+            /** Format: int32 */
+            vesselGrantCount: number;
+            administrator: boolean;
+            self: boolean;
+            /** Format: date-time */
+            statusChangedAt: string;
+            /** Format: uint32 */
+            version: number;
+            /** Format: int64 */
+            accessRevision: number;
+            /** Format: int32 */
+            grantRevision: null | number;
+        };
+        MembershipCatalogDto: {
+            bundles: components["schemas"]["RoleBundleDto"][];
+            permissions: components["schemas"]["PermissionOptionDto"][];
+            canManage: boolean;
+            canSecuritySuspend: boolean;
+            grantorTenantWideRead: boolean;
+            grantorTenantWideManage: boolean;
+            vessels: components["schemas"]["VesselOptionDto"][];
+            companies: components["schemas"]["CompanyOptionDto"][];
+            delegationReasons: string[];
+            trustedIssuer: null | string;
+            /** Format: uuid */
+            actorId: string;
+        };
+        MembershipCreateCommand: {
+            issuer: null | string;
+            subject: null | string;
+            bundles: null | string[];
+            permissions: null | string[];
+            tenantWideRead: null | boolean;
+            tenantWideManage: null | boolean;
+            /** Format: uuid */
+            activeCompanyId: null | string;
+            vesselGrants: null | components["schemas"]["MembershipVesselGrantCommand"][];
+        };
         MembershipDto: {
             /** Format: uuid */
             id: string;
@@ -14068,6 +14240,17 @@ export interface components {
             statusChangedAt: string;
             /** Format: uint32 */
             version: number;
+        };
+        MembershipGrantCommand: {
+            /** Format: int64 */
+            expectedVersion: null | number;
+            bundles: null | string[];
+            permissions: null | string[];
+            tenantWideRead: null | boolean;
+            tenantWideManage: null | boolean;
+            /** Format: uuid */
+            activeCompanyId: null | string;
+            vesselGrants: null | components["schemas"]["MembershipVesselGrantCommand"][];
         };
         MembershipImportCommand: Record<string, never>;
         MembershipImportDto: {
@@ -14098,6 +14281,12 @@ export interface components {
         MembershipTransitionCommand: {
             /** Format: uint32 */
             expectedVersion: null | number;
+        };
+        MembershipVesselGrantCommand: {
+            /** Format: uuid */
+            vesselId: string;
+            /** @default false */
+            canEdit: boolean;
         };
         MetricCatalogDto: {
             contractVersion: string;
@@ -14697,6 +14886,13 @@ export interface components {
             freshness: string;
             blockers: string[];
             href: string;
+        };
+        PermissionOptionDto: {
+            code: string;
+            module: string;
+            decisionAuthority: boolean;
+            delegable: boolean;
+            grantable: boolean;
         };
         PilotChecklistItem: {
             code: string;
@@ -16796,6 +16992,14 @@ export interface components {
             /** Format: uint32 */
             expectedVersion: number;
             content: components["schemas"]["RiskTemplateContent"];
+        };
+        RoleBundleDto: {
+            code: string;
+            /** Format: uuid */
+            roleId: string;
+            locator: string;
+            permissions: string[];
+            grantable: boolean;
         };
         RuleAuthorCommand: {
             /** Format: uint32 */
@@ -19866,6 +20070,13 @@ export interface components {
             /** @default false */
             canEdit: boolean;
         };
+        VesselOptionDto: {
+            /** Format: uuid */
+            id: string;
+            code: string;
+            name: string;
+            kind: string;
+        };
         VesselUpdateCommand: {
             code: null | string;
             name: null | string;
@@ -22597,6 +22808,83 @@ export interface operations {
             };
         };
     };
+    CreateMembership: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string;
+                "X-CSRF-TOKEN"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MembershipCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MembershipAccessDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     GetMembership: {
         parameters: {
             query?: never;
@@ -23202,6 +23490,240 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DelegationDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GetMembershipCatalog: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MembershipCatalogDto"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ListMembershipAccess: {
+        parameters: {
+            query?: {
+                offset?: string;
+                limit?: string;
+                status?: string;
+                bundle?: string;
+                q?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MembershipAccessPageDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GetMembershipAccess: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MembershipAccessDto"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UpdateMembershipGrant: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string;
+                "X-CSRF-TOKEN"?: string;
+            };
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MembershipGrantCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MembershipAccessDto"];
                 };
             };
             /** @description Bad Request */

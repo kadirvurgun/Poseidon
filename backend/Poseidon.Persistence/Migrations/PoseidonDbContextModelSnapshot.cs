@@ -85,7 +85,7 @@ namespace Poseidon.Persistence.Migrations
 
                     b.ToTable("Memberships", "identity", t =>
                         {
-                            t.HasCheckConstraint("CK_Memberships_Closed", "\"Status\" IN ('Active','Suspended','Revoked') AND \"AccessRevision\" >= 0 AND \"Source\" IN ('ConfigurationImport','SyntheticUnverified') AND \"StatusReason\" IN ('ConfigurationImport','SyntheticFixture','AdministrativeSuspension','AdministrativeResume','AdministrativeRevocation','SecuritySuspension','SecurityResume')");
+                            t.HasCheckConstraint("CK_Memberships_Closed", "\"Status\" IN ('Active','Suspended','Revoked') AND \"AccessRevision\" >= 0 AND \"Source\" IN ('ConfigurationImport','SyntheticUnverified','AdminProvisioned') AND \"StatusReason\" IN ('ConfigurationImport','SyntheticFixture','AdministrativeSuspension','AdministrativeResume','AdministrativeRevocation','SecuritySuspension','SecurityResume','AdminProvisioning')");
                         });
                 });
 
@@ -7452,7 +7452,7 @@ namespace Poseidon.Persistence.Migrations
 
                     b.ToTable("MembershipCommandReceipts", "identity", t =>
                         {
-                            t.HasCheckConstraint("CK_MembershipCommandReceipts_Action", "\"Action\" IN ('MembershipImport','MembershipSuspend','MembershipResume','MembershipRevoke','MembershipSecuritySuspend','DelegationCreate','DelegationRevoke')");
+                            t.HasCheckConstraint("CK_MembershipCommandReceipts_Action", "\"Action\" IN ('MembershipImport','MembershipSuspend','MembershipResume','MembershipRevoke','MembershipSecuritySuspend','DelegationCreate','DelegationRevoke','MembershipCreate','MembershipGrantUpdate')");
                         });
                 });
 
@@ -7529,6 +7529,83 @@ namespace Poseidon.Persistence.Migrations
                         {
                             t.HasCheckConstraint("CK_Delegations_Closed", "\"Status\" IN ('Active','Revoked') AND \"ValidUntil\" > \"ValidFrom\" AND \"DelegatorMembershipId\" <> \"DelegateMembershipId\" AND length(\"Permissions\") > 0 AND \"ReasonCode\" IN ('PlannedAbsence','UnplannedAbsence','WorkloadCover','Handover','LegacyUnscoped') AND ((\"Status\" = 'Active' AND \"RevokedAt\" IS NULL AND \"RevocationReason\" IS NULL) OR (\"Status\" = 'Revoked' AND \"RevokedAt\" IS NOT NULL AND \"RevocationReason\" IS NOT NULL AND \"RevocationReason\" IN ('AdministrativeRevocation','MembershipSuspended','MembershipRevoked')))");
                         });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.MembershipGrantRevision", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("MembershipId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Revision")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("ActiveCompanyId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Bundles")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("GrantedBy")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("IndividualPermissions")
+                        .IsRequired()
+                        .HasMaxLength(8192)
+                        .HasColumnType("character varying(8192)");
+
+                    b.Property<string>("Permissions")
+                        .IsRequired()
+                        .HasMaxLength(8192)
+                        .HasColumnType("character varying(8192)");
+
+                    b.Property<bool>("TenantWideManage")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("TenantWideRead")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("TenantId", "MembershipId", "Revision");
+
+                    b.HasIndex("TenantId", "ActiveCompanyId");
+
+                    b.ToTable("MembershipGrantRevisions", "identity", t =>
+                        {
+                            t.HasCheckConstraint("CK_MembershipGrantRevisions_Closed", "\"Revision\" >= 1 AND length(\"Bundles\") > 0 AND length(\"Permissions\") > 0 AND length(\"GrantedBy\") > 0");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.MembershipGrantVessel", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("MembershipId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Revision")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("VesselId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("CanEdit")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("TenantId", "MembershipId", "Revision", "VesselId");
+
+                    b.HasIndex("TenantId", "VesselId");
+
+                    b.ToTable("MembershipGrantVessels", "identity");
                 });
 
             modelBuilder.Entity("Poseidon.Persistence.MsmdRoleBinding", b =>
@@ -15442,7 +15519,7 @@ namespace Poseidon.Persistence.Migrations
 
                     b.ToTable("Accounts", "identity", t =>
                         {
-                            t.HasCheckConstraint("CK_Accounts_Closed", "\"AccountType\" = 'Human' AND \"Source\" IN ('ConfigurationImport','SyntheticUnverified') AND length(\"Issuer\") > 0 AND length(\"Subject\") > 0");
+                            t.HasCheckConstraint("CK_Accounts_Closed", "\"AccountType\" = 'Human' AND \"Source\" IN ('ConfigurationImport','SyntheticUnverified','AdminProvisioned') AND length(\"Issuer\") > 0 AND length(\"Subject\") > 0");
                         });
                 });
 
@@ -18335,6 +18412,39 @@ namespace Poseidon.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("FK_Delegations_Delegator");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.MembershipGrantRevision", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.Company", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ActiveCompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_MembershipGrantRevisions_Company");
+
+                    b.HasOne("Poseidon.Persistence.AccountMembership", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "MembershipId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_MembershipGrantRevisions_Membership");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.MembershipGrantVessel", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.Vessel", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "VesselId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_MembershipGrantVessels_Vessel");
+
+                    b.HasOne("Poseidon.Persistence.MembershipGrantRevision", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "MembershipId", "Revision")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_MembershipGrantVessels_Revision");
                 });
 
             modelBuilder.Entity("Poseidon.Persistence.MsmdRoleBinding", b =>

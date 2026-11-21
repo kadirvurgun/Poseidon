@@ -539,6 +539,9 @@ public sealed partial class DirectoryWorkspaceTests
             if (!Request.Headers.TryGetValue("X-Membership-Subject", out var subject)) return Task.FromResult(AuthenticateResult.NoResult());
             List<Claim> claims = [new("sub", subject.ToString()), new("iss", MemberIssuer)];
             if (Request.Headers.TryGetValue("X-Membership-Arv", out var revision)) claims.Add(new(MembershipSession.AccessRevisionClaim, revision.ToString()));
+            // USER-ADMIN-01: the binding the OIDC login stamps for an admin-provisioned identity ("tenant/actor").
+            if (Request.Headers.TryGetValue("X-Membership-Provisioned", out var binding) && binding.ToString().Split('/') is [var tenant, var actor])
+                claims.AddRange([new(ActorResolver.ProvisionedTenantClaim, tenant), new(ClaimTypes.NameIdentifier, actor), new(ActorResolver.SessionSourceClaim, ActorResolver.ProvisionedSource)]);
             return Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(new ClaimsPrincipal(new ClaimsIdentity(claims, Scheme.Name)), Scheme.Name)));
         }
     }

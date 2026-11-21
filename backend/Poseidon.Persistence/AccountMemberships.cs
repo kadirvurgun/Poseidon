@@ -96,6 +96,34 @@ public sealed class TenantAccessRecovery : ITenantEntity
     public string? Resolution { get; set; }
 }
 
+// USER-ADMIN-01: immutable grant revision of an admin-provisioned membership (Source = AdminProvisioned). The latest
+// revision is the current grant; earlier ones are the reviewable grant history. Bundles are closed role-bundle codes,
+// Permissions is the effective snapshot bounded at grant time by the granting administrator's own authority.
+public sealed class MembershipGrantRevision : ITenantEntity
+{
+    public Guid TenantId { get; set; }
+    public Guid MembershipId { get; set; }
+    public int Revision { get; set; }
+    public required string Bundles { get; set; }
+    public required string IndividualPermissions { get; set; }
+    public required string Permissions { get; set; }
+    public bool TenantWideRead { get; set; }
+    public bool TenantWideManage { get; set; }
+    public Guid? ActiveCompanyId { get; set; }
+    public required string GrantedBy { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
+}
+
+// Immutable vessel scope of one grant revision.
+public sealed class MembershipGrantVessel : ITenantEntity
+{
+    public Guid TenantId { get; set; }
+    public Guid MembershipId { get; set; }
+    public int Revision { get; set; }
+    public Guid VesselId { get; set; }
+    public bool CanEdit { get; set; }
+}
+
 public sealed class MembershipCommandReceipt : ITenantEntity
 {
     public Guid TenantId { get; set; }
@@ -114,19 +142,19 @@ public static class AccountMembershipStorage
     public const string IdentitySchema = "identity";
     internal static readonly string[] Statuses = ["Active", "Suspended", "Revoked"];
     internal static readonly string[] Reasons = ["ConfigurationImport", "SyntheticFixture", "AdministrativeSuspension", "AdministrativeResume",
-        "AdministrativeRevocation", "SecuritySuspension", "SecurityResume"];
+        "AdministrativeRevocation", "SecuritySuspension", "SecurityResume", "AdminProvisioning"];
     internal static readonly string[] DelegationReasons = ["PlannedAbsence", "UnplannedAbsence", "WorkloadCover", "Handover"];
     internal static readonly string[] RecoveryResolutions = ["SecuritySuspensionResumed"];
-    internal static readonly string[] Sources = ["ConfigurationImport", "SyntheticUnverified"];
+    internal static readonly string[] Sources = ["ConfigurationImport", "SyntheticUnverified", "AdminProvisioned"];
     internal static readonly string[] Actions = ["MembershipImport", "MembershipSuspend", "MembershipResume", "MembershipRevoke",
-        "MembershipSecuritySuspend", "DelegationCreate", "DelegationRevoke"];
+        "MembershipSecuritySuspend", "DelegationCreate", "DelegationRevoke", "MembershipCreate", "MembershipGrantUpdate"];
 
     internal static void Configure(ModelBuilder model)
     {
         model.Entity<UserAccount>(b =>
         {
             b.ToTable("Accounts", IdentitySchema, t => t.HasCheckConstraint("CK_Accounts_Closed",
-                "\"AccountType\" = 'Human' AND \"Source\" IN ('ConfigurationImport','SyntheticUnverified') AND length(\"Issuer\") > 0 AND length(\"Subject\") > 0"));
+                "\"AccountType\" = 'Human' AND \"Source\" IN ('ConfigurationImport','SyntheticUnverified','AdminProvisioned') AND length(\"Issuer\") > 0 AND length(\"Subject\") > 0"));
             b.HasKey(x => new { x.TenantId, x.Id });
             b.HasAlternateKey(x => x.Id).HasName("AK_Accounts_Id");
             // One federated identity maps to exactly one account across all tenants.
@@ -141,8 +169,8 @@ public static class AccountMembershipStorage
         model.Entity<AccountMembership>(b =>
         {
             b.ToTable("Memberships", IdentitySchema, t => t.HasCheckConstraint("CK_Memberships_Closed",
-                "\"Status\" IN ('Active','Suspended','Revoked') AND \"AccessRevision\" >= 0 AND \"Source\" IN ('ConfigurationImport','SyntheticUnverified') AND " +
-                "\"StatusReason\" IN ('ConfigurationImport','SyntheticFixture','AdministrativeSuspension','AdministrativeResume','AdministrativeRevocation','SecuritySuspension','SecurityResume')"));
+                "\"Status\" IN ('Active','Suspended','Revoked') AND \"AccessRevision\" >= 0 AND \"Source\" IN ('ConfigurationImport','SyntheticUnverified','AdminProvisioned') AND " +
+                "\"StatusReason\" IN ('ConfigurationImport','SyntheticFixture','AdministrativeSuspension','AdministrativeResume','AdministrativeRevocation','SecuritySuspension','SecurityResume','AdminProvisioning')"));
             b.HasKey(x => new { x.TenantId, x.Id });
             b.HasIndex(x => new { x.TenantId, x.AccountId }).IsUnique().HasDatabaseName("IX_Memberships_Account");
             b.HasIndex(x => new { x.TenantId, x.Status }).HasDatabaseName("IX_Memberships_Status");
@@ -202,10 +230,29 @@ public static class AccountMembershipStorage
             b.Property(x => x.Cause).HasMaxLength(32);
             b.HasOne<AccountMembership>().WithMany().HasForeignKey(x => new { x.TenantId, x.MembershipId }).HasConstraintName("FK_AccessRecoveries_Membership").OnDelete(DeleteBehavior.Restrict);
         });
+        model.Entity<MembershipGrantRevision>(b =>
+        {
+            b.ToTable("MembershipGrantRevisions", IdentitySchema, t => t.HasCheckConstraint("CK_MembershipGrantRevisions_Closed",
+                "\"Revision\" >= 1 AND length(\"Bundles\") > 0 AND length(\"Permissions\") > 0 AND length(\"GrantedBy\") > 0"));
+            b.HasKey(x => new { x.TenantId, x.MembershipId, x.Revision });
+            b.Property(x => x.Bundles).HasMaxLength(512);
+            b.Property(x => x.IndividualPermissions).HasMaxLength(8192);
+            b.Property(x => x.Permissions).HasMaxLength(8192);
+            b.Property(x => x.GrantedBy).HasMaxLength(200);
+            b.HasOne<AccountMembership>().WithMany().HasForeignKey(x => new { x.TenantId, x.MembershipId }).HasConstraintName("FK_MembershipGrantRevisions_Membership").OnDelete(DeleteBehavior.Restrict);
+            b.HasOne<Company>().WithMany().HasForeignKey(x => new { x.TenantId, x.ActiveCompanyId }).HasConstraintName("FK_MembershipGrantRevisions_Company").OnDelete(DeleteBehavior.Restrict);
+        });
+        model.Entity<MembershipGrantVessel>(b =>
+        {
+            b.ToTable("MembershipGrantVessels", IdentitySchema);
+            b.HasKey(x => new { x.TenantId, x.MembershipId, x.Revision, x.VesselId });
+            b.HasOne<MembershipGrantRevision>().WithMany().HasForeignKey(x => new { x.TenantId, x.MembershipId, x.Revision }).HasConstraintName("FK_MembershipGrantVessels_Revision").OnDelete(DeleteBehavior.Restrict);
+            b.HasOne<Vessel>().WithMany().HasForeignKey(x => new { x.TenantId, x.VesselId }).HasConstraintName("FK_MembershipGrantVessels_Vessel").OnDelete(DeleteBehavior.Restrict);
+        });
         model.Entity<MembershipCommandReceipt>(b =>
         {
             b.ToTable("MembershipCommandReceipts", IdentitySchema, t => t.HasCheckConstraint("CK_MembershipCommandReceipts_Action",
-                "\"Action\" IN ('MembershipImport','MembershipSuspend','MembershipResume','MembershipRevoke','MembershipSecuritySuspend','DelegationCreate','DelegationRevoke')"));
+                "\"Action\" IN ('MembershipImport','MembershipSuspend','MembershipResume','MembershipRevoke','MembershipSecuritySuspend','DelegationCreate','DelegationRevoke','MembershipCreate','MembershipGrantUpdate')"));
             b.HasKey(x => new { x.TenantId, x.ActorId, x.Key });
             b.Property(x => x.Key).HasMaxLength(80);
             b.Property(x => x.Action).HasMaxLength(32);
@@ -224,6 +271,14 @@ public static class AccountMembershipStorage
             {
                 case UserAccount:
                     if (entry.State != EntityState.Added) throw new InvalidOperationException("Federated account identity is immutable.");
+                    break;
+                case MembershipGrantRevision r:
+                    if (entry.State != EntityState.Added) throw new InvalidOperationException("Membership grant revisions are immutable; a change appends a revision.");
+                    if (r.Revision < 1 || Poseidon.Domain.MembershipGrantPolicy.Split(r.Bundles) is not { Length: > 0 } codes || codes.Any(c => Poseidon.Domain.MembershipRoleBundles.Find(c) == null))
+                        throw new InvalidOperationException("A membership grant revision needs closed role bundle codes.");
+                    break;
+                case MembershipGrantVessel:
+                    if (entry.State != EntityState.Added) throw new InvalidOperationException("Membership grant revisions are immutable; a change appends a revision.");
                     break;
                 case AccountMembershipVesselGrant or DelegationVesselScope or MembershipCommandReceipt:
                     if (entry.State != EntityState.Added) throw new InvalidOperationException("Membership grant snapshots, delegation scopes and receipts are immutable.");

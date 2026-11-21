@@ -39,6 +39,7 @@ import { DocumentCompareWorkspace } from './product/DocumentCompareWorkspace';
 import { UatWorkspace } from './product/UatWorkspace';
 import { PilotGateWorkspace } from './product/PilotGateWorkspace';
 import { PilotProgramWorkspace } from './product/PilotProgramWorkspace';
+import { UserAdminWorkspace } from './product/UserAdminWorkspace';
 import { RiskTemplateLibraryWorkspace } from './product/RiskTemplateLibraryWorkspace';
 import { CriticalSparesWorkspace } from './product/CriticalSparesWorkspace';
 import { AuditReadyWorkspace } from './product/AuditReadyWorkspace';
@@ -117,6 +118,8 @@ export function App() {
         return <PilotGateWorkspace />;
     if (/^\/app\/pilot-program(?:\/|$)/.test(window.location.pathname))
         return <PilotProgramWorkspace />;
+    if (/^\/app\/user-admin(?:\/|$)/.test(window.location.pathname))
+        return <UserAdminWorkspace />;
     if (/^\/app\/document-compare(?:\/|$)/.test(window.location.pathname))
         return <DocumentCompareWorkspace />;
     if (/^\/app\/work-order-center(?:\/|$)/.test(window.location.pathname))

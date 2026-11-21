@@ -23,6 +23,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             CommandReceipt r when r.Action is "HrLegalEntityUpdate" or "HrLegalEntityStatus" or "HrIdentifierAdd" or "HrIdentifierRetire" or "HrRoleAdd" or "HrRoleEnd" or "HrRoleCancel" => "Tenant",
             CommandReceipt r when r.Action is "CrewPersonSave" or "CrewIdentityConvert" or "CrewProfileSave" or "CrewPhotoSave" => "TenantPerson",
             UserAccount or AccountMembership or AccountMembershipVesselGrant or MembershipDelegation or DelegationVesselScope or TenantAccessRecovery or MembershipCommandReceipt => "Tenant",
+            MembershipGrantRevision or MembershipGrantVessel => "Tenant",
             Tenant or Company or RegisterDraft or RegisterRevision or RuleDraft or RuleRevision or FleetCatalogDraft or FleetCatalogDraftRevision or
                 RegulatoryQualificationHead or RegulatoryQualificationEvent or RegulatoryQualificationReceipt or
                 ParameterRoot or ParameterRevision or ParameterDecision or ParameterCommandReceipt => "Tenant",
@@ -333,17 +334,32 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         string? OwnerBinding() => entry.State == EntityState.Added ? null : "OwnerReference";
         if (entry.Entity is UserAccount account)
             return new(null, account.Id, "Account", null, null, Fields(Field("IdentityLink", null, null, "ValuesWithheld"),
-                Field("Source", null, Closed(account.Source, "ConfigurationImport", "SyntheticUnverified")), Field("Binding", null, "OwnerReference")));
+                Field("Source", null, Closed(account.Source, "ConfigurationImport", "SyntheticUnverified", "AdminProvisioned")), Field("Binding", null, "OwnerReference")));
         if (entry.Entity is AccountMembership membership)
         {
             string? Prior(string name) => entry.State == EntityState.Added ? null : entry.Property(name).OriginalValue?.ToString();
             return new(null, membership.Id, "Membership", entry.State == EntityState.Added ? null : (long?)entry.Property(nameof(membership.AccessRevision)).OriginalValue,
                 membership.AccessRevision, Fields(
                     Field("Status", Prior(nameof(membership.Status)) is { } s ? Closed(s, "Active", "Suspended", "Revoked") : null, Closed(membership.Status, "Active", "Suspended", "Revoked")),
-                    Field("StatusReason", null, Closed(membership.StatusReason, "ConfigurationImport", "SyntheticFixture", "AdministrativeSuspension", "AdministrativeResume", "AdministrativeRevocation", "SecuritySuspension", "SecurityResume")),
+                    Field("StatusReason", null, Closed(membership.StatusReason, "ConfigurationImport", "SyntheticFixture", "AdministrativeSuspension", "AdministrativeResume", "AdministrativeRevocation", "SecuritySuspension", "SecurityResume", "AdminProvisioning")),
                     Field("AccessRevision", Prior(nameof(membership.AccessRevision)), Number(membership.AccessRevision)),
                     Field("AccountId", null, membership.AccountId.ToString("D")), Field("Binding", OwnerBinding(), "OwnerReference")));
         }
+        // USER-ADMIN-01: closed bundle codes, counts and flags only; the permission list itself is withheld.
+        if (entry.Entity is MembershipGrantRevision grantRevision)
+            // Always an Added row: the prior revision is recorded in the Revision field, never as a before revision.
+            return new(null, grantRevision.MembershipId, "MembershipGrant", null, grantRevision.Revision, Fields(
+                Field("Revision", grantRevision.Revision > 1 ? Number(grantRevision.Revision - 1) : null, Number(grantRevision.Revision)),
+                Field("Bundles", null, string.Join(',', Poseidon.Domain.MembershipGrantPolicy.Split(grantRevision.Bundles).Select(b => Closed(b, [.. Poseidon.Domain.MembershipRoleBundles.Codes])))),
+                Field("Permissions", null, null, "ValuesWithheld"),
+                Field("PermissionCount", null, Number(Poseidon.Domain.MembershipGrantPolicy.Split(grantRevision.Permissions).Length)),
+                Field("TenantWideRead", null, grantRevision.TenantWideRead ? "true" : "false"),
+                Field("TenantWideManage", null, grantRevision.TenantWideManage ? "true" : "false"),
+                Field("CompanyId", null, grantRevision.ActiveCompanyId?.ToString("D")),
+                Field("Binding", null, "OwnerReference")));
+        if (entry.Entity is MembershipGrantVessel grantVessel)
+            return new(grantVessel.VesselId, grantVessel.MembershipId, "MembershipGrantVessel", null, grantVessel.Revision,
+                Fields(Field("CanEdit", null, grantVessel.CanEdit ? "true" : "false"), Field("Binding", null, "OwnerReference")));
         if (entry.Entity is AccountMembershipVesselGrant grant)
             return new(grant.VesselId, grant.MembershipId, "MembershipVesselGrant", null, null,
                 Fields(Field("CanEdit", null, grant.CanEdit ? "true" : "false"), Field("Binding", null, "OwnerReference")));
@@ -369,7 +385,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if (entry.Entity is MembershipCommandReceipt membershipReceipt)
             return new(null, membershipReceipt.ResourceId, "MembershipCommandReceipt", null, null,
                 Fields(Field("Action", null, Closed(membershipReceipt.Action, "MembershipImport", "MembershipSuspend", "MembershipResume", "MembershipRevoke",
-                    "MembershipSecuritySuspend", "DelegationCreate", "DelegationRevoke")), Field("Binding", null, "CommittedResource")));
+                    "MembershipSecuritySuspend", "DelegationCreate", "DelegationRevoke", "MembershipCreate", "MembershipGrantUpdate")), Field("Binding", null, "CommittedResource")));
         // Never copy the declared reference text, value or observation time into audit.
         if (entry.Entity is VesselProfileFieldSource fieldSource)
             return new(fieldSource.VesselId, fieldSource.VesselId, "VesselProfileFieldSource", null, fieldSource.Sequence,
