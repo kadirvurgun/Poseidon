@@ -94,8 +94,8 @@ internal static class SafetyEventReader
             if (head.State == "APPROVED") approved = content;
             var editable = head.State is "DRAFT" or "RETURNED" or "REJECTED";
             investigation = new(head.Revision, head.Version, head.State, content, head.Hash, head.ApprovedRevision, SafetyEventPolicy.InvestigationMissing(content), authors, decisions,
-                editable && SafetyEventAccess.Investigator(a) && !mine,
-                head.State is "DRAFT" or "RETURNED" && SafetyEventAccess.Investigator(a) && !mine && SafetyEventPolicy.InvestigationMissing(content).Length == 0,
+                editable && SafetyEventAccess.Investigator(a) && CertificateRenewalEndpoints.Human(h, a) && !mine,
+                head.State is "DRAFT" or "RETURNED" && SafetyEventAccess.Investigator(a) && CertificateRenewalEndpoints.Human(h, a) && !mine && SafetyEventPolicy.InvestigationMissing(content).Length == 0,
                 SafetyEventAccess.Reviewer(a) && CertificateRenewalEndpoints.Human(h, a) && SafetyEventPolicy.ReviewInvestigation(head.State, "APPROVE", a.Id, authors, head.SubmittedBy, mine).Ok);
         }
         var rows = reader ? await db.SafetyActions.AsNoTracking().Where(x => x.EventId == id && x.VesselId == vessel).OrderBy(x => x.CreatedAt).ThenBy(x => x.Id).ToArrayAsync(ct) : [];
@@ -123,9 +123,9 @@ internal static class SafetyEventReader
             SafetyEventAccess.Triager(a) && human && !mine && e.State is SafetyEventPolicy.Submitted or SafetyEventPolicy.Triaged,
             SafetyEventAccess.IdentityReader(a) && human && e.ReportingMode == SafetyEventPolicy.Confidential,
             SafetyEventAccess.Team(a) && SafetyEventPolicy.Open(e.State),
-            SafetyEventAccess.Investigator(a) && !mine && (e.State == SafetyEventPolicy.Triaged && head == null || head?.State is "DRAFT" or "RETURNED" or "REJECTED"),
+            SafetyEventAccess.Investigator(a) && human && !mine && (e.State == SafetyEventPolicy.Triaged && head == null || head?.State is "DRAFT" or "RETURNED" or "REJECTED"),
             investigation?.CanReview == true,
-            SafetyEventAccess.ActionWriter(a) && e.State == SafetyEventPolicy.ActionTracking && approved != null,
+            SafetyEventAccess.ActionWriter(a) && human && e.State == SafetyEventPolicy.ActionTracking && approved != null,
             SafetyEventAccess.Reviewer(a) && human && !mine && !authorsOfInvestigation.Contains(a.Id) && e.State is SafetyEventPolicy.Triaged or SafetyEventPolicy.ActionTracking && blockers.Length == 0);
         var reporter = e.ReportingMode == SafetyEventPolicy.Named ? new SafetyEventReporterDto(SafetyEventPolicy.Named, e.ReportedBy, mine)
             : new SafetyEventReporterDto(SafetyEventPolicy.Confidential, null, mine);

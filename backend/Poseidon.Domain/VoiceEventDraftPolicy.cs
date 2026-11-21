@@ -42,7 +42,7 @@ public static class VoiceEventDraftPolicy
     public const string RuleSetVersion = "voice-event-rules-tr-en/2026-11-20";
     public const string Draft = "DRAFT", Confirmed = "CONFIRMED", Rejected = "REJECTED";
     public static readonly string[] States = [Draft, Confirmed, Rejected];
-    public static readonly string[] ReasonCodes = ["CREATE", "EDIT", "CONFIRM", "REJECT"];
+    public static readonly string[] ReasonCodes = ["CREATE", "EDIT", "CONFIRM", "REJECT", "LINK"];
     public static readonly string[] Origins = ["TYPED", "LOCAL_SPEECH"];
     // ISM Code 9.1: accidents, hazardous situations and non-conformities are reported; a near miss is a
     // hazardous occurrence that did not result in loss. No default: the note must state it or the user selects.

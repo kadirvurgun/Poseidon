@@ -256,6 +256,15 @@ public sealed class PoseidonDbContext(
     public DbSet<PilotSupportCheck> PilotSupportChecks => Set<PilotSupportCheck>();
     public DbSet<PilotGateDecision> PilotGateDecisions => Set<PilotGateDecision>();
     public DbSet<PilotReceipt> PilotReceipts => Set<PilotReceipt>();
+    // Pilot program kit (DEV-076/077/078/079/095/096/121).
+    public DbSet<PilotProgram> PilotPrograms => Set<PilotProgram>();
+    public DbSet<PilotChecklistLink> PilotChecklistLinks => Set<PilotChecklistLink>();
+    public DbSet<PilotFeedback> PilotFeedback => Set<PilotFeedback>();
+    public DbSet<PilotIssue> PilotIssues => Set<PilotIssue>();
+    public DbSet<PilotMeasurement> PilotMeasurements => Set<PilotMeasurement>();
+    public DbSet<PilotWeekClose> PilotWeekCloses => Set<PilotWeekClose>();
+    public DbSet<PilotProgramDecision> PilotProgramDecisions => Set<PilotProgramDecision>();
+    public DbSet<PilotProgramReceipt> PilotProgramReceipts => Set<PilotProgramReceipt>();
     public DbSet<TugCapabilityBinding> TugCapabilityBindings => Set<TugCapabilityBinding>();
     public DbSet<OperationEquipmentBinding> OperationEquipmentBindings => Set<OperationEquipmentBinding>();
     public DbSet<MsmdRoleBinding> MsmdRoleBindings => Set<MsmdRoleBinding>();
@@ -523,6 +532,16 @@ public sealed class PoseidonDbContext(
         model.Entity<PilotSupportCheck>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<PilotGateDecision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<PilotReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        // Pilot program kit (DEV-076/077/078/079/095/096/121).
+        PilotProgramStorage.Configure(model);
+        model.Entity<PilotProgram>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<PilotChecklistLink>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<PilotFeedback>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<PilotIssue>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<PilotMeasurement>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<PilotWeekClose>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<PilotProgramDecision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<PilotProgramReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         MaintenanceObservationStorage.Configure(model);
         model.Entity<MaintenanceObservation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<MaintenanceObservationRevocation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -918,6 +937,7 @@ public sealed class PoseidonDbContext(
         CertificateRenewalOfflineStorage.Guard(changes);
         ImportReconciliationStorage.Guard(changes);
         PilotGateStorage.Guard(changes);
+        PilotProgramStorage.Guard(changes);
         if(changes.Any(e=>e.Entity is DowntimeRevision or DowntimeReceipt && e.State!=EntityState.Added))
             throw new InvalidOperationException("Downtime history and outcomes are immutable.");
         if(changes.Any(e=>e.Entity is Downtime && (e.State==EntityState.Deleted || e.State==EntityState.Modified &&

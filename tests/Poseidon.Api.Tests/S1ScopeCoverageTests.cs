@@ -67,9 +67,12 @@ public sealed partial class DirectoryWorkspaceTests
         // S11 WP-C adds 3 (DEV-073/093 regulatory review campaign create, item verdict, close).
         // S11 WP-B adds 1 (DEV-072 pilot metrics event submit).
         // S11 WP-D adds 9 (DEV-074/094 UAT threshold/run/result/finding/submit/attest/resolve; DEV-075 support check, gate decision).
-        Assert.Equal(287, observed.Count);
-        Assert.Equal(278, observed.Count(x => x.IsCritical));
-        Assert.Equal(303, S1SecurityContract.CriticalOperationIds.Count);
+        // Pilot kit adds 10 (DEV-076..079/095/096/121 program create, link, withdraw, feedback, issue report/triage/resolve,
+        // measurement, week close, program decision).
+        // QA S9/S10 notes hardening adds 1 (N7 late voice draft -> safety event DRAFT hand-off by the confirming human).
+        Assert.Equal(298, observed.Count);
+        Assert.Equal(289, observed.Count(x => x.IsCritical));
+        Assert.Equal(314, S1SecurityContract.CriticalOperationIds.Count);
         Assert.Equal(9, observed.Count(x => !x.IsCritical));
         var extra = new RouteEndpoint(_ => Task.CompletedTask, RoutePatternFactory.Parse("/api/v1/unclassified-write"), 0,
             new EndpointMetadataCollection(new HttpMethodMetadata(["POST"]), new AuthorizeAttribute("DirectoryRead")), "unclassified");

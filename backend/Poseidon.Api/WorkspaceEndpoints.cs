@@ -34,6 +34,7 @@ public static class WorkspaceEndpoints
         // S11 WP-D DEV-074/094/075: the same server predicates as the UAT and pilot gate endpoints.
         if (PilotAccess.UatRead(actor)) destinations = [.. destinations, new("role-uat", "/app/role-uat")];
         if (PilotAccess.GateRead(actor)) destinations = [.. destinations, new("pilot-gate", "/app/pilot-gate")];
+        if (PilotProgramAccess.Read(actor)) destinations = [.. destinations, new("pilot-program", "/app/pilot-program")];
         if (OperationalDowntimeEndpoints.CanRead(actor)) destinations = [.. destinations, new("operational-downtime", "/app/operational-downtime")];
         // DEV-105/DEV-106: the same server predicates as the risk endpoints.
         if (RiskAssessmentEndpoints.CanRead(actor)) destinations = [.. destinations, new("risk-assessment", "/app/risk-assessment")];

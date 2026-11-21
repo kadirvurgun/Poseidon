@@ -96,6 +96,12 @@ public sealed partial class DirectoryWorkspaceTests
 
         // DEV-061: the investigation records contributing factors, a human root cause and the failed barrier.
         var factor = Guid.NewGuid(); var cause = Guid.NewGuid(); var barrier = Guid.NewGuid();
+        // QA S9 N1: a non-human membership with the investigator permission cannot open or edit the investigation.
+        var settings = host.Services.GetRequiredService<FederationSettings>(); var human = settings.Memberships[0];
+        settings.Memberships[0] = human with { ActorKind = "AI" }; await Token(c);
+        await AssertCode(await Send(c, SafetyPath($"/{draft.Id}/investigation"), new SafetyInvestigationSaveCommand(0, new(null, [], [], [], [], [])), update: true),
+            HttpStatusCode.Forbidden, "human_authority_required");
+        settings.Memberships[0] = human; await Token(c);
         var opened = await RiskOk<SafetyEventDto>(await Send(c, SafetyPath($"/{draft.Id}/investigation"),
             new SafetyInvestigationSaveCommand(0, new(null, [], [], [], [], [])), update: true));
         Assert.Equal("INVESTIGATING", opened.State); Assert.Contains("contributing_factors", opened.Investigation!.Missing);
@@ -113,6 +119,12 @@ public sealed partial class DirectoryWorkspaceTests
 
         // Corrective action with owner and due date; completion, verification and effectiveness by three people.
         var actionId = Guid.NewGuid();
+        // QA S9 N1: action creation (owner and due date assignment) is a human record.
+        var reviewerMembership = settings.Memberships[0];
+        settings.Memberships[0] = reviewerMembership with { ActorKind = "AI" }; await Token(c);
+        await AssertCode(await Send(c, SafetyPath($"/{draft.Id}/actions"), new SafetyActionCreateCommand(actionId, "CORRECTIVE", "FICTIONAL inspect lines",
+            "FICTIONAL inspect and retire mooring lines per criteria", owner, DateOnly.FromDateTime(now.UtcDateTime.AddDays(14)), [cause], [barrier])), HttpStatusCode.Forbidden, "human_authority_required");
+        settings.Memberships[0] = reviewerMembership; await Token(c);
         await AssertCode(await Send(c, SafetyPath($"/{draft.Id}/actions"), new SafetyActionCreateCommand(actionId, "CORRECTIVE", "FICTIONAL inspect lines",
             "FICTIONAL inspect and retire mooring lines per criteria", Guid.NewGuid(), DateOnly.FromDateTime(now.UtcDateTime.AddDays(14)), [cause], [barrier])), (HttpStatusCode)422, "owner_unavailable");
         var withAction = await RiskOk<SafetyEventDto>(await Send(c, SafetyPath($"/{draft.Id}/actions"), new SafetyActionCreateCommand(actionId, "CORRECTIVE", "FICTIONAL inspect lines",

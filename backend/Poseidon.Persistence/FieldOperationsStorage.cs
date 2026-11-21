@@ -111,6 +111,9 @@ public sealed class TugDailyLogReview : ITenantEntity
     public string ContentHash { get; set; } = "";
     public string Reconciliation { get; set; } = "";
     public Guid ActorId { get; set; }
+    // QA S9 N5: the submitter and authors of the reviewed revision, kept so the DB CHECK enforces reviewer != author.
+    public Guid SubmittedBy { get; set; }
+    public string AuthorsJson { get; set; } = "[]";
     public Guid AuthorityId { get; set; }
     public string Duty { get; set; } = "";
     public string Reason { get; set; } = "";
@@ -228,12 +231,13 @@ public static class FieldOperationsStorage
         model.Entity<TugDailyLogReview>(b => {
             b.ToTable("TugDailyLogReviews", "tug", t => t.HasCheckConstraint("CK_TugDailyLogReview_Kind",
                 "\"Decision\" IN ('VERIFY','RETURN') AND \"ResultRevision\"=\"Revision\"+1 AND length(\"Reason\")>=10 AND \"Duty\" IN ('TugMaster','Master') AND " +
-                "\"Reconciliation\" IN ('RECONCILED','REVIEW_REQUIRED','INCOMPLETE')"));
+                "\"Reconciliation\" IN ('RECONCILED','REVIEW_REQUIRED','INCOMPLETE') AND " +
+                "\"ActorId\"<>\"SubmittedBy\" AND NOT (\"AuthorsJson\"::jsonb @> jsonb_build_array(\"ActorId\"::text))"));
             b.HasKey(x => new { x.TenantId, x.Id }); b.HasIndex(x => new { x.TenantId, x.LogId, x.Revision }).IsUnique();
             b.HasOne<TugDailyLogRevision>().WithMany().HasForeignKey(x => new { x.TenantId, x.LogId, x.Revision })
                 .HasPrincipalKey(x => new { x.TenantId, x.LogId, x.Revision }).HasConstraintName("FK_TugDailyLogReviews_Revision").OnDelete(DeleteBehavior.Restrict);
             b.Property(x => x.Decision).HasMaxLength(16); b.Property(x => x.ContentHash).HasMaxLength(64); b.Property(x => x.Reconciliation).HasMaxLength(20);
-            b.Property(x => x.Duty).HasMaxLength(20); b.Property(x => x.Reason).HasMaxLength(1000);
+            b.Property(x => x.Duty).HasMaxLength(20); b.Property(x => x.Reason).HasMaxLength(1000); b.Property(x => x.AuthorsJson).HasColumnType("text");
         });
         model.Entity<DrydockPackage>(b => {
             b.ToTable("DrydockPackages", "technical", t => t.HasCheckConstraint("CK_DrydockPackage_State",

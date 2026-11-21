@@ -8544,6 +8544,155 @@ namespace Poseidon.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Poseidon.Persistence.PilotChecklistLink", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("AuditTracedAtLink")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ItemCode")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.Property<DateTimeOffset>("LinkedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<Guid>("ProgramId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("RecordId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("RecordType")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.Property<Guid?>("RecordVesselId")
+                        .HasColumnType("uuid");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<string>("Week")
+                        .IsRequired()
+                        .HasMaxLength(4)
+                        .HasColumnType("character varying(4)");
+
+                    b.Property<string>("WithdrawalReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTimeOffset?>("WithdrawnAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("WithdrawnBy")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "ProgramId", "ItemCode", "RecordType", "RecordId")
+                        .IsUnique()
+                        .HasFilter("\"WithdrawnAt\" IS NULL");
+
+                    b.ToTable("PilotChecklistLinks", "pilot", t =>
+                        {
+                            t.HasCheckConstraint("CK_PilotChecklistLink_Values", "\"Week\" IN ('W1', 'W2', 'W3', 'W4') AND \"ItemCode\" IN ('W1_DAILY_FEEDBACK', 'W1_FIRST_LIVE_TRACE', 'W1_SHIP_CERTIFICATE', 'W1_SHIP_CREW', 'W1_TUG_JOB_INTAKE', 'W2_WORK_ORDER', 'W2_DEFECT_SAFEGUARD', 'W2_DEPARTURE_REVIEW', 'W2_OFFLINE_RECONNECT', 'W2_DUAL_SHIP_SAFETY', 'W2_DUAL_TUG_JOB', 'W2_DUAL_TUG_TOWAGE', 'W2_DUAL_SHARED_CREW_TUG', 'W2_DUAL_SHARED_PMS_TUG', 'W2_DUAL_SHARED_EVIDENCE', 'W2_DUAL_TUG_OFFLINE', 'W3_EVENT_FLOW', 'W3_AUDIT_PACK_RETRIEVAL', 'W3_VOICE_OCR_CORRECTION', 'W3_NO_AI_AUTHORITY_BYPASS', 'W3_TUG_TOWAGE_PLAN', 'W3_TUG_BRIEFING', 'W4_BEFORE_AFTER_BASELINE', 'W4_SHIP_UAT_SIGNOFF', 'W4_TUG_UAT_SIGNOFF', 'W4_TUG_DAILY_LOG') AND \"RecordType\" IN ('WORK_ORDER', 'DEFECT', 'DEPARTURE_DECISION', 'OFFLINE_OUTCOME', 'WORK_ORDER_OFFLINE_OUTCOME', 'DAILY_OFFLINE_OUTCOME', 'SAFETY_EVENT_OFFLINE_OUTCOME', 'TUG_OFFLINE_OUTCOME', 'SAFETY_EVENT', 'RISK_ASSESSMENT', 'AUDIT_PACK', 'TOWAGE_EXECUTION', 'TOWAGE_PLAN', 'TOWAGE_BRIEFING', 'TUG_JOB', 'TUG_DAILY_LOG', 'VESSEL_CERTIFICATE', 'CREW_ASSIGNMENT', 'CONTROL_EVIDENCE', 'VOICE_EVENT_DRAFT', 'UAT_RUN', 'PILOT_FEEDBACK', 'PILOT_MEASUREMENT')");
+
+                            t.HasCheckConstraint("CK_PilotChecklistLink_Withdrawal", "(\"WithdrawnAt\" IS NULL) = (\"WithdrawnBy\" IS NULL) AND (\"WithdrawnAt\" IS NULL) = (\"WithdrawalReason\" IS NULL)");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.PilotFeedback", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Area")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ParticipantPseudonym")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<Guid>("ProgramId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("RecordedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("RetentionPolicyRef")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.Property<string>("Sentiment")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<string>("Summary")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("Week")
+                        .IsRequired()
+                        .HasMaxLength(4)
+                        .HasColumnType("character varying(4)");
+
+                    b.HasKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "ExpiresAt");
+
+                    b.HasIndex("TenantId", "ProgramId", "RecordedAt");
+
+                    b.ToTable("PilotFeedback", "pilot", t =>
+                        {
+                            t.HasCheckConstraint("CK_PilotFeedback_Retention", "\"ExpiresAt\" > \"RecordedAt\"");
+
+                            t.HasCheckConstraint("CK_PilotFeedback_Values", "\"Week\" IN ('W1', 'W2', 'W3', 'W4') AND \"Area\" IN ('SHIP', 'TUG', 'SHARED') AND \"Category\" IN ('USABILITY', 'DATA_QUALITY', 'PERFORMANCE', 'OFFLINE', 'AI_ASSIST', 'TRAINING', 'SAFETY_CONCERN', 'OTHER') AND \"Sentiment\" IN ('POSITIVE', 'NEUTRAL', 'NEGATIVE') AND \"Role\" IN ('MASTER', 'DPA', 'CHIEF_ENGINEER', 'CREW', 'TUG_MASTER', 'TUG_OPERATIONS_RESPONSIBLE', 'TUG_CREW', 'SHORE_OFFICE', 'OTHER')");
+                        });
+                });
+
             modelBuilder.Entity("Poseidon.Persistence.PilotGateDecision", b =>
                 {
                     b.Property<Guid>("TenantId")
@@ -8624,6 +8773,180 @@ namespace Poseidon.Persistence.Migrations
                             t.HasCheckConstraint("CK_PilotGateDecision_Lineage", "\"Sequence\" >= 1 AND (\"Sequence\" = 1) = (\"PreviousDecisionId\" IS NULL)");
 
                             t.HasCheckConstraint("CK_PilotGateDecision_Rationale", "char_length(\"Rationale\") >= 10");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.PilotIssue", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Area")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<Guid>("ProgramId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("ReportedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("ReportedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Resolution")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("ResolutionReference")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTimeOffset?>("ResolvedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("ResolvedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Severity")
+                        .IsRequired()
+                        .HasMaxLength(4)
+                        .HasColumnType("character varying(4)");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("TriageNote")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTimeOffset?>("TriagedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("TriagedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<string>("Week")
+                        .IsRequired()
+                        .HasMaxLength(4)
+                        .HasColumnType("character varying(4)");
+
+                    b.HasKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "ProgramId", "Week", "State");
+
+                    b.ToTable("PilotIssues", "pilot", t =>
+                        {
+                            t.HasCheckConstraint("CK_PilotIssue_Resolution", "(\"State\" = 'RESOLVED') = (\"ResolvedAt\" IS NOT NULL AND \"ResolvedBy\" IS NOT NULL AND \"Resolution\" IS NOT NULL) AND (\"State\" = 'RESOLVED' OR \"ResolutionReference\" IS NULL) AND (\"ResolvedAt\" IS NULL OR \"ResolvedAt\" >= \"TriagedAt\")");
+
+                            t.HasCheckConstraint("CK_PilotIssue_Triage", "(\"State\" = 'OPEN') = (\"TriagedAt\" IS NULL) AND (\"TriagedAt\" IS NULL) = (\"TriagedBy\" IS NULL) AND (\"TriagedAt\" IS NULL) = (\"TriageNote\" IS NULL) AND (\"TriagedAt\" IS NULL OR \"TriagedAt\" >= \"ReportedAt\")");
+
+                            t.HasCheckConstraint("CK_PilotIssue_Values", "\"Week\" IN ('W1', 'W2', 'W3', 'W4') AND \"Area\" IN ('SHIP', 'TUG', 'SHARED') AND \"Category\" IN ('ONBOARDING', 'CERTIFICATE', 'CREW', 'PMS', 'DEFECT', 'DEPARTURE', 'OFFLINE', 'SAFETY_EVENT', 'EVIDENCE', 'AUDIT', 'AI_ASSIST', 'TUG_JOB', 'TOWAGE', 'UAT', 'VALUE', 'OTHER') AND \"Severity\" IN ('P0', 'P1', 'P2') AND \"State\" IN ('OPEN', 'TRIAGED', 'RESOLVED')");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.PilotMeasurement", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("EvidenceReference")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Method")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("MetricId")
+                        .IsRequired()
+                        .HasMaxLength(48)
+                        .HasColumnType("character varying(48)");
+
+                    b.Property<string>("Mode")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)");
+
+                    b.Property<DateOnly>("PeriodFrom")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly>("PeriodTo")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Phase")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<Guid?>("PreviousMeasurementId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ProgramId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("RecordedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("SampleSize")
+                        .HasColumnType("integer");
+
+                    b.Property<long>("Sequence")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<decimal>("Value")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)");
+
+                    b.HasKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "ProgramId", "MetricId", "Mode", "Phase", "Sequence")
+                        .IsUnique();
+
+                    b.ToTable("PilotMeasurements", "pilot", t =>
+                        {
+                            t.HasCheckConstraint("CK_PilotMeasurement_Evidence", "char_length(\"EvidenceReference\") >= 1 AND char_length(\"Method\") >= 10");
+
+                            t.HasCheckConstraint("CK_PilotMeasurement_Lineage", "\"Sequence\" >= 1 AND (\"Sequence\" = 1) = (\"PreviousMeasurementId\" IS NULL)");
+
+                            t.HasCheckConstraint("CK_PilotMeasurement_Range", "\"Value\" >= 0 AND (\"Unit\" <> 'PERCENT' OR \"Value\" <= 100) AND \"SampleSize\" >= 1 AND \"PeriodTo\" >= \"PeriodFrom\"");
+
+                            t.HasCheckConstraint("CK_PilotMeasurement_Values", "\"MetricId\" IN ('SHIP_TIME_TO_COMPLETE', 'SHIP_DUPLICATE_ENTRY', 'SHIP_EVIDENCE_COMPLETENESS', 'SHIP_READINESS_ACCURACY', 'SHIP_OFFLINE_SUCCESS', 'SHIP_USER_ADOPTION', 'SHIP_AI_CORRECTION', 'TUG_TIME_TO_COMPLETE', 'TUG_JOB_PREP_TIME', 'TUG_ASSIGNMENT_CONFLICT_VISIBILITY', 'TUG_EVIDENCE_COMPLETENESS', 'TUG_READINESS_ACCURACY', 'TUG_OFFLINE_SUCCESS', 'TUG_USER_ADOPTION', 'TUG_AI_CORRECTION') AND \"Mode\" IN ('SHIP', 'TUG') AND \"Phase\" IN ('BASELINE', 'PILOT') AND \"Unit\" IN ('SECOND', 'COUNT', 'PERCENT', 'PERSON')");
                         });
                 });
 
@@ -8739,6 +9062,185 @@ namespace Poseidon.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Poseidon.Persistence.PilotProgram", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CatalogVersion")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)");
+
+                    b.Property<string>("Provenance")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<Guid>("ShipVesselId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("TimeZone")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid?>("TugVesselId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "CreatedAt");
+
+                    b.HasIndex("TenantId", "ShipVesselId");
+
+                    b.HasIndex("TenantId", "TugVesselId");
+
+                    b.ToTable("PilotPrograms", "pilot", t =>
+                        {
+                            t.HasCheckConstraint("CK_PilotProgram_Name", "char_length(\"Name\") >= 3");
+
+                            t.HasCheckConstraint("CK_PilotProgram_Provenance", "\"Provenance\" IN ('UserDeclaredUnverified', 'SyntheticUnverified')");
+
+                            t.HasCheckConstraint("CK_PilotProgram_Vessels", "\"TugVesselId\" IS NULL OR \"TugVesselId\" <> \"ShipVesselId\"");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.PilotProgramDecision", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AuthorityHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("AuthorityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Decision")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
+
+                    b.Property<string>("Duty")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<Guid?>("PreviousDecisionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ProgramHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("ProgramId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Rationale")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("Recommendation")
+                        .IsRequired()
+                        .HasMaxLength(48)
+                        .HasColumnType("character varying(48)");
+
+                    b.Property<DateTimeOffset>("RecordedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Sequence")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("SnapshotJson")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.HasKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "ProgramId", "Sequence")
+                        .IsUnique();
+
+                    b.ToTable("PilotProgramDecisions", "pilot", t =>
+                        {
+                            t.HasCheckConstraint("CK_PilotProgramDecision_Duty", "\"Duty\" = 'ProductOwner'");
+
+                            t.HasCheckConstraint("CK_PilotProgramDecision_Expand", "\"Decision\" <> 'EXPAND' OR \"Recommendation\" = 'EXPAND_ELIGIBLE_PENDING_HUMAN_DECISION'");
+
+                            t.HasCheckConstraint("CK_PilotProgramDecision_Lineage", "\"Sequence\" >= 1 AND (\"Sequence\" = 1) = (\"PreviousDecisionId\" IS NULL)");
+
+                            t.HasCheckConstraint("CK_PilotProgramDecision_Rationale", "char_length(\"Rationale\") >= 10");
+
+                            t.HasCheckConstraint("CK_PilotProgramDecision_Values", "\"Decision\" IN ('CONTINUE', 'EXPAND', 'FIX', 'STOP') AND \"Recommendation\" IN ('EXPAND_ELIGIBLE_PENDING_HUMAN_DECISION', 'FIX_RECOMMENDED')");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.PilotProgramReceipt", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Key")
+                        .HasMaxLength(36)
+                        .HasColumnType("character varying(36)");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.Property<DateTimeOffset>("CommittedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Fingerprint")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("RecordId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TenantId", "ActorId", "Key");
+
+                    b.ToTable("PilotProgramReceipts", "pilot", t =>
+                        {
+                            t.HasCheckConstraint("CK_PilotProgramReceipt_Action", "\"Action\" IN ('PilotProgramCreate', 'PilotChecklistLink', 'PilotChecklistWithdraw', 'PilotFeedbackRecord', 'PilotIssueReport', 'PilotIssueTriage', 'PilotIssueResolve', 'PilotMeasurementRecord', 'PilotWeekClose', 'PilotProgramDecide')");
+                        });
+                });
+
             modelBuilder.Entity("Poseidon.Persistence.PilotReceipt", b =>
                 {
                     b.Property<Guid>("TenantId")
@@ -8826,6 +9328,93 @@ namespace Poseidon.Persistence.Migrations
                             t.HasCheckConstraint("CK_PilotSupportCheck_Lineage", "\"Sequence\" >= 1 AND (\"Sequence\" = 1) = (\"PreviousCheckId\" IS NULL)");
 
                             t.HasCheckConstraint("CK_PilotSupportCheck_Values", "\"Item\" IN ('SUPPORT_CONTACTS', 'ONCALL_ROTA', 'ESCALATION_PATH', 'ROLLBACK_OWNER', 'INCIDENT_COMMUNICATION', 'MONITORING_ALERTING') AND \"State\" IN ('READY', 'NOT_READY')");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.PilotWeekClose", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AuthorityHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<Guid>("AuthorityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Duty")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("Outcome")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<Guid?>("PreviousCloseId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ProgramId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Rationale")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<string>("Recommendation")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.Property<DateTimeOffset>("RecordedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uuid");
+
+                    b.Property<long>("Sequence")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("SnapshotJson")
+                        .IsRequired()
+                        .HasColumnType("jsonb");
+
+                    b.Property<string>("Week")
+                        .IsRequired()
+                        .HasMaxLength(4)
+                        .HasColumnType("character varying(4)");
+
+                    b.Property<string>("WeekHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.HasKey("TenantId", "Id");
+
+                    b.HasIndex("TenantId", "ProgramId", "Week", "Sequence")
+                        .IsUnique();
+
+                    b.ToTable("PilotWeekCloses", "pilot", t =>
+                        {
+                            t.HasCheckConstraint("CK_PilotWeekClose_Accepted", "\"Outcome\" <> 'ACCEPTED' OR \"Recommendation\" = 'READY_FOR_HUMAN_CLOSE'");
+
+                            t.HasCheckConstraint("CK_PilotWeekClose_Duty", "\"Duty\" = 'ProductOwner'");
+
+                            t.HasCheckConstraint("CK_PilotWeekClose_Lineage", "\"Sequence\" >= 1 AND (\"Sequence\" = 1) = (\"PreviousCloseId\" IS NULL)");
+
+                            t.HasCheckConstraint("CK_PilotWeekClose_Rationale", "char_length(\"Rationale\") >= 10");
+
+                            t.HasCheckConstraint("CK_PilotWeekClose_Values", "\"Week\" IN ('W1', 'W2', 'W3', 'W4') AND \"Outcome\" IN ('ACCEPTED', 'NOT_ACCEPTED') AND \"Recommendation\" IN ('READY_FOR_HUMAN_CLOSE', 'NOT_READY')");
                         });
                 });
 
@@ -13597,6 +14186,10 @@ namespace Poseidon.Persistence.Migrations
                     b.Property<Guid>("AuthorityId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("AuthorsJson")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("ContentHash")
                         .IsRequired()
                         .HasMaxLength(64)
@@ -13634,6 +14227,9 @@ namespace Poseidon.Persistence.Migrations
                     b.Property<long>("Revision")
                         .HasColumnType("bigint");
 
+                    b.Property<Guid>("SubmittedBy")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("VesselId")
                         .HasColumnType("uuid");
 
@@ -13644,7 +14240,7 @@ namespace Poseidon.Persistence.Migrations
 
                     b.ToTable("TugDailyLogReviews", "tug", t =>
                         {
-                            t.HasCheckConstraint("CK_TugDailyLogReview_Kind", "\"Decision\" IN ('VERIFY','RETURN') AND \"ResultRevision\"=\"Revision\"+1 AND length(\"Reason\")>=10 AND \"Duty\" IN ('TugMaster','Master') AND \"Reconciliation\" IN ('RECONCILED','REVIEW_REQUIRED','INCOMPLETE')");
+                            t.HasCheckConstraint("CK_TugDailyLogReview_Kind", "\"Decision\" IN ('VERIFY','RETURN') AND \"ResultRevision\"=\"Revision\"+1 AND length(\"Reason\")>=10 AND \"Duty\" IN ('TugMaster','Master') AND \"Reconciliation\" IN ('RECONCILED','REVIEW_REQUIRED','INCOMPLETE') AND \"ActorId\"<>\"SubmittedBy\" AND NOT (\"AuthorsJson\"::jsonb @> jsonb_build_array(\"ActorId\"::text))");
                         });
                 });
 
@@ -15393,7 +15989,7 @@ namespace Poseidon.Persistence.Migrations
 
                     b.ToTable("VoiceEventDraftRevisions", "intelligence", t =>
                         {
-                            t.HasCheckConstraint("CK_VoiceEventDraftRevision_State", "\"Revision\">0 AND \"State\" IN ('DRAFT','CONFIRMED','REJECTED') AND \"ReasonCode\" IN ('CREATE','EDIT','CONFIRM','REJECT')");
+                            t.HasCheckConstraint("CK_VoiceEventDraftRevision_State", "\"Revision\">0 AND \"State\" IN ('DRAFT','CONFIRMED','REJECTED') AND \"ReasonCode\" IN ('CREATE','EDIT','CONFIRM','REJECT','LINK')");
                         });
                 });
 
@@ -17969,6 +18565,42 @@ namespace Poseidon.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Poseidon.Persistence.PilotChecklistLink", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.PilotProgram", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ProgramId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.PilotFeedback", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.PilotProgram", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ProgramId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.PilotIssue", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.PilotProgram", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ProgramId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.PilotMeasurement", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.PilotProgram", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ProgramId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Poseidon.Persistence.PilotMetricBatch", b =>
                 {
                     b.HasOne("Poseidon.Persistence.Tenant", null)
@@ -17983,6 +18615,40 @@ namespace Poseidon.Persistence.Migrations
                     b.HasOne("Poseidon.Persistence.Tenant", null)
                         .WithMany()
                         .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.PilotProgram", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.Vessel", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ShipVesselId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_PilotPrograms_ShipVessel");
+
+                    b.HasOne("Poseidon.Persistence.Vessel", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "TugVesselId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_PilotPrograms_TugVessel");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.PilotProgramDecision", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.PilotProgram", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ProgramId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.PilotWeekClose", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.PilotProgram", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "ProgramId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

@@ -126,6 +126,33 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Empty(await check.SafetyEventReceipts.Where(r => r.ResourceId == eventId).ToArrayAsync(Ct));
         Assert.Equal(eventId, (await check.VoiceEventDrafts.SingleAsync(d => d.Id == handed.Id, Ct)).SafetyEventId);
         Assert.Contains(await check.AuditEvents.Where(a => a.ResourceId == eventId).ToArrayAsync(Ct), a => a.EntityType == nameof(SafetyEvent) && a.ActorId == reporter.ToString());
+        // QA S9 N7: the event DRAFT created through the voice path is also a SafetyEventCommand outcome.
+        Assert.Contains(await check.Set<SecurityEvent>().Where(e => e.ResourceId == eventId).ToArrayAsync(Ct), e => e.Action == "SafetyEventCommand" && e.Result == "Success");
+
+        // QA S9 N7: the candidate left pending for the report permission is handed off later, only by its confirming human.
+        string Link() => Voice($"/{id}/safety-event-link");
+        var pending = (await c.GetFromJsonAsync<VoiceDraftDto>("/api/v1/" + Voice($"/{id}"), Ct))!;
+        Assert.False(pending.CanLinkSafetyEvent); // reporter did not confirm it
+        await AssertCode(await Send(c, Link(), new VoiceDraftLinkSafetyEventCommand(pending.Version, pending.Hash)), HttpStatusCode.Forbidden, "voice_handoff_confirmer_required");
+        S9Actor(host.Services, crew, "Human", "voice.draft.read", "voice.draft.write"); await Token(c);
+        await AssertCode(await Send(c, Link(), new VoiceDraftLinkSafetyEventCommand(pending.Version, pending.Hash)), HttpStatusCode.Forbidden, "permission_denied");
+        S9Actor(host.Services, crew, "AI", "voice.draft.read", "voice.draft.write", SafetyEventPolicy.ReportPermission); await Token(c);
+        await AssertCode(await Send(c, Link(), new VoiceDraftLinkSafetyEventCommand(pending.Version, pending.Hash)), HttpStatusCode.Forbidden, "human_actor_required");
+        S9Actor(host.Services, crew, "Human", "voice.draft.read", "voice.draft.write", SafetyEventPolicy.ReportPermission); await Token(c);
+        var linkable = (await c.GetFromJsonAsync<VoiceDraftDto>("/api/v1/" + Voice($"/{id}"), Ct))!;
+        Assert.True(linkable.CanLinkSafetyEvent);
+        await AssertCode(await Send(c, Link(), new VoiceDraftLinkSafetyEventCommand(linkable.Version, new string('0', 64))), HttpStatusCode.Conflict, "version_conflict");
+        var late = await TechOk<VoiceDraftDto>(await Send(c, Link(), new VoiceDraftLinkSafetyEventCommand(linkable.Version, linkable.Hash)));
+        Assert.Equal(("CONFIRMED", "EVENT_DRAFT_CREATED", (string?)null, crew, false), (late.State, late.Handoff, late.HandoffReason, late.ConfirmedBy, late.CanLinkSafetyEvent));
+        var lateEvent = Assert.IsType<Guid>(late.SafetyEventId);
+        await AssertCode(await Send(c, Link(), new VoiceDraftLinkSafetyEventCommand(late.Version, late.Hash)), HttpStatusCode.Conflict, "invalid_state");
+        await using var lateCheck = Db();
+        var lateSafety = await lateCheck.SafetyEvents.SingleAsync(e => e.Id == lateEvent, Ct);
+        Assert.Equal(("DRAFT", SafetyEventPolicy.Named, (Guid?)crew, 1L), (lateSafety.State, lateSafety.ReportingMode, lateSafety.ReportedBy, lateSafety.Revision));
+        Assert.Null(lateSafety.SubmittedAt);
+        Assert.Equal(["CREATE", "EDIT", "CONFIRM", "LINK"], await lateCheck.VoiceEventDraftRevisions.Where(r => r.DraftId == id).OrderBy(r => r.Revision).Select(r => r.ReasonCode).ToArrayAsync(Ct));
+        Assert.Contains(await lateCheck.Set<SecurityEvent>().Where(e => e.ResourceId == lateEvent).ToArrayAsync(Ct), e => e.Action == "SafetyEventCommand" && e.Result == "Success");
+        Assert.Contains(await lateCheck.AuditEvents.Where(a => a.ResourceId == id).ToArrayAsync(Ct), a => a.EntityType == nameof(VoiceEventDraft) && a.ActorId == crew.ToString());
     }
 
     [Fact]

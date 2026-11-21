@@ -95,7 +95,9 @@ public static class TowageExecutionPolicy
     // this only checks they exist, are current and belong to this job/tug. It never creates or implies a GO.
     public static string[] StartBlockers(TowageStartFacts f) {
         var b = new List<string>();
-        if (f.JobStatus == "Cancelled") b.Add("job_cancelled");
+        // QA S9 N10: only a SUBMITTED job starts; a cancelled, unsubmitted (DRAFT) or unrecognised status is refused.
+        if (f.JobStatus == TugJobLifecycle.Cancelled) b.Add("job_cancelled");
+        else if (f.JobStatus != TugJobLifecycle.Submitted) b.Add("job_not_submitted");
         if (f.ExecutionExists) b.Add("execution_already_started");
         if (!f.PlanPresent) b.Add("towage_plan_missing");
         else {

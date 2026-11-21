@@ -17832,6 +17832,48 @@
         "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
+    "/api/v1/voice-event-drafts/{id}/safety-event-link": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "VoiceDraftLinkSafetyEvent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VoiceDraftLinkSafetyEventCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VoiceDraftDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
     "/api/v1/pms/command-center": {
       "get": {
         "tags": [
@@ -21179,6 +21221,493 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PilotGateDecisionDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/pilot-programs": {
+      "get": {
+        "tags": [
+          "PilotProgramEndpoints"
+        ],
+        "operationId": "PilotProgramList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotProgramListView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "PilotProgramEndpoints"
+        ],
+        "operationId": "PilotProgramCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PilotProgramCreateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotProgramDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/pilot-programs/{id}": {
+      "get": {
+        "tags": [
+          "PilotProgramEndpoints"
+        ],
+        "operationId": "PilotProgramRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotProgramView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/pilot-programs/{id}/links": {
+      "post": {
+        "tags": [
+          "PilotProgramEndpoints"
+        ],
+        "operationId": "PilotChecklistLink",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PilotLinkCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotLinkDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/pilot-programs/{id}/links/{link}/withdraw": {
+      "post": {
+        "tags": [
+          "PilotProgramEndpoints"
+        ],
+        "operationId": "PilotChecklistWithdraw",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "link",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PilotLinkWithdrawCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotLinkDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/pilot-programs/{id}/feedback": {
+      "post": {
+        "tags": [
+          "PilotProgramEndpoints"
+        ],
+        "operationId": "PilotFeedbackRecord",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PilotFeedbackCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotFeedbackDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/pilot-programs/{id}/issues": {
+      "post": {
+        "tags": [
+          "PilotProgramEndpoints"
+        ],
+        "operationId": "PilotIssueReport",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PilotIssueCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotIssueDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/pilot-programs/{id}/issues/{issue}/triage": {
+      "post": {
+        "tags": [
+          "PilotProgramEndpoints"
+        ],
+        "operationId": "PilotIssueTriage",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "issue",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PilotIssueTriageCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotIssueDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/pilot-programs/{id}/issues/{issue}/resolve": {
+      "post": {
+        "tags": [
+          "PilotProgramEndpoints"
+        ],
+        "operationId": "PilotIssueResolve",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "issue",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PilotIssueResolveCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotIssueDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/pilot-programs/{id}/measurements": {
+      "post": {
+        "tags": [
+          "PilotProgramEndpoints"
+        ],
+        "operationId": "PilotMeasurementRecord",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PilotMeasurementCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotMeasurementDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/pilot-programs/{id}/week-closes": {
+      "post": {
+        "tags": [
+          "PilotProgramEndpoints"
+        ],
+        "operationId": "PilotWeekClose",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PilotWeekCloseCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotWeekCloseDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/pilot-programs/{id}/decisions": {
+      "post": {
+        "tags": [
+          "PilotProgramEndpoints"
+        ],
+        "operationId": "PilotProgramDecide",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PilotProgramDecisionCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotProgramDecisionDto"
                 }
               }
             }
@@ -44293,6 +44822,184 @@
           }
         }
       },
+      "PilotChecklistItem": {
+        "required": [
+          "code",
+          "week",
+          "requirement",
+          "area",
+          "recordTypes",
+          "requiresAuditTrace",
+          "criterion",
+          "locator"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "week": {
+            "type": "string"
+          },
+          "requirement": {
+            "type": "string"
+          },
+          "area": {
+            "type": "string"
+          },
+          "recordTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "requiresAuditTrace": {
+            "type": "boolean"
+          },
+          "criterion": {
+            "type": "string"
+          },
+          "locator": {
+            "type": "string"
+          }
+        }
+      },
+      "PilotDefectSeverity": {
+        "required": [
+          "mode",
+          "state",
+          "critical",
+          "high",
+          "medium",
+          "low",
+          "unassessed",
+          "syntheticExcluded"
+        ],
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "critical": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "high": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "medium": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "low": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unassessed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "syntheticExcluded": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "PilotFeedbackCommand": {
+        "required": [
+          "week",
+          "area",
+          "category",
+          "sentiment",
+          "role",
+          "summary",
+          "participantPseudonym"
+        ],
+        "type": "object",
+        "properties": {
+          "week": {
+            "type": "string"
+          },
+          "area": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "sentiment": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "participantPseudonym": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PilotFeedbackDto": {
+        "required": [
+          "id",
+          "week",
+          "area",
+          "category",
+          "sentiment",
+          "role",
+          "summary",
+          "participantPseudonym",
+          "actorId",
+          "recordedAt",
+          "expiresAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "week": {
+            "type": "string"
+          },
+          "area": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "sentiment": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string"
+          },
+          "participantPseudonym": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
       "PilotGateAuthorityDto": {
         "required": [
           "id",
@@ -44541,6 +45248,477 @@
           "authority": {
             "type": "string",
             "default": "ProductOwnerHumanDecisionRequired;EngineNeverDecidesGo;AiCannotDecide"
+          }
+        }
+      },
+      "PilotIssueCommand": {
+        "required": [
+          "week",
+          "area",
+          "category",
+          "severity",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "week": {
+            "type": "string"
+          },
+          "area": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PilotIssueDto": {
+        "required": [
+          "id",
+          "week",
+          "area",
+          "category",
+          "severity",
+          "title",
+          "state",
+          "reportedBy",
+          "reportedAt",
+          "triagedBy",
+          "triagedAt",
+          "triageNote",
+          "resolvedBy",
+          "resolvedAt",
+          "resolution",
+          "resolutionReference",
+          "timing",
+          "reportedLocalDate",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "week": {
+            "type": "string"
+          },
+          "area": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reportedBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reportedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "triagedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "triagedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "triageNote": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "resolvedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "resolvedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "resolution": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "resolutionReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "timing": {
+            "type": "string"
+          },
+          "reportedLocalDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "PilotIssueResolveCommand": {
+        "required": [
+          "resolution",
+          "resolutionReference",
+          "expectedVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "resolution": {
+            "type": "string"
+          },
+          "resolutionReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PilotIssueTriageCommand": {
+        "required": [
+          "note",
+          "expectedVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "note": {
+            "type": "string"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PilotItemOutcome": {
+        "required": [
+          "code",
+          "state",
+          "validLinks",
+          "reasons"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "validLinks": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "PilotLinkCommand": {
+        "required": [
+          "itemCode",
+          "recordType",
+          "recordId",
+          "note"
+        ],
+        "type": "object",
+        "properties": {
+          "itemCode": {
+            "type": "string"
+          },
+          "recordType": {
+            "type": "string"
+          },
+          "recordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "PilotLinkDto": {
+        "required": [
+          "id",
+          "week",
+          "itemCode",
+          "recordType",
+          "recordId",
+          "auditTracedAtLink",
+          "note",
+          "actorId",
+          "linkedAt",
+          "withdrawnBy",
+          "withdrawnAt",
+          "withdrawalReason",
+          "version",
+          "validity",
+          "refusal"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "week": {
+            "type": "string"
+          },
+          "itemCode": {
+            "type": "string"
+          },
+          "recordType": {
+            "type": "string"
+          },
+          "recordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "auditTracedAtLink": {
+            "type": "boolean"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "linkedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "withdrawnBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "withdrawnAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "withdrawalReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "validity": {
+            "type": "string"
+          },
+          "refusal": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "PilotLinkWithdrawCommand": {
+        "required": [
+          "reason",
+          "expectedVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PilotMeasurementCommand": {
+        "required": [
+          "metricId",
+          "phase",
+          "value",
+          "sampleSize",
+          "periodFrom",
+          "periodTo",
+          "evidenceReference",
+          "method",
+          "expectedSequence"
+        ],
+        "type": "object",
+        "properties": {
+          "metricId": {
+            "type": "string"
+          },
+          "phase": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          },
+          "sampleSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "periodFrom": {
+            "type": "string",
+            "format": "date"
+          },
+          "periodTo": {
+            "type": "string",
+            "format": "date"
+          },
+          "evidenceReference": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string"
+          },
+          "expectedSequence": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PilotMeasurementDto": {
+        "required": [
+          "id",
+          "metricId",
+          "mode",
+          "phase",
+          "sequence",
+          "previousMeasurementId",
+          "value",
+          "unit",
+          "sampleSize",
+          "periodFrom",
+          "periodTo",
+          "evidenceReference",
+          "method",
+          "actorId",
+          "recordedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "metricId": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "phase": {
+            "type": "string"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "previousMeasurementId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "sampleSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "periodFrom": {
+            "type": "string",
+            "format": "date"
+          },
+          "periodTo": {
+            "type": "string",
+            "format": "date"
+          },
+          "evidenceReference": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
           }
         }
       },
@@ -44858,6 +46036,411 @@
           }
         }
       },
+      "PilotProgramCreateCommand": {
+        "required": [
+          "name",
+          "shipVesselId",
+          "tugVesselId",
+          "startDate",
+          "timeZone"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "shipVesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tugVesselId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "timeZone": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PilotProgramDecisionCommand": {
+        "required": [
+          "decision",
+          "rationale",
+          "expectedProgramHash",
+          "expectedSequence",
+          "authorityId"
+        ],
+        "type": "object",
+        "properties": {
+          "decision": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "expectedProgramHash": {
+            "type": "string"
+          },
+          "expectedSequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PilotProgramDecisionDto": {
+        "required": [
+          "id",
+          "sequence",
+          "previousDecisionId",
+          "decision",
+          "recommendation",
+          "programHash",
+          "rationale",
+          "duty",
+          "actorId",
+          "recordedAt",
+          "validity"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "previousDecisionId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "recommendation": {
+            "type": "string"
+          },
+          "programHash": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "duty": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "validity": {
+            "type": "string"
+          }
+        }
+      },
+      "PilotProgramDto": {
+        "required": [
+          "id",
+          "name",
+          "shipVesselId",
+          "tugVesselId",
+          "startDate",
+          "timeZone",
+          "catalogVersion",
+          "createdBy",
+          "createdAt",
+          "provenance"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "shipVesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tugVesselId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "timeZone": {
+            "type": "string"
+          },
+          "catalogVersion": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "provenance": {
+            "type": "string"
+          }
+        }
+      },
+      "PilotProgramListView": {
+        "required": [
+          "programs",
+          "vessels",
+          "canCreate",
+          "catalogVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "programs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotProgramDto"
+            }
+          },
+          "vessels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotVesselOption"
+            }
+          },
+          "canCreate": {
+            "type": "boolean"
+          },
+          "catalogVersion": {
+            "type": "string"
+          },
+          "authority": {
+            "type": "string",
+            "default": "ProductOwnerHumanDecisionRequired;EngineRecommendsOnly;AiCannotDecide;SoftwareCannotCompletePilot"
+          }
+        }
+      },
+      "PilotProgramOutcome": {
+        "required": [
+          "recommendation",
+          "reasons",
+          "hash"
+        ],
+        "type": "object",
+        "properties": {
+          "recommendation": {
+            "type": "string"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "hash": {
+            "type": "string"
+          },
+          "authority": {
+            "type": "string",
+            "default": "ProductOwnerHumanDecisionRequired;EngineRecommendsOnly;AiCannotDecide;SoftwareCannotCompletePilot"
+          }
+        }
+      },
+      "PilotProgramView": {
+        "required": [
+          "program",
+          "weeks",
+          "issues",
+          "feedback",
+          "measurements",
+          "readout",
+          "review",
+          "decisions",
+          "decisionSequence",
+          "authorities",
+          "canRecord",
+          "canTriage",
+          "canDecide",
+          "allowedDecisions",
+          "feedbackRetention",
+          "metricCatalog",
+          "recordTypes",
+          "assessedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "program": {
+            "$ref": "#/components/schemas/PilotProgramDto"
+          },
+          "weeks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotWeekView"
+            }
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotIssueDto"
+            }
+          },
+          "feedback": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotFeedbackDto"
+            }
+          },
+          "measurements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotMeasurementDto"
+            }
+          },
+          "readout": {
+            "$ref": "#/components/schemas/PilotReadoutView"
+          },
+          "review": {
+            "$ref": "#/components/schemas/PilotProgramOutcome"
+          },
+          "decisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotProgramDecisionDto"
+            }
+          },
+          "decisionSequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotGateAuthorityDto"
+            }
+          },
+          "canRecord": {
+            "type": "boolean"
+          },
+          "canTriage": {
+            "type": "boolean"
+          },
+          "canDecide": {
+            "type": "boolean"
+          },
+          "allowedDecisions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "feedbackRetention": {
+            "type": "string"
+          },
+          "metricCatalog": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotValueMetric"
+            }
+          },
+          "recordTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "assessedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "authority": {
+            "type": "string",
+            "default": "ProductOwnerHumanDecisionRequired;EngineRecommendsOnly;AiCannotDecide;SoftwareCannotCompletePilot"
+          },
+          "sourceLocator": {
+            "type": "string",
+            "default": "18.01/sheet:Backlog/row:77-80,96,97,122;18.01/sheet:Sprint Plan/row:14-17;19.01/paragraph:43-67,137-161,255-278;63.05/paragraph:142-156"
+          }
+        }
+      },
+      "PilotReadoutView": {
+        "required": [
+          "metrics",
+          "telemetryState",
+          "telemetryBasis",
+          "telemetryRetention",
+          "telemetryWindowDays",
+          "uatShip",
+          "uatTug",
+          "defects",
+          "openP0"
+        ],
+        "type": "object",
+        "properties": {
+          "metrics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotValueRow"
+            }
+          },
+          "telemetryState": {
+            "type": "string"
+          },
+          "telemetryBasis": {
+            "type": "string"
+          },
+          "telemetryRetention": {
+            "type": "string"
+          },
+          "telemetryWindowDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "uatShip": {
+            "$ref": "#/components/schemas/PilotGateInput"
+          },
+          "uatTug": {
+            "$ref": "#/components/schemas/PilotGateInput"
+          },
+          "defects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotDefectSeverity"
+            }
+          },
+          "openP0": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "PilotSupportCheckCommand": {
         "required": [
           "item",
@@ -44963,6 +46546,437 @@
                 "$ref": "#/components/schemas/PilotSupportCheckDto"
               }
             ]
+          }
+        }
+      },
+      "PilotTelemetryCell": {
+        "required": [
+          "state",
+          "value",
+          "unitCode"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unitCode": {
+            "type": "string"
+          }
+        }
+      },
+      "PilotValueMetric": {
+        "required": [
+          "id",
+          "mode",
+          "unit",
+          "direction",
+          "requirements",
+          "telemetryMetricId",
+          "locator"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "requirements": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "telemetryMetricId": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "locator": {
+            "type": "string"
+          }
+        }
+      },
+      "PilotValueRow": {
+        "required": [
+          "metricId",
+          "mode",
+          "unit",
+          "direction",
+          "quality",
+          "baseline",
+          "current",
+          "delta",
+          "percentChange",
+          "comparison",
+          "reasons",
+          "baselineId",
+          "currentId",
+          "telemetry",
+          "locator"
+        ],
+        "type": "object",
+        "properties": {
+          "metricId": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "quality": {
+            "type": "string"
+          },
+          "baseline": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "current": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "delta": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "percentChange": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "comparison": {
+            "type": "string"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "baselineId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "currentId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "telemetry": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PilotTelemetryCell"
+              }
+            ]
+          },
+          "locator": {
+            "type": "string"
+          }
+        }
+      },
+      "PilotVesselOption": {
+        "required": [
+          "id",
+          "code",
+          "name",
+          "kind"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          }
+        }
+      },
+      "PilotWeekCloseCommand": {
+        "required": [
+          "week",
+          "outcome",
+          "rationale",
+          "expectedWeekHash",
+          "expectedSequence",
+          "authorityId"
+        ],
+        "type": "object",
+        "properties": {
+          "week": {
+            "type": "string"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "expectedWeekHash": {
+            "type": "string"
+          },
+          "expectedSequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PilotWeekCloseDto": {
+        "required": [
+          "id",
+          "week",
+          "sequence",
+          "previousCloseId",
+          "outcome",
+          "recommendation",
+          "weekHash",
+          "rationale",
+          "duty",
+          "actorId",
+          "recordedAt",
+          "validity"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "week": {
+            "type": "string"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "previousCloseId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "recommendation": {
+            "type": "string"
+          },
+          "weekHash": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "duty": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "validity": {
+            "type": "string"
+          }
+        }
+      },
+      "PilotWeekDefinition": {
+        "required": [
+          "week",
+          "number",
+          "requirements",
+          "locator",
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "week": {
+            "type": "string"
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requirements": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "locator": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotChecklistItem"
+            }
+          }
+        }
+      },
+      "PilotWeekOutcome": {
+        "required": [
+          "week",
+          "phase",
+          "recommendation",
+          "items",
+          "openP0",
+          "overdueP0",
+          "lateP0",
+          "reasons",
+          "hash"
+        ],
+        "type": "object",
+        "properties": {
+          "week": {
+            "type": "string"
+          },
+          "phase": {
+            "type": "string"
+          },
+          "recommendation": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotItemOutcome"
+            }
+          },
+          "openP0": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "overdueP0": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lateP0": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "hash": {
+            "type": "string"
+          },
+          "authority": {
+            "type": "string",
+            "default": "ProductOwnerHumanDecisionRequired;EngineRecommendsOnly;AiCannotDecide;SoftwareCannotCompletePilot"
+          }
+        }
+      },
+      "PilotWeekView": {
+        "required": [
+          "definition",
+          "startDate",
+          "endDateExclusive",
+          "outcome",
+          "links",
+          "closes",
+          "closeSequence",
+          "feedbackCount",
+          "allowedOutcomes"
+        ],
+        "type": "object",
+        "properties": {
+          "definition": {
+            "$ref": "#/components/schemas/PilotWeekDefinition"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "endDateExclusive": {
+            "type": "string",
+            "format": "date"
+          },
+          "outcome": {
+            "$ref": "#/components/schemas/PilotWeekOutcome"
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotLinkDto"
+            }
+          },
+          "closes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotWeekCloseDto"
+            }
+          },
+          "closeSequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "feedbackCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "allowedOutcomes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -63027,6 +65041,10 @@
               "null",
               "string"
             ]
+          },
+          "canLinkSafetyEvent": {
+            "type": "boolean",
+            "default": false
           }
         }
       },
@@ -63138,6 +65156,23 @@
             "$ref": "#/components/schemas/VoiceDraftSpan"
           }
         }
+      },
+      "VoiceDraftLinkSafetyEventCommand": {
+        "required": [
+          "expectedVersion",
+          "contentHash"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "contentHash": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
       },
       "VoiceDraftListItemDto": {
         "required": [
@@ -65170,6 +67205,9 @@
     },
     {
       "name": "PilotGateEndpoints"
+    },
+    {
+      "name": "PilotProgramEndpoints"
     },
     {
       "name": "ParameterEndpoints"

@@ -38,6 +38,7 @@ import { VoiceEventDraftWorkspace } from './product/VoiceEventDraftWorkspace';
 import { DocumentCompareWorkspace } from './product/DocumentCompareWorkspace';
 import { UatWorkspace } from './product/UatWorkspace';
 import { PilotGateWorkspace } from './product/PilotGateWorkspace';
+import { PilotProgramWorkspace } from './product/PilotProgramWorkspace';
 import { RiskTemplateLibraryWorkspace } from './product/RiskTemplateLibraryWorkspace';
 import { CriticalSparesWorkspace } from './product/CriticalSparesWorkspace';
 import { AuditReadyWorkspace } from './product/AuditReadyWorkspace';
@@ -114,6 +115,8 @@ export function App() {
         return <UatWorkspace />;
     if (/^\/app\/pilot-gate(?:\/|$)/.test(window.location.pathname))
         return <PilotGateWorkspace />;
+    if (/^\/app\/pilot-program(?:\/|$)/.test(window.location.pathname))
+        return <PilotProgramWorkspace />;
     if (/^\/app\/document-compare(?:\/|$)/.test(window.location.pathname))
         return <DocumentCompareWorkspace />;
     if (/^\/app\/work-order-center(?:\/|$)/.test(window.location.pathname))

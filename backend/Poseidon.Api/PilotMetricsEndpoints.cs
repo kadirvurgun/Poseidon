@@ -223,14 +223,19 @@ public static class PilotMetricsEndpoints
         if (actor == null || db.TenantId != actor.TenantId || !CanReadSummary(actor)) return await Fail(h, ReadAction, 403, "permission_denied");
         // Ship/tug mode isolation applies to analytics too.
         string[] areas = [.. (actor.CanSeeShip ? [PilotMetricsPolicy.Ship] : Array.Empty<string>()), .. (actor.CanSeeTug ? [PilotMetricsPolicy.Tug] : Array.Empty<string>())];
-        var settings = Settings(h);
-        var now = TechnicalRecordCommands.Now(h);
+        var summary = await BuildSummary(db, Settings(h), areas, window, TechnicalRecordCommands.Now(h), ct);
+        await TechnicalRecordCommands.Audit(h, ReadAction, "Success");
+        return Results.Json(summary, Json);
+    }
+
+    // Shared with the pilot value readout (DEV-079/096/121), which composes this summary without changing it:
+    // SUPPRESSED, UNKNOWN and UNAVAILABLE stay as such and are never replaced by zero.
+    internal static async Task<PilotMetricSummaryDto> BuildSummary(PoseidonDbContext db, PilotTelemetrySettings settings, string[] areas, int window,
+        DateTimeOffset now, CancellationToken ct)
+    {
         if (!settings.Configured)
-        {
-            await TechnicalRecordCommands.Audit(h, ReadAction, "Success");
-            return Results.Json(new PilotMetricSummaryDto(MetricEndpoints.ContractVersion, window, now.AddDays(-window), now, "DECLARED_UNVERIFIED", "UNCONFIGURED",
-                areas, PilotMetricsPolicy.Unavailable("RETENTION_UNCONFIGURED")), Json);
-        }
+            return new PilotMetricSummaryDto(MetricEndpoints.ContractVersion, window, now.AddDays(-window), now, "DECLARED_UNVERIFIED", "UNCONFIGURED",
+                areas, PilotMetricsPolicy.Unavailable("RETENTION_UNCONFIGURED"));
         var effective = Math.Min(window, settings.RetentionDays!.Value);
         var from = PilotMetricsPolicy.Hour(now.AddDays(-effective));
         PilotMetricResult[] items;
@@ -250,7 +255,6 @@ public static class PilotMetricsEndpoints
             catch (Exception ex) when (ex is JsonException or InvalidDataException or NotSupportedException)
             { items = PilotMetricsPolicy.Unavailable("SOURCE_UNREADABLE"); }
         }
-        await TechnicalRecordCommands.Audit(h, ReadAction, "Success");
-        return Results.Json(new PilotMetricSummaryDto(MetricEndpoints.ContractVersion, effective, from, now, "DECLARED_UNVERIFIED", "CONFIGURED", areas, items), Json);
+        return new PilotMetricSummaryDto(MetricEndpoints.ContractVersion, effective, from, now, "DECLARED_UNVERIFIED", "CONFIGURED", areas, items);
     }
 }
