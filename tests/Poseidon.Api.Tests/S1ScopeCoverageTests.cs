@@ -70,9 +70,10 @@ public sealed partial class DirectoryWorkspaceTests
         // Pilot kit adds 10 (DEV-076..079/095/096/121 program create, link, withdraw, feedback, issue report/triage/resolve,
         // measurement, week close, program decision).
         // QA S9/S10 notes hardening adds 1 (N7 late voice draft -> safety event DRAFT hand-off by the confirming human).
-        Assert.Equal(298, observed.Count);
-        Assert.Equal(289, observed.Count(x => x.IsCritical));
-        Assert.Equal(314, S1SecurityContract.CriticalOperationIds.Count);
+        // USER-ADMIN-01 adds 2 (membership create, membership grant revision).
+        Assert.Equal(300, observed.Count);
+        Assert.Equal(291, observed.Count(x => x.IsCritical));
+        Assert.Equal(316, S1SecurityContract.CriticalOperationIds.Count);
         Assert.Equal(9, observed.Count(x => !x.IsCritical));
         var extra = new RouteEndpoint(_ => Task.CompletedTask, RoutePatternFactory.Parse("/api/v1/unclassified-write"), 0,
             new EndpointMetadataCollection(new HttpMethodMetadata(["POST"]), new AuthorizeAttribute("DirectoryRead")), "unclassified");
