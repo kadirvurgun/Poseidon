@@ -3748,6 +3748,7 @@
       "notGrantable": "You do not hold every permission of this bundle",
       "notGrantablePermission": "Not held by you",
       "blocked_self_modification": "This is your own membership. Another administrator must change it.",
+      "blocked_configuration_shadowed": "The operator configuration has an entry for this identity; configuration takes precedence and the database grant here does not apply. It cannot be edited; contact the operator.",
       "blocked_configuration_managed": "This grant comes from the operator configuration (bootstrap/break-glass) and cannot be edited here.",
       "blocked_revoked": "A revoked membership cannot be edited.",
       "blocked_not_manager": "You can view but not change memberships.",

@@ -48,6 +48,14 @@ reads the new `ActorResolver.KnownPermissions` array instead of regex-parsing th
   (failed before the fix at MembershipAuditBeforeAfterTests.cs:166, 7/7 after); new integration tests 3/3 and
   persistence unit 155/155 re-run green.
 
+## QA notes on 2e61f7a3 (ACCEPT-WITH-NOTES) — fixed in one commit
+N2 grantor re-read inside the SERIALIZABLE transaction, N4 configuration shadowing (read-only `configuration_shadowed`,
+409 `configuration_managed`), N5 database-side filters/total/paging, N9 navigation needs `membership.read`; N3/N6/N8
+documented, N1 recorded as open follow-up USER-ADMIN-02 (UA-D10 in the task contract). Local results (22.11.2026):
+build 0 errors; Api non-integration 478/478; Api integration real PG, 28 filtered methods (incl. 3 new: >2000-row
+paging, shadowing, navigation) 31/31; frontend typecheck/lint exit 0, vitest user-admin + i18n + hardcoded-colors
+7 files / 91 tests passed. No deterministic N2 race test (see UA-D10).
+
 ## Open items
 See task contract: P5202-OPEN-01 eligibility lists, no display name, bundle catalog approval, 14 locales English
 fallback (`i18n_untranslated.py` will report them), IdP-side invitation/MFA.

@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Poseidon.Api;
 using Poseidon.Persistence;
+using Poseidon.Persistence.Seeding;
 using Xunit;
 
 namespace Poseidon.Api.Tests;
@@ -229,5 +230,98 @@ public sealed partial class DirectoryWorkspaceTests
             vessels: [new { vesselId = SeedVessel.Id, canEdit = false }], expected: 1)))
             Assert.Equal(HttpStatusCode.OK, narrowed.StatusCode);
         Assert.Empty((await member.GetFromJsonAsync<CurrentMembershipDto>("/api/v1/memberships/current", Ct))!.ReceivedDelegations);
+    }
+
+    // QA N5: filters, totals and paging are computed in the database over the whole tenant, not over a capped read.
+    [Fact]
+    [Trait("Requirement", "USER-ADMIN-01")]
+    public async Task Access_list_filters_counts_and_pages_in_the_database_beyond_two_thousand_rows()
+    {
+        await using var host = UserAdminHost();
+        using var admin = await Member(host, "synthetic");
+        var tenant = seed.Tenants[0].Id;
+        const int synthetic = 2005;
+        await using (var import = new PoseidonDbContext(SeedImporter.Options(postgres.GetConnectionString(), seed), Guid.Empty, ActorContext.SeedImport(), true))
+        {
+            for (var i = 0; i < synthetic; i++)
+            {
+                var account = Guid.NewGuid();
+                import.UserAccounts.Add(new UserAccount { TenantId = tenant, Id = account, Issuer = AccountMembershipFixtures.SyntheticIssuer,
+                    Subject = $"synthetic-bulk-{i:D5}", Source = "SyntheticUnverified", CreatedAt = DateTimeOffset.UnixEpoch });
+                import.AccountMemberships.Add(new AccountMembership { TenantId = tenant, Id = Guid.NewGuid(), AccountId = account, Status = "Active",
+                    StatusReason = "SyntheticFixture", StatusChangedAt = DateTimeOffset.UnixEpoch, AccessRevision = 0, Source = "SyntheticUnverified", CreatedAt = DateTimeOffset.UnixEpoch });
+            }
+            await import.SaveChangesAsync(Ct);
+        }
+        var created = new List<Guid>();
+        foreach (var subject in new[] { "bulk-reader-1", "bulk-reader-2", "bulk-reader-3" })
+            created.Add((await Created(admin, Create(subject, ["read-only"]))).Membership.Id);
+
+        var all = (await admin.GetFromJsonAsync<MembershipAccessPageDto>("/api/v1/memberships/access?limit=100", Ct))!;
+        Assert.Equal(synthetic + 3, all.Total);
+        Assert.Equal(100, all.Items.Length); Assert.True(all.HasMore);
+        var tail = (await admin.GetFromJsonAsync<MembershipAccessPageDto>("/api/v1/memberships/access?limit=100&offset=2000", Ct))!;
+        Assert.Equal(8, tail.Items.Length); Assert.False(tail.HasMore);
+        var first = (await admin.GetFromJsonAsync<MembershipAccessPageDto>("/api/v1/memberships/access?bundle=read-only&limit=2", Ct))!;
+        Assert.Equal((3, 2, true), (first.Total, first.Items.Length, first.HasMore));
+        var second = (await admin.GetFromJsonAsync<MembershipAccessPageDto>("/api/v1/memberships/access?bundle=read-only&limit=2&offset=2", Ct))!;
+        Assert.Equal((3, 1, false), (second.Total, second.Items.Length, second.HasMore));
+        Assert.Equal(created.Order(), first.Items.Concat(second.Items).Select(x => x.Id).Order());
+        var bySubject = (await admin.GetFromJsonAsync<MembershipAccessPageDto>("/api/v1/memberships/access?q=synthetic-bulk-02004", Ct))!;
+        Assert.Equal(1, bySubject.Total);
+        var byPrefix = (await admin.GetFromJsonAsync<MembershipAccessPageDto>($"/api/v1/memberships/access?q={created[0].ToString("D")[..13].ToUpperInvariant()}", Ct))!;
+        Assert.Contains(byPrefix.Items, x => x.Id == created[0]);
+        Assert.Equal(0, (await admin.GetFromJsonAsync<MembershipAccessPageDto>("/api/v1/memberships/access?status=Suspended&limit=1", Ct))!.Total);
+    }
+
+    // QA N4: an operator entry for a provisioned identity (other tenant/actor) shadows the database grant: the screen
+    // shows configuration governance without leaking that entry, grant edits are refused and the session gets no grant.
+    [Fact]
+    [Trait("Requirement", "USER-ADMIN-01")]
+    public async Task A_configuration_entry_shadows_a_provisioned_grant_which_becomes_read_only()
+    {
+        await using var host = UserAdminHost();
+        using var admin = await Member(host, "synthetic");
+        var tenant = seed.Tenants[0].Id;
+        var view = await Created(admin, Create("provisioned-shadow", ["read-only"]));
+        using var member = await Provisioned(host, "provisioned-shadow", tenant, view.Membership.AccountId);
+        Assert.Equal(HttpStatusCode.OK, (await member.GetAsync("/api/v1/vessels", Ct)).StatusCode);
+        var settings = host.Services.GetRequiredService<FederationSettings>();
+        var original = settings.Memberships[4]; // other-tenant-admin: different tenant and actor id.
+        settings.Memberships[4] = original with { Subject = "provisioned-shadow" };
+        try
+        {
+            var shadowed = (await admin.GetFromJsonAsync<MembershipAccessDto>($"/api/v1/memberships/{view.Membership.Id}/access", Ct))!;
+            Assert.Equal(("Configuration", "configuration_shadowed", false), (shadowed.Membership.ManagedBy, shadowed.EditBlockedReason, shadowed.Editable));
+            Assert.Equal((0, (int?)null), (shadowed.Membership.PermissionCount, shadowed.Membership.GrantRevision));
+            Assert.Empty(shadowed.Permissions); Assert.Empty(shadowed.Membership.Bundles);
+            using (var edit = await Post(admin, $"memberships/{view.Membership.Id}/grant", Grant(["read-only"], expected: 1)))
+            { Assert.Equal(HttpStatusCode.Conflict, edit.StatusCode); Assert.Equal("configuration_managed", await MembershipCode(edit)); }
+            Assert.DoesNotContain((await admin.GetFromJsonAsync<MembershipAccessPageDto>("/api/v1/memberships/access?bundle=read-only&limit=100", Ct))!.Items,
+                x => x.Id == view.Membership.Id);
+            // Configuration governs the identity entirely: it resolves to the configured actor/tenant, never to the DB grant.
+            var current = (await member.GetFromJsonAsync<CurrentMembershipDto>("/api/v1/memberships/current", Ct))!;
+            Assert.Equal((otherTenantAdmin, seed.Tenants[1].Id), (current.ActorId, current.TenantId));
+        }
+        finally { settings.Memberships[4] = original; }
+        Assert.Equal("Database", (await admin.GetFromJsonAsync<MembershipAccessDto>($"/api/v1/memberships/{view.Membership.Id}/access", Ct))!.Membership.ManagedBy);
+    }
+
+    // QA N9: the user-admin destination is projected only with explicit membership.read and tenant-wide scope.
+    [Fact]
+    [Trait("Requirement", "USER-ADMIN-01")]
+    public async Task User_admin_destination_needs_membership_read()
+    {
+        await using var host = UserAdminHost();
+        async Task<bool> Has(string subject)
+        {
+            using var client = await Member(host, subject);
+            var body = await client.GetFromJsonAsync<System.Text.Json.JsonElement>("/api/v1/workspace", Ct);
+            return body.GetProperty("destinations").EnumerateArray().Any(d => d.GetProperty("key").GetString() == "user-admin" &&
+                d.GetProperty("href").GetString() == "/app/user-admin");
+        }
+        Assert.True(await Has("synthetic"));   // membership.read + membership.manage, tenant-wide manage.
+        Assert.False(await Has("admin-c"));    // membership.manage only.
+        Assert.False(await Has("member-b"));   // no membership permission.
     }
 }

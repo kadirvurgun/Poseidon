@@ -63,18 +63,20 @@ public static partial class MembershipEndpoints
             .Accepts<MembershipGrantCommand>("application/json").Produces<MembershipAccessDto>();
     }
 
-    private sealed record AccessRow(AccountMembership Membership, string Issuer, string Subject, ProvisionedGrant? Grant, Membership? Config);
+    // Shadowed (QA N4): the operator configuration has an entry for this identity that is not this exact tenant/actor
+    // binding. Configuration always governs the identity (ActorResolver), so a database grant on it never applies.
+    private sealed record AccessRow(AccountMembership Membership, string Issuer, string Subject, ProvisionedGrant? Grant, Membership? Config, bool Shadowed);
 
     private static async Task<AccessRow[]> AccessRows(PoseidonDbContext db, FederationSettings settings, Guid tenant, IQueryable<AccountMembership> query, CancellationToken ct)
     {
         var rows = await query.Join(db.UserAccounts.AsNoTracking(), m => m.AccountId, a => a.Id, (m, a) => new { m, a.Issuer, a.Subject })
-            .Take(2000).ToArrayAsync(ct);
+            .ToArrayAsync(ct);
         var grants = await ProvisionedGrants.LoadAsync(db, rows.Where(r => r.m.Source == ProvisionedGrants.Source).Select(r => r.m.Id).ToArray(), ct);
         return rows.Select(r =>
         {
             var config = settings.Memberships.Where(c => c.Issuer == r.Issuer && c.Subject == r.Subject).ToArray();
-            return new AccessRow(r.m, r.Issuer, r.Subject, grants.GetValueOrDefault(r.m.Id),
-                config.Length == 1 && config[0].TenantId == tenant && config[0].ActorId == r.m.AccountId ? config[0] : null);
+            var exact = config.Length == 1 && config[0].TenantId == tenant && config[0].ActorId == r.m.AccountId ? config[0] : null;
+            return new AccessRow(r.m, r.Issuer, r.Subject, grants.GetValueOrDefault(r.m.Id), exact, exact == null && config.Length > 0);
         }).ToArray();
     }
 
@@ -85,6 +87,10 @@ public static partial class MembershipEndpoints
             return new(m.Id, m.AccountId, m.Status, m.StatusReason, m.Source, "Configuration", [], ActorResolver.TrustedPermissions(c.Permissions).Length,
                 c.TenantWideRead, c.TenantWideManage, (c.VesselGrants ?? []).Count(g => g.VesselId != Guid.Empty), admins.Contains(m.AccountId),
                 m.AccountId == self, m.StatusChangedAt, m.Version, m.AccessRevision, null);
+        // A shadowed identity is governed by an operator entry this tenant must not see: no grant values are shown.
+        if (r.Shadowed)
+            return new(m.Id, m.AccountId, m.Status, m.StatusReason, m.Source, "Configuration", [], 0, false, false, 0, false, m.AccountId == self,
+                m.StatusChangedAt, m.Version, m.AccessRevision, null);
         if (r.Grant is { } g)
             return new(m.Id, m.AccountId, m.Status, m.StatusReason, m.Source, "Database", g.Bundles, ActorResolver.TrustedPermissions(g.Permissions).Length,
                 g.TenantWideRead, g.TenantWideManage, g.VesselGrants.Length, admins.Contains(m.AccountId), m.AccountId == self,
@@ -106,7 +112,8 @@ public static partial class MembershipEndpoints
             MembershipGrantPolicy.Split(g.Permissions).Length, g.TenantWideRead, g.TenantWideManage, g.ActiveCompanyId, counts.GetValueOrDefault(g.Revision),
             Guid.TryParse(g.GrantedBy, out var by) ? by : Guid.Empty, g.CreatedAt)).ToArray();
         string? blocked = !CanManageMemberships(actor) ? "not_manager" : MembershipGrantPolicy.IsSelf(actor.Id, row.Membership.AccountId) ? MembershipGrantPolicy.SelfModification
-            : row.Config != null || row.Grant == null ? MembershipGrantPolicy.ConfigurationManaged : row.Membership.Status == "Revoked" ? "revoked" : null;
+            : row.Config != null ? MembershipGrantPolicy.ConfigurationManaged : row.Shadowed ? ConfigurationShadowed
+            : row.Grant == null ? MembershipGrantPolicy.ConfigurationManaged : row.Membership.Status == "Revoked" ? "revoked" : null;
         string[] individual = [], permissions = [];
         Guid? company = null; VesselGrant[] vessels = [];
         if (row.Config is { } c)
@@ -115,7 +122,7 @@ public static partial class MembershipEndpoints
             company = c.ActiveCompanyId is { } configured && configured != Guid.Empty ? configured : null;
             vessels = [.. (c.VesselGrants ?? []).Where(v => v.VesselId != Guid.Empty).OrderBy(v => v.VesselId)];
         }
-        else if (row.Grant is { } g)
+        else if (!row.Shadowed && row.Grant is { } g)
         {
             individual = g.IndividualPermissions; permissions = [.. ActorResolver.TrustedPermissions(g.Permissions)];
             company = g.ActiveCompanyId; vessels = g.VesselGrants;
@@ -140,11 +147,6 @@ public static partial class MembershipEndpoints
             actor.TenantWideManage, vessels, companies, DelegationPolicy.ReasonCodes, string.IsNullOrWhiteSpace(settings.Issuer) ? null : settings.Issuer, actor.Id));
     }
 
-    private static bool Matches(AccessRow r, string q) =>
-        r.Membership.Id.ToString("D").StartsWith(q, StringComparison.OrdinalIgnoreCase) ||
-        r.Membership.AccountId.ToString("D").StartsWith(q, StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(r.Subject, q, StringComparison.Ordinal);
-
     private static async Task<IResult> AccessList(HttpContext h, PoseidonDbContext db, FederationSettings settings, SecurityAudit audit,
         string? offset, string? limit, string? status, string? bundle, string? q)
     {
@@ -156,14 +158,30 @@ public static partial class MembershipEndpoints
             status != null && MembershipLifecyclePolicy.Parse(status) == null || bundle != null && MembershipRoleBundles.Find(bundle) == null ||
             q != null && (q.Trim().Length is 0 or > 255 || q.Any(char.IsControl));
         if (invalid) { await audit.WriteAsync(h, "MembershipRead", "invalid_query"); return Problem(h, 400, "invalid_query"); }
-        var rows = await AccessRows(db, settings, actor.TenantId, db.AccountMemberships.AsNoTracking().Where(m => status == null || m.Status == status), h.RequestAborted);
+        var query = db.AccountMemberships.AsNoTracking().Join(db.UserAccounts.AsNoTracking(), m => m.AccountId, a => a.Id, (m, a) => new { m, a });
+        if (status != null) query = query.Where(x => x.m.Status == status);
+        if (q?.Trim() is { } needle)
+        {
+            var prefix = needle.ToLowerInvariant();
+            query = query.Where(x => x.m.Id.ToString().StartsWith(prefix) || x.m.AccountId.ToString().StartsWith(prefix) || x.a.Subject == needle);
+        }
+        if (bundle != null)
+        {
+            // Only governing database grants: AdminProvisioned, not shadowed by any operator entry, bundle in the LATEST revision.
+            var configured = settings.Memberships.Select(c => c.Issuer + "\n" + c.Subject).Distinct().ToArray();
+            var token = "," + bundle + ",";
+            query = query.Where(x => x.m.Source == ProvisionedGrants.Source && !configured.Contains(x.a.Issuer + "\n" + x.a.Subject) &&
+                db.MembershipGrantRevisions.Any(g => g.MembershipId == x.m.Id && ("," + g.Bundles + ",").Contains(token) &&
+                    g.Revision == db.MembershipGrantRevisions.Where(r => r.MembershipId == x.m.Id).Max(r => r.Revision)));
+        }
+        var total = await query.CountAsync(h.RequestAborted);
+        var ids = await query.OrderBy(x => x.m.AccountId).ThenBy(x => x.m.Id).Skip(skip).Take(take).Select(x => x.m.Id).ToArrayAsync(h.RequestAborted);
+        var rows = (await AccessRows(db, settings, actor.TenantId, db.AccountMemberships.AsNoTracking().Where(m => ids.Contains(m.Id)), h.RequestAborted))
+            .ToDictionary(r => r.Membership.Id);
         var admins = await ActiveAdministrators(db, settings, actor.TenantId, h.RequestAborted);
-        var needle = q?.Trim();
-        var filtered = rows.Where(r => (bundle == null || r.Grant?.Bundles.Contains(bundle) == true) && (needle == null || Matches(r, needle)))
-            .OrderBy(r => r.Membership.AccountId).ThenBy(r => r.Membership.Id).ToArray();
-        var page = filtered.Skip(skip).Take(take).Select(r => Summary(r, admins, actor.Id)).ToArray();
+        var page = ids.Where(rows.ContainsKey).Select(id => Summary(rows[id], admins, actor.Id)).ToArray();
         await audit.WriteAsync(h, "MembershipRead", "Success");
-        return Results.Ok(new MembershipAccessPageDto(page, skip, take, filtered.Length > skip + take, filtered.Length));
+        return Results.Ok(new MembershipAccessPageDto(page, skip, take, total > skip + take, total));
     }
 
     private static async Task<IResult> AccessDetail(Guid id, HttpContext h, PoseidonDbContext db, FederationSettings settings, SecurityAudit audit)
@@ -176,14 +194,35 @@ public static partial class MembershipEndpoints
         return Results.Ok(view);
     }
 
-    // Validates the grant against the caller's authority and the tenant's real vessels/companies (tenant filter ⇒ a
-    // foreign vessel or company id is unknown here).
-    private static async Task<(GrantOutcome Outcome, Dictionary<string, string[]> Errors)> CheckGrant(PoseidonDbContext db, TrustedActor actor,
+    internal const string ConfigurationShadowed = "configuration_shadowed";
+
+    // QA N9: the navigation destination needs explicit membership.read (manage-only callers keep the API routes).
+    internal static bool ShowsUserAdministration(TrustedActor a) => CanReadMemberships(a) && a.Permissions.Contains("membership.read");
+
+    // QA N2: the grantor's CURRENT authority, read inside the command's SERIALIZABLE transaction. A configured actor's
+    // grant is the static operator source (its persisted lifecycle is fenced by Run); a provisioned actor's grant is
+    // re-read from its latest revision, so a concurrent demotion either serializes before this read or aborts (40001,
+    // classified by Run through PostgresFailure). Null ⇒ the caller no longer manages memberships.
+    private static async Task<Grantor?> CurrentGrantor(PoseidonDbContext db, HttpContext h, TrustedActor actor, CancellationToken ct)
+    {
+        if (h.RequestServices.GetRequiredService<ActorResolver>().ProvisionedIdentityFor(h.User) == null)
+            return new Grantor(actor.Id, actor.Permissions, actor.TenantWideRead, actor.TenantWideManage);
+        var self = await db.AccountMemberships.AsNoTracking().Where(m => m.AccountId == actor.Id && m.Source == ProvisionedGrants.Source && m.Status == "Active")
+            .Select(m => m.Id).Take(2).ToArrayAsync(ct);
+        if (self.Length != 1 || (await ProvisionedGrants.LoadAsync(db, self, ct)).GetValueOrDefault(self[0]) is not { } grant) return null;
+        var permissions = ActorResolver.TrustedPermissions(grant.Permissions);
+        var fresh = new TrustedActor(actor.Id, actor.TenantId, permissions, grant.TenantWideRead, grant.TenantWideManage, grant.VesselGrants)
+            { RoleContext = grant.RoleContext, ActiveCompanyId = grant.ActiveCompanyId };
+        return CanManageMemberships(fresh) ? new Grantor(actor.Id, permissions, grant.TenantWideRead, grant.TenantWideManage) : null;
+    }
+
+    // Validates the grant against the grantor's current authority and the tenant's real vessels/companies (tenant
+    // filter ⇒ a foreign vessel or company id is unknown here).
+    private static async Task<(GrantOutcome Outcome, Dictionary<string, string[]> Errors)> CheckGrant(PoseidonDbContext db, Grantor grantor,
         string[]? bundles, string[]? permissions, bool tenantWideRead, bool tenantWideManage, Guid? company, MembershipVesselGrantCommand[]? vessels, CancellationToken ct)
     {
         var requested = (vessels ?? []).Select(v => v == null ? new VesselAccess(Guid.Empty, false) : new VesselAccess(v.VesselId, v.CanEdit)).ToArray();
-        var outcome = MembershipGrantPolicy.Validate(new GrantRequest(bundles, permissions, tenantWideRead, tenantWideManage, requested),
-            new Grantor(actor.Id, actor.Permissions, actor.TenantWideRead, actor.TenantWideManage), Known);
+        var outcome = MembershipGrantPolicy.Validate(new GrantRequest(bundles, permissions, tenantWideRead, tenantWideManage, requested), grantor, Known);
         var errors = new Dictionary<string, string[]>(outcome.Errors, StringComparer.Ordinal);
         if (outcome.Vessels.Length > 0)
         {
@@ -244,7 +283,8 @@ public static partial class MembershipEndpoints
             var errors = new Dictionary<string, string[]>(StringComparer.Ordinal);
             if (!ValidIssuer(command.Issuer, settings)) errors["issuer"] = [command.Issuer is { Length: > 0 } ? "issuer_not_trusted" : "required"];
             if (!ValidSubject(command.Subject)) errors["subject"] = [command.Subject is { Length: > 0 } ? "invalid" : "required"];
-            var (outcome, grantErrors) = await CheckGrant(db, actor, command.Bundles, command.Permissions, read, manage, command.ActiveCompanyId, command.VesselGrants, h.RequestAborted);
+            if (await CurrentGrantor(db, h, actor, h.RequestAborted) is not { } grantor) return (Problem(h, 409, "conflict_changed"), "conflict_changed");
+            var (outcome, grantErrors) = await CheckGrant(db, grantor, command.Bundles, command.Permissions, read, manage, command.ActiveCompanyId, command.VesselGrants, h.RequestAborted);
             foreach (var (k, v) in grantErrors) errors[k] = v;
             if (errors.Count > 0) return (Problem(h, 400, "validation_failed", errors), "validation_failed");
             // The operator configuration stays the bootstrap/break-glass source for its identities; a provisioned
@@ -306,11 +346,12 @@ public static partial class MembershipEndpoints
                 h.Response.Headers["Idempotency-Replayed"] = "true";
                 return (Results.Ok(await AccessView(db, settings, actor, id, h.RequestAborted)), "Success");
             }
-            if (row.Config != null || row.Grant == null || row.Membership.Source != ProvisionedGrants.Source)
+            if (row.Config != null || row.Shadowed || row.Grant == null || row.Membership.Source != ProvisionedGrants.Source)
                 return (Problem(h, 409, MembershipGrantPolicy.ConfigurationManaged), MembershipGrantPolicy.ConfigurationManaged);
             if (row.Membership.Status == "Revoked") return (Problem(h, 409, "invalid_transition"), "invalid_transition");
             if (row.Grant.Revision != command.ExpectedVersion) return (Problem(h, 409, "version_conflict"), "version_conflict");
-            var (outcome, errors) = await CheckGrant(db, actor, command.Bundles, command.Permissions, read, manage, command.ActiveCompanyId, command.VesselGrants, h.RequestAborted);
+            if (await CurrentGrantor(db, h, actor, h.RequestAborted) is not { } grantor) return (Problem(h, 409, "conflict_changed"), "conflict_changed");
+            var (outcome, errors) = await CheckGrant(db, grantor, command.Bundles, command.Permissions, read, manage, command.ActiveCompanyId, command.VesselGrants, h.RequestAborted);
             if (errors.Count > 0) return (Problem(h, 400, "validation_failed", errors), "validation_failed");
             // Last-admin guard (P5202-D04 predicate) counted inside the same SERIALIZABLE transaction.
             var admins = await ActiveAdministrators(db, settings, actor.TenantId, h.RequestAborted);

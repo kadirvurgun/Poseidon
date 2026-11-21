@@ -3748,6 +3748,7 @@
       "notGrantable": "Bu paketin tüm yetkileri sizde değil",
       "notGrantablePermission": "Sizde yok",
       "blocked_self_modification": "Bu sizin üyeliğiniz. Başka bir yönetici değiştirmelidir.",
+      "blocked_configuration_shadowed": "Bu kimlik için operatör yapılandırmasında bir kayıt var; yapılandırma önceliklidir ve buradaki veritabanı yetkisi uygulanmaz. Düzenlenemez; operatörle görüşün.",
       "blocked_configuration_managed": "Bu yetki operatör yapılandırmasından gelir (başlangıç/acil durum) ve burada düzenlenemez.",
       "blocked_revoked": "İptal edilmiş üyelik düzenlenemez.",
       "blocked_not_manager": "Üyelikleri görebilir ama değiştiremezsiniz.",
