@@ -1,8 +1,8 @@
 # Claude handoff
 
-STATUS: IN_PROGRESS
+STATUS: DONE
 Güncelleme: 2026-11-21 14:45 (14:41 zamanlanmış oturum)
-in_progress: 2026-11-21 14:41 zamanlanmış oturum (claude/loop)
+in_progress: yok (14:41 oturumu bitti)
 
 ## KOTA KURALI (zorunlu)
 Her büyük adımdan önce `C:\Users\avurgun\.claude-poseidon\statusline\cache\usage.json` oku (`fiveHourPct`, `resetsAt`). `fiveHourPct >= 97` ise yeni iş başlatma, durumu bu dosyaya yaz, commit et ve çık. `>= 90` ise yeni alt-ajan başlatma, yalnız mevcut işi bitir. Alt-ajanları aynı anda en fazla 3 tut.
@@ -292,3 +292,5 @@ Main: #16 #17 #18 #20 #23 #36 + **#37 paket 2** birleşik (`2995f70`, 19.11 ~08:
 - **Çakışma:** etkileşimli oturum poseidon-05 (14:45) paralel olarak efactor/timeprovider-20261121 46a4892a (97 dosya, daha geniş) ve eature/theme-complete-20261121 üzerinde çalışıyor. Benim ix/api-timeprovider-20261121 4c79f263 mükerrer → **birleştirilmeyecek** (poseidon-05'inki esas). Bu oturum yalnız #51 + ix/pilot-decision-sod-20261121 **46d3d382** (karar geri bildirim yazarlarını dışlar, migration 20261124100000, W4 pin testi, 503 eşlemesi; Domain 1626, Persistence 150, API unit 463, model değişikliği yok; PG DEFERRED → CI 44902450640).
 - 46d3d382 bağımsız QA **PASS-WITH-NOTES** (Down gövdesi bayt-eşit, 503 yalnız PostgresFailure sonrasında; PilotProgramPolicyTests 12/12, PilotProgramStorageGuardTests 5/5; notlar düşük: domain linked.Contains kayıt tipi kontrolsüz — zararsız). poseidon-05 ile anlaşma: timeprovider+theme onda (integration/polish-bundle-20261121), #51 + pilot-sod bende; ix/api-timeprovider-20261121 terk edildi.
 - 46d3d382 push CI 44902450640 **yeşil**. **#51 birleşti → main f22214ad.** pilot-sod'a main birleşimi 8e6ddbd5 (içerik farkı yok) → **PR #52** açıldı; CI bekleniyor, yeşilse gh pr merge 52 --merge --match-head-commit <tam SHA>.
+- PR #52 CI push 44905744952 + PR 44905748727 **yeşil** → **#52 birleşti, main 84d4cd6e**. Açık PR yok (bu oturumun kapsamında).
+- **STATUS: DONE gerekçesi:** canonical 121 işin 114'ü kabul (932/970 SP, %96,08); kalan 7 pilot işi (DEV-076–079/095/096/121, 38 SP) yazılım kiti main'de, AUTHORED_UNVERIFIED — gerçek pilot, insan/uzman imzası ve operatör aktivasyonu gerektirir; ajan bunları kapatamaz/uyduramaz. Kalan yazılım cilası (saat TimeProvider refaktörü efactor/timeprovider-20261121 + tema eature/theme-complete-20261121 → integration/polish-bundle-20261121) etkileşimli oturum poseidon-05'in sahipliğinde. Terk edilen mükerrer dal: ix/api-timeprovider-20261121 (birleştirme). Sonraki zamanlanmış oturum yeniden açılırsa: polish-bundle PR durumunu kontrol et, yalnız kırmızı CI/QA notu varsa devam et.
