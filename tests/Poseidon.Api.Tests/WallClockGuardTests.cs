@@ -19,7 +19,7 @@ public sealed class WallClockGuardTests
     {
         ["backend/Poseidon.Api/Startup.cs"] = 1,                          // single DI registration
         ["backend/Poseidon.DbMigrator/MigrationDesignTimeServices.cs"] = 1, // design-time migration id tooling
-        ["backend/Poseidon.Persistence/PoseidonDbContext.cs"] = 1,        // Clock fallback for offline tools (DbMigrator/seed)
+        ["backend/Poseidon.Persistence/PoseidonDbContext.cs"] = 2,        // Clock fallback for offline tools + audit recording clock
         ["backend/Poseidon.Api/CertificateExtractionProvider.cs"] = 2,    // timeout timer fallback when no TimeProvider is injected
     };
 

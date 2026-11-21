@@ -12,6 +12,9 @@ public sealed class PoseidonDbContext(
 {
     // Single clock seam for persistence timestamps; hosts pass the DI TimeProvider, offline tools default to the system clock.
     public TimeProvider Clock { get; } = timeProvider ?? TimeProvider.System;
+    // Audit rows record the physical write instant, never the injectable business clock: a shifted
+    // test/business clock must not forward- or back-date the audit trail (CriticalWriteCoverageCapture).
+    public static TimeProvider AuditRecordingClock { get; } = TimeProvider.System;
     public IQualifiedInputRuntime? QualifiedInputs { get; } = qualifiedInputs;
     public Guid TenantId { get; } = tenantId;
     public bool IsAdministrativeImport { get; } = administrativeImport;
@@ -1177,7 +1180,7 @@ public sealed class PoseidonDbContext(
                     entry.Entity is ControlEvidenceReceipt controlReceipt ? controlReceipt.ResourceId.ToString() :
                     entry.Entity is VesselProfileFieldSourceReceipt fieldReceipt ? fieldReceipt.VesselId + "/" + fieldReceipt.FieldPath + "/" + fieldReceipt.Sequence :
                     string.Join('/', key.Select(p => entry.Property(p.Name).CurrentValue)),
-                CorrelationId = actor.CorrelationId, OccurredAt = Clock.GetUtcNow(),
+                CorrelationId = actor.CorrelationId, OccurredAt = AuditRecordingClock.GetUtcNow(),
                 VesselId = metadata.VesselId, ResourceId = metadata.ResourceId,
                 BeforeVersion = entry.State == EntityState.Modified && entry.Metadata.FindProperty("Version") != null ? (uint?)entry.Property("Version").OriginalValue : null,
                 // Receipt save happens after PostgreSQL returned the business xmin, inside the same transaction.

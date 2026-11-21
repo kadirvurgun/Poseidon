@@ -21,7 +21,7 @@ public sealed class SecurityAudit(IConfiguration configuration, ActorResolver ac
             {
                 Id = Guid.NewGuid(), TenantId = actor?.TenantId, ActorId = actor?.Id.ToString(),
                 ResourceId = resourceId,
-                Action = action, Result = result, CorrelationId = http.TraceIdentifier, OccurredAt = http.UtcNow()
+                Action = action, Result = result, CorrelationId = http.TraceIdentifier, OccurredAt = PoseidonDbContext.AuditRecordingClock.GetUtcNow()
             }, deadline.Token);
             persisted = true;
         }
