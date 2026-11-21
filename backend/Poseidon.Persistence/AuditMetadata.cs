@@ -31,7 +31,9 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             RiskCommandReceipt { VesselId: null } => "Tenant",
             // S10 WP-A DEV-113: an import mapping is tenant configuration (no vessel); its receipt carries no vessel either.
             AssuranceImportMapping or AssuranceReceipt { VesselId: null } => "Tenant",
+            PilotMetricBatch or PilotMetricTenantSalt or PilotMetricReceipt => "Tenant",
             ApplicabilityReceipt r when r.Action is "author" or "review" => "Tenant",
+            UatThreshold or UatRun or UatStepResult or UatFinding or PilotSupportCheck or PilotGateDecision or PilotReceipt => "Tenant",
             _ => "Unresolved"
         };
         if (requireResolvedScope && scopeKind == "Unresolved")
@@ -63,11 +65,14 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if (PmsProjection(entry) is { } pms) return pms;
         if (TechnicalRecordProjection(entry) is { } technical) return technical;
         if (S9WpcProjection(entry) is { } s9wpc) return s9wpc;
+        if (PilotMetricsProjection(entry) is { } pilot) return pilot;
         if (TowageProjection(entry) is { } towage) return towage;
         if (SafetyEventProjection(entry) is { } safety) return safety;
         if (AssuranceProjection(entry) is { } assurance) return assurance;
         if (FieldOperationsProjection(entry) is { } field) return field;
         if (TugOperationsOfflineProjection(entry) is { } tugOffline) return tugOffline;
+        if (ImportReconciliationProjection(entry) is { } reconciliation) return reconciliation;
+        if (PilotGateProjection(entry) is { } pilotGate) return pilotGate;
         if(entry.Entity is Defect defect)
             return new(defect.VesselId,defect.Id,"Defect",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,defect.Revision,
                 Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(defect.Revision)),Field("Binding",null,"OwnerReference")));
@@ -596,6 +601,36 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if (entry.Entity is DepartureReceipt departureReceipt)
             return new(departureReceipt.VesselId, departureReceipt.RecordId, "DepartureReceipt", null, departureReceipt.Sequence, Fields(
                 Field("Action", null, Closed(departureReceipt.Action, DepartureStorage.ReceiptActions)), Field("Binding", null, "CommittedResource")));
+        // S11 WP-C DEV-073/093: closed codes only; notes, source references, editions, issue ids and qualification refs are withheld.
+        if (entry.Entity is RegulatoryReviewCampaign reviewCampaign)
+            return new(reviewCampaign.VesselId, reviewCampaign.Id, "RegulatoryReviewCampaign", null, null, Fields(
+                Field("Scope", null, Closed(reviewCampaign.Scope, RegulatoryReviewPolicy.Scopes)),
+                Field("State", entry.State == EntityState.Added ? null : Closed((string)entry.Property("State").OriginalValue!, RegulatoryReviewPolicy.States), Closed(reviewCampaign.State, RegulatoryReviewPolicy.States)),
+                Field("ItemCount", null, Number(reviewCampaign.ItemCount)), Field("OpenItemsAtClose", null, reviewCampaign.OpenItemsAtClose is { } open ? Number(open) : null),
+                Field("Provenance", null, Closed(reviewCampaign.Provenance, "Recorded", "SyntheticUnverified")),
+                Field("PinHash", null, null, "ValuesWithheld"), Field("CloseReason", null, null, "ValuesWithheld"),
+                Field("Binding", entry.State == EntityState.Added ? null : "OwnerReference", "OwnerReference")));
+        if (entry.Entity is RegulatoryReviewItem reviewItem)
+            return new(reviewItem.VesselId, reviewItem.Id, "RegulatoryReviewItem",
+                entry.State == EntityState.Added ? null : (int)entry.Property("VerdictCount").OriginalValue!, reviewItem.VerdictCount, Fields(
+                Field("Kind", null, Closed(reviewItem.Kind, RegulatoryReviewPolicy.Kinds)),
+                Field("Verdict", entry.State == EntityState.Added ? null : Closed((string)entry.Property("Verdict").OriginalValue!, RegulatoryReviewPolicy.Verdicts), Closed(reviewItem.Verdict, RegulatoryReviewPolicy.Verdicts)),
+                Field("SourceAuthority", null, reviewItem.SourceAuthority == null ? null : Closed(reviewItem.SourceAuthority, RegulatoryReviewPolicy.Authorities)),
+                Field("OwnerRole", null, Closed(reviewItem.OwnerRole, RegulatoryReviewPolicy.OwnerRoles)),
+                Field("Provenance", null, Closed(reviewItem.Provenance, "Recorded", "SyntheticUnverified")),
+                Field("SourceReference", null, null, "ValuesWithheld"), Field("TrackedIssueId", null, null, "ValuesWithheld"),
+                Field("Binding", entry.State == EntityState.Added ? null : "OwnerReference", "OwnerReference")));
+        if (entry.Entity is RegulatoryReviewVerdict reviewVerdict)
+            return new(reviewVerdict.VesselId, reviewVerdict.ItemId, "RegulatoryReviewVerdict", null, reviewVerdict.Sequence, Fields(
+                Field("Verdict", null, Closed(reviewVerdict.Verdict, RegulatoryReviewPolicy.Verdicts)),
+                Field("SourceAuthority", null, reviewVerdict.SourceAuthority == null ? null : Closed(reviewVerdict.SourceAuthority, RegulatoryReviewPolicy.Authorities)),
+                Field("OwnerRole", null, Closed(reviewVerdict.OwnerRole, RegulatoryReviewPolicy.OwnerRoles)),
+                Field("QualificationState", null, Closed(reviewVerdict.QualificationState, RegulatoryReviewPolicy.QualificationVerified, "UNVERIFIED")),
+                Field("Sequence", null, Number(reviewVerdict.Sequence)), Field("Note", null, null, "ValuesWithheld"), Field("QualificationRef", null, null, "ValuesWithheld"),
+                Field("SourceReference", null, null, "ValuesWithheld"), Field("TrackedIssueId", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference")));
+        if (entry.Entity is RegulatoryReviewReceipt regulatoryReviewReceipt)
+            return new(regulatoryReviewReceipt.VesselId, regulatoryReviewReceipt.RecordId, "RegulatoryReviewReceipt", null, null, Fields(
+                Field("Action", null, Closed(regulatoryReviewReceipt.Action, RegulatoryReviewStorage.ReceiptActions)), Field("Binding", null, "CommittedResource")));
         if (entry.Entity is TechnicalOwner or TugOwner)
             return new(vessel, resource, "OwnerReference", null, null, Fields(Field("Binding", null, "OwnerReference")));
         if (entry.Entity is CrewPosition)
@@ -873,6 +908,24 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         };
     }
 
+    // S11 WP-B DEV-072: schema version, event count and a fixed operation only. Event codes, buckets,
+    // timestamps, the retention reference and the tenant salt are never copied. A purge (Deleted) row
+    // carries the same single revision as its insert, so before/after stay provable.
+    private static AuditMetadata? PilotMetricsProjection(EntityEntry entry)
+    {
+        long? Before() => entry.State == EntityState.Added ? null : 1;
+        return entry.Entity switch
+        {
+            PilotMetricBatch b => new(null, b.Id, "PilotMetricBatch", Before(), 1, Fields(
+                Field("SchemaVersion", null, Closed(b.SchemaVersion, Poseidon.Domain.PilotMetricsPolicy.SchemaVersion)),
+                Field("EventCount", null, Number(b.EventCount)), Field("Events", null, null, "ValuesWithheld"), Field("Buckets", null, null, "ValuesWithheld"))),
+            PilotMetricTenantSalt t => new(null, t.TenantId, "PilotMetricTenantSalt", null, 1, Fields(Field("Salt", null, null, "ValuesWithheld"))),
+            PilotMetricReceipt r => new(null, r.BatchId, "PilotMetricReceipt", Before(), 1, Fields(
+                Field("Operation", null, "PilotMetricsSubmit"), Field("Accepted", null, Number(r.Accepted)), Field("Binding", null, "CommittedResource"))),
+            _ => null
+        };
+    }
+
     internal static readonly string[] TechnicalRecordOperations = ["DefectLifecycleStart", "DefectLifecycleAssess", "DefectLifecycleSafeguard", "DefectLifecycleLift",
         "DefectLifecycleAction", "DefectLifecycleVerify", "DefectLifecycleEffectiveness", "DefectLifecycleClose",
         "ServiceReportCreate", "ServiceReportUpdate", "ServiceReportSubmit", "ServiceReportVerify", "ServiceReportAmend"];
@@ -978,6 +1031,53 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
     // S9 WP-D (DEV-089/090/111): closed state/kind/decision codes and revisions only. Ledger payloads (loads,
     // weather, positions, evidence references), log content, meter values, scope items, reasons and verification
     // texts are withheld; no actor identity is copied into the summary.
+    // S11 WP-D DEV-074/094/075: closed codes only; rationale, notes, titles, statements, references, pseudonyms and
+    // build identities are withheld.
+    private static AuditMetadata? PilotGateProjection(EntityEntry entry)
+    {
+        string? BeforeState(string property, string[] allowed) => entry.State == EntityState.Added ? null : Closed((string)entry.Property(property).OriginalValue!, allowed);
+        static string Flag(bool value) => value ? "True" : "False";
+        var scenarios = UatScenarioCatalog.Scenarios.Select(x => x.Id).ToArray();
+        // Lifecycle step as the audited revision (run OPEN=1, SUBMITTED=2, ATTESTED=3; finding OPEN=1, resolved=2) so
+        // before/after is provable for these xmin-versioned aggregates.
+        long Step(string state) => state switch { UatPolicy.RunSubmitted => 2, UatPolicy.RunAttested => 3, UatPolicy.Resolved or UatPolicy.AcceptedRisk => 2, _ => 1 };
+        long? BeforeStep() => entry.State == EntityState.Added ? null : Step((string)entry.Property("State").OriginalValue!);
+        return entry.Entity switch
+        {
+            UatThreshold t => new(null, t.Id, "UatThreshold", null, t.Sequence, Fields(
+                Field("Scope", null, Closed(t.Scope, UatScenarioCatalog.Scopes)), Field("Sequence", null, Number(t.Sequence)),
+                Field("MinScenarioPassPercent", null, Number(t.MinScenarioPassPercent)), Field("MaxOpenMajorFindings", null, Number(t.MaxOpenMajorFindings)),
+                Field("RequireDesignConformance", null, Flag(t.RequireDesignConformance)),
+                Field("AgreementReference", null, null, "ValuesWithheld"), Field("Rationale", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
+            UatRun r => new(null, r.Id, "UatRun", BeforeStep(), Step(r.State), Fields(
+                Field("Scope", null, Closed(r.Scope, UatScenarioCatalog.Scopes)), Field("Role", null, Closed(r.Role, [.. UatScenarioCatalog.ShipRoles, .. UatScenarioCatalog.TugRoles])),
+                Field("Environment", null, Closed(r.Environment, UatPolicy.Environments)), Field("State", BeforeState("State", UatPolicy.RunStates), Closed(r.State, UatPolicy.RunStates)),
+                Field("Provenance", null, Closed(r.Provenance, PilotGateStorage.Provenances)),
+                Field("ParticipantPseudonym", null, null, "ValuesWithheld"), Field("BuildCommit", null, null, "ValuesWithheld"),
+                Field("AttestationStatement", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
+            UatStepResult x => new(null, x.RunId, "UatStepResult", null, x.Attempt, Fields(
+                Field("ScenarioId", null, Closed(x.ScenarioId, scenarios)), Field("Outcome", null, Closed(x.Outcome, UatPolicy.Outcomes)),
+                Field("Attempt", null, Number(x.Attempt)), Field("Assisted", null, Flag(x.Assisted)),
+                Field("AutomatedEvidence", null, Flag(x.AutomatedEvidenceReference != null)), Field("Note", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
+            UatFinding f => new(null, f.Id, "UatFinding", BeforeStep(), Step(f.State), Fields(
+                Field("ScenarioId", null, Closed(f.ScenarioId, scenarios)), Field("Severity", null, Closed(f.Severity, UatPolicy.Severities)),
+                Field("IsUx", null, Flag(f.IsUx)), Field("DesignConformance", null, Flag(f.DesignConformance)),
+                Field("State", BeforeState("State", UatPolicy.FindingStates), Closed(f.State, UatPolicy.FindingStates)),
+                Field("Title", null, null, "ValuesWithheld"), Field("Resolution", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
+            PilotSupportCheck c => new(null, c.Id, "PilotSupportCheck", null, c.Sequence, Fields(
+                Field("Item", null, Closed(c.Item, PilotGatePolicy.SupportItems)), Field("State", null, Closed(c.State, PilotGatePolicy.SupportStates)),
+                Field("Sequence", null, Number(c.Sequence)), Field("Note", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
+            PilotGateDecision d => new(null, d.Id, "PilotGateDecision", null, d.Sequence, Fields(
+                Field("Decision", null, Closed(d.Decision, PilotGatePolicy.Decisions)), Field("Recommendation", null, Closed(d.Recommendation, PilotGatePolicy.Recommendations)),
+                Field("Duty", null, Closed(d.Duty, PilotGatePolicy.ProductOwnerDuty)), Field("Sequence", null, Number(d.Sequence)),
+                Field("ReviewHash", null, null, "ValuesWithheld"), Field("Rationale", null, null, "ValuesWithheld"), Field("Conditions", null, null, "ValuesWithheld"),
+                Field("Binding", null, "OwnerReference"))),
+            PilotReceipt r => new(null, r.RecordId, "PilotReceipt", null, null, Fields(
+                Field("Action", null, Closed(r.Action, PilotGateStorage.ReceiptActions)), Field("Binding", null, "CommittedResource"))),
+            _ => null
+        };
+    }
+
     private static AuditMetadata? FieldOperationsProjection(EntityEntry entry)
     {
         long? Before(string property) => entry.State == EntityState.Added ? null : (long?)entry.Property(property).OriginalValue;
@@ -1067,6 +1167,31 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
                 Field("ProtectedContext", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
         _ => null
     };
+    // S11 WP-A (DEV-069/070): closed kind/state/decision codes, counts and revisions only. Source hashes, batch pins,
+    // missing-critical lists, samples, reasons, exception dispositions and actor identities are withheld.
+    private static AuditMetadata? ImportReconciliationProjection(EntityEntry entry)
+    {
+        var states = Poseidon.Domain.ImportReconciliationPolicy.States;
+        string? BeforeState() => entry.State == EntityState.Added ? null : Closed((string)entry.Property("State").OriginalValue!, states);
+        long? Before() => entry.State == EntityState.Added ? null : (long?)entry.Property("Revision").OriginalValue;
+        return entry.Entity switch
+        {
+            ImportProvenance p => new(p.VesselId, p.BatchId, "ImportProvenance", null, p.TargetRevision, Fields(
+                Field("TargetKind", null, Closed(p.TargetKind, Poseidon.Domain.ImportReconciliationPolicy.TargetKinds)),
+                Field("Operation", null, Closed(p.Operation, ImportReconciliationStorage.Operations)), Field("RowNumber", null, Number(p.RowNumber)),
+                Field("SourceHash", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
+            ReconciliationReport r => new(r.VesselId, r.Id, "ReconciliationReport", Before(), r.Revision, Fields(
+                Field("Revision", Before() is { } b ? Number(b) : null, Number(r.Revision)), Field("State", BeforeState(), Closed(r.State, states)),
+                Field("SourceCount", null, Number(r.SourceCount)), Field("MissingCriticalCount", null, Number(r.MissingCriticalCount)),
+                Field("SnapshotJson", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
+            ReconciliationSignOff o => new(o.VesselId, o.ReportId, "ReconciliationSignOff", null, null, Fields(
+                Field("Decision", null, Closed(o.Decision, Poseidon.Domain.ImportReconciliationPolicy.Decisions)), Field("Duty", null, Closed(o.Duty, "DataOwner")),
+                Field("Reason", null, null, "ValuesWithheld"), Field("Exceptions", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
+            ImportReconciliationReceipt c => new(c.VesselId, c.ResourceId, "ImportReconciliationReceipt", null, c.Revision, Fields(
+                Field("Action", null, Closed(c.Action, ImportReconciliationStorage.ReceiptActions)), Field("Revision", null, Number(c.Revision)), Field("Binding", null, "CommittedResource"))),
+            _ => null
+        };
+    }
     internal static readonly string[] RiskOperations = ["RiskAssessmentCreate", "RiskAssessmentUpdate", "RiskAssessmentSubmit", "RiskAssessmentReview",
         "RiskAssessmentAmend", "RiskAssessmentAcknowledge", "RiskTemplateCreate", "RiskTemplateUpdate", "RiskTemplateSubmit", "RiskTemplateReview",
         "RiskTemplateRevise", "RiskTemplateSuggest", "RiskTemplateSuggestionReview", "RiskMethodCreate", "RiskMethodPublish"];

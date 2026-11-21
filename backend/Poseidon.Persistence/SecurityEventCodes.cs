@@ -49,12 +49,19 @@ public static class SecurityEventCodes
         "CredentialVerificationRead", "CredentialVerificationCommand", "CrewCompetenceRead", "CrewCompetenceCommand", "SafeManningRead", "SafeManningCommand",
         "MeasurementRead", "MeasurementCommand", "MaintenancePostponementRead", "MaintenancePostponementCommand",
         "DepartureReadinessRead", "DepartureSignoffCommand",
+        "RegulatoryReviewRead", "RegulatoryReviewCommand",
         // S9 WP-C DEV-062 / DEV-114.
         "VoiceDraftRead", "VoiceDraftCommand", "VoiceDraftTranscription", "ControlledDocumentContentAccess",
         // S10 WP-A DEV-064 / DEV-065 / DEV-113.
         "AuditPackRead", "AuditPackCommand", "DataTrustRead", "AssuranceRead", "AssuranceCommand",
         // S10 WP-C DEV-066 certificate renewal offline draft capture.
         "CertificateRenewalOfflineRead", "CertificateRenewalOfflineRequest",
+        // S11 WP-A DEV-069 / DEV-070.
+        "ImportProvenanceRead", "ImportReconciliationRead", "ImportReconciliationCommand",
+        // S11 WP-B DEV-072.
+        "PilotMetricsRead", "PilotMetricsCommand",
+        // S11 WP-D DEV-074/094/075.
+        "UatRead", "UatCommand", "PilotGateRead", "PilotGateCommand",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static IReadOnlySet<string> Results { get; } = new string[]
     {
@@ -127,6 +134,8 @@ public static class SecurityEventCodes
         "required_evidence_missing", "required_evidence_unconfigured", "evidence_changed", "stock_not_low", "requisition_already_open", "quantity_required",
         "credential_document_required", "competence_requirement_unavailable", "evaluation_window_invalid", "manning_dispensation_required", "manning_dispensation_not_applicable", "manning_review_acknowledgement_required",
         "departure_release_not_permitted", "departure_release_forecast_only", "departure_window_invalid", "departure_authority_required", "decision_sequence_conflict",
+        "review_campaign_open", "review_scope_mismatch", "reviewer_authority_required", "reviewer_qualification_unverified", "item_revision_stale", "source_authority_required",
+        "source_owner_required", "source_reference_required", "tracked_issue_required", "unsupported_approval_claim", "campaign_closed", "open_items_remain", "no_open_items", "open_item_untracked",
         // S9 WP-C DEV-062 / DEV-114.
         "speech_capability_unavailable", "speech_input_invalid", "speech_attestation_invalid", "voice_draft_incomplete",
         "document_download_restricted", "controlled_document_download_policy", "acknowledgement_revision_stale", "already_acknowledged",
@@ -136,6 +145,14 @@ public static class SecurityEventCodes
         "diff_changed", "media_type_unavailable", "pack_scope_empty",
         // S10 WP-B DEV-092.
         "offline_snapshot_unavailable",
+        // S11 WP-A DEV-069 / DEV-070.
+        "invalid_decision", "invalid_exception", "invalid_sample", "reconciliation_superseded", "reconciliation_stale", "reconciliation_open_items",
+        "reconciliation_exceptions_required", "reconciliation_batch_unavailable", "data_owner_authority_required",
+        // S11 WP-D DEV-074/094/075.
+        "facilitator_required", "uat_run_not_open", "uat_run_not_submitted", "scenario_out_of_scope", "synthetic_record_not_submittable",
+        "separation_of_duties_required", "uat_finding_not_open", "blocker_risk_acceptance_not_permitted", "threshold_sequence_conflict",
+        "support_sequence_conflict", "review_stale", "pilot_gate_failed", "pilot_gate_p0_open_or_unknown", "pilot_gate_not_passed",
+        "pilot_gate_unknown", "pilot_gate_deferred", "conditions_required", "pilot_gate_authority_required",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static bool Allows(string action, string result) => Actions.Contains(action) && Results.Contains(result);
 }

@@ -5522,6 +5522,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/vessels/{vessel}/imports/{batch}/provenance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ImportProvenanceList"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/vessels/{vessel}/imports/{batch}/commit": {
         parameters: {
             query?: never;
@@ -7282,6 +7298,70 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/regulatory-reviews": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["RegulatoryReviewList"];
+        put?: never;
+        post: operations["RegulatoryReviewCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/regulatory-reviews/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["RegulatoryReviewRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/regulatory-reviews/{id}/items/{item}/verdicts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RegulatoryReviewVerdict"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/regulatory-reviews/{id}/close": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["RegulatoryReviewClose"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/equipment-hierarchy/{vessel}/{asset}/observations": {
         parameters: {
             query?: never;
@@ -8242,6 +8322,265 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/pilot-metrics/capabilities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Pilot telemetry schema and whether this membership is enrolled. No identity or stored value is returned. */
+        get: operations["PilotMetricsCapabilities"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot-metrics/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Records one closed-code pilot event batch for the trusted actor. Free text, identities and record ids are not accepted. */
+        post: operations["PilotMetricsSubmit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot-metrics/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Pilot metric observations over a bounded window. SUPPRESSED, UNKNOWN and UNAVAILABLE carry no value; zero is never substituted. */
+        get: operations["PilotMetricsSummary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/uat/scenarios": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["UatScenarioCatalog"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/uat/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["UatSummaryRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/uat/runs/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["UatRunRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/uat/thresholds": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["UatThresholdRecord"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/uat/runs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["UatRunCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/uat/runs/{id}/results": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["UatResultRecord"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/uat/runs/{id}/findings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["UatFindingRecord"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/uat/runs/{id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["UatRunSubmit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/uat/runs/{id}/attest": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["UatRunAttest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/uat/findings/{id}/resolve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["UatFindingResolve"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot-gate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PilotGateRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot-gate/support-checks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["PilotSupportCheckRecord"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pilot-gate/decisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["PilotGateDecide"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/parameter-definitions": {
         parameters: {
             query?: never;
@@ -8657,6 +8996,54 @@ export interface paths {
         put?: never;
         /** @description Audited HR command. Requires tenant-wide HR permission, a trusted role, antiforgery and a 16-80 character Idempotency-Key. Mutations of existing records require expectedVersion (409 on conflict). Replay returns the fresh authorized representation. */
         post: operations["HrRecordActualEvent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/reconciliation-reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ReconciliationReportList"];
+        put?: never;
+        post: operations["ReconciliationReportCreate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/reconciliation-reports/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["ReconciliationReportRead"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/vessels/{vessel}/reconciliation-reports/{id}/sign-off": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["ReconciliationSignOff"];
         delete?: never;
         options?: never;
         head?: never;
@@ -11229,6 +11616,11 @@ export interface components {
             state: string;
             value: null | string;
         };
+        DataOwnerAuthorityDto: {
+            /** Format: uuid */
+            id: string;
+            duty: string;
+        };
         DataQualitySignal: {
             kind: string;
             reason: string;
@@ -12957,6 +13349,42 @@ export interface components {
             hasMore: boolean;
             rows: components["schemas"]["ImportValidationRowDto"][];
         };
+        ImportProvenanceDto: {
+            /** Format: uuid */
+            batchId: string;
+            /** Format: uuid */
+            previewId: string;
+            /** Format: int32 */
+            rowNumber: number;
+            category: string;
+            sourceHash: string;
+            templateVersion: string;
+            templateFingerprint: string;
+            targetKind: string;
+            /** Format: uuid */
+            targetId: string;
+            /** Format: int64 */
+            targetRevision: number;
+            revisionKind: string;
+            operation: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            recordedAt: string;
+        };
+        ImportProvenancePageDto: {
+            /** Format: uuid */
+            batchId: string;
+            state: string;
+            /** Format: int32 */
+            total: number;
+            /** Format: int32 */
+            offset: number;
+            /** Format: int32 */
+            limit: number;
+            hasMore: boolean;
+            items: components["schemas"]["ImportProvenanceDto"][];
+        };
         ImportRowIssueDto: {
             code: string;
             /** Format: int32 */
@@ -13538,6 +13966,17 @@ export interface components {
             /** Format: int32 */
             notCollectedSources: number;
         };
+        MissingCriticalItem: {
+            /** Format: uuid */
+            batchId: string;
+            /** Format: int32 */
+            rowNumber: number;
+            targetKind: string;
+            /** Format: uuid */
+            targetId: string;
+            field: string;
+            reason: string;
+        };
         MsmdReference: {
             documentReference?: null | string;
             issuerReference?: null | string;
@@ -14067,6 +14506,176 @@ export interface components {
             blockers: string[];
             href: string;
         };
+        PilotGateAuthorityDto: {
+            /** Format: uuid */
+            id: string;
+            duty: string;
+        };
+        PilotGateDecisionCommand: {
+            decision: string;
+            rationale: string;
+            conditions: string[];
+            expectedReviewHash: string;
+            /** Format: int64 */
+            expectedSequence: number;
+            /** Format: uuid */
+            authorityId: string;
+        };
+        PilotGateDecisionDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int64 */
+            sequence: number;
+            /** Format: uuid */
+            previousDecisionId: null | string;
+            decision: string;
+            recommendation: string;
+            reviewHash: string;
+            conditions: string[];
+            rationale: string;
+            duty: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            recordedAt: string;
+            validity: string;
+        };
+        PilotGateInput: {
+            gate: string;
+            state: string;
+            reasons: string[];
+            source: string;
+        };
+        PilotGateReviewOutcome: {
+            recommendation: string;
+            gates: components["schemas"]["PilotGateInput"][];
+            /** Format: int32 */
+            openP0: null | number;
+            noGoReasons: string[];
+            hash: string;
+            /** @default ProductOwnerHumanDecisionRequired;EngineNeverDecidesGo;AiCannotDecide */
+            authority: string;
+        };
+        PilotGateView: {
+            review: components["schemas"]["PilotGateReviewOutcome"];
+            support: components["schemas"]["PilotSupportItemView"][];
+            decisions: components["schemas"]["PilotGateDecisionDto"][];
+            /** Format: int64 */
+            sequence: number;
+            authorities: components["schemas"]["PilotGateAuthorityDto"][];
+            canDecide: boolean;
+            canRecordSupport: boolean;
+            allowedDecisions: string[];
+            /** Format: date-time */
+            assessedAt: string;
+            /** @default 18.01/sheet:Backlog/row:76;18.01/sheet:DoR DoD Gates/row:4;23.03/paragraph:97-110;19.01/paragraph:130-136,276-279 */
+            sourceLocator: string;
+            /** @default ProductOwnerHumanDecisionRequired;EngineNeverDecidesGo;AiCannotDecide */
+            authority: string;
+        };
+        PilotMetricCapabilitiesDto: {
+            canContribute: boolean;
+            canRead: boolean;
+            retentionState: string;
+            /** Format: int32 */
+            retentionDays: null | number;
+            schemaVersion: string;
+            /** Format: int32 */
+            maxEventsPerBatch: number;
+            /** Format: int32 */
+            requestsPerMinute: number;
+            kinds: string[];
+            areas: string[];
+            shipJourneys: string[];
+            tugJourneys: string[];
+            aiSources: string[];
+            windowDays: number[];
+            /** Format: int32 */
+            minContributors: number;
+        };
+        PilotMetricCell: {
+            dimension: string;
+            key: string;
+            state: string;
+            value: null | string;
+            /** Format: int32 */
+            contributors: null | number;
+            reasons: string[];
+        };
+        PilotMetricEventCommand: {
+            kind: string;
+            area: string;
+            journey: null | string;
+            aiSource: null | string;
+            /** Format: int32 */
+            durationMs: null | number;
+            /** Format: date-time */
+            occurredAt: string;
+        };
+        PilotMetricEventsCommand: {
+            events: components["schemas"]["PilotMetricEventCommand"][];
+        };
+        PilotMetricIngestDto: {
+            /** Format: uuid */
+            batchId: string;
+            /** Format: int32 */
+            accepted: number;
+            schemaVersion: string;
+            replayed: boolean;
+        };
+        PilotMetricResult: {
+            metricId: string;
+            /** Format: int32 */
+            definitionVersion: number;
+            unitCode: string;
+            state: string;
+            value: null | string;
+            /** Format: int32 */
+            contributors: null | number;
+            reasons: string[];
+            breakdown: components["schemas"]["PilotMetricCell"][];
+        };
+        PilotMetricSummaryDto: {
+            contractVersion: string;
+            /** Format: int32 */
+            windowDays: number;
+            /** Format: date-time */
+            from: string;
+            /** Format: date-time */
+            asOf: string;
+            basis: string;
+            retentionState: string;
+            areas: string[];
+            items: components["schemas"]["PilotMetricResult"][];
+        };
+        PilotSupportCheckCommand: {
+            item: string;
+            state: string;
+            evidenceReference: null | string;
+            note: string;
+            /** Format: int64 */
+            expectedSequence: number;
+        };
+        PilotSupportCheckDto: {
+            /** Format: uuid */
+            id: string;
+            item: string;
+            /** Format: int64 */
+            sequence: number;
+            /** Format: uuid */
+            previousCheckId: null | string;
+            state: string;
+            evidenceReference: null | string;
+            note: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            recordedAt: string;
+        };
+        PilotSupportItemView: {
+            item: string;
+            latest: null | components["schemas"]["PilotSupportCheckDto"];
+        };
         PmsCommandCenterDto: {
             /** Format: uuid */
             vesselId: string;
@@ -14578,6 +15187,171 @@ export interface components {
             sourceLocator: null | string;
             requireCredential?: null | boolean;
         };
+        ReconciliationBatchFacts: {
+            /** Format: uuid */
+            batchId: string;
+            category: string;
+            /** Format: int64 */
+            revision: number;
+            state: string;
+            sourceHash: string;
+            templateFingerprint: string;
+            /** Format: uuid */
+            previewId: null | string;
+            /** Format: int32 */
+            sourceRows: number;
+            /** Format: int32 */
+            acceptedRows: number;
+            /** Format: int32 */
+            rejectedRows: number;
+            /** Format: int32 */
+            duplicateRows: number;
+            /** Format: uuid */
+            uploadedBy: string;
+        };
+        ReconciliationCandidateBatchDto: {
+            /** Format: uuid */
+            id: string;
+            category: string;
+            state: string;
+            /** Format: int32 */
+            rowCount: number;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            committedAt: null | string;
+            templateVersion: string;
+        };
+        ReconciliationCounts: {
+            /** Format: int32 */
+            source: number;
+            /** Format: int32 */
+            accepted: number;
+            /** Format: int32 */
+            rejected: number;
+            /** Format: int32 */
+            duplicate: number;
+            /** Format: int32 */
+            notCommitted: number;
+            /** Format: int32 */
+            missingCritical: number;
+        };
+        ReconciliationException: {
+            kind: string;
+            reference: string;
+            disposition: string;
+        };
+        ReconciliationListView: {
+            /** Format: uuid */
+            vesselId: string;
+            items: components["schemas"]["ReconciliationReportSummaryDto"][];
+            batches: components["schemas"]["ReconciliationCandidateBatchDto"][];
+            canCreate: boolean;
+            authorities: components["schemas"]["DataOwnerAuthorityDto"][];
+            templateVersions: {
+                [key: string]: string;
+            };
+            /** Format: int32 */
+            maxBatches: number;
+            /** Format: int32 */
+            maxSample: number;
+            /** @default 18.01/Backlog/row:71;18.03/paragraph:10,49-66,82,84-102 */
+            sourceLocator: string;
+        };
+        ReconciliationReportCreateCommand: {
+            /** Format: uuid */
+            id: string;
+            batchIds: string[];
+            /** Format: int32 */
+            sampleSize: number;
+        };
+        ReconciliationReportDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            /** Format: int64 */
+            revision: number;
+            /** Format: uint32 */
+            version: number;
+            state: string;
+            policyVersion: string;
+            criticalFieldVersion: string;
+            batches: components["schemas"]["ReconciliationBatchFacts"][];
+            counts: components["schemas"]["ReconciliationCounts"];
+            missingCritical: components["schemas"]["MissingCriticalItem"][];
+            missingCriticalTruncated: boolean;
+            sampleSeed: string;
+            sample: components["schemas"]["ReconciliationTarget"][];
+            hash: string;
+            /** Format: uuid */
+            createdBy: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            supersededAt: null | string;
+            provenance: string;
+        };
+        ReconciliationReportSummaryDto: {
+            /** Format: uuid */
+            id: string;
+            state: string;
+            /** Format: int64 */
+            revision: number;
+            counts: components["schemas"]["ReconciliationCounts"];
+            /** Format: date-time */
+            createdAt: string;
+            decision: null | string;
+            signOffValidity: string;
+        };
+        ReconciliationReportView: {
+            report: components["schemas"]["ReconciliationReportDto"];
+            signOff: null | components["schemas"]["ReconciliationSignOffDto"];
+            stale: boolean;
+            openItems: string[];
+            authorities: components["schemas"]["DataOwnerAuthorityDto"][];
+            canSignOff: boolean;
+            signOffBlockers: string[];
+            decisions: string[];
+            exceptionKinds: string[];
+            /** @default 18.01/Backlog/row:71;18.03/paragraph:10,49-66,82,84-102 */
+            sourceLocator: string;
+        };
+        ReconciliationSignOffCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            reportHash: string;
+            decision: string;
+            reason: string;
+            exceptions: null | components["schemas"]["ReconciliationException"][];
+            sampleVerified: null | string[];
+            /** Format: uuid */
+            authorityId: string;
+        };
+        ReconciliationSignOffDto: {
+            /** Format: uuid */
+            id: string;
+            decision: string;
+            reason: string;
+            exceptions: components["schemas"]["ReconciliationException"][];
+            sampleVerified: string[];
+            duty: string;
+            /** Format: uuid */
+            signedBy: string;
+            /** Format: date-time */
+            signedAt: string;
+            reportHash: string;
+            validity: string;
+        };
+        ReconciliationTarget: {
+            /** Format: uuid */
+            batchId: string;
+            /** Format: int32 */
+            rowNumber: number;
+            targetKind: string;
+            /** Format: uuid */
+            targetId: string;
+        };
         RecordedDecision: {
             content: components["schemas"]["DecisionRecording"];
             policy: components["schemas"]["HumanRecordingPolicy"];
@@ -14663,6 +15437,151 @@ export interface components {
             savedAt: null | string;
             provenance: string;
             content: components["schemas"]["RegulatoryDraftContent"];
+        };
+        RegulatoryReviewCloseCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            outcome: string;
+            reason: string;
+        };
+        RegulatoryReviewCreateCommand: {
+            /** Format: uuid */
+            vesselId: string;
+            scope: string;
+        };
+        RegulatoryReviewDetailDto: {
+            campaign: components["schemas"]["RegulatoryReviewSummaryDto"];
+            items: components["schemas"]["RegulatoryReviewItemDto"][];
+            ownerMatrix: components["schemas"]["RegulatoryReviewOwnerRow"][];
+            canManage: boolean;
+            canReview: boolean;
+            reviewerAuthorities: components["schemas"]["RegulatoryReviewerAuthorityDto"][];
+            notices: string[];
+            /** @default false */
+            replayed: boolean;
+            /** @default regulatory-sme-review-v1 */
+            policyVersion: string;
+            /** @default contracts/sources/pilot-ownership.v1.json */
+            candidateSourcePlan: string;
+        };
+        RegulatoryReviewerAuthorityDto: {
+            /** Format: uuid */
+            id: string;
+            scopes: string[];
+            sourceAuthorities: string[];
+            qualificationVerified: boolean;
+        };
+        RegulatoryReviewItemDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: int32 */
+            ordinal: number;
+            kind: string;
+            subjectKey: string;
+            /** Format: uuid */
+            ruleId: null | string;
+            /** Format: int64 */
+            ruleRevision: null | number;
+            /** Format: uuid */
+            requirementId: null | string;
+            /** Format: int64 */
+            requirementRevision: null | number;
+            /** Format: uuid */
+            sourceId: null | string;
+            /** Format: int64 */
+            sourceRevision: null | number;
+            candidateSourceCode: null | string;
+            candidateAuthority: null | string;
+            candidateUnverified: boolean;
+            predictedResult: null | string;
+            verdict: string;
+            effectiveVerdict: string;
+            stale: boolean;
+            open: boolean;
+            sourceAuthority: null | string;
+            authorityCategory: string;
+            ownerRole: string;
+            sourceReference: null | string;
+            sourceEdition: null | string;
+            trackedIssueId: null | string;
+            /** Format: uuid */
+            reviewerId: null | string;
+            qualificationRef: null | string;
+            /** Format: int32 */
+            verdictCount: number;
+            /** Format: date-time */
+            verdictAt: null | string;
+            /** Format: uint32 */
+            version: number;
+            blockers: string[];
+            /** @default false */
+            replayed: boolean;
+        };
+        RegulatoryReviewListDto: {
+            items: components["schemas"]["RegulatoryReviewSummaryDto"][];
+            canManage: boolean;
+        };
+        RegulatoryReviewOwnerRow: {
+            authority: string;
+            category: string;
+            /** Format: int32 */
+            items: number;
+            /** Format: int32 */
+            open: number;
+            /** Format: int32 */
+            confirmed: number;
+            ownerRoles: string[];
+        };
+        RegulatoryReviewSummaryDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            vesselId: string;
+            scope: string;
+            state: string;
+            /** Format: int64 */
+            profileRevision: null | number;
+            /** Format: uuid */
+            evaluationId: null | string;
+            pinHash: string;
+            /** Format: int32 */
+            itemCount: number;
+            /** Format: int32 */
+            openItems: number;
+            /** Format: int32 */
+            untrackedOpenItems: number;
+            /** Format: int32 */
+            confirmedItems: number;
+            /** Format: int32 */
+            staleItems: number;
+            profileStale: boolean;
+            /** Format: uuid */
+            createdBy: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: uuid */
+            closedBy: null | string;
+            /** Format: date-time */
+            closedAt: null | string;
+            /** Format: int32 */
+            openItemsAtClose: null | number;
+            provenance: string;
+            /** Format: uint32 */
+            version: number;
+            blockers: string[];
+        };
+        RegulatoryReviewVerdictCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+            /** Format: uuid */
+            authorityId: string;
+            verdict: string;
+            sourceAuthority: null | string;
+            ownerRole: string;
+            sourceReference: null | string;
+            sourceEdition: null | string;
+            trackedIssueId: null | string;
+            note: string;
         };
         RegulatoryRevisionDto: {
             /** Format: int64 */
@@ -18092,6 +19011,222 @@ export interface components {
             requestedStart: null | string;
             /** Format: date-time */
             requestedEnd: null | string;
+        };
+        UatCatalogView: {
+            version: string;
+            scenarios: components["schemas"]["UatScenario"][];
+            shipRoles: string[];
+            tugRoles: string[];
+            environments: string[];
+            outcomes: string[];
+            severities: string[];
+            /** @default HumanUatEvidenceOnly;EngineNeverAcceptsUat;NotAPilotGo */
+            authority: string;
+        };
+        UatFindingCommand: {
+            scenarioId: string;
+            severity: string;
+            isUx: boolean;
+            designConformance: boolean;
+            title: string;
+        };
+        UatFindingDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            runId: string;
+            scope: string;
+            scenarioId: string;
+            severity: string;
+            isUx: boolean;
+            designConformance: boolean;
+            title: string;
+            state: string;
+            /** Format: uuid */
+            reportedBy: string;
+            /** Format: date-time */
+            reportedAt: string;
+            /** Format: uuid */
+            resolvedBy: null | string;
+            /** Format: date-time */
+            resolvedAt: null | string;
+            resolution: null | string;
+            resolutionReference: null | string;
+            /** Format: uint32 */
+            version: number;
+        };
+        UatFindingResolveCommand: {
+            state: string;
+            resolution: string;
+            resolutionReference: null | string;
+            /** Format: uint32 */
+            expectedVersion: number;
+        };
+        UatGateOutcome: {
+            scope: string;
+            state: string;
+            gateState: string;
+            reasons: string[];
+            scenarios: components["schemas"]["UatScenarioOutcome"][];
+            /** Format: int32 */
+            openBlockers: number;
+            /** Format: int32 */
+            openMajors: number;
+            /** Format: int32 */
+            openDesignConformance: number;
+            /** Format: int32 */
+            attestedRuns: number;
+            /** Format: int32 */
+            pendingAttestation: number;
+            /** @default HumanUatEvidenceOnly;EngineNeverAcceptsUat;NotAPilotGo */
+            authority: string;
+        };
+        UatResultCommand: {
+            scenarioId: string;
+            outcome: string;
+            /** Format: int32 */
+            durationSeconds: null | number;
+            assisted: boolean;
+            automatedEvidenceReference: null | string;
+            note: null | string;
+        };
+        UatResultDto: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            runId: string;
+            scenarioId: string;
+            /** Format: int32 */
+            attempt: number;
+            outcome: string;
+            /** Format: int32 */
+            durationSeconds: null | number;
+            assisted: boolean;
+            automatedEvidenceReference: null | string;
+            note: null | string;
+            /** Format: uuid */
+            recordedBy: string;
+            /** Format: date-time */
+            recordedAt: string;
+            /** @default AutomatedEvidenceIsAttachmentOnly */
+            evidenceRule: string;
+        };
+        UatRunAttestCommand: {
+            statement: string;
+            /** Format: uint32 */
+            expectedVersion: number;
+        };
+        UatRunCreateCommand: {
+            scope: string;
+            role: string;
+            environment: string;
+            buildCommit: string;
+            participantPseudonym: string;
+        };
+        UatRunDetailView: {
+            run: components["schemas"]["UatRunDto"];
+            results: components["schemas"]["UatResultDto"][];
+            findings: components["schemas"]["UatFindingDto"][];
+            canRecord: boolean;
+            canAttest: boolean;
+        };
+        UatRunDto: {
+            /** Format: uuid */
+            id: string;
+            scope: string;
+            role: string;
+            environment: string;
+            buildCommit: string;
+            participantPseudonym: string;
+            catalogVersion: string;
+            state: string;
+            /** Format: uuid */
+            facilitatorActorId: string;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            submittedAt: null | string;
+            /** Format: uuid */
+            attestedBy: null | string;
+            /** Format: date-time */
+            attestedAt: null | string;
+            attestationStatement: null | string;
+            provenance: string;
+            /** Format: uint32 */
+            version: number;
+        };
+        UatRunSubmitCommand: {
+            /** Format: uint32 */
+            expectedVersion: number;
+        };
+        UatScenario: {
+            id: string;
+            scope: string;
+            journey: string;
+            passProof: string;
+            locator: string;
+        };
+        UatScenarioOutcome: {
+            scenarioId: string;
+            /** Format: int32 */
+            attestedRuns: number;
+            /** Format: int32 */
+            passed: number;
+            /** Format: int32 */
+            failed: number;
+            /** Format: int32 */
+            blocked: number;
+            /** Format: int32 */
+            notRun: number;
+            /** Format: int32 */
+            passPercent: null | number;
+        };
+        UatSummaryView: {
+            scope: string;
+            catalogVersion: string;
+            threshold: null | components["schemas"]["UatThresholdDto"];
+            /** Format: int64 */
+            thresholdSequence: number;
+            gate: components["schemas"]["UatGateOutcome"];
+            runs: components["schemas"]["UatRunDto"][];
+            openFindings: components["schemas"]["UatFindingDto"][];
+            canRecord: boolean;
+            canRecordThreshold: boolean;
+            canAttest: boolean;
+            /** @default HumanUatEvidenceOnly;EngineNeverAcceptsUat;NotAPilotGo */
+            authority: string;
+        };
+        UatThresholdCommand: {
+            scope: string;
+            /** Format: int32 */
+            minScenarioPassPercent: number;
+            /** Format: int32 */
+            maxOpenMajorFindings: number;
+            requireDesignConformance: boolean;
+            agreementReference: string;
+            rationale: string;
+            /** Format: int64 */
+            expectedSequence: number;
+        };
+        UatThresholdDto: {
+            /** Format: uuid */
+            id: string;
+            scope: string;
+            /** Format: int64 */
+            sequence: number;
+            /** Format: uuid */
+            previousThresholdId: null | string;
+            /** Format: int32 */
+            minScenarioPassPercent: number;
+            /** Format: int32 */
+            maxOpenMajorFindings: number;
+            requireDesignConformance: boolean;
+            agreementReference: string;
+            rationale: string;
+            /** Format: uuid */
+            actorId: string;
+            /** Format: date-time */
+            recordedAt: string;
         };
         VesselCertificateContent: {
             metadata: components["schemas"]["CertificateMetadata"];
@@ -26956,6 +28091,29 @@ export interface operations {
             };
         };
     };
+    ImportProvenanceList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                batch: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ImportProvenancePageDto"];
+                };
+            };
+        };
+    };
     ImportCommit: {
         parameters: {
             query?: never;
@@ -30551,6 +31709,125 @@ export interface operations {
             };
         };
     };
+    RegulatoryReviewList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegulatoryReviewListDto"];
+                };
+            };
+        };
+    };
+    RegulatoryReviewCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RegulatoryReviewCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegulatoryReviewDetailDto"];
+                };
+            };
+        };
+    };
+    RegulatoryReviewRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegulatoryReviewDetailDto"];
+                };
+            };
+        };
+    };
+    RegulatoryReviewVerdict: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+                item: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RegulatoryReviewVerdictCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegulatoryReviewItemDto"];
+                };
+            };
+        };
+    };
+    RegulatoryReviewClose: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RegulatoryReviewCloseCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegulatoryReviewDetailDto"];
+                };
+            };
+        };
+    };
     MaintenanceObservationRead: {
         parameters: {
             query?: never;
@@ -32369,6 +33646,413 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TugOperationsConflictDto"];
+                };
+            };
+        };
+    };
+    PilotMetricsCapabilities: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotMetricCapabilitiesDto"];
+                };
+            };
+        };
+    };
+    PilotMetricsSubmit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PilotMetricEventsCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotMetricIngestDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PilotMetricsSummary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotMetricSummaryDto"];
+                };
+            };
+        };
+    };
+    UatScenarioCatalog: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UatCatalogView"];
+                };
+            };
+        };
+    };
+    UatSummaryRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UatSummaryView"];
+                };
+            };
+        };
+    };
+    UatRunRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UatRunDetailView"];
+                };
+            };
+        };
+    };
+    UatThresholdRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UatThresholdCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UatThresholdDto"];
+                };
+            };
+        };
+    };
+    UatRunCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UatRunCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UatRunDto"];
+                };
+            };
+        };
+    };
+    UatResultRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UatResultCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UatResultDto"];
+                };
+            };
+        };
+    };
+    UatFindingRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UatFindingCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UatFindingDto"];
+                };
+            };
+        };
+    };
+    UatRunSubmit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UatRunSubmitCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UatRunDto"];
+                };
+            };
+        };
+    };
+    UatRunAttest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UatRunAttestCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UatRunDto"];
+                };
+            };
+        };
+    };
+    UatFindingResolve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UatFindingResolveCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UatFindingDto"];
+                };
+            };
+        };
+    };
+    PilotGateRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotGateView"];
+                };
+            };
+        };
+    };
+    PilotSupportCheckRecord: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PilotSupportCheckCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotSupportCheckDto"];
+                };
+            };
+        };
+    };
+    PilotGateDecide: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PilotGateDecisionCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PilotGateDecisionDto"];
                 };
             };
         };
@@ -34517,6 +36201,104 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    ReconciliationReportList: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReconciliationListView"];
+                };
+            };
+        };
+    };
+    ReconciliationReportCreate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReconciliationReportCreateCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReconciliationReportView"];
+                };
+            };
+        };
+    };
+    ReconciliationReportRead: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReconciliationReportView"];
+                };
+            };
+        };
+    };
+    ReconciliationSignOff: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                vessel: string;
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReconciliationSignOffCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReconciliationReportView"];
+                };
             };
         };
     };

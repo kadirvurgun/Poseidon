@@ -11,6 +11,7 @@ import { isGuid } from './identifiers';
 import { loadSystemHealth, type NotificationDispatch, type SystemHealth } from './system-health-api';
 import { useWorkspaceRevalidation } from './use-workspace-revalidation';
 import { decodeTodayVessels } from './today-api';
+import { PilotMetricsPanel } from './PilotMetricsPanel';
 import './offline-enterprise.css';
 import './product.css';
 function selection() {
@@ -71,6 +72,7 @@ export function SystemHealthWorkspace() {
         {currentPage?.error && <p role="alert">{localizedText(en, "pairs.m_e0b902838820e1d9")}</p>}
         {currentPage?.rows && <EnterprisePagination label={localizedText(en, "pairs.m_86c9cba3060ef9f4")} previous={localizedText(en, "pairs.m_3ebc6aea5e3f139e")} next={localizedText(en, "pairs.m_1062ab19d3959cdd")} previousDisabled={!offset} nextDisabled={!currentPage.rows.hasMore || offset >= 100000} onPrevious={() => setOffset(n => Math.max(0, n - 25))} onNext={() => setOffset(n => n + 25)}/>}
         {vessel ? <HealthSnapshot key={`${user.tenantId}:${user.actorId}:${vessel}:${epoch}:${attempt}`} vessel={vessel} language={language}/> : <p role="status">{localizedText(en, "pairs.m_a558c33c8fd047aa")}</p>}
+        <PilotMetricsPanel key={`${user.tenantId}:${user.actorId}:${epoch}:${attempt}`} language={language}/>
       </>}
     </main></div>;
 }

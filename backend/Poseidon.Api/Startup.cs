@@ -20,6 +20,9 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddCertificateExtraction(configuration);
         services.AddSingleton(configuration.GetSection("TugPlanning").Get<TugPlanningPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<TimeProvider>(TimeProvider.System);
+        // S11 WP-B DEV-072: operator retention configuration; unset = no pilot telemetry is collected.
+        services.AddSingleton(configuration.GetSection("PilotTelemetry").Get<PilotTelemetrySettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
+        services.AddSingleton<PilotTelemetryRateLimiter>();
         services.AddSingleton<IProfileFreshnessPolicySource, UnconfiguredProfileFreshnessPolicy>();
         // DEV-056 x DEV-054/DEV-110 (S8 integration): real WorkOrder state and spare gap sources, registered
         // before the UNKNOWN fallbacks below. A denied/unavailable source still answers UNKNOWN / ACCESS_REQUIRED.
@@ -42,6 +45,14 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddSingleton<IDataTrustSignalSource, DataTrustSignalSource>();
         // S10 WP-C DEV-066: absent operator configuration leaves certificate renewal offline drafts unavailable.
         services.AddSingleton(configuration.GetSection("CertificateRenewalOffline").Get<CertificateRenewalOfflineSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
+        // S11 WP-D DEV-075: one reader per pilot gate. Not-yet-integrated owners stay DEFERRED (never PASS).
+        foreach (var deferred in DeferredPilotGateSource.Defaults()) services.AddSingleton(deferred);
+        services.AddSingleton<IPilotGateSource>(new UatPilotGateSource(Poseidon.Domain.UatScenarioCatalog.Ship));
+        services.AddSingleton<IPilotGateSource>(new UatPilotGateSource(Poseidon.Domain.UatScenarioCatalog.Tug));
+        services.AddSingleton<IPilotGateSource, SupportPilotGateSource>();
+        services.AddSingleton<IPilotGateSource, RegulatoryReviewPilotGateSource>(); // S11 WP-C DEV-073/093
+        services.AddSingleton<IPilotGateSource, DataReconciliationPilotGateSource>(); // S11 WP-A DEV-070
+        services.AddSingleton<IPilotP0Source, UatBlockerP0Source>();
         services.AddSingleton<ISpareGapSource, SpareGapReader>();
         services.AddSingleton(configuration.GetSection("NotificationScheduler").Get<NotificationSchedulerSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<NotificationServiceContexts>();
@@ -247,6 +258,7 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapVoiceEventDrafts();
             endpoints.MapPmsCommandCenter();
             endpoints.MapDepartureReadiness(); // S9 WP-A DEV-058/059
+            endpoints.MapRegulatoryReviews(); // S11 WP-C DEV-073/093
             endpoints.MapMaintenanceObservations();
             endpoints.MapMeasurementPoints();
             endpoints.MapMaintenancePostponements();
@@ -254,9 +266,13 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             endpoints.MapDrydock(); // S9 WP-D DEV-111
             endpoints.MapTugOperationsOffline(); // S10 WP-B DEV-092
             endpoints.MapTugOperationHistory(); // S10 WP-B DEV-091
+            endpoints.MapPilotMetrics(); // S11 WP-B DEV-072
+            endpoints.MapUat(); // S11 WP-D DEV-074/094
+            endpoints.MapPilotGate(); // S11 WP-D DEV-075
             endpoints.MapParameters();
             endpoints.MapHr();
             endpoints.MapMemberships();
+            endpoints.MapImportReconciliation(); // S11 WP-A DEV-070
             endpoints.MapGet("/health/live", () => Results.Text("alive"))
                 .WithName("GetLiveness")
                 .WithSummary("Process liveness only; does not indicate database or operational readiness.");

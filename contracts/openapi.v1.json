@@ -12851,6 +12851,47 @@
         "x-poseidon-profile": "NATIVE-READ-1"
       }
     },
+    "/api/v1/vessels/{vessel}/imports/{batch}/provenance": {
+      "get": {
+        "tags": [
+          "ImportEndpoints"
+        ],
+        "operationId": "ImportProvenanceList",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "batch",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportProvenancePageDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
     "/api/v1/vessels/{vessel}/imports/{batch}/commit": {
       "post": {
         "tags": [
@@ -17867,6 +17908,181 @@
         "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
+    "/api/v1/regulatory-reviews": {
+      "get": {
+        "tags": [
+          "RegulatoryReviewEndpoints"
+        ],
+        "operationId": "RegulatoryReviewList",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegulatoryReviewListDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "RegulatoryReviewEndpoints"
+        ],
+        "operationId": "RegulatoryReviewCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegulatoryReviewCreateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegulatoryReviewDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/regulatory-reviews/{id}": {
+      "get": {
+        "tags": [
+          "RegulatoryReviewEndpoints"
+        ],
+        "operationId": "RegulatoryReviewRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegulatoryReviewDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/regulatory-reviews/{id}/items/{item}/verdicts": {
+      "post": {
+        "tags": [
+          "RegulatoryReviewEndpoints"
+        ],
+        "operationId": "RegulatoryReviewVerdict",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "item",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegulatoryReviewVerdictCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegulatoryReviewItemDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/regulatory-reviews/{id}/close": {
+      "post": {
+        "tags": [
+          "RegulatoryReviewEndpoints"
+        ],
+        "operationId": "RegulatoryReviewClose",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegulatoryReviewCloseCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegulatoryReviewDetailDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
     "/api/v1/equipment-hierarchy/{vessel}/{asset}/observations": {
       "get": {
         "tags": [
@@ -20449,6 +20665,526 @@
           }
         },
         "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/pilot-metrics/capabilities": {
+      "get": {
+        "tags": [
+          "PilotMetricsEndpoints"
+        ],
+        "summary": "Pilot telemetry schema and whether this membership is enrolled. No identity or stored value is returned.",
+        "operationId": "PilotMetricsCapabilities",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotMetricCapabilitiesDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/pilot-metrics/events": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "summary": "Records one closed-code pilot event batch for the trusted actor. Free text, identities and record ids are not accepted.",
+        "operationId": "PilotMetricsSubmit",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PilotMetricEventsCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotMetricIngestDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "429": {
+            "description": "Too Many Requests"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/pilot-metrics/summary": {
+      "get": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "summary": "Pilot metric observations over a bounded window. SUPPRESSED, UNKNOWN and UNAVAILABLE carry no value; zero is never substituted.",
+        "operationId": "PilotMetricsSummary",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotMetricSummaryDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/uat/scenarios": {
+      "get": {
+        "tags": [
+          "UatEndpoints"
+        ],
+        "operationId": "UatScenarioCatalog",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UatCatalogView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/uat/summary": {
+      "get": {
+        "tags": [
+          "UatEndpoints"
+        ],
+        "operationId": "UatSummaryRead",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UatSummaryView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/uat/runs/{id}": {
+      "get": {
+        "tags": [
+          "UatEndpoints"
+        ],
+        "operationId": "UatRunRead",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UatRunDetailView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/uat/thresholds": {
+      "post": {
+        "tags": [
+          "UatEndpoints"
+        ],
+        "operationId": "UatThresholdRecord",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UatThresholdCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UatThresholdDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/uat/runs": {
+      "post": {
+        "tags": [
+          "UatEndpoints"
+        ],
+        "operationId": "UatRunCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UatRunCreateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UatRunDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/uat/runs/{id}/results": {
+      "post": {
+        "tags": [
+          "UatEndpoints"
+        ],
+        "operationId": "UatResultRecord",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UatResultCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UatResultDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/uat/runs/{id}/findings": {
+      "post": {
+        "tags": [
+          "UatEndpoints"
+        ],
+        "operationId": "UatFindingRecord",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UatFindingCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UatFindingDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/uat/runs/{id}/submit": {
+      "post": {
+        "tags": [
+          "UatEndpoints"
+        ],
+        "operationId": "UatRunSubmit",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UatRunSubmitCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UatRunDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/uat/runs/{id}/attest": {
+      "post": {
+        "tags": [
+          "UatEndpoints"
+        ],
+        "operationId": "UatRunAttest",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UatRunAttestCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UatRunDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/uat/findings/{id}/resolve": {
+      "post": {
+        "tags": [
+          "UatEndpoints"
+        ],
+        "operationId": "UatFindingResolve",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UatFindingResolveCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UatFindingDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/pilot-gate": {
+      "get": {
+        "tags": [
+          "PilotGateEndpoints"
+        ],
+        "operationId": "PilotGateRead",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotGateView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/pilot-gate/support-checks": {
+      "post": {
+        "tags": [
+          "PilotGateEndpoints"
+        ],
+        "operationId": "PilotSupportCheckRecord",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PilotSupportCheckCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotSupportCheckDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/pilot-gate/decisions": {
+      "post": {
+        "tags": [
+          "PilotGateEndpoints"
+        ],
+        "operationId": "PilotGateDecide",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PilotGateDecisionCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PilotGateDecisionDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
       }
     },
     "/api/v1/parameter-definitions": {
@@ -23087,6 +23823,170 @@
           },
           "503": {
             "description": "Service Unavailable"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/vessels/{vessel}/reconciliation-reports": {
+      "get": {
+        "tags": [
+          "ImportReconciliationEndpoints"
+        ],
+        "operationId": "ReconciliationReportList",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReconciliationListView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "ReconciliationReportCreate",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReconciliationReportCreateCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReconciliationReportView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/vessels/{vessel}/reconciliation-reports/{id}": {
+      "get": {
+        "tags": [
+          "ImportReconciliationEndpoints"
+        ],
+        "operationId": "ReconciliationReportRead",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReconciliationReportView"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      }
+    },
+    "/api/v1/vessels/{vessel}/reconciliation-reports/{id}/sign-off": {
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "operationId": "ReconciliationSignOff",
+        "parameters": [
+          {
+            "name": "vessel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReconciliationSignOffCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReconciliationReportView"
+                }
+              }
+            }
           }
         },
         "x-poseidon-profile": "NATIVE-COMMAND-1"
@@ -32582,6 +33482,22 @@
           }
         }
       },
+      "DataOwnerAuthorityDto": {
+        "required": [
+          "id",
+          "duty"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "duty": {
+            "type": "string"
+          }
+        }
+      },
       "DataQualitySignal": {
         "required": [
           "kind",
@@ -39173,6 +40089,118 @@
           }
         }
       },
+      "ImportProvenanceDto": {
+        "required": [
+          "batchId",
+          "previewId",
+          "rowNumber",
+          "category",
+          "sourceHash",
+          "templateVersion",
+          "templateFingerprint",
+          "targetKind",
+          "targetId",
+          "targetRevision",
+          "revisionKind",
+          "operation",
+          "actorId",
+          "recordedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "batchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "previewId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "rowNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "category": {
+            "type": "string"
+          },
+          "sourceHash": {
+            "type": "string"
+          },
+          "templateVersion": {
+            "type": "string"
+          },
+          "templateFingerprint": {
+            "type": "string"
+          },
+          "targetKind": {
+            "type": "string"
+          },
+          "targetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "targetRevision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "revisionKind": {
+            "type": "string"
+          },
+          "operation": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ImportProvenancePageDto": {
+        "required": [
+          "batchId",
+          "state",
+          "total",
+          "offset",
+          "limit",
+          "hasMore",
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "batchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "offset": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "limit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasMore": {
+            "type": "boolean"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImportProvenanceDto"
+            }
+          }
+        }
+      },
       "ImportRowIssueDto": {
         "required": [
           "code",
@@ -41322,6 +42350,40 @@
           }
         }
       },
+      "MissingCriticalItem": {
+        "required": [
+          "batchId",
+          "rowNumber",
+          "targetKind",
+          "targetId",
+          "field",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "batchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "rowNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "targetKind": {
+            "type": "string"
+          },
+          "targetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "field": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
       "MsmdReference": {
         "type": "object",
         "properties": {
@@ -43228,6 +44290,679 @@
           },
           "href": {
             "type": "string"
+          }
+        }
+      },
+      "PilotGateAuthorityDto": {
+        "required": [
+          "id",
+          "duty"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "duty": {
+            "type": "string"
+          }
+        }
+      },
+      "PilotGateDecisionCommand": {
+        "required": [
+          "decision",
+          "rationale",
+          "conditions",
+          "expectedReviewHash",
+          "expectedSequence",
+          "authorityId"
+        ],
+        "type": "object",
+        "properties": {
+          "decision": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "conditions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "expectedReviewHash": {
+            "type": "string"
+          },
+          "expectedSequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PilotGateDecisionDto": {
+        "required": [
+          "id",
+          "sequence",
+          "previousDecisionId",
+          "decision",
+          "recommendation",
+          "reviewHash",
+          "conditions",
+          "rationale",
+          "duty",
+          "actorId",
+          "recordedAt",
+          "validity"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "previousDecisionId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "recommendation": {
+            "type": "string"
+          },
+          "reviewHash": {
+            "type": "string"
+          },
+          "conditions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "duty": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "validity": {
+            "type": "string"
+          }
+        }
+      },
+      "PilotGateInput": {
+        "required": [
+          "gate",
+          "state",
+          "reasons",
+          "source"
+        ],
+        "type": "object",
+        "properties": {
+          "gate": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "source": {
+            "type": "string"
+          }
+        }
+      },
+      "PilotGateReviewOutcome": {
+        "required": [
+          "recommendation",
+          "gates",
+          "openP0",
+          "noGoReasons",
+          "hash"
+        ],
+        "type": "object",
+        "properties": {
+          "recommendation": {
+            "type": "string"
+          },
+          "gates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotGateInput"
+            }
+          },
+          "openP0": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "noGoReasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "hash": {
+            "type": "string"
+          },
+          "authority": {
+            "type": "string",
+            "default": "ProductOwnerHumanDecisionRequired;EngineNeverDecidesGo;AiCannotDecide"
+          }
+        }
+      },
+      "PilotGateView": {
+        "required": [
+          "review",
+          "support",
+          "decisions",
+          "sequence",
+          "authorities",
+          "canDecide",
+          "canRecordSupport",
+          "allowedDecisions",
+          "assessedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "review": {
+            "$ref": "#/components/schemas/PilotGateReviewOutcome"
+          },
+          "support": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotSupportItemView"
+            }
+          },
+          "decisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotGateDecisionDto"
+            }
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotGateAuthorityDto"
+            }
+          },
+          "canDecide": {
+            "type": "boolean"
+          },
+          "canRecordSupport": {
+            "type": "boolean"
+          },
+          "allowedDecisions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "assessedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "sourceLocator": {
+            "type": "string",
+            "default": "18.01/sheet:Backlog/row:76;18.01/sheet:DoR DoD Gates/row:4;23.03/paragraph:97-110;19.01/paragraph:130-136,276-279"
+          },
+          "authority": {
+            "type": "string",
+            "default": "ProductOwnerHumanDecisionRequired;EngineNeverDecidesGo;AiCannotDecide"
+          }
+        }
+      },
+      "PilotMetricCapabilitiesDto": {
+        "required": [
+          "canContribute",
+          "canRead",
+          "retentionState",
+          "retentionDays",
+          "schemaVersion",
+          "maxEventsPerBatch",
+          "requestsPerMinute",
+          "kinds",
+          "areas",
+          "shipJourneys",
+          "tugJourneys",
+          "aiSources",
+          "windowDays",
+          "minContributors"
+        ],
+        "type": "object",
+        "properties": {
+          "canContribute": {
+            "type": "boolean"
+          },
+          "canRead": {
+            "type": "boolean"
+          },
+          "retentionState": {
+            "type": "string"
+          },
+          "retentionDays": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "schemaVersion": {
+            "type": "string"
+          },
+          "maxEventsPerBatch": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requestsPerMinute": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "kinds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "areas": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "shipJourneys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tugJourneys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "aiSources": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "windowDays": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "minContributors": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "PilotMetricCell": {
+        "required": [
+          "dimension",
+          "key",
+          "state",
+          "value",
+          "contributors",
+          "reasons"
+        ],
+        "type": "object",
+        "properties": {
+          "dimension": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "contributors": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "PilotMetricEventCommand": {
+        "required": [
+          "kind",
+          "area",
+          "journey",
+          "aiSource",
+          "durationMs",
+          "occurredAt"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "area": {
+            "type": "string"
+          },
+          "journey": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "aiSource": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "durationMs": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PilotMetricEventsCommand": {
+        "required": [
+          "events"
+        ],
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotMetricEventCommand"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "PilotMetricIngestDto": {
+        "required": [
+          "batchId",
+          "accepted",
+          "schemaVersion",
+          "replayed"
+        ],
+        "type": "object",
+        "properties": {
+          "batchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "accepted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "schemaVersion": {
+            "type": "string"
+          },
+          "replayed": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PilotMetricResult": {
+        "required": [
+          "metricId",
+          "definitionVersion",
+          "unitCode",
+          "state",
+          "value",
+          "contributors",
+          "reasons",
+          "breakdown"
+        ],
+        "type": "object",
+        "properties": {
+          "metricId": {
+            "type": "string"
+          },
+          "definitionVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unitCode": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "contributors": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "breakdown": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotMetricCell"
+            }
+          }
+        }
+      },
+      "PilotMetricSummaryDto": {
+        "required": [
+          "contractVersion",
+          "windowDays",
+          "from",
+          "asOf",
+          "basis",
+          "retentionState",
+          "areas",
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "contractVersion": {
+            "type": "string"
+          },
+          "windowDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "asOf": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "basis": {
+            "type": "string"
+          },
+          "retentionState": {
+            "type": "string"
+          },
+          "areas": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PilotMetricResult"
+            }
+          }
+        }
+      },
+      "PilotSupportCheckCommand": {
+        "required": [
+          "item",
+          "state",
+          "evidenceReference",
+          "note",
+          "expectedSequence"
+        ],
+        "type": "object",
+        "properties": {
+          "item": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "evidenceReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "note": {
+            "type": "string"
+          },
+          "expectedSequence": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PilotSupportCheckDto": {
+        "required": [
+          "id",
+          "item",
+          "sequence",
+          "previousCheckId",
+          "state",
+          "evidenceReference",
+          "note",
+          "actorId",
+          "recordedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "item": {
+            "type": "string"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "previousCheckId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "evidenceReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "note": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PilotSupportItemView": {
+        "required": [
+          "item",
+          "latest"
+        ],
+        "type": "object",
+        "properties": {
+          "item": {
+            "type": "string"
+          },
+          "latest": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PilotSupportCheckDto"
+              }
+            ]
           }
         }
       },
@@ -45322,6 +47057,596 @@
         },
         "additionalProperties": false
       },
+      "ReconciliationBatchFacts": {
+        "required": [
+          "batchId",
+          "category",
+          "revision",
+          "state",
+          "sourceHash",
+          "templateFingerprint",
+          "previewId",
+          "sourceRows",
+          "acceptedRows",
+          "rejectedRows",
+          "duplicateRows",
+          "uploadedBy"
+        ],
+        "type": "object",
+        "properties": {
+          "batchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "category": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "state": {
+            "type": "string"
+          },
+          "sourceHash": {
+            "type": "string"
+          },
+          "templateFingerprint": {
+            "type": "string"
+          },
+          "previewId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "sourceRows": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "acceptedRows": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rejectedRows": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "duplicateRows": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "uploadedBy": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "ReconciliationCandidateBatchDto": {
+        "required": [
+          "id",
+          "category",
+          "state",
+          "rowCount",
+          "createdAt",
+          "committedAt",
+          "templateVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "category": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "rowCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "committedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "templateVersion": {
+            "type": "string"
+          }
+        }
+      },
+      "ReconciliationCounts": {
+        "required": [
+          "source",
+          "accepted",
+          "rejected",
+          "duplicate",
+          "notCommitted",
+          "missingCritical"
+        ],
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "accepted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "rejected": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "duplicate": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "notCommitted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "missingCritical": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ReconciliationException": {
+        "required": [
+          "kind",
+          "reference",
+          "disposition"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "reference": {
+            "type": "string"
+          },
+          "disposition": {
+            "type": "string"
+          }
+        }
+      },
+      "ReconciliationListView": {
+        "required": [
+          "vesselId",
+          "items",
+          "batches",
+          "canCreate",
+          "authorities",
+          "templateVersions",
+          "maxBatches",
+          "maxSample"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReconciliationReportSummaryDto"
+            }
+          },
+          "batches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReconciliationCandidateBatchDto"
+            }
+          },
+          "canCreate": {
+            "type": "boolean"
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DataOwnerAuthorityDto"
+            }
+          },
+          "templateVersions": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "maxBatches": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxSample": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sourceLocator": {
+            "type": "string",
+            "default": "18.01/Backlog/row:71;18.03/paragraph:10,49-66,82,84-102"
+          }
+        }
+      },
+      "ReconciliationReportCreateCommand": {
+        "required": [
+          "id",
+          "batchIds",
+          "sampleSize"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "batchIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "sampleSize": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReconciliationReportDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "revision",
+          "version",
+          "state",
+          "policyVersion",
+          "criticalFieldVersion",
+          "batches",
+          "counts",
+          "missingCritical",
+          "missingCriticalTruncated",
+          "sampleSeed",
+          "sample",
+          "hash",
+          "createdBy",
+          "createdAt",
+          "supersededAt",
+          "provenance"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "state": {
+            "type": "string"
+          },
+          "policyVersion": {
+            "type": "string"
+          },
+          "criticalFieldVersion": {
+            "type": "string"
+          },
+          "batches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReconciliationBatchFacts"
+            }
+          },
+          "counts": {
+            "$ref": "#/components/schemas/ReconciliationCounts"
+          },
+          "missingCritical": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MissingCriticalItem"
+            }
+          },
+          "missingCriticalTruncated": {
+            "type": "boolean"
+          },
+          "sampleSeed": {
+            "type": "string"
+          },
+          "sample": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReconciliationTarget"
+            }
+          },
+          "hash": {
+            "type": "string"
+          },
+          "createdBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "supersededAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "provenance": {
+            "type": "string"
+          }
+        }
+      },
+      "ReconciliationReportSummaryDto": {
+        "required": [
+          "id",
+          "state",
+          "revision",
+          "counts",
+          "createdAt",
+          "decision",
+          "signOffValidity"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "state": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "counts": {
+            "$ref": "#/components/schemas/ReconciliationCounts"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "decision": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "signOffValidity": {
+            "type": "string"
+          }
+        }
+      },
+      "ReconciliationReportView": {
+        "required": [
+          "report",
+          "signOff",
+          "stale",
+          "openItems",
+          "authorities",
+          "canSignOff",
+          "signOffBlockers",
+          "decisions",
+          "exceptionKinds"
+        ],
+        "type": "object",
+        "properties": {
+          "report": {
+            "$ref": "#/components/schemas/ReconciliationReportDto"
+          },
+          "signOff": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ReconciliationSignOffDto"
+              }
+            ]
+          },
+          "stale": {
+            "type": "boolean"
+          },
+          "openItems": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "authorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DataOwnerAuthorityDto"
+            }
+          },
+          "canSignOff": {
+            "type": "boolean"
+          },
+          "signOffBlockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "decisions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "exceptionKinds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sourceLocator": {
+            "type": "string",
+            "default": "18.01/Backlog/row:71;18.03/paragraph:10,49-66,82,84-102"
+          }
+        }
+      },
+      "ReconciliationSignOffCommand": {
+        "required": [
+          "expectedVersion",
+          "reportHash",
+          "decision",
+          "reason",
+          "exceptions",
+          "sampleVerified",
+          "authorityId"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "reportHash": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "exceptions": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ReconciliationException"
+            }
+          },
+          "sampleVerified": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReconciliationSignOffDto": {
+        "required": [
+          "id",
+          "decision",
+          "reason",
+          "exceptions",
+          "sampleVerified",
+          "duty",
+          "signedBy",
+          "signedAt",
+          "reportHash",
+          "validity"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "decision": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "exceptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReconciliationException"
+            }
+          },
+          "sampleVerified": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "duty": {
+            "type": "string"
+          },
+          "signedBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "signedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "reportHash": {
+            "type": "string"
+          },
+          "validity": {
+            "type": "string"
+          }
+        }
+      },
+      "ReconciliationTarget": {
+        "required": [
+          "batchId",
+          "rowNumber",
+          "targetKind",
+          "targetId"
+        ],
+        "type": "object",
+        "properties": {
+          "batchId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "rowNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "targetKind": {
+            "type": "string"
+          },
+          "targetId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
       "RecordedDecision": {
         "required": [
           "content",
@@ -45615,6 +47940,564 @@
             "$ref": "#/components/schemas/RegulatoryDraftContent"
           }
         }
+      },
+      "RegulatoryReviewCloseCommand": {
+        "required": [
+          "expectedVersion",
+          "outcome",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RegulatoryReviewCreateCommand": {
+        "required": [
+          "vesselId",
+          "scope"
+        ],
+        "type": "object",
+        "properties": {
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scope": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "RegulatoryReviewDetailDto": {
+        "required": [
+          "campaign",
+          "items",
+          "ownerMatrix",
+          "canManage",
+          "canReview",
+          "reviewerAuthorities",
+          "notices"
+        ],
+        "type": "object",
+        "properties": {
+          "campaign": {
+            "$ref": "#/components/schemas/RegulatoryReviewSummaryDto"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RegulatoryReviewItemDto"
+            }
+          },
+          "ownerMatrix": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RegulatoryReviewOwnerRow"
+            }
+          },
+          "canManage": {
+            "type": "boolean"
+          },
+          "canReview": {
+            "type": "boolean"
+          },
+          "reviewerAuthorities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RegulatoryReviewerAuthorityDto"
+            }
+          },
+          "notices": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "replayed": {
+            "type": "boolean",
+            "default": false
+          },
+          "policyVersion": {
+            "type": "string",
+            "default": "regulatory-sme-review-v1"
+          },
+          "candidateSourcePlan": {
+            "type": "string",
+            "default": "contracts/sources/pilot-ownership.v1.json"
+          }
+        }
+      },
+      "RegulatoryReviewerAuthorityDto": {
+        "required": [
+          "id",
+          "scopes",
+          "sourceAuthorities",
+          "qualificationVerified"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sourceAuthorities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "qualificationVerified": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RegulatoryReviewItemDto": {
+        "required": [
+          "id",
+          "ordinal",
+          "kind",
+          "subjectKey",
+          "ruleId",
+          "ruleRevision",
+          "requirementId",
+          "requirementRevision",
+          "sourceId",
+          "sourceRevision",
+          "candidateSourceCode",
+          "candidateAuthority",
+          "candidateUnverified",
+          "predictedResult",
+          "verdict",
+          "effectiveVerdict",
+          "stale",
+          "open",
+          "sourceAuthority",
+          "authorityCategory",
+          "ownerRole",
+          "sourceReference",
+          "sourceEdition",
+          "trackedIssueId",
+          "reviewerId",
+          "qualificationRef",
+          "verdictCount",
+          "verdictAt",
+          "version",
+          "blockers"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "ordinal": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "subjectKey": {
+            "type": "string"
+          },
+          "ruleId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "ruleRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "requirementId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "requirementRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "sourceId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "sourceRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "candidateSourceCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "candidateAuthority": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "candidateUnverified": {
+            "type": "boolean"
+          },
+          "predictedResult": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "verdict": {
+            "type": "string"
+          },
+          "effectiveVerdict": {
+            "type": "string"
+          },
+          "stale": {
+            "type": "boolean"
+          },
+          "open": {
+            "type": "boolean"
+          },
+          "sourceAuthority": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "authorityCategory": {
+            "type": "string"
+          },
+          "ownerRole": {
+            "type": "string"
+          },
+          "sourceReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sourceEdition": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "trackedIssueId": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reviewerId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "qualificationRef": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "verdictCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "verdictAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "replayed": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "RegulatoryReviewListDto": {
+        "required": [
+          "items",
+          "canManage"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RegulatoryReviewSummaryDto"
+            }
+          },
+          "canManage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RegulatoryReviewOwnerRow": {
+        "required": [
+          "authority",
+          "category",
+          "items",
+          "open",
+          "confirmed",
+          "ownerRoles"
+        ],
+        "type": "object",
+        "properties": {
+          "authority": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "open": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "confirmed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ownerRoles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "RegulatoryReviewSummaryDto": {
+        "required": [
+          "id",
+          "vesselId",
+          "scope",
+          "state",
+          "profileRevision",
+          "evaluationId",
+          "pinHash",
+          "itemCount",
+          "openItems",
+          "untrackedOpenItems",
+          "confirmedItems",
+          "staleItems",
+          "profileStale",
+          "createdBy",
+          "createdAt",
+          "closedBy",
+          "closedAt",
+          "openItemsAtClose",
+          "provenance",
+          "version",
+          "blockers"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vesselId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "profileRevision": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "evaluationId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "pinHash": {
+            "type": "string"
+          },
+          "itemCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "openItems": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "untrackedOpenItems": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "confirmedItems": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "staleItems": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "profileStale": {
+            "type": "boolean"
+          },
+          "createdBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "closedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "closedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "openItemsAtClose": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "blockers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "RegulatoryReviewVerdictCommand": {
+        "required": [
+          "expectedVersion",
+          "authorityId",
+          "verdict",
+          "sourceAuthority",
+          "ownerRole",
+          "sourceReference",
+          "sourceEdition",
+          "trackedIssueId",
+          "note"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "authorityId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "verdict": {
+            "type": "string"
+          },
+          "sourceAuthority": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "ownerRole": {
+            "type": "string"
+          },
+          "sourceReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sourceEdition": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "trackedIssueId": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
       },
       "RegulatoryRevisionDto": {
         "required": [
@@ -58777,6 +61660,800 @@
           }
         }
       },
+      "UatCatalogView": {
+        "required": [
+          "version",
+          "scenarios",
+          "shipRoles",
+          "tugRoles",
+          "environments",
+          "outcomes",
+          "severities"
+        ],
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string"
+          },
+          "scenarios": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UatScenario"
+            }
+          },
+          "shipRoles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tugRoles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "environments": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "outcomes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "severities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "authority": {
+            "type": "string",
+            "default": "HumanUatEvidenceOnly;EngineNeverAcceptsUat;NotAPilotGo"
+          }
+        }
+      },
+      "UatFindingCommand": {
+        "required": [
+          "scenarioId",
+          "severity",
+          "isUx",
+          "designConformance",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "scenarioId": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "isUx": {
+            "type": "boolean"
+          },
+          "designConformance": {
+            "type": "boolean"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UatFindingDto": {
+        "required": [
+          "id",
+          "runId",
+          "scope",
+          "scenarioId",
+          "severity",
+          "isUx",
+          "designConformance",
+          "title",
+          "state",
+          "reportedBy",
+          "reportedAt",
+          "resolvedBy",
+          "resolvedAt",
+          "resolution",
+          "resolutionReference",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "runId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "scenarioId": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string"
+          },
+          "isUx": {
+            "type": "boolean"
+          },
+          "designConformance": {
+            "type": "boolean"
+          },
+          "title": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "reportedBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reportedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "resolvedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "resolvedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "resolution": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "resolutionReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "UatFindingResolveCommand": {
+        "required": [
+          "state",
+          "resolution",
+          "resolutionReference",
+          "expectedVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string"
+          },
+          "resolution": {
+            "type": "string"
+          },
+          "resolutionReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UatGateOutcome": {
+        "required": [
+          "scope",
+          "state",
+          "gateState",
+          "reasons",
+          "scenarios",
+          "openBlockers",
+          "openMajors",
+          "openDesignConformance",
+          "attestedRuns",
+          "pendingAttestation"
+        ],
+        "type": "object",
+        "properties": {
+          "scope": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "gateState": {
+            "type": "string"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "scenarios": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UatScenarioOutcome"
+            }
+          },
+          "openBlockers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "openMajors": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "openDesignConformance": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "attestedRuns": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pendingAttestation": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "authority": {
+            "type": "string",
+            "default": "HumanUatEvidenceOnly;EngineNeverAcceptsUat;NotAPilotGo"
+          }
+        }
+      },
+      "UatResultCommand": {
+        "required": [
+          "scenarioId",
+          "outcome",
+          "durationSeconds",
+          "assisted",
+          "automatedEvidenceReference",
+          "note"
+        ],
+        "type": "object",
+        "properties": {
+          "scenarioId": {
+            "type": "string"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "durationSeconds": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "assisted": {
+            "type": "boolean"
+          },
+          "automatedEvidenceReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "UatResultDto": {
+        "required": [
+          "id",
+          "runId",
+          "scenarioId",
+          "attempt",
+          "outcome",
+          "durationSeconds",
+          "assisted",
+          "automatedEvidenceReference",
+          "note",
+          "recordedBy",
+          "recordedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "runId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scenarioId": {
+            "type": "string"
+          },
+          "attempt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "durationSeconds": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "assisted": {
+            "type": "boolean"
+          },
+          "automatedEvidenceReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "recordedBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "evidenceRule": {
+            "type": "string",
+            "default": "AutomatedEvidenceIsAttachmentOnly"
+          }
+        }
+      },
+      "UatRunAttestCommand": {
+        "required": [
+          "statement",
+          "expectedVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "statement": {
+            "type": "string"
+          },
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UatRunCreateCommand": {
+        "required": [
+          "scope",
+          "role",
+          "environment",
+          "buildCommit",
+          "participantPseudonym"
+        ],
+        "type": "object",
+        "properties": {
+          "scope": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "environment": {
+            "type": "string"
+          },
+          "buildCommit": {
+            "type": "string"
+          },
+          "participantPseudonym": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UatRunDetailView": {
+        "required": [
+          "run",
+          "results",
+          "findings",
+          "canRecord",
+          "canAttest"
+        ],
+        "type": "object",
+        "properties": {
+          "run": {
+            "$ref": "#/components/schemas/UatRunDto"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UatResultDto"
+            }
+          },
+          "findings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UatFindingDto"
+            }
+          },
+          "canRecord": {
+            "type": "boolean"
+          },
+          "canAttest": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UatRunDto": {
+        "required": [
+          "id",
+          "scope",
+          "role",
+          "environment",
+          "buildCommit",
+          "participantPseudonym",
+          "catalogVersion",
+          "state",
+          "facilitatorActorId",
+          "createdAt",
+          "submittedAt",
+          "attestedBy",
+          "attestedAt",
+          "attestationStatement",
+          "provenance",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "environment": {
+            "type": "string"
+          },
+          "buildCommit": {
+            "type": "string"
+          },
+          "participantPseudonym": {
+            "type": "string"
+          },
+          "catalogVersion": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "facilitatorActorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "submittedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "attestedBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "attestedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "attestationStatement": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "UatRunSubmitCommand": {
+        "required": [
+          "expectedVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UatScenario": {
+        "required": [
+          "id",
+          "scope",
+          "journey",
+          "passProof",
+          "locator"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "journey": {
+            "type": "string"
+          },
+          "passProof": {
+            "type": "string"
+          },
+          "locator": {
+            "type": "string"
+          }
+        }
+      },
+      "UatScenarioOutcome": {
+        "required": [
+          "scenarioId",
+          "attestedRuns",
+          "passed",
+          "failed",
+          "blocked",
+          "notRun",
+          "passPercent"
+        ],
+        "type": "object",
+        "properties": {
+          "scenarioId": {
+            "type": "string"
+          },
+          "attestedRuns": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "passed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "failed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "blocked": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "notRun": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "passPercent": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "UatSummaryView": {
+        "required": [
+          "scope",
+          "catalogVersion",
+          "threshold",
+          "thresholdSequence",
+          "gate",
+          "runs",
+          "openFindings",
+          "canRecord",
+          "canRecordThreshold",
+          "canAttest"
+        ],
+        "type": "object",
+        "properties": {
+          "scope": {
+            "type": "string"
+          },
+          "catalogVersion": {
+            "type": "string"
+          },
+          "threshold": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/UatThresholdDto"
+              }
+            ]
+          },
+          "thresholdSequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "gate": {
+            "$ref": "#/components/schemas/UatGateOutcome"
+          },
+          "runs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UatRunDto"
+            }
+          },
+          "openFindings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UatFindingDto"
+            }
+          },
+          "canRecord": {
+            "type": "boolean"
+          },
+          "canRecordThreshold": {
+            "type": "boolean"
+          },
+          "canAttest": {
+            "type": "boolean"
+          },
+          "authority": {
+            "type": "string",
+            "default": "HumanUatEvidenceOnly;EngineNeverAcceptsUat;NotAPilotGo"
+          }
+        }
+      },
+      "UatThresholdCommand": {
+        "required": [
+          "scope",
+          "minScenarioPassPercent",
+          "maxOpenMajorFindings",
+          "requireDesignConformance",
+          "agreementReference",
+          "rationale",
+          "expectedSequence"
+        ],
+        "type": "object",
+        "properties": {
+          "scope": {
+            "type": "string"
+          },
+          "minScenarioPassPercent": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxOpenMajorFindings": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requireDesignConformance": {
+            "type": "boolean"
+          },
+          "agreementReference": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "expectedSequence": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UatThresholdDto": {
+        "required": [
+          "id",
+          "scope",
+          "sequence",
+          "previousThresholdId",
+          "minScenarioPassPercent",
+          "maxOpenMajorFindings",
+          "requireDesignConformance",
+          "agreementReference",
+          "rationale",
+          "actorId",
+          "recordedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "scope": {
+            "type": "string"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "previousThresholdId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "minScenarioPassPercent": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxOpenMajorFindings": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requireDesignConformance": {
+            "type": "boolean"
+          },
+          "agreementReference": {
+            "type": "string"
+          },
+          "rationale": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recordedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
       "VesselCertificateContent": {
         "required": [
           "metadata"
@@ -61447,6 +65124,9 @@
       "name": "DepartureReadinessEndpoints"
     },
     {
+      "name": "RegulatoryReviewEndpoints"
+    },
+    {
       "name": "MaintenanceObservationEndpoints"
     },
     {
@@ -61483,7 +65163,19 @@
       "name": "TugOperationsOfflineEndpoints"
     },
     {
+      "name": "PilotMetricsEndpoints"
+    },
+    {
+      "name": "UatEndpoints"
+    },
+    {
+      "name": "PilotGateEndpoints"
+    },
+    {
       "name": "ParameterEndpoints"
+    },
+    {
+      "name": "ImportReconciliationEndpoints"
     }
   ]
 }

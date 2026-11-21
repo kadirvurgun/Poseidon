@@ -14,7 +14,7 @@ export type MetricScalar = components['schemas']['MetricScalarDto'] & {
 // unreadableSources (undecodable source) + notCollectedSources (no declaration).
 export type MetricScope = components['schemas']['MetricScopeDto'] & { kind: 'TENANT_VISIBLE' | 'VESSEL' }
 export type MetricDefinition = components['schemas']['MetricDefinitionDto'] & {
-  allowedActions: ('view')[]; scopes: ('TENANT_VISIBLE' | 'VESSEL')[]
+  allowedActions: ('view')[]; scopes: ('TENANT_VISIBLE' | 'VESSEL' | 'PILOT_WINDOW')[]
 }
 export type MetricCatalog = { contractVersion: 'metrics.v1'; items: MetricDefinition[] }
 export type MetricState = 'VALUE' | 'SUPPRESSED' | 'UNKNOWN' | 'UNAVAILABLE'
@@ -37,7 +37,8 @@ const codes = (x: unknown) => Array.isArray(x) && x.length <= 16 && x.every(c =>
 const strings = (x: unknown) => Array.isArray(x) && x.length > 0 && x.length <= 16 && x.every(c => text(c, 120))
 const members = (x: unknown, allowed: readonly string[]) => Array.isArray(x) && x.length > 0 && new Set(x).size === x.length &&
   x.every(c => typeof c === 'string' && allowed.includes(c))
-const metricScopes = ['TENANT_VISIBLE', 'VESSEL'] as const
+// PILOT_WINDOW (S11 WP-B DEV-072): evaluated only by pilot-metrics/summary, never by the scalar endpoint.
+const metricScopes = ['TENANT_VISIBLE', 'VESSEL', 'PILOT_WINDOW'] as const
 const metricActions = ['view'] as const
 function fail(): never { throw new ApiError(502, 'invalid_metric_contract') }
 

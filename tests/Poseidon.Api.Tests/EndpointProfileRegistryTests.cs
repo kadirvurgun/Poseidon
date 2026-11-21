@@ -262,15 +262,16 @@ public sealed partial class DirectoryWorkspaceTests
         "maintenance.observation.write", "maintenance.measurement.write", "maintenance.postponement.request", "maintenance.postponement.decide", "maintenance.owner.eligible", "maintenance.read", "maintenance.write", "mode.cross", "mode.tug",
         "notification.acknowledge", "notification.evaluate", "notification.manage", "notification.preference.write", "notification.read",
         "operations.downtime.read", "operations.downtime.write", "operations.fuel.read", "operations.fuel.write", "operations.port.read",
-        "operations.port.write", "operations.port.finalize", "operations.downtime.review", "regulatory.draft.read", "regulatory.draft.write", "regulatory.facts.attest", "regulatory.qualify",
-        "rules.review", "rules.write", "system.health.read", "tug.owner.eligible", "tug.plan.write", "tug.execution.verify", "drydock.read", "drydock.write", "drydock.verify", "tug.read", "tug.write",
+        "operations.port.write", "regulatory.review.read", "regulatory.review.manage", "regulatory.review.verdict", "operations.port.finalize", "operations.downtime.review", "regulatory.draft.read", "regulatory.draft.write", "regulatory.facts.attest", "regulatory.qualify",
+        "rules.review", "rules.write", "system.health.read", "tug.owner.eligible", "tug.plan.write", "tug.execution.verify", "pilot.metrics.read", "pilot.metrics.contribute", "import.reconciliation.sign", "drydock.read", "drydock.write", "drydock.verify", "tug.read", "tug.write",
         "workorder.read", "workorder.write", "workorder.release", "workorder.execute", "workorder.verify", "workorder.close",
         "spare.read", "spare.write", "requisition.propose", "requisition.approve", "workspace.search",
         "membership.read", "membership.manage", "membership.security.suspend",
         "document.publish", "document.isps.read", "document.restricted.download", "document.acknowledge", "voice.draft.read", "voice.draft.write", "evidence.verify", "record.hold", "record.retention.manage", "record.purge.request", "record.purge.approve",
         "hse.risk.read", "hse.risk.write", "hse.risk.approve", "hse.risk.acknowledge", "hse.risk_template.read", "hse.risk_template.write", "hse.risk_template.publish", "hse.risk_template.suggest", "hse.risk_method.write", "hse.risk_method.publish", "hse.high_risk_work.read", "departure.readiness.read", "departure.decide",
         "hse.safety_event.read", "hse.safety_event.report", "hse.safety_event.triage", "hse.safety_event.identity.read", "hse.safety_event.investigate", "hse.safety_event.review", "hse.safety_action.write", "hse.safety_action.verify", "hse.safety_action.effectiveness",
-        "assurance.inspection.read", "assurance.inspection.import", "assurance.import.accept", "assurance.evidence.write", "assurance.finding.link", "assurance.mapping.write"];
+        "assurance.inspection.read", "assurance.inspection.import", "assurance.import.accept", "assurance.evidence.write", "assurance.finding.link", "assurance.mapping.write",
+        "uat.read", "uat.record", "uat.threshold.record", "uat.attest", "pilot.gate.read", "pilot.gate.support.record", "pilot.gate.decide"];
 
     private async Task<HttpResponseMessage> ProfileSend(WebApplicationFactory<Program> host, HttpClient client, EndpointProfileEntry entry,
         string path, bool csrf, bool key)

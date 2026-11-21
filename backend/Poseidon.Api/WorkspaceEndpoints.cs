@@ -25,10 +25,15 @@ public static class WorkspaceEndpoints
         if (PmsCommandCenterEndpoints.CanRead(actor)) destinations = [.. destinations, new("pms-command-center", "/app/pms-command-center")];
         // S9 DEV-058/059: the same server predicate as the departure readiness endpoint.
         if (DepartureAuthorities.CanRead(actor)) destinations = [.. destinations, new("departure-signoff", "/app/departure-signoff")];
+        // S11 DEV-073/093: the same server predicate as the regulatory review endpoints.
+        if (RegulatoryReviewAccess.CanRead(actor)) destinations = [.. destinations, new("regulatory-review", "/app/regulatory-review")];
         if (ServiceReportEndpoints.CanRead(actor)) destinations = [.. destinations, new("service-engineer-report", "/app/service-engineer-report")];
         // S9 WP-C DEV-062 / DEV-114: the same server predicates as their endpoints.
         if (VoiceEventDraftEndpoints.CanRead(actor)) destinations = [.. destinations, new("voice-event-draft", "/app/voice-event-draft")];
         if (ControlledDocumentEndpoints.CanReadDocuments(actor)) destinations = [.. destinations, new("document-compare", "/app/document-compare")];
+        // S11 WP-D DEV-074/094/075: the same server predicates as the UAT and pilot gate endpoints.
+        if (PilotAccess.UatRead(actor)) destinations = [.. destinations, new("role-uat", "/app/role-uat")];
+        if (PilotAccess.GateRead(actor)) destinations = [.. destinations, new("pilot-gate", "/app/pilot-gate")];
         if (OperationalDowntimeEndpoints.CanRead(actor)) destinations = [.. destinations, new("operational-downtime", "/app/operational-downtime")];
         // DEV-105/DEV-106: the same server predicates as the risk endpoints.
         if (RiskAssessmentEndpoints.CanRead(actor)) destinations = [.. destinations, new("risk-assessment", "/app/risk-assessment")];

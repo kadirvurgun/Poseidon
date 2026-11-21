@@ -1,0 +1,61 @@
+{
+  "schemaVersion": "poseidon.compliance-roadmap.v1",
+  "id": "DEV-117",
+  "title": "PMS type approval roadmap",
+  "state": "DRAFT",
+  "disclaimer": "Sertifika/onay iddiası değildir. This roadmap is a plan; no class society has reviewed, assessed or awarded anything to POSEIDON.",
+  "sources": [
+    "18.01/Backlog/row:118 DEV-117 T-V463-003",
+    "22.01/paragraph:26-28",
+    "22.01/paragraph:35-41",
+    "22.01/paragraph:42-90",
+    "03.02/paragraph:23",
+    "03.02/paragraph:254",
+    "03.01/NOZZLE Kaynakları/row:18-19 (competitor public material, not a requirement authority)"
+  ],
+  "targetClass": {
+    "state": "UNSELECTED",
+    "candidates": ["DNV", "ClassNK", "Türk Loydu"],
+    "selectionRule": "Pilot customer's class first, then commercial priority (22.01 paragraph:50). Decided by Product Council (CA-01).",
+    "selectedBy": null,
+    "selectedAt": null
+  },
+  "approvalScheme": {
+    "state": "NOT_REVIEWED",
+    "reference": null,
+    "note": "The applicable scheme, its edition and its requirement matrix are read from the selected society's own published documents during CA-02 by a Class/Technical SME. Nothing here restates scheme requirements."
+  },
+  "approval": { "state": "APPROVAL_PENDING", "approverRole": "Product Council", "approvedBy": null, "approvedAt": null },
+  "stages": [
+    { "id": "CA-01", "name": "Target class selection", "output": "Target class list", "gateRole": "Product Council", "status": "NOT_STARTED", "source": "22.01/paragraph:48-51" },
+    { "id": "CA-02", "name": "Scheme review", "output": "Approval requirement matrix", "gateRole": "Class/Technical SME", "status": "NOT_STARTED", "source": "22.01/paragraph:52-55" },
+    { "id": "CA-03", "name": "Product gap", "output": "Class gap backlog", "gateRole": "Product Owner + Engineering", "status": "DRAFT_GAP_LIST_ONLY", "source": "22.01/paragraph:56-59" },
+    { "id": "CA-04", "name": "Evidence pack", "output": "Controlled approval evidence", "gateRole": "QA", "status": "NOT_STARTED", "source": "22.01/paragraph:60-63" },
+    { "id": "CA-05", "name": "Pre-assessment", "output": "Finding list", "gateRole": "Class/RO", "status": "NOT_STARTED", "source": "22.01/paragraph:64-67" },
+    { "id": "CA-06", "name": "Remediation", "output": "Closed findings", "gateRole": "Engineering/QA", "status": "NOT_STARTED", "source": "22.01/paragraph:68-71" },
+    { "id": "CA-07", "name": "Formal audit/test", "output": "Audit/test report", "gateRole": "Class/RO", "status": "NOT_STARTED", "source": "22.01/paragraph:72-75" },
+    { "id": "CA-08", "name": "Award", "output": "Society-issued document", "gateRole": "Authorized class society", "status": "NOT_STARTED", "source": "22.01/paragraph:76-79", "claimRule": "Sales and product material make no approval statement before a formal award (22.01 paragraph:78)." }
+  ],
+  "gaps": [
+    { "id": "PMS-GAP-01", "area": "Equipment hierarchy and unique equipment identity", "source": "22.01/paragraph:81", "ownerRole": "Technical Product Owner", "targetDate": null, "status": "EVIDENCE_AUTHORED_UNVERIFIED",
+      "evidence": ["backend/Poseidon.Domain/EquipmentHierarchyPolicy.cs", "docs/tasks/equipment-hierarchy-policy-01.md"], "remaining": "Scheme-specific identity/hierarchy criteria after CA-02; QA verification record." },
+    { "id": "PMS-GAP-02", "area": "Planned/unplanned maintenance lifecycle and recurring maintenance", "source": "22.01/paragraph:82", "ownerRole": "Technical Product Owner", "targetDate": null, "status": "EVIDENCE_AUTHORED_UNVERIFIED",
+      "evidence": ["backend/Poseidon.Domain/MaintenancePlanningPolicy.cs", "docs/tasks/equipment-maintenance-01.md"], "remaining": "Unplanned-maintenance path mapping and scheme criteria." },
+    { "id": "PMS-GAP-03", "area": "Running hours / measurement-point integrity and traceable source", "source": "22.01/paragraph:83", "ownerRole": "Technical Product Owner", "targetDate": null, "status": "EVIDENCE_AUTHORED_UNVERIFIED",
+      "evidence": ["backend/Poseidon.Domain/PmsMeasurementPolicy.cs"], "remaining": "Counter-integrity test evidence pack." },
+    { "id": "PMS-GAP-04", "area": "Work-order postpone/approve controls with reason and audit trail", "source": "22.01/paragraph:84", "ownerRole": "Technical Product Owner", "targetDate": null, "status": "EVIDENCE_AUTHORED_UNVERIFIED",
+      "evidence": ["backend/Poseidon.Domain/MaintenancePostponementPolicy.cs", "backend/Poseidon.Domain/WorkOrderExecution.cs"], "remaining": "Postponement maximum-extension policy is UNCONFIGURED until a Technical SME sets it." },
+    { "id": "PMS-GAP-05", "area": "Critical equipment and critical task handling", "source": "22.01/paragraph:85", "ownerRole": "Class/Technical SME", "targetDate": null, "status": "OPEN",
+      "evidence": ["backend/Poseidon.Domain/CriticalStatePolicy.cs"], "remaining": "Approved criticality catalogue does not exist; it is an expert decision, never seeded." },
+    { "id": "PMS-GAP-06", "area": "Job plan / revision history and fleet-standard job pool", "source": "22.01/paragraph:86", "ownerRole": "Technical Product Owner", "targetDate": null, "status": "OPEN",
+      "evidence": [], "remaining": "Fleet-standard job pool is not implemented." },
+    { "id": "PMS-GAP-07", "area": "Completion evidence, verifier and immutable maintenance history", "source": "22.01/paragraph:87", "ownerRole": "QA Lead", "targetDate": null, "status": "EVIDENCE_AUTHORED_UNVERIFIED",
+      "evidence": ["backend/Poseidon.Domain/WorkOrderExecution.cs", "docs/tasks/audit-trace-01.md"], "remaining": "Independent QA verification and evidence pack." },
+    { "id": "PMS-GAP-08", "area": "Defect / safeguard / restriction link to equipment and readiness", "source": "22.01/paragraph:88", "ownerRole": "Technical Product Owner", "targetDate": null, "status": "EVIDENCE_AUTHORED_UNVERIFIED",
+      "evidence": ["backend/Poseidon.Domain/DefectLifecyclePolicy.cs"], "remaining": "Readiness propagation test evidence." },
+    { "id": "PMS-GAP-09", "area": "Backup/restore, user authorization, audit trail and controlled software change", "source": "22.01/paragraph:89", "ownerRole": "DevOps Lead", "targetDate": null, "status": "OPEN",
+      "evidence": ["docs/operations/dr-runbook.md", "scripts/dr_rehearsal.py", "backend/Poseidon.Api/SecurityAudit.cs", "docs/security-baseline.md"], "remaining": "Measured restore rehearsal and signed rollback procedure (DEV-071) are DEFERRED." },
+    { "id": "PMS-GAP-10", "area": "Versioned migration and regression-test evidence", "source": "22.01/paragraph:90", "ownerRole": "Engineering Lead", "targetDate": null, "status": "EVIDENCE_AUTHORED_UNVERIFIED",
+      "evidence": [".github/workflows/backend-foundation.yml", "backend/Poseidon.Persistence/Migrations"], "remaining": "Controlled regression evidence bound to a release commit." }
+  ]
+}

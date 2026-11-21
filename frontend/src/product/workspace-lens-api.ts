@@ -30,6 +30,7 @@ export const lensLabels: Record<string, readonly [
     'risk-assessment': [sourceText("tr", "pairs.m_2ba46e791f65fb5f"), sourceText("en", "pairs.m_2ba46e791f65fb5f")],
     'risk-template-library': [sourceText("tr", "pairs.m_c086860d120fa851"), sourceText("en", "pairs.m_c086860d120fa851")],
     'departure-signoff': [sourceText("tr", "pairs.m_9d2a4c6e8f0b1d35"), sourceText("en", "pairs.m_9d2a4c6e8f0b1d35")],
+    'regulatory-review': [sourceText("tr", "pairs.m_3c8e1f5a7b2d9e40"), sourceText("en", "pairs.m_3c8e1f5a7b2d9e40")],
     'pms-command-center': [sourceText("tr", "pairs.m_8c3e1f0a5d2b7c41"), sourceText("en", "pairs.m_8c3e1f0a5d2b7c41")],
     'service-engineer-report': [sourceText("tr", "pairs.m_8c3e1f0a5d2b7c42"), sourceText("en", "pairs.m_8c3e1f0a5d2b7c42")],
     'safety-events': [sourceText("tr", "pairs.m_8a32195b2423b0ae"), sourceText("en", "pairs.m_8a32195b2423b0ae")],
@@ -37,6 +38,8 @@ export const lensLabels: Record<string, readonly [
     'industry-assurance': [sourceText("tr", "pairs.m_b62e1f8d4a0c3592"), sourceText("en", "pairs.m_b62e1f8d4a0c3592")],
     'voice-event-draft': [sourceText("tr", "pairs.m_9a7c51e0d3b2f461"), sourceText("en", "pairs.m_9a7c51e0d3b2f461")],
     'document-compare': [sourceText("tr", "pairs.m_9a7c51e0d3b2f462"), sourceText("en", "pairs.m_9a7c51e0d3b2f462")],
+    'role-uat': [sourceText("tr", "pairs.m_5b1e7c9d3a2f4e60"), sourceText("en", "pairs.m_5b1e7c9d3a2f4e60")],
+    'pilot-gate': [sourceText("tr", "pairs.m_5b1e7c9d3a2f4e61"), sourceText("en", "pairs.m_5b1e7c9d3a2f4e61")],
     'high-risk-work': [sourceText("tr", "pairs.m_04076d4cdaa5ec7d"), sourceText("en", "pairs.m_04076d4cdaa5ec7d")],
     'work-order-center': [sourceText("tr", "pairs.m_8b20599d8e3aae73"), sourceText("en", "pairs.m_8b20599d8e3aae73")],
     'critical-spares': [sourceText("tr", "pairs.m_5e7a1c0d2b4f9b10"), sourceText("en", "pairs.m_5e7a1c0d2b4f9b10")],
@@ -47,6 +50,7 @@ export const lensLabels: Record<string, readonly [
     'noon-report': [sourceText("tr", "pairs.m_ff485806c57476ca"), sourceText("en", "pairs.m_ff485806c57476ca")], 'deck-daily-log': [sourceText("tr", "pairs.m_75d4c27ced71efda"), sourceText("en", "pairs.m_75d4c27ced71efda")], 'engine-daily-log': [sourceText("tr", "pairs.m_21eb6ede9f2b37f9"), sourceText("en", "pairs.m_21eb6ede9f2b37f9")],
     today: [sourceText("tr", "pairs.m_14d5741b2e6e2585"), sourceText("en", "pairs.m_14d5741b2e6e2585")], fleet: [sourceText("tr", "pairs.m_624c9bbf6ccfa3dd"), sourceText("en", "pairs.m_624c9bbf6ccfa3dd")], companies: [sourceText("tr", "pairs.m_3ff4996c5348b429"), sourceText("en", "pairs.m_3ff4996c5348b429")], crew: [sourceText("tr", "pairs.m_9c7ff80bf1b60400"), sourceText("en", "pairs.m_9c7ff80bf1b60400")],
     equipment: [sourceText("tr", "pairs.m_77e9d3d4c2e4b44f"), sourceText("en", "pairs.m_77e9d3d4c2e4b44f")], maintenance: [sourceText("tr", "pairs.m_21f68c2e5c640595"), sourceText("en", "pairs.m_21f68c2e5c640595")], import: [sourceText("tr", "pairs.m_f1779f35acec39d7"), sourceText("en", "pairs.m_f1779f35acec39d7")],
+    'data-reconciliation': [sourceText("tr", "pairs.m_e5831d38d264db25"), sourceText("en", "pairs.m_e5831d38d264db25")],
     audit: [sourceText("tr", "pairs.m_9f8662ba28b5b4fc"), sourceText("en", "pairs.m_9f8662ba28b5b4fc")],
     'audit-ready': [sourceText("tr", "pairs.m_372c48ba7e84c124"), sourceText("en", "pairs.m_372c48ba7e84c124")], sources: [sourceText("tr", "pairs.m_d52797a6e362de20"), sourceText("en", "pairs.m_d52797a6e362de20")], requirements: [sourceText("tr", "pairs.m_d6ad4bb19c60b2b2"), sourceText("en", "pairs.m_d6ad4bb19c60b2b2")],
     'crew-certificates': [sourceText("tr", "pairs.m_57a1c0ce00000001"), sourceText("en", "pairs.m_57a1c0ce00000001")], 'crew-competence': [sourceText("tr", "pairs.m_57a1c0ce00000002"), sourceText("en", "pairs.m_57a1c0ce00000002")], 'safe-manning': [sourceText("tr", "pairs.m_57a1c0ce00000003"), sourceText("en", "pairs.m_57a1c0ce00000003")],
@@ -64,11 +68,11 @@ export const lensLabels: Record<string, readonly [
     'drydock-planning': [sourceText("tr", "pairs.m_7a31428311abb402"), sourceText("en", "pairs.m_7a31428311abb402")],
     'towage-risk-briefing': [sourceText("tr", "pairs.m_b75bd8b78f08cd52"), sourceText("en", "pairs.m_b75bd8b78f08cd52")],
 };
-const root: Record<string, string> = { crew: 'crew-roster', 'crew-certificates': 'crew-certificates', 'crew-competence': 'training-position-matrix', 'safe-manning': 'safe-manning', equipment: 'equipment-hierarchy', maintenance: 'maintenance-plan', import: 'excel-migration' };
+const root: Record<string, string> = { crew: 'crew-roster', 'crew-certificates': 'crew-certificates', 'crew-competence': 'training-position-matrix', 'safe-manning': 'safe-manning', equipment: 'equipment-hierarchy', maintenance: 'maintenance-plan', import: 'excel-migration', 'data-reconciliation': 'data-reconciliation' };
 export function lensHref(key: string, vessel: string | null) {
     if (!Object.hasOwn(lensLabels, key))
         return null;
-    if (['audit-ready', 'operational-downtime', 'risk-assessment', 'pms-command-center', 'departure-signoff', 'service-engineer-report', 'voice-event-draft', 'document-compare', 'work-order-center', 'defects', 'fuel-bunker-log', 'port-activity-sof', 'noon-report', 'deck-daily-log', 'engine-daily-log', 'certificate-command-center', 'renewal-workflow', 'pre-survey-checklist'].includes(key))
+    if (['audit-ready', 'operational-downtime', 'risk-assessment', 'pms-command-center', 'departure-signoff', 'regulatory-review', 'service-engineer-report', 'voice-event-draft', 'document-compare', 'work-order-center', 'defects', 'fuel-bunker-log', 'port-activity-sof', 'noon-report', 'deck-daily-log', 'engine-daily-log', 'certificate-command-center', 'renewal-workflow', 'pre-survey-checklist'].includes(key))
         return vessel ? `/app/${key}/${vessel}` : `/app/${key}`;
     if (Object.hasOwn(root, key))
         return vessel ? `/app/${root[key]}/${vessel}` : null;
@@ -97,7 +101,7 @@ export function decodeLenses(value: unknown, tenant: string, actor: string, vess
         for (const item of row.items) {
             if (!object(item) || !closed(item, ['key', 'href', 'group']) || typeof item.key !== 'string' || !Object.hasOwn(lensLabels, item.key) || typeof item.href !== 'string' || items.some(x => x.key === item.key) ||
                 item.href !== lensHref(item.key, vessel) || (item.group !== 'daily' && item.group !== 'review') ||
-                item.group !== (['audit', 'audit-ready', 'sources', 'requirements', 'import', 'certificate-command-center', 'renewal-workflow', 'risk-template-library', 'high-risk-work', 'crew-certificates', 'pre-survey-checklist', 'crew-competence', 'survey-planner', 'safe-manning'].includes(item.key) ? 'review' : 'daily') ||
+                item.group !== (['audit', 'audit-ready', 'sources', 'requirements', 'import', 'data-reconciliation', 'certificate-command-center', 'renewal-workflow', 'risk-template-library', 'high-risk-work', 'crew-certificates', 'pre-survey-checklist', 'crew-competence', 'survey-planner', 'safe-manning'].includes(item.key) ? 'review' : 'daily') ||
                 (value.mode === 'Ship' && (item.key.startsWith('tug-') || item.key.startsWith('towage-'))) || (value.mode === 'Tug' && ['fuel-bunker-log', 'port-activity-sof', 'operational-downtime'].includes(item.key)))
                 invalid();
             items.push({ key: item.key, href: item.href as string, group: item.group });

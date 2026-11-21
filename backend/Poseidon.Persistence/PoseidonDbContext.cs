@@ -137,6 +137,10 @@ public sealed class PoseidonDbContext(
     public DbSet<ControlledDocumentCertificateLink> ControlledDocumentCertificateLinks => Set<ControlledDocumentCertificateLink>();
     public DbSet<ControlledDocumentEvidenceLink> ControlledDocumentEvidenceLinks => Set<ControlledDocumentEvidenceLink>();
     public DbSet<ControlledDocumentCredentialLink> ControlledDocumentCredentialLinks => Set<ControlledDocumentCredentialLink>();
+    // S11 WP-B DEV-072.
+    public DbSet<PilotMetricBatch> PilotMetricBatches => Set<PilotMetricBatch>();
+    public DbSet<PilotMetricTenantSalt> PilotMetricTenantSalts => Set<PilotMetricTenantSalt>();
+    public DbSet<PilotMetricReceipt> PilotMetricReceipts => Set<PilotMetricReceipt>();
 
     public DbSet<Credential> Credentials => Set<Credential>();
     public DbSet<CredentialRevision> CredentialRevisions => Set<CredentialRevision>();
@@ -231,9 +235,27 @@ public sealed class PoseidonDbContext(
     // S10 WP-B DEV-092.
     public DbSet<TugOperationOfflineSnapshot> TugOperationOfflineSnapshots => Set<TugOperationOfflineSnapshot>();
     public DbSet<TugOperationOfflineOutcome> TugOperationOfflineOutcomes => Set<TugOperationOfflineOutcome>();
+    // S11 WP-A (DEV-069/070): import provenance, reconciliation report, data owner sign-off, receipts.
+    public DbSet<ImportProvenance> ImportProvenance => Set<ImportProvenance>();
+    public DbSet<ReconciliationReport> ReconciliationReports => Set<ReconciliationReport>();
+    public DbSet<ReconciliationSignOff> ReconciliationSignOffs => Set<ReconciliationSignOff>();
+    public DbSet<ImportReconciliationReceipt> ImportReconciliationReceipts => Set<ImportReconciliationReceipt>();
+    // S11 WP-C (DEV-073/093): regulatory SME review campaigns, items, append-only verdicts and receipts.
+    public DbSet<RegulatoryReviewCampaign> RegulatoryReviewCampaigns => Set<RegulatoryReviewCampaign>();
+    public DbSet<RegulatoryReviewItem> RegulatoryReviewItems => Set<RegulatoryReviewItem>();
+    public DbSet<RegulatoryReviewVerdict> RegulatoryReviewVerdicts => Set<RegulatoryReviewVerdict>();
+    public DbSet<RegulatoryReviewReceipt> RegulatoryReviewReceipts => Set<RegulatoryReviewReceipt>();
     public DbSet<TugOfflineEnrollment> TugOfflineEnrollments => Set<TugOfflineEnrollment>();
     public DbSet<TugOfflineOutcome> TugOfflineOutcomes => Set<TugOfflineOutcome>();
     public DbSet<TugOfflineLifecycle> TugOfflineLifecycles => Set<TugOfflineLifecycle>();
+    // S11 WP-D (DEV-074/094/075): UAT records and pilot go/no-go human records.
+    public DbSet<UatThreshold> UatThresholds => Set<UatThreshold>();
+    public DbSet<UatRun> UatRuns => Set<UatRun>();
+    public DbSet<UatStepResult> UatStepResults => Set<UatStepResult>();
+    public DbSet<UatFinding> UatFindings => Set<UatFinding>();
+    public DbSet<PilotSupportCheck> PilotSupportChecks => Set<PilotSupportCheck>();
+    public DbSet<PilotGateDecision> PilotGateDecisions => Set<PilotGateDecision>();
+    public DbSet<PilotReceipt> PilotReceipts => Set<PilotReceipt>();
     public DbSet<TugCapabilityBinding> TugCapabilityBindings => Set<TugCapabilityBinding>();
     public DbSet<OperationEquipmentBinding> OperationEquipmentBindings => Set<OperationEquipmentBinding>();
     public DbSet<MsmdRoleBinding> MsmdRoleBindings => Set<MsmdRoleBinding>();
@@ -480,6 +502,27 @@ public sealed class PoseidonDbContext(
         model.Entity<CertificateRenewalOfflineEnrollment>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<CertificateRenewalOfflineLifecycle>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<CertificateRenewalOfflineOutcome>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        // S11 WP-A (DEV-069/070).
+        ImportReconciliationStorage.Configure(model);
+        model.Entity<ImportProvenance>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ReconciliationReport>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ReconciliationSignOff>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<ImportReconciliationReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        // S11 WP-C (DEV-073/093).
+        RegulatoryReviewStorage.Configure(model);
+        model.Entity<RegulatoryReviewCampaign>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<RegulatoryReviewItem>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<RegulatoryReviewVerdict>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<RegulatoryReviewReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        // S11 WP-D (DEV-074/094/075).
+        PilotGateStorage.Configure(model);
+        model.Entity<UatThreshold>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<UatRun>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<UatStepResult>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<UatFinding>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<PilotSupportCheck>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<PilotGateDecision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<PilotReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         MaintenanceObservationStorage.Configure(model);
         model.Entity<MaintenanceObservation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<MaintenanceObservationRevocation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -573,6 +616,11 @@ public sealed class PoseidonDbContext(
         model.Entity<ControlledDocumentCertificateLink>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ControlledDocumentEvidenceLink>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<ControlledDocumentCredentialLink>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        // S11 WP-B DEV-072.
+        PilotMetricsStorage.Configure(model);
+        model.Entity<PilotMetricBatch>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<PilotMetricTenantSalt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<PilotMetricReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         RegisterStorage.Configure(model);
         model.Entity<RegisterDraft>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<RegisterRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -859,6 +907,7 @@ public sealed class PoseidonDbContext(
         TechnicalRecordStorage.Guard(changes);
         ControlledDocumentSecurityStorage.Guard(changes);
         VoiceEventDraftStorage.Guard(changes);
+        PilotMetricsStorage.Guard(changes);
         TowageStorage.Guard(changes);
         SafetyEventStorage.Guard(changes);
         FieldOperationsStorage.Guard(changes);
@@ -867,6 +916,8 @@ public sealed class PoseidonDbContext(
         AssuranceStorage.Guard(changes);
         TugOperationsOfflineStorage.Guard(changes);
         CertificateRenewalOfflineStorage.Guard(changes);
+        ImportReconciliationStorage.Guard(changes);
+        PilotGateStorage.Guard(changes);
         if(changes.Any(e=>e.Entity is DowntimeRevision or DowntimeReceipt && e.State!=EntityState.Added))
             throw new InvalidOperationException("Downtime history and outcomes are immutable.");
         if(changes.Any(e=>e.Entity is Downtime && (e.State==EntityState.Deleted || e.State==EntityState.Modified &&
@@ -984,6 +1035,17 @@ public sealed class PoseidonDbContext(
         // DEV-059: the Master departure decision lineage and its receipts are append-only.
         if (changes.Any(e => e.Entity is DepartureDecision or DepartureReceipt && e.State != EntityState.Added))
             throw new InvalidOperationException("Departure decisions are immutable.");
+        // DEV-073/093: verdicts and receipts are append-only; an item changes only its current verdict columns, a campaign only
+        // its lifecycle columns, and a closed campaign never changes again. Nothing is deleted.
+        if (changes.Any(e => e.Entity is RegulatoryReviewVerdict or RegulatoryReviewReceipt && e.State != EntityState.Added))
+            throw new InvalidOperationException("Regulatory review verdicts are immutable.");
+        if (changes.Any(e => e.Entity is RegulatoryReviewItem && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            e.Properties.Any(p => p.IsModified && !RegulatoryReviewStorage.ItemVerdictColumns.Contains(p.Metadata.Name)))))
+            throw new InvalidOperationException("Regulatory review item pins are immutable.");
+        if (changes.Any(e => e.Entity is RegulatoryReviewCampaign && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
+            (e.Properties.Any(p => p.IsModified && !RegulatoryReviewStorage.CampaignMutableColumns.Contains(p.Metadata.Name)) ||
+             Poseidon.Domain.RegulatoryReviewPolicy.Terminal((string)e.Property("State").OriginalValue!)))))
+            throw new InvalidOperationException("Regulatory review campaign scope is immutable.");
         if (changes.Any(e => e.Entity is TugAssignmentProposal && (e.State == EntityState.Deleted || e.State == EntityState.Modified &&
             e.Properties.Any(p => p.IsModified && p.Metadata.Name is not ("State" or "MasterAck" or "CancelledAt" or "CancelledBy" or "CancelReason" or "Revision")))))
             throw new InvalidOperationException("Tug assignment scope is immutable.");

@@ -27,6 +27,7 @@ const labels: Record<string, {
     'risk-assessment': { tr: sourceText("tr", "pairs.m_2ba46e791f65fb5f"), en: sourceText("en", "pairs.m_2ba46e791f65fb5f"), icon: ShieldCheck, group: 'operations' },
     'risk-template-library': { tr: sourceText("tr", "pairs.m_c086860d120fa851"), en: sourceText("en", "pairs.m_c086860d120fa851"), icon: FolderCheck, group: 'assurance' },
     'departure-signoff': { tr: sourceText("tr", "pairs.m_9d2a4c6e8f0b1d35"), en: sourceText("en", "pairs.m_9d2a4c6e8f0b1d35"), icon: ShieldCheck, group: 'operations' },
+    'regulatory-review': { tr: sourceText("tr", "pairs.m_3c8e1f5a7b2d9e40"), en: sourceText("en", "pairs.m_3c8e1f5a7b2d9e40"), icon: FolderCheck, group: 'assurance' },
     'pms-command-center': { tr: sourceText("tr", "pairs.m_8c3e1f0a5d2b7c41"), en: sourceText("en", "pairs.m_8c3e1f0a5d2b7c41"), icon: Gauge, group: 'operations' },
     'service-engineer-report': { tr: sourceText("tr", "pairs.m_8c3e1f0a5d2b7c42"), en: sourceText("en", "pairs.m_8c3e1f0a5d2b7c42"), icon: FileCheck2, group: 'operations' },
     'safety-events': { tr: sourceText("tr", "pairs.m_8a32195b2423b0ae"), en: sourceText("en", "pairs.m_8a32195b2423b0ae"), icon: ShieldCheck, group: 'assurance' },
@@ -34,6 +35,8 @@ const labels: Record<string, {
     'industry-assurance': { tr: sourceText("tr", "pairs.m_b62e1f8d4a0c3592"), en: sourceText("en", "pairs.m_b62e1f8d4a0c3592"), icon: FileCheck2, group: 'assurance' },
     'voice-event-draft': { tr: sourceText("tr", "pairs.m_9a7c51e0d3b2f461"), en: sourceText("en", "pairs.m_9a7c51e0d3b2f461"), icon: ClipboardList, group: 'assurance' },
     'document-compare': { tr: sourceText("tr", "pairs.m_9a7c51e0d3b2f462"), en: sourceText("en", "pairs.m_9a7c51e0d3b2f462"), icon: FolderCheck, group: 'assurance' },
+    'role-uat': { tr: sourceText("tr", "pairs.m_5b1e7c9d3a2f4e60"), en: sourceText("en", "pairs.m_5b1e7c9d3a2f4e60"), icon: FolderCheck, group: 'assurance' },
+    'pilot-gate': { tr: sourceText("tr", "pairs.m_5b1e7c9d3a2f4e61"), en: sourceText("en", "pairs.m_5b1e7c9d3a2f4e61"), icon: FolderCheck, group: 'assurance' },
     'high-risk-work': { tr: sourceText("tr", "pairs.m_04076d4cdaa5ec7d"), en: sourceText("en", "pairs.m_04076d4cdaa5ec7d"), icon: ShieldCheck, group: 'assurance' },
     'work-order-center': { tr: sourceText("tr", "pairs.m_8b20599d8e3aae73"), en: sourceText("en", "pairs.m_8b20599d8e3aae73"), icon: ClipboardList, group: 'operations' },
     'critical-spares': { tr: sourceText("tr", "pairs.m_5e7a1c0d2b4f9b10"), en: sourceText("en", "pairs.m_5e7a1c0d2b4f9b10"), icon: ClipboardList, group: 'operations' },
@@ -78,7 +81,8 @@ const labels: Record<string, {
     crew: { tr: sourceText("tr", "pairs.m_9c7ff80bf1b60400"), en: sourceText("en", "pairs.m_9c7ff80bf1b60400"), icon: Users, group: 'operations' },
     equipment: { tr: sourceText("tr", "pairs.m_77e9d3d4c2e4b44f"), en: sourceText("en", "pairs.m_77e9d3d4c2e4b44f"), icon: Wrench, group: 'operations' },
     maintenance: { tr: sourceText("tr", "pairs.m_21f68c2e5c640595"), en: sourceText("en", "pairs.m_21f68c2e5c640595"), icon: ClipboardList, group: 'operations' },
-    import: { tr: sourceText("tr", "pairs.m_f1779f35acec39d7"), en: sourceText("en", "pairs.m_f1779f35acec39d7"), icon: Upload, group: 'assurance' }
+    import: { tr: sourceText("tr", "pairs.m_f1779f35acec39d7"), en: sourceText("en", "pairs.m_f1779f35acec39d7"), icon: Upload, group: 'assurance' },
+    'data-reconciliation': { tr: sourceText("tr", "pairs.m_e5831d38d264db25"), en: sourceText("en", "pairs.m_e5831d38d264db25"), icon: FolderCheck, group: 'assurance' }
 };
 type Props = {
     session: Session | null;

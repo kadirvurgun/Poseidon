@@ -32,14 +32,18 @@ import { DowntimeWorkspace } from './product/DowntimeWorkspace';
 import { RiskAssessmentWorkspace } from './product/RiskAssessmentWorkspace';
 import { PmsCommandCenterWorkspace } from './product/PmsCommandCenterWorkspace';
 import { DepartureReadinessWorkspace } from './product/DepartureReadinessWorkspace';
+import { RegulatoryReviewWorkspace } from './product/RegulatoryReviewWorkspace';
 import { ServiceReportWorkspace } from './product/ServiceReportWorkspace';
 import { VoiceEventDraftWorkspace } from './product/VoiceEventDraftWorkspace';
 import { DocumentCompareWorkspace } from './product/DocumentCompareWorkspace';
+import { UatWorkspace } from './product/UatWorkspace';
+import { PilotGateWorkspace } from './product/PilotGateWorkspace';
 import { RiskTemplateLibraryWorkspace } from './product/RiskTemplateLibraryWorkspace';
 import { CriticalSparesWorkspace } from './product/CriticalSparesWorkspace';
 import { AuditReadyWorkspace } from './product/AuditReadyWorkspace';
 import { SurveyWorkspace } from './product/SurveyWorkspace';
 import { ShipDemoJourney } from './product/ShipDemoJourney';
+import { DataReconciliationWorkspace } from './product/DataReconciliationWorkspace';
 import { AppearanceControls } from './theme/AppearanceControls';
 type Connection = 'loading' | 'available' | 'error';
 const content = localizedCopy("App_tsx_content");
@@ -63,6 +67,9 @@ export function App() {
         return <NotificationWorkspace />;
     if (window.location.pathname === '/app/offline-conflict-center')
         return <ConflictCenterWorkspace />;
+    // S11 WP-A DEV-070 pilot data reconciliation report and data owner sign-off.
+    if (/^\/app\/data-reconciliation\/[0-9a-fA-F-]{36}\/?$/.test(window.location.pathname))
+        return <DataReconciliationWorkspace />;
     const importer = /^\/app\/excel-migration\/([0-9a-fA-F-]{36})\/?$/.exec(window.location.pathname);
     if (importer)
         return <ImportWorkspace key={importer[1]} vessel={importer[1]}/>;
@@ -95,12 +102,18 @@ export function App() {
         return <DefectWorkspace />;
     if (/^\/app\/departure-signoff(?:\/|$)/.test(window.location.pathname))
         return <DepartureReadinessWorkspace />;
+    if (/^\/app\/regulatory-review(?:\/|$)/.test(window.location.pathname))
+        return <RegulatoryReviewWorkspace />;
     if (/^\/app\/pms-command-center(?:\/|$)/.test(window.location.pathname))
         return <PmsCommandCenterWorkspace />;
     if (/^\/app\/service-engineer-report(?:\/|$)/.test(window.location.pathname))
         return <ServiceReportWorkspace />;
     if (/^\/app\/voice-event-draft(?:\/|$)/.test(window.location.pathname))
         return <VoiceEventDraftWorkspace />;
+    if (/^\/app\/role-uat(?:\/|$)/.test(window.location.pathname))
+        return <UatWorkspace />;
+    if (/^\/app\/pilot-gate(?:\/|$)/.test(window.location.pathname))
+        return <PilotGateWorkspace />;
     if (/^\/app\/document-compare(?:\/|$)/.test(window.location.pathname))
         return <DocumentCompareWorkspace />;
     if (/^\/app\/work-order-center(?:\/|$)/.test(window.location.pathname))
