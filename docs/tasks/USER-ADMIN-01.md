@@ -98,7 +98,7 @@ Locators are 1-based paragraph indices as returned by `py scripts/query_sources.
     there is no database trigger (as for the 5202 grant snapshots). A database administrator can still alter rows.
   - *N9 navigation.* The `user-admin` destination is projected only with explicit `membership.read` and tenant-wide
     scope (`ShowsUserAdministration`); manage-only callers keep the API routes. The frontend contract is unchanged.
-- **USER-ADMIN-02 (open follow-up, N1) — cross-tenant identity squatting.** `IX_Accounts_IssuerSubject` is global, so the
+- **USER-ADMIN-02 (follow-up, N1; closed by [USER-ADMIN-02](USER-ADMIN-02.md)) — cross-tenant identity squatting.** `IX_Accounts_IssuerSubject` is global, so the
   first tenant administrator to provision an issuer+subject claims it: a tenant-2 admin who knows a tenant-1 user's
   subject could bind that identity to tenant 2 first (that user would then log into tenant 2, and tenant 1 receives
   `identity_unavailable`). Fix options: invitation + acceptance by the identity holder at login, or a per-tenant
@@ -158,5 +158,8 @@ loading/empty/error/forbidden/offline/conflict states. TR/EN copy; the other 15 
 - No person link/display name (privacy decision); members are identified by account id + bundles + exact-subject search.
 - Bundles and decision-authority classification are technical and need an approved role catalog review.
 - 15 locales use English fallback text for the new screen.
-- USER-ADMIN-02: cross-tenant identity squatting (see UA-D10 / N1).
+- USER-ADMIN-02: cross-tenant identity squatting (see UA-D10 / N1) — **addressed** by
+  [USER-ADMIN-02](USER-ADMIN-02.md) (invitation + acceptance by the identity holder; uniqueness over accepted bindings only;
+  one accepted membership per identity). Since USER-ADMIN-02 a created membership starts `Invited` (UA-D07's "applies at
+  next login" now means: at the next login after acceptance).
 - Invitation/activation flows of 52.02 G, IdP account creation and MFA enforcement remain in the IdP (13.03 paragraph:104).
