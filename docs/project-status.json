@@ -1175,7 +1175,7 @@
     "verification_record_scope": "Authored/deferred and original20f1198 results are historical;current rejection-repair evidence in core_bundle_01.verification"
   },
   "baseline": "POSEIDON v46.3 updated 2026-10-30 / Library26 candidate",
-  "current_stage": "S11 accepted with notes 21.11.2026 for SOFTWARE SCOPE ONLY (S11-GATE-20261122: PR #49 e0639fa7 -> main c6a7036, CI push 44856983692 + PR 44856990162 green, critical-write coverage 303/303, independent QA re-check ACCEPT x11 incl. notes). Human/operational S11 gates remain open (data owner, DR rehearsal/RPO/RTO/rollback signature, SME, UAT, Product Owner go/no-go; SECURITY/OFFLINE/DR/TRACE pilot gates DEFERRED -> GO impossible). Not pilot ready. Remaining: 7 pilot-week tasks DEV-076-079/095/096/121 (38 SP) require a real pilot.",
+  "current_stage": "S11 accepted with notes 21.11.2026 for SOFTWARE SCOPE ONLY (S11-GATE-20261122: PR #49 e0639fa7 -> main c6a7036, CI push 44856983692 + PR 44856990162 green, critical-write coverage 303/303, independent QA re-check ACCEPT x11 incl. notes). Human/operational S11 gates remain open (data owner, DR rehearsal/RPO/RTO/rollback signature, SME, UAT, Product Owner go/no-go; SECURITY/OFFLINE/DR/TRACE pilot gates DEFERRED -> GO impossible). Not pilot ready. Remaining: 7 pilot-week tasks DEV-076-079/095/096/121 (38 SP) require a real pilot. Pilot-week software kit (DEV-076-079/095/096/121) integrated in integration/final-bundle-20261121: AUTHORED_UNVERIFIED, NOT ACCEPTED; tasks remain open until a real pilot is run and signed off.",
   "method": "accepted story points / total baseline story points * 100",
   "scope": "complete v46.3 Backlog sheet; duplicates in other sheets excluded",
   "total_tasks": 121,
@@ -4232,14 +4232,17 @@
       "priority": "P0",
       "story_points": 5,
       "source_status": "Not Started",
-      "assessment": "not-started",
+      "assessment": "authored-unverified",
       "accepted": false,
       "acceptance_evidence": [],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:77",
       "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
-      "source_baseline": "poseidon-v46.3-20261030"
+      "source_baseline": "poseidon-v46.3-20261030",
+      "authoring_evidence": [
+        "docs/phases/PILOT-KIT-20261121.md (software kit only; real pilot run, evidence and human sign-off required; AUTHORED_UNVERIFIED, NOT ACCEPTED)"
+      ]
     },
     {
       "id": "DEV-077",
@@ -4248,14 +4251,17 @@
       "priority": "P0",
       "story_points": 5,
       "source_status": "Not Started",
-      "assessment": "not-started",
+      "assessment": "authored-unverified",
       "accepted": false,
       "acceptance_evidence": [],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:78",
       "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
-      "source_baseline": "poseidon-v46.3-20261030"
+      "source_baseline": "poseidon-v46.3-20261030",
+      "authoring_evidence": [
+        "docs/phases/PILOT-KIT-20261121.md (software kit only; real pilot run, evidence and human sign-off required; AUTHORED_UNVERIFIED, NOT ACCEPTED)"
+      ]
     },
     {
       "id": "DEV-078",
@@ -4264,14 +4270,17 @@
       "priority": "P0",
       "story_points": 5,
       "source_status": "Not Started",
-      "assessment": "not-started",
+      "assessment": "authored-unverified",
       "accepted": false,
       "acceptance_evidence": [],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:79",
       "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
-      "source_baseline": "poseidon-v46.3-20261030"
+      "source_baseline": "poseidon-v46.3-20261030",
+      "authoring_evidence": [
+        "docs/phases/PILOT-KIT-20261121.md (software kit only; real pilot run, evidence and human sign-off required; AUTHORED_UNVERIFIED, NOT ACCEPTED)"
+      ]
     },
     {
       "id": "DEV-079",
@@ -4280,14 +4289,17 @@
       "priority": "P0",
       "story_points": 5,
       "source_status": "Not Started",
-      "assessment": "not-started",
+      "assessment": "authored-unverified",
       "accepted": false,
       "acceptance_evidence": [],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:80",
       "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
-      "source_baseline": "poseidon-v46.3-20261030"
+      "source_baseline": "poseidon-v46.3-20261030",
+      "authoring_evidence": [
+        "docs/phases/PILOT-KIT-20261121.md (software kit only; real pilot run, evidence and human sign-off required; AUTHORED_UNVERIFIED, NOT ACCEPTED)"
+      ]
     },
     {
       "id": "DEV-080",
@@ -4846,14 +4858,17 @@
       "priority": "P0",
       "story_points": 5,
       "source_status": "Not Started",
-      "assessment": "not-started",
+      "assessment": "authored-unverified",
       "accepted": false,
       "acceptance_evidence": [],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:96",
       "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
-      "source_baseline": "poseidon-v46.3-20261030"
+      "source_baseline": "poseidon-v46.3-20261030",
+      "authoring_evidence": [
+        "docs/phases/PILOT-KIT-20261121.md (software kit only; real pilot run, evidence and human sign-off required; AUTHORED_UNVERIFIED, NOT ACCEPTED)"
+      ]
     },
     {
       "id": "DEV-096",
@@ -4862,14 +4877,17 @@
       "priority": "P0",
       "story_points": 5,
       "source_status": "Not Started",
-      "assessment": "not-started",
+      "assessment": "authored-unverified",
       "accepted": false,
       "acceptance_evidence": [],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:97",
       "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
-      "source_baseline": "poseidon-v46.3-20261030"
+      "source_baseline": "poseidon-v46.3-20261030",
+      "authoring_evidence": [
+        "docs/phases/PILOT-KIT-20261121.md (software kit only; real pilot run, evidence and human sign-off required; AUTHORED_UNVERIFIED, NOT ACCEPTED)"
+      ]
     },
     {
       "id": "DEV-097",
@@ -5780,14 +5798,17 @@
       "priority": "P0",
       "story_points": 8,
       "source_status": "Not Started",
-      "assessment": "not-started",
+      "assessment": "authored-unverified",
       "accepted": false,
       "acceptance_evidence": [],
       "source_path": "analiz/POSEIDON GUNCEL 30.10.2026/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
       "source_sha256": "09890162c4718867cf10397a08b2ff3d13dc44b1384e06b0be0c437d15df4674",
       "source_locator": "sheet:Backlog/row:122",
       "previous_source_path": "sources/poseidon-v46.3/06_DEVELOPMENT/18.01_POSEIDON_v46.3_Development_Backlog_TR.xlsx",
-      "source_baseline": "poseidon-v46.3-20261030"
+      "source_baseline": "poseidon-v46.3-20261030",
+      "authoring_evidence": [
+        "docs/phases/PILOT-KIT-20261121.md (software kit only; real pilot run, evidence and human sign-off required; AUTHORED_UNVERIFIED, NOT ACCEPTED)"
+      ]
     }
   ],
   "limitations": [
@@ -5916,7 +5937,8 @@
     "docs/phases/S8-GATE-20261120.md",
     "docs/phases/S9-GATE-20261120.md",
     "docs/phases/S10-GATE-20261121.md",
-    "docs/phases/S11-GATE-20261122.md"
+    "docs/phases/S11-GATE-20261122.md",
+    "docs/phases/PILOT-KIT-20261121.md"
   ],
   "active_source": "docs/sources/active.json",
   "current_package": {
@@ -18457,6 +18479,32 @@
       ],
       "story_points": 38,
       "requires": "real pilot execution"
+    }
+  },
+  "pilot_kit_20261121": {
+    "state": "AUTHORED_UNVERIFIED_NOT_ACCEPTED",
+    "accepted": false,
+    "accepted_story_points_added": 0,
+    "tasks": [
+      "DEV-076",
+      "DEV-077",
+      "DEV-078",
+      "DEV-079",
+      "DEV-095",
+      "DEV-096",
+      "DEV-121"
+    ],
+    "story_points": 38,
+    "branch": "feature/pilot-kit-20261121",
+    "head": "9159e0decc93972956ccf5c56ea74113326df16d",
+    "integration_branch": "integration/final-bundle-20261121",
+    "migration": "20261124080000_PilotProgramKit",
+    "phase_report": "docs/phases/PILOT-KIT-20261121.md",
+    "s1_delta": "+10/+10/+10",
+    "note": "Software kit for the 30-day design partner pilot (PILOT-W1..W4). Software cannot complete these tasks: they stay open until a real pilot is executed, evidenced and signed off by humans (Product Owner week close/decision with separation of duties). No pilot result, measurement, UAT attestation or decision is claimed or seeded.",
+    "ci": {
+      "feature_e19d4ea6": "44858058538 failure (base NotificationTests.cs:291 time bomb, fixed in e0639fa7)",
+      "feature_9159e0de": "44862152432 in progress at integration time"
     }
   }
 }

@@ -1,5 +1,14 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
+## Pilot program yazılım kiti — YAZILDI, DOĞRULANMADI, KABUL DEĞİL (21.11.2026)
+
+**Canonical ilerleme değişmedi: 114 iş / 932 SP / 970 SP = %96,08.**
+
+- DEV-076, 077, 078, 079, 095, 096, 121 (38 SP) için pilot kiti `integration/final-bundle-20261121` dalına entegre edildi (`feature/pilot-kit-20261121` `9159e0de`, migration `20261124080000_PilotProgramKit`, [faz raporu](phases/PILOT-KIT-20261121.md)).
+- Kit, gerçek pilot ekibine şunları verir: haftalık kontrol listeleri, yapılandırılmış geri bildirim, P0/P1/P2 issue triage, ölçülmüş taban çizgisi ve pilot değer okuması, hafta kapanışı ve CONTINUE/EXPAND/FIX/STOP kararı (bu karar yalnız atanmış Product Owner verir, görev ayrılığıyla).
+- Durum **AUTHORED_UNVERIFIED / NOT ACCEPTED**. Bu işler gerçek dünya pilot faaliyetleridir ve yazılım bunları tamamlayamaz. Gerçek pilot koşulup kanıtlanana ve insanlar imzalayana kadar açık kalırlar. Hiçbir pilot sonucu, ölçüm, UAT onayı veya karar iddia edilmiyor ya da seed edilmiyor.
+- S1 kapsam farkı +10/+10/+10. Feature CI `44862152432` entegrasyon sırasında hâlâ koşuyordu.
+
 ## S11 kabul edildi — notlarla, YALNIZ YAZILIM KAPSAMI (21.11.2026)
 
 **Canonical ilerleme: 114 iş / 932 SP / 970 SP = %96,08** (önceki: 103 iş / 861 SP, %88,76). S0 13/53, S1 7/50, S2 6/42, S3 7/66, S4 6/58, S5 8/69, S6 9/87, S7 13/121, S8 13/124, S9 10/92, S10 11/99, **S11 11/71** kabul.
