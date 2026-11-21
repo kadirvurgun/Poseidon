@@ -4,7 +4,7 @@ import { localizedLabel, localizedText, sourceText } from "../i18n/messages";
 import { type Locale as AppLocale } from "../i18n";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Anchor, ArrowLeft, ArrowUpRight, Building2, ChevronRight, ClipboardList, FileCheck2, FolderCheck, Gauge, LayoutDashboard, Menu, Search, ShieldCheck, Ship, Users, Wrench, Upload, Waves, X } from 'lucide-react';
+import { Anchor, ArrowLeft, ArrowUpRight, Building2, ChevronRight, ClipboardList, FileCheck2, FolderCheck, Gauge, LayoutDashboard, Menu, Search, ShieldCheck, Ship, UserCog, Users, Wrench, Upload, Waves, X } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import type { Session } from './directory-contract';
@@ -38,6 +38,7 @@ const labels: Record<string, {
     'role-uat': { tr: sourceText("tr", "pairs.m_5b1e7c9d3a2f4e60"), en: sourceText("en", "pairs.m_5b1e7c9d3a2f4e60"), icon: FolderCheck, group: 'assurance' },
     'pilot-gate': { tr: sourceText("tr", "pairs.m_5b1e7c9d3a2f4e61"), en: sourceText("en", "pairs.m_5b1e7c9d3a2f4e61"), icon: FolderCheck, group: 'assurance' },
     'pilot-program': { tr: sourceText("tr", "pairs.m_5b1e7c9d3a2f4e62"), en: sourceText("en", "pairs.m_5b1e7c9d3a2f4e62"), icon: FolderCheck, group: 'assurance' },
+    'user-admin': { tr: sourceText("tr", "pairs.m_7c3d9a1e5b2f4a68"), en: sourceText("en", "pairs.m_7c3d9a1e5b2f4a68"), icon: UserCog, group: 'workspace' },
     'high-risk-work': { tr: sourceText("tr", "pairs.m_04076d4cdaa5ec7d"), en: sourceText("en", "pairs.m_04076d4cdaa5ec7d"), icon: ShieldCheck, group: 'assurance' },
     'work-order-center': { tr: sourceText("tr", "pairs.m_8b20599d8e3aae73"), en: sourceText("en", "pairs.m_8b20599d8e3aae73"), icon: ClipboardList, group: 'operations' },
     'critical-spares': { tr: sourceText("tr", "pairs.m_5e7a1c0d2b4f9b10"), en: sourceText("en", "pairs.m_5e7a1c0d2b4f9b10"), icon: ClipboardList, group: 'operations' },
@@ -109,7 +110,7 @@ export function EnterpriseChrome({ session, vessel = null, language, onLanguageC
     const currentLens = roleLens?.owner === session && roleLens.vessel === vessel && roleLens.epoch === navigation.epoch ? roleLens : null;
     // A service-observation utility remains separately granted by the server;
     // selecting a role lens never grants it or hides it from an assigned operator.
-    const menuItems = currentLens ? [...currentLens.items, ...navigation.destinations.filter(item => ['system-health', 'notification-escalation', 'offline-conflict-center'].includes(item.key) && !currentLens.items.some(lens => lens.key === item.key))] : navigation.destinations;
+    const menuItems = currentLens ? [...currentLens.items, ...navigation.destinations.filter(item => ['system-health', 'notification-escalation', 'offline-conflict-center', 'user-admin'].includes(item.key) && !currentLens.items.some(lens => lens.key === item.key))] : navigation.destinations;
     const menuButton = useRef<HTMLButtonElement>(null);
     const header = useRef<HTMLElement>(null);
     // DEV-025 / 65.03 paragraph 90 + UX-013: scroll padding equals the real sticky bar height, so a

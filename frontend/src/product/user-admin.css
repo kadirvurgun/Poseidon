@@ -1,0 +1,18 @@
+/* USER-ADMIN-01: single-column, wrap-safe layout usable at 320px. Colours come only from theme tokens/components. */
+.user-admin-workspace main { min-width: 0; }
+.user-admin-workspace code,
+.user-admin-workspace bdi { overflow-wrap: anywhere; word-break: break-word; }
+.user-admin-filters,
+.user-admin-form { display: grid; gap: 0.5rem; max-width: 48rem; }
+.user-admin-filters input,
+.user-admin-filters select,
+.user-admin-form input:not([type="checkbox"]),
+.user-admin-form select { width: 100%; min-width: 0; }
+.user-admin-form fieldset { min-width: 0; display: grid; gap: 0.25rem; }
+.user-admin-members,
+.user-admin-vessels { list-style: none; padding: 0; display: grid; gap: 0.5rem; }
+.user-admin-permission-groups { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr)); }
+.user-admin-facts { display: grid; grid-template-columns: minmax(0, max-content) minmax(0, 1fr); gap: 0.25rem 0.75rem; }
+@media (max-width: 30rem) {
+  .user-admin-facts { grid-template-columns: minmax(0, 1fr); }
+}
