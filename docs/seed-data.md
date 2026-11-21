@@ -310,3 +310,15 @@ DB CHECK `CK_UatRun_Synthetic` rejects a synthetic run leaving OPEN. UAT thresho
 are human records and are never seeded. Add-missing; operator edits are preserved. Real-PostgreSQL test
 `Readers_without_permission_are_denied_unknown_runs_are_not_found_and_the_uat_fixture_is_opt_in_fictional_and_open` is
 AUTHORED, execution DEFERRED to CI.
+
+## PILOT-KIT DEV-076..079/095/096/121 — pilot program fixture (optional)
+
+`PilotProgramFixtures.AddMissingAsync` is an explicit administrative fixture, not wired into normal startup/seed import
+(default seed and audit totals unchanged). Per tenant with a ship vessel it adds one FICTIONAL pilot program header (first
+ship and first tug by code, start 2026-12-01, time zone UTC) with provenance `SyntheticUnverified`, created by a
+deterministic synthetic actor id without membership. No checklist link, feedback, issue, measurement, week close, program
+decision, Product Owner appointment or receipt is seeded. The API refuses week close and program decisions on a synthetic
+program (`synthetic_program_not_decidable`) and refuses to link any `SyntheticUnverified` record as pilot evidence.
+Add-missing; operator edits are preserved. Real-PostgreSQL test
+`Pilot_program_readers_without_permission_are_denied_feedback_needs_retention_and_the_fixture_is_opt_in_fictional` is
+AUTHORED, execution DEFERRED to CI.

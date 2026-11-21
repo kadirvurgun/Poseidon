@@ -303,7 +303,17 @@
     "UatRunAttest": "HUMAN_REVIEW_WORKFLOW",
     "UatFindingResolve": "HUMAN_REVIEW_WORKFLOW",
     "PilotSupportCheckRecord": "HUMAN_REVIEW_WORKFLOW",
-    "PilotGateDecide": "HUMAN_REVIEW_WORKFLOW"
+    "PilotGateDecide": "HUMAN_REVIEW_WORKFLOW",
+    "PilotProgramCreate": "PREPARATION_COMMAND",
+    "PilotChecklistLink": "PREPARATION_COMMAND",
+    "PilotChecklistWithdraw": "PREPARATION_COMMAND",
+    "PilotFeedbackRecord": "PREPARATION_COMMAND",
+    "PilotIssueReport": "PREPARATION_COMMAND",
+    "PilotIssueTriage": "HUMAN_REVIEW_WORKFLOW",
+    "PilotIssueResolve": "HUMAN_REVIEW_WORKFLOW",
+    "PilotMeasurementRecord": "PREPARATION_COMMAND",
+    "PilotWeekClose": "HUMAN_REVIEW_WORKFLOW",
+    "PilotProgramDecide": "HUMAN_REVIEW_WORKFLOW"
   },
   "reasonCodes": [
     "PREPARATION_COMMAND",

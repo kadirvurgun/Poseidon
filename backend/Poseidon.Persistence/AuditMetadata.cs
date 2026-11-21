@@ -34,6 +34,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             PilotMetricBatch or PilotMetricTenantSalt or PilotMetricReceipt => "Tenant",
             ApplicabilityReceipt r when r.Action is "author" or "review" => "Tenant",
             UatThreshold or UatRun or UatStepResult or UatFinding or PilotSupportCheck or PilotGateDecision or PilotReceipt => "Tenant",
+            PilotProgram or PilotChecklistLink or PilotFeedback or PilotIssue or PilotMeasurement or PilotWeekClose or PilotProgramDecision or PilotProgramReceipt => "Tenant",
             _ => "Unresolved"
         };
         if (requireResolvedScope && scopeKind == "Unresolved")
@@ -73,6 +74,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if (TugOperationsOfflineProjection(entry) is { } tugOffline) return tugOffline;
         if (ImportReconciliationProjection(entry) is { } reconciliation) return reconciliation;
         if (PilotGateProjection(entry) is { } pilotGate) return pilotGate;
+        if (PilotProgramProjection(entry) is { } pilotProgram) return pilotProgram;
         if(entry.Entity is Defect defect)
             return new(defect.VesselId,defect.Id,"Defect",entry.State==EntityState.Added?null:(long?)entry.Property("Revision").OriginalValue,defect.Revision,
                 Fields(Field("Revision",entry.State==EntityState.Added?null:Number((long)entry.Property("Revision").OriginalValue!),Number(defect.Revision)),Field("Binding",null,"OwnerReference")));
@@ -1033,6 +1035,55 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
     // texts are withheld; no actor identity is copied into the summary.
     // S11 WP-D DEV-074/094/075: closed codes only; rationale, notes, titles, statements, references, pseudonyms and
     // build identities are withheld.
+    // Pilot program kit (DEV-076/077/078/079/095/096/121): closed codes, sequences and record-type references only;
+    // names, notes, summaries, titles, rationales, evidence references, methods, pseudonyms and values are withheld.
+    private static AuditMetadata? PilotProgramProjection(EntityEntry entry)
+    {
+        string? BeforeState(string property, string[] allowed) => entry.State == EntityState.Added ? null : Closed((string)entry.Property(property).OriginalValue!, allowed);
+        static string Flag(bool value) => value ? "True" : "False";
+        var items = PilotProgramCatalog.Items.Select(i => i.Code).ToArray();
+        long IssueStep(string state) => state switch { PilotIssuePolicy.Triaged => 2, PilotIssuePolicy.Resolved => 3, _ => 1 };
+        return entry.Entity switch
+        {
+            PilotProgram p => new(null, p.Id, "PilotProgram", null, 1, Fields(
+                Field("CatalogVersion", null, Closed(p.CatalogVersion, PilotProgramCatalog.Version)), Field("HasTug", null, Flag(p.TugVesselId != null)),
+                Field("Provenance", null, Closed(p.Provenance, PilotProgramStorage.Provenances)), Field("Name", null, null, "ValuesWithheld"),
+                Field("Binding", null, "OwnerReference"))),
+            PilotChecklistLink l => new(null, l.ProgramId, "PilotChecklistLink", entry.State == EntityState.Added ? null : 1, l.WithdrawnAt == null ? 1 : 2, Fields(
+                Field("Week", null, Closed(l.Week, PilotProgramCatalog.Weeks)), Field("ItemCode", null, Closed(l.ItemCode, items)),
+                Field("RecordType", null, Closed(l.RecordType, PilotProgramCatalog.RecordTypes)), Field("AuditTraced", null, Flag(l.AuditTracedAtLink)),
+                Field("Withdrawn", entry.State == EntityState.Added ? null : Flag(entry.Property("WithdrawnAt").OriginalValue != null), Flag(l.WithdrawnAt != null)),
+                Field("Note", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
+            PilotFeedback f => new(null, f.ProgramId, "PilotFeedback", null, null, Fields(
+                Field("Week", null, Closed(f.Week, PilotProgramCatalog.Weeks)), Field("Area", null, Closed(f.Area, PilotProgramCatalog.Areas)),
+                Field("Category", null, Closed(f.Category, PilotFeedbackPolicy.Categories)), Field("Sentiment", null, Closed(f.Sentiment, PilotFeedbackPolicy.Sentiments)),
+                Field("Role", null, Closed(f.Role, PilotFeedbackPolicy.Roles)), Field("Summary", null, null, "ValuesWithheld"),
+                Field("ParticipantPseudonym", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
+            PilotIssue i => new(null, i.Id, "PilotIssue", entry.State == EntityState.Added ? null : IssueStep((string)entry.Property("State").OriginalValue!), IssueStep(i.State), Fields(
+                Field("Week", null, Closed(i.Week, PilotProgramCatalog.Weeks)), Field("Severity", null, Closed(i.Severity, PilotIssuePolicy.Severities)),
+                Field("Category", null, Closed(i.Category, PilotIssuePolicy.Categories)), Field("State", BeforeState("State", PilotIssuePolicy.States), Closed(i.State, PilotIssuePolicy.States)),
+                Field("Title", null, null, "ValuesWithheld"), Field("TriageNote", null, null, "ValuesWithheld"), Field("Resolution", null, null, "ValuesWithheld"),
+                Field("Binding", null, "OwnerReference"))),
+            PilotMeasurement m => new(null, m.Id, "PilotMeasurement", null, m.Sequence, Fields(
+                Field("MetricId", null, Closed(m.MetricId, PilotProgramCatalog.ValueMetrics.Select(x => x.Id).ToArray())), Field("Mode", null, Closed(m.Mode, PilotProgramCatalog.Modes)),
+                Field("Phase", null, Closed(m.Phase, PilotMeasurementPolicy.Phases)), Field("Sequence", null, Number(m.Sequence)),
+                Field("Value", null, null, "ValuesWithheld"), Field("EvidenceReference", null, null, "ValuesWithheld"), Field("Method", null, null, "ValuesWithheld"),
+                Field("Binding", null, "OwnerReference"))),
+            PilotWeekClose c => new(null, c.Id, "PilotWeekClose", null, c.Sequence, Fields(
+                Field("Week", null, Closed(c.Week, PilotProgramCatalog.Weeks)), Field("Outcome", null, Closed(c.Outcome, PilotProgramPolicy.CloseOutcomes)),
+                Field("Recommendation", null, Closed(c.Recommendation, PilotProgramPolicy.WeekRecommendations)), Field("Duty", null, Closed(c.Duty, PilotProgramPolicy.ProductOwnerDuty)),
+                Field("Sequence", null, Number(c.Sequence)), Field("WeekHash", null, null, "ValuesWithheld"), Field("Rationale", null, null, "ValuesWithheld"),
+                Field("Binding", null, "OwnerReference"))),
+            PilotProgramDecision d => new(null, d.Id, "PilotProgramDecision", null, d.Sequence, Fields(
+                Field("Decision", null, Closed(d.Decision, PilotProgramPolicy.Decisions)), Field("Recommendation", null, Closed(d.Recommendation, PilotProgramPolicy.ProgramRecommendations)),
+                Field("Duty", null, Closed(d.Duty, PilotProgramPolicy.ProductOwnerDuty)), Field("Sequence", null, Number(d.Sequence)),
+                Field("ProgramHash", null, null, "ValuesWithheld"), Field("Rationale", null, null, "ValuesWithheld"), Field("Binding", null, "OwnerReference"))),
+            PilotProgramReceipt r => new(null, r.RecordId, "PilotProgramReceipt", null, null, Fields(
+                Field("Action", null, Closed(r.Action, PilotProgramStorage.ReceiptActions)), Field("Binding", null, "CommittedResource"))),
+            _ => null
+        };
+    }
+
     private static AuditMetadata? PilotGateProjection(EntityEntry entry)
     {
         string? BeforeState(string property, string[] allowed) => entry.State == EntityState.Added ? null : Closed((string)entry.Property(property).OriginalValue!, allowed);
