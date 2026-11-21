@@ -46,6 +46,8 @@ export function decodeVoiceDraft(value: unknown, vessel: string, id?: string): V
         value.handoff === 'PENDING_EVENT_DRAFT_INTEGRATION' && (value.safetyEventId ?? null) === null && oneOf(value.handoffReason, voiceHandoffPendingReasons))) ||
     value.state !== 'CONFIRMED' && (value.confirmedBy !== null || value.handoff !== 'NOT_READY' || (value.safetyEventId ?? null) !== null || (value.handoffReason ?? null) !== null) ||
     value.state === 'REJECTED' && !object(value.rejection) || value.state !== 'DRAFT' && (value.canEdit === true || value.canConfirm === true) ||
+    // Only a pending CONFIRMED candidate may offer the late hand-off.
+    value.canLinkSafetyEvent === true && !(value.state === 'CONFIRMED' && value.handoff === 'PENDING_EVENT_DRAFT_INTEGRATION') ||
     value.origin === 'LOCAL_SPEECH' && !object(value.speech)) invalid()
   return value as unknown as VoiceDraft
 }
@@ -72,7 +74,7 @@ const documentPath = (vessel: string, suffix = '') => {
 // A frozen command keeps its Idempotency-Key and exact body until its outcome is known.
 export type S9Attempt = { method: 'POST' | 'PUT'; path: string; key: string; body: string; ifMatch?: number }
 export function freezeS9Command(method: 'POST' | 'PUT', path: string, body: unknown, ifMatch?: number): S9Attempt {
-  if (!/^(voice-event-drafts(\/[0-9a-f-]{36}(\/(confirm|reject))?)?\?vesselId=[0-9a-f-]{36}|vessels\/[0-9a-f-]{36}\/controlled-documents\/[0-9a-f-]{36}\/revisions\/\d{1,9}\/(acknowledgements|content-access))$/.test(path))
+  if (!/^(voice-event-drafts(\/[0-9a-f-]{36}(\/(confirm|reject|safety-event-link))?)?\?vesselId=[0-9a-f-]{36}|vessels\/[0-9a-f-]{36}\/controlled-documents\/[0-9a-f-]{36}\/revisions\/\d{1,9}\/(acknowledgements|content-access))$/.test(path))
     throw new ApiError(400, 'invalid_context')
   return { method, path, key: crypto.randomUUID(), body: JSON.stringify(body), ifMatch }
 }

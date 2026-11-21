@@ -30,20 +30,22 @@ public sealed record SafetyActionStepCommand([property: JsonRequired] long Expec
 // independent closure. Closed != Effective: both are separate human records; nothing is decided automatically.
 public static class SafetyInvestigationEndpoints
 {
+    // QA S9 N1: investigation save/submit and action creation are human statements (root causes, barriers, owner
+    // assignment); only the owner's COMPLETE step may come from a non-human actor.
     public static void MapSafetyInvestigations(this IEndpointRouteBuilder app)
     {
         var g = app.MapGroup("/api/v1/safety-events/{id:guid}").RequireAuthorization("DirectoryRead");
         g.MapPut("/investigation", (Guid id, HttpContext h, PoseidonDbContext db) => SafetyEventCommands.Run<SafetyInvestigationSaveCommand>(h, db, "SafetyInvestigationSave", id, null,
-                (a, _) => SafetyEventAccess.Investigator(a), _ => id, Save, SafetyEventEndpoints.Fresh))
+                (a, _) => SafetyEventAccess.Investigator(a), _ => id, Save, SafetyEventEndpoints.Fresh, humanOnly: true))
             .WithName("SafetyInvestigationSave").Accepts<SafetyInvestigationSaveCommand>("application/json").Produces<SafetyEventDto>();
         g.MapPost("/investigation/submit", (Guid id, HttpContext h, PoseidonDbContext db) => SafetyEventCommands.Run<SafetyInvestigationSubmitCommand>(h, db, "SafetyInvestigationSubmit", id, null,
-                (a, _) => SafetyEventAccess.Investigator(a), _ => id, Submit, SafetyEventEndpoints.Fresh))
+                (a, _) => SafetyEventAccess.Investigator(a), _ => id, Submit, SafetyEventEndpoints.Fresh, humanOnly: true))
             .WithName("SafetyInvestigationSubmit").Accepts<SafetyInvestigationSubmitCommand>("application/json").Produces<SafetyEventDto>().Produces<SafetyFailure>(422);
         g.MapPost("/investigation/review", (Guid id, HttpContext h, PoseidonDbContext db) => SafetyEventCommands.Run<SafetyInvestigationReviewCommand>(h, db, "SafetyInvestigationReview", id, null,
                 (a, _) => SafetyEventAccess.Reviewer(a), _ => id, Review, SafetyEventEndpoints.Fresh, humanOnly: true))
             .WithName("SafetyInvestigationReview").Accepts<SafetyInvestigationReviewCommand>("application/json").Produces<SafetyEventDto>();
         g.MapPost("/actions", (Guid id, HttpContext h, PoseidonDbContext db) => SafetyEventCommands.Run<SafetyActionCreateCommand>(h, db, "SafetyActionCreate", id, null,
-                (a, _) => SafetyEventAccess.ActionWriter(a), _ => id, CreateAction, SafetyEventEndpoints.Fresh))
+                (a, _) => SafetyEventAccess.ActionWriter(a), _ => id, CreateAction, SafetyEventEndpoints.Fresh, humanOnly: true))
             .WithName("SafetyActionCreate").Accepts<SafetyActionCreateCommand>("application/json").Produces<SafetyEventDto>().Produces<SafetyFailure>(422);
         g.MapPost("/actions/{actionId:guid}/steps", (Guid id, Guid actionId, HttpContext h, PoseidonDbContext db) => Step(id, actionId, h, db))
             .WithName("SafetyActionStep").Accepts<SafetyActionStepCommand>("application/json").Produces<SafetyEventDto>();

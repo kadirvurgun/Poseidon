@@ -2441,6 +2441,7 @@
       "vdHandoffCreated": "Confirmado por una persona. Se creó para usted un borrador nominativo de evento de seguridad; complételo y envíelo en Eventos de seguridad. No se envió nada.",
       "vdOpenEventDraft": "Abrir el borrador del evento de seguridad",
       "vdHandoffPermission": "No se creó ningún borrador de evento de seguridad porque no tiene permiso para notificar eventos de seguridad.",
+      "vdLinkEventDraft": "Crear ahora el borrador del evento de seguridad",
       "vdRejected": "Rechazado: {reason}. El rechazo queda registrado para la evaluación.",
       "vdConfirm": "Confirmar borrador",
       "vdConfirmNote": "Guarde primero. Confirmar registra que revisó cada campo; no envía ni cierra un evento.",

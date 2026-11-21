@@ -6,6 +6,7 @@
     "VoiceDraftUpdate": "PREPARATION_COMMAND",
     "VoiceDraftConfirm": "HUMAN_REVIEW_WORKFLOW",
     "VoiceDraftReject": "HUMAN_REVIEW_WORKFLOW",
+    "VoiceDraftLinkSafetyEvent": "HUMAN_REVIEW_WORKFLOW",
     "AcknowledgeControlledDocumentRevision": "HUMAN_REVIEW_WORKFLOW",
     "AuthorizeControlledDocumentContent": "FILE_TRANSPORT",
     "DefectLifecycleStart": "PREPARATION_COMMAND",

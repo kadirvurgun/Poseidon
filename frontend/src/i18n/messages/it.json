@@ -2441,6 +2441,7 @@
       "vdHandoffCreated": "Confermato da una persona. È stata creata per te una bozza nominativa di evento di sicurezza; completala e inviala in Eventi di sicurezza. Nulla è stato inviato.",
       "vdOpenEventDraft": "Apri la bozza dell'evento di sicurezza",
       "vdHandoffPermission": "Nessuna bozza di evento di sicurezza è stata creata perché non hai l'autorizzazione a segnalare eventi di sicurezza.",
+      "vdLinkEventDraft": "Crea ora la bozza dell'evento di sicurezza",
       "vdRejected": "Rifiutata: {reason}. Il rifiuto è registrato per la valutazione.",
       "vdConfirm": "Conferma bozza",
       "vdConfirmNote": "Salva prima. La conferma registra che hai controllato ogni campo; non invia né chiude un evento.",

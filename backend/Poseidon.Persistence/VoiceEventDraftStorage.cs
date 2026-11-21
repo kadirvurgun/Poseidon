@@ -74,7 +74,7 @@ public sealed class VoiceEventDraftReceipt : ITenantEntity
 
 internal static class VoiceEventDraftStorage
 {
-    internal static readonly string[] Operations = ["VoiceDraftCreate", "VoiceDraftUpdate", "VoiceDraftConfirm", "VoiceDraftReject"];
+    internal static readonly string[] Operations = ["VoiceDraftCreate", "VoiceDraftUpdate", "VoiceDraftConfirm", "VoiceDraftReject", "VoiceDraftLinkSafetyEvent"];
     private const string Provenance="\"Provenance\" IN ('UserDeclaredUnverified','SyntheticUnverified')";
     internal static void Configure(ModelBuilder model) {
         model.Entity<VoiceEventDraft>(b=> {
@@ -107,7 +107,7 @@ internal static class VoiceEventDraftStorage
         });
         model.Entity<VoiceEventDraftRevision>(b=> {
             b.ToTable("VoiceEventDraftRevisions","intelligence",t=>t.HasCheckConstraint("CK_VoiceEventDraftRevision_State",
-                "\"Revision\">0 AND \"State\" IN ('DRAFT','CONFIRMED','REJECTED') AND \"ReasonCode\" IN ('CREATE','EDIT','CONFIRM','REJECT')"));
+                "\"Revision\">0 AND \"State\" IN ('DRAFT','CONFIRMED','REJECTED') AND \"ReasonCode\" IN ('CREATE','EDIT','CONFIRM','REJECT','LINK')"));
             b.HasKey(r=>new{r.TenantId,r.DraftId,r.Revision});
             b.HasOne<VoiceEventDraft>().WithMany().HasForeignKey(r=>new{r.TenantId,r.VesselId,r.DraftId}).HasPrincipalKey(r=>new{r.TenantId,r.VesselId,r.Id})
                 .HasConstraintName("FK_VoiceEventDraftRevision_Head").OnDelete(DeleteBehavior.Restrict);
@@ -127,9 +127,14 @@ internal static class VoiceEventDraftStorage
         if(changes.Any(e=>e.Entity is VoiceEventDraftRevision or VoiceEventDraftReceipt && e.State!=EntityState.Added))
             throw new InvalidOperationException("Voice draft history and command outcomes are immutable.");
         if(changes.Any(e=>e.Entity is VoiceEventDraft d && (e.State==EntityState.Deleted || e.State==EntityState.Added && (d.State!="DRAFT" || d.Revision!=1) ||
-            e.State==EntityState.Modified && ((string)e.Property("State").OriginalValue! != "DRAFT" ||
+            e.State==EntityState.Modified && ((string)e.Property("State").OriginalValue! != "DRAFT" && !LateLink(e,d) ||
                 Changed(e,"Revision","State","FieldsJson","EvidenceJson","Hash","ActorId","SavedAt","ConfirmedBy","ConfirmedAt","CorrectionsJson","RejectedBy","RejectedAt","RejectionReason","RejectionNote","SafetyEventId","HandoffReason") ||
                 (long)e.Property("Revision").CurrentValue! != (long)e.Property("Revision").OriginalValue!+1))))
             throw new InvalidOperationException("A voice draft starts as DRAFT, its transcript and candidate are immutable and confirmed/rejected drafts are terminal.");
     }
+    // QA S9 N7: the only change to a CONFIRMED draft is the one-time late hand-off of a pending candidate to its event DRAFT.
+    private static bool LateLink(EntityEntry e, VoiceEventDraft d) => (string)e.Property("State").OriginalValue! == "CONFIRMED" && d.State == "CONFIRMED" &&
+        e.Property("SafetyEventId").OriginalValue == null && d.SafetyEventId != null &&
+        (string?)e.Property("HandoffReason").OriginalValue == "SAFETY_EVENT_REPORT_PERMISSION_REQUIRED" && d.HandoffReason == null &&
+        !Changed(e,"Revision","Hash","ActorId","SavedAt","SafetyEventId","HandoffReason");
 }

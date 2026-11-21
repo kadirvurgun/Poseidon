@@ -2441,6 +2441,7 @@
       "vdHandoffCreated": "Bir kişi tarafından onaylandı. Sizin adınıza bir emniyet olayı taslağı oluşturuldu; Emniyet olayları ekranında tamamlayıp gönderin. Hiçbir şey gönderilmedi.",
       "vdOpenEventDraft": "Emniyet olayı taslağını aç",
       "vdHandoffPermission": "Emniyet olayı bildirme yetkiniz olmadığı için emniyet olayı taslağı oluşturulmadı.",
+      "vdLinkEventDraft": "Emniyet olayı taslağını şimdi oluştur",
       "vdRejected": "Reddedildi: {reason}. Ret, değerlendirme için kaydedildi.",
       "vdConfirm": "Taslağı onayla",
       "vdConfirmNote": "Önce düzenlemeleri kaydedin. Onay, her alanı kontrol ettiğinizi kaydeder; olay göndermez veya kapatmaz.",

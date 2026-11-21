@@ -72,6 +72,9 @@ public sealed class FieldOperationsStorageGuardTests
         Assert.Contains("\"VerifiedRevision\"=\"Revision\"", Check(typeof(TugDailyLog), "CK_TugDailyLog_State"));
         Assert.Contains("\"VerifiedBy\"<>\"CompletedBy\"", Check(typeof(DrydockPackage), "CK_DrydockPackage_State"));
         Assert.Contains("\"ResultRevision\"=\"Revision\"+1", Check(typeof(TugDailyLogReview), "CK_TugDailyLogReview_Kind"));
+        // QA S9 N5: the Master review row itself refuses a reviewer who submitted or authored the reviewed revision.
+        Assert.Contains("\"ActorId\"<>\"SubmittedBy\"", Check(typeof(TugDailyLogReview), "CK_TugDailyLogReview_Kind"));
+        Assert.Contains("NOT (\"AuthorsJson\"::jsonb @> jsonb_build_array(\"ActorId\"::text))", Check(typeof(TugDailyLogReview), "CK_TugDailyLogReview_Kind"));
         Assert.Contains(model.FindEntityType(typeof(TowageExecution))!.GetIndexes(), i => i.IsUnique && i.Properties.Select(p => p.Name).SequenceEqual(["TenantId", "VesselId", "JobId", "TugId"]));
         Assert.Contains(model.FindEntityType(typeof(TugDailyLog))!.GetIndexes(), i => i.IsUnique && i.Properties.Select(p => p.Name).SequenceEqual(["TenantId", "VesselId", "LogDate", "Watch"]));
     }

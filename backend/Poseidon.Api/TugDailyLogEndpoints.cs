@@ -136,6 +136,8 @@ public static class TugDailyLogEndpoints
         if (l.Version != cmd.ExpectedVersion || l.Hash != cmd.ContentHash) return TowageOutcome.Fail(409, "version_conflict");
         var failure = TugDailyLogPolicy.ReviewFailure(l.State, cmd.Decision, c.Actor.Id, FieldOpsCommands.Authors(l.AuthorsJson), l.SubmittedBy, cmd.Reason);
         if (failure != null) return TowageOutcome.Fail(failure switch { "invalid_state" => 409, "separation_of_duties" => 403, _ => 400 }, failure);
+        if (l.SubmittedBy is not { } submitter) return TowageOutcome.Fail(409, "invalid_state");
+        var authors = l.AuthorsJson;
         var reconciliation = (await Reconcile(db, l, Content(l.ContentJson), c.Now, c.Ct)).Result;
         var reviewed = l.Revision; var hash = l.Hash;
         l.Revision = checked(l.Revision + 1);
@@ -143,7 +145,8 @@ public static class TugDailyLogEndpoints
         l.VerifiedRevision = l.State == TugDailyLogPolicy.Verified ? l.Revision : null;
         Stamp(l, c.Actor.Id, c.Now); Append(db, l, cmd.Decision == "VERIFY" ? "VERIFY" : "RETURN");
         db.TugDailyLogReviews.Add(new() { TenantId = l.TenantId, VesselId = l.VesselId, Id = Guid.NewGuid(), LogId = l.Id, Revision = reviewed, ResultRevision = l.Revision,
-            Decision = cmd.Decision, ContentHash = hash, Reconciliation = reconciliation.State, ActorId = c.Actor.Id, AuthorityId = grant.Id, Duty = grant.Duty, Reason = cmd.Reason, DecidedAt = c.Now });
+            Decision = cmd.Decision, ContentHash = hash, Reconciliation = reconciliation.State, ActorId = c.Actor.Id, SubmittedBy = submitter, AuthorsJson = authors,
+            AuthorityId = grant.Id, Duty = grant.Duty, Reason = cmd.Reason, DecidedAt = c.Now });
         await db.SaveChangesAsync(c.Ct);
         return TowageOutcome.Ok(l.Id, l.Revision);
     }

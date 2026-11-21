@@ -160,6 +160,8 @@ public static class SecurityEventCodes
         "record_vessel_mismatch", "audit_trace_missing", "link_exists", "link_withdrawn", "pii_suspected", "issue_not_open",
         "issue_not_triaged", "measurement_sequence_conflict", "close_sequence_conflict", "week_stale", "week_not_started", "week_not_ready",
         "program_stale", "expand_not_eligible", "synthetic_program_not_decidable", "invalid_vessel", "invalid_time_zone", "mode_not_visible",
+        // QA S9/S10 notes hardening (N7 late voice hand-off).
+        "voice_handoff_confirmer_required",
     }.ToFrozenSet(StringComparer.Ordinal);
     public static bool Allows(string action, string result) => Actions.Contains(action) && Results.Contains(result);
 }

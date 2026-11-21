@@ -2441,6 +2441,7 @@
       "vdHandoffCreated": "Henkilö vahvisti. Sinulle luotiin nimetty turvallisuustapahtuman luonnos; täydennä ja lähetä se kohdassa Turvallisuustapahtumat. Mitään ei lähetetty.",
       "vdOpenEventDraft": "Avaa turvallisuustapahtuman luonnos",
       "vdHandoffPermission": "Turvallisuustapahtuman luonnosta ei luotu, koska sinulla ei ole oikeutta ilmoittaa turvallisuustapahtumista.",
+      "vdLinkEventDraft": "Luo turvallisuustapahtuman luonnos nyt",
       "vdRejected": "Hylätty: {reason}. Hylkäys on kirjattu arviointia varten.",
       "vdConfirm": "Vahvista luonnos",
       "vdConfirmNote": "Tallenna ensin. Vahvistus kirjaa, että tarkistit jokaisen kentän; se ei lähetä tapahtumaa.",

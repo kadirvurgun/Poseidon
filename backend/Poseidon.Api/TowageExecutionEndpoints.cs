@@ -88,7 +88,7 @@ public static class TowageExecutionEndpoints
         string[] actions = !master ? [] : x.State switch {
             TowageExecutionPolicy.Active => ["SUSPEND", "ABORT", "COMPLETE"], TowageExecutionPolicy.Suspended => ["RESUME", "ABORT"], _ => [] };
         return new TowageExecutionView(Dto(x), job?.JobNumber, job?.AssistedVessel, ledger, timeline, TugOperationsAuthorities.Dto(grants),
-            write && x.VerificationState == TowageExecutionPolicy.Pending, master && running,
+            write && FieldOpsCommands.Human(h, a) && x.VerificationState == TowageExecutionPolicy.Pending, master && running,
             CanVerify(a) && !running && x.VerificationState == TowageExecutionPolicy.Pending && a.Id != x.StartedBy && a.Id != x.EndedBy && FieldOpsCommands.Human(h, a),
             actions, running ? TowageExecutionPolicy.CompleteBlockers("-", ledger).Where(b => b != "end_position_missing").ToArray() : [],
             running ? TowageExecutionPolicy.RecordableKinds : TowageExecutionPolicy.TerminalKinds, TowageExecutionPolicy.LoadUnits, TowageExecutionPolicy.CommunicationStates,
@@ -193,13 +193,16 @@ public static class TowageExecutionEndpoints
         return TowageOutcome.Ok(x.Id, x.Revision);
     }
 
-    // Crew on the executing tug record observations; the ledger is append-only and hash-chained.
+    // Human crew on the executing tug record observations; the ledger is append-only and hash-chained.
     internal static async Task<TowageOutcome> Record(TowageContext<TowageExecutionEventCommand> c) {
         var e = c.Command.Event; var db = c.Db;
         if (!TowageExecutionPolicy.ValidEvent(e)) return TowageOutcome.Fail(400, "validation_failed");
         var x = await db.TowageExecutions.SingleOrDefaultAsync(r => r.Id == c.RouteId && r.VesselId == c.Vessel, c.Ct);
         if (x == null || !await TugReadinessHttp.Tugs(db, c.Actor).AnyAsync(v => v.Id == x.TugId, c.Ct)) return TowageOutcome.Fail(404, "resource_not_found");
         if (!TugReadinessHttp.Write(c.Actor, x.TugId)) return TowageOutcome.Fail(403, "permission_denied");
+        // QA S9 N4: a ledger observation is a person's record (60.02 p228 recordedBy); AIS/system data supports but never
+        // proves line load or a master's decision (p233), and authenticated provider imports are a separate path.
+        if (!FieldOpsCommands.Human(c.Http, c.Actor)) return TowageOutcome.Fail(403, "human_actor_required");
         var running = x.State is TowageExecutionPolicy.Active or TowageExecutionPolicy.Suspended;
         if (!running && (!TowageExecutionPolicy.TerminalKinds.Contains(e.Kind) || x.VerificationState != TowageExecutionPolicy.Pending)) return TowageOutcome.Fail(409, "invalid_state");
         if (x.Sequence >= TowageExecutionPolicy.MaxEvents) return TowageOutcome.Fail(409, "invalid_state");

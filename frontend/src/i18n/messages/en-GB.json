@@ -2441,6 +2441,7 @@
       "vdHandoffCreated": "Confirmed by a person. A named safety event draft was created for you; complete and submit it in Safety events. Nothing was submitted.",
       "vdOpenEventDraft": "Open the safety event draft",
       "vdHandoffPermission": "No safety event draft was created because you do not have permission to report safety events.",
+      "vdLinkEventDraft": "Create the safety event draft now",
       "vdRejected": "Rejected: {reason}. The rejection is recorded for evaluation.",
       "vdConfirm": "Confirm draft",
       "vdConfirmNote": "Save your edits first. Confirming records that you checked every field; it does not submit or close an event.",

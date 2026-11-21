@@ -37,6 +37,11 @@ describe('S9 WP-C wire decoding', () => {
     expect(() => decodeVoiceDraft(voiceDraftFixture({ ...human, handoff: 'PENDING_EVENT_DRAFT_INTEGRATION' }), s9Vessel)).toThrow(ApiError)
     expect(() => decodeVoiceDraft(voiceDraftFixture({ ...human, handoff: 'PENDING_EVENT_DRAFT_INTEGRATION', safetyEventId: event, handoffReason: 'SAFETY_EVENT_REPORT_PERMISSION_REQUIRED' }), s9Vessel)).toThrow(ApiError)
     expect(() => decodeVoiceDraft(voiceDraftFixture({ safetyEventId: event }), s9Vessel)).toThrow(ApiError)
+    // QA S9 N7: only a pending CONFIRMED candidate may offer the late hand-off to a safety event draft.
+    expect(decodeVoiceDraft(voiceDraftFixture({ ...human, handoff: 'PENDING_EVENT_DRAFT_INTEGRATION', handoffReason: 'SAFETY_EVENT_REPORT_PERMISSION_REQUIRED', canLinkSafetyEvent: true }), s9Vessel)
+      .canLinkSafetyEvent).toBe(true)
+    expect(() => decodeVoiceDraft(voiceDraftFixture({ canLinkSafetyEvent: true }), s9Vessel)).toThrow(ApiError)
+    expect(() => decodeVoiceDraft(voiceDraftFixture({ ...human, handoff: 'EVENT_DRAFT_CREATED', safetyEventId: event, canLinkSafetyEvent: true }), s9Vessel)).toThrow(ApiError)
     expect(() => decodeVoiceDraft(voiceDraftFixture({ audioRetention: 'RETAINED' }), s9Vessel)).toThrow(ApiError)
     expect(() => decodeDocument(documentFixture({ contentPolicy: { ...documentFixture().contentPolicy, download: 'MAYBE' } }), s9Vessel, s9Document)).toThrow(ApiError)
     expect(() => decodeDocument(documentFixture({ classification: 'INTERNAL' }), s9Vessel, s9Document)).toThrow(ApiError)

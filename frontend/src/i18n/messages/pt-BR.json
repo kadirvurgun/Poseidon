@@ -2441,6 +2441,7 @@
       "vdHandoffCreated": "Confirmado por uma pessoa. Um rascunho nominal de evento de segurança foi criado para você; complete-o e envie-o em Eventos de segurança. Nada foi enviado.",
       "vdOpenEventDraft": "Abrir o rascunho do evento de segurança",
       "vdHandoffPermission": "Nenhum rascunho de evento de segurança foi criado porque você não tem permissão para relatar eventos de segurança.",
+      "vdLinkEventDraft": "Criar agora o rascunho do evento de segurança",
       "vdRejected": "Rejeitado: {reason}. A rejeição foi registrada para avaliação.",
       "vdConfirm": "Confirmar rascunho",
       "vdConfirmNote": "Salve primeiro. Confirmar registra que você verificou cada campo; não envia nem encerra um evento.",

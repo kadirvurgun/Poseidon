@@ -2441,6 +2441,7 @@
       "vdHandoffCreated": "已由人员确认。已为您创建一份署名的安全事件草稿；请在“安全事件”中补充并提交。未提交任何内容。",
       "vdOpenEventDraft": "打开安全事件草稿",
       "vdHandoffPermission": "由于您没有报告安全事件的权限，未创建安全事件草稿。",
+      "vdLinkEventDraft": "立即创建安全事件草稿",
       "vdRejected": "已驳回：{reason}。驳回已记录用于评估。",
       "vdConfirm": "确认草稿",
       "vdConfirmNote": "请先保存。确认表示您已核对每个字段；不会提交或关闭事件。",

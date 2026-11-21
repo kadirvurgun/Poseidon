@@ -27,6 +27,10 @@ public sealed class FieldOperationsPolicyTests
         Assert.Equal(["readiness_not_ready"], TowageExecutionPolicy.StartBlockers(Ready() with { AssessmentReady = false }));
         Assert.Contains("tug_not_in_approved_plan", TowageExecutionPolicy.StartBlockers(Ready() with { TugInPlan = false }));
         Assert.Contains("execution_already_started", TowageExecutionPolicy.StartBlockers(Ready() with { ExecutionExists = true }));
+        // QA S9 N10: only a SUBMITTED job starts.
+        Assert.Equal(["job_cancelled"], TowageExecutionPolicy.StartBlockers(Ready() with { JobStatus = "Cancelled" }));
+        Assert.Equal(["job_not_submitted"], TowageExecutionPolicy.StartBlockers(Ready() with { JobStatus = "Draft" }));
+        Assert.Equal(["job_not_submitted"], TowageExecutionPolicy.StartBlockers(Ready() with { JobStatus = "Closed" }));
     }
 
     [Theory]
