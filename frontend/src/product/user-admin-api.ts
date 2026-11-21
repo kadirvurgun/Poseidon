@@ -7,10 +7,13 @@ import { timestamp } from './date-validation'
 // The account and its credentials stay in the IdP; the server never returns issuer/subject values.
 export const bundleCodes = ['master', 'tug-master', 'dpa-hseq', 'chief-engineer', 'crew-oow', 'shore-ops', 'regulatory-assurance', 'tenant-admin', 'read-only'] as const
 export type BundleCode = typeof bundleCodes[number]
-export const statuses = ['Active', 'Suspended', 'Revoked'] as const
+export const statuses = ['Active', 'Suspended', 'Revoked', 'Invited'] as const
 export type MembershipStatus = typeof statuses[number]
 export const statusReasons = ['ConfigurationImport', 'SyntheticFixture', 'AdministrativeSuspension', 'AdministrativeResume', 'AdministrativeRevocation',
-  'SecuritySuspension', 'SecurityResume', 'AdminProvisioning'] as const
+  'SecuritySuspension', 'SecurityResume', 'AdminProvisioning', 'AdminInvitation', 'InvitationAccepted', 'InvitationRevoked'] as const
+// USER-ADMIN-02: latest invitation of an admin-provisioned membership; Expired is derived from server time.
+export const invitationStates = ['Pending', 'Expired', 'Accepted', 'Revoked', 'Superseded'] as const
+export type InvitationState = typeof invitationStates[number]
 export const sources = ['ConfigurationImport', 'SyntheticUnverified', 'AdminProvisioned'] as const
 export const managedBy = ['Configuration', 'Database', 'None'] as const
 export type ManagedBy = typeof managedBy[number]
@@ -28,7 +31,8 @@ export type Catalog = { bundles: RoleBundle[]; permissions: PermissionOption[]; 
   grantorTenantWideManage: boolean; vessels: VesselOption[]; companies: CompanyOption[]; delegationReasons: string[]; trustedIssuer: string | null; actorId: string }
 export type MemberSummary = { id: string; accountId: string; status: MembershipStatus; statusReason: typeof statusReasons[number]; source: typeof sources[number]
   managedBy: ManagedBy; bundles: BundleCode[]; permissionCount: number; tenantWideRead: boolean; tenantWideManage: boolean; vesselGrantCount: number
-  administrator: boolean; self: boolean; statusChangedAt: string; version: number; accessRevision: number; grantRevision: number | null }
+  administrator: boolean; self: boolean; statusChangedAt: string; version: number; accessRevision: number; grantRevision: number | null
+  invitationState: InvitationState | null; invitationExpiresAt: string | null; invitationSubjectExpected: boolean }
 export type MemberPage = { items: MemberSummary[]; offset: number; limit: number; hasMore: boolean; total: number }
 export type VesselGrant = { vesselId: string; canEdit: boolean }
 export type GrantRevision = { revision: number; bundles: BundleCode[]; individualPermissions: string[]; permissionCount: number; tenantWideRead: boolean
@@ -94,12 +98,18 @@ export function decodeCatalog(v: unknown): Catalog {
 }
 
 const summaryKeys = ['id', 'accountId', 'status', 'statusReason', 'source', 'managedBy', 'bundles', 'permissionCount', 'tenantWideRead', 'tenantWideManage',
-  'vesselGrantCount', 'administrator', 'self', 'statusChangedAt', 'version', 'accessRevision', 'grantRevision'] as const
+  'vesselGrantCount', 'administrator', 'self', 'statusChangedAt', 'version', 'accessRevision', 'grantRevision', 'invitationState', 'invitationExpiresAt',
+  'invitationSubjectExpected'] as const
 export function decodeSummary(v: unknown): MemberSummary {
   if (!exact(v, summaryKeys) || !guid(v.id) || !guid(v.accountId) || !oneOf(v.status, statuses) || !oneOf(v.statusReason, statusReasons) ||
     !oneOf(v.source, sources) || !oneOf(v.managedBy, managedBy) || !int(v.permissionCount) || !bool(v.tenantWideRead) || !bool(v.tenantWideManage) ||
     !int(v.vesselGrantCount) || !bool(v.administrator) || !bool(v.self) || !time(v.statusChangedAt) || !int(v.version) || !int(v.accessRevision) ||
-    !(v.grantRevision === null || int(v.grantRevision, 1))) fail()
+    !(v.grantRevision === null || int(v.grantRevision, 1)) || !(v.invitationState === null || oneOf(v.invitationState, invitationStates)) ||
+    !(v.invitationExpiresAt === null || time(v.invitationExpiresAt)) || !bool(v.invitationSubjectExpected)) fail()
+  // An invitation belongs to an admin-provisioned membership only; an Invited membership always has its latest invitation.
+  if ((v.invitationState === null) !== (v.invitationExpiresAt === null) || v.invitationState !== null && v.source !== 'AdminProvisioned' ||
+    v.status === 'Invited' && (v.invitationState === null || v.administrator || v.source !== 'AdminProvisioned') ||
+    v.invitationState === null && v.invitationSubjectExpected) fail()
   const bundles = strings(v.bundles, x => oneOf(x, bundleCodes), 16) as BundleCode[]
   // Only a database-managed grant carries bundles and a grant revision; an administrator is never inactive.
   if ((v.managedBy === 'Database') !== (v.grantRevision !== null) || v.managedBy !== 'Database' && bundles.length > 0 ||
@@ -107,7 +117,8 @@ export function decodeSummary(v: unknown): MemberSummary {
   return { id: v.id, accountId: v.accountId, status: v.status, statusReason: v.statusReason, source: v.source, managedBy: v.managedBy, bundles,
     permissionCount: v.permissionCount, tenantWideRead: v.tenantWideRead, tenantWideManage: v.tenantWideManage, vesselGrantCount: v.vesselGrantCount,
     administrator: v.administrator, self: v.self, statusChangedAt: v.statusChangedAt, version: v.version, accessRevision: v.accessRevision,
-    grantRevision: v.grantRevision as number | null }
+    grantRevision: v.grantRevision as number | null, invitationState: v.invitationState as InvitationState | null,
+    invitationExpiresAt: v.invitationExpiresAt as string | null, invitationSubjectExpected: v.invitationSubjectExpected }
 }
 
 export function decodePage(v: unknown): MemberPage {
@@ -136,6 +147,33 @@ export function decodeAccess(v: unknown, id?: string): MemberAccess {
     activeCompanyId: v.activeCompanyId as string | null, vesselGrants: list(v.vesselGrants, vesselGrant, 64), editable: v.editable,
     editBlockedReason: v.editBlockedReason as EditBlockedReason | null, history }
 }
+
+// USER-ADMIN-02: the token is returned only by create/reissue (null on an idempotent replay); it is never stored client-side
+// beyond the page that shows it, and never logged.
+export type InvitationIssue = { access: MemberAccess; token: string | null; expiresAt: string | null }
+const token = (v: unknown): v is string => typeof v === 'string' && /^pi1\.[0-9a-f]{32}\.[A-Za-z0-9_-]{43}$/.test(v)
+export function decodeInvitationIssue(v: unknown): InvitationIssue {
+  if (!exact(v, ['membership', 'invitationToken', 'expiresAt']) || !(v.invitationToken === null || token(v.invitationToken)) ||
+    !(v.expiresAt === null || time(v.expiresAt)) || (v.invitationToken === null) !== (v.expiresAt === null)) fail()
+  return { access: decodeAccess(v.membership), token: v.invitationToken as string | null, expiresAt: v.expiresAt as string | null }
+}
+export const isInvitationToken = token
+
+export type InvitationGrant = { tenantName: string | null; bundles: BundleCode[]; permissionCount: number; tenantWideRead: boolean; tenantWideManage: boolean
+  vesselGrantCount: number; companyScoped: boolean; expiresAt: string }
+export function decodeInvitationGrant(v: unknown): InvitationGrant {
+  if (!exact(v, ['tenantName', 'bundles', 'permissionCount', 'tenantWideRead', 'tenantWideManage', 'vesselGrantCount', 'companyScoped', 'expiresAt']) ||
+    !(v.tenantName === null || text(v.tenantName, 400)) || !int(v.permissionCount) || !bool(v.tenantWideRead) || !bool(v.tenantWideManage) ||
+    !int(v.vesselGrantCount) || !bool(v.companyScoped) || !time(v.expiresAt)) fail()
+  return { tenantName: v.tenantName as string | null, bundles: strings(v.bundles, x => oneOf(x, bundleCodes), 16) as BundleCode[], permissionCount: v.permissionCount,
+    tenantWideRead: v.tenantWideRead, tenantWideManage: v.tenantWideManage, vesselGrantCount: v.vesselGrantCount, companyScoped: v.companyScoped, expiresAt: v.expiresAt }
+}
+export function decodeInvitationAccepted(v: unknown): { membershipId: string; grant: InvitationGrant; signInRequired: boolean } {
+  if (!exact(v, ['membershipId', 'grant', 'signInRequired']) || !guid(v.membershipId) || v.signInRequired !== true) fail()
+  return { membershipId: v.membershipId, grant: decodeInvitationGrant(v.grant), signInRequired: true }
+}
+// The link the administrator hands out of band. The accept page moves the token out of the address bar on arrival.
+export const invitationLink = (origin: string, value: string) => `${origin}/app/accept-invitation?token=${encodeURIComponent(value)}`
 
 export function decodeDelegations(v: unknown): Delegation[] {
   return list(v, d => {
@@ -170,7 +208,9 @@ export const userAdminApi = {
   list: async (query: ListQuery, signal: AbortSignal) => decodePage(await request<unknown>(listPath(query), signal)),
   access: async (id: string, signal: AbortSignal) => decodeAccess(await request<unknown>(`memberships/${id}/access`, signal), id),
   delegations: async (id: string, signal: AbortSignal) => decodeDelegations(await request<unknown>(`memberships/${id}/delegations`, signal)),
-  create: (issuer: string, subject: string, grant: GrantInput): AdminCommand => ({ key: key(), path: 'memberships', body: { issuer, subject, ...grantBody(grant) } }),
+  // USER-ADMIN-02: subject is the optional expected IdP subject (null = whoever holds the link and signs in).
+  create: (issuer: string, subject: string | null, grant: GrantInput): AdminCommand => ({ key: key(), path: 'memberships', body: { issuer, subject, ...grantBody(grant) } }),
+  reissueInvitation: (id: string, expectedVersion: number): AdminCommand => ({ key: key(), path: `memberships/${id}/invitation`, body: { expectedVersion } }),
   updateGrant: (id: string, expectedVersion: number, grant: GrantInput): AdminCommand =>
     ({ key: key(), path: `memberships/${id}/grant`, body: { expectedVersion, ...grantBody(grant) } }),
   transition: (id: string, action: 'suspend' | 'resume' | 'revoke' | 'security-suspend', expectedVersion: number): AdminCommand =>

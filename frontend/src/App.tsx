@@ -40,6 +40,7 @@ import { UatWorkspace } from './product/UatWorkspace';
 import { PilotGateWorkspace } from './product/PilotGateWorkspace';
 import { PilotProgramWorkspace } from './product/PilotProgramWorkspace';
 import { UserAdminWorkspace } from './product/UserAdminWorkspace';
+import { AcceptInvitationPage } from './product/AcceptInvitationPage';
 import { RiskTemplateLibraryWorkspace } from './product/RiskTemplateLibraryWorkspace';
 import { CriticalSparesWorkspace } from './product/CriticalSparesWorkspace';
 import { AuditReadyWorkspace } from './product/AuditReadyWorkspace';
@@ -118,6 +119,9 @@ export function App() {
         return <PilotGateWorkspace />;
     if (/^\/app\/pilot-program(?:\/|$)/.test(window.location.pathname))
         return <PilotProgramWorkspace />;
+    // USER-ADMIN-02: invitation acceptance; reached only through an invitation link, never a navigation destination.
+    if (/^\/app\/accept-invitation\/?$/.test(window.location.pathname))
+        return <AcceptInvitationPage />;
     if (/^\/app\/user-admin(?:\/|$)/.test(window.location.pathname))
         return <UserAdminWorkspace />;
     if (/^\/app\/document-compare(?:\/|$)/.test(window.location.pathname))

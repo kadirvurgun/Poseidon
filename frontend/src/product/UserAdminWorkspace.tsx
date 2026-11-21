@@ -9,8 +9,8 @@ import { ApiError, session as readSession, type Session } from './api'
 import { isGuid } from './identifiers'
 import { useOnline } from './UatWorkspace'
 import './user-admin.css'
-import { bundleCodes, localToIso, sendAdmin, shortId, statuses, userAdminApi, type AdminCommand, type Catalog, type Delegation, type GrantInput,
-  type ListQuery, type MemberAccess, type MemberPage, type MemberSummary, type VesselGrant } from './user-admin-api'
+import { bundleCodes, decodeInvitationIssue, invitationLink, localToIso, sendAdmin, shortId, statuses, userAdminApi, type AdminCommand, type Catalog,
+  type Delegation, type GrantInput, type ListQuery, type MemberAccess, type MemberPage, type MemberSummary, type VesselGrant } from './user-admin-api'
 
 // USER-ADMIN-01 "Kullanıcılar ve yetkiler" (13.03 §9 paragraph:102-106). Server authority only: the page renders
 // nothing about permissions until the membership catalog read succeeds, never grants in the browser, and keeps the
@@ -19,6 +19,8 @@ export const userAdminCopy = localizedCopy('UserAdmin_tsx_copy')
 type Copy = (typeof userAdminCopy)[AppLocale]
 const word = (t: Copy, key: string) => (t as Record<string, string>)[key] ?? key
 const base = '/app/user-admin'
+// USER-ADMIN-02: a freshly issued invitation link, kept only in this page's memory (never stored or logged).
+type IssuedLink = { membershipId: string; link: string; expiresAt: string }
 
 export type UserAdminRoute = { view: 'list'; query: ListQuery; invalid: boolean } | { view: 'new'; invalid: boolean } | { view: 'detail'; id: string; invalid: boolean }
 export function readUserAdminRoute(href: string): UserAdminRoute {
@@ -96,11 +98,20 @@ export function UserAdminWorkspace() {
   const [catalog, setCatalog] = useState<Catalog | null>(null), [page, setPage] = useState<MemberPage | null>(null)
   const [access, setAccess] = useState<MemberAccess | null>(null), [delegations, setDelegations] = useState<Delegation[]>([])
   const [active, setActive] = useState<MemberSummary[]>([])
+  const [issued, setIssued] = useState<IssuedLink | null>(null)
   const offline = useOnline()
   const refresh = useCallback(() => setReload(x => x + 1), [])
   const go = useCallback((href: string) => { history.pushState(null, '', href); setRoute(readUserAdminRoute(window.location.href)); refresh() }, [refresh])
   const onDone = useCallback((body: unknown) => {
-    const id = body && typeof body === 'object' && 'membership' in body && body.membership && typeof body.membership === 'object' && 'id' in body.membership ? body.membership.id : null
+    // USER-ADMIN-02: create and reissue return the membership plus a one-time invitation token.
+    let id: unknown = null
+    if (body && typeof body === 'object' && 'invitationToken' in body) {
+      try {
+        const issue = decodeInvitationIssue(body)
+        id = issue.access.membership.id
+        setIssued(issue.token && issue.expiresAt ? { membershipId: issue.access.membership.id, link: invitationLink(window.location.origin, issue.token), expiresAt: issue.expiresAt } : null)
+      } catch { setIssued(null) }
+    } else id = body && typeof body === 'object' && 'membership' in body && body.membership && typeof body.membership === 'object' && 'id' in body.membership ? body.membership.id : null
     // Receipt confirmed: keep the canonical resource identity in the URL before the optional current read.
     if (route.view === 'new' && isGuid(id)) go(`${base}/${id}`)
     else refresh()
@@ -158,17 +169,23 @@ export function UserAdminWorkspace() {
         ? <CreateForm t={t} catalog={catalog} disabled={disabled} run={cmd.run}/>
         : <p role="alert" data-state="forbidden">{t.blocked_not_manager}</p>)}
       {!loading && !error && catalog && route.view === 'detail' && access &&
-        <MemberDetail t={t} catalog={catalog} access={access} delegations={delegations} active={active} disabled={disabled} run={cmd.run} open={id => move(`${base}/${id}`)}/>}
+        <MemberDetail t={t} catalog={catalog} access={access} delegations={delegations} active={active} disabled={disabled} run={cmd.run} open={id => move(`${base}/${id}`)}
+          issued={issued?.membershipId === access.membership.id ? issued : null}/>}
     </main>
   </div>
 }
 
 const bundleLabel = (t: Copy, code: string) => word(t, 'bundle_' + code)
 function StatusBadge({ t, status }: { t: Copy; status: string }) {
-  return <Badge tone={status === 'Active' ? 'info' : status === 'Suspended' ? 'warning' : 'danger'} data-status={status}>{word(t, 'status_' + status)}</Badge>
+  return <Badge tone={status === 'Active' ? 'info' : status === 'Suspended' || status === 'Invited' ? 'warning' : 'danger'} data-status={status}>{word(t, 'status_' + status)}</Badge>
+}
+// An invitation is never shown as an active grant: Pending/Expired are warnings until the identity holder accepts.
+function InvitationBadge({ t, m }: { t: Copy; m: MemberSummary }) {
+  if (!m.invitationState || m.status !== 'Invited') return null
+  return <> <Badge tone={m.invitationState === 'Pending' ? 'neutral' : 'warning'} data-invitation={m.invitationState}>{word(t, 'invitation_' + m.invitationState)}</Badge></>
 }
 function MemberBadges({ t, m }: { t: Copy; m: MemberSummary }) {
-  return <><StatusBadge t={t} status={m.status}/> <Badge tone={m.managedBy === 'Database' ? 'neutral' : m.managedBy === 'Configuration' ? 'info' : 'warning'} data-managed={m.managedBy}>
+  return <><StatusBadge t={t} status={m.status}/><InvitationBadge t={t} m={m}/> <Badge tone={m.managedBy === 'Database' ? 'neutral' : m.managedBy === 'Configuration' ? 'info' : 'warning'} data-managed={m.managedBy}>
     {word(t, 'managed_' + m.managedBy)}</Badge>
     {m.administrator && <> <Badge tone="info" data-admin="true">{t.admin}</Badge></>}{m.self && <> <Badge tone="neutral" data-self="true">{t.you}</Badge></>}</>
 }
@@ -275,16 +292,18 @@ const sortedGrants = (g: VesselGrant[]) => [...g].sort((a, b) => a.vesselId.loca
 
 function CreateForm({ t, catalog, disabled, run }: { t: Copy; catalog: Catalog; disabled: boolean; run: (c: AdminCommand) => Promise<void> }) {
   const [issuer, setIssuer] = useState(catalog.trustedIssuer ?? ''), [subject, setSubject] = useState(''), [grant, setGrant] = useState<GrantInput>(emptyGrant)
-  const ok = issuer.trim().length > 0 && subject.trim().length > 0 && grant.bundles.length > 0
+  // USER-ADMIN-02: the subject is optional; when given only that IdP identity can accept the invitation.
+  const ok = issuer.trim().length > 0 && grant.bundles.length > 0
   return <form aria-label={t.create} className="user-admin-form" onSubmit={e => { e.preventDefault()
-    if (ok && !disabled) void run(userAdminApi.create(issuer.trim(), subject.trim(), { ...grant, vesselGrants: sortedGrants(grant.vesselGrants) })) }}>
+    if (ok && !disabled) void run(userAdminApi.create(issuer.trim(), subject.trim() || null, { ...grant, vesselGrants: sortedGrants(grant.vesselGrants) })) }}>
     <h2>{t.create}</h2>
     <p role="note">{t.idpNote}</p>
+    <p role="note">{t.invitationNote}</p>
     <label htmlFor="ua-issuer">{t.issuer}</label>
     <input id="ua-issuer" required maxLength={1024} inputMode="url" value={issuer} onChange={e => setIssuer(e.target.value)}/>
-    <label htmlFor="ua-subject">{t.subject}</label>
-    <input id="ua-subject" required maxLength={255} autoComplete="off" value={subject} aria-describedby="ua-subject-hint" onChange={e => setSubject(e.target.value)}/>
-    <small id="ua-subject-hint">{t.subjectHint}</small>
+    <label htmlFor="ua-subject">{t.expectedSubject}</label>
+    <input id="ua-subject" maxLength={255} autoComplete="off" value={subject} aria-describedby="ua-subject-hint" onChange={e => setSubject(e.target.value)}/>
+    <small id="ua-subject-hint">{t.expectedSubjectHint}</small>
     <GrantFields t={t} catalog={catalog} value={grant} onChange={setGrant} prefix="ua-new"/>
     <EnterpriseActions layout="form" aria-label={t.create}><Button type="submit" disabled={disabled || !ok}>{t.create}</Button></EnterpriseActions>
   </form>
@@ -292,8 +311,38 @@ function CreateForm({ t, catalog, disabled, run }: { t: Copy; catalog: Catalog; 
 
 function Section({ label, children }: { label: string; children: ReactNode }) { return <section aria-label={label}><h3>{label}</h3>{children}</section> }
 
-function MemberDetail({ t, catalog, access, delegations, active, disabled, run, open }: { t: Copy; catalog: Catalog; access: MemberAccess; delegations: Delegation[]
-  active: MemberSummary[]; disabled: boolean; run: (c: AdminCommand) => Promise<void>; open: (id: string) => void }) {
+// USER-ADMIN-02: invitation state, the one-time link (copy) and a reissue. The link is shown only right after it was
+// issued; afterwards the server holds only a hash, so a new link means a reissue that invalidates the previous one.
+function InvitationPanel({ t, m, issued, canManage, disabled, run }: { t: Copy; m: MemberSummary; issued: IssuedLink | null; canManage: boolean; disabled: boolean
+  run: (c: AdminCommand) => Promise<void> }) {
+  const [copied, setCopied] = useState<'' | 'copied' | 'failed'>('')
+  if (!m.invitationState) return null
+  const copy = async () => {
+    if (!issued) return
+    try { await navigator.clipboard.writeText(issued.link); setCopied('copied') } catch { setCopied('failed') }
+  }
+  return <Section label={t.invitation}>
+    <p data-invitation-state={m.invitationState}>{word(t, 'invitation_' + m.invitationState)}
+      {m.invitationExpiresAt && m.status === 'Invited' && <> · {t.invitationExpires} <time dateTime={m.invitationExpiresAt}>{m.invitationExpiresAt}</time></>}
+      {m.invitationSubjectExpected && <> · {t.invitationSubjectBound}</>}</p>
+    {m.status === 'Invited' && <p><small>{t.invitationPendingNote}</small></p>}
+    {issued && m.status === 'Invited' && <div data-state="invitation-link">
+      <label htmlFor="ua-invitation-link">{t.invitationLink}</label>
+      <input id="ua-invitation-link" readOnly value={issued.link} aria-describedby="ua-invitation-link-hint" onFocus={e => e.currentTarget.select()}/>
+      <small id="ua-invitation-link-hint">{t.invitationLinkHint}</small>
+      <EnterpriseActions align="start" aria-label={t.invitationLink}>
+        <Button type="button" onClick={() => void copy()}>{t.copyInvitationLink}</Button>
+      </EnterpriseActions>
+      {copied && <p role="status" data-copy={copied}>{copied === 'copied' ? t.invitationCopied : t.invitationCopyFailed}</p>}
+    </div>}
+    {canManage && m.status === 'Invited' && <EnterpriseActions align="start" aria-label={t.invitation}>
+      <Button type="button" variant="outline" disabled={disabled} onClick={() => void run(userAdminApi.reissueInvitation(m.id, m.version))}>{t.reissueInvitation}</Button>
+    </EnterpriseActions>}
+  </Section>
+}
+
+function MemberDetail({ t, catalog, access, delegations, active, disabled, run, open, issued }: { t: Copy; catalog: Catalog; access: MemberAccess; delegations: Delegation[]
+  active: MemberSummary[]; disabled: boolean; run: (c: AdminCommand) => Promise<void>; open: (id: string) => void; issued: IssuedLink | null }) {
   const m = access.membership
   const vessel = (id: string) => catalog.vessels.find(v => v.id === id)
   const company = access.activeCompanyId ? catalog.companies.find(c => c.id === access.activeCompanyId) : null
@@ -318,6 +367,7 @@ function MemberDetail({ t, catalog, access, delegations, active, disabled, run, 
       </dl>
       <p><a href={`/app/audit?resourceId=${m.id}`}>{t.auditLink}</a></p>
     </section>
+    <InvitationPanel t={t} m={m} issued={issued} canManage={catalog.canManage} disabled={disabled} run={run}/>
     <Section label={t.vesselGrants}>
       {access.vesselGrants.length === 0 ? <p data-state="empty">{t.none}</p> : <ul>{access.vesselGrants.map(g => { const v = vessel(g.vesselId)
         return <li key={g.vesselId} data-vessel={g.vesselId}>{v ? `${v.code} · ${v.name}` : <code>{g.vesselId}</code>} · {g.canEdit ? t.canEdit : t.readOnly}</li> })}</ul>}
@@ -329,7 +379,8 @@ function MemberDetail({ t, catalog, access, delegations, active, disabled, run, 
       <EnterpriseActions align="start" aria-label={t.lifecycle}>
         {m.status === 'Active' && !m.self && <Button type="button" variant="outline" disabled={disabled} onClick={() => transition('suspend')}>{t.suspend}</Button>}
         {m.status === 'Suspended' && <Button type="button" variant="outline" disabled={disabled} onClick={() => transition('resume')}>{t.resume}</Button>}
-        {m.status !== 'Revoked' && !m.self && <Button type="button" variant="destructive" disabled={disabled} onClick={() => transition('revoke')}>{t.revokeMembership}</Button>}
+        {m.status !== 'Revoked' && !m.self && <Button type="button" variant="destructive" disabled={disabled} onClick={() => transition('revoke')}>
+          {m.status === 'Invited' ? t.revokeInvitation : t.revokeMembership}</Button>}
         {m.status === 'Active' && catalog.canSecuritySuspend && <Button type="button" variant="destructive" disabled={disabled} onClick={() => transition('security-suspend')}>{t.securitySuspend}</Button>}
       </EnterpriseActions>
     </Section>}
