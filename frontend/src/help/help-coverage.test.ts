@@ -54,6 +54,16 @@ describe('help content coverage guard', () => {
     }
   })
 
+  it('keeps every guide reviewed:false until the human UG-REV-01 sign-off flow replaces this guard (D7)', () => {
+    // An AI author can never record SME/UX approval. When the human review flow lands, it replaces this
+    // assertion explicitly; until then a `reviewed: { by, date }` value in a guide is a defect.
+    for (const [path, text] of Object.entries(raw)) {
+      const locale = /^\.\/content\/(tr|en)\//.exec(path)?.[1] as HelpLocale
+      expect(parseHelpDocument(text, locale).meta.reviewed, path).toBe(false)
+      expect(text, path).toMatch(/^reviewed: false$/m)
+    }
+  })
+
   it('keeps authored content inside the safe Markdown subset with no raw HTML or external link', () => {
     for (const [path, text] of Object.entries(raw)) {
       expect(text, path).not.toMatch(/<\/?[a-z!][^>]*>/i)

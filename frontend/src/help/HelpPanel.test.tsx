@@ -64,6 +64,47 @@ describe('page help panel', () => {
     await openedGuide()
   })
 
+  it('ignores Shift+? in a contentEditable region and while another modal is open', async () => {
+    mount('/app/today')
+    await screen.findByRole('button', { name: 'Today' })
+    const editor = document.createElement('div')
+    editor.contentEditable = 'true'
+    // jsdom does not derive isContentEditable from the attribute; a browser does.
+    Object.defineProperty(editor, 'isContentEditable', { value: true })
+    document.getElementById('test-main')!.append(editor)
+    fireEvent.keyDown(editor, { key: '?', shiftKey: true })
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    const other = document.createElement('div')
+    other.setAttribute('role', 'dialog'); other.setAttribute('aria-modal', 'true'); other.setAttribute('aria-label', 'Other modal')
+    document.body.append(other)
+    try {
+      fireEvent.keyDown(document.body, { key: '?', shiftKey: true })
+      expect(screen.queryByRole('dialog', { name: /Help/ })).not.toBeInTheDocument()
+    } finally { other.remove() }
+    fireEvent.keyDown(document.body, { key: '?', shiftKey: true, ctrlKey: true })
+    expect(screen.queryByRole('dialog', { name: /Help/ })).not.toBeInTheDocument()
+    fireEvent.keyDown(document.body, { key: '?', shiftKey: true })
+    await openedGuide()
+  })
+
+  it('starts no XHR or beacon either when the guide opens and renders (D2)', async () => {
+    const xhrOpen = vi.spyOn(XMLHttpRequest.prototype, 'open')
+    const beacon = vi.fn(() => true)
+    Object.defineProperty(navigator, 'sendBeacon', { value: beacon, configurable: true })
+    try {
+      const { fetcher } = mount('/app/today')
+      await screen.findByRole('button', { name: 'Today' })
+      const before = fetcher.mock.calls.length
+      await userEvent.click(trigger())
+      const dialog = await openedGuide()
+      await userEvent.click(within(dialog).getByRole('tab', { name: 'Why' }))
+      await userEvent.click(within(dialog).getByRole('tab', { name: 'AI' }))
+      expect(fetcher.mock.calls.length).toBe(before)
+      expect(xhrOpen).not.toHaveBeenCalled()
+      expect(beacon).not.toHaveBeenCalled()
+    } finally { Reflect.deleteProperty(navigator, 'sendBeacon') }
+  })
+
   it('traps Tab inside the panel and keeps the background inert', async () => {
     mount('/app/today')
     await screen.findByRole('button', { name: 'Today' })

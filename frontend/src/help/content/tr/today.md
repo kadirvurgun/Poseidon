@@ -32,7 +32,7 @@ reviewed: false
 - **Kullanılabilir (doğrulanmamış):** kaynak okundu. Bu, içeriğin doğrulandığı anlamına gelmez.
 - **Eksik / Bu bağlamda kullanılamıyor:** kaynak bu araç için okunamadı. Görünmeyen uyarı, her şeyin uygun olduğu anlamına gelmez.
 - **Kısmi görünüm:** bazı kaynaklar okunamadı. Sıfır sayısı "sorun yok" demek değildir.
-- **Öğe dönmedi:** listelenen kaynaklar okundu ve uyarı dönmedi. Bu bir emniyet onayı değildir.
+- **Listelenen tüm kaynaklar okundu ve öğe dönmedi:** uyarı gelmedi. Bu bir emniyet onayı değildir.
 - **Bilinmiyor:** değer kaynakta yok veya belirlenemedi. Bilinmiyor; "Hayır", "Hazır" veya "Uygulanmaz" anlamına gelmez.
 - **İnceleme gerekli / Planlama uyarısı / Bilgilendirme:** kartın önceliği. İnceleme gerekli olan kart, yetkili bir kişinin bakmasını bekler.
 - **Tamamlandı ≠ Doğrulandı:** bir kaydın tamamlanması, yetkili doğrulayıcının onayladığı anlamına gelmez (13.03 §1).
@@ -48,6 +48,6 @@ reviewed: false
 - **Erişim reddedildi / Araç yetki alanınızda kullanılamıyor:** rol ve araç bağlamınızı kontrol edin; gerekirse kiracı yöneticisine başvurun.
 - **Beklenmeyen uyarı:** "Neden?" bölümünü açın; kural veya kaynak yanlış görünüyorsa kontrol sahibine ya da alan uzmanına iletin.
 - **Kaynağa ulaşılamıyor / Çok fazla istek:** bir süre bekleyip "Tekrar dene" düğmesini kullanın.
-- **Sunucu yanıtı doğrulamadan geçemedi:** ekran görüntüsü, zaman ve adımlarla destek ekibine bildirin.
+- **Sunucu yanıtı doğrulamadan geçemedi:** yanıttan hiçbir şey gösterilmez; ekran görüntüsü, zaman ve adımlarla destek ekibine bildirin.
 
 ## İlgili sayfalar

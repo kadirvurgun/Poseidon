@@ -48,10 +48,17 @@ Sonuçlar teslim raporunda ve aşağıdaki tabloda; CI sonucu ayrıca raporlanı
 | `npm run typecheck` | 0 hata |
 | `npm run lint` | 0 hata / 0 uyarı |
 | `npx vitest run src/help` | 3 dosya, 79 test geçti |
-| `npx vitest run` (tam frontend, offline-shell testi dahil) | 229 dosya, 2273 test geçti, 0 başarısız (590 s) |
+| `npx vitest run` (tam frontend, offline-shell testi dahil) | bd906386: 229 dosya / 2273 test geçti. QA düzeltmesi sonrası: 229 dosya / 2276 test geçti, 0 başarısız |
 | `npx vite build` | geçti; `help-tr` 11,7 kB, `help-en` 10,7 kB chunk; ikisi de `dist/offline-shell.js` envanterinde |
 | `py scripts/test_i18n_untranslated.py` | 4 test geçti; `HelpPanel_tsx_copy` için yalnız fr "Guide" aynı (Fransızcada doğru kelime) |
 | Playwright / axe / 320 px / offline PWA | **DEFERRED** (yerelde çalıştırılmadı) |
+
+## Bağımsız QA (bd906386: ACCEPT-WITH-NOTES) ve düzeltmeler
+
+- **N1:** Vitest'in disk modül önbelleği `import.meta.glob` sonucunu bayat tutabiliyordu. `frontend/vite.config.ts` içinde `test.fsModuleCache: false` yapıldı. Vitest 5.0.5'te bu seçenek `experimental` altında değil, üst düzeyde; typecheck bunu doğruladı. Önbellek bayrağı olmadan deneme yapıldı: geçen koşu → `content/en/fleet.md` (`<script>`) eklendi → koruma 3 vakada kırmızı → dosya silindi → yeşil.
+- **N3:** Kılavuzlardaki durum metinleri UI dizeleriyle birebir aynı yapıldı. EN: "The outcome could not be confirmed", "Every listed source was read and returned no items", "The server response failed validation". TR karşılıkları: "İşlem sonucu doğrulanamadı", "Listelenen tüm kaynaklar okundu ve öğe dönmedi", "Sunucu yanıtı doğrulamadan geçemedi".
+- **N4:** UG-REV-01 insan onay akışı gelene kadar her kılavuzun `reviewed: false` olduğunu doğrulayan koruma testi eklendi. İnsan onay akışı bu testi açıkça değiştirecek.
+- **N2:** İki test eklendi: Shift+? contentEditable içinde, başka bir modal açıkken ve Ctrl ile birlikte yok sayılır. Panel açılıp sekmeler gezildiğinde XHR veya `sendBeacon` çağrısı olmaz.
 
 ## Açık işler
 

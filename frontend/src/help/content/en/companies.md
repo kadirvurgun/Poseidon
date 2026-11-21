@@ -41,7 +41,7 @@ The Companies page lists the **company records** of your workspace that you are 
 ## If something goes wrong
 - **This record changed in another operation:** your draft is kept. Discard the draft to load the current record, then make your change again.
 - **This code is already in use:** enter a different code.
-- **The result could not be confirmed:** fields stay locked; retrying the same command is safe.
+- **The outcome could not be confirmed:** fields stay locked until the outcome is known; safely retry the same command.
 - **Your permission may have changed / No access:** check your role and workspace context; contact your tenant administrator if needed (13.03 §10).
 - **The service is unavailable:** use "Retry"; if the problem continues, report it with the support reference.
 

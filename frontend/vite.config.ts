@@ -23,5 +23,8 @@ export default defineConfig({
   server: { port: 5173, strictPort: true, proxy },
   preview: { host: '127.0.0.1', port: uiPort, strictPort: true, proxy },
   test: { environment: 'jsdom', setupFiles: ['./src/test-setup.ts'], clearMocks: true, maxWorkers: 2,
-    reporters: ['default', './scripts/strict-test-reporter.ts'] },
+    reporters: ['default', './scripts/strict-test-reporter.ts'],
+    // USER-GUIDE-01 QA N1: the on-disk module cache (vitest 5 top-level `fsModuleCache`) can keep a stale import.meta.glob result, so a new
+    // guide file would not reach help-coverage.test.ts. Coverage guards must see the real tree.
+    fsModuleCache: false },
 })

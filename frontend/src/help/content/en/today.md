@@ -32,7 +32,7 @@ reviewed: false
 - **Available (unverified):** the source was read. This does not mean its content was verified.
 - **Missing / Unavailable in this context:** the source could not be read for this vessel. An alert you cannot see does not mean everything is fine.
 - **Partial view:** some sources could not be read. A count of zero does not mean "no problem".
-- **No items returned:** the listed sources were read and returned no alert. This is not a safety approval.
+- **Every listed source was read and returned no items:** no alert came back. This is not a safety clearance.
 - **Unknown:** the value is missing from the source or could not be determined. Unknown does not mean "No", "Ready" or "Not applicable".
 - **Review required / Planning attention / Advisory:** the card's priority. A review-required card waits for an authorized person to look at it.
 - **Completed ≠ Verified:** completing a record does not mean an authorized verifier has confirmed it (13.03 §1).
@@ -48,6 +48,6 @@ reviewed: false
 - **Access denied / Vessel unavailable in your scope:** check your role and vessel context; contact your tenant administrator if needed.
 - **Unexpected alert:** open "Why?"; if the rule or source looks wrong, pass it to the control owner or subject-matter expert.
 - **Source unavailable / Too many requests:** wait a moment and use "Retry".
-- **Server response failed validation:** report it to support with a screenshot, the time and your steps.
+- **The server response failed validation:** nothing from it is shown; report it to support with a screenshot, the time and your steps.
 
 ## Related pages

@@ -41,7 +41,7 @@ reviewed: false
 ## Sorun olursa
 - **Kayıt başka bir işlemle değişti:** taslağınız korunur. Güncel kaydı yüklemek için taslağı bırakın ve değişikliğinizi yeniden yapın.
 - **Bu kod zaten kullanılıyor:** başka bir kod girin.
-- **İşlem sonucu doğrulanamadı:** alanlar kilitli kalır; aynı komutu güvenle tekrar deneyin.
+- **İşlem sonucu doğrulanamadı:** alanlar sonuç alınana kadar kilitlidir; aynı komutu güvenle tekrar deneyin.
 - **Kaydetme yetkiniz değişmiş olabilir / Erişim yok:** rol ve çalışma alanı bağlamınızı kontrol edin; gerekirse kiracı yöneticisine başvurun (13.03 §10).
 - **Hizmete ulaşılamıyor:** "Tekrar dene" düğmesini kullanın; sorun sürerse destek referansıyla bildirin.
 
