@@ -18,7 +18,8 @@ Dal: `feature/help-screenshots-20261122` (taban `origin/main` dde4bb50, UG-1 dah
 - **Lab eylemleri** (`scripts/help_screenshots_lab.py`, `oidc_lab` modülünü kullanır; bağımsız incelenmiş `oidc_lab.py` kaynağı değiştirilmedi çünkü depo gizli tarayıcısının incelenmiş istisnaları satır + blob hash'ine bağlıdır): `prepare_screenshots` lab-manager'a okuma yetkileri (`regulatory.draft.read, maintenance.read, tug.read, membership.read`) ve iki gemi türü görünürlük kapsamı (`mode.tug, mode.cross`) ekler. QA N2: `mode.*` saf okuma değildir; lab-manager'ın görebildiği gemileri (römorkör; `mode.tug` varken yeniden gemi) genişletir, dolayısıyla lab-manager'ın mevcut yazma yetkileri bu özel lab'da o gemilere de uygulanır. İkisi gereklidir: iş panosu `mode.tug + tug.read` ister, `mode.tug` varken `mode.cross` olmadan Today'in gemi bağlamı kaybolur — yalnız `.runtime/oidc-lab/appsettings.json` (gitignore, commit edilmez) — ve demo fixture komutunu çalıştırır. `screenshots` yakalama betiğini çalıştırır. Yazma/yönetim/emniyet yetkisi bilinçli olarak verilmez.
 - **Yakalama betiği** (`tests/Poseidon.Browser.Tests/screenshots/capture.ts`): `lab/run.ts` gibi doğrudan Playwright kütüphane koşucusu (trace/video/HAR/test-runner DOM snapshot'ı yok), `strictContext` (yalnız lab CA'sı, Firefox), gerçek Keycloak girişi. Sabit 1440×900 (ve isteğe bağlı 390×844), açık mod + Zümrüt palet (`poseidon.appearance.v2`) ve dil (`poseidon.locale`) yüklemeden önce yerel depoya yazılır; `reducedMotion: reduce`, animasyon kapalı, imleç gizli, `page.clock.setFixedTime(2026-11-22T09:00Z)`. Sunucu zaman damgaları, tarih/saat metinleri ve UUID'ler maskelenir. Her adımın hedef öğelerine CSS token'lı numaralı halka + rozet, altta commit kimliği damgası eklenir.
   - Modlar: `compare` (varsayılan; PNG yazmaz, piksel farkı oranı ≤ `POSEIDON_SCREENSHOTS_THRESHOLD`, varsayılan 0,002; damga şeridi karşılaştırma dışı), `update` (PNG + köken JSON yeniden üretir), `discover` (erişilebilirlik ağacını özel dizine yazar). Commit edilmeyen görünüm alanı (mobil) yalnız `.runtime/oidc-lab/screenshots-uncommitted/` altına yazılır.
-  - Hazırlık eylemleri kapalı şemadır: tıklama/doldurma/Enter; adı kaydet/oluştur/gönder/onayla/imzala/doğrula/sil/iptal/askıya al/çıkış vb. olan bir denetime tıklama **yürütme öncesi reddedilir** (D5). Hedefler rol + erişilebilir ad, etiket veya metin; CSS seçici kabul edilmez.
+  - Hazırlık eylemleri yalnız tıklamadır ve `steps.ts` içindeki **açık izin listesiyle** sınırlıdır (QA N1): tür (düğme / `<details>` özeti) + TR ve EN tam ad (desen yok, büyük/küçük harf katlama yok). Liste dört okuma amaçlı tıklamadır: Neden?/Why?, Neden / sonraki adım/Why / next action, Synthetic Operator A, Hesap/Account add41584. Adsız, yalnız sıra (nth), `re:` desenli, düğme dışı tıklamalar ve doldurma/Enter eylemleri reddedilir; eşleme dosyasını düzenlemek tek başına yeni tıklama ekleyemez. Koşucu tıklamadan hemen önce tarayıcıda öğenin gerçek rolünü ve erişilebilir adını (düğme) ya da kapalı `<details>` özetinin tam metnini (CSS +/− işareti ada eklendiği için) yeniden doğrular.
+- **Köken (QA N3):** şema `v2`; her JSON `capture.ts` ve `steps.json` dosyalarının git blob kimliğini ve `dirty` bayrağını taşır. `update` kirli üreteçle çalışmayı reddeder; `provenance.test.ts` kirli kaydı ve depodaki dosyalarla eşleşmeyen blob'u reddeder (üreteç değişirse görüntüler yeniden üretilmelidir). Görüntüler üreteç commit'i `7fdbe061` üzerinden yeniden üretildi; `commit` alanı bu commit'i gösterir.
 - **Adım eşlemesi** `frontend/src/help/screenshots/steps.json` (kılavuzların yanında). Okuma yetkili hesabın dürüstçe gösteremeyeceği adımlar açıkça `unavailable: write_permission_required` olarak işaretlenir; yetki veya durum sahnelenmez.
 - **Çıktı:** `frontend/src/help/screenshots/<dil>/<anahtar>/<adım>-desktop.png` + aynı adla köken JSON (`generator`, `commit`, veri kümeleri, kiracı, sabit saat, PNG sha256/boyut, yakalanan DOM metni).
 - **Panel:** ön bilgi `screenshots` artık adım numarası listesidir (`[1, 2, 4]`; sıralı, tekrarsız, katı ayrıştırma). "Adım adım" bölümünde listelenen her adımın altında görüntü (`loading="lazy"`, `decoding="async"`). Görüntü kaynağı yalnız derleme zamanı `import.meta.glob` URL'sidir; Markdown hâlâ görüntü üretemez. Yeni metinler 17 katalogda (`screenshotAlt`, `screenshotOffline`).
@@ -75,7 +76,30 @@ Sonuç `.runtime/oidc-lab/screenshot-report.json` (yalnız ad/sonuç/oran/bayt/s
 
 | `npx vitest run` (tam frontend) | 230 dosya / 2296 test; ilk çalıştırmada 1 başarısız (yanlışlıkla depoya yazılmış mobil köken JSON'ları — yakalama betiği hatası düzeltildi, dosyalar kaldırıldı), düzeltme sonrası `help-coverage` yeniden geçti |
 
-CI: ilk push (`8053a871`, run 44966741552) kırmızıydı: (1) depo gizli tarayıcısı `oidc_lab.py` değişikliğini incelenmiş istisnaların dışına düşürdü → değişiklik geri alındı, eylemler `help_screenshots_lab.py`'ye taşındı; (2) aynı mobil JSON yetimi. Sonraki CI sonucu teslim raporunda.
+CI: ilk push (`8053a871`, run 44966741552) kırmızıydı: (1) depo gizli tarayıcısı `oidc_lab.py` değişikliğini incelenmiş istisnaların dışına düşürdü → değişiklik geri alındı, eylemler `help_screenshots_lab.py`'ye taşındı; (2) aynı mobil JSON yetimi. Düzeltme commit'i `8fd7dc03` → run **44967711805: success** (4/4 iş: persistence-and-security, frontend-and-browser, windows-automation, nightly-installer-construction).
+
+## Bağımsız QA düzeltmeleri (8fd7dc03 → ACCEPT-WITH-NOTES)
+
+| Not | Düzeltme |
+|---|---|
+| N1 | Yıkıcı kelime kara listesi kaldırıldı; `steps.ts` içinde açık tıklama izin listesi (tür + TR/EN tam ad). Koşucu tıklamadan önce rol + erişilebilir adı (düğme) ya da kapalı `<details>` özetinin tam metnini doğrular. Adsız/yalnız-nth/`re:`/düğme dışı tıklama ve doldurma/Enter reddedilir. Birim testleri: İmzala/İptal/İçe aktar/Çıkış, Grant/Confirm/Assign/Remove/Reject/Add, büyük/küçük harf ve Türkçe İ/ı varyantları. |
+| N2 | `mode.tug/mode.cross` ayrı `SCREENSHOT_VISIBILITY_SCOPES` olarak modellendi ve belgelendi (görünürlüğü genişletir, saf okuma değildir). İkisi gerekli olduğu için kaldırılmadı. |
+| N3 | Köken `v2`: üreteç blob'ları + `dirty`; `update` kirli üreteci reddeder (doğrulandı: kirli ağaçta `update` FAILED, dosya yazılmadı). 36 görüntü `7fdbe061` üreteç commit'inden yeniden üretildi; JSON blob'ları `git rev-parse HEAD:<yol>` ile birebir. |
+| N5 | Rozet halkanın dışında; görünmeyen/başlık altındaki hedef açığa çıkarılır (companies/3 artık Ayrıntılar bölgesinin tamamını işaretler). today/4: hedef bölge başlığın altında tamamen görünür; yarı saydam yapışkan başlığın arkasındaki soluk kaydırılmış içerik (uygulamanın kendi görünümü) kalır. |
+| N6 | `SyntheticMembershipGuardTests` (Theory, 4 vaka: fixture `.invalid`, SyntheticUnverified güvenilir issuer, ConfigurationImport güvenilir/`.invalid`): yetki ucu 409 `configuration_managed`, `Editable=false`, yetki revizyonu yok, `ProvisionedIdentityLocator` null, bağlanmış oturum 200 almaz. |
+
+Yeniden doğrulama (22.11.2026, kendi lab'ı yeniden başlatıldı ve sonunda durduruldu):
+
+| Komut | Sonuç |
+|---|---|
+| `screenshots` `update` (desktop, temiz üreteç `7fdbe061`) | `status=passed`, 36/36 written, 3,16 MB |
+| `screenshots` `compare` (ikinci çalıştırma) | 36/36 `match`, en büyük fark 0,000094 |
+| `node --test steps.test.ts provenance.test.ts` | 11/11 geçti |
+| `py -3.13 -m unittest test_help_screenshots_lab test_oidc_lab` | 9/9 geçti |
+| `dotnet test Api.Tests --filter-method *A_membership_not_provisioned_by_an_administrator*` (Testcontainers PG) | 4/4 geçti |
+| `npx vitest run src/help` | 3 dosya, 95 test geçti |
+
+Görüntü commit'i ve CI sonucu teslim raporunda.
 
 ## Açık konular
 

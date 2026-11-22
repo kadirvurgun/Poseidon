@@ -1,7 +1,12 @@
 {
- "schemaVersion": "poseidon.help.screenshot-provenance.v1",
+ "schemaVersion": "poseidon.help.screenshot-provenance.v2",
  "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
- "commit": "dde4bb50e6a2eef7fc9b0b0591460878ea46df56",
+ "commit": "7fdbe06127aa527849086d8789b9d3eaf784e38b",
+ "generatorBlobs": {
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "d3bbdcc1affcc5973826404c4fedd69f13378b18",
+  "frontend/src/help/screenshots/steps.json": "dc6b3a7f9b72e45ce1a921f8c5f0c54c9b7d6b81"
+ },
+ "dirty": false,
  "key": "tug-job-board",
  "locale": "en",
  "step": 5,
@@ -13,7 +18,7 @@
  "tenant": "Synthetic Fleet A",
  "fixedClock": "2026-11-22T09:00:00.000Z",
  "png": {
-  "sha256": "29e8b2471b6a674ee4971d6146156932049d7a3a7d87296b0ddad96d22351951",
+  "sha256": "c467a79c5237b2acf96bdea7d8f7b3ce1167f63a24e143329bebe01455a8b1f9",
   "width": 1440,
   "height": 900
  },
