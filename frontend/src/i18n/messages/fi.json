@@ -3863,6 +3863,7 @@
       "loading": "Ladataan opasta…",
       "failed": "Opasta ei voitu ladata. Lataa sivu uudelleen ja yritä uudelleen.",
       "fallback": "Tällä kielellä ei vielä ole opasta; näytetään englanninkielinen versio.",
+      "translationUnreviewed": "Konekäännös — ei tarkistettu. Jos jokin on epäselvää, katso englanninkielinen opas.",
       "relatedNone": "Ei näytettäviä liittyviä sivuja.",
       "shortcut": "Pikanäppäin: Vaihto+?",
       "screenshotAlt": "Kuvakaappaus, vaihe",

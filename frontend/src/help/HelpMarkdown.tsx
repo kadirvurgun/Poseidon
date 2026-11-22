@@ -90,7 +90,8 @@ function blocks(source: string): Block[] {
 export function HelpMarkdown({ source, policy, idPrefix, afterStep }: { source: string; policy: HelpLinkPolicy; idPrefix: string; afterStep?: (step: number) => ReactNode }) {
   return <>{blocks(source).map((block, index) => {
     const key = `${idPrefix}-${index}`
-    if (block.kind === 'h') return <h4 key={key} id={helpAnchorId(block.text)}>{inline(block.text, policy, key)}</h4>
+    // A heading without Latin letters (ar, hi, ru, zh) has no slug; its id stays unique by position.
+    if (block.kind === 'h') { const id = helpAnchorId(block.text); return <h4 key={key} id={id === 'help-section' ? `help-${key}` : id}>{inline(block.text, policy, key)}</h4> }
     if (block.kind === 'p') return <p key={key}>{inline(block.text, policy, key)}</p>
     const items = block.items.map((item, itemIndex) => <li key={`${key}-${itemIndex}`}>{inline(item, policy, `${key}-${itemIndex}`)}
       {block.kind === 'ol' && afterStep?.(itemIndex + 1)}</li>)

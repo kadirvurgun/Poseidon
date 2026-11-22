@@ -3863,6 +3863,7 @@
       "loading": "Caricamento della guida…",
       "failed": "Impossibile caricare la guida. Ricarica la pagina e riprova.",
       "fallback": "Nessuna guida in questa lingua; viene mostrata la versione inglese.",
+      "translationUnreviewed": "Traduzione automatica — non revisionata. Se qualcosa non è chiaro, consulti la guida in inglese.",
       "relatedNone": "Nessuna pagina correlata da mostrare.",
       "shortcut": "Scorciatoia: Maiusc+?",
       "screenshotAlt": "Schermata, passaggio",

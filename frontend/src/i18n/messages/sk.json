@@ -3863,6 +3863,7 @@
       "loading": "Načítava sa návod…",
       "failed": "Návod sa nepodarilo načítať. Obnovte stránku a skúste to znova.",
       "fallback": "V tomto jazyku zatiaľ návod nie je; zobrazuje sa anglická verzia.",
+      "translationUnreviewed": "Strojový preklad — nebol skontrolovaný. Ak je niečo nejasné, pozrite si anglickú príručku.",
       "relatedNone": "Žiadne súvisiace stránky na zobrazenie.",
       "shortcut": "Skratka: Shift+?",
       "screenshotAlt": "Snímka obrazovky, krok",

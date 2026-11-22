@@ -2,7 +2,18 @@
 // Content is bundled Markdown authored in this repository. Parsing is pure and side-effect free:
 // opening the help panel never issues an API request, command or AI call (D2, 65.03 p59).
 
-export type HelpLocale = 'tr' | 'en'
+/**
+ * Guide content locales (USER-GUIDE-01 D6). `en-GB` reads the `en` guides. TR and EN are the
+ * authored languages; every other locale holds machine-drafted translations that always show the
+ * "translation not reviewed" notice and fall back to EN, per page, where a file does not exist.
+ */
+export const helpLocales = ['tr', 'en', 'ar', 'cs', 'de', 'es', 'fi', 'fr', 'hi', 'hu', 'it', 'pt-BR', 'ru', 'sk', 'zh-Hans', 'zh-Hant'] as const
+export type HelpLocale = typeof helpLocales[number]
+/** Locales whose guides are authored directly (not machine-drafted translations of EN). */
+export const authoredHelpLocales: ReadonlySet<HelpLocale> = new Set<HelpLocale>(['tr', 'en'])
+export function isHelpLocale(value: string): value is HelpLocale { return (helpLocales as readonly string[]).includes(value) }
+/** True for a locale whose guides are unreviewed machine-drafted translations (UG-5, D6). */
+export function isDraftTranslationLocale(locale: HelpLocale): boolean { return !authoredHelpLocales.has(locale) }
 export type HelpReview = false | { by: string; date: string }
 export type HelpFrontMatter = {
   key: string
@@ -17,15 +28,37 @@ export type HelpFrontMatter = {
 export type HelpSection = { heading: string; body: string }
 export type HelpDocument = { meta: HelpFrontMatter; sections: HelpSection[] }
 
-/** The 8 fixed section headings, in order. Each guide must contain all of them exactly once. */
+/**
+ * The 8 fixed section headings, in order, for every guide locale. Each guide must contain all of
+ * them exactly once. This is the single heading table translators use (UG-5 translator brief).
+ */
 export const helpSectionHeadings: Readonly<Record<HelpLocale, readonly string[]>> = Object.freeze({
   tr: Object.freeze(['Bu sayfa ne işe yarar', 'Kim kullanır', 'Başlamadan önce', 'Adım adım', 'Durumlar ne anlama gelir', 'Yapamazsınız / dikkat', 'Sorun olursa', 'İlgili sayfalar']),
   en: Object.freeze(['What this page is for', 'Who uses it', 'Before you start', 'Step by step', 'What the states mean', 'What you cannot do / caution', 'If something goes wrong', 'Related pages']),
+  ar: Object.freeze(['الغرض من هذه الصفحة', 'من يستخدمها', 'قبل أن تبدأ', 'خطوة بخطوة', 'معنى الحالات', 'ما لا يمكنك فعله / تنبيه', 'إذا حدث خطأ ما', 'صفحات ذات صلة']),
+  cs: Object.freeze(['K čemu tato stránka slouží', 'Kdo ji používá', 'Než začnete', 'Krok za krokem', 'Co znamenají stavy', 'Co nemůžete dělat / upozornění', 'Když se něco pokazí', 'Související stránky']),
+  de: Object.freeze(['Wofür diese Seite dient', 'Wer sie verwendet', 'Bevor Sie beginnen', 'Schritt für Schritt', 'Was die Zustände bedeuten', 'Was Sie nicht tun können / Vorsicht', 'Wenn etwas schiefgeht', 'Verwandte Seiten']),
+  es: Object.freeze(['Para qué sirve esta página', 'Quién la usa', 'Antes de empezar', 'Paso a paso', 'Qué significan los estados', 'Lo que no puede hacer / precaución', 'Si algo sale mal', 'Páginas relacionadas']),
+  fi: Object.freeze(['Mihin tätä sivua käytetään', 'Kuka sitä käyttää', 'Ennen kuin aloitat', 'Vaihe vaiheelta', 'Mitä tilat tarkoittavat', 'Mitä et voi tehdä / varoitus', 'Jos jokin menee vikaan', 'Liittyvät sivut']),
+  fr: Object.freeze(['À quoi sert cette page', 'Qui l’utilise', 'Avant de commencer', 'Étape par étape', 'Signification des états', 'Ce que vous ne pouvez pas faire / prudence', 'En cas de problème', 'Pages associées']),
+  hi: Object.freeze(['यह पृष्ठ किसलिए है', 'इसका उपयोग कौन करता है', 'शुरू करने से पहले', 'चरण दर चरण', 'स्थितियों का अर्थ', 'आप क्या नहीं कर सकते / सावधानी', 'अगर कुछ गलत हो जाए', 'संबंधित पृष्ठ']),
+  hu: Object.freeze(['Mire szolgál ez az oldal', 'Ki használja', 'Mielőtt elkezdené', 'Lépésről lépésre', 'Mit jelentenek az állapotok', 'Amit nem tehet meg / figyelem', 'Ha valami nem sikerül', 'Kapcsolódó oldalak']),
+  it: Object.freeze(['A cosa serve questa pagina', 'Chi la usa', 'Prima di iniziare', 'Passo dopo passo', 'Cosa significano gli stati', 'Cosa non si può fare / attenzione', 'Se qualcosa va storto', 'Pagine correlate']),
+  'pt-BR': Object.freeze(['Para que serve esta página', 'Quem usa', 'Antes de começar', 'Passo a passo', 'O que significam os estados', 'O que você não pode fazer / cuidado', 'Se algo der errado', 'Páginas relacionadas']),
+  ru: Object.freeze(['Для чего эта страница', 'Кто ею пользуется', 'Прежде чем начать', 'Пошагово', 'Что означают состояния', 'Чего делать нельзя / осторожно', 'Если что-то пошло не так', 'Связанные страницы']),
+  sk: Object.freeze(['Na čo slúži táto stránka', 'Kto ju používa', 'Skôr než začnete', 'Krok za krokom', 'Čo znamenajú stavy', 'Čo nemôžete robiť / upozornenie', 'Ak sa niečo pokazí', 'Súvisiace stránky']),
+  'zh-Hans': Object.freeze(['本页用途', '谁使用本页', '开始之前', '操作步骤', '状态含义', '不能做的事 / 注意', '出现问题时', '相关页面']),
+  'zh-Hant': Object.freeze(['本頁用途', '誰使用本頁', '開始之前', '操作步驟', '狀態含義', '不能做的事 / 注意', '發生問題時', '相關頁面']),
 })
 /** Index of the "Related pages" section; its body is computed from front matter and the caller's own navigation. */
 export const relatedSectionIndex = 7
 /** Index of the "Step by step" section; its numbered items receive the generated screenshots (UG-2). */
 export const stepSectionIndex = 3
+
+/** Number of top-level numbered items in a guide's "Step by step" section. */
+export function helpStepCount(document: HelpDocument): number {
+  return document.sections[stepSectionIndex].body.split('\n').filter(line => /^\d+\. /.test(line.trim())).length
+}
 
 /**
  * Pages whose screen has its own record-level "Why" disclosure. The help panel only points to it;

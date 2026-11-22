@@ -3863,6 +3863,7 @@
       "loading": "Anleitung wird geladen…",
       "failed": "Die Anleitung konnte nicht geladen werden. Laden Sie die Seite neu und versuchen Sie es erneut.",
       "fallback": "In dieser Sprache gibt es noch keine Anleitung; die englische Fassung wird angezeigt.",
+      "translationUnreviewed": "Maschinelle Übersetzung — nicht geprüft. Wenn etwas unklar ist, sehen Sie in der englischen Anleitung nach.",
       "relatedNone": "Keine verwandten Seiten anzuzeigen.",
       "shortcut": "Tastenkürzel: Umschalt+?",
       "screenshotAlt": "Bildschirmfoto, Schritt",

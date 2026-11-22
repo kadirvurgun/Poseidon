@@ -3863,6 +3863,7 @@
       "loading": "Kılavuz yükleniyor…",
       "failed": "Kılavuz yüklenemedi. Sayfayı yenileyip tekrar deneyin.",
       "fallback": "Bu dilde kılavuz henüz yok; İngilizce sürüm gösteriliyor.",
+      "translationUnreviewed": "Makine çevirisi — gözden geçirilmedi. Belirsiz bir nokta varsa İngilizce kılavuza bakın.",
       "relatedNone": "Gösterilecek ilgili sayfa yok.",
       "shortcut": "Kısayol: Shift+?",
       "screenshotAlt": "Ekran görüntüsü, adım",

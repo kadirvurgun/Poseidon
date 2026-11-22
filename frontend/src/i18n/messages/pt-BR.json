@@ -3863,6 +3863,7 @@
       "loading": "Carregando o guia…",
       "failed": "Não foi possível carregar o guia. Recarregue a página e tente novamente.",
       "fallback": "Ainda não há guia neste idioma; exibindo a versão em inglês.",
+      "translationUnreviewed": "Tradução automática — não revisada. Se algo não estiver claro, consulte o guia em inglês.",
       "relatedNone": "Nenhuma página relacionada para mostrar.",
       "shortcut": "Atalho: Shift+?",
       "screenshotAlt": "Captura de tela, etapa",

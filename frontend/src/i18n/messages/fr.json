@@ -3863,6 +3863,7 @@
       "loading": "Chargement du guide…",
       "failed": "Le guide n’a pas pu être chargé. Rechargez la page et réessayez.",
       "fallback": "Pas encore de guide dans cette langue ; la version anglaise est affichée.",
+      "translationUnreviewed": "Traduction automatique — non relue. En cas de doute, consultez le guide en anglais.",
       "relatedNone": "Aucune page associée à afficher.",
       "shortcut": "Raccourci : Maj+?",
       "screenshotAlt": "Capture d’écran, étape",

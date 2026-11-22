@@ -3863,6 +3863,7 @@
       "loading": "Útmutató betöltése…",
       "failed": "Az útmutatót nem sikerült betölteni. Töltse újra az oldalt, és próbálja újra.",
       "fallback": "Ezen a nyelven még nincs útmutató; az angol változat látható.",
+      "translationUnreviewed": "Gépi fordítás — nincs ellenőrizve. Ha valami nem egyértelmű, nézze meg az angol nyelvű útmutatót.",
       "relatedNone": "Nincs megjeleníthető kapcsolódó oldal.",
       "shortcut": "Billentyűparancs: Shift+?",
       "screenshotAlt": "Képernyőkép, lépés",

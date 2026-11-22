@@ -3863,6 +3863,7 @@
       "loading": "正在加载指南…",
       "failed": "无法加载指南。请刷新页面后重试。",
       "fallback": "此语言暂无指南；显示英文版本。",
+      "translationUnreviewed": "机器翻译 — 未经审核。如有不清楚之处，请查看英文指南。",
       "relatedNone": "没有可显示的相关页面。",
       "shortcut": "快捷键：Shift+?",
       "screenshotAlt": "截图，步骤",
