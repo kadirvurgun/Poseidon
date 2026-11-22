@@ -169,6 +169,17 @@ async function reveal(page: Page, targets: Locator[]) {
   await Promise.all(handles.map(handle => handle?.dispose()))
 }
 
+/** Waits (bounded, 3 s) until every target's box and the page height are unchanged across two 150 ms samples. */
+async function steady(page: Page, targets: Locator[]) {
+  let previous = ''
+  for (let attempt = 0; attempt < 20; attempt++) {
+    const sample = JSON.stringify([await Promise.all(targets.map(target => target.boundingBox())), await page.evaluate(() => document.documentElement.scrollHeight)])
+    if (sample === previous) return
+    previous = sample
+    await page.waitForTimeout(150)
+  }
+}
+
 /** Fraction of differing pixels (ignoring the commit footer) decoded in an isolated about:blank page. */
 async function difference(blank: Page, previous: Buffer, current: Buffer): Promise<number> {
   return blank.evaluate(async ({ a, b, footerHeight }) => {
@@ -216,8 +227,11 @@ async function capture(page: Page, blank: Page, key: string, locale: ScreenshotL
         await settle(page)
       }
       const targets = step.targets.map(target => locate(page, target, locale))
+      // Late content (a details pane filling in, a focus scroll) must not race the composition: wait until
+      // the targets stop moving, compose, then wait again before measuring.
+      await steady(page, targets)
       await reveal(page, targets)
-      await page.waitForTimeout(150)
+      await steady(page, targets)
       const size = viewports[viewport]
       const boxes = []
       for (const [index, target] of targets.entries()) {
@@ -237,7 +251,15 @@ async function capture(page: Page, blank: Page, key: string, locale: ScreenshotL
         page.getByText(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|\b[0-9a-f]{8}…/i)]
       // Masks are painted in the page itself (not as a screenshot layer), so they keep the page's stacking
       // order: a sticky header or the commit footer still covers a masked value scrolled beneath it.
+      // The masked value is also replaced by a fixed-width placeholder, so a timestamp whose length varies
+      // between runs (trailing fractional-second digits) cannot shift the layout or the mask width.
       for (const mask of masks) await mask.evaluateAll(nodes => {
+        const value = /\d{4}-\d{2}-\d{2}(?:[T ]\d{1,2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?)?|\b\d{1,2}[./]\d{1,2}[./]\d{2,4}(?:,? \d{1,2}:\d{2}(?::\d{2})?)?|\b\d{1,2}:\d{2}(?::\d{2}(?:\.\d+)?)?\b|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|\b[0-9a-f]{8}…/gi
+        for (const node of nodes) {
+          const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT)
+          for (let text = walker.nextNode(); text; text = walker.nextNode())
+            text.textContent = node.tagName === 'TIME' ? (text.textContent?.trim() ? '0000-00-00 00:00' : text.textContent) : text.textContent!.replace(value, '0000-00-00 00:00')
+        }
         for (const node of nodes) for (const element of [node, ...node.querySelectorAll('*')] as HTMLElement[]) {
           for (const [property, value] of [['color', 'transparent'], ['-webkit-text-fill-color', 'transparent'], ['background', '#c8cdd3'],
             ['border-color', 'transparent'], ['box-shadow', 'none'], ['text-shadow', 'none'], ['fill', 'transparent'], ['stroke', 'transparent']])
