@@ -56,11 +56,16 @@ class PosixOwnedSessionTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             ready = root / 'ready.json'
+            staged = root / 'ready.json.partial'
             # Native grandchild has its own process group, but inherits the SID.
             grandchild = 'import time; time.sleep(30)'
-            native = ('import json,os,subprocess,sys,time; '
+            # Readiness is published atomically: open(..., "w") creates the
+            # path before its bytes are flushed, so a poller could read an
+            # empty file. Write a staged file, then rename it into place.
+            native = ('import json,os,subprocess,sys,time; from pathlib import Path; '
                 f'p=subprocess.Popen([sys.executable,"-c",{grandchild!r}],process_group=0); '
-                f'open({str(ready)!r},"w").write(json.dumps([os.getpid(),p.pid,os.getsid(0),os.getpgrp()])); '
+                f'Path({str(staged)!r}).write_text(json.dumps([os.getpid(),p.pid,os.getsid(0),os.getpgrp()])); '
+                f'os.replace({str(staged)!r},{str(ready)!r}); '
                 'time.sleep(30)')
             parent = ('import os,sys,threading,time; from pathlib import Path; '
                 f'sys.path.insert(0,{str(Path(s3_gate.__file__).parent)!r}); '
@@ -73,6 +78,9 @@ class PosixOwnedSessionTests(unittest.TestCase):
                 ' time.sleep(.01)\n'
                 + ('time.sleep(30)' if timeout else 'os._exit(7)'))
             evidence = {}; events = []; launched = []; identities = []
+            # s3_gate converts any launch/provider-removal exception into a
+            # closed code (from None); record fixture failures so they surface.
+            fixture_failures = []
             image = 'sha256:' + 'a' * 64
             original_launch = s3_gate.launch_owned_child
             original_stop = PosixOwnedTree.stop
@@ -81,6 +89,13 @@ class PosixOwnedSessionTests(unittest.TestCase):
                 start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
             def launch(command, env):
+                try:
+                    return checked_launch(command, env)
+                except BaseException as failure:
+                    fixture_failures.append(f'launch: {failure!r}')
+                    raise
+
+            def checked_launch(command, env):
                 process, tree = original_launch(command, env)
                 launched.append(tree)
                 # Establish actual native readiness before the timeout starts.
@@ -118,10 +133,14 @@ class PosixOwnedSessionTests(unittest.TestCase):
                 if args[0] == 'run':
                     events.append('provider-start'); return 'synthetic-owned-provider'
                 if args[0] == 'rm':
-                    self.assertEqual(('rm', '--force', 'synthetic-owned-provider'), args)
-                    self.assertTrue(identities)
-                    self.assertFalse(alive(), 'provider removed while native process still alive')
-                    self.assertIsNone(unrelated.poll(), 'another invocation was stopped')
+                    try:
+                        self.assertEqual(('rm', '--force', 'synthetic-owned-provider'), args)
+                        self.assertTrue(identities)
+                        self.assertFalse(alive(), 'provider removed while native process still alive')
+                        self.assertIsNone(unrelated.poll(), 'another invocation was stopped')
+                    except AssertionError as failure:
+                        fixture_failures.append(f'provider-remove: {failure}')
+                        raise
                     events.append('provider-remove-after-no-live-members'); return ''
                 self.fail('unexpected provider command')
 
@@ -136,16 +155,20 @@ class PosixOwnedSessionTests(unittest.TestCase):
                         patch.object(s3_gate, 'launch_owned_child', side_effect=launch):
                     if unproven:
                         with patch.object(PosixOwnedTree, 'stop', side_effect=RuntimeError('census-unavailable')):
-                            with self.assertRaisesRegex(RuntimeError, 'owned_child_tree_stop_failed'):
+                            with self.assertRaises(RuntimeError) as caught:
                                 s3_gate.run(image, [sys.executable, '-c', parent], 1, evidence)
+                        self.assertEqual([], fixture_failures)
+                        self.assertRegex(str(caught.exception), 'owned_child_tree_stop_failed')
                         self.assertTrue(alive())
                         self.assertEqual('STOP_UNPROVEN', evidence['child_tree_status'])
                         self.assertEqual('DEFERRED_CHILD_TREE_STOP_UNPROVEN', evidence['provider_cleanup'])
                         self.assertEqual(['provider-start'], events)
                     else:
                         expected = 'owned_child_deadline' if timeout else 'owned_child_unfinished_descendants'
-                        with self.assertRaisesRegex(RuntimeError, expected):
+                        with self.assertRaises(RuntimeError) as caught:
                             s3_gate.run(image, [sys.executable, '-c', parent], 1 if timeout else 5, evidence)
+                        self.assertEqual([], fixture_failures)
+                        self.assertRegex(str(caught.exception), expected)
                         self.assertFalse(alive())
                         self.assertEqual('STOPPED_BEFORE_PROVIDER_CLEANUP', evidence['child_tree_status'])
                         self.assertEqual('REMOVED_EXACT_OWNED_CONTAINER', evidence['provider_cleanup'])
