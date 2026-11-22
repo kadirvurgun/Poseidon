@@ -89,8 +89,8 @@
       {
        "role": "button",
        "name": {
-        "tr": "Taslağı görüntüle",
-        "en": "View draft"
+        "tr": "Bakım planını görüntüle",
+        "en": "View maintenance plan"
        },
        "within": {
         "role": "article",
@@ -869,17 +869,10 @@
      "actions": [],
      "targets": [
       {
-       "role": "heading",
+       "role": "region",
        "name": {
-        "tr": "Kayıtlı taslaklar",
-        "en": "Recorded drafts"
-       }
-      },
-      {
-       "role": "navigation",
-       "name": {
-        "tr": "Günlük kayıt sayfaları",
-        "en": "Daily record pages"
+        "tr": "Günlük kayıtlar",
+        "en": "Daily records"
        }
       }
      ]
@@ -986,7 +979,7 @@
    ]
   },
   "safety-events": {
-   "route": "/app/safety-events",
+   "route": "/app/safety-events?vessel=30000000-0000-0000-0000-000000000001",
    "steps": [
     {
      "step": 1,
@@ -1348,7 +1341,7 @@
       {
        "role": "combobox",
        "name": {
-        "tr": "Eylem",
+        "tr": "İşlem",
         "en": "Action"
        },
        "within": {
@@ -1386,12 +1379,16 @@
      "actions": [],
      "targets": [
       {
-       "role": "table",
+       "role": "row",
+       "nth": 0,
        "within": {
-        "role": "region",
-        "name": {
-         "tr": "İşlem geçmişi",
-         "en": "Action history"
+        "role": "table",
+        "within": {
+         "role": "region",
+         "name": {
+          "tr": "İşlem geçmişi",
+          "en": "Action history"
+         }
         }
        }
       }

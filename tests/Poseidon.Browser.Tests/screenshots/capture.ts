@@ -285,7 +285,11 @@ async function discover(page: Page, key: string, locale: ScreenshotLocale) {
   }
 }
 
-try {
+/**
+ * One fresh browser context and real sign-in per (viewport, locale) block: the app session has a fixed
+ * 30-minute lifetime without sliding renewal, and a full two-viewport run takes longer than that.
+ */
+async function session(viewport: ViewportName, locale: ScreenshotLocale, work: (page: Page, blank: Page) => Promise<void>) {
   const owned = await strictContext({ baseURL: labRuntimeFromEnvironment().appOrigin, viewport: viewports.desktop, reducedMotion: 'reduce', colorScheme: 'light' })
   try {
     const page = await owned.context.newPage()
@@ -293,24 +297,23 @@ try {
     page.setDefaultNavigationTimeout(30_000)
     await login(page, 'lab-manager', '/app/today')
     await page.clock.setFixedTime(new Date(fixedClock))
+    // Sign in on the desktop layout (the sign-in entry it asserts), then switch to the captured viewport.
+    await page.setViewportSize(viewports[viewport])
     const blank = await owned.context.newPage()
     await blank.goto('about:blank')
-    const keys = Object.keys(mapping.guides).filter(key => !onlyGuide || key === onlyGuide)
-    if (mode === 'discover') {
-      for (const locale of screenshotLocales) {
-        await prepare(page, locale)
-        for (const key of keys) await discover(page, key, locale)
-      }
-    } else {
-      for (const viewport of runViewports) {
-        await page.setViewportSize(viewports[viewport])
-        for (const locale of screenshotLocales) {
-          await prepare(page, locale)
-          for (const key of keys) await capture(page, blank, key, locale, viewport)
-        }
-      }
-    }
+    await prepare(page, locale)
+    await work(page, blank)
   } finally { await owned.close() }
+}
+
+try {
+  const keys = Object.keys(mapping.guides).filter(key => !onlyGuide || key === onlyGuide)
+  if (mode === 'discover') {
+    for (const locale of screenshotLocales) await session('desktop', locale, async page => { for (const key of keys) await discover(page, key, locale) })
+  } else {
+    for (const viewport of runViewports) for (const locale of screenshotLocales)
+      await session(viewport, locale, async (page, blank) => { for (const key of keys) await capture(page, blank, key, locale, viewport) })
+  }
   const bad = report.shots.filter(shot => !['written', 'match', 'discovered'].includes(shot.result))
   report.status = bad.length ? 'failed' : 'passed'
 } catch (error) {
