@@ -1,9 +1,9 @@
 {
  "schemaVersion": "poseidon.help.screenshot-provenance.v2",
  "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
- "commit": "426292077c468c0856c7b15db77f243c6141fd0e",
+ "commit": "5e7e2e0ebac2dd5d406524a06229f6276324dc1d",
  "generatorBlobs": {
-  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "438630399fb470fd06a4946bb772746698fe3fa7",
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "a473e17d44c9ed72ab530d9b343f72129e08968c",
   "tests/Poseidon.Browser.Tests/screenshots/png-palette.ts": "3a0f780074c6da126fc96cee0869800475e2709d",
   "frontend/src/help/screenshots/steps.json": "5239b1cd352b1a5882e079f96e408f981587e66f"
  },
@@ -19,9 +19,9 @@
  "tenant": "Synthetic Fleet A",
  "fixedClock": "2026-11-22T00:00:00.000Z",
  "png": {
-  "sha256": "070340c542222335d1bee1cb98bbc662e18292715b276bac33b0ab2384b517c9",
+  "sha256": "d570c23dc8daa715b66e8ab063320b734ea557ee705ac7f275aef5ca283a95b6",
   "width": 390,
   "height": 844
  },
- "domText": "Skip to main content\nUsers and permissions\nAppearance\nChoose language\nNo vessel selected\nSynthetic Fleet A\nCompany context:\nUnavailable\nNo vessel selected\nRole context: Not assigned\nChange vessel context\nOnline\n\nTENANT ADMINISTRATION\n\nUsers and permissions\n\nAssign user, role, vessel and object scope with least privilege. You can grant only permissions you hold yourself; your own membership is edited by another administrator. Changes take effect on the member's next request; a new member gets access at the next login.\n\nBack to members\nRefresh\nAccount add41584-4585-c6b9-0958-a82a8c152a50\n\nActive No grant\n\nGrant source\nNo grant\nRecord source\nSyntheticUnverified\nStatus reason\nSyntheticFixture · 2026-11-22T05:34:18.171483+00:00\nAccess revision\n0\nRole bundles\nNone\nTenant-wide read\n—\nTenant-wide manage\n—\nActive company\nNone\n\nOpen action history (needs audit.read)\n\nVessel scope\n\nNone\n\nEffective permissions\n\nNo permissions.\n\nEdit grant\n\nYou can view but not change memberships.\n\nGrant history\n\nNo grant revision is stored here; the grant comes from the operator configuration or does not exist.\n\nDelegations\n\nStart, end and scope are audited (13.03 paragraph:104). A delegation never exceeds the source's current authority, is never tenant-wide and you cannot approve one where you are source or delegate.\n\nNo delegation."
+ "domText": "Skip to main content\nUsers and permissions\nAppearance\nChoose language\nNo vessel selected\nSynthetic Fleet A\nCompany context:\nUnavailable\nNo vessel selected\nRole context: Not assigned\nChange vessel context\nOnline\n\nTENANT ADMINISTRATION\n\nUsers and permissions\n\nAssign user, role, vessel and object scope with least privilege. You can grant only permissions you hold yourself; your own membership is edited by another administrator. Changes take effect on the member's next request; a new member gets access at the next login.\n\nBack to members\nRefresh\nAccount add41584-4585-c6b9-0958-a82a8c152a50\n\nActive No grant\n\nGrant source\nNo grant\nRecord source\nSyntheticUnverified\nStatus reason\nSyntheticFixture · 2026-11-22T22:11:28.866604+00:00\nAccess revision\n0\nRole bundles\nNone\nTenant-wide read\n—\nTenant-wide manage\n—\nActive company\nNone\n\nOpen action history (needs audit.read)\n\nVessel scope\n\nNone\n\nEffective permissions\n\nNo permissions.\n\nEdit grant\n\nYou can view but not change memberships.\n\nGrant history\n\nNo grant revision is stored here; the grant comes from the operator configuration or does not exist.\n\nDelegations\n\nStart, end and scope are audited (13.03 paragraph:104). A delegation never exceeds the source's current authority, is never tenant-wide and you cannot approve one where you are source or delegate.\n\nNo delegation."
 }

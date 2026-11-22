@@ -1,9 +1,9 @@
 {
  "schemaVersion": "poseidon.help.screenshot-provenance.v2",
  "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
- "commit": "426292077c468c0856c7b15db77f243c6141fd0e",
+ "commit": "5e7e2e0ebac2dd5d406524a06229f6276324dc1d",
  "generatorBlobs": {
-  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "438630399fb470fd06a4946bb772746698fe3fa7",
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "a473e17d44c9ed72ab530d9b343f72129e08968c",
   "tests/Poseidon.Browser.Tests/screenshots/png-palette.ts": "3a0f780074c6da126fc96cee0869800475e2709d",
   "frontend/src/help/screenshots/steps.json": "5239b1cd352b1a5882e079f96e408f981587e66f"
  },
@@ -19,9 +19,9 @@
  "tenant": "Synthetic Fleet A",
  "fixedClock": "2026-11-22T00:00:00.000Z",
  "png": {
-  "sha256": "9d89a4d4fe71c7fceac80670abfe01430afdd964bc56cadc9aa8bf53a68a4178",
+  "sha256": "39c594bd9ae723d5d8063703d16b20ebed570462ff81f2b9aae8aade1a9d704d",
   "width": 1440,
   "height": 900
  },
- "domText": "Ana içeriğe geç\nPOSEIDON\nÖğle raporu\nGörünüm\nÇalışma alanında ara\nDil seçin\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nDEMO-SHIP · Synthetic Ship A\nGemi modu: Gemi\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\nPOSEIDON\nDENİZCİLİK OPERASYONLARI\nÇalışma görünümü\nMenüde ara\n\nYalnızca açmaya yetkili olduğunuz ekranlarda arar.\n\nGenel bakış\nGemi operasyonları\nKalkış hazırlığı ve Kaptan kararı\nÖğle raporu\nTeknik ve bakım\nRömorkör operasyonları\nUyum ve güvence\nÇalışma alanı\nSY\nSynthetic Fleet A\nYetkili çalışma alanı\n\nGEMİ GÜNLÜK OPERASYONLARI\n\nÖğle raporu\n\nKayıtlı kaynak sürümleriyle kontrollü beyanlar. Taslak kaydı kaptan veya başmühendis onayı oluşturmaz.\n\nTaslak · beyanlar doğrulanmamış\nKontrollü kaynak referansları\n\nKaynak güncelliği doğrulanmamış. Çözülmemiş ölçüm birimleri ve kaynak seçimleri açıkça kullanılamaz durumda kalır.\n\nKayıtlı taslaklar\n\nBu sayfada yetkili günlük taslak dönmedi. Bu, günlük raporların tamamlandığına kanıt değildir.\n\nÖnceki taslaklar\nDiğer taslaklar\n\nTaslak veriler emisyon, yakıt güvencesi, grafik veya hazırlık sonucuna dönüştürülmez."
+ "domText": "Ana içeriğe geç\nPOSEIDON\nÖğle raporu\nGörünüm\nÇalışma alanında ara\nDil seçin\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nDEMO-SHIP · Synthetic Ship A\nGemi modu: Gemi\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\nPOSEIDON\nDENİZCİLİK OPERASYONLARI\nÇalışma görünümü\nMenüde ara\n\nYalnızca açmaya yetkili olduğunuz ekranlarda arar.\n\nGenel bakış\nGemi operasyonları\nKalkış hazırlığı ve Kaptan kararı\nÖğle raporu\nTeknik ve bakım\nRömorkör operasyonları\nUyum ve güvence\nÇalışma alanı\nYardım merkezi\nSY\nSynthetic Fleet A\nYetkili çalışma alanı\n\nGEMİ GÜNLÜK OPERASYONLARI\n\nÖğle raporu\n\nKayıtlı kaynak sürümleriyle kontrollü beyanlar. Taslak kaydı kaptan veya başmühendis onayı oluşturmaz.\n\nTaslak · beyanlar doğrulanmamış\nKontrollü kaynak referansları\n\nKaynak güncelliği doğrulanmamış. Çözülmemiş ölçüm birimleri ve kaynak seçimleri açıkça kullanılamaz durumda kalır.\n\nKayıtlı taslaklar\n\nBu sayfada yetkili günlük taslak dönmedi. Bu, günlük raporların tamamlandığına kanıt değildir.\n\nÖnceki taslaklar\nDiğer taslaklar\n\nTaslak veriler emisyon, yakıt güvencesi, grafik veya hazırlık sonucuna dönüştürülmez."
 }
