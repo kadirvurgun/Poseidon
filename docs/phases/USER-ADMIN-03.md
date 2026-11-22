@@ -37,7 +37,9 @@ inventory/deny probes and OpenAPI tests in `S1ScopeCoverageTests`/`DiagnosticsTe
 regression traits. Not run: full frontend suite, Playwright/axe, a real SMTP server.
 
 ## CI
-See final report / next status update (run for this push).
+- Run 45039612661 (88bb67e0, push): failure in `persistence-and-security` / repository secret scan, rule `db-password` at
+  `backend/Poseidon.Api/InvitationDelivery.cs:73` (local variable `password = OperatorSecretReferences.Resolve(...)` matched
+  the pattern; no secret value). Fixed by renaming the variable; all other jobs green.
 
 ## Open items
 See task contract: no real SMTP journey, implicit TLS unsupported, Data Protection key persistence is operator

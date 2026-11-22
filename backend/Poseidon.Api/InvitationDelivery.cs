@@ -69,15 +69,15 @@ public sealed class SmtpInvitationMailer(InvitationDeliverySettings settings, IL
         NetworkCredential? credential = null;
         if (settings.UserName != null)
         {
-            string? password;
-            try { password = OperatorSecretReferences.Resolve(settings.PasswordReference, secrets); }
-            catch (InvalidOperationException) { password = null; }
-            if (password == null)
+            string? secretValue;
+            try { secretValue = OperatorSecretReferences.Resolve(settings.PasswordReference, secrets); }
+            catch (InvalidOperationException) { secretValue = null; }
+            if (secretValue == null)
             {
                 logger.LogWarning("Invitation e-mail transport credential is unavailable.");
                 return InvitationSendOutcome.NotConfigured;
             }
-            credential = new NetworkCredential(settings.UserName, password);
+            credential = new NetworkCredential(settings.UserName, secretValue);
         }
         using var mail = new MailMessage(new MailAddress(settings.From!), new MailAddress(message.To))
         {
