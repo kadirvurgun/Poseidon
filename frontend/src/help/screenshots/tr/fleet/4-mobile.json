@@ -1,0 +1,27 @@
+{
+ "schemaVersion": "poseidon.help.screenshot-provenance.v2",
+ "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
+ "commit": "426292077c468c0856c7b15db77f243c6141fd0e",
+ "generatorBlobs": {
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "438630399fb470fd06a4946bb772746698fe3fa7",
+  "tests/Poseidon.Browser.Tests/screenshots/png-palette.ts": "3a0f780074c6da126fc96cee0869800475e2709d",
+  "frontend/src/help/screenshots/steps.json": "5239b1cd352b1a5882e079f96e408f981587e66f"
+ },
+ "dirty": false,
+ "key": "fleet",
+ "locale": "tr",
+ "step": 4,
+ "viewport": "mobile",
+ "datasets": [
+  "backend/seed/synthetic-demo.json",
+  "DemoFixtureCommand"
+ ],
+ "tenant": "Synthetic Fleet A",
+ "fixedClock": "2026-11-22T00:00:00.000Z",
+ "png": {
+  "sha256": "c3826c8aeb6dc3f5f1e47a44270cae5b904e423e536dd82ea18a4ee51623f779",
+  "width": 390,
+  "height": 844
+ },
+ "domText": "Ana içeriğe geç\nFilo\nGörünüm\nDil seçin\nDEMO-SHIP\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nDEMO-SHIP · Synthetic Ship A\nGemi modu: Gemi\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\n\nDENİZCİLİK ÇALIŞMA ALANI\n\nFilo\n\nYetkili olduğunuz kayıtları görüntüleyin.\n\nEtkin araç: Gemi · Synthetic Ship A\nAraç değiştir\n\nÇalışma alanı: Synthetic Fleet A\n\nOturumu kapat\nListelenen araçlar\n2\nBu sayfada\nGemiler\n1\nBu sayfada\nRömorkörler\n1\nBu sayfada\nDüzenlenebilir kayıtlar\n0\nBu sayfadaki güncel erişim\nAraç dağılımı\n\nDönen listedeki araç türleri\n\n2 kayıt\nGemiler: 1 · \nRömorkörler: 1\n\nYalnız bu sayfa. Operasyonel hazırlık ayrıca değerlendirilir.\n\nÇalışma kapsamı\n\nGüncel liste ve erişim bağlamı\n\nGemiler\n1\nRömorkörler\n1\nSalt okunur kayıtlar\n2\nSonraki sayfa\nListe sonu\nKod veya ad ile ara\nAraç türü\nAra\nKod Ad Tür\nDEMO-SHIP Synthetic Ship A Gemi\nDEMO-TUG Synthetic Tug A Römorkör\nSayfa 1\nÖnceki\nSonraki\nAyrıntılar\nKapat\nMevzuat profili\nPilot gemi ekleme\nDijital uyum pasaportu\nKod\nDEMO-SHIP\nAd\nSynthetic Ship A\nTür\nGemi\nKontrollü içe aktarma\nEkipman ve bakım\nMürettebat listesi\nAraç ekleri\nBelge taslakları\nAraç dosyaları\n\nDosyanın bulunması ve zararlı yazılım taraması kanıtı doğrulamaz, hazırlığı etkinleştirmez.\n\nDosya servisi kullanılamıyor veya istek reddedildi.\n\nDosyaları yenile"
+}

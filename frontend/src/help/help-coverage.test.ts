@@ -146,7 +146,7 @@ const stepItems = (text: string, locale: HelpLocale) => parseHelpDocument(text, 
 describe('help screenshot coverage (UG-2)', () => {
   it('reads a capture mapping that only names real guides', () => {
     expect(mapping).toBeDefined()
-    expect(mapping.committedViewports).toContain('desktop')
+    expect([...mapping.committedViewports].sort()).toEqual(['desktop', 'mobile'])
     for (const key of Object.keys(mapping.guides)) for (const locale of locales) expect(source(locale, key), `${key}/${locale}`).toBeTypeOf('string')
   })
 
@@ -156,12 +156,13 @@ describe('help screenshot coverage (UG-2)', () => {
       expect(guide.steps.map(step => step.step), `${key}: mapping must follow the guide steps`).toEqual(Array.from({ length: stepItems(text, locale) }, (_, index) => index + 1))
       const captured = guide.steps.filter(step => !step.unavailable).map(step => step.step)
       expect(parseHelpDocument(text, locale).meta.screenshots, `${key}/${locale}: screenshots front matter`).toEqual(captured)
-      for (const step of captured) {
-        const base = `./screenshots/${locale}/${key}/${step}-desktop`
+      // D4: every captured step has both committed viewports (1440x900 desktop, 390x844 mobile).
+      for (const step of captured) for (const viewport of mapping.committedViewports) {
+        const base = `./screenshots/${locale}/${key}/${step}-${viewport}`
         expect(pngs.has(base + '.png'), base + '.png').toBe(true)
         const record = provenance[base + '.json']
         expect(record, base + '.json').toBeDefined()
-        expect(record).toMatchObject({ generator: 'tests/Poseidon.Browser.Tests/screenshots/capture.ts', key, locale, step, viewport: 'desktop' })
+        expect(record).toMatchObject({ generator: 'tests/Poseidon.Browser.Tests/screenshots/capture.ts', key, locale, step, viewport })
       }
     }
   })

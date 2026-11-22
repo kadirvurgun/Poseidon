@@ -1,0 +1,27 @@
+{
+ "schemaVersion": "poseidon.help.screenshot-provenance.v2",
+ "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
+ "commit": "426292077c468c0856c7b15db77f243c6141fd0e",
+ "generatorBlobs": {
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "438630399fb470fd06a4946bb772746698fe3fa7",
+  "tests/Poseidon.Browser.Tests/screenshots/png-palette.ts": "3a0f780074c6da126fc96cee0869800475e2709d",
+  "frontend/src/help/screenshots/steps.json": "5239b1cd352b1a5882e079f96e408f981587e66f"
+ },
+ "dirty": false,
+ "key": "work-order-center",
+ "locale": "tr",
+ "step": 1,
+ "viewport": "desktop",
+ "datasets": [
+  "backend/seed/synthetic-demo.json",
+  "DemoFixtureCommand"
+ ],
+ "tenant": "Synthetic Fleet A",
+ "fixedClock": "2026-11-22T00:00:00.000Z",
+ "png": {
+  "sha256": "a1a3219ecd169d70d2ae921c616b20ebf8dcdb126386dd50fc7a117f2eedf9ee",
+  "width": 1440,
+  "height": 900
+ },
+ "domText": "Ana içeriğe geç\nPOSEIDON\nİş emri merkezi\nGörünüm\nÇalışma alanında ara\nDil seçin\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nDEMO-SHIP · Synthetic Ship A\nGemi modu: Gemi\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\nPOSEIDON\nDENİZCİLİK OPERASYONLARI\nÇalışma görünümü\nMenüde ara\n\nYalnızca açmaya yetkili olduğunuz ekranlarda arar.\n\nGenel bakış\nGemi operasyonları\nTeknik ve bakım\nİş emirleri\nPMS komuta merkezi\nRömorkör operasyonları\nUyum ve güvence\nÇalışma alanı\nSY\nSynthetic Fleet A\nYetkili çalışma alanı\n\nBAKIM UYGULAMA\n\nİş emri merkezi\n\nDEMO-SHIP · Synthetic Ship A\n\nKayıtlı iş emirleri\nDönen iş emri numaralarında ara\n\nArama yalnız dönen sayfayı filtreler; tam filo veya tamamlanma durumu varsayılmaz.\n\nBu sayfada yetkili taslak dönmedi.\n\nÖnceki iş emirleri\nDiğer iş emirleri"
+}

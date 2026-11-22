@@ -36,6 +36,8 @@
 }
 .help-guide-shot { margin: 8px 0 12px; }
 .help-guide-shot img { display: block; width: 100%; height: auto; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--muted); }
+/* UG-2 mobile: the full-page panel shows the 390 px portrait capture at its natural width at most. */
+@media (max-width: 767px) { .help-guide-shot img { max-width: 390px; margin-inline: auto; } }
 .help-guide-shot-offline {
   margin: 8px 0 12px; padding: 8px 10px; border: 1px dashed var(--border); border-radius: var(--radius-sm);
   color: var(--muted-foreground); font-size: 0.85rem;

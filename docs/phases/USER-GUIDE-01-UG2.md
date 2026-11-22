@@ -110,9 +110,52 @@ USER-ADMIN-02 davet akışı user-admin kılavuzunu 9 adıma çıkardı; UG-3 50
 - **Rozet:** adım başına tek numara (ilk hedefte); bitişik hedef halkaları artık rozetle örtülmez.
 - Üreteç commit'leri `1ff000a8` (eşleme) ve `ffabd677` (rozet); görüntüler bu son üreteç commit'inden kendi lab'ımla (bu daldan derlenmiş Release API + frontend/dist) yeniden üretildi: **64 PNG, 5,45 MB** (yalnız masaüstü, TR/EN). Sonuçlar teslim raporunda.
 
+## Mobil görüntüler ve genişletilmiş eşleme (`feature/help-screenshots-mobile-20261122`, 22.11.2026)
+
+Taban `origin/integration/guide-bundle-20261122` (8a9d27f9). Kaynak: `docs/tasks/USER-GUIDE-01.md` §5 D4 (1440×900 **ve** 390×844, TR ve EN), 65.03 p57–59 (mobilde yardım paneli tam sayfa), UG-DOC-02/03.
+
+- **Mobil commit edilir (Karar 1 değişti):** `committedViewports: ["desktop", "mobile"]`; her görüntülü adım için `<adım>-mobile.png` + köken JSON. `help-coverage.test.ts` ve `provenance.test.ts` her iki görünüm alanını zorunlu tutar.
+- **Panel:** `help-screenshots.tsx` her adımı `<picture>` ile verir: `(max-width: 767px)` (paneli tam sayfa yapan `help-panel.css` kırılımı) altında 390 px mobil görüntü, üstünde masaüstü görüntü; mobilde görüntü en fazla 390 px genişlikte ortalanır. Yeni bileşen testi `<source media>` ve `srcset`'i doğrular.
+- **Mobil kompozisyon:** `reveal()` artık tüm hedeflerin birleşik kutusunu yapışkan başlığın altına getirir (sığıyorsa), yoksa ilk hedefe düşer; ekran dışında kalan ek hedefe halka çizilmez, ilk hedef ekranda değilse adım başarısız olur (`target_off_screen`).
+- **Oturum:** uygulama oturumu 30 dk sabit (kaymasız); iki görünüm alanı × iki dil çalıştırması bunu aştığı için her (görünüm alanı, dil) bloğu yeni bağlam + gerçek Keycloak girişiyle çalışır (giriş masaüstü düzeninde, sonra görünüm alanı değişir).
+- **Sayfa içi maske:** zaman/tarih/UUID değerleri artık Playwright ekran görüntüsü katmanı yerine sayfada (satır içi stil: gri zemin, saydam metin) maskelenir; böylece yapışkan başlık ve commit damgası şeridi, altlarına kaymış maskelenmiş değerin üstünde kalır (mobilde önceden gri şeritler başlığın ve damganın üzerine biniyordu).
+- **Belirlenimci kompozisyon:** iki karşılaştırma turu 4/196 fark buldu ve düzeltildi: (1) değişken uzunluklu zaman damgaları maske genişliğini değiştiriyordu → maskelenen değer sabit genişlikli yer tutucuyla değiştirilir; (2) geç dolan ayrıntı paneli / "Yükleniyor…" durumu → `settle` `role=status`/`aria-busy` yükleme durumunu (sınırlı, 10 sn) bekler, `steady` hedef kutuları ve sayfa yüksekliği iki örnekte sabitlenene kadar bekler; (3) hazırlık tıklamasının bıraktığı kaydırma → kompozisyondan önce tüm kaydırma kapları ve pencere başa alınır.
+- **Sabit saat `2026-11-22T00:00Z`:** 09:00Z, aynı gün sunucunun verdiği 60 sn geçerlilikli kalkış değerlendirmesini tarayıcıda "eski" gösteriyordu; gün başı hiçbir sunucu zaman damgasından sonra değildir. Tarih/saat metinleri yine maskelenir.
+- **Boyut:** `png-palette.ts` (bağımlılıksız, saf) — en sık 256 renk paleti, kalan renkler en yakın girdiye; herhangi bir piksel bir kanalda 24'ten (karşılaştırma eşiği) fazla kayarsa veya saydamlık varsa özgün kayıpsız PNG korunur. Örnek: 88,5 kB → 37,0 kB, en büyük kanal hatası 18. Her modda uygulanır (karşılaştırma aynı biçimi kıyaslar) ve üreteç dosyası olarak köken blob'una bağlıdır (`generatorFiles` 3 dosya). `png-palette.test.ts` CI adımına eklendi.
+- **Per-step route:** `steps.json` adımı isteğe bağlı `route` alır (ör. gemi seçim adımı ile geminin sayfası); aynı `/app/...` (+ `?vessel=<uuid>`) deseni, `unavailable` adımda yasak.
+- **Yeni görüntüsüz nedenler:** `synthetic_record_unavailable` (sentetik seed/fixture'da kayıt yok; sahnelenmez), `record_selection_not_allowlisted` (kaydı açmak çalıştırmaya bağlı ad/kimlik taşıyan, izin listesinde olmayan bir tıklama ister).
+- **İzin listesi:** tek yeni tıklama `Hazırlığı değerlendir`/`Assess readiness` — `GET /api/v1/departure-readiness` (sayfanın önceden doldurduğu tarih aralığıyla okur/değerlendirir; Kaptan kararı ayrı `Record` komutudur, listede yok). Yıkıcı kelime testine Record/Release/Hold/Deny/Record triage/Report an event/Save draft/Release work order/Record verification/Filter/Refresh eklendi.
+- **Lab okuma yetkileri** (yalnız özel `.runtime/oidc-lab/appsettings.json`, lab-manager): `daily.noon.read, certificate.read, hse.safety_event.read, departure.readiness.read, workorder.read, equipment.read, audit.read`. Rapor/ön değerlendirme/karar/doğrulama/serbest bırakma/yazma yetkisi yok (`test_help_screenshots_lab` bunları açıkça reddeder).
+
+| Kılavuz | Görüntülü adımlar | Görüntüsüz (neden) |
+|---|---|---|
+| noon-report | 1 (Kayıtlı taslaklar bölgesi; boş liste metni "tamamlandığına kanıt değildir") | 2–6 yazma/inceleme |
+| certificate-command-center | 1 (gemi seçimi), 2 (kapsam + takvim filtresi) | 3, synthetic_record_unavailable; 4–7 yazma |
+| safety-events | 1 (Olaylar + "Yalnızca benim bildirimlerim") | 2–9 bildirim/ön değerlendirme/inceleme/kapanış |
+| departure-signoff | 1 (gemi seçimi), 2–7, 9 (değerlendirme satırı, kategori tablosu, Neden, "Serbest bırakma neden kullanılamıyor", Kaptan kararları, Yenile) | 8 Kaptan kararı (`departure.decide` + atama) |
+| work-order-center | 1 | 2–6 yazma/serbest bırakma/doğrulama/kapanış; 7 synthetic_record_unavailable |
+| audit | 1–3 | 4–5 record_selection_not_allowlisted |
+| tug-daily-log | 1 (günlük listesi; DemoFixture taslağı) | 2–8 yazma/Kaptan incelemesi |
+
+towage-plan / towage-risk-briefing eşlenmedi: lab'da "gönderilmiş römorkör işi" yok, sayfa yalnız "No submitted tug jobs" gösterir.
+
+Üreteç commit'i `42629207` (temiz, `dirty=false`); görüntüler kendi lab'ımla (worktree `.runtime/worktrees/ug2-mobile`, özel dizin `.runtime/oidc-lab`, varsayılan portlar boştu; bu daldan derlenmiş Release API + `frontend/dist`) üretildi ve sonunda lab durduruldu.
+
+| Komut | Sonuç |
+|---|---|
+| `screenshots` `update` (desktop + mobile, TR/EN) | `status=passed`, 196/196 written (49 adım × 2 dil × 2 görünüm alanı) |
+| `screenshots` `compare` (ikinci bağımsız çalıştırma) | `status=passed`, 196/196 `match`, en büyük fark oranı 0 (eşik 0,002) |
+| `node --test steps.test.ts provenance.test.ts png-palette.test.ts` | 15/15 geçti |
+| `npx vitest run src/help` | 3 dosya, 96 test geçti |
+| `npm run typecheck`, `npm run lint` (frontend) | geçti |
+| `npm run build` (frontend) | geçti; `dist/assets` 196 PNG, `offline-shell.js` içinde 0 `.png` |
+| `py -3.13 -m unittest test_help_screenshots_lab test_oidc_lab` | 9/9 geçti |
+
+Boyut: **196 PNG, 8,85 MiB** (masaüstü 98 → 6,46 MiB, mobil 98 → 2,39 MiB; palet indirgemesi örnekte ~%58 küçültür) + 196 köken JSON (506 KiB). Önceki teslim: 64 PNG, 5,45 MB.
+
 ## Açık konular
 
-- Yazma/yönetim gerektiren 8 adım (tug-job-board 6; companies 4–6; user-admin 3, 5, 6) görüntüsüz. Görüntü için ayrı, yalnız lab'a özgü ve yalnız formu **açan** (kaydetmeyen) bir yazma hesabı gerekir; bu pakette bilinçli olarak eklenmedi.
-- Mobil kompozisyon: çok hedefli adımlarda hedeflerin tek karede görünmesi için adım başına görünüm alanına özgü kaydırma gerekir.
+- Yazma/yönetim gerektiren adımlar (yukarıdaki tablolar) görüntüsüz. Görüntü için ayrı, yalnız lab'a özgü ve yalnız formu **açan** (kaydetmeyen) bir yazma hesabı gerekir; bu pakette bilinçli olarak eklenmedi.
+- Kalkış değerlendirmesi görüntüleri sunucu tarihine bağlıdır (sayfa tarayıcı tarihini önerir, sunucu geçmiş aralığı reddeder): başka bir günde `compare` bu adımlar için yeniden üretim ister.
 - UG-DOC-04 (offline PWA) Playwright testi: DEFERRED (panel bileşen testi offline yer tutucuyu doğrular).
 - Bağımsız QA ve CI; UG-REV-01 insan kapısı.
