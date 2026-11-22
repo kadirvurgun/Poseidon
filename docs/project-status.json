@@ -18596,7 +18596,7 @@
     ]
   },
   "locales_manual_bundle_20261122": {
-    "status": "AUTHORED_QA_ACCEPT_WITH_NOTES_GATE_CI_PENDING",
+    "status": "MERGED_PR56",
     "branch": "integration/help-locales-20261122",
     "base": "integration/guide-bundle-20261122",
     "scope": "UG-4 TR/EN illustrated manual generator (HTML/PDF); UG-5 locale infra + 14 machine-drafted locales x 54 guides; user-admin/invitation UI strings in 14 locales; N3/N4 product-fix notes",
@@ -18613,6 +18613,28 @@
     "phase_reports": [
       "docs/phases/LOCALES-MANUAL-BUNDLE-20261122.md",
       "docs/phases/USER-GUIDE-01-UG4.md"
+    ]
+  },
+  "help_mobile_bundle_20261122": {
+    "status": "AUTHORED_QA_ACCEPT_WITH_NOTES_GATE_CI_PENDING",
+    "branch": "integration/help-mobile-20261122",
+    "base": "c4915375",
+    "scope": "UG-2 mobile (390x844) + desktop screenshots, 196 PNGs for 13 guides; help panel picture switch below 768px; read-only mapping extended to noon-report, certificate-command-center, safety-events, departure-signoff, work-order-center, audit, tug-daily-log; draft locales mirror EN screenshot mapping; manual embeds 49 screenshots",
+    "canonical_effect": "none; 114/121 tasks, 932/970 SP unchanged",
+    "qa": [
+      "mobile QA ACCEPT-WITH-NOTES (provenance 196/196, no PII, read-only allow-list verified)"
+    ],
+    "deferred": [
+      "mobile sticky top bar shows content behind it (enterprise.css topbar) - fix UI then regenerate",
+      "step badge overlaps labels on some mobile shots",
+      "'Only my reports' checkbox oversized on mobile",
+      "TR audit list shows untranslated 'Added'",
+      "departure screenshots depend on server date",
+      "write-step screenshots need a lab-only form account",
+      "UG-6 human review"
+    ],
+    "phase_reports": [
+      "docs/phases/USER-GUIDE-01-UG2.md"
     ]
   }
 }
