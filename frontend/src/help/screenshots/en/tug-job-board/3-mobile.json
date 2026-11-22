@@ -1,0 +1,21 @@
+{
+ "schemaVersion": "poseidon.help.screenshot-provenance.v1",
+ "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
+ "commit": "dde4bb50e6a2eef7fc9b0b0591460878ea46df56",
+ "key": "tug-job-board",
+ "locale": "en",
+ "step": 3,
+ "viewport": "mobile",
+ "datasets": [
+  "backend/seed/synthetic-demo.json",
+  "DemoFixtureCommand"
+ ],
+ "tenant": "Synthetic Fleet A",
+ "fixedClock": "2026-11-22T09:00:00.000Z",
+ "png": {
+  "sha256": "f2dc3c874d0898f4380acf36fd8055efe60e8655b92af49b1fbf55ce7fea81a8",
+  "width": 390,
+  "height": 844
+ },
+ "domText": "Skip to main content\nJob board\nAppearance\nChoose language\nDEMO-TUG\nSynthetic Fleet A\nCompany context:\nUnavailable\nDEMO-TUG · Synthetic Tug A\nVessel mode: Tug\nRole context: Not assigned\nChange vessel context\nOnline\n\nTUG OPERATIONS\n\nJob board\n\nRequests, draft plans and current source context.\n\nDraft declarations only. Draft planning is separate from operational assignment, availability, permits and safety approval.\n\nTug context: DEMO-TUG · Synthetic Tug A · Tug\n\nTug context\nJob board\nListed requests\n1\nThis returned page\nRecorded blockers\n0\nJobs with a current blocker\nReadiness review\n1\nThis returned page\nReadiness unknown\n0\nNo readiness conclusion\nSearch requests\nPriority\nState\nTime window\nApply filters\nRefresh board\nCurrent draft requests\nPlanning view · UTC\nDraft\nr1\nUnknown\nTUG-SYN-30000000000000000000000000000002\n\nUnknown\n\nUnknown\nRequested window · UTC\nUnknown\nUnknown\nStart missing\nDraft plan window · r1\nUnverified draft plan; no operational approval\nDraft assignments\n0 tugs\nCurrent draft assignments only\nRequested: Unknown\nRequired BP\nUnknown\nPlanning capacity: Unknown\nReadiness\nReview required\nOperational conflict\nUnknown\nNext action: Complete draft\nOpen job\nWhy / next action\nPage 1 · Counts cover this page only\nPrevious\nNext"
+}

@@ -1,0 +1,21 @@
+{
+ "schemaVersion": "poseidon.help.screenshot-provenance.v1",
+ "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
+ "commit": "dde4bb50e6a2eef7fc9b0b0591460878ea46df56",
+ "key": "user-admin",
+ "locale": "tr",
+ "step": 4,
+ "viewport": "desktop",
+ "datasets": [
+  "backend/seed/synthetic-demo.json",
+  "DemoFixtureCommand"
+ ],
+ "tenant": "Synthetic Fleet A",
+ "fixedClock": "2026-11-22T09:00:00.000Z",
+ "png": {
+  "sha256": "cdf7b5ebeeb2d98ee3448218d550559782d10fec0fa1b4bee62ef5e5f0897dac",
+  "width": 1440,
+  "height": 900
+ },
+ "domText": "Ana içeriğe geç\nPOSEIDON\nKullanıcılar ve yetkiler\nGörünüm\nÇalışma alanında ara\nDil seçin\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nAraç seçilmedi\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\nPOSEIDON\nDENİZCİLİK OPERASYONLARI\nÇalışma görünümü\nMenüde ara\n\nYalnızca açmaya yetkili olduğunuz ekranlarda arar.\n\nGenel bakış\nRömorkör operasyonları\nUyum ve güvence\nÇalışma alanı\nŞirketler\nÖnemli çakışma merkezi\nKullanıcılar ve yetkiler\nSY\nSynthetic Fleet A\nYetkili çalışma alanı\n\nTENANT YÖNETİMİ\n\nKullanıcılar ve yetkiler\n\nKullanıcı, rol, gemi ve nesne kapsamı en az yetki ilkesiyle atanır. Yalnız kendinizde olan yetkileri verebilirsiniz; kendi üyeliğinizi başka bir yönetici düzenler. Değişiklik üyenin bir sonraki isteğinde, yeni üyenin erişimi bir sonraki girişte geçerli olur.\n\nÜyelere dön\nYenile\nHesap add41584-4585-c6b9-0958-a82a8c152a50\n\nAktif Yetki yok\n\nYetki kaynağı\nYetki yok\nKayıt kaynağı\nSyntheticUnverified\nDurum gerekçesi\nSyntheticFixture · 2026-11-22T00:01:25.147644+00:00\nErişim revizyonu\n0\nRol paketleri\nYok\nTenant geneli okuma\n—\nTenant geneli yönetim\n—\nAktif şirket\nYok\n\nİşlem geçmişini aç (audit.read gerekir)\n\nGemi kapsamı\n\nYok\n\nEtkin yetkiler\n\nYetki yok.\n\nYetkiyi düzenle\n\nÜyelikleri görebilir ama değiştiremezsiniz.\n\nYetki geçmişi\n\nBurada yetki revizyonu yok; yetki operatör yapılandırmasından gelir ya da yoktur.\n\nVekaletler\n\nBaşlangıç, bitiş ve kapsam audit edilir (13.03 paragraph:104). Vekalet kaynağın güncel yetkisini aşamaz, tenant geneli olamaz ve kaynak ya da vekil olduğunuz vekaleti onaylayamazsınız.\n\nVekalet yok."
+}

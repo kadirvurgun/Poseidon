@@ -1,0 +1,21 @@
+{
+ "schemaVersion": "poseidon.help.screenshot-provenance.v1",
+ "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
+ "commit": "dde4bb50e6a2eef7fc9b0b0591460878ea46df56",
+ "key": "today",
+ "locale": "en",
+ "step": 6,
+ "viewport": "desktop",
+ "datasets": [
+  "backend/seed/synthetic-demo.json",
+  "DemoFixtureCommand"
+ ],
+ "tenant": "Synthetic Fleet A",
+ "fixedClock": "2026-11-22T09:00:00.000Z",
+ "png": {
+  "sha256": "b5c776e6a12e596555133a78d6ade0f02ac9fa861fe779c0ead3ebea48e3133d",
+  "width": 1440,
+  "height": 900
+ },
+ "domText": "Skip to main content\nPOSEIDON\nToday\nAppearance\nSearch workspace\nChoose language\nSynthetic Fleet A\nCompany context:\nUnavailable\nDEMO-SHIP · Synthetic Ship A\nVessel mode: Ship\nRole context: Not assigned\nChange vessel context\nOnline\nPOSEIDON\nMARITIME OPERATIONS\nWork view\nFilter menu\n\nOnly screens you are authorized to open are searched.\n\nOverview\nToday\nFleet\nTug operations\nCompliance and assurance\nWorkspace\nSY\nSynthetic Fleet A\nAuthorized workspace\n\nMARITIME WORKSPACE\n\nToday\n\nBrowse the records available in your workspace.\n\nWorkspace: Synthetic Fleet A\n\nSign out\nRefresh\nSwitch vessel\nCurrent vessel: Ship · DEMO-SHIP · Synthetic Ship A\n\nDisplayed snapshot may be stale. Refresh to recheck sources.\n\nRead from server at: 2026-11-22T00:17:23.416517+00:00\n\nPartial view: some owning sources are unavailable in this context. Absent items do not mean all clear.\n\nReturned cards\n1\nPartial sources: zero does not mean all clear\nPlanning attention\n0\nPartial sources: zero does not mean all clear\nReview required\n0\nPartial sources: zero does not mean all clear\nAvailable sources\n1 / 7\nAvailability is not verification\nSource coverage\nRegulatory draft: Available (unverified)\nOperational tasks: Unavailable in this context\nSafety decisions: Unavailable in this context\nPermits: Unavailable in this context\nEvidence verification: Unavailable in this context\nMaintenance plans: Unavailable in this context\nTug draft planning: Unavailable in this context\nAdvisory · Regulatory draft\nAdvisory\n\nStored regulatory draft is unverified.\n\nSource owner\nRegulatory\nSource reference\nRegulatory draft · 30000000-0000-0000-0000-000000000001\nSource revision\n1\nSource saved at\n2026-11-22T00:01:06.234738+00:00\n\nOwner: not assigned by a supported source\n\nView draft\nWhy?\nPrevious alerts\nNext alerts\n\nReview tenant source drafts (unverified)"
+}

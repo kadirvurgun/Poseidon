@@ -1,0 +1,21 @@
+{
+ "schemaVersion": "poseidon.help.screenshot-provenance.v1",
+ "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
+ "commit": "dde4bb50e6a2eef7fc9b0b0591460878ea46df56",
+ "key": "companies",
+ "locale": "tr",
+ "step": 1,
+ "viewport": "desktop",
+ "datasets": [
+  "backend/seed/synthetic-demo.json",
+  "DemoFixtureCommand"
+ ],
+ "tenant": "Synthetic Fleet A",
+ "fixedClock": "2026-11-22T09:00:00.000Z",
+ "png": {
+  "sha256": "c5dfd8aee7e4e7711d8cd65054def21a9b80f048f9ed3be73cb65f4a01942558",
+  "width": 1440,
+  "height": 900
+ },
+ "domText": "Ana içeriğe geç\nPOSEIDON\nŞirketler\nGörünüm\nÇalışma alanında ara\nDil seçin\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nAraç seçilmedi\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\nPOSEIDON\nDENİZCİLİK OPERASYONLARI\nÇalışma görünümü\nMenüde ara\n\nYalnızca açmaya yetkili olduğunuz ekranlarda arar.\n\nGenel bakış\nRömorkör operasyonları\nUyum ve güvence\nÇalışma alanı\nŞirketler\nÖnemli çakışma merkezi\nKullanıcılar ve yetkiler\nSY\nSynthetic Fleet A\nYetkili çalışma alanı\n\nDENİZCİLİK ÇALIŞMA ALANI\n\nŞirketler\n\nYetkili olduğunuz kayıtları görüntüleyin.\n\nÇalışma alanı: Synthetic Fleet A\n\nOturumu kapat\nListelenen şirketler\n1\nBu sayfada\nSayfa\n1\nDönen son sayfa\nSalt okunur\n1\nBu sayfada\nDüzenlenebilir kayıtlar\n0\nBu sayfadaki güncel erişim\nKod veya ad ile ara\nAra\nKod Ad\nDEMO-OP Synthetic Operator A\nSayfa 1\nÖnceki\nSonraki"
+}

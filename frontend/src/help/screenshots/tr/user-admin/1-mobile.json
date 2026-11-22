@@ -1,0 +1,21 @@
+{
+ "schemaVersion": "poseidon.help.screenshot-provenance.v1",
+ "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
+ "commit": "dde4bb50e6a2eef7fc9b0b0591460878ea46df56",
+ "key": "user-admin",
+ "locale": "tr",
+ "step": 1,
+ "viewport": "mobile",
+ "datasets": [
+  "backend/seed/synthetic-demo.json",
+  "DemoFixtureCommand"
+ ],
+ "tenant": "Synthetic Fleet A",
+ "fixedClock": "2026-11-22T09:00:00.000Z",
+ "png": {
+  "sha256": "0154e05f2a2b9794110abbaf4092a6a6538f1499932e8ce26353a066f75c44c0",
+  "width": 390,
+  "height": 844
+ },
+ "domText": "Ana içeriğe geç\nKullanıcılar ve yetkiler\nGörünüm\nDil seçin\nAraç seçilmedi\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nAraç seçilmedi\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\n\nTENANT YÖNETİMİ\n\nKullanıcılar ve yetkiler\n\nKullanıcı, rol, gemi ve nesne kapsamı en az yetki ilkesiyle atanır. Yalnız kendinizde olan yetkileri verebilirsiniz; kendi üyeliğinizi başka bir yönetici düzenler. Değişiklik üyenin bir sonraki isteğinde, yeni üyenin erişimi bir sonraki girişte geçerli olur.\n\nYenile\nAra\nÜyelik veya hesap kimliği başlangıcı ya da tam IdP subject değeri\nDurum\nRol paketi\nUygula\nÜyeler · Toplam: 1\nHesap\nadd41584\n Aktif Yetki yok\n\nYok · Yetkiler: 0 · Gemiler: 0\n\nÖnceki\nSonraki"
+}

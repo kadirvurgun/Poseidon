@@ -4,7 +4,7 @@ title: Job board
 roles: [Tug Operations Coordinator, Shore Operations, Tug Master]
 permissions: [canRead, canWrite]
 related: [tug-command, tug-job-intake, tug-assignment, tug-readiness, today]
-screenshots: []
+screenshots: [1, 2, 3, 4, 5, 7]
 reviewed: false
 ---
 ## What this page is for

@@ -1,0 +1,21 @@
+{
+ "schemaVersion": "poseidon.help.screenshot-provenance.v1",
+ "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
+ "commit": "dde4bb50e6a2eef7fc9b0b0591460878ea46df56",
+ "key": "today",
+ "locale": "tr",
+ "step": 4,
+ "viewport": "mobile",
+ "datasets": [
+  "backend/seed/synthetic-demo.json",
+  "DemoFixtureCommand"
+ ],
+ "tenant": "Synthetic Fleet A",
+ "fixedClock": "2026-11-22T09:00:00.000Z",
+ "png": {
+  "sha256": "0a914d8dd813bb1cda003d37edf13c5e66fe75e7748811007f44c7fb865e9564",
+  "width": 390,
+  "height": 844
+ },
+ "domText": "Ana içeriğe geç\nBugün\nGörünüm\nDil seçin\nDEMO-SHIP\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nDEMO-SHIP · Synthetic Ship A\nGemi modu: Gemi\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\n\nDENİZCİLİK ÇALIŞMA ALANI\n\nBugün\n\nYetkili olduğunuz kayıtları görüntüleyin.\n\nÇalışma alanı: Synthetic Fleet A\n\nOturumu kapat\nYenile\nAraç değiştir\nEtkin araç: Gemi · DEMO-SHIP · Synthetic Ship A\n\nGörüntülenen anlık veri eski olabilir. Kaynakları yeniden denetlemek için yenileyin.\n\nSunucudan okuma zamanı: 2026-11-22T00:24:15.6056528+00:00\n\nKısmi görünüm: bazı sahip kaynaklar bu bağlamda kullanılamıyor. Görünmeyen öğe, her şeyin uygun olduğu anlamına gelmez.\n\nDönen kartlar\n1\nKısmi kaynaklar: sıfır, her şeyin uygun olduğu anlamına gelmez\nPlanlama uyarıları\n0\nKısmi kaynaklar: sıfır, her şeyin uygun olduğu anlamına gelmez\nİnceleme gerekenler\n0\nKısmi kaynaklar: sıfır, her şeyin uygun olduğu anlamına gelmez\nKullanılabilir kaynaklar\n1 / 7\nKullanılabilirlik doğrulama değildir\nKaynak kapsamı\nMevzuat taslağı: Kullanılabilir (doğrulanmamış)\nOperasyonel görevler: Bu bağlamda kullanılamıyor\nEmniyet kararları: Bu bağlamda kullanılamıyor\nİzinler: Bu bağlamda kullanılamıyor\nKanıt doğrulama: Bu bağlamda kullanılamıyor\nBakım planları: Bu bağlamda kullanılamıyor\nRömorkör taslak planlaması: Bu bağlamda kullanılamıyor\nBilgilendirme · Mevzuat taslağı\nBilgilendirme\n\nKayıtlı mevzuat taslağı doğrulanmamış.\n\nKaynak sahibi\nMevzuat\nKaynak referansı\nMevzuat taslağı · 30000000-0000-0000-0000-000000000001\nKaynak sürümü\n1\nKaynak kayıt zamanı\n2026-11-22T00:01:06.234738+00:00\n\nSorumlu: desteklenen kaynak tarafından atanmamış\n\nTaslağı görüntüle\nNeden ayrıntısını kapat\n\nKayıtlı mevzuat taslağı doğrulanmamış.\n\nKural: TW-DRAFT-01\n\nKaynak\nMevzuat taslağı\nKaynak referansı\n30000000-0000-0000-0000-000000000001\nKaynak sürümü\n1\n\nSunucudan okuma zamanı: 2026-11-22T00:24:16.541754+00:00\n\nGüncel kaynak sorumlu rolü: Bilinmiyor\n\nBeyan edilen / eksik / bilinmeyen girdiler: 1 / 17 / 2\n\nGirdi kaynağı beyanı: Synthetic\n\nTaslak kayıt zamanı: 2026-11-22T00:01:06.234738+00:00\n\nGirdi kaynak gözlemi: Bilinmiyor\n\nGirdi güncelliği doğrulanmadı. Kayıt/okuma zamanı kaynağı doğrulamaz.\n\nKullanılamayan ön koşullar\n\nDoğrulama kaynağı kullanılamıyor\nOperasyonel kaynaklar kullanılamıyor\nÖnceki uyarılar\nSonraki uyarılar\n\nKuruluş kaynak taslaklarını incele (doğrulanmamış)"
+}

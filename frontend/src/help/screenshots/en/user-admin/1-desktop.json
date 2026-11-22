@@ -1,0 +1,21 @@
+{
+ "schemaVersion": "poseidon.help.screenshot-provenance.v1",
+ "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
+ "commit": "dde4bb50e6a2eef7fc9b0b0591460878ea46df56",
+ "key": "user-admin",
+ "locale": "en",
+ "step": 1,
+ "viewport": "desktop",
+ "datasets": [
+  "backend/seed/synthetic-demo.json",
+  "DemoFixtureCommand"
+ ],
+ "tenant": "Synthetic Fleet A",
+ "fixedClock": "2026-11-22T09:00:00.000Z",
+ "png": {
+  "sha256": "46173ec8a4fe9f942d83021f037a7ae065c641987824b4437d1d8f340a58e045",
+  "width": 1440,
+  "height": 900
+ },
+ "domText": "Skip to main content\nPOSEIDON\nUsers and permissions\nAppearance\nSearch workspace\nChoose language\nSynthetic Fleet A\nCompany context:\nUnavailable\nNo vessel selected\nRole context: Not assigned\nChange vessel context\nOnline\nPOSEIDON\nMARITIME OPERATIONS\nWork view\nFilter menu\n\nOnly screens you are authorized to open are searched.\n\nOverview\nTug operations\nCompliance and assurance\nWorkspace\nCompanies\nMaterial conflict center\nUsers and permissions\nSY\nSynthetic Fleet A\nAuthorized workspace\n\nTENANT ADMINISTRATION\n\nUsers and permissions\n\nAssign user, role, vessel and object scope with least privilege. You can grant only permissions you hold yourself; your own membership is edited by another administrator. Changes take effect on the member's next request; a new member gets access at the next login.\n\nRefresh\nSearch\nMembership or account id prefix, or the exact IdP subject\nStatus\nRole bundle\nApply\nMembers · Total: 1\nAccount\nadd41584\n Active No grant\n\nNone · Permissions: 0 · Vessels: 0\n\nPrevious\nNext"
+}

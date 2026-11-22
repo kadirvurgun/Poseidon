@@ -1,0 +1,21 @@
+{
+ "schemaVersion": "poseidon.help.screenshot-provenance.v1",
+ "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
+ "commit": "dde4bb50e6a2eef7fc9b0b0591460878ea46df56",
+ "key": "user-admin",
+ "locale": "en",
+ "step": 2,
+ "viewport": "mobile",
+ "datasets": [
+  "backend/seed/synthetic-demo.json",
+  "DemoFixtureCommand"
+ ],
+ "tenant": "Synthetic Fleet A",
+ "fixedClock": "2026-11-22T09:00:00.000Z",
+ "png": {
+  "sha256": "4ef168c92851baef878bc4b8fb8c5158fa19341f25ad7e6a0d6b6804aba64cc0",
+  "width": 390,
+  "height": 844
+ },
+ "domText": "Skip to main content\nUsers and permissions\nAppearance\nChoose language\nNo vessel selected\nSynthetic Fleet A\nCompany context:\nUnavailable\nNo vessel selected\nRole context: Not assigned\nChange vessel context\nOnline\n\nTENANT ADMINISTRATION\n\nUsers and permissions\n\nAssign user, role, vessel and object scope with least privilege. You can grant only permissions you hold yourself; your own membership is edited by another administrator. Changes take effect on the member's next request; a new member gets access at the next login.\n\nBack to members\nRefresh\nAccount add41584-4585-c6b9-0958-a82a8c152a50\n\nActive No grant\n\nGrant source\nNo grant\nRecord source\nSyntheticUnverified\nStatus reason\nSyntheticFixture · 2026-11-22T00:01:25.147644+00:00\nAccess revision\n0\nRole bundles\nNone\nTenant-wide read\n—\nTenant-wide manage\n—\nActive company\nNone\n\nOpen action history (needs audit.read)\n\nVessel scope\n\nNone\n\nEffective permissions\n\nNo permissions.\n\nEdit grant\n\nYou can view but not change memberships.\n\nGrant history\n\nNo grant revision is stored here; the grant comes from the operator configuration or does not exist.\n\nDelegations\n\nStart, end and scope are audited (13.03 paragraph:104). A delegation never exceeds the source's current authority, is never tenant-wide and you cannot approve one where you are source or delegate.\n\nNo delegation."
+}
