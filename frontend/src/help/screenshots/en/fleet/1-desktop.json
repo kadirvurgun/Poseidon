@@ -1,0 +1,26 @@
+{
+ "schemaVersion": "poseidon.help.screenshot-provenance.v2",
+ "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
+ "commit": "ffabd677418b73f964e85faf458946dc850eda91",
+ "generatorBlobs": {
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "91ab4199809e7d12deb54f371232749e96fc1ade",
+  "frontend/src/help/screenshots/steps.json": "a0400619a48fe8d0f9811b031bc8f5d4a05d7cfc"
+ },
+ "dirty": false,
+ "key": "fleet",
+ "locale": "en",
+ "step": 1,
+ "viewport": "desktop",
+ "datasets": [
+  "backend/seed/synthetic-demo.json",
+  "DemoFixtureCommand"
+ ],
+ "tenant": "Synthetic Fleet A",
+ "fixedClock": "2026-11-22T09:00:00.000Z",
+ "png": {
+  "sha256": "9311ad09223b3d44876e29f1a7de2c11e836d271496430ae0cd65cba9f6ac9e6",
+  "width": 1440,
+  "height": 900
+ },
+ "domText": "Skip to main content\nPOSEIDON\nFleet\nAppearance\nSearch workspace\nChoose language\nSynthetic Fleet A\nCompany context:\nUnavailable\nNo vessel selected\nRole context: Not assigned\nChange vessel context\nOnline\nPOSEIDON\nMARITIME OPERATIONS\nWork view\nFilter menu\n\nOnly screens you are authorized to open are searched.\n\nOverview\nToday\nFleet\nTug operations\nCompliance and assurance\nWorkspace\nSY\nSynthetic Fleet A\nAuthorized workspace\n\nMARITIME WORKSPACE\n\nFleet\n\nBrowse the records available in your workspace.\n\nWorkspace: Synthetic Fleet A\n\nSign out\nListed vessels\n2\nOn this page\nShips\n1\nOn this page\nTugs\n1\nOn this page\nEditable records\n0\nCurrent access on this page\nVessel composition\n\nVessel types in the returned list\n\n2 records\nShips: 1 · \nTugs: 1\n\nThis page only. Operational readiness is evaluated separately.\n\nWorkspace scope\n\nCurrent list and access context\n\nShips\n1\nTugs\n1\nRead-only records\n2\nNext page\nEnd of list\nSearch by code or name\nVessel type\nSearch\nCode Name Type\nDEMO-SHIP Synthetic Ship A Ship\nDEMO-TUG Synthetic Tug A Tug\nPage 1\nPrevious\nNext"
+}

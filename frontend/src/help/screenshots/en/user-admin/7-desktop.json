@@ -1,0 +1,26 @@
+{
+ "schemaVersion": "poseidon.help.screenshot-provenance.v2",
+ "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
+ "commit": "ffabd677418b73f964e85faf458946dc850eda91",
+ "generatorBlobs": {
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "91ab4199809e7d12deb54f371232749e96fc1ade",
+  "frontend/src/help/screenshots/steps.json": "a0400619a48fe8d0f9811b031bc8f5d4a05d7cfc"
+ },
+ "dirty": false,
+ "key": "user-admin",
+ "locale": "en",
+ "step": 7,
+ "viewport": "desktop",
+ "datasets": [
+  "backend/seed/synthetic-demo.json",
+  "DemoFixtureCommand"
+ ],
+ "tenant": "Synthetic Fleet A",
+ "fixedClock": "2026-11-22T09:00:00.000Z",
+ "png": {
+  "sha256": "79de5e1f4e45e3ef3e6e799e2e061c36637f5dcc9049a9b823175c9da0535e94",
+  "width": 1440,
+  "height": 900
+ },
+ "domText": "Skip to main content\nPOSEIDON\nUsers and permissions\nAppearance\nSearch workspace\nChoose language\nSynthetic Fleet A\nCompany context:\nUnavailable\nNo vessel selected\nRole context: Not assigned\nChange vessel context\nOnline\nPOSEIDON\nMARITIME OPERATIONS\nWork view\nFilter menu\n\nOnly screens you are authorized to open are searched.\n\nOverview\nTug operations\nCompliance and assurance\nWorkspace\nCompanies\nMaterial conflict center\nUsers and permissions\nSY\nSynthetic Fleet A\nAuthorized workspace\n\nTENANT ADMINISTRATION\n\nUsers and permissions\n\nAssign user, role, vessel and object scope with least privilege. You can grant only permissions you hold yourself; your own membership is edited by another administrator. Changes take effect on the member's next request; a new member gets access at the next login.\n\nBack to members\nRefresh\nAccount add41584-4585-c6b9-0958-a82a8c152a50\n\nActive No grant\n\nGrant source\nNo grant\nRecord source\nSyntheticUnverified\nStatus reason\nSyntheticFixture · 2026-11-22T03:00:11.335491+00:00\nAccess revision\n0\nRole bundles\nNone\nTenant-wide read\n—\nTenant-wide manage\n—\nActive company\nNone\n\nOpen action history (needs audit.read)\n\nVessel scope\n\nNone\n\nEffective permissions\n\nNo permissions.\n\nEdit grant\n\nYou can view but not change memberships.\n\nGrant history\n\nNo grant revision is stored here; the grant comes from the operator configuration or does not exist.\n\nDelegations\n\nStart, end and scope are audited (13.03 paragraph:104). A delegation never exceeds the source's current authority, is never tenant-wide and you cannot approve one where you are source or delegate.\n\nNo delegation."
+}

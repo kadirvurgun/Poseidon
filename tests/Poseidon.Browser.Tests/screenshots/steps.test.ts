@@ -12,7 +12,7 @@ const withClick = (click: unknown) => { const mapping = clone(); mapping.guides.
 
 test('the committed mapping is valid and only marks steps unavailable for an explicit reason', () => {
   const mapping = validateMapping(committed)
-  assert.deepEqual(Object.keys(mapping.guides).sort(), ['companies', 'today', 'tug-job-board', 'user-admin'])
+  assert.deepEqual(Object.keys(mapping.guides).sort(), ['companies', 'fleet', 'today', 'tug-command', 'tug-job-board', 'user-admin'])
   for (const guide of Object.values(mapping.guides))
     for (const step of guide.steps) if (step.unavailable) assert.equal(step.unavailable, 'write_permission_required')
 })

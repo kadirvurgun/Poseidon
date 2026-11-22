@@ -4,7 +4,7 @@ title: Kullanıcılar ve yetkiler
 roles: [Tenant Admin]
 permissions: [membership.read, membership.manage]
 related: [audit, companies, fleet]
-screenshots: [1, 2, 4]
+screenshots: [1, 2, 7]
 reviewed: false
 ---
 ## Bu sayfa ne işe yarar

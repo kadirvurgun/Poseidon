@@ -95,7 +95,7 @@ async function overlay(page: Page, boxes: { x: number; y: number; width: number;
     host.id = 'poseidon-doc-overlay'
     host.setAttribute('aria-hidden', 'true')
     host.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:2147483647'
-    for (const box of boxes) {
+    for (const [index, box] of boxes.entries()) {
       const ring = document.createElement('div')
       ring.style.cssText = `position:absolute;left:${box.x - 4}px;top:${box.y - 4}px;width:${box.width + 8}px;height:${box.height + 8}px;` +
         'border:3px solid var(--primary);border-radius:8px;box-shadow:0 0 0 3px color-mix(in oklch, var(--primary) 25%, transparent)'
@@ -108,7 +108,9 @@ async function overlay(page: Page, boxes: { x: number; y: number; width: number;
       badge.style.cssText = `position:absolute;left:${left}px;top:${top}px;width:28px;height:28px;border-radius:50%;display:flex;` +
         'align-items:center;justify-content:center;background:var(--primary);color:var(--primary-foreground);font:700 15px/1 system-ui,sans-serif;' +
         'box-shadow:0 0 0 2px var(--background)'
-      host.append(ring, badge)
+      // One number per step: only the first target gets the badge, so badges never cover adjacent rings.
+      if (index === 0) host.append(ring, badge)
+      else host.append(ring)
     }
     const footer = document.createElement('div')
     footer.textContent = stamp
