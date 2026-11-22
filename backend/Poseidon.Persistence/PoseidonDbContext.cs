@@ -36,6 +36,8 @@ public sealed class PoseidonDbContext(
     public DbSet<MembershipGrantRevision> MembershipGrantRevisions => Set<MembershipGrantRevision>();
     public DbSet<MembershipGrantVessel> MembershipGrantVessels => Set<MembershipGrantVessel>();
     public DbSet<MembershipInvitation> MembershipInvitations => Set<MembershipInvitation>();
+    public DbSet<InvitationDelivery> InvitationDeliveries => Set<InvitationDelivery>();
+    public DbSet<TenantInvitationSettings> TenantInvitationSettings => Set<TenantInvitationSettings>();
     public DbSet<VesselCertificate> VesselCertificates => Set<VesselCertificate>();
     public DbSet<VesselCertificateRevision> VesselCertificateRevisions => Set<VesselCertificateRevision>();
     public DbSet<CertificateRenewal> CertificateRenewals => Set<CertificateRenewal>();
@@ -316,6 +318,7 @@ public sealed class PoseidonDbContext(
     protected override void OnModelCreating(ModelBuilder model)
     {
         AccountMembershipStorage.Configure(model);
+        InvitationDeliveryStorage.Configure(model);
         model.Entity<UserAccount>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<AccountMembership>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<AccountMembershipVesselGrant>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -326,6 +329,8 @@ public sealed class PoseidonDbContext(
         model.Entity<MembershipGrantRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<MembershipGrantVessel>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<MembershipInvitation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<InvitationDelivery>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<TenantInvitationSettings>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         FleetCatalogDraftStorage.Configure(model);
         ParameterStorage.Configure(model);
         model.Entity<ParameterRoot>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
@@ -890,6 +895,7 @@ public sealed class PoseidonDbContext(
         FleetCatalogDraftStorage.Guard(this, changes);
         ParameterStorage.Guard(changes);
         AccountMembershipStorage.Guard(changes);
+        InvitationDeliveryStorage.Guard(changes);
         ControlledDocumentStorage.Guard(this, changes);
         if (string.IsNullOrWhiteSpace(actor.Id) || string.IsNullOrWhiteSpace(actor.Type) || string.IsNullOrWhiteSpace(actor.CorrelationId))
             throw new InvalidOperationException("An authenticated or explicit system actor and correlation ID are required.");

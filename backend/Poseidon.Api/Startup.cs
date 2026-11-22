@@ -60,6 +60,13 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddSingleton<NotificationServiceContexts>();
         services.AddSingleton<NotificationScheduler>();
         services.AddHostedService(sp => sp.GetRequiredService<NotificationScheduler>());
+        // USER-ADMIN-03: invitation e-mail outbox. Absent/invalid operator configuration = NOT_CONFIGURED (copy link only).
+        services.AddSingleton(configuration.GetSection("InvitationDelivery").Get<InvitationDeliverySettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
+        Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddSingleton<IInvitationMailer>(services,
+            sp => new SmtpInvitationMailer(sp.GetRequiredService<InvitationDeliverySettings>(), sp.GetRequiredService<ILogger<SmtpInvitationMailer>>()));
+        services.AddSingleton<InvitationPayloadProtection>();
+        services.AddSingleton<InvitationDeliveryDispatcher>();
+        services.AddHostedService(sp => sp.GetRequiredService<InvitationDeliveryDispatcher>());
         services.AddSingleton(configuration.GetSection("OfflineApplication").Get<OfflineApplicationPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton(configuration.GetSection("CrewPositionPolicy").Get<CrewPositionPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton(configuration.GetSection("CrewIdentityPolicy").Get<CrewIdentityPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());

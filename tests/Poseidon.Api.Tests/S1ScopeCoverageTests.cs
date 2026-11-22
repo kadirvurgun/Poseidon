@@ -72,9 +72,10 @@ public sealed partial class DirectoryWorkspaceTests
         // QA S9/S10 notes hardening adds 1 (N7 late voice draft -> safety event DRAFT hand-off by the confirming human).
         // USER-ADMIN-01 adds 2 (membership create, membership grant revision).
         // USER-ADMIN-02 adds 3 (invitation reissue and acceptance as critical writes, invitation preview as a session observation).
-        Assert.Equal(303, observed.Count);
-        Assert.Equal(293, observed.Count(x => x.IsCritical));
-        Assert.Equal(318, S1SecurityContract.CriticalOperationIds.Count);
+        // USER-ADMIN-03 adds 1 (tenant invitation lifetime update).
+        Assert.Equal(304, observed.Count);
+        Assert.Equal(294, observed.Count(x => x.IsCritical));
+        Assert.Equal(319, S1SecurityContract.CriticalOperationIds.Count);
         Assert.Equal(10, observed.Count(x => !x.IsCritical));
         var extra = new RouteEndpoint(_ => Task.CompletedTask, RoutePatternFactory.Parse("/api/v1/unclassified-write"), 0,
             new EndpointMetadataCollection(new HttpMethodMetadata(["POST"]), new AuthorizeAttribute("DirectoryRead")), "unclassified");

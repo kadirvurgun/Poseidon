@@ -9,8 +9,8 @@ import { ApiError, session as readSession, type Session } from './api'
 import { isGuid } from './identifiers'
 import { useOnline } from './UatWorkspace'
 import './user-admin.css'
-import { bundleCodes, decodeInvitationIssue, invitationLink, localToIso, sendAdmin, shortId, statuses, userAdminApi, type AdminCommand, type Catalog,
-  type Delegation, type GrantInput, type ListQuery, type MemberAccess, type MemberPage, type MemberSummary, type VesselGrant } from './user-admin-api'
+import { bundleCodes, decodeInvitationIssue, invitationLink, localToIso, plausibleEmail, sendAdmin, shortId, statuses, userAdminApi, type AdminCommand, type Catalog,
+  type Delegation, type GrantInput, type InvitationSettings, type ListQuery, type MemberAccess, type MemberPage, type MemberSummary, type VesselGrant } from './user-admin-api'
 
 // USER-ADMIN-01 "Kullanıcılar ve yetkiler" (13.03 §9 paragraph:102-106). Server authority only: the page renders
 // nothing about permissions until the membership catalog read succeeds, never grants in the browser, and keeps the
@@ -99,6 +99,7 @@ export function UserAdminWorkspace() {
   const [access, setAccess] = useState<MemberAccess | null>(null), [delegations, setDelegations] = useState<Delegation[]>([])
   const [active, setActive] = useState<MemberSummary[]>([])
   const [issued, setIssued] = useState<IssuedLink | null>(null)
+  const [settings, setSettings] = useState<InvitationSettings | null>(null)
   const offline = useOnline()
   const refresh = useCallback(() => setReload(x => x + 1), [])
   const go = useCallback((href: string) => { history.pushState(null, '', href); setRoute(readUserAdminRoute(window.location.href)); refresh() }, [refresh])
@@ -132,13 +133,18 @@ export function UserAdminWorkspace() {
     ;(async () => {
       await Promise.resolve()
       if (c.signal.aborted) return
-      setLoading(true); setError(null); setPage(null); setAccess(null); setDelegations([]); setActive([])
+      setLoading(true); setError(null); setPage(null); setAccess(null); setDelegations([]); setActive([]); setSettings(null)
       if (route.invalid) throw new ApiError(400, 'invalid_route')
       setUser(await readSession(c.signal))
       // The catalog gates everything: a 403 here leaves no permission name on the page.
       const cat = await userAdminApi.catalog(c.signal)
       setCatalog(cat)
-      if (route.view === 'list') setPage(await userAdminApi.list(route.query, c.signal))
+      if (route.view === 'list') {
+        const [p, s] = await Promise.all([userAdminApi.list(route.query, c.signal), userAdminApi.invitationSettings(c.signal)])
+        setPage(p); setSettings(s)
+      }
+      // USER-ADMIN-03: whether e-mail delivery exists decides the create/reissue hint (never a delivered claim).
+      if (route.view !== 'list') setSettings(await userAdminApi.invitationSettings(c.signal))
       if (route.view === 'detail') {
         const [a, d, members] = await Promise.all([userAdminApi.access(route.id, c.signal), userAdminApi.delegations(route.id, c.signal),
           userAdminApi.list({ status: 'Active', bundle: '', q: '', offset: 0 }, c.signal)])
@@ -163,14 +169,16 @@ export function UserAdminWorkspace() {
       {!loading && error && <div role="alert" data-state={error.status === 403 ? 'forbidden' : 'error'}>
         <p>{error.code === 'invalid_route' ? t.invalidRoute : error.status === 403 ? t.forbidden : error.status === 404 ? t.notFound : error.status === 0 ? t.offline : t.error}</p>
         {error.code !== 'invalid_route' && error.status !== 403 && <Button type="button" variant="outline" onClick={refresh}>{t.retry}</Button>}</div>}
+      {!loading && !error && catalog && route.view === 'list' && settings &&
+        <InvitationSettingsPanel key={`${settings.version}-${settings.lifetimeHours}`} t={t} settings={settings} disabled={disabled} run={cmd.run}/>}
       {!loading && !error && catalog && route.view === 'list' && page &&
         <MemberList t={t} catalog={catalog} page={page} query={route.query} open={id => move(`${base}/${id}`)} filter={q => move(listHref(q))}/>}
       {!loading && !error && catalog && route.view === 'new' && (catalog.canManage
-        ? <CreateForm t={t} catalog={catalog} disabled={disabled} run={cmd.run}/>
+        ? <CreateForm t={t} catalog={catalog} disabled={disabled} run={cmd.run} deliveryConfigured={settings?.deliveryConfigured ?? false}/>
         : <p role="alert" data-state="forbidden">{t.blocked_not_manager}</p>)}
       {!loading && !error && catalog && route.view === 'detail' && access &&
         <MemberDetail t={t} catalog={catalog} access={access} delegations={delegations} active={active} disabled={disabled} run={cmd.run} open={id => move(`${base}/${id}`)}
-          issued={issued?.membershipId === access.membership.id ? issued : null}/>}
+          issued={issued?.membershipId === access.membership.id ? issued : null} deliveryConfigured={settings?.deliveryConfigured ?? false}/>}
     </main>
   </div>
 }
@@ -182,7 +190,46 @@ function StatusBadge({ t, status }: { t: Copy; status: string }) {
 // An invitation is never shown as an active grant: Pending/Expired are warnings until the identity holder accepts.
 function InvitationBadge({ t, m }: { t: Copy; m: MemberSummary }) {
   if (!m.invitationState || m.status !== 'Invited') return null
-  return <> <Badge tone={m.invitationState === 'Pending' ? 'neutral' : 'warning'} data-invitation={m.invitationState}>{word(t, 'invitation_' + m.invitationState)}</Badge></>
+  return <> <Badge tone={m.invitationState === 'Pending' ? 'neutral' : 'warning'} data-invitation={m.invitationState}>{word(t, 'invitation_' + m.invitationState)}</Badge>
+    <DeliveryBadge t={t} m={m}/></>
+}
+// USER-ADMIN-03: e-mail delivery of the latest invitation. SENT = accepted by the mail server (not read/accepted by the person);
+// FAILED and NOT_CONFIGURED are warnings: the copy link remains the way to hand the invitation over.
+function DeliveryBadge({ t, m }: { t: Copy; m: MemberSummary }) {
+  if (!m.invitationDeliveryState) return null
+  const tone = m.invitationDeliveryState === 'SENT' ? 'info' : m.invitationDeliveryState === 'QUEUED' ? 'neutral' : 'warning'
+  return <> <Badge tone={tone} data-delivery={m.invitationDeliveryState}>{word(t, 'delivery_' + m.invitationDeliveryState)}</Badge></>
+}
+
+// USER-ADMIN-03: 54.01 account.invite_hours (1-168, default 24) for this tenant; applies to invitations issued afterwards.
+function InvitationSettingsPanel({ t, settings, disabled, run }: { t: Copy; settings: InvitationSettings; disabled: boolean; run: (c: AdminCommand) => Promise<void> }) {
+  const [hours, setHours] = useState(String(settings.lifetimeHours))
+  const value = /^\d{1,3}$/.test(hours) ? Number(hours) : NaN
+  const valid = Number.isInteger(value) && value >= settings.minHours && value <= settings.maxHours
+  return <section aria-label={t.lifetime} data-state="invitation-settings">
+    <h2>{t.lifetime}</h2>
+    <p data-lifetime={settings.lifetimeHours}>{settings.lifetimeHours} h{!settings.tenantValue && <> · {t.lifetimeDefault}</>}
+      {' · '}<span data-delivery-configured={settings.deliveryConfigured}>{settings.deliveryConfigured ? t.deliveryConfigured : t.deliveryNotConfigured}</span></p>
+    {settings.canManage && <form aria-label={t.lifetime} className="user-admin-filters" onSubmit={e => { e.preventDefault()
+      if (valid && !disabled && value !== settings.lifetimeHours) void run(userAdminApi.updateInvitationSettings(settings.version, value)) }}>
+      <label htmlFor="ua-lifetime">{t.lifetimeHours}</label>
+      <input id="ua-lifetime" type="number" inputMode="numeric" min={settings.minHours} max={settings.maxHours} step={1} required value={hours}
+        aria-invalid={!valid} aria-describedby="ua-lifetime-hint" onChange={e => setHours(e.target.value)}/>
+      <small id="ua-lifetime-hint">{t.lifetimeHint}</small>
+      <EnterpriseActions layout="form" aria-label={t.lifetime}>
+        <Button type="submit" disabled={disabled || !valid || value === settings.lifetimeHours}>{t.lifetimeSave}</Button></EnterpriseActions>
+    </form>}
+  </section>
+}
+
+// Optional invitation e-mail recipient (create and reissue). An empty value means copy link only.
+function DeliveryEmailField({ t, id, value, onChange, configured }: { t: Copy; id: string; value: string; onChange: (v: string) => void; configured: boolean }) {
+  const invalid = value.trim() !== '' && !plausibleEmail(value.trim())
+  return <>
+    <label htmlFor={id}>{t.deliveryEmail}</label>
+    <input id={id} type="email" maxLength={254} autoComplete="off" value={value} aria-invalid={invalid} aria-describedby={id + '-hint'} onChange={e => onChange(e.target.value)}/>
+    <small id={id + '-hint'}>{configured ? t.deliveryEmailHint : t.deliveryNotConfiguredNote}</small>
+  </>
 }
 function MemberBadges({ t, m }: { t: Copy; m: MemberSummary }) {
   return <><StatusBadge t={t} status={m.status}/><InvitationBadge t={t} m={m}/> <Badge tone={m.managedBy === 'Database' ? 'neutral' : m.managedBy === 'Configuration' ? 'info' : 'warning'} data-managed={m.managedBy}>
@@ -290,12 +337,14 @@ function GrantFields({ t, catalog, value, onChange, prefix }: { t: Copy; catalog
 const emptyGrant: GrantInput = { bundles: [], permissions: [], tenantWideRead: false, tenantWideManage: false, activeCompanyId: null, vesselGrants: [] }
 const sortedGrants = (g: VesselGrant[]) => [...g].sort((a, b) => a.vesselId.localeCompare(b.vesselId))
 
-function CreateForm({ t, catalog, disabled, run }: { t: Copy; catalog: Catalog; disabled: boolean; run: (c: AdminCommand) => Promise<void> }) {
+function CreateForm({ t, catalog, disabled, run, deliveryConfigured }: { t: Copy; catalog: Catalog; disabled: boolean; run: (c: AdminCommand) => Promise<void>
+  deliveryConfigured: boolean }) {
   const [issuer, setIssuer] = useState(catalog.trustedIssuer ?? ''), [subject, setSubject] = useState(''), [grant, setGrant] = useState<GrantInput>(emptyGrant)
+  const [email, setEmail] = useState('')
   // USER-ADMIN-02: the subject is optional; when given only that IdP identity can accept the invitation.
-  const ok = issuer.trim().length > 0 && grant.bundles.length > 0
+  const ok = issuer.trim().length > 0 && grant.bundles.length > 0 && (email.trim() === '' || plausibleEmail(email.trim()))
   return <form aria-label={t.create} className="user-admin-form" onSubmit={e => { e.preventDefault()
-    if (ok && !disabled) void run(userAdminApi.create(issuer.trim(), subject.trim() || null, { ...grant, vesselGrants: sortedGrants(grant.vesselGrants) })) }}>
+    if (ok && !disabled) void run(userAdminApi.create(issuer.trim(), subject.trim() || null, { ...grant, vesselGrants: sortedGrants(grant.vesselGrants) }, email.trim() || null)) }}>
     <h2>{t.create}</h2>
     <p role="note">{t.idpNote}</p>
     <p role="note">{t.invitationNote}</p>
@@ -304,6 +353,7 @@ function CreateForm({ t, catalog, disabled, run }: { t: Copy; catalog: Catalog; 
     <label htmlFor="ua-subject">{t.expectedSubject}</label>
     <input id="ua-subject" maxLength={255} autoComplete="off" value={subject} aria-describedby="ua-subject-hint" onChange={e => setSubject(e.target.value)}/>
     <small id="ua-subject-hint">{t.expectedSubjectHint}</small>
+    <DeliveryEmailField t={t} id="ua-delivery-email" value={email} onChange={setEmail} configured={deliveryConfigured}/>
     <GrantFields t={t} catalog={catalog} value={grant} onChange={setGrant} prefix="ua-new"/>
     <EnterpriseActions layout="form" aria-label={t.create}><Button type="submit" disabled={disabled || !ok}>{t.create}</Button></EnterpriseActions>
   </form>
@@ -313,9 +363,10 @@ function Section({ label, children }: { label: string; children: ReactNode }) { 
 
 // USER-ADMIN-02: invitation state, the one-time link (copy) and a reissue. The link is shown only right after it was
 // issued; afterwards the server holds only a hash, so a new link means a reissue that invalidates the previous one.
-function InvitationPanel({ t, m, issued, canManage, disabled, run }: { t: Copy; m: MemberSummary; issued: IssuedLink | null; canManage: boolean; disabled: boolean
-  run: (c: AdminCommand) => Promise<void> }) {
-  const [copied, setCopied] = useState<'' | 'copied' | 'failed'>('')
+function InvitationPanel({ t, m, issued, canManage, disabled, run, deliveryConfigured }: { t: Copy; m: MemberSummary; issued: IssuedLink | null; canManage: boolean
+  disabled: boolean; run: (c: AdminCommand) => Promise<void>; deliveryConfigured: boolean }) {
+  const [copied, setCopied] = useState<'' | 'copied' | 'failed'>(''), [email, setEmail] = useState('')
+  const emailOk = email.trim() === '' || plausibleEmail(email.trim())
   if (!m.invitationState) return null
   const copy = async () => {
     if (!issued) return
@@ -325,6 +376,9 @@ function InvitationPanel({ t, m, issued, canManage, disabled, run }: { t: Copy; 
     <p data-invitation-state={m.invitationState}>{word(t, 'invitation_' + m.invitationState)}
       {m.invitationExpiresAt && m.status === 'Invited' && <> · {t.invitationExpires} <time dateTime={m.invitationExpiresAt}>{m.invitationExpiresAt}</time></>}
       {m.invitationSubjectExpected && <> · {t.invitationSubjectBound}</>}</p>
+    {m.invitationDeliveryState && <p data-delivery-state={m.invitationDeliveryState}>{t.delivery}: {word(t, 'delivery_' + m.invitationDeliveryState)}
+      {m.invitationDeliveryState === 'SENT' && <> · <small>{t.deliverySentNote}</small></>}
+      {(m.invitationDeliveryState === 'FAILED' || m.invitationDeliveryState === 'NOT_CONFIGURED') && m.status === 'Invited' && <> · <small>{t.deliveryFallbackNote}</small></>}</p>}
     {m.status === 'Invited' && <p><small>{t.invitationPendingNote}</small></p>}
     {issued && m.status === 'Invited' && <div data-state="invitation-link">
       <label htmlFor="ua-invitation-link">{t.invitationLink}</label>
@@ -335,14 +389,18 @@ function InvitationPanel({ t, m, issued, canManage, disabled, run }: { t: Copy; 
       </EnterpriseActions>
       {copied && <p role="status" data-copy={copied}>{copied === 'copied' ? t.invitationCopied : t.invitationCopyFailed}</p>}
     </div>}
-    {canManage && m.status === 'Invited' && <EnterpriseActions align="start" aria-label={t.invitation}>
-      <Button type="button" variant="outline" disabled={disabled} onClick={() => void run(userAdminApi.reissueInvitation(m.id, m.version))}>{t.reissueInvitation}</Button>
-    </EnterpriseActions>}
+    {canManage && m.status === 'Invited' && <>
+      <DeliveryEmailField t={t} id="ua-reissue-email" value={email} onChange={setEmail} configured={deliveryConfigured}/>
+      <EnterpriseActions align="start" aria-label={t.invitation}>
+        <Button type="button" variant="outline" disabled={disabled || !emailOk}
+          onClick={() => void run(userAdminApi.reissueInvitation(m.id, m.version, email.trim() || null))}>{t.reissueInvitation}</Button>
+      </EnterpriseActions></>}
   </Section>
 }
 
-function MemberDetail({ t, catalog, access, delegations, active, disabled, run, open, issued }: { t: Copy; catalog: Catalog; access: MemberAccess; delegations: Delegation[]
-  active: MemberSummary[]; disabled: boolean; run: (c: AdminCommand) => Promise<void>; open: (id: string) => void; issued: IssuedLink | null }) {
+function MemberDetail({ t, catalog, access, delegations, active, disabled, run, open, issued, deliveryConfigured }: { t: Copy; catalog: Catalog; access: MemberAccess; delegations: Delegation[]
+  active: MemberSummary[]; disabled: boolean; run: (c: AdminCommand) => Promise<void>; open: (id: string) => void; issued: IssuedLink | null
+  deliveryConfigured: boolean }) {
   const m = access.membership
   const vessel = (id: string) => catalog.vessels.find(v => v.id === id)
   const company = access.activeCompanyId ? catalog.companies.find(c => c.id === access.activeCompanyId) : null
@@ -367,7 +425,7 @@ function MemberDetail({ t, catalog, access, delegations, active, disabled, run, 
       </dl>
       <p><a href={`/app/audit?resourceId=${m.id}`}>{t.auditLink}</a></p>
     </section>
-    <InvitationPanel t={t} m={m} issued={issued} canManage={catalog.canManage} disabled={disabled} run={run}/>
+    <InvitationPanel t={t} m={m} issued={issued} canManage={catalog.canManage} disabled={disabled} run={run} deliveryConfigured={deliveryConfigured}/>
     <Section label={t.vesselGrants}>
       {access.vesselGrants.length === 0 ? <p data-state="empty">{t.none}</p> : <ul>{access.vesselGrants.map(g => { const v = vessel(g.vesselId)
         return <li key={g.vesselId} data-vessel={g.vesselId}>{v ? `${v.code} · ${v.name}` : <code>{g.vesselId}</code>} · {g.canEdit ? t.canEdit : t.readOnly}</li> })}</ul>}

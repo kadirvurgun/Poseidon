@@ -2382,7 +2382,7 @@
           "Poseidon.Api"
         ],
         "summary": "CreateMembership",
-        "description": "Invites an IdP identity to a database membership (USER-ADMIN-02). The membership starts Invited and grants nothing; it binds an identity only when the identity holder, signed in through the trusted issuer, accepts the single-use invitation token returned once in this response (expiry 24 hours: the 54.01 account.invite_hours default). subject is optional and, when given, is the only identity allowed to accept; it reserves nothing. Role bundles and individual permissions are limited to the trusted allow-list and to the caller's own permissions (400 exceeds_grantor_authority). A subject present in the operator configuration, already bound in this tenant or with a pending invitation here returns 409 identity_unavailable.",
+        "description": "Invites an IdP identity to a database membership (USER-ADMIN-02). The membership starts Invited and grants nothing; it binds an identity only when the identity holder, signed in through the trusted issuer, accepts the single-use invitation token returned once in this response (expiry: the tenant's 54.01 account.invite_hours value, 1-168 hours, default 24). deliveryEmail is optional and queues the invitation e-mail in the same transaction (delivery state QUEUED, or NOT_CONFIGURED without a mail transport); the address is never returned, logged or audited. subject is optional and, when given, is the only identity allowed to accept; it reserves nothing. Role bundles and individual permissions are limited to the trusted allow-list and to the caller's own permissions (400 exceeds_grantor_authority). A subject present in the operator configuration, already bound in this tenant or with a pending invitation here returns 409 identity_unavailable.",
         "operationId": "CreateMembership",
         "parameters": [
           {
@@ -3631,7 +3631,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MembershipTransitionCommand"
+                "$ref": "#/components/schemas/InvitationReissueCommand"
               }
             }
           },
@@ -3690,6 +3690,137 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/MembershipInvitationIssueDto"
+                }
+              }
+            }
+          }
+        },
+        "x-poseidon-profile": "NATIVE-COMMAND-1"
+      }
+    },
+    "/api/v1/memberships/invitation-settings": {
+      "get": {
+        "tags": [
+          "MembershipEndpoints"
+        ],
+        "summary": "The tenant's invitation lifetime (54.01 account.invite_hours, 1-168 h, default 24) and whether invitation e-mail delivery is configured. Requires membership.read or membership.manage with tenant-wide scope.",
+        "operationId": "GetInvitationSettings",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvitationSettingsDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        },
+        "x-poseidon-profile": "NATIVE-READ-1"
+      },
+      "post": {
+        "tags": [
+          "Poseidon.Api"
+        ],
+        "summary": "UpdateInvitationSettings",
+        "description": "Sets the tenant's invitation lifetime in hours (54.01 account.invite_hours: 1-168). Applies to invitations issued afterwards; existing invitations keep their expiry. expectedVersion is the settings version (0 while the source default applies); stale => 409 version_conflict; out of range => 400 validation_failed.",
+        "operationId": "UpdateInvitationSettings",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-CSRF-TOKEN",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InvitationSettingsCommand"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable"
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvitationSettingsDto"
                 }
               }
             }
@@ -41846,6 +41977,96 @@
           }
         }
       },
+      "InvitationReissueCommand": {
+        "required": [
+          "expectedVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          },
+          "deliveryEmail": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "InvitationSettingsCommand": {
+        "required": [
+          "expectedVersion",
+          "lifetimeHours"
+        ],
+        "type": "object",
+        "properties": {
+          "expectedVersion": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          },
+          "lifetimeHours": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "InvitationSettingsDto": {
+        "required": [
+          "lifetimeHours",
+          "minHours",
+          "maxHours",
+          "defaultHours",
+          "tenantValue",
+          "version",
+          "deliveryConfigured",
+          "canManage"
+        ],
+        "type": "object",
+        "properties": {
+          "lifetimeHours": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minHours": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxHours": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "defaultHours": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tenantValue": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "deliveryConfigured": {
+            "type": "boolean"
+          },
+          "canManage": {
+            "type": "boolean"
+          }
+        }
+      },
       "InvitationTokenCommand": {
         "required": [
           "token"
@@ -43517,6 +43738,12 @@
           "invitationSubjectExpected": {
             "type": "boolean",
             "default": false
+          },
+          "invitationDeliveryState": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -43660,6 +43887,12 @@
             "items": {
               "$ref": "#/components/schemas/MembershipVesselGrantCommand"
             }
+          },
+          "deliveryEmail": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
         "additionalProperties": false
