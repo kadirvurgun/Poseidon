@@ -21,6 +21,34 @@ def _stat(pid):
     return fields[0], int(fields[3]), int(fields[19])
 
 
+def _live(pid, state):
+    """Whether a /proc/<tgid> member still has a task that has not exited.
+
+    /proc/<tgid>/stat reports the thread-group leader's own task. A leader
+    shows 'Z' as soon as its own thread exits, while sibling threads (for
+    example an API parent's capture thread) may still be running or exiting;
+    the process is fully dead only when no task in /proc/<tgid>/task is live.
+    """
+    if state == 'X':
+        return False
+    if state != 'Z':
+        return True
+    try:
+        tasks = [entry.name for entry in Path(f'/proc/{pid}/task').iterdir()]
+    except (FileNotFoundError, ProcessLookupError):
+        return False
+    for task in tasks:
+        if task == str(pid):
+            continue
+        try:
+            task_state = Path(f'/proc/{pid}/task/{task}/stat').read_text().rsplit(')', 1)[1].split()[0]
+        except (FileNotFoundError, ProcessLookupError, IndexError):
+            continue
+        if task_state not in ('Z', 'X'):
+            return True
+    return False
+
+
 def native_group_options(env):
     marker = (os.environ if env is None else env).get(SESSION_ENV)
     if marker is None:
@@ -70,7 +98,7 @@ class PosixOwnedTree:
                 state, sid, born = _stat(int(entry.name))
             except (FileNotFoundError, ProcessLookupError):
                 continue
-            if sid == self.pid and state not in ('Z', 'X'):
+            if sid == self.pid and _live(int(entry.name), state):
                 yield int(entry.name), born
 
     def active(self):
@@ -87,7 +115,7 @@ class PosixOwnedTree:
                 try:
                     descriptor = os.pidfd_open(pid)
                     state, sid, current_born = _stat(pid)
-                    if sid == self.pid and current_born == born and state not in ('Z', 'X'):
+                    if sid == self.pid and current_born == born and _live(pid, state):
                         signal.pidfd_send_signal(descriptor, signal.SIGKILL)
                 except (FileNotFoundError, ProcessLookupError):
                     pass
