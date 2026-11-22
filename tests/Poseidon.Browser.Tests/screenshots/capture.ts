@@ -15,6 +15,7 @@ import { createHash } from 'node:crypto'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { clickKind, clickName, screenshotLocales, shotName, validateClick, validateMapping, viewports, type ClickTarget, type Localized, type ScreenshotLocale, type Target, type ViewportName } from './steps.ts'
+import { paletteScreenshot } from './png-palette.ts'
 import { allowedDatasets, generator, generatorFiles, gitBlobSha1, provenanceSchema, scanDomText, visibleTenant, type Provenance } from './provenance.ts'
 
 const mode = process.env.POSEIDON_SCREENSHOTS_MODE ?? 'compare'
@@ -32,7 +33,9 @@ const generatorBlobs = Object.fromEntries(generatorFiles.map(path => [path, gitB
 const dirty = git('status', '--porcelain', '--', ...generatorFiles) !== '' ||
   generatorFiles.some(path => git('rev-parse', `HEAD:${path}`) !== generatorBlobs[path])
 if (mode === 'update' && dirty) throw new Error('screenshot_generator_dirty')
-const fixedClock = '2026-11-22T09:00:00.000Z'
+// Midnight UTC of the capture day: never later than a server timestamp issued that day, so a short-lived
+// server validity (departure readiness, 60 s) is not shown as stale merely because the browser clock is pinned.
+const fixedClock = '2026-11-22T00:00:00.000Z'
 const footerHeight = 22
 const threshold = Number(process.env.POSEIDON_SCREENSHOTS_THRESHOLD ?? '0.002')
 const onlyGuide = process.env.POSEIDON_SCREENSHOTS_GUIDE
@@ -85,6 +88,10 @@ async function verifiedClick(page: Page, target: ClickTarget, locale: Screenshot
 
 async function settle(page: Page) {
   await page.waitForLoadState('networkidle')
+  // A pane still announcing "Loading…" (role=status) or aria-busy resolves later (for example the vessel
+  // file list against the lab's absent file service); wait for it, bounded, so its end state is captured.
+  await page.waitForFunction(() => ![...document.querySelectorAll('[role="status"], [aria-busy="true"]')].some(node =>
+    node.getAttribute('aria-busy') === 'true' || /loading|yükleniyor/i.test(node.textContent ?? '')), undefined, { timeout: 10_000 }).catch(() => undefined)
   await page.evaluate(() => document.fonts.ready.then(() => undefined))
   await page.waitForTimeout(300)
 }
@@ -122,36 +129,63 @@ async function overlay(page: Page, boxes: { x: number; y: number; width: number;
 }
 
 /**
- * QA N5: brings the first target to the top of its scroll container, then moves it below any sticky or
- * fixed header that would otherwise cover it, leaving a small margin for the marker badge.
+ * QA N5 + mobile composition: keeps the natural page when every target is already fully visible below
+ * any sticky/fixed header and above the commit footer. Otherwise it scrolls so that the union of all
+ * targets sits just below that header when the union fits the viewport (needed on the 390 px mobile
+ * viewport, where stacked targets rarely share one screen), else it falls back to the first target.
  */
-async function reveal(target: Locator) {
-  await target.evaluate((element, footerHeight) => {
-    // Bottom edge of any sticky/fixed layer painted above the target's top-left corner.
-    const covered = () => {
+async function reveal(page: Page, targets: Locator[]) {
+  const handles = await Promise.all(targets.map(target => target.elementHandle()))
+  await page.evaluate(([elements, footerHeight]) => {
+    const nodes = elements as Element[]
+    const union = (list: Element[]) => {
+      const boxes = list.map(node => node.getBoundingClientRect())
+      return { top: Math.min(...boxes.map(box => box.top)), bottom: Math.max(...boxes.map(box => box.bottom)) }
+    }
+    // Bottom edge of any sticky/fixed layer painted above the element's top-left corner.
+    const cover = (element: Element) => {
       const box = element.getBoundingClientRect()
-      let cover = 0
+      let bottom = 0
       for (const node of document.elementsFromPoint(Math.min(window.innerWidth - 1, Math.max(0, box.left + 8)), Math.min(window.innerHeight - 1, Math.max(0, box.top + 2)))) {
         if (node === element || element.contains(node) || node.contains(element)) break
         for (let current: Element | null = node; current; current = current.parentElement) {
           const position = getComputedStyle(current).position
-          if (position === 'sticky' || position === 'fixed') { cover = Math.max(cover, current.getBoundingClientRect().bottom); break }
+          if (position === 'sticky' || position === 'fixed') { bottom = Math.max(bottom, current.getBoundingClientRect().bottom); break }
         }
       }
-      return { box, cover }
+      return bottom
     }
-    const before = covered()
-    // Already fully visible below any header and above the commit footer: keep the natural page composition.
-    if (before.box.top >= before.cover + 8 && before.box.bottom <= window.innerHeight - footerHeight - 4) return
-    element.scrollIntoView({ block: 'start', inline: 'nearest' })
-    const after = covered()
-    const delta = after.cover + 40 - after.box.top
+    // Start from the top of every scroll container: a preparation click scrolls its button into view by
+    // an amount that depends on how far late content had rendered, which must not decide the composition.
+    for (const node of nodes) for (let container = node.parentElement; container; container = container.parentElement) container.scrollTop = 0
+    window.scrollTo(0, 0)
+    const topmost = (list: Element[]) => list.reduce((best, node) => node.getBoundingClientRect().top < best.getBoundingClientRect().top ? node : best)
+    const available = window.innerHeight - footerHeight - 4
+    const all = union(nodes)
+    if (all.top >= cover(topmost(nodes)) + 8 && all.bottom <= available) return
+    // The union fits below a header of similar height: compose all targets; otherwise only the first.
+    const group = all.bottom - all.top <= available - cover(topmost(nodes)) - 48 ? nodes : [nodes[0]]
+    const anchor = topmost(group)
+    anchor.scrollIntoView({ block: 'start', inline: 'nearest' })
+    const delta = cover(anchor) + 40 - union(group).top
     if (delta <= 0) return
-    let container: Element | null = element.parentElement
+    let container: Element | null = anchor.parentElement
     while (container && !(container.scrollHeight > container.clientHeight && /(auto|scroll)/.test(getComputedStyle(container).overflowY))) container = container.parentElement
     if (container) container.scrollTop -= delta
     else window.scrollBy(0, -delta)
-  }, footerHeight)
+  }, [handles, footerHeight] as const)
+  await Promise.all(handles.map(handle => handle?.dispose()))
+}
+
+/** Waits (bounded, 3 s) until every target's box and the page height are unchanged across two 150 ms samples. */
+async function steady(page: Page, targets: Locator[]) {
+  let previous = ''
+  for (let attempt = 0; attempt < 20; attempt++) {
+    const sample = JSON.stringify([await Promise.all(targets.map(target => target.boundingBox())), await page.evaluate(() => document.documentElement.scrollHeight)])
+    if (sample === previous) return
+    previous = sample
+    await page.waitForTimeout(150)
+  }
 }
 
 /** Fraction of differing pixels (ignoring the commit footer) decoded in an isolated about:blank page. */
@@ -194,20 +228,27 @@ async function capture(page: Page, blank: Page, key: string, locale: ScreenshotL
     const shot: Shot = { name, result: 'error' }
     report.shots.push(shot)
     try {
-      await page.goto(guide.route)
+      await page.goto(step.route ?? guide.route)
       await settle(page)
       for (const action of step.actions) {
         await verifiedClick(page, action.click, locale)
         await settle(page)
       }
       const targets = step.targets.map(target => locate(page, target, locale))
-      await reveal(targets[0])
-      await page.waitForTimeout(150)
+      // Late content (a details pane filling in, a focus scroll) must not race the composition: wait until
+      // the targets stop moving, compose, then wait again before measuring.
+      await steady(page, targets)
+      await reveal(page, targets)
+      await steady(page, targets)
+      const size = viewports[viewport]
       const boxes = []
-      for (const target of targets) {
+      for (const [index, target] of targets.entries()) {
         const box = await target.boundingBox()
-        if (!box) throw new Error('target_not_visible:' + targets.indexOf(target))
-        boxes.push(box)
+        if (!box) throw new Error('target_not_visible:' + index)
+        // A ring is drawn only for a target that is on screen; the first target must always be.
+        const onScreen = box.y + box.height > 0 && box.y < size.height - footerHeight && box.x + box.width > 0 && box.x < size.width
+        if (!onScreen && index === 0) throw new Error('target_off_screen:0')
+        if (onScreen) boxes.push(box)
       }
       const domText = (await page.locator('body').innerText()).replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim().slice(0, 20000)
       const findings = scanDomText(domText, secrets)
@@ -216,7 +257,25 @@ async function capture(page: Page, blank: Page, key: string, locale: ScreenshotL
       const masks = [page.locator('time'),
         page.getByText(/\b\d{4}-\d{2}-\d{2}\b|\b\d{1,2}[./]\d{1,2}[./]\d{2,4}\b|\b\d{1,2}:\d{2}\b/),
         page.getByText(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|\b[0-9a-f]{8}…/i)]
-      const png = await page.screenshot({ animations: 'disabled', caret: 'hide', scale: 'css', mask: masks, maskColor: '#c8cdd3' })
+      // Masks are painted in the page itself (not as a screenshot layer), so they keep the page's stacking
+      // order: a sticky header or the commit footer still covers a masked value scrolled beneath it.
+      // The masked value is also replaced by a fixed-width placeholder, so a timestamp whose length varies
+      // between runs (trailing fractional-second digits) cannot shift the layout or the mask width.
+      for (const mask of masks) await mask.evaluateAll(nodes => {
+        const value = /\d{4}-\d{2}-\d{2}(?:[T ]\d{1,2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:?\d{2})?)?|\b\d{1,2}[./]\d{1,2}[./]\d{2,4}(?:,? \d{1,2}:\d{2}(?::\d{2})?)?|\b\d{1,2}:\d{2}(?::\d{2}(?:\.\d+)?)?\b|[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|\b[0-9a-f]{8}…/gi
+        for (const node of nodes) {
+          const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT)
+          for (let text = walker.nextNode(); text; text = walker.nextNode())
+            text.textContent = node.tagName === 'TIME' ? (text.textContent?.trim() ? '0000-00-00 00:00' : text.textContent) : text.textContent!.replace(value, '0000-00-00 00:00')
+        }
+        for (const node of nodes) for (const element of [node, ...node.querySelectorAll('*')] as HTMLElement[]) {
+          for (const [property, value] of [['color', 'transparent'], ['-webkit-text-fill-color', 'transparent'], ['background', '#c8cdd3'],
+            ['border-color', 'transparent'], ['box-shadow', 'none'], ['text-shadow', 'none'], ['fill', 'transparent'], ['stroke', 'transparent']])
+            element.style.setProperty(property, value, 'important')
+        }
+      })
+      // Deterministic palette reduction (png-palette.ts) in every mode, so compare diffs like against like.
+      const png = paletteScreenshot(await page.screenshot({ animations: 'disabled', caret: 'hide', scale: 'css' }))
       await page.evaluate(() => document.getElementById('poseidon-doc-overlay')?.remove())
       shot.bytes = png.length
       // Viewports not committed to the repository (see steps.json committedViewports) are written to the
@@ -246,11 +305,14 @@ async function capture(page: Page, blank: Page, key: string, locale: ScreenshotL
 async function discover(page: Page, key: string, locale: ScreenshotLocale) {
   mkdirSync(resolve(privateRoot, 'screenshot-discovery'), { recursive: true })
   const guide = mapping.guides[key]
-  // The bare route plus the state after each step's own preparation actions (if any).
-  for (const step of [{ step: 0, actions: [] as typeof guide.steps[number]['actions'] }, ...guide.steps.filter(item => item.actions.length)]) {
+  // The bare route plus every distinct step route, and the state after each step's own preparation actions.
+  const routes = [...new Set(guide.steps.flatMap(item => item.route ? [item.route] : []))]
+  for (const step of [{ step: 0, route: guide.route, actions: [] as typeof guide.steps[number]['actions'] },
+    ...routes.map((route, index) => ({ step: 100 + index, route, actions: [] as typeof guide.steps[number]['actions'] })),
+    ...guide.steps.filter(item => item.actions.length)]) {
     const name = `${locale}/${key}/${step.step}`
     try {
-      await page.goto(guide.route)
+      await page.goto(step.route ?? guide.route)
       await settle(page)
       for (const action of step.actions) {
         await verifiedClick(page, action.click, locale)
@@ -264,7 +326,11 @@ async function discover(page: Page, key: string, locale: ScreenshotLocale) {
   }
 }
 
-try {
+/**
+ * One fresh browser context and real sign-in per (viewport, locale) block: the app session has a fixed
+ * 30-minute lifetime without sliding renewal, and a full two-viewport run takes longer than that.
+ */
+async function session(viewport: ViewportName, locale: ScreenshotLocale, work: (page: Page, blank: Page) => Promise<void>) {
   const owned = await strictContext({ baseURL: labRuntimeFromEnvironment().appOrigin, viewport: viewports.desktop, reducedMotion: 'reduce', colorScheme: 'light' })
   try {
     const page = await owned.context.newPage()
@@ -272,24 +338,23 @@ try {
     page.setDefaultNavigationTimeout(30_000)
     await login(page, 'lab-manager', '/app/today')
     await page.clock.setFixedTime(new Date(fixedClock))
+    // Sign in on the desktop layout (the sign-in entry it asserts), then switch to the captured viewport.
+    await page.setViewportSize(viewports[viewport])
     const blank = await owned.context.newPage()
     await blank.goto('about:blank')
-    const keys = Object.keys(mapping.guides).filter(key => !onlyGuide || key === onlyGuide)
-    if (mode === 'discover') {
-      for (const locale of screenshotLocales) {
-        await prepare(page, locale)
-        for (const key of keys) await discover(page, key, locale)
-      }
-    } else {
-      for (const viewport of runViewports) {
-        await page.setViewportSize(viewports[viewport])
-        for (const locale of screenshotLocales) {
-          await prepare(page, locale)
-          for (const key of keys) await capture(page, blank, key, locale, viewport)
-        }
-      }
-    }
+    await prepare(page, locale)
+    await work(page, blank)
   } finally { await owned.close() }
+}
+
+try {
+  const keys = Object.keys(mapping.guides).filter(key => !onlyGuide || key === onlyGuide)
+  if (mode === 'discover') {
+    for (const locale of screenshotLocales) await session('desktop', locale, async page => { for (const key of keys) await discover(page, key, locale) })
+  } else {
+    for (const viewport of runViewports) for (const locale of screenshotLocales)
+      await session(viewport, locale, async (page, blank) => { for (const key of keys) await capture(page, blank, key, locale, viewport) })
+  }
   const bad = report.shots.filter(shot => !['written', 'match', 'discovered'].includes(shot.result))
   report.status = bad.length ? 'failed' : 'passed'
 } catch (error) {

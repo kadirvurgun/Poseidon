@@ -1,10 +1,11 @@
 {
  "schemaVersion": "poseidon.help.screenshot-provenance.v2",
  "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
- "commit": "ffabd677418b73f964e85faf458946dc850eda91",
+ "commit": "426292077c468c0856c7b15db77f243c6141fd0e",
  "generatorBlobs": {
-  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "91ab4199809e7d12deb54f371232749e96fc1ade",
-  "frontend/src/help/screenshots/steps.json": "a0400619a48fe8d0f9811b031bc8f5d4a05d7cfc"
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "438630399fb470fd06a4946bb772746698fe3fa7",
+  "tests/Poseidon.Browser.Tests/screenshots/png-palette.ts": "3a0f780074c6da126fc96cee0869800475e2709d",
+  "frontend/src/help/screenshots/steps.json": "5239b1cd352b1a5882e079f96e408f981587e66f"
  },
  "dirty": false,
  "key": "tug-command",
@@ -16,11 +17,11 @@
   "DemoFixtureCommand"
  ],
  "tenant": "Synthetic Fleet A",
- "fixedClock": "2026-11-22T09:00:00.000Z",
+ "fixedClock": "2026-11-22T00:00:00.000Z",
  "png": {
-  "sha256": "4c697751d347147c957102991a03be4605908f79ceb9c6b50c95e169dc6b843e",
+  "sha256": "a7a56e66fbc6fa8cb3f7b6a36cfb1de4662eed89594ea65cee01ff25cf4ee601",
   "width": 1440,
   "height": 900
  },
- "domText": "Ana içeriğe geç\nPOSEIDON\nRömorkör operasyonları\nGörünüm\nÇalışma alanında ara\nDil seçin\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nDEMO-TUG · Synthetic Tug A\nGemi modu: Römorkör\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\nPOSEIDON\nDENİZCİLİK OPERASYONLARI\nÇalışma görünümü\nMenüde ara\n\nYalnızca açmaya yetkili olduğunuz ekranlarda arar.\n\nGenel bakış\nRömorkör operasyonları\nRömorkör merkezi\nİş panosu\nİş talebi\nRömorkör atama\nRömorkör hazırlık kapısı\nÇekme ekipmanı hazırlığı\nRömorkör mürettebat yetkinliği\nRömorkaj operasyon planı\nRömorkaj risk ve brifing\nRömorkör operasyon geçmişi\nRömorkör çevrimdışı operasyonlar\nRömorkör demo yolculuğu\nUyum ve güvence\nÇalışma alanı\nSY\nSynthetic Fleet A\nYetkili çalışma alanı\n\nRÖMORKÖR OPERASYONLARI\n\nRömorkör operasyonları\n\nTalepler, taslak planlar ve güncel kaynak bağlamı.\n\nYalnız taslak beyanlar. Taslak planlama; operasyonel atama, uygunluk, izin ve emniyet onayından ayrıdır.\n\nRömorkör bağlamı: DEMO-TUG · Synthetic Tug A · Tug\n\nRömorkör bağlamı\nİş panosu\nRömorkör bağlamı\nKaynak beyanları · operasyonel hazırlık bilinmiyor\nRol (sunucu ataması)\nBilinmiyor — rol ataması yok\nRömorkör modu menü merceği\nBilinmiyor — rol ataması yok\nRol referansları\nBilinmiyor\nMod görünürlüğü\nModlar arası yetki beyan edilmiş; her hedef sunucu yetkisi gerektirir.\nRömorkör tipi\nKullanılamıyor\nTip kaynağı / sürümü\nKullanılamıyor\nTip kaynak gözlemi / politikası\nBilinmiyor / Kullanılamıyor\nProfil BP (doğrulanmamış)\n65.00 · ton\nBP kaynağı / sürümü / niteliği\nTugProfile / 860 / Eski profil ölçümü, doğrulanmamış\nBP güncelliği / gözlemi\nBilinmiyor / Bilinmiyor\nEkipman bağlamı\n\nKullanılamıyor\n\nEkipman kaynağı kullanılamıyor veya yetki verilmemiş. Envanterin boş olduğu varsayılmaz.\n\nGemi Modu ekranları\n\nMod-arası rol beyan edilmiş ancak hiçbir Gemi Modu ekranı yetkilendirilmemiş.\n\nDoğrulanmış ölçüm, sertifika, ekip ve operasyonel atama girdileri kullanılamıyor"
+ "domText": "Ana içeriğe geç\nPOSEIDON\nRömorkör operasyonları\nGörünüm\nÇalışma alanında ara\nDil seçin\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nDEMO-TUG · Synthetic Tug A\nGemi modu: Römorkör\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\nPOSEIDON\nDENİZCİLİK OPERASYONLARI\nÇalışma görünümü\nMenüde ara\n\nYalnızca açmaya yetkili olduğunuz ekranlarda arar.\n\nGenel bakış\nGemi operasyonları\nTeknik ve bakım\nRömorkör operasyonları\nRömorkör merkezi\nİş panosu\nİş talebi\nRömorkör atama\nRömorkör hazırlık kapısı\nÇekme ekipmanı hazırlığı\nRömorkör mürettebat yetkinliği\nRömorkaj operasyon planı\nRömorkaj risk ve brifing\nRömorkör operasyon geçmişi\nRömorkör çevrimdışı operasyonlar\nRömorkör demo yolculuğu\nUyum ve güvence\nÇalışma alanı\nSY\nSynthetic Fleet A\nYetkili çalışma alanı\n\nRÖMORKÖR OPERASYONLARI\n\nRömorkör operasyonları\n\nTalepler, taslak planlar ve güncel kaynak bağlamı.\n\nYalnız taslak beyanlar. Taslak planlama; operasyonel atama, uygunluk, izin ve emniyet onayından ayrıdır.\n\nRömorkör bağlamı: DEMO-TUG · Synthetic Tug A · Tug\n\nRömorkör bağlamı\nİş panosu\nRömorkör bağlamı\nKaynak beyanları · operasyonel hazırlık bilinmiyor\nRol (sunucu ataması)\nBilinmiyor — rol ataması yok\nRömorkör modu menü merceği\nBilinmiyor — rol ataması yok\nRol referansları\nBilinmiyor\nMod görünürlüğü\nModlar arası yetki beyan edilmiş; her hedef sunucu yetkisi gerektirir.\nRömorkör tipi\nKullanılamıyor\nTip kaynağı / sürümü\nKullanılamıyor\nTip kaynak gözlemi / politikası\nBilinmiyor / Kullanılamıyor\nProfil BP (doğrulanmamış)\n65.00 · ton\nBP kaynağı / sürümü / niteliği\nTugProfile / 861 / Eski profil ölçümü, doğrulanmamış\nBP güncelliği / gözlemi\nBilinmiyor / Bilinmiyor\nEkipman bağlamı\n\nYalnız taslak beyanlar\n\nBilinmiyor · Equipment · r1 · Sentetik, doğrulanmamış\n30000000-0000-0000-0000-000000000002\nGemi Modu ekranları\nÖğle raporu\n\nDoğrulanmış ölçüm, sertifika, ekip ve operasyonel atama girdileri kullanılamıyor"
 }

@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { allowedClicks, shotName, validateClick, validateMapping, validateTarget } from './steps.ts'
+import { allowedClicks, shotName, unavailableReasons, validateClick, validateMapping, validateTarget } from './steps.ts'
 
 // USER-GUIDE-01 UG-2: closed step-mapping schema; a screenshot run can only perform allow-listed clicks.
 const committed = JSON.parse(readFileSync(resolve(import.meta.dirname, '../../../frontend/src/help/screenshots/steps.json'), 'utf8'))
@@ -12,9 +12,29 @@ const withClick = (click: unknown) => { const mapping = clone(); mapping.guides.
 
 test('the committed mapping is valid and only marks steps unavailable for an explicit reason', () => {
   const mapping = validateMapping(committed)
-  assert.deepEqual(Object.keys(mapping.guides).sort(), ['companies', 'fleet', 'today', 'tug-command', 'tug-job-board', 'user-admin'])
+  assert.deepEqual(Object.keys(mapping.guides).sort(), ['audit', 'certificate-command-center', 'companies', 'departure-signoff', 'fleet',
+    'noon-report', 'safety-events', 'today', 'tug-command', 'tug-daily-log', 'tug-job-board', 'user-admin', 'work-order-center'])
+  assert.deepEqual([...mapping.committedViewports].sort(), ['desktop', 'mobile'])
   for (const guide of Object.values(mapping.guides))
-    for (const step of guide.steps) if (step.unavailable) assert.equal(step.unavailable, 'write_permission_required')
+    for (const step of guide.steps) if (step.unavailable) assert.ok(unavailableReasons.includes(step.unavailable), step.unavailable)
+  // Steps that need a write, triage, review or decision grant stay explicitly unavailable (never staged).
+  const reason = (key: string, step: number) => mapping.guides[key].steps[step - 1].unavailable
+  assert.equal(reason('departure-signoff', 8), 'write_permission_required')
+  for (const step of [2, 3, 4, 5, 6, 7, 8, 9]) assert.equal(reason('safety-events', step), 'write_permission_required')
+  assert.equal(reason('audit', 4), 'record_selection_not_allowlisted')
+})
+
+test('a step route is an app path like the guide route and is not allowed on an unavailable step', () => {
+  const ok = clone(); ok.guides.today.steps[0].route = '/app/today'
+  validateMapping(ok)
+  for (const route of ['https://example.invalid/app/today', '/app/today?id=1', '/app/today#x', '/api/v1/workspace', '/app/Today']) {
+    const bad = clone(); bad.guides.today.steps[0].route = route
+    assert.throws(() => validateMapping(bad), /route:today:1/, route)
+  }
+  const hidden = clone(); hidden.guides['tug-job-board'].steps[5].route = '/app/tug-job-board'
+  assert.throws(() => validateMapping(hidden), /unavailable/)
+  const reason = clone(); reason.guides['tug-job-board'].steps[5].unavailable = 'not_needed'
+  assert.throws(() => validateMapping(reason), /unavailable/)
 })
 
 test('rejects CSS selectors, unknown fields, missing locales and non-sequential steps', () => {
@@ -45,7 +65,8 @@ test('every allow-listed click is accepted with its exact names, optionally scop
 test('clicks outside the allow-list are rejected, including destructive words in both languages (QA N1)', () => {
   const words = ['Save', 'Kaydet', 'Create membership', 'Üyelik oluştur', 'Suspend', 'Askıya al', 'Revoke membership', 'Approve', 'Sign out',
     'Submit', 'Grant', 'Yetki ver', 'Confirm', 'Onayla', 'Assign', 'Ata', 'Remove', 'Kaldır', 'Reject', 'Reddet', 'Add', 'Ekle', 'Add member',
-    'İmzala', 'İptal', 'İçe aktar', 'Çıkış', 'Çıkış yap', 'Delete', 'Sil']
+    'İmzala', 'İptal', 'İçe aktar', 'Çıkış', 'Çıkış yap', 'Delete', 'Sil', 'Record', 'Kaydet', 'Record Master decision', 'Release', 'Hold', 'Deny',
+    'Record triage', 'Report an event', 'Save draft', 'New draft', 'Release work order', 'Record verification', 'Filter', 'Refresh']
   for (const word of words) {
     assert.throws(() => validateClick(button(word)), /click_not_allowed/, word)
     assert.throws(() => validateMapping(withClick(button(word))), /click_not_allowed/, word)

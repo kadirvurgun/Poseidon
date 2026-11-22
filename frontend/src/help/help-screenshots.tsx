@@ -7,19 +7,32 @@ import type { HelpLocale } from './help-model'
 // Only the URL strings are bundled; each PNG is a separate same-origin asset fetched lazily when the
 // step scrolls into view. PNGs are deliberately NOT in the offline shell inventory (it accepts only
 // js/css/woff2 and at most 128 entries), so offline the step shows a neutral text placeholder.
-const urls = import.meta.glob<string>('./screenshots/*/*/*-desktop.png', { eager: true, query: '?url', import: 'default' })
+const urls = import.meta.glob<string>('./screenshots/*/*/*-{desktop,mobile}.png', { eager: true, query: '?url', import: 'default' })
 
-export function helpScreenshotUrl(locale: HelpLocale, key: string, step: number): string | undefined {
-  return urls[`./screenshots/${locale}/${key}/${step}-desktop.png`]
+/**
+ * 65.03 p57-59: below 768 px the help panel is a full page, so the browser picks the 390x844 mobile
+ * capture there (same breakpoint as help-panel.css) and the 1440x900 desktop capture otherwise.
+ */
+export const mobileScreenshotMedia = '(max-width: 767px)'
+export type HelpScreenshotSources = { desktop: string; mobile?: string }
+
+export function helpScreenshotUrl(locale: HelpLocale, key: string, step: number): HelpScreenshotSources | undefined {
+  const desktop = urls[`./screenshots/${locale}/${key}/${step}-desktop.png`]
+  if (!desktop) return undefined
+  const mobile = urls[`./screenshots/${locale}/${key}/${step}-mobile.png`]
+  return mobile ? { desktop, mobile } : { desktop }
 }
 
 type Copy = { screenshotAlt: string; screenshotOffline: string }
 
-export function HelpScreenshot({ src, step, t }: { src: string; step: number; t: Copy }) {
+export function HelpScreenshot({ src, step, t }: { src: HelpScreenshotSources; step: number; t: Copy }) {
   const [failed, setFailed] = useState(false)
   const offline = typeof navigator !== 'undefined' && navigator.onLine === false
   if (failed || offline) return <p className="help-guide-shot-offline" role="note">{t.screenshotOffline}</p>
   return <figure className="help-guide-shot">
-    <img src={src} alt={`${t.screenshotAlt} ${step}`} loading="lazy" decoding="async" width={1440} height={900} onError={() => setFailed(true)}/>
+    <picture>
+      {src.mobile && <source media={mobileScreenshotMedia} srcSet={src.mobile} width={390} height={844}/>}
+      <img src={src.desktop} alt={`${t.screenshotAlt} ${step}`} loading="lazy" decoding="async" width={1440} height={900} onError={() => setFailed(true)}/>
+    </picture>
   </figure>
 }

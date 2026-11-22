@@ -1,6 +1,11 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
-## Diller + kullanım kılavuzu paketi — resimli el kitabı, 14 dil kılavuz taslağı; QA notlarla, kapı CI bekleniyor (22.11.2026)
+## Mobil ekran görüntüleri paketi — 196 görüntü, 13 kılavuz; QA notlarla, kapı CI bekleniyor (22.11.2026)
+- `integration/help-mobile-20261122` (main c4915375 + `feature/help-screenshots-mobile-20261122`). Canonical sayım değişmez.
+- Masaüstü + mobil (390×844) TR/EN 196 PNG, köken kaydı 196/196; yardım paneli 768 px altında mobil görüntüyü gösterir; el kitabı 49 görüntü. Ayrıntı: `docs/phases/USER-GUIDE-01-UG2.md`.
+- Açık UI kusurları (görüntülerde görünür): mobil üst çubuğun arkası, bazı rozet örtüşmeleri, mobil onay kutusu boyutu, TR denetimde "Added".
+
+## Diller + kullanım kılavuzu paketi — resimli el kitabı, 14 dil kılavuz taslağı; #56 ile birleşti (22.11.2026)
 - `integration/help-locales-20261122` (taban main f4e44501, kılavuz paketi #55 sonrası). Canonical sayım değişmez: 114/121 iş, 932/970 SP.
 - UG-4 TR/EN resimli el kitabı üreticisi (HTML + PDF); UG-5 14 dil × 54 kılavuz makine taslağı ("gözden geçirilmedi" uyarısı, sayfa bazlı EN yedeği); kullanıcı/davet ekranı 14 dile çevrildi. Ayrıntı: `docs/phases/LOCALES-MANUAL-BUNDLE-20261122.md`.
 - Yerel: frontend 3075/3075, el kitabı 25/25, build çevrimdışı envanter 36/128. Açık: UG-6 insan onayı, mobil görüntüler.

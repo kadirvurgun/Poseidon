@@ -4,7 +4,7 @@ title: Centre des certificats
 roles: [Master, Chief Engineer / Technical Superintendent, Regulatory / Assurance]
 permissions: [certificate.read, certificate.write, certificate.extract, certificate.verify.record, file.read, directory.write]
 related: [renewal-workflow, pre-survey-checklist, survey-planner, audit]
-screenshots: []
+screenshots: [1, 2]
 reviewed: false
 ---
 ## À quoi sert cette page

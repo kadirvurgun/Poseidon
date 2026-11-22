@@ -1,0 +1,27 @@
+{
+ "schemaVersion": "poseidon.help.screenshot-provenance.v2",
+ "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
+ "commit": "426292077c468c0856c7b15db77f243c6141fd0e",
+ "generatorBlobs": {
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "438630399fb470fd06a4946bb772746698fe3fa7",
+  "tests/Poseidon.Browser.Tests/screenshots/png-palette.ts": "3a0f780074c6da126fc96cee0869800475e2709d",
+  "frontend/src/help/screenshots/steps.json": "5239b1cd352b1a5882e079f96e408f981587e66f"
+ },
+ "dirty": false,
+ "key": "noon-report",
+ "locale": "tr",
+ "step": 1,
+ "viewport": "mobile",
+ "datasets": [
+  "backend/seed/synthetic-demo.json",
+  "DemoFixtureCommand"
+ ],
+ "tenant": "Synthetic Fleet A",
+ "fixedClock": "2026-11-22T00:00:00.000Z",
+ "png": {
+  "sha256": "fac6f6b4fd90c9f53a8e68af92b18b44d586d4bfd59defd794b6a8b186c348ec",
+  "width": 390,
+  "height": 844
+ },
+ "domText": "Ana içeriğe geç\nÖğle raporu\nGörünüm\nDil seçin\nDEMO-SHIP\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nDEMO-SHIP · Synthetic Ship A\nGemi modu: Gemi\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\n\nGEMİ GÜNLÜK OPERASYONLARI\n\nÖğle raporu\n\nKayıtlı kaynak sürümleriyle kontrollü beyanlar. Taslak kaydı kaptan veya başmühendis onayı oluşturmaz.\n\nTaslak · beyanlar doğrulanmamış\nKontrollü kaynak referansları\n\nKaynak güncelliği doğrulanmamış. Çözülmemiş ölçüm birimleri ve kaynak seçimleri açıkça kullanılamaz durumda kalır.\n\nKayıtlı taslaklar\n\nBu sayfada yetkili günlük taslak dönmedi. Bu, günlük raporların tamamlandığına kanıt değildir.\n\nÖnceki taslaklar\nDiğer taslaklar\n\nTaslak veriler emisyon, yakıt güvencesi, grafik veya hazırlık sonucuna dönüştürülmez."
+}

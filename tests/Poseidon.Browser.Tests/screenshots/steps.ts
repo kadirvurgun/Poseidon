@@ -37,6 +37,9 @@ export const allowedClicks: ReadonlyArray<Readonly<{ kind: 'button' | 'disclosur
   { kind: 'button', name: { tr: 'Synthetic Operator A', en: 'Synthetic Operator A' } },
   { kind: 'button', name: { tr: 'Hesap add41584', en: 'Account add41584' } },
   { kind: 'button', name: { tr: 'Synthetic Ship A', en: 'Synthetic Ship A' } },
+  // Departure readiness: GET /api/v1/departure-readiness with the page's prefilled window; it reads and
+  // assesses, it never records a Master decision (that is the separate "Record" command, not listed).
+  { kind: 'button', name: { tr: 'Hazırlığı değerlendir', en: 'Assess readiness' } },
 ])
 export const clickKind = (target: ClickTarget) => 'disclosure' in target ? 'disclosure' as const : 'button' as const
 export const clickName = (target: ClickTarget): Localized => 'disclosure' in target ? target.disclosure : target.name
@@ -45,8 +48,15 @@ export const clickName = (target: ClickTarget): Localized => 'disclosure' in tar
  * the read-only screenshot enrollment deliberately lacks). It is listed explicitly instead of staging
  * a permission or state; the help panel shows the text step without an image.
  */
-export const unavailableReasons = Object.freeze(['write_permission_required'] as const)
-export type StepSpec = Readonly<{ step: number; actions: readonly Action[]; targets: readonly Target[]; unavailable?: (typeof unavailableReasons)[number] }>
+export const unavailableReasons = Object.freeze([
+  'write_permission_required',
+  /** The synthetic seed and demo fixtures hold no record this step needs (nothing is staged to fake one). */
+  'synthetic_record_unavailable',
+  /** Opening the record needs a click on a run-dependent name (an id or timestamp) outside the allow-list. */
+  'record_selection_not_allowlisted',
+] as const)
+/** Step `route` overrides the guide route (for example the vessel picker step versus a vessel's page). */
+export type StepSpec = Readonly<{ step: number; route?: string; actions: readonly Action[]; targets: readonly Target[]; unavailable?: (typeof unavailableReasons)[number] }>
 export type GuideSpec = Readonly<{ route: string; steps: readonly StepSpec[] }>
 export type ScreenshotMapping = Readonly<{
   schemaVersion: 'poseidon.help.screenshots.v1'
@@ -107,19 +117,23 @@ function validateAction(value: unknown): Action {
   return value as Action
 }
 
+/** Same-origin app path only: /app/<segments> with an optional ?vessel=<uuid>; no host, fragment or other query. */
+const validRoute = (route: unknown) => typeof route === 'string' && /^\/app(?:\/[a-z0-9-]+)+(?:\?vessel=[0-9a-f-]{36})?$/.test(route)
+
 export function validateMapping(value: unknown): ScreenshotMapping {
   if (!object(value) || value.schemaVersion !== 'poseidon.help.screenshots.v1' || !object(value.guides)) fail('root')
   const committed = value.committedViewports
   if (!Array.isArray(committed) || !committed.length || committed.some(item => !(item in viewports)) || new Set(committed).size !== committed.length) fail('viewports')
   for (const [key, guide] of Object.entries(value.guides)) {
     if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(key) || !object(guide)) fail('guide:' + key)
-    if (typeof guide.route !== 'string' || !/^\/app(?:\/[a-z0-9-]+)+(?:\?vessel=[0-9a-f-]{36})?$/.test(guide.route)) fail('route:' + key)
+    if (!validRoute(guide.route)) fail('route:' + key)
     if (!Array.isArray(guide.steps) || !guide.steps.length) fail('steps:' + key)
     guide.steps.forEach((step: unknown, index: number) => {
       if (!object(step) || step.step !== index + 1 || !Array.isArray(step.actions) || !Array.isArray(step.targets)) fail(`step:${key}:${index + 1}`)
-      if (Object.keys(step).some(field => !['step', 'actions', 'targets', 'unavailable'].includes(field))) fail(`step_field:${key}:${index + 1}`)
+      if (Object.keys(step).some(field => !['step', 'route', 'actions', 'targets', 'unavailable'].includes(field))) fail(`step_field:${key}:${index + 1}`)
+      if ('route' in step && !validRoute(step.route)) fail(`route:${key}:${index + 1}`)
       if ('unavailable' in step) {
-        if (!unavailableReasons.includes(step.unavailable as never) || step.actions.length || step.targets.length) fail(`unavailable:${key}:${index + 1}`)
+        if (!unavailableReasons.includes(step.unavailable as never) || step.actions.length || step.targets.length || 'route' in step) fail(`unavailable:${key}:${index + 1}`)
         return
       }
       if (!step.targets.length) fail(`targets:${key}:${index + 1}`)

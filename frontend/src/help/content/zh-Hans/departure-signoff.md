@@ -4,7 +4,7 @@ title: 开航就绪与船长签署
 roles: [Master, Shore Operations, Technical Superintendent]
 permissions: [departure.readiness.read, departure.decide]
 related: [today, fleet, defects, safety-events, certificate-command-center, data-trust-center]
-screenshots: []
+screenshots: [1, 2, 3, 4, 5, 6, 7, 9]
 reviewed: false
 ---
 ## 本页用途

@@ -7,7 +7,8 @@ import { createHash } from 'node:crypto'
 export const provenanceSchema = 'poseidon.help.screenshot-provenance.v2' as const
 export const generator = 'tests/Poseidon.Browser.Tests/screenshots/capture.ts' as const
 /** Generator inputs whose exact committed content a screenshot was produced with (QA N3). */
-export const generatorFiles = Object.freeze(['tests/Poseidon.Browser.Tests/screenshots/capture.ts', 'frontend/src/help/screenshots/steps.json'])
+export const generatorFiles = Object.freeze(['tests/Poseidon.Browser.Tests/screenshots/capture.ts', 'tests/Poseidon.Browser.Tests/screenshots/png-palette.ts',
+  'frontend/src/help/screenshots/steps.json'])
 
 /** Git blob id (SHA-1 of "blob <size>\0" + content) of the LF-normalised file, as `git hash-object` reports it. */
 export function gitBlobSha1(bytes: Uint8Array): string {

@@ -4,7 +4,7 @@ title: प्रस्थान तत्परता और मास्टर 
 roles: [Master, Shore Operations, Technical Superintendent]
 permissions: [departure.readiness.read, departure.decide]
 related: [today, fleet, defects, safety-events, certificate-command-center, data-trust-center]
-screenshots: []
+screenshots: [1, 2, 3, 4, 5, 6, 7, 9]
 reviewed: false
 ---
 ## यह पृष्ठ किसलिए है

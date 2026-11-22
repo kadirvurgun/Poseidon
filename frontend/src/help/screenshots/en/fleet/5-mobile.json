@@ -1,0 +1,27 @@
+{
+ "schemaVersion": "poseidon.help.screenshot-provenance.v2",
+ "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
+ "commit": "426292077c468c0856c7b15db77f243c6141fd0e",
+ "generatorBlobs": {
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "438630399fb470fd06a4946bb772746698fe3fa7",
+  "tests/Poseidon.Browser.Tests/screenshots/png-palette.ts": "3a0f780074c6da126fc96cee0869800475e2709d",
+  "frontend/src/help/screenshots/steps.json": "5239b1cd352b1a5882e079f96e408f981587e66f"
+ },
+ "dirty": false,
+ "key": "fleet",
+ "locale": "en",
+ "step": 5,
+ "viewport": "mobile",
+ "datasets": [
+  "backend/seed/synthetic-demo.json",
+  "DemoFixtureCommand"
+ ],
+ "tenant": "Synthetic Fleet A",
+ "fixedClock": "2026-11-22T00:00:00.000Z",
+ "png": {
+  "sha256": "a1c32696151d2f26d02275b58a56e02f33fef7414e92df0e8860f7b57de903b6",
+  "width": 390,
+  "height": 844
+ },
+ "domText": "Skip to main content\nFleet\nAppearance\nChoose language\nDEMO-SHIP\nSynthetic Fleet A\nCompany context:\nUnavailable\nDEMO-SHIP · Synthetic Ship A\nVessel mode: Ship\nRole context: Not assigned\nChange vessel context\nOnline\n\nMARITIME WORKSPACE\n\nFleet\n\nBrowse the records available in your workspace.\n\nCurrent vessel: Ship · Synthetic Ship A\nSwitch vessel\n\nWorkspace: Synthetic Fleet A\n\nSign out\nListed vessels\n2\nOn this page\nShips\n1\nOn this page\nTugs\n1\nOn this page\nEditable records\n0\nCurrent access on this page\nVessel composition\n\nVessel types in the returned list\n\n2 records\nShips: 1 · \nTugs: 1\n\nThis page only. Operational readiness is evaluated separately.\n\nWorkspace scope\n\nCurrent list and access context\n\nShips\n1\nTugs\n1\nRead-only records\n2\nNext page\nEnd of list\nSearch by code or name\nVessel type\nSearch\nCode Name Type\nDEMO-SHIP Synthetic Ship A Ship\nDEMO-TUG Synthetic Tug A Tug\nPage 1\nPrevious\nNext\nDetails\nClose\nRegulatory profile\nPilot vessel onboarding\nDigital compliance passport\nCode\nDEMO-SHIP\nName\nSynthetic Ship A\nType\nShip\nControlled import\nEquipment and maintenance\nCrew roster\nVessel attachments\nDocument drafts\nVessel files\n\nFile presence and a malware scan do not verify evidence or activate readiness.\n\nFile service unavailable or request rejected.\n\nRefresh files"
+}

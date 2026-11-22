@@ -22,6 +22,10 @@ class ScreenshotEnrollmentTests(unittest.TestCase):
         self.assertEqual({'mode.tug', 'mode.cross'}, set(shots.SCREENSHOT_VISIBILITY_SCOPES))
         self.assertEqual(set(shots.SCREENSHOT_PERMISSIONS), set(shots.SCREENSHOT_READ_PERMISSIONS) | set(shots.SCREENSHOT_VISIBILITY_SCOPES))
         self.assertFalse(any(p.endswith(('.write', '.manage', '.decide', '.approve', '.verify', '.sign')) for p in shots.SCREENSHOT_PERMISSIONS))
+        # Page-read grants only: never a report, triage, decision, release or verification capability.
+        for forbidden in ('hse.safety_event.report', 'hse.safety_event.triage', 'departure.decide', 'workorder.write',
+                          'workorder.release', 'workorder.verify', 'certificate.write', 'daily.noon.write', 'membership.manage'):
+            self.assertNotIn(forbidden, shots.SCREENSHOT_PERMISSIONS)
         self.assertEqual(original['Authentication']['Oidc']['Memberships'][1:], once['Authentication']['Oidc']['Memberships'][1:])
         self.assertEqual(original['ConnectionStrings'], once['ConnectionStrings'])
         self.assertEqual(original['Authentication']['Oidc']['ClientSecret'], once['Authentication']['Oidc']['ClientSecret'])

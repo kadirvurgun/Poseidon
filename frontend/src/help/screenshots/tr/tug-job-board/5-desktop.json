@@ -1,10 +1,11 @@
 {
  "schemaVersion": "poseidon.help.screenshot-provenance.v2",
  "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
- "commit": "ffabd677418b73f964e85faf458946dc850eda91",
+ "commit": "426292077c468c0856c7b15db77f243c6141fd0e",
  "generatorBlobs": {
-  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "91ab4199809e7d12deb54f371232749e96fc1ade",
-  "frontend/src/help/screenshots/steps.json": "a0400619a48fe8d0f9811b031bc8f5d4a05d7cfc"
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "438630399fb470fd06a4946bb772746698fe3fa7",
+  "tests/Poseidon.Browser.Tests/screenshots/png-palette.ts": "3a0f780074c6da126fc96cee0869800475e2709d",
+  "frontend/src/help/screenshots/steps.json": "5239b1cd352b1a5882e079f96e408f981587e66f"
  },
  "dirty": false,
  "key": "tug-job-board",
@@ -16,11 +17,11 @@
   "DemoFixtureCommand"
  ],
  "tenant": "Synthetic Fleet A",
- "fixedClock": "2026-11-22T09:00:00.000Z",
+ "fixedClock": "2026-11-22T00:00:00.000Z",
  "png": {
-  "sha256": "69ec7e2db4966fa7fb392353742e1b47a2344435118bbfae2fe6c2255f5b43db",
+  "sha256": "5256191d9aae6bc2e5e3d3dd64b30676450a916c20e697824343e7838985f432",
   "width": 1440,
   "height": 900
  },
- "domText": "Ana içeriğe geç\nPOSEIDON\nİş panosu\nGörünüm\nÇalışma alanında ara\nDil seçin\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nDEMO-TUG · Synthetic Tug A\nGemi modu: Römorkör\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\nPOSEIDON\nDENİZCİLİK OPERASYONLARI\nÇalışma görünümü\nMenüde ara\n\nYalnızca açmaya yetkili olduğunuz ekranlarda arar.\n\nGenel bakış\nRömorkör operasyonları\nRömorkör merkezi\nİş panosu\nİş talebi\nRömorkör atama\nRömorkör hazırlık kapısı\nÇekme ekipmanı hazırlığı\nRömorkör mürettebat yetkinliği\nRömorkaj operasyon planı\nRömorkaj risk ve brifing\nRömorkör operasyon geçmişi\nRömorkör çevrimdışı operasyonlar\nRömorkör demo yolculuğu\nUyum ve güvence\nÇalışma alanı\nSY\nSynthetic Fleet A\nYetkili çalışma alanı\n\nRÖMORKÖR OPERASYONLARI\n\nİş panosu\n\nTalepler, taslak planlar ve güncel kaynak bağlamı.\n\nYalnız taslak beyanlar. Taslak planlama; operasyonel atama, uygunluk, izin ve emniyet onayından ayrıdır.\n\nRömorkör bağlamı: DEMO-TUG · Synthetic Tug A · Tug\n\nRömorkör bağlamı\nİş panosu\nListelenen talepler\n1\nDönen bu sayfa\nKayıtlı engeller\n0\nGüncel engeli olan işler\nHazırlık incelemesi\n1\nDönen bu sayfa\nHazırlığı bilinmeyen\n0\nHazırlık sonucu çıkarılmaz\nTaleplerde ara\nÖncelik\nDurum\nZaman aralığı\nFiltreleri uygula\nPanoyu yenile\nGüncel taslak talepler\nPlanlama görünümü · UTC\nTaslak\nr1\nBilinmiyor\nTUG-SYN-30000000000000000000000000000002\n\nBilinmiyor\n\nBilinmiyor\nTalep aralığı · UTC\nBilinmiyor\nBilinmiyor\nBaşlangıç eksik\nTaslak plan aralığı · r1\nTaslak plan doğrulanmamış; operasyon onayı yok\nTaslak atamalar\n0 römorkör\nYalnız güncel taslak atamaları\nTalep edilen: Bilinmiyor\nGerekli BP\nBilinmiyor\nPlanlama kapasitesi: Bilinmiyor\nHazırlık\nİnceleme gerekli\nOperasyonel çakışma\nBilinmiyor\nSonraki adım: Taslağı tamamlayın\nİşi aç\nNeden / sonraki adım\nSayfa 1 · Sayılar yalnız bu sayfayı kapsar\nÖnceki\nSonraki"
+ "domText": "Ana içeriğe geç\nPOSEIDON\nİş panosu\nGörünüm\nÇalışma alanında ara\nDil seçin\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nDEMO-TUG · Synthetic Tug A\nGemi modu: Römorkör\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\nPOSEIDON\nDENİZCİLİK OPERASYONLARI\nÇalışma görünümü\nMenüde ara\n\nYalnızca açmaya yetkili olduğunuz ekranlarda arar.\n\nGenel bakış\nGemi operasyonları\nTeknik ve bakım\nRömorkör operasyonları\nRömorkör merkezi\nİş panosu\nİş talebi\nRömorkör atama\nRömorkör hazırlık kapısı\nÇekme ekipmanı hazırlığı\nRömorkör mürettebat yetkinliği\nRömorkaj operasyon planı\nRömorkaj risk ve brifing\nRömorkör operasyon geçmişi\nRömorkör çevrimdışı operasyonlar\nRömorkör demo yolculuğu\nUyum ve güvence\nÇalışma alanı\nSY\nSynthetic Fleet A\nYetkili çalışma alanı\n\nRÖMORKÖR OPERASYONLARI\n\nİş panosu\n\nTalepler, taslak planlar ve güncel kaynak bağlamı.\n\nYalnız taslak beyanlar. Taslak planlama; operasyonel atama, uygunluk, izin ve emniyet onayından ayrıdır.\n\nRömorkör bağlamı: DEMO-TUG · Synthetic Tug A · Tug\n\nRömorkör bağlamı\nİş panosu\nListelenen talepler\n1\nDönen bu sayfa\nKayıtlı engeller\n0\nGüncel engeli olan işler\nHazırlık incelemesi\n1\nDönen bu sayfa\nHazırlığı bilinmeyen\n0\nHazırlık sonucu çıkarılmaz\nTaleplerde ara\nÖncelik\nDurum\nZaman aralığı\nFiltreleri uygula\nPanoyu yenile\nGüncel taslak talepler\nPlanlama görünümü · UTC\nTaslak\nr1\nBilinmiyor\nTUG-SYN-30000000000000000000000000000002\n\nBilinmiyor\n\nBilinmiyor\nTalep aralığı · UTC\nBilinmiyor\nBilinmiyor\nBaşlangıç eksik\nTaslak plan aralığı · r1\nTaslak plan doğrulanmamış; operasyon onayı yok\nTaslak atamalar\n0 römorkör\nYalnız güncel taslak atamaları\nTalep edilen: Bilinmiyor\nGerekli BP\nBilinmiyor\nPlanlama kapasitesi: Bilinmiyor\nHazırlık\nİnceleme gerekli\nOperasyonel çakışma\nBilinmiyor\nSonraki adım: Taslağı tamamlayın\nİşi aç\nNeden / sonraki adım\nSayfa 1 · Sayılar yalnız bu sayfayı kapsar\nÖnceki\nSonraki"
 }
