@@ -47,7 +47,9 @@ The 52.02/54.01 rows are `candidate-unverified` source text, not an approved cat
   scan returning tenant ids (`IgnoreQueryFilters` on a context that never writes, keyed by no request input) — same
   pattern as the login lookup. Concurrency: claim = attempt count + lease (`LeaseUntil`) saved with the xmin token
   before sending; a lost claim skips the row. At-least-once: a crash after an accepted send can resend once after the
-  lease (documented, not exactly-once).
+  lease (documented, not exactly-once). QA M1/M2: a row at the attempt ceiling is finished `FAILED/smtp_retries_exhausted`;
+  row and tenant failures are isolated; tenants are visited round-robin; without a transport the dispatcher still sweeps
+  due rows to `NOT_CONFIGURED` every 5 minutes, and acceptance cancels a queued e-mail in its transaction.
 - **UA3-D06 — transport.** `IInvitationMailer`; default `SmtpInvitationMailer` (System.Net.Mail, no new dependency).
   Options `InvitationDelivery:{Enabled, PublicBaseUrl, SmtpHost, SmtpPort=587, Security=StartTls|None, From, UserName,
   PasswordReference, PollSeconds, BatchSize, LeaseSeconds, SendTimeoutSeconds}`. `Security=None` only for a loopback host
@@ -109,7 +111,7 @@ strings in all 17 catalogs (machine-drafted translations, not human-reviewed).
 ## Open items
 
 - No real SMTP server journey (only a recording mailer and an unreachable loopback port); implicit TLS (465) unsupported.
-- Data Protection key persistence is operator configuration; with ephemeral keys a restart turns queued rows into
+- **Production precondition:** Data Protection key persistence is operator configuration (no `PersistKeysTo*` in the repo); with ephemeral keys a restart turns queued rows into
   `FAILED/payload_unavailable` (fail closed, reissue needed).
 - At-least-once delivery (possible single duplicate after a crash mid-send).
 - E-mail body is fixed bilingual EN/TR plain text; not localized per recipient, not human-reviewed copy.

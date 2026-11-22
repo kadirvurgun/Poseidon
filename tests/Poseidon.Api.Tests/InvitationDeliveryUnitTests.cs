@@ -138,4 +138,15 @@ public sealed class InvitationDeliveryUnitTests
         // A lost key ring (another provider) fails closed instead of throwing.
         Assert.Null(new InvitationPayloadProtection(new EphemeralDataProtectionProvider()).Unprotect(tenant, delivery, payload));
     }
+
+    [Fact]
+    public void The_tenant_name_cannot_add_lines_or_fake_paragraphs_to_the_mail_body()
+    {
+        Assert.Equal("FICTIONAL Ltd Click here", SmtpInvitationMailer.OneLine("FICTIONAL\r\nLtd\u2028\u200BClick   here"));
+        Assert.Equal("", SmtpInvitationMailer.OneLine(" \r\n\t "));
+        Assert.Equal(120, SmtpInvitationMailer.OneLine(new string('x', 500)).Length);
+        var body = SmtpInvitationMailer.Body(new InvitationMailMessage(Recipient, Valid().Link(Token), DateTimeOffset.UnixEpoch, "FICTIONAL\r\n\r\nhttps://evil.example.invalid"));
+        Assert.Contains("(FICTIONAL https://evil.example.invalid)", body);
+        Assert.DoesNotContain("FICTIONAL\r\n", body);
+    }
 }

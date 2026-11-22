@@ -24,11 +24,16 @@ public sealed partial class DirectoryWorkspaceTests
         public ConcurrentQueue<InvitationMailMessage> Sent { get; } = new();
         public ConcurrentQueue<InvitationSendOutcome> Script { get; } = new();
         public bool Configured { get; set; } = true;
-        public Task<InvitationSendOutcome> SendAsync(InvitationMailMessage message, CancellationToken ct)
+        // Number of next sends that throw (a faulty transport); a hook that runs while a send is in flight.
+        public int Throws { get; set; }
+        public Func<Task>? DuringSend { get; set; }
+        public async Task<InvitationSendOutcome> SendAsync(InvitationMailMessage message, CancellationToken ct)
         {
+            if (Throws > 0) { Throws--; throw new InvalidOperationException("synthetic transport fault"); }
+            if (DuringSend is { } hook) { DuringSend = null; await hook(); }
             var outcome = Script.TryDequeue(out var next) ? next : InvitationSendOutcome.Accepted;
             if (outcome == InvitationSendOutcome.Accepted) Sent.Enqueue(message);
-            return Task.FromResult(outcome);
+            return outcome;
         }
     }
 
@@ -57,6 +62,22 @@ public sealed partial class DirectoryWorkspaceTests
         return await db.InvitationDeliveries.AsNoTracking().Where(d => d.MembershipId == membership).OrderBy(d => d.CreatedAt).ThenBy(d => d.Id).ToArrayAsync(Ct);
     }
 
+    // The fixture database is shared by the collection: rows a previous test left QUEUED would be picked up by this test's
+    // dispatcher. Each delivery test starts from no QUEUED rows (audited fixture write, before its host starts).
+    private async Task ResetQueuedDeliveries()
+    {
+        foreach (var tenant in seed.Tenants)
+        {
+            await using var db = Db(tenant.Id);
+            foreach (var row in await db.InvitationDeliveries.Where(d => d.State == "QUEUED").ToArrayAsync(Ct))
+            {
+                row.State = "CANCELLED"; row.LastErrorCode = InvitationDeliveryPolicy.ErrorInvitationClosed; row.ProtectedPayload = null;
+                row.LeaseUntil = null; row.CompletedAt = DateTimeOffset.UtcNow;
+            }
+            await db.SaveChangesAsync(Ct);
+        }
+    }
+
     private static async Task Dispatch(WebApplicationFactory<Program> host)
     {
         var dispatcher = host.Services.GetRequiredService<InvitationDeliveryDispatcher>();
@@ -73,6 +94,7 @@ public sealed partial class DirectoryWorkspaceTests
     public async Task An_invitation_email_is_queued_with_the_invitation_and_sent_by_the_attributed_system_dispatcher()
     {
         var mailer = new RecordingMailer();
+        await ResetQueuedDeliveries();
         await using var host = DeliveryHost(mailer);
         using var admin = await Member(host, "synthetic");
         var issued = await Invited(admin, InviteByEmail(InviteeEmail));
@@ -119,6 +141,7 @@ public sealed partial class DirectoryWorkspaceTests
         var mailer = new RecordingMailer();
         mailer.Script.Enqueue(InvitationSendOutcome.TransientFailure);
         mailer.Script.Enqueue(InvitationSendOutcome.PermanentFailure);
+        await ResetQueuedDeliveries();
         await using var host = DeliveryHost(mailer, clock);
         using var admin = await Member(host, "synthetic");
         var membership = (await Invited(admin, InviteByEmail(InviteeEmail))).Membership.Membership.Id;
@@ -143,6 +166,7 @@ public sealed partial class DirectoryWorkspaceTests
     [Trait("Requirement", "USER-ADMIN-03")]
     public async Task Without_a_transport_the_email_is_not_configured_and_the_copy_link_still_works()
     {
+        await ResetQueuedDeliveries();
         await using var host = DeliveryHost(null);
         using var admin = await Member(host, "synthetic");
         var settings = (await admin.GetFromJsonAsync<InvitationSettingsDto>("/api/v1/memberships/invitation-settings", Ct))!;
@@ -171,6 +195,7 @@ public sealed partial class DirectoryWorkspaceTests
     public async Task Reissue_and_revoke_cancel_a_queued_email_and_erase_its_payload()
     {
         var mailer = new RecordingMailer();
+        await ResetQueuedDeliveries();
         await using var host = DeliveryHost(mailer);
         using var admin = await Member(host, "synthetic");
         var first = await Invited(admin, InviteByEmail(InviteeEmail));
@@ -194,6 +219,7 @@ public sealed partial class DirectoryWorkspaceTests
     public async Task The_tenant_invitation_lifetime_is_bounded_permission_gated_audited_and_used_on_create()
     {
         var clock = new MembershipClock(new DateTimeOffset(2026, 11, 22, 8, 0, 0, TimeSpan.Zero));
+        await ResetQueuedDeliveries();
         await using var host = DeliveryHost(null, clock);
         using var admin = await Member(host, "synthetic");
         using var foreignAdmin = await Member(host, "other-tenant-admin");
@@ -236,5 +262,110 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(("Added", "User"), (added.Action, added.ActorType));
         Assert.Contains("\"48\"", added.ChangeSummary!, StringComparison.Ordinal);
         Assert.Contains(await db.MembershipCommandReceipts.AsNoTracking().ToArrayAsync(Ct), r => r.Action == "InvitationLifetimeUpdate");
+    }
+
+    // QA M1: a row whose fifth attempt was claimed but never finished is finished FAILED/exhausted, never claimed again,
+    // and a faulty transport on one row never stops the next row.
+    [Fact]
+    [Trait("Requirement", "USER-ADMIN-03")]
+    public async Task An_exhausted_or_faulty_row_never_stalls_the_dispatcher()
+    {
+        var mailer = new RecordingMailer();
+        await ResetQueuedDeliveries();
+        await using var host = DeliveryHost(mailer);
+        using var admin = await Member(host, "synthetic");
+        var stuck = (await Invited(admin, InviteByEmail(InviteeEmail))).Membership.Membership.Id;
+        // Simulate a crash after the 5th claim: Attempts already at the ceiling, still QUEUED (audited fixture write).
+        await using (var db = Db())
+        {
+            var row = await db.InvitationDeliveries.SingleAsync(d => d.MembershipId == stuck, Ct);
+            row.Attempts = InvitationDeliveryPolicy.MaxAttempts;
+            await db.SaveChangesAsync(Ct);
+        }
+        await Dispatch(host);
+        var exhausted = Assert.Single(await Deliveries(stuck));
+        Assert.Equal(("FAILED", InvitationDeliveryPolicy.MaxAttempts, "smtp_retries_exhausted", (string?)null),
+            (exhausted.State, exhausted.Attempts, exhausted.LastErrorCode, exhausted.ProtectedPayload));
+        Assert.Empty(mailer.Sent);
+
+        var faulty = (await Invited(admin, InviteByEmail("faulty@example.invalid"))).Membership.Membership.Id;
+        var healthy = (await Invited(admin, InviteByEmail("healthy@example.invalid"))).Membership.Membership.Id;
+        mailer.Throws = 1;
+        await Dispatch(host);
+        var states = (await Deliveries(faulty)).Concat(await Deliveries(healthy)).Select(d => (d.MembershipId, d.State, d.LastErrorCode)).ToArray();
+        // Exactly one row met the faulty transport and is retried; the other was sent in the same run.
+        Assert.Single(states, s => s.State == "QUEUED" && s.LastErrorCode == "smtp_transient");
+        Assert.Single(states, s => s.State == "SENT");
+        Assert.Single(mailer.Sent);
+    }
+
+    // QA M2: rows queued while a transport existed are swept to NOT_CONFIGURED (payload erased) once it is gone.
+    [Fact]
+    [Trait("Requirement", "USER-ADMIN-03")]
+    public async Task Rows_queued_before_the_transport_was_disabled_end_not_configured_with_the_payload_erased()
+    {
+        var mailer = new RecordingMailer();
+        await ResetQueuedDeliveries();
+        await using var host = DeliveryHost(mailer);
+        using var admin = await Member(host, "synthetic");
+        var issued = await Invited(admin, InviteByEmail(InviteeEmail));
+        Assert.Equal("QUEUED", issued.Membership.Membership.InvitationDeliveryState);
+        mailer.Configured = false;
+        await Dispatch(host);
+        var row = Assert.Single(await Deliveries(issued.Membership.Membership.Id));
+        Assert.Equal(("NOT_CONFIGURED", "not_configured", (string?)null), (row.State, row.LastErrorCode, row.ProtectedPayload));
+        Assert.Empty(mailer.Sent);
+        // The copy link from the response still works.
+        using var holder = await Invitee(host, "swept-holder");
+        using var accept = await Post(holder, "invitations/accept", new { token = issued.InvitationToken });
+        Assert.Equal(HttpStatusCode.OK, accept.StatusCode);
+    }
+
+    // QA M2: accepting an invitation cancels its queued e-mail in the acceptance transaction.
+    [Fact]
+    [Trait("Requirement", "USER-ADMIN-03")]
+    public async Task Accepting_an_invitation_cancels_its_queued_email_in_the_same_transaction()
+    {
+        var mailer = new RecordingMailer();
+        await ResetQueuedDeliveries();
+        await using var host = DeliveryHost(mailer);
+        using var admin = await Member(host, "synthetic");
+        var issued = await Invited(admin, InviteByEmail(InviteeEmail));
+        using var holder = await Invitee(host, "early-holder");
+        using (var accept = await Post(holder, "invitations/accept", new { token = issued.InvitationToken }))
+            Assert.Equal(HttpStatusCode.OK, accept.StatusCode);
+        var row = Assert.Single(await Deliveries(issued.Membership.Membership.Id));
+        Assert.Equal(("CANCELLED", "invitation_closed", (string?)null), (row.State, row.LastErrorCode, row.ProtectedPayload));
+        await Dispatch(host);
+        Assert.Empty(mailer.Sent);
+    }
+
+    // QA L6: a reissue committed while the old link is being sent wins; the dispatcher's late result never overwrites it.
+    [Fact]
+    [Trait("Requirement", "USER-ADMIN-03")]
+    public async Task A_reissue_racing_a_send_keeps_the_cancellation_and_queues_the_new_link()
+    {
+        var mailer = new RecordingMailer();
+        await ResetQueuedDeliveries();
+        await using var host = DeliveryHost(mailer);
+        using var admin = await Member(host, "synthetic");
+        var first = await Invited(admin, InviteByEmail(InviteeEmail));
+        var membership = first.Membership.Membership.Id;
+        mailer.DuringSend = async () =>
+        {
+            using var reissue = await Post(admin, $"memberships/{membership}/invitation", new { expectedVersion = first.Membership.Membership.Version, deliveryEmail = "second@example.invalid" });
+            Assert.Equal(HttpStatusCode.OK, reissue.StatusCode);
+        };
+        await Dispatch(host);
+        var rows = await Deliveries(membership);
+        Assert.Equal(2, rows.Length);
+        // The old row was cancelled by the reissue (xmin changed under the dispatcher): its SENT write lost the race.
+        Assert.Equal(("CANCELLED", (string?)null), (rows[0].State, rows[0].ProtectedPayload));
+        Assert.Equal("QUEUED", rows[1].State);
+        // The message that left during the race carries the superseded (now unusable) token.
+        Assert.Contains(Uri.EscapeDataString(first.InvitationToken!), Assert.Single(mailer.Sent).Link);
+        using var holder = await Invitee(host, "race-holder");
+        using var stale = await Post(holder, "invitations/accept", new { token = first.InvitationToken });
+        await AssertNeutral(stale);
     }
 }

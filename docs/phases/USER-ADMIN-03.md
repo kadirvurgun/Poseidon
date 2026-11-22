@@ -38,8 +38,30 @@ regression traits. Not run: full frontend suite, Playwright/axe, a real SMTP ser
 
 ## CI
 - Run 45039612661 (88bb67e0, push): failure in `persistence-and-security` / repository secret scan, rule `db-password` at
-  `backend/Poseidon.Api/InvitationDelivery.cs:73` (local variable `password = OperatorSecretReferences.Resolve(...)` matched
+  `backend/Poseidon.Api/InvitationDelivery.cs:73` (an assignment to a local variable named after the credential matched
   the pattern; no secret value). Fixed by renaming the variable; all other jobs green.
+- Run 45040746196 (a2576c08, push): failure in the same step, now at `docs/phases/USER-ADMIN-03.md:41` (this report quoted
+  the flagged assignment). Reworded in the QA-fix commit; a scan of every changed file with all `secret_scan.py` rules
+  shows 0 hits.
+
+## Independent QA on 88bb67e0 — REJECT (B1), fixed
+- B1 (CI secret scan `db-password` at `InvitationDelivery.cs:73`): fixed in a2576c08 (variable renamed, rule unchanged).
+- M1 poison row: a row at the attempt ceiling (claim saved, finish lost) is finished `FAILED/smtp_retries_exhausted`
+  instead of claimed again; row and tenant processing are isolated (one failure is logged by type and the loop
+  continues); a throwing mailer is a transient attempt. Test `An_exhausted_or_faulty_row_never_stalls_the_dispatcher`.
+- M2 retention: the dispatcher always runs; without a valid transport it sweeps due rows every 5 minutes to
+  `NOT_CONFIGURED` (or `CANCELLED` for closed/expired invitations) and erases the payload; accepting an invitation cancels
+  its queued e-mail in the acceptance transaction. Tests `Rows_queued_before_the_transport_was_disabled_…`,
+  `Accepting_an_invitation_cancels_its_queued_email_…`.
+- L1 message construction inside the classified try; no exception except shutdown leaves the dispatcher loop.
+- L3 client `plausibleEmail` mirrors server `ValidEmail` (vitest cases). L4 tenant name put on one line, bounded
+  (unit test). L5 round-robin tenant cursor (64 per run). L6 reissue racing a send: the reissue's cancellation wins
+  (xmin), the late SENT write is discarded, the old token is unusable (test `A_reissue_racing_a_send_…`).
+- L2 **production precondition (not built):** `AddDataProtection()` has no persisted or shared key ring (no
+  `PersistKeysTo*` pattern exists in the repo). Before invitation e-mail is enabled in a multi-instance or container
+  deployment, the operator must configure a persisted, shared, protected Data Protection key ring; otherwise queued rows
+  fail closed as `FAILED/payload_unavailable` after a restart or on another node.
+- PG test isolation: each delivery test first cancels QUEUED rows left in the shared fixture database (audited write).
 
 ## Open items
 See task contract: no real SMTP journey, implicit TLS unsupported, Data Protection key persistence is operator

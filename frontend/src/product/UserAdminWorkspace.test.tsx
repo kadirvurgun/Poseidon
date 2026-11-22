@@ -227,6 +227,10 @@ it('decodes delivery states and invitation settings strictly', () => {
   expect(plausibleEmail('invitee@example.invalid')).toBe(true)
   expect(plausibleEmail('Invitee <invitee@example.invalid>')).toBe(false)
   expect(plausibleEmail('invitee@example.invalid\r\nBcc: x@example.invalid')).toBe(false)
+  // QA L3: the same refusals as the server's ValidEmail.
+  for (const bad of ['.lead@example.invalid', 'trail.@example.invalid', 'dou..ble@example.invalid', 'a@example.123', 'a@-bad.example.invalid',
+    'a@[127.0.0.1]', 'ünï@example.invalid', 'a@b', ' a@example.invalid', 'x'.repeat(65) + '@example.invalid']) expect(plausibleEmail(bad)).toBe(false)
+  expect(plausibleEmail('first.last+tag@sub.example.invalid')).toBe(true)
 })
 
 it('shows e-mail delivery status on the list and never presents SENT as accepted', async () => {

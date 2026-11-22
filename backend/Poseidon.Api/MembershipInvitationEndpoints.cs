@@ -473,6 +473,8 @@ public static partial class MembershipEndpoints
             target.Membership.AccessRevision += 1;
             target.Invitation.Status = MembershipInvitationPolicy.Wire(InvitationStatus.Accepted);
             target.Invitation.ClosedAt = now;
+            // USER-ADMIN-03 (QA M2): an accepted invitation's queued e-mail is cancelled and its payload erased in this transaction.
+            await CancelQueuedDeliveries(db, membershipId, now, h.RequestAborted);
             await db.SaveChangesAsync(h.RequestAborted);
             db.MembershipCommandReceipts.Add(new MembershipCommandReceipt { TenantId = request.Tenant, ActorId = accountId, Key = request.Key!, Action = AcceptAction,
                 Fingerprint = fingerprint, ResourceId = membershipId, CommittedAt = now });

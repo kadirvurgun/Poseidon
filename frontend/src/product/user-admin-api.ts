@@ -194,8 +194,19 @@ export function decodeInvitationSettings(v: unknown): InvitationSettings {
   return { lifetimeHours: v.lifetimeHours, minHours: v.minHours, maxHours: v.maxHours, defaultHours: v.defaultHours, tenantValue: v.tenantValue, version: v.version,
     deliveryConfigured: v.deliveryConfigured, canManage: v.canManage }
 }
-// A narrow client-side shape check only; the server's check is authoritative (no display names, no header characters).
-export const plausibleEmail = (value: string) => value.length <= 254 && /^[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+$/.test(value)
+// Mirrors the server's InvitationDeliveryPolicy.ValidEmail (QA L3); the server stays authoritative. No display names,
+// quoted/IP-literal forms or header characters; no leading/trailing/doubled dot; labels 1-63 without edge hyphens; the
+// top-level label is not all digits; local part <= 64, whole address 3-254.
+export function plausibleEmail(value: string): boolean {
+  if (value.length < 3 || value.length > 254 || value.trim() !== value) return false
+  const at = value.indexOf('@')
+  if (at < 1 || at !== value.lastIndexOf('@') || at > 64 || at === value.length - 1) return false
+  // Printable ASCII only, without the server's forbidden <>,;"()[]\ characters.
+  if (!/^[\x21-\x7e]+$/.test(value) || /[<>,;"()[\]\\]/.test(value)) return false
+  const local = value.slice(0, at), labels = value.slice(at + 1).split('.')
+  if (local.startsWith('.') || local.endsWith('.') || local.includes('..')) return false
+  return labels.length >= 2 && labels.every(l => /^[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?$/.test(l)) && !/^\d+$/.test(labels[labels.length - 1])
+}
 
 export function decodeDelegations(v: unknown): Delegation[] {
   return list(v, d => {

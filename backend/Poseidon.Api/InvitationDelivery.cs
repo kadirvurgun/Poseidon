@@ -79,24 +79,26 @@ public sealed class SmtpInvitationMailer(InvitationDeliverySettings settings, IL
             }
             credential = new NetworkCredential(settings.UserName, secretValue);
         }
-        using var mail = new MailMessage(new MailAddress(settings.From!), new MailAddress(message.To))
-        {
-            Subject = "POSEIDON invitation / POSEIDON daveti",
-            Body = Body(message),
-            IsBodyHtml = false,
-            BodyEncoding = System.Text.Encoding.UTF8,
-            SubjectEncoding = System.Text.Encoding.UTF8,
-        };
-        using var client = new SmtpClient(settings.SmtpHost!, settings.SmtpPort)
-        {
-            EnableSsl = settings.Security == "StartTls",
-            DeliveryMethod = SmtpDeliveryMethod.Network,
-            UseDefaultCredentials = false,
-            Credentials = credential,
-            Timeout = settings.SendTimeoutSeconds * 1000,
-        };
         try
         {
+            // QA L1: message construction is inside the try, so a malformed address is a classified outcome, never an
+            // exception that escapes the dispatcher.
+            using var mail = new MailMessage(new MailAddress(settings.From!), new MailAddress(message.To))
+            {
+                Subject = "POSEIDON invitation / POSEIDON daveti",
+                Body = Body(message),
+                IsBodyHtml = false,
+                BodyEncoding = System.Text.Encoding.UTF8,
+                SubjectEncoding = System.Text.Encoding.UTF8,
+            };
+            using var client = new SmtpClient(settings.SmtpHost!, settings.SmtpPort)
+            {
+                EnableSsl = settings.Security == "StartTls",
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = credential,
+                Timeout = settings.SendTimeoutSeconds * 1000,
+            };
             await client.SendMailAsync(mail, ct);
             return InvitationSendOutcome.Accepted;
         }
@@ -121,10 +123,22 @@ public sealed class SmtpInvitationMailer(InvitationDeliverySettings settings, IL
 
     private static bool Permanent(SmtpStatusCode code) => (int)code is >= 500 and < 600;
 
+    // QA L4: the tenant name is administrator text; it is put on one line (control/format characters and line or paragraph
+    // separators become a space, runs of whitespace collapse) and bounded, so it cannot add lines or fake paragraphs.
+    internal static string OneLine(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return "";
+        var chars = value.Select(c => char.IsControl(c) || char.IsWhiteSpace(c) || char.GetUnicodeCategory(c) is UnicodeCategory.Format
+            or UnicodeCategory.LineSeparator or UnicodeCategory.ParagraphSeparator ? ' ' : c).ToArray();
+        var text = string.Join(' ', new string(chars).Split(' ', StringSplitOptions.RemoveEmptyEntries));
+        return text.Length <= 120 ? text : text[..120];
+    }
+
     internal static string Body(InvitationMailMessage m)
     {
         var expires = m.ExpiresAt.ToUniversalTime().ToString("yyyy-MM-dd HH:mm 'UTC'", CultureInfo.InvariantCulture);
-        var organisation = string.IsNullOrWhiteSpace(m.TenantName) ? "" : $" ({m.TenantName})";
+        var name = OneLine(m.TenantName);
+        var organisation = name.Length == 0 ? "" : $" ({name})";
         return $"You have been invited to POSEIDON{organisation}.\r\n" +
             $"Open the link below, sign in with your organisation account and accept the invitation. The link works once and expires on {expires}.\r\n\r\n" +
             $"{m.Link}\r\n\r\n" +
@@ -156,7 +170,7 @@ public sealed class InvitationPayloadProtection(IDataProtectionProvider provider
     }
 }
 
-public sealed record InvitationDispatchResult(string Status, int Sent, int Retried, int Failed, int Cancelled, int NotConfigured);
+public sealed record InvitationDispatchResult(string Status, int Sent, int Retried, int Failed, int Cancelled, int NotConfigured, int Errored = 0);
 
 // Dispatcher. Identity: the explicit system actor "system:invitation-delivery" (ActorType System, Source InvitationDelivery);
 // every state change is an audited SaveChanges write in the row's own tenant context. The only cross-tenant read is the due
@@ -165,7 +179,12 @@ public sealed class InvitationDeliveryDispatcher(IConfiguration configuration, I
     IInvitationMailer mailer, InvitationPayloadProtection protection, TimeProvider time, ILogger<InvitationDeliveryDispatcher> logger) : BackgroundService
 {
     public const string ActorId = "system:invitation-delivery";
+    // Tenants with due rows handled per run; the cursor rotates so no tenant starves behind lower tenant ids (QA L5).
+    internal const int TenantsPerRun = 64;
+    // Without a valid transport the dispatcher still sweeps due rows to NOT_CONFIGURED (QA M2), at a slower cadence.
+    internal static readonly TimeSpan UnconfiguredSweep = TimeSpan.FromMinutes(5);
     private readonly SemaphoreSlim gate = new(1, 1);
+    private Guid cursor = Guid.Empty;
 
     private PoseidonDbContext? Open(Guid tenant, string correlation)
     {
@@ -181,39 +200,64 @@ public sealed class InvitationDeliveryDispatcher(IConfiguration configuration, I
         try
         {
             var now = time.GetUtcNow();
-            Guid[] tenants;
+            Guid[] due;
             await using (var scan = Open(Guid.Empty, Guid.NewGuid().ToString("N")))
             {
                 if (scan == null) return new("Unavailable", 0, 0, 0, 0, 0);
-                tenants = await scan.InvitationDeliveries.IgnoreQueryFilters().AsNoTracking()
+                due = await scan.InvitationDeliveries.IgnoreQueryFilters().AsNoTracking()
                     .Where(d => d.State == "QUEUED" && d.NextAttemptAt <= now && (d.LeaseUntil == null || d.LeaseUntil < now))
-                    .Select(d => d.TenantId).Distinct().OrderBy(t => t).Take(64).ToArrayAsync(ct);
+                    .Select(d => d.TenantId).Distinct().OrderBy(t => t).ToArrayAsync(ct);
             }
-            int sent = 0, retried = 0, failed = 0, cancelled = 0, notConfigured = 0;
+            // QA L5: round-robin from the tenant after the last one handled.
+            var tenants = due.Where(t => t.CompareTo(cursor) > 0).Concat(due.Where(t => t.CompareTo(cursor) <= 0)).Take(TenantsPerRun).ToArray();
+            if (tenants.Length > 0) cursor = tenants[^1];
+            int sent = 0, retried = 0, failed = 0, cancelled = 0, notConfigured = 0, errored = 0;
             foreach (var tenant in tenants)
             {
-                await using var db = Open(tenant, Guid.NewGuid().ToString("N"));
-                if (db == null) return new("Unavailable", sent, retried, failed, cancelled, notConfigured);
-                var due = await db.InvitationDeliveries.AsNoTracking()
-                    .Where(d => d.State == "QUEUED" && d.NextAttemptAt <= now && (d.LeaseUntil == null || d.LeaseUntil < now))
-                    .OrderBy(d => d.NextAttemptAt).ThenBy(d => d.Id).Select(d => d.Id).Take(settings.BatchSize is >= 1 and <= 100 ? settings.BatchSize : 20).ToArrayAsync(ct);
-                foreach (var id in due)
+                ct.ThrowIfCancellationRequested();
+                // QA M1: one tenant's or one row's failure never stops the others; the error is logged by type only.
+                try
                 {
-                    ct.ThrowIfCancellationRequested();
-                    switch (await DeliverAsync(db, id, ct))
+                    await using var db = Open(tenant, Guid.NewGuid().ToString("N"));
+                    if (db == null) return new("Unavailable", sent, retried, failed, cancelled, notConfigured, errored);
+                    var rows = await db.InvitationDeliveries.AsNoTracking()
+                        .Where(d => d.State == "QUEUED" && d.NextAttemptAt <= now && (d.LeaseUntil == null || d.LeaseUntil < now))
+                        .OrderBy(d => d.NextAttemptAt).ThenBy(d => d.Id).Select(d => d.Id).Take(settings.BatchSize is >= 1 and <= 100 ? settings.BatchSize : 20).ToArrayAsync(ct);
+                    foreach (var id in rows)
                     {
-                        case InvitationDeliveryState.Sent: sent++; break;
-                        case InvitationDeliveryState.Queued: retried++; break;
-                        case InvitationDeliveryState.Failed: failed++; break;
-                        case InvitationDeliveryState.Cancelled: cancelled++; break;
-                        case InvitationDeliveryState.NotConfigured: notConfigured++; break;
+                        ct.ThrowIfCancellationRequested();
+                        InvitationDeliveryState? state;
+                        try { state = await DeliverAsync(db, id, ct); }
+                        catch (Exception e) when (Isolated(e, ct))
+                        {
+                            db.ChangeTracker.Clear();
+                            errored++;
+                            logger.LogWarning("Invitation delivery {DeliveryId} could not be processed ({ExceptionType}).", id, e.GetType().Name);
+                            continue;
+                        }
+                        switch (state)
+                        {
+                            case InvitationDeliveryState.Sent: sent++; break;
+                            case InvitationDeliveryState.Queued: retried++; break;
+                            case InvitationDeliveryState.Failed: failed++; break;
+                            case InvitationDeliveryState.Cancelled: cancelled++; break;
+                            case InvitationDeliveryState.NotConfigured: notConfigured++; break;
+                        }
                     }
                 }
+                catch (Exception e) when (Isolated(e, ct))
+                {
+                    errored++;
+                    logger.LogWarning("Invitation delivery for one tenant could not be processed ({ExceptionType}).", e.GetType().Name);
+                }
             }
-            return new(tenants.Length == 0 ? "Idle" : "Dispatched", sent, retried, failed, cancelled, notConfigured);
+            return new(tenants.Length == 0 ? "Idle" : "Dispatched", sent, retried, failed, cancelled, notConfigured, errored);
         }
         finally { gate.Release(); }
     }
+
+    // Everything except shutdown cancellation is isolated to its row/tenant.
+    private static bool Isolated(Exception e, CancellationToken ct) => !(e is OperationCanceledException && ct.IsCancellationRequested);
 
     // One row: claim (xmin-checked lease), check the invitation, send, record the outcome. Returns the resulting state, or
     // null when another instance holds the row.
@@ -235,6 +279,10 @@ public sealed class InvitationDeliveryDispatcher(IConfiguration configuration, I
             !MembershipInvitationPolicy.TryParse(payload.Token, out var tokenTenant, out var secret) || tokenTenant != row.TenantId ||
             MembershipInvitationPolicy.Hash(secret) != invitation.TokenHash)
             return await Finish(db, row, new(InvitationDeliveryState.Failed, null, InvitationDeliveryPolicy.ErrorPayloadUnavailable), now, ct);
+        // QA M1: a row whose last allowed attempt was claimed but never finished (crash or lost final write) is terminal,
+        // never claimed again past the ceiling.
+        if (row.Attempts >= InvitationDeliveryPolicy.MaxAttempts)
+            return await Finish(db, row, new(InvitationDeliveryState.Failed, null, InvitationDeliveryPolicy.ErrorExhausted), now, ct);
         // Claim: count the attempt and take a lease before sending (a crash after an accepted send can resend once
         // after the lease: at-least-once, documented).
         var attempt = row.Attempts + 1;
@@ -248,7 +296,12 @@ public sealed class InvitationDeliveryDispatcher(IConfiguration configuration, I
         {
             deadline.CancelAfter(TimeSpan.FromSeconds(settings.SendTimeoutSeconds + 5));
             try { outcome = await mailer.SendAsync(new InvitationMailMessage(payload.To, settings.Link(payload.Token), invitation.ExpiresAt, tenantName), deadline.Token); }
-            catch (OperationCanceledException) when (!ct.IsCancellationRequested) { outcome = InvitationSendOutcome.TransientFailure; }
+            catch (Exception e) when (!ct.IsCancellationRequested)
+            {
+                // Any transport fault (including a mailer that throws) is a transient attempt, never an escaped exception.
+                outcome = InvitationSendOutcome.TransientFailure;
+                if (e is not OperationCanceledException) logger.LogWarning("Invitation e-mail transport fault ({ExceptionType}).", e.GetType().Name);
+            }
         }
         var step = InvitationDeliveryPolicy.After(attempt, outcome, time.GetUtcNow());
         // A retry that would fall after the invitation expires is pointless: stop as expired instead.
@@ -273,9 +326,10 @@ public sealed class InvitationDeliveryDispatcher(IConfiguration configuration, I
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        // Without an explicit valid transport configuration the dispatcher performs no DB access; invitations created
-        // meanwhile are recorded NOT_CONFIGURED at creation and the copy-link flow stays available.
-        if (!settings.Valid()) return;
+        // QA M2: the dispatcher always runs. With a valid transport it sends every PollSeconds; without one (never configured,
+        // disabled or misconfigured after rows were queued) it sweeps due rows every 5 minutes to NOT_CONFIGURED (or
+        // CANCELLED for closed/expired invitations), erasing their payload, so nothing waits for a transport that is gone.
+        // Without a database connection it does nothing. No exception except shutdown leaves this loop (QA L1).
         while (!stoppingToken.IsCancellationRequested)
         {
             try
@@ -283,11 +337,12 @@ public sealed class InvitationDeliveryDispatcher(IConfiguration configuration, I
                 await RunOnceAsync(stoppingToken);
             }
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested) { break; }
-            catch (Exception e) when (PostgresFailure.IsDatabase(e) || e is InvalidOperationException or AuditUnavailableException)
+            catch (Exception e)
             {
                 logger.LogWarning("Invitation delivery dispatch is unavailable ({ExceptionType}).", e.GetType().Name);
             }
-            try { await Task.Delay(TimeSpan.FromSeconds(settings.PollSeconds), time, stoppingToken); }
+            var wait = mailer.Configured && settings.PollSeconds is >= 1 and <= 3600 ? TimeSpan.FromSeconds(settings.PollSeconds) : UnconfiguredSweep;
+            try { await Task.Delay(wait, time, stoppingToken); }
             catch (OperationCanceledException) { break; }
         }
     }
