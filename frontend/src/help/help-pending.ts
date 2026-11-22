@@ -3,8 +3,6 @@
 // when the list grows past its UG-1 baseline. A new navigation destination therefore needs its
 // TR + EN guide in the same change; it may not be parked here.
 export const pendingHelpKeys: ReadonlySet<string> = new Set([
-  'audit',
-  'certificate-command-center',
   'critical-spares',
   'data-trust-center',
   'deck-daily-log',
@@ -21,11 +19,7 @@ export const pendingHelpKeys: ReadonlySet<string> = new Set([
   'operational-downtime',
   'pms-command-center',
   'port-activity-sof',
-  'pre-survey-checklist',
-  'regulatory-review',
-  'renewal-workflow',
   'service-engineer-report',
-  'survey-planner',
   'system-health',
   'towage-execution',
   'towage-plan',
