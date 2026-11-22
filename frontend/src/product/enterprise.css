@@ -98,6 +98,10 @@
 .enterprise-shell button.primary-button, .enterprise-shell a.primary-button { border-color: var(--primary); background: var(--primary); color: var(--primary-foreground); font-weight: 550; min-height: 38px; padding: 9px 15px; margin: 16px 0 0; box-shadow: 0 2px 4px color-mix(in srgb, var(--shadow-color) 12%, transparent); }
 .enterprise-shell button.primary-button:hover:not(:disabled) { background: var(--primary); border-color: var(--primary); }
 .enterprise-shell input, .enterprise-shell textarea { border: 1px solid var(--input); border-radius: max(0px, calc(7px + var(--radius-delta))); min-height: 38px; padding: 8px 11px; font-size: 12px; background: var(--card); color: var(--foreground); box-shadow: 0 1px 2px color-mix(in srgb, var(--shadow-color) 3%, transparent); }
+/* Checkboxes/radios keep their native box size; the text-field padding/min-height above (and the coarse-pointer
+   44px rule) would otherwise inflate them into large empty squares. The surrounding label is the touch target. */
+.enterprise-shell input[type="checkbox"], .enterprise-shell input[type="radio"] { flex:0 0 18px; inline-size:18px; block-size:18px; min-height:18px; min-width:18px; margin:2px 0 0; padding:0; box-shadow:none; accent-color:var(--primary); }
+.enterprise-shell label:has(> input[type="checkbox"]), .enterprise-shell label:has(> input[type="radio"]) { display:inline-flex; flex-direction:row; align-items:flex-start; gap:10px; min-height:var(--control-height,40px); }
 .enterprise-shell input::placeholder, .enterprise-shell textarea::placeholder { color: var(--muted-foreground); }
 .enterprise-shell input:focus, .enterprise-shell select:focus, .enterprise-shell textarea:focus { border-color: var(--focus-ring); }
 .enterprise-shell label, .enterprise-shell legend { color: var(--foreground); font-size: 12px; font-weight: 550; }
@@ -220,7 +224,10 @@
   .product-shell.enterprise-shell > main { padding: 22px 18px 40px; }
   .product-shell.enterprise-shell .enterprise-sidebar { display:none; }
   .product-shell.enterprise-shell .enterprise-sidebar.is-open { display:flex; z-index: 30; width: min(290px, 85vw); box-shadow: 12px 0 60px color-mix(in srgb, var(--shadow-color) 27%, transparent); }
-  .enterprise-shell .enterprise-topbar { padding: 0 18px; min-height: 68px; }
+  /* Mobile QA note 1: the wrapped bar (breadcrumb, actions, context rows) is fully opaque and sized by its content,
+     so scrolled page text never shows through or below it as ghost text. */
+  .enterprise-shell .enterprise-topbar { padding: 0 18px; min-height: 68px; height: auto; align-content: flex-start; background: var(--card); backdrop-filter: none; box-shadow: 0 1px 0 var(--border); }
+  .enterprise-shell .enterprise-topbar > * { min-width: 0; max-width: 100%; }
   .enterprise-shell .enterprise-topbar .workspace-menu { display: inline-flex; min-height: 40px; }
   .enterprise-breadcrumb { min-height: 48px; gap: 7px; }
   .enterprise-breadcrumb > span { display: none; }
@@ -252,5 +259,5 @@
    (e.g. 200%/400% zoom) it scrolls with the page instead of occupying most of the screen. */
 html { scroll-padding-top: calc(var(--shell-sticky-offset, 0px) + 8px); }
 @media (max-height: 31.25rem) { .enterprise-shell .enterprise-topbar { position: relative; backdrop-filter: none; } }
-@media (pointer: coarse) { .enterprise-shell button, .enterprise-shell [data-slot="button"], .enterprise-shell select, .enterprise-shell input { min-height: 44px; } }
+@media (pointer: coarse) { .enterprise-shell button, .enterprise-shell [data-slot="button"], .enterprise-shell select, .enterprise-shell input:not([type="checkbox"]):not([type="radio"]) { min-height: 44px; } .enterprise-shell label:has(> input[type="checkbox"]), .enterprise-shell label:has(> input[type="radio"]) { min-height: 44px; align-items:center; } .enterprise-shell label:has(> input[type="checkbox"]) > input, .enterprise-shell label:has(> input[type="radio"]) > input { margin-top:0; } }
 @media (prefers-reduced-motion: reduce) { .enterprise-shell *, .enterprise-shell *::before, .enterprise-shell *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
