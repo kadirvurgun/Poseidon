@@ -88,6 +88,10 @@ async function verifiedClick(page: Page, target: ClickTarget, locale: Screenshot
 
 async function settle(page: Page) {
   await page.waitForLoadState('networkidle')
+  // A pane still announcing "Loading…" (role=status) or aria-busy resolves later (for example the vessel
+  // file list against the lab's absent file service); wait for it, bounded, so its end state is captured.
+  await page.waitForFunction(() => ![...document.querySelectorAll('[role="status"], [aria-busy="true"]')].some(node =>
+    node.getAttribute('aria-busy') === 'true' || /loading|yükleniyor/i.test(node.textContent ?? '')), undefined, { timeout: 10_000 }).catch(() => undefined)
   await page.evaluate(() => document.fonts.ready.then(() => undefined))
   await page.waitForTimeout(300)
 }
@@ -151,6 +155,10 @@ async function reveal(page: Page, targets: Locator[]) {
       }
       return bottom
     }
+    // Start from the top of every scroll container: a preparation click scrolls its button into view by
+    // an amount that depends on how far late content had rendered, which must not decide the composition.
+    for (const node of nodes) for (let container = node.parentElement; container; container = container.parentElement) container.scrollTop = 0
+    window.scrollTo(0, 0)
     const topmost = (list: Element[]) => list.reduce((best, node) => node.getBoundingClientRect().top < best.getBoundingClientRect().top ? node : best)
     const available = window.innerHeight - footerHeight - 4
     const all = union(nodes)
