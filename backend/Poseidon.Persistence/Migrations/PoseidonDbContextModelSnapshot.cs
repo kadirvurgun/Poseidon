@@ -9773,6 +9773,40 @@ namespace Poseidon.Persistence.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Poseidon.Persistence.RateLimitCounter", b =>
+                {
+                    b.Property<string>("Policy")
+                        .HasMaxLength(48)
+                        .HasColumnType("character varying(48)");
+
+                    b.Property<string>("PartitionHash")
+                        .HasMaxLength(64)
+                        .HasColumnType("character(64)")
+                        .IsFixedLength();
+
+                    b.Property<long>("Count")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("WindowIndex")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Policy", "PartitionHash");
+
+                    b.HasIndex("ExpiresAt");
+
+                    b.ToTable("RateLimitCounters", "ratelimit", t =>
+                        {
+                            t.HasCheckConstraint("CK_RateLimitCounters_Count", "\"Count\" >= 1 AND \"WindowIndex\" >= 0");
+
+                            t.HasCheckConstraint("CK_RateLimitCounters_Hash", "\"PartitionHash\" ~ '^[0-9a-f]{64}$'");
+
+                            t.HasCheckConstraint("CK_RateLimitCounters_Policy", "\"Policy\" ~ '^[a-z0-9][a-z0-9.-]{0,47}$'");
+                        });
+                });
+
             modelBuilder.Entity("Poseidon.Persistence.ReconciliationReport", b =>
                 {
                     b.Property<Guid>("TenantId")

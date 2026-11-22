@@ -1,5 +1,10 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
+## RATE-LIMIT-01 — paylaşımlı (PostgreSQL) hız sınırlama; YAZILDI, birim testleri yerelde geçti, PG testleri CI'da (22.11.2026)
+- `feature/rate-limit-20261122` (main 36d5d183). Canonical sayım değişmez. USER-ADMIN-02 açık maddesi "process-local limiter" kapatıldı (opt-in `RateLimiting:Store=Postgres`).
+- HMAC anahtarlı bölüm özeti (ham kimlik/IP/token saklanmaz), tek ifadeli atomik sayaç, sınırlı arka plan temizliği, mağaza yoksa yerel sınırlayıcıya loglu/metrikli geri dönüş, 429 + Retry-After. Ayrıntı: `docs/phases/RATE-LIMIT-01.md`.
+- Yerel: build 0 uyarı; Persistence 185/185, Domain 1650/1650, API birim 506/506. PG entegrasyon testleri DEFERRED (CI). Açık: davet oluşturma/login sınırı (sözleşme değişikliği), bağımsız QA.
+
 ## Mobil ekran görüntüleri paketi — 196 görüntü, 13 kılavuz; QA notlarla, kapı CI bekleniyor (22.11.2026)
 - `integration/help-mobile-20261122` (main c4915375 + `feature/help-screenshots-mobile-20261122`). Canonical sayım değişmez.
 - Masaüstü + mobil (390×844) TR/EN 196 PNG, köken kaydı 196/196; yardım paneli 768 px altında mobil görüntüyü gösterir; el kitabı 49 görüntü. Ayrıntı: `docs/phases/USER-GUIDE-01-UG2.md`.

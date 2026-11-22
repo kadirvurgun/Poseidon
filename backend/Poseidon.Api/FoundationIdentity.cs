@@ -282,7 +282,6 @@ public static class FoundationIdentity
         services.AddSingleton<ActorResolver>();
         services.AddSingleton<MembershipStateReader>();
         services.AddSingleton<ProvisionedIdentityLocator>();
-        services.AddSingleton<InvitationAttemptLimiter>();
         services.AddSingleton(new InvitationIdentityReference(settings.ClientSecret));
         services.AddScoped<ICurrentMembershipResolver, CurrentMembershipResolver>();
         services.AddAntiforgery(o =>

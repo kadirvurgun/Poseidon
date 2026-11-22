@@ -22,7 +22,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddSingleton<TimeProvider>(TimeProvider.System);
         // S11 WP-B DEV-072: operator retention configuration; unset = no pilot telemetry is collected.
         services.AddSingleton(configuration.GetSection("PilotTelemetry").Get<PilotTelemetrySettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
-        services.AddSingleton<PilotTelemetryRateLimiter>();
+        // RATE-LIMIT-01: shared (PostgreSQL) or in-process technical rate limiting for invitation and pilot telemetry.
+        services.AddSharedRateLimiting(configuration, hostEnvironment);
         // Pilot program kit: absent operator retention configuration leaves pilot feedback capture unavailable.
         services.AddSingleton(configuration.GetSection("PilotProgram").Get<PilotProgramSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<IProfileFreshnessPolicySource, UnconfiguredProfileFreshnessPolicy>();

@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using System.Globalization;
@@ -23,18 +22,15 @@ public sealed class PilotTelemetrySettings
         RetentionPolicyRef.All(c => char.IsAsciiLetterOrDigit(c) || c is '-' or '.' or '_' or ':' or '/');
 }
 
-// Technical abuse guard per (tenant, actor), not an approved quota: a fixed one-minute window.
-public sealed class PilotTelemetryRateLimiter(TimeProvider clock)
+// Technical abuse guard per (tenant, actor), not an approved quota: a fixed one-minute window. RATE-LIMIT-01: counted by
+// the SharedRateLimiter; the partition is a keyed HMAC of the tenant and actor ids, never the ids themselves.
+public sealed class PilotTelemetryRateLimiter(SharedRateLimiter limiter)
 {
     public const int RequestsPerMinute = 30;
-    private readonly ConcurrentDictionary<(Guid, Guid), (long Window, int Count)> windows = new();
-    public bool TryAcquire(Guid tenant, Guid actor)
-    {
-        var window = clock.GetUtcNow().ToUnixTimeSeconds() / 60;
-        if (windows.Count > 10_000) windows.Clear();
-        var next = windows.AddOrUpdate((tenant, actor), (window, 1), (_, x) => x.Window == window ? (window, x.Count + 1) : (window, 1));
-        return next.Count <= RequestsPerMinute;
-    }
+    public static readonly RateLimitPolicy Policy = new("pilot.telemetry", RequestsPerMinute, TimeSpan.FromMinutes(1));
+
+    public Task<RateLimitDecision> AcquireAsync(Guid tenant, Guid actor, CancellationToken cancellationToken) =>
+        limiter.AcquireAsync(Policy, [tenant.ToString("D"), actor.ToString("D")], cancellationToken);
 }
 
 // Process-local counters with closed labels only (OperationalTelemetry pattern): no tenant,
@@ -130,8 +126,8 @@ public static class PilotMetricsEndpoints
         catch (AntiforgeryValidationException) { return await Fail(h, CommandAction, 403, "csrf_invalid"); }
         var settings = Settings(h);
         if (!settings.Configured) return await Fail(h, CommandAction, 503, "retention_unconfigured");
-        if (!h.RequestServices.GetRequiredService<PilotTelemetryRateLimiter>().TryAcquire(actor.TenantId, actor.Id))
-            return await Fail(h, CommandAction, 429, "request_limit");
+        var limit = await h.RequestServices.GetRequiredService<PilotTelemetryRateLimiter>().AcquireAsync(actor.TenantId, actor.Id, ct);
+        if (!limit.Allowed) { RateLimitingRuntime.RetryAfter(h, limit); return await Fail(h, CommandAction, 429, "request_limit"); }
         var keys = h.Request.Headers["Idempotency-Key"];
         if (keys.Count != 1 || !Guid.TryParseExact(keys[0], "D", out var parsedKey) || parsedKey == Guid.Empty)
             return await Fail(h, CommandAction, 400, "invalid_idempotency_key");

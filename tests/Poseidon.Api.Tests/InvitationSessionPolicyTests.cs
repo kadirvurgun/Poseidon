@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Poseidon.Api;
+using Poseidon.Persistence;
 using Xunit;
 
 namespace Poseidon.Api.Tests;
@@ -72,35 +73,44 @@ public sealed class InvitationSessionPolicyTests
         Assert.Null(FoundationIdentity.InvitationSession(new ClaimsPrincipal(new ClaimsIdentity()), "/app/accept-invitation", settings, Now.AddHours(1), Now));
     }
 
+    private static InvitationAttemptLimiter Limiter(TimeProvider clock, int capacity = LocalRateLimitCounters.DefaultCapacity) =>
+        new(new SharedRateLimiter(RateLimitPartitionKeys.Ephemeral(), null, new LocalRateLimitCounters(clock, capacity), clock,
+            Microsoft.Extensions.Logging.Abstractions.NullLogger<SharedRateLimiter>.Instance));
+
+    private static RateLimitOutcome Try(InvitationAttemptLimiter limiter, string subject) =>
+        limiter.AcquireAsync(Issuer, subject, TestContext.Current.CancellationToken).GetAwaiter().GetResult().Outcome;
+
     [Fact]
     public void The_limiter_counts_per_identity_and_audits_only_the_first_refusal_of_a_window()
     {
         var clock = new Clock(Now);
-        var limiter = new InvitationAttemptLimiter(clock);
-        for (var i = 0; i < InvitationAttemptLimiter.AttemptsPerWindow; i++) Assert.Equal(InvitationAttempt.Allowed, limiter.TryAcquire(Issuer, "a"));
-        Assert.Equal(InvitationAttempt.Limited, limiter.TryAcquire(Issuer, "a"));
-        Assert.Equal(InvitationAttempt.LimitedRepeat, limiter.TryAcquire(Issuer, "a"));
-        Assert.Equal(InvitationAttempt.Allowed, limiter.TryAcquire(Issuer, "b"));
+        var limiter = Limiter(clock);
+        for (var i = 0; i < InvitationAttemptLimiter.AttemptsPerWindow; i++) Assert.Equal(RateLimitOutcome.Allowed, Try(limiter, "a"));
+        Assert.Equal(RateLimitOutcome.Limited, Try(limiter, "a"));
+        Assert.Equal(RateLimitOutcome.LimitedRepeat, Try(limiter, "a"));
+        Assert.Equal(RateLimitOutcome.Allowed, Try(limiter, "b"));
         clock.Now = clock.Now.AddMinutes(15);
-        Assert.Equal(InvitationAttempt.Allowed, limiter.TryAcquire(Issuer, "a"));
+        Assert.Equal(RateLimitOutcome.Allowed, Try(limiter, "a"));
     }
 
     [Fact]
     public void A_full_limiter_evicts_only_past_windows_and_never_resets_current_counters()
     {
         var clock = new Clock(Now);
-        var limiter = new InvitationAttemptLimiter(clock, capacity: 3);
-        for (var i = 0; i <= InvitationAttemptLimiter.AttemptsPerWindow; i++) limiter.TryAcquire(Issuer, "flooder");
-        Assert.Equal(InvitationAttempt.Allowed, limiter.TryAcquire(Issuer, "b"));
-        Assert.Equal(InvitationAttempt.Allowed, limiter.TryAcquire(Issuer, "c"));
+        var counters = new LocalRateLimitCounters(clock, capacity: 3);
+        var limiter = new InvitationAttemptLimiter(new SharedRateLimiter(RateLimitPartitionKeys.Ephemeral(), null, counters, clock,
+            Microsoft.Extensions.Logging.Abstractions.NullLogger<SharedRateLimiter>.Instance));
+        for (var i = 0; i <= InvitationAttemptLimiter.AttemptsPerWindow; i++) Try(limiter, "flooder");
+        Assert.Equal(RateLimitOutcome.Allowed, Try(limiter, "b"));
+        Assert.Equal(RateLimitOutcome.Allowed, Try(limiter, "c"));
         // Full with current-window identities: a new identity is refused (fail closed) and the flooder stays limited.
-        Assert.Equal(InvitationAttempt.LimitedRepeat, limiter.TryAcquire(Issuer, "d"));
-        Assert.Equal(InvitationAttempt.LimitedRepeat, limiter.TryAcquire(Issuer, "flooder"));
-        Assert.Equal(3, limiter.Tracked);
+        Assert.Equal(RateLimitOutcome.LimitedRepeat, Try(limiter, "d"));
+        Assert.Equal(RateLimitOutcome.LimitedRepeat, Try(limiter, "flooder"));
+        Assert.Equal(3, counters.Tracked);
         // Next window: stale entries are evicted for a new identity; nothing exceeds the capacity.
         clock.Now = clock.Now.AddMinutes(15);
-        Assert.Equal(InvitationAttempt.Allowed, limiter.TryAcquire(Issuer, "d"));
-        Assert.True(limiter.Tracked <= 3);
+        Assert.Equal(RateLimitOutcome.Allowed, Try(limiter, "d"));
+        Assert.True(counters.Tracked <= 3);
     }
 
     [Fact]

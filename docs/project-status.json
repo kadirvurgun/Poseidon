@@ -18636,5 +18636,29 @@
     "phase_reports": [
       "docs/phases/USER-GUIDE-01-UG2.md"
     ]
+  },
+  "rate_limit_01_20261122": {
+    "state": "AUTHORED_UNIT_VERIFIED_PG_DEFERRED_NOT_ACCEPTED",
+    "branch": "feature/rate-limit-20261122",
+    "base": "36d5d183",
+    "report": "docs/phases/RATE-LIMIT-01.md",
+    "closes": "USER-ADMIN-02 open item: process-local invitation limiter",
+    "verification": {
+      "build_release": "PASS_0_WARNINGS",
+      "pending_model_changes": "PASS_NONE",
+      "persistence_unit": "PASS_185_185",
+      "domain": "PASS_1650_1650",
+      "api_unit": "PASS_506_506",
+      "postgres_integration": "DEFERRED_TO_CI",
+      "api_integration": "DEFERRED_TO_CI",
+      "independent_qa": "PENDING",
+      "required_ci": "PENDING"
+    },
+    "open": [
+      "invitation create/reissue and /login limits need a public contract change",
+      "operator key provisioning and Store=Postgres rollout"
+    ],
+    "accepted_tasks_added": 0,
+    "accepted_story_points_added": 0
   }
 }
