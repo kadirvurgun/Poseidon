@@ -22,14 +22,16 @@ POSIX_DEPENDENCIES = ('libnspr4.so', 'libplc4.so', 'libplds4.so', 'libmozsqlite3
 
 
 def load_nss(bundle):
+    """Libraries exporting the NSS API: folded nss3.dll on Windows; libnss3.so + libsmime3.so on Linux."""
     if os.name == 'nt':
-        return c.CDLL(str(bundle / 'nss3.dll'))
+        return (c.CDLL(str(bundle / 'nss3.dll')),)
     # The bundle has no system install path; preload its own NSPR/NSS dependencies globally so
     # libnss3.so resolves them from this directory only (never a system NSS or certutil).
     for name in POSIX_DEPENDENCIES:
         if (bundle / name).is_file():
             c.CDLL(str(bundle / name), mode=c.RTLD_GLOBAL)
-    return c.CDLL(str(bundle / 'libnss3.so'), mode=c.RTLD_GLOBAL)
+    # Linux Firefox does not fold NSS: CERT_DecodeCertFromPackage lives in libsmime3.so.
+    return tuple(c.CDLL(str(bundle / name), mode=c.RTLD_GLOBAL) for name in ('libnss3.so', 'libsmime3.so'))
 
 
 def install(profile, executable, owner):
@@ -47,9 +49,11 @@ def install(profile, executable, owner):
     if pem.count(b'-----BEGIN CERTIFICATE-----') != 1:
         raise RuntimeError('single_owned_ca_required')
     with os.add_dll_directory(str(bundle)) if os.name == 'nt' else contextlib.nullcontext():
-        nss = load_nss(bundle)
+        libraries = load_nss(bundle)
         def api(name, result, *args):
-            f = getattr(nss, name)
+            f = next((getattr(lib, name) for lib in libraries if hasattr(lib, name)), None)
+            if f is None:
+                raise RuntimeError('nss_symbol')
             f.restype, f.argtypes = result, list(args)
             return f
         init = api('NSS_InitReadWrite', c.c_int, c.c_char_p)
