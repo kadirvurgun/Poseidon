@@ -64,11 +64,19 @@ session and not POSEIDON requirements; the binding requirements are the 52.02/54
   attribution, account id = actor id); moving a person to another organisation needs an operator procedure (open item).
   Enforcement: `ProvisionedIdentityLocator` (the existing login lookup, keyed only by the caller's IdP-validated
   issuer+subject) pre-checks; the filtered unique index is the authority under concurrency.
-- **UA2-D05 — acceptance by the identity holder.** The holder opens `/app/accept-invitation?token=…`; the page moves the
-  token from the address bar into this tab's `sessionStorage` (no history/bookmark/Referer copy) and starts the normal
-  OIDC login with `returnUrl=/app/accept-invitation`. `OnTokenValidated` issues an **invitation session** only for an
+- **UA2-D05 — acceptance by the identity holder.** The holder opens `/app/accept-invitation#token=…`. The token is in the
+  URL **fragment**, which browsers never send to a server, so it is not in any request line, proxy/host access log or
+  Referer (QA N1 on 9db83443: the earlier `?token=` form reached the server on the first GET). On its first render,
+  before any request, the page moves the token into this tab's `sessionStorage` and clears the fragment
+  (`history.replaceState`), so it stays out of history and bookmarks; a legacy `?token=` query is stripped and never used.
+  Every API response carries `Referrer-Policy: no-referrer` and `index.html` sets the same meta policy: no URL leaves in
+  a Referer at all. The OIDC authorization-code flow does not depend on Referer (state, nonce and PKCE travel in
+  parameters and cookies), so the strict policy does not affect login. The page then starts the normal OIDC login with
+  `returnUrl=/app/accept-invitation`. `OnTokenValidated` issues an **invitation session** only for an
   IdP-validated identity with no operator entry and no bound account, and only when the login returns to the accept page:
-  claims `sub`, `iss`, `poseidon:src=invitation`, lifetime ≤ 10 min (and ≤ token expiry). It resolves to no actor, so every
+  claims `sub`, `iss`, `poseidon:src=invitation`, lifetime ≤ 10 min (and ≤ token expiry). The decision is
+  `FoundationIdentity.InvitationSession` (unit-tested: 10-minute cap, ID-token cap, return-path validation, configured /
+  ambiguous / incomplete identities refused); `OnTokenValidated` only applies its result (QA N6). It resolves to no actor, so every
   existing policy denies it; `GET /api/v1/auth/session` returns `invitationSession: true` and a CSRF token.
   `POST /api/v1/invitations/preview` shows what the invitation grants in its tenant (tenant name, bundle codes,
   permission count, tenant-wide flags, vessel count, company scope, expiry); `POST /api/v1/invitations/accept`
@@ -83,7 +91,10 @@ session and not POSEIDON requirements; the binding requirements are the 52.02/54
   is the same `409 invitation_unavailable`; the internal reason goes only to the SecurityEvent (`invitation_token_invalid`,
   `invitation_expired`, `invitation_closed`, `invitation_subject_mismatch`, `identity_unavailable`, `conflict_changed`).
   Preview and accept share a per-identity limiter (hash of issuer+subject, 10 attempts / 15 min, `429 request_limit`;
-  process-local technical guard, not an approved quota).
+  process-local technical guard, not an approved quota). QA N4: the limiter runs before any SecurityEvent is written and
+  only the first refusal of a window is audited; the table is bounded (10 000 identities) with time-bucketed eviction of
+  past windows only, so a flood never resets other identities' counters (a new identity is refused while the table is full
+  of current-window entries).
 - **UA2-D07 — transaction and races.** Acceptance re-reads invitation, membership and account in a SERIALIZABLE
   transaction of the token's tenant; concurrent accepts of one invitation produce exactly one binding (the losers get
   40001/40P01, an xmin concurrency failure or a unique violation, classified through `PostgresFailure` → neutral 409).
@@ -92,13 +103,22 @@ session and not POSEIDON requirements; the binding requirements are the 52.02/54
   `MembershipInvitationAccept`, and only for an invitation session. Its EF writes are attributed to the account being
   bound (server-derived from the matched invitation, never a request value) with the invited grant's role context and the
   S1 command context; SecurityEvents (`MembershipInvitation`) carry the invitation's tenant and, on success, the account.
+  QA N3: before binding, events carry a pseudonymous identity reference in the new `audit.SecurityEvents.IdentityReference`
+  column, `idref:v1:<32 hex>` = truncated HMAC-SHA256(issuer+subject) keyed by an HKDF of the operator-resolved OIDC
+  client secret (stable while that secret is unchanged; a public client without a secret uses a random per-process key,
+  `idref:p1:`); the raw subject is never written. `ActorId` stays reserved for trusted actors (the writer still requires a
+  tenant for it). When the token's tenant segment parses but the invitation is not identified, that claimed tenant goes
+  to the new `UnverifiedTenantId` column (no foreign key, `TenantId` null): recording it never depends on, or reveals,
+  whether that tenant exists. Both columns are accepted by `SecurityEventWriter` only for events without a trusted actor
+  (reference) or tenant (unverified tenant). Added in migration `20261124100002_UserAdministrationInvitations`. An audit-store outage on preview or accept is `503 service_unavailable` (QA N5).
   Audit summaries carry closed codes only: invitation status, expiry, `SubjectExpected` flag, account `BindingState`
   Pending→Bound; token hash and subjects are `ValuesWithheld`. New S1 operations: `MembershipInvitationReissue`,
   `MembershipInvitationAccept` (critical, `PREPARATION_COMMAND`), `MembershipInvitationPreview` (session observation).
   New SecurityEvent action `MembershipInvitation`, results `invitation_unavailable`, `invitation_closed`,
   `invitation_expired`, `invitation_subject_mismatch`, `invitation_token_invalid`.
 - **UA2-D09 — migration path.** Migration `20261124100002_UserAdministrationInvitations`: `Accounts.Subject` nullable
-  (CHECK: null only for `AdminProvisioned`), filtered unique index, `Invited` status and three reasons in the closed
+  (CHECK `COALESCE(length("Subject"),0) > 0 OR ("Subject" IS NULL AND "Source" = 'AdminProvisioned')`; QA N2: the
+  earlier form evaluated to NULL for a NULL subject and therefore passed for every source), filtered unique index, `Invited` status and three reasons in the closed
   CHECK, `MembershipInvitations` table, two receipt actions. Existing `AdminProvisioned` rows created before this change
   keep their subject and Active state and are treated as **already accepted** (no data rewrite). Down fails closed while
   an unaccepted invitation account exists. No seed rows (`docs/seed-data.md` USER-ADMIN-02).
@@ -146,6 +166,7 @@ rate-limit, offline and error states. TR/EN copy; the other 15 locales carry the
 | UA2-AC-11 | Contracts: S1 (+3), endpoint profiles (+3), OpenAPI/api.d.ts, audit vocabulary, S1 deny/anonymous/forged probes | `S1ScopeCoverageTests`, `EndpointProfileRegistryTests`, `DiagnosticsTests.OpenApi_*` |
 | UA2-AC-12 | USER-ADMIN-01 behaviour preserved through the invitation flow | API trait `USER-ADMIN-01` |
 | UA2-AC-13 | UI: invitation states, one-time link + copy, reissue body, subject optional, strict decoding | `frontend/src/product/UserAdminWorkspace.test.tsx` |
+| UA2-AC-15 | QA fixes: fragment link + cleared before any request, legacy query ignored; DB CHECK refuses NULL/empty subject for other sources (raw SQL); limiter bounded/eviction/audited-once; identity reference; invitation-session decision | `AcceptInvitationPage.test.tsx`, `UserAdminWorkspace.test.tsx`, persistence PG `MembershipInvitationPostgresTests`, Api unit `InvitationSessionPolicyTests`, API `Expired_reissued_…` |
 | UA2-AC-14 | Accept page: token leaves the URL, sign-in return without token, preview + accept with CSRF/key, neutral refusal, member session, rate limit, invalid link | `frontend/src/product/AcceptInvitationPage.test.tsx` |
 
 ## Open items
@@ -156,6 +177,8 @@ rate-limit, offline and error states. TR/EN copy; the other 15 locales carry the
   product decision.
 - No e-mail/outbox delivery (52.02 paragraph:342); the administrator hands the link out of band.
 - The attempt limiter is process-local; a multi-instance deployment needs a shared limiter.
-- No real-IdP (Keycloak) journey or Playwright run for the invitation login; covered by the synthetic session handler and
-  the PostgreSQL API tests only. `OnTokenValidated` invitation-session branch has no direct test (QA N7 class gap).
+- No real-IdP (Keycloak) journey or Playwright run for the invitation login. The invitation-session decision is unit-tested
+  through `FoundationIdentity.InvitationSession`; the OIDC event wiring itself (`OnTokenValidated` assigning the result)
+  needs a signed ID token from a real or emulated IdP, which the synthetic test auth handler bypasses by design.
+- Identity references change when the OIDC client secret rotates (and per process for a public client).
 - 15 locales use English fallback text for the new strings.

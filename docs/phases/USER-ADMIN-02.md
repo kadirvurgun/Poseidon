@@ -48,7 +48,25 @@ Not run: full Api/Persistence integration suites (CI), Playwright/real-IdP (Keyc
 - Frontend `Session` type: `invitationSession` optional on the client (existing fixtures omit it).
 
 ## CI
-Pending (push run).
+- Run 44959072560 (9db83443, push): success.
+
+## Independent QA on 9db83443 — ACCEPT-WITH-NOTES, fixed in one commit
+- N1: invitation link uses the URL fragment (`#token=`), read and cleared before the first request; legacy `?token=`
+  stripped and ignored; `Referrer-Policy: no-referrer` on every API response and as `index.html` meta (OIDC code flow
+  does not use Referer).
+- N2: `CK_Accounts_Closed` rewritten with `COALESCE` in the (unmerged) migration `20261124100002`; raw-SQL PG test.
+- N3: pre-binding SecurityEvents carry `IdentityReference` (HMAC of issuer+subject, HKDF of the OIDC client secret) and
+  `UnverifiedTenantId` (new columns in the same migration); `ActorId` stays trusted-actor only.
+- N4: limiter before any SecurityEvent write, first refusal per window audited once, bounded time-bucketed eviction.
+- N5: audit-store outage on preview/accept → 503.
+- N6: invitation-session decision extracted to `FoundationIdentity.InvitationSession` and unit-tested (10-minute cap,
+  ID-token cap, return-path validation, identity checks); the OIDC event wiring itself needs a signed ID token (open item).
+
+Results after the fix (local): build 0/0; `has-pending-model-changes` none; Api non-integration 495/495; Api traits
+USER-ADMIN-02 + USER-ADMIN-01 39/39 (incl. 16 new unit tests); PLAN-1511-5202 + 5803 33/33; S1/OpenAPI/DEV-022/status
+15/15; Persistence non-integration 163/163; Persistence PG invitation + membership classes 9/9 (incl. 3 new raw-SQL CHECK
+tests); Persistence `*igration*`/`*SecurityEvent*` 22/22; frontend typecheck/lint exit 0; vitest user-admin, accept page,
+help, i18n, scripts 11 files / 198 tests.
 
 ## Open items
 See task contract: `account.invite_hours` tenant override not wired, revoked binding stays bound (operator re-homing

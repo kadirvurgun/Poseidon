@@ -47,7 +47,7 @@ Kullanıcılar ve yetkiler sayfası, çalışma alanınızdaki **üyelikleri** y
 - Kendinizde olmayan bir yetkiyi, gemiyi veya tenant geneli erişimi veremezsiniz.
 - Kendi üyeliğinizi değiştiremezsiniz; son aktif yönetici kaldırılamaz.
 - Bir hesap yalnız bir kuruluşta kabul edilmiş üyelik tutabilir. Davet, başka bir kuruluşa ait bir hesabı hiçbir zaman taşımaz; davet edilen kişi yalnız davetin kabul edilemediğini görür.
-- Davet bağlantısını bir anahtar gibi koruyun: beklenen subject girmediyseniz bağlantıyı tutan ve oturum açan herkes daveti kabul edebilir. Ortak kanallarda paylaşmayın.
+- Davet bağlantısını bir anahtar gibi koruyun: beklenen subject girmediyseniz bağlantıyı tutan ve oturum açan herkes daveti kabul edebilir. Ortak kanallarda paylaşmayın. Bağlantıyı her zaman bütün olarak iletin: **#** işaretinden sonraki gizli kısmı yalnız tarayıcı okur, sunucuya ve kayıtlarına hiç ulaşmaz.
 - Karar, doğrulama ve onay yetkileri hiçbir pakette yoktur. Bunlar yalnız tek tek ve bu yetkiye sahip bir yönetici tarafından verilebilir. Atamaya bağlı işlemler, örneğin römorkör veya kalkış kararları, ayrıca operatör ataması gerektirir. Bir rol paketi vermek kişiyi kaptan veya doğrulayıcı olarak atamaz.
 - Kaynak veya vekil olduğunuz bir vekaleti onaylayamazsınız. Vekalet, kaynağın güncel yetkisini aşamaz ve tenant geneli olamaz.
 - POSEIDON parola saklamaz, davet bağlantısının yalnız parmak izini tutar ve IdP subject değerlerini listede geri göstermez.

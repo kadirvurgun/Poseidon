@@ -13,15 +13,17 @@ const json = (value: unknown, status = 200) => new Response(JSON.stringify(value
 const fetcher = vi.fn()
 let session: Record<string, unknown> = {}, previewReply: () => Response = () => json(grant), acceptReply: () => Response = () => json({ membershipId, grant, signInRequired: true })
 let posts: { url: string; init: RequestInit }[] = []
+let seenLocations: string[] = []
 
 beforeEach(async () => {
   await changeAppLanguage('en', false)
   Object.defineProperty(navigator, 'onLine', { value: true, configurable: true })
-  sessionStorage.clear(); posts = []
+  sessionStorage.clear(); posts = []; seenLocations = []
   session = { authenticated: true, setupRequired: false, actorId: null, tenantId: null, canRead: false, csrfToken: 'synthetic-csrf', invitationSession: true }
   previewReply = () => json(grant); acceptReply = () => json({ membershipId, grant, signInRequired: true })
   fetcher.mockReset()
   fetcher.mockImplementation(async (url: string, init?: RequestInit) => {
+    seenLocations.push(window.location.href)
     if (url.endsWith('auth/session')) return json(session)
     if (init?.method === 'POST') posts.push({ url, init })
     if (url.endsWith('invitations/preview')) return previewReply()
@@ -29,13 +31,14 @@ beforeEach(async () => {
     return json({}, 404)
   })
   vi.stubGlobal('fetch', fetcher)
-  history.replaceState(null, '', `/app/accept-invitation?token=${encodeURIComponent(token)}`)
+  history.replaceState(null, '', `/app/accept-invitation#token=${encodeURIComponent(token)}`)
 })
 afterEach(() => { vi.unstubAllGlobals(); vi.restoreAllMocks(); history.replaceState(null, '', '/') })
 
 it('moves the token out of the address bar, previews the grant and accepts with CSRF and a key', async () => {
   const user = userEvent.setup()
   render(<AcceptInvitationPage/>)
+  expect(window.location.hash).toBe('')
   expect(window.location.search).toBe('')
   expect(window.location.pathname).toBe('/app/accept-invitation')
   const grants = await screen.findByRole('region', { name: 'This invitation grants' })
@@ -85,7 +88,24 @@ it('reports rate limiting and a missing link without calling the server', async 
   expect(await screen.findByText('Too many attempts. Wait a few minutes and try again.')).toBeTruthy()
   unmount()
   sessionStorage.clear(); fetcher.mockClear()
-  history.replaceState(null, '', '/app/accept-invitation?token=not-a-token')
+  history.replaceState(null, '', '/app/accept-invitation#token=not-a-token')
+  render(<AcceptInvitationPage/>)
+  expect(await screen.findByText(/This page needs an invitation link\./)).toBeTruthy()
+  expect(window.location.search).toBe('')
+  expect(fetcher).not.toHaveBeenCalled()
+})
+
+// QA N1: the fragment is read and cleared before the first request; no request URL ever carries the token.
+it('clears the token fragment before any request and never puts the token in a request URL', async () => {
+  render(<AcceptInvitationPage/>)
+  await screen.findByRole('region', { name: 'This invitation grants' })
+  expect(fetcher).toHaveBeenCalled()
+  expect(seenLocations.every(href => !href.includes('#') && !href.includes(token))).toBe(true)
+  expect(fetcher.mock.calls.every(([url]) => !String(url).includes(token))).toBe(true)
+})
+
+it('strips and ignores a legacy query-string token', async () => {
+  history.replaceState(null, '', `/app/accept-invitation?token=${encodeURIComponent(token)}`)
   render(<AcceptInvitationPage/>)
   expect(await screen.findByText(/This page needs an invitation link\./)).toBeTruthy()
   expect(window.location.search).toBe('')

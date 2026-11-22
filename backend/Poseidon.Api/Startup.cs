@@ -122,6 +122,9 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             // Public diagnostics contain no tenant/user context and must not be cached.
             context.Response.Headers.CacheControl = "no-store";
             context.Response.Headers.XContentTypeOptions = "nosniff";
+            // USER-ADMIN-02 (QA N1): no URL (path, query or fragment-derived state) ever leaves in a Referer header. The
+            // OIDC code flow (state/nonce/PKCE via cookies and parameters) does not rely on Referer.
+            context.Response.Headers["Referrer-Policy"] = "no-referrer";
             try
             {
                 await next(context);

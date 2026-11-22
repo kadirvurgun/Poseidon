@@ -177,7 +177,8 @@ public static class AccountMembershipStorage
         {
             b.ToTable("Accounts", IdentitySchema, t => t.HasCheckConstraint("CK_Accounts_Closed",
                 "\"AccountType\" = 'Human' AND \"Source\" IN ('ConfigurationImport','SyntheticUnverified','AdminProvisioned') AND length(\"Issuer\") > 0 AND " +
-                "(length(\"Subject\") > 0 OR \"Subject\" IS NULL AND \"Source\" = 'AdminProvisioned')"));
+                // QA N2: COALESCE so a NULL subject never evaluates the CHECK to NULL (which PostgreSQL treats as passing).
+                "(COALESCE(length(\"Subject\"), 0) > 0 OR (\"Subject\" IS NULL AND \"Source\" = 'AdminProvisioned'))"));
             b.HasKey(x => new { x.TenantId, x.Id });
             b.HasAlternateKey(x => x.Id).HasName("AK_Accounts_Id");
             // USER-ADMIN-02 (UA2-D03): one federated identity holds at most one ACCEPTED (bound) account across all tenants.

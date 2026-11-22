@@ -172,8 +172,9 @@ export function decodeInvitationAccepted(v: unknown): { membershipId: string; gr
   if (!exact(v, ['membershipId', 'grant', 'signInRequired']) || !guid(v.membershipId) || v.signInRequired !== true) fail()
   return { membershipId: v.membershipId, grant: decodeInvitationGrant(v.grant), signInRequired: true }
 }
-// The link the administrator hands out of band. The accept page moves the token out of the address bar on arrival.
-export const invitationLink = (origin: string, value: string) => `${origin}/app/accept-invitation?token=${encodeURIComponent(value)}`
+// The link the administrator hands out of band. QA N1: the token is in the URL FRAGMENT, which browsers never send to a
+// server (no request line, access log or Referer); the accept page reads and clears it before its first request.
+export const invitationLink = (origin: string, value: string) => `${origin}/app/accept-invitation#token=${encodeURIComponent(value)}`
 
 export function decodeDelegations(v: unknown): Delegation[] {
   return list(v, d => {

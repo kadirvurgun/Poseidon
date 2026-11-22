@@ -182,7 +182,8 @@ it('invites without a subject, then shows the one-time link with copy and never 
   expect(JSON.parse(String(posts[0].init.body)).subject).toBeNull()
   await waitFor(() => expect(window.location.pathname).toBe(`/app/user-admin/${memberId}`))
   const link = await screen.findByRole('textbox', { name: 'Invitation link' }) as HTMLInputElement
-  expect(link.value).toBe(`${window.location.origin}/app/accept-invitation?token=${encodeURIComponent(token)}`)
+  expect(link.value).toBe(`${window.location.origin}/app/accept-invitation#token=${encodeURIComponent(token)}`)
+  expect(new URL(link.value).search).toBe('') // QA N1: the token is never in the query string
   expect(screen.getByText('Invitation pending')).toBeTruthy()
   expect(document.querySelector('[data-status=Invited]')).not.toBeNull()
   await user.click(screen.getByRole('button', { name: 'Copy invitation link' }))

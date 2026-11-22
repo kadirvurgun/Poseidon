@@ -200,7 +200,20 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(("Revoked", "Revoked"), (revokedView.Membership.Status, revokedView.Membership.InvitationState));
 
         await using var db = Db();
-        var results = (await SecurityEvents()).Select(e => e.Result).ToArray();
+        var events = await SecurityEvents();
+        var results = events.Select(e => e.Result).ToArray();
+        // QA N3: pre-binding events are attributed to a pseudonymous keyed reference, never the raw subject; the token's
+        // tenant segment is recorded as an unverified ResourceId (TenantId stays null until the invitation is found).
+        Assert.All(events.Where(e => e.Result is "Attempted" or "invitation_token_invalid" or "invitation_unavailable" or "invitation_expired"), e =>
+        {
+            Assert.Null(e.ActorId); // no trusted actor before binding
+            Assert.Matches("^idref:(v1|p1):[0-9a-f]{32}$", e.IdentityReference!);
+        });
+        Assert.All(events.Where(e => e.Result is "Attempted" or "invitation_token_invalid"), e => { Assert.Null(e.TenantId); Assert.Null(e.UnverifiedTenantId); });
+        Assert.DoesNotContain(events, e => e.IdentityReference != null && (e.IdentityReference.Contains("intruder") || e.IdentityReference.Contains("late-holder")));
+        Assert.Contains(events, e => e.Result == "invitation_unavailable" && e.TenantId == null && e.UnverifiedTenantId == seed.Tenants[0].Id);
+        Assert.Contains(events, e => e.Result == "invitation_subject_mismatch" && e.TenantId == seed.Tenants[0].Id && e.IdentityReference != null);
+        Assert.Single(events.Where(e => e.Result == "invitation_token_invalid").Select(e => e.IdentityReference).Distinct());
         Assert.Contains("invitation_subject_mismatch", results);
         Assert.Contains("invitation_expired", results);
         Assert.Contains("invitation_token_invalid", results);

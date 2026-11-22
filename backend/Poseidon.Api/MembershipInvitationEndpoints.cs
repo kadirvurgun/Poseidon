@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using System.Data;
 using System.Security.Cryptography;
 using System.Text;
@@ -24,22 +23,67 @@ public sealed record InvitationAcceptedDto(Guid MembershipId, InvitationGrantDto
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record InvitationTokenCommand(string? Token);
 
+public enum InvitationAttempt { Allowed, Limited, LimitedRepeat }
+
 // Technical abuse guard per validated identity (hash of issuer+subject), not an approved quota: preview and accept
 // attempts share one fixed 15-minute window. Process-local; a multi-instance deployment needs a shared limiter.
-public sealed class InvitationAttemptLimiter(TimeProvider clock)
+// QA N4: bounded and time-bucketed. At capacity only entries of past windows are evicted; counters of the current window
+// are never reset, and while the table is full of current-window identities a NEW identity is refused (fail closed) until
+// the window rolls over. Limited = the first refused attempt of a window (audited once); LimitedRepeat = later ones.
+public sealed class InvitationAttemptLimiter(TimeProvider clock, int capacity = InvitationAttemptLimiter.DefaultCapacity)
 {
     public const int AttemptsPerWindow = 10;
+    public const int DefaultCapacity = 10_000;
     private const long WindowSeconds = 15 * 60;
-    private readonly ConcurrentDictionary<string, (long Window, int Count)> windows = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, (long Window, int Count)> windows = new(StringComparer.Ordinal);
+    private readonly Lock gate = new();
 
-    public bool TryAcquire(string issuer, string subject)
+    public int Tracked { get { lock (gate) return windows.Count; } }
+
+    public InvitationAttempt TryAcquire(string issuer, string subject)
     {
         var key = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(issuer + "\n" + subject)));
         var window = clock.GetUtcNow().ToUnixTimeSeconds() / WindowSeconds;
-        if (windows.Count > 10_000) windows.Clear();
-        var next = windows.AddOrUpdate(key, (window, 1), (_, x) => x.Window == window ? (window, x.Count + 1) : (window, 1));
-        return next.Count <= AttemptsPerWindow;
+        lock (gate)
+        {
+            if (windows.TryGetValue(key, out var entry) && entry.Window == window)
+            {
+                if (entry.Count > AttemptsPerWindow) return InvitationAttempt.LimitedRepeat;
+                windows[key] = (window, entry.Count + 1);
+                return entry.Count + 1 > AttemptsPerWindow ? InvitationAttempt.Limited : InvitationAttempt.Allowed;
+            }
+            if (!windows.ContainsKey(key) && windows.Count >= capacity)
+            {
+                foreach (var stale in windows.Where(x => x.Value.Window != window).Select(x => x.Key).ToArray()) windows.Remove(stale);
+                if (windows.Count >= capacity) return InvitationAttempt.LimitedRepeat;
+            }
+            windows[key] = (window, 1);
+            return InvitationAttempt.Allowed;
+        }
     }
+}
+
+// QA N3: pseudonymous reference to the authenticated identity of a not-yet-bound caller, for SecurityEvent attribution.
+// HMAC-SHA256 over issuer+subject keyed by an HKDF of the operator-resolved OIDC client secret ("v1": stable while the
+// secret is unchanged; rotating the secret starts new references). A public client without a secret uses a random
+// per-process key ("p1": correlatable only within one process lifetime). The raw subject is never written.
+public sealed class InvitationIdentityReference
+{
+    private readonly byte[] key;
+    private readonly string version;
+
+    public InvitationIdentityReference(string? serverSecret)
+    {
+        if (!string.IsNullOrEmpty(serverSecret))
+        {
+            key = HKDF.DeriveKey(HashAlgorithmName.SHA256, Encoding.UTF8.GetBytes(serverSecret), 32, info: Encoding.ASCII.GetBytes("poseidon.audit.identity-reference.v1"));
+            version = "v1";
+        }
+        else { key = RandomNumberGenerator.GetBytes(32); version = "p1"; }
+    }
+
+    public string For(string issuer, string subject) =>
+        $"idref:{version}:" + Convert.ToHexString(HMACSHA256.HashData(key, Encoding.UTF8.GetBytes(issuer + "\n" + subject)).AsSpan(0, 16)).ToLowerInvariant();
 }
 
 public static partial class MembershipEndpoints
@@ -123,22 +167,30 @@ public static partial class MembershipEndpoints
     }
 
     private sealed record InvitationTarget(MembershipInvitation Invitation, AccountMembership Membership, UserAccount Account);
-    private sealed record InvitationRequest((string Issuer, string Subject) Identity, Guid Tenant, string Hash, string? Key, byte[] Body);
+    private sealed record InvitationRequest((string Issuer, string Subject) Identity, string Reference, Guid Tenant, string Hash, string? Key, byte[] Body);
 
-    // Shared prelude of preview/accept: attempt audit, rate limit, antiforgery, bounded body, optional key, strict token.
-    // Every outcome after the transport checks is the same neutral 409, so no caller can learn about other tenants.
+    // Shared prelude of preview/accept: session check, rate limit (before any write), attempt audit, antiforgery, bounded
+    // body, optional key, strict token. Every outcome after the transport checks is the same neutral 409, so no caller can
+    // learn about other tenants. Pre-binding events carry the pseudonymous identity reference (QA N3) and, once the token's
+    // tenant segment parses, that claimed tenant as UnverifiedTenantId (TenantId is set only once the invitation is found).
     private static async Task<(InvitationRequest? Value, IResult? Failure)> InvitationBegin(HttpContext h, bool keyRequired)
     {
         var audit = h.RequestServices.GetRequiredService<SecurityAudit>();
-        async Task<(InvitationRequest?, IResult?)> Fail(int status, string code, string? auditCode = null)
-        { await audit.WriteAsync(h, InvitationAction, auditCode ?? code); return (null, Problem(h, status, code)); }
-        await audit.WriteAsync(h, InvitationAction, "Attempted");
         // Only an invitation session (an IdP-validated identity with no membership, no operator entry, no binding) may
         // preview or accept: a member's session already holds its one membership (UA2-D04), so it is denied here.
         if (h.RequestServices.GetRequiredService<ActorResolver>().InvitationIdentityFor(h.User) is not { } identity)
-            return await Fail(403, "permission_denied", "Denied");
-        if (!h.RequestServices.GetRequiredService<InvitationAttemptLimiter>().TryAcquire(identity.Issuer, identity.Subject))
-            return await Fail(429, "request_limit");
+        { await audit.WriteAsync(h, InvitationAction, "Denied"); return (null, Problem(h, 403, "permission_denied")); }
+        var reference = h.RequestServices.GetRequiredService<InvitationIdentityReference>().For(identity.Issuer, identity.Subject);
+        Guid? claimedTenant = null;
+        async Task<(InvitationRequest?, IResult?)> Fail(int status, string code, string? auditCode = null)
+        { await audit.WriteAsync(h, InvitationAction, auditCode ?? code, identityReference: reference, unverifiedTenant: claimedTenant); return (null, Problem(h, status, code)); }
+        // QA N4: the limiter runs before any SecurityEvent write; only the first refused attempt of a window is audited.
+        switch (h.RequestServices.GetRequiredService<InvitationAttemptLimiter>().TryAcquire(identity.Issuer, identity.Subject))
+        {
+            case InvitationAttempt.Limited: return await Fail(429, "request_limit");
+            case InvitationAttempt.LimitedRepeat: return (null, Problem(h, 429, "request_limit"));
+        }
+        await audit.WriteAsync(h, InvitationAction, "Attempted", identityReference: reference);
         try { await h.RequestServices.GetRequiredService<IAntiforgery>().ValidateRequestAsync(h); }
         catch (AntiforgeryValidationException) { return await Fail(403, "csrf_invalid"); }
         if (!h.Request.HasJsonContentType() || h.Request.ContentLength > 1024) return await Fail(400, "invalid_request");
@@ -160,7 +212,8 @@ public static partial class MembershipEndpoints
         if (command == null) return await Fail(400, "invalid_request");
         if (!MembershipInvitationPolicy.TryParse(command.Token, out var tenant, out var secret))
             return await Fail(409, MembershipInvitationPolicy.NeutralRefusal, "invitation_token_invalid");
-        return (new InvitationRequest(identity, tenant, MembershipInvitationPolicy.Hash(secret), key, buffer.ToArray()), null);
+        claimedTenant = tenant;
+        return (new InvitationRequest(identity, reference, tenant, MembershipInvitationPolicy.Hash(secret), key, buffer.ToArray()), null);
     }
 
     // A tenant-scoped context for the token's tenant: query filters stay on, so the token can only ever reach rows of
@@ -215,7 +268,17 @@ public static partial class MembershipEndpoints
     private static ActorContext InvitationReader(HttpContext h) =>
         new("system:invitation-reader", "System", h.TraceIdentifier, Source: "MembershipInvitation");
 
-    private static async Task<IResult> PreviewInvitation(HttpContext h)
+    // QA N5: an audit-store outage anywhere in preview/accept is a 503, never a 500.
+    private static async Task<IResult> AuditGuarded(HttpContext h, Func<Task<IResult>> handler)
+    {
+        try { return await handler(); }
+        catch (AuditUnavailableException) { return Problem(h, 503, "service_unavailable"); }
+    }
+
+    private static Task<IResult> PreviewInvitation(HttpContext h) => AuditGuarded(h, () => Preview(h));
+    private static Task<IResult> AcceptInvitation(HttpContext h) => AuditGuarded(h, () => Accept(h));
+
+    private static async Task<IResult> Preview(HttpContext h)
     {
         var (request, failure) = await InvitationBegin(h, keyRequired: false);
         if (request == null) return failure!;
@@ -225,7 +288,7 @@ public static partial class MembershipEndpoints
         {
             if (await IdentityBound(h, request.Identity))
             {
-                await audit.WriteAsync(h, InvitationAction, "identity_unavailable");
+                await audit.WriteAsync(h, InvitationAction, "identity_unavailable", identityReference: request.Reference, unverifiedTenant: request.Tenant);
                 return Problem(h, 409, MembershipInvitationPolicy.NeutralRefusal);
             }
             await using var db = InvitationContext(h, request.Tenant, InvitationReader(h));
@@ -234,30 +297,33 @@ public static partial class MembershipEndpoints
             if (target == null || refusal != InvitationRefusal.None)
             {
                 await audit.WriteAsync(h, InvitationAction, target == null ? MembershipInvitationPolicy.NeutralRefusal : MembershipInvitationPolicy.AuditCode(refusal),
-                    resourceId: target?.Membership.Id, attributedTenant: target == null ? null : request.Tenant);
+                    resourceId: target?.Membership.Id, attributedTenant: target == null ? null : request.Tenant, identityReference: request.Reference,
+                    unverifiedTenant: target == null ? request.Tenant : null);
                 return Problem(h, 409, MembershipInvitationPolicy.NeutralRefusal);
             }
             var view = await GrantView(db, target, h.RequestAborted);
-            await audit.WriteAsync(h, InvitationAction, "Authorized", resourceId: target.Membership.Id, attributedTenant: request.Tenant);
+            await audit.WriteAsync(h, InvitationAction, "Authorized", resourceId: target.Membership.Id, attributedTenant: request.Tenant, identityReference: request.Reference);
             return Results.Ok(view);
         }
-        catch (Exception ex) when (PostgresFailure.IsDatabase(ex) || ex is AuditUnavailableException)
+        catch (Exception ex) when (PostgresFailure.IsDatabase(ex))
         {
             await audit.TryWriteAsync(h, InvitationAction, "Unavailable");
             return Problem(h, 503, "service_unavailable");
         }
     }
 
-    private static async Task<IResult> AcceptInvitation(HttpContext h)
+    private static async Task<IResult> Accept(HttpContext h)
     {
         var (request, failure) = await InvitationBegin(h, keyRequired: true);
         if (request == null) return failure!;
         var audit = h.RequestServices.GetRequiredService<SecurityAudit>();
         var now = h.RequestServices.GetRequiredService<TimeProvider>().GetUtcNow();
         var fingerprint = Fingerprint(new { action = AcceptAction, hash = request.Hash });
-        async Task<IResult> Refuse(string code, Guid? membership = null, Guid? account = null)
+        async Task<IResult> Refuse(string code, Guid? membership = null)
         {
-            await audit.WriteAsync(h, InvitationAction, code, resourceId: membership, attributedTenant: membership == null ? null : request.Tenant, attributedActor: account);
+            // Pre-binding refusal: the pseudonymous identity reference; the claimed tenant stays unverified (ResourceId) until found.
+            await audit.WriteAsync(h, InvitationAction, code, resourceId: membership, attributedTenant: membership == null ? null : request.Tenant,
+                identityReference: request.Reference, unverifiedTenant: membership == null ? request.Tenant : null);
             return Problem(h, 409, MembershipInvitationPolicy.NeutralRefusal);
         }
         InvitationTarget? found;
@@ -334,7 +400,7 @@ public static partial class MembershipEndpoints
             await audit.TryWriteAsync(h, InvitationAction, "Unavailable");
             return Problem(h, 503, "service_unavailable");
         }
-        await audit.WriteAsync(h, InvitationAction, "Success", resourceId: membershipId, attributedTenant: request.Tenant, attributedActor: accountId);
+        await audit.WriteAsync(h, InvitationAction, "Success", resourceId: membershipId, attributedTenant: request.Tenant, attributedActor: accountId.ToString());
         // The invitation session ends; the next sign-in stamps the accepted binding (UA-D07: a new membership applies at login).
         if (h.RequestServices.GetRequiredService<ActorResolver>().InvitationIdentityFor(h.User) != null && !h.Response.HasStarted)
             await h.SignOutAsync(FoundationIdentity.Cookie);

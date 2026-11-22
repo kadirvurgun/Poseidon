@@ -9,7 +9,7 @@ public sealed class SecurityAudit(IConfiguration configuration, ActorResolver ac
     // attributedTenant/attributedActor (USER-ADMIN-02): server-derived attribution for a caller who has no trusted actor yet
     // (an invitation accepted by its identity holder). Used only when the principal resolves to no actor; never request input.
     public async Task WriteAsync(HttpContext http, string action, string result, ClaimsPrincipal? principal = null, Guid? resourceId = null,
-        Guid? attributedTenant = null, Guid? attributedActor = null)
+        Guid? attributedTenant = null, string? attributedActor = null, string? identityReference = null, Guid? unverifiedTenant = null)
     {
         var connection = OperatorSecretReferences.Database(configuration, environment);
         if (string.IsNullOrWhiteSpace(connection)) { AuditTelemetry.Record(false, TimeSpan.Zero); throw new AuditUnavailableException(); }
@@ -22,7 +22,9 @@ public sealed class SecurityAudit(IConfiguration configuration, ActorResolver ac
             await using var writer = new SecurityEventWriter(new DbContextOptionsBuilder<SecurityEventWriter>().UseNpgsql(connection).Options);
             await writer.AppendAsync(new SecurityEvent
             {
-                Id = Guid.NewGuid(), TenantId = actor?.TenantId ?? attributedTenant, ActorId = actor?.Id.ToString() ?? attributedActor?.ToString(),
+                Id = Guid.NewGuid(), TenantId = actor?.TenantId ?? attributedTenant, ActorId = actor?.Id.ToString() ?? attributedActor,
+                IdentityReference = actor == null && attributedActor == null ? identityReference : null,
+                UnverifiedTenantId = actor == null && attributedTenant == null ? unverifiedTenant : null,
                 ResourceId = resourceId,
                 Action = action, Result = result, CorrelationId = http.TraceIdentifier, OccurredAt = PoseidonDbContext.AuditRecordingClock.GetUtcNow()
             }, deadline.Token);

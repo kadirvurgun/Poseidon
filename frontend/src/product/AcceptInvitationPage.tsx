@@ -9,9 +9,10 @@ import { useOnline } from './UatWorkspace'
 import { decodeInvitationAccepted, decodeInvitationGrant, isInvitationToken, sendAdmin, type InvitationGrant } from './user-admin-api'
 import './user-admin.css'
 
-// USER-ADMIN-02 invitation acceptance (/app/accept-invitation?token=…). Not a navigation destination: it is reached only
-// through the link an administrator hands out. The token leaves the address bar on arrival (kept in this tab's session
-// storage until accepted), so it is not kept in history, bookmarks or Referer headers. The server decides everything;
+// USER-ADMIN-02 invitation acceptance (/app/accept-invitation#token=…). Not a navigation destination: it is reached only
+// through the link an administrator hands out. The token is in the URL fragment (never sent to the server or in a
+// Referer); on the first render, before any request, it moves into this tab's session storage and the fragment is
+// cleared, so it stays out of history and bookmarks. A legacy ?token= query is stripped and never used. The server decides everything;
 // every refusal is one neutral message that reveals nothing about other organisations.
 export const acceptInvitationCopy = localizedCopy('AcceptInvitation_tsx_copy')
 type Copy = (typeof acceptInvitationCopy)[AppLocale]
@@ -25,12 +26,13 @@ function storage(): Storage | null { try { return window.sessionStorage } catch 
 // Reads the token once: from the query (then removed from the address bar) or from this tab's session storage.
 export function takeInvitationToken(): string | null {
   const url = new URL(window.location.href)
-  const fromQuery = url.searchParams.get('token')
-  if (fromQuery !== null) {
-    history.replaceState(null, '', page)
-    if (!isInvitationToken(fromQuery)) { try { storage()?.removeItem(storageKey) } catch { /* Storage unavailable. */ } return null }
-    try { storage()?.setItem(storageKey, fromQuery) } catch { /* The token then lives in memory only. */ }
-    return fromQuery
+  const fromFragment = new URLSearchParams(url.hash.replace(/^#/, '')).get('token')
+  if (url.hash !== '' || url.search !== '') history.replaceState(null, '', page)
+  if (url.searchParams.has('token') && fromFragment === null) { forgetInvitationToken(); return null }
+  if (fromFragment !== null) {
+    if (!isInvitationToken(fromFragment)) { forgetInvitationToken(); return null }
+    try { storage()?.setItem(storageKey, fromFragment) } catch { /* The token then lives in memory only. */ }
+    return fromFragment
   }
   let stored: string | null
   try { stored = storage()?.getItem(storageKey) ?? null } catch { stored = null }

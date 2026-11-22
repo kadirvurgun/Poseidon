@@ -47,7 +47,7 @@ The Users and permissions page manages the **memberships** in your workspace. It
 - You cannot grant a permission, vessel or tenant-wide access you do not hold.
 - You cannot change your own membership; the last active administrator cannot be removed.
 - An account can hold an accepted membership in one organisation only. An invitation never moves an account that already belongs elsewhere; the invited person then sees only that the invitation cannot be accepted.
-- Treat the invitation link like a key: anyone who holds it and signs in can accept it unless you entered an expected subject. Do not post it in shared channels.
+- Treat the invitation link like a key: anyone who holds it and signs in can accept it unless you entered an expected subject. Do not post it in shared channels. Always pass on the whole link: the secret part after **#** is read only by the browser and never reaches the server or its logs.
 - Decision, verification and approval permissions are never in a bundle. Only an administrator who holds them can grant them, one by one. Appointment-gated actions (for example tug or departure decisions) also need an operator appointment. Granting a role bundle does not appoint anyone as Master or verifier.
 - You cannot approve a delegation where you are source or delegate. A delegation never exceeds the source's current authority and is never tenant-wide.
 - POSEIDON stores no passwords, keeps only a fingerprint of the invitation link and never shows IdP subjects back in the list.

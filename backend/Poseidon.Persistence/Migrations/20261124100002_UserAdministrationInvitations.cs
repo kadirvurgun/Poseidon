@@ -99,7 +99,7 @@ namespace Poseidon.Persistence.Migrations
                 name: "CK_Accounts_Closed",
                 schema: "identity",
                 table: "Accounts",
-                sql: "\"AccountType\" = 'Human' AND \"Source\" IN ('ConfigurationImport','SyntheticUnverified','AdminProvisioned') AND length(\"Issuer\") > 0 AND (length(\"Subject\") > 0 OR \"Subject\" IS NULL AND \"Source\" = 'AdminProvisioned')");
+                sql: "\"AccountType\" = 'Human' AND \"Source\" IN ('ConfigurationImport','SyntheticUnverified','AdminProvisioned') AND length(\"Issuer\") > 0 AND (COALESCE(length(\"Subject\"), 0) > 0 OR (\"Subject\" IS NULL AND \"Source\" = 'AdminProvisioned'))");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MembershipInvitations_Pending",
@@ -115,12 +115,39 @@ namespace Poseidon.Persistence.Migrations
                 table: "MembershipInvitations",
                 columns: new[] { "TenantId", "TokenHash" },
                 unique: true);
+
+            // QA N3: pseudonymous identity reference and unverified claimed tenant for invitation-session security events.
+            migrationBuilder.AddColumn<string>(
+                name: "IdentityReference",
+                schema: "audit",
+                table: "SecurityEvents",
+                type: "character varying(48)",
+                maxLength: 48,
+                nullable: true);
+
+            migrationBuilder.AddColumn<Guid>(
+                name: "UnverifiedTenantId",
+                schema: "audit",
+                table: "SecurityEvents",
+                type: "uuid",
+                nullable: true);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             // Down is only valid while no unaccepted invitation account (null subject) exists; it fails closed otherwise.
+
+            migrationBuilder.DropColumn(
+                name: "IdentityReference",
+                schema: "audit",
+                table: "SecurityEvents");
+
+            migrationBuilder.DropColumn(
+                name: "UnverifiedTenantId",
+                schema: "audit",
+                table: "SecurityEvents");
+
             migrationBuilder.DropTable(
                 name: "MembershipInvitations",
                 schema: "identity");

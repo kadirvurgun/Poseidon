@@ -250,6 +250,22 @@ public static class FoundationIdentity
     public static bool IsInvitationReturn(string? redirect) => redirect != null && LocalReturn(redirect) == redirect &&
         redirect.StartsWith(InvitationPage, StringComparison.Ordinal) && (redirect.Length == InvitationPage.Length || redirect[InvitationPage.Length] is '?' or '#');
 
+    public static readonly TimeSpan InvitationSessionLifetime = TimeSpan.FromMinutes(10);
+
+    // USER-ADMIN-02 (QA N6): the decision OnTokenValidated applies to an IdP-validated identity that resolved to no
+    // membership. Only a login that returns to the invitation page, for an identity with exactly one issuer and subject and
+    // no operator entry, gets an invitation session: claims sub/iss/source only, lifetime min(ID token, 10 minutes).
+    public static (ClaimsPrincipal Principal, DateTimeOffset ExpiresUtc)? InvitationSession(ClaimsPrincipal validated, string? redirectUri,
+        FederationSettings settings, DateTimeOffset tokenValidTo, DateTimeOffset now)
+    {
+        if (!IsInvitationReturn(redirectUri) || ActorResolver.AuthenticatedIdentity(validated) is not { } invitee ||
+            settings.Memberships.Any(x => x.Issuer == invitee.Issuer && x.Subject == invitee.Subject) || tokenValidTo <= now) return null;
+        var principal = new ClaimsPrincipal(new ClaimsIdentity([new Claim("sub", invitee.Subject), new Claim("iss", invitee.Issuer),
+            new Claim(ActorResolver.SessionSourceClaim, ActorResolver.InvitationSource)], Oidc));
+        var limit = now + InvitationSessionLifetime;
+        return (principal, tokenValidTo < limit ? tokenValidTo : limit);
+    }
+
     public static void AddFoundationIdentity(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
     {
         var settings = configuration.GetSection("Authentication:Oidc").Get<FederationSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new();
@@ -267,6 +283,7 @@ public static class FoundationIdentity
         services.AddSingleton<MembershipStateReader>();
         services.AddSingleton<ProvisionedIdentityLocator>();
         services.AddSingleton<InvitationAttemptLimiter>();
+        services.AddSingleton(new InvitationIdentityReference(settings.ClientSecret));
         services.AddScoped<ICurrentMembershipResolver, CurrentMembershipResolver>();
         services.AddAntiforgery(o =>
         {
@@ -351,16 +368,11 @@ public static class FoundationIdentity
                             identity = await c.HttpContext.RequestServices.GetRequiredService<ProvisionedIdentityLocator>()
                                 .FindAsync(issuers[0].Value, subjects[0].Value, c.HttpContext.TraceIdentifier, c.HttpContext.RequestAborted);
                     }
-                    if (identity == null && actor == null && IsInvitationReturn(c.Properties?.RedirectUri) &&
-                        ActorResolver.AuthenticatedIdentity(c.Principal!) is { } invitee && !settings.Memberships.Any(x => x.Issuer == invitee.Issuer && x.Subject == invitee.Subject))
+                    if (identity == null && actor == null && InvitationSession(c.Principal!, c.Properties?.RedirectUri, settings,
+                            new DateTimeOffset(c.SecurityToken.ValidTo, TimeSpan.Zero), c.HttpContext.UtcNow()) is { } invitation)
                     {
-                        // USER-ADMIN-02: the identity holder signs in to accept an invitation. The session carries only the
-                        // validated issuer+subject and the invitation source; it grants nothing and lives at most 10 minutes.
-                        c.Principal = new ClaimsPrincipal(new ClaimsIdentity([new Claim("sub", invitee.Subject), new Claim("iss", invitee.Issuer),
-                            new Claim(ActorResolver.SessionSourceClaim, ActorResolver.InvitationSource)], Oidc));
-                        var validTo = new DateTimeOffset(c.SecurityToken.ValidTo, TimeSpan.Zero);
-                        var limit = c.HttpContext.UtcNow().AddMinutes(10);
-                        c.Properties!.ExpiresUtc = validTo < limit ? validTo : limit;
+                        c.Principal = invitation.Principal;
+                        c.Properties!.ExpiresUtc = invitation.ExpiresUtc;
                         c.Properties.IsPersistent = false;
                         return;
                     }

@@ -84,7 +84,7 @@ GDPR/KVKK acceptance. [Decisions](tasks/USER-ADMIN-01.md).
 
 Closes USER-ADMIN-01 N1 (cross-tenant identity squatting). An admin-created membership starts `Invited`, grants nothing and
 reserves no identity: its account has no subject until the identity holder, signed in through the trusted IdP in a
-short (≤10 min) invitation-only session that resolves to no actor, accepts a single-use 256-bit token. Only the SHA-256 of
+short (≤10 min) invitation-only session (link token in the URL fragment, `Referrer-Policy: no-referrer`) that resolves to no actor, accepts a single-use 256-bit token. Only the SHA-256 of
 the token secret is stored; the token is returned once to the creating administrator and is never logged or audited.
 Uniqueness covers accepted bindings only (filtered unique index); one identity holds at most one accepted membership in
 any tenant (strict option). Acceptance runs SERIALIZABLE inside the token's tenant only (tenant-filtered context, no

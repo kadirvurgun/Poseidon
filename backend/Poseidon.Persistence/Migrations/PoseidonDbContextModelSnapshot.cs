@@ -12307,6 +12307,10 @@ namespace Poseidon.Persistence.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("character varying(128)");
 
+                    b.Property<string>("IdentityReference")
+                        .HasMaxLength(48)
+                        .HasColumnType("character varying(48)");
+
                     b.Property<DateTimeOffset>("OccurredAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -12319,6 +12323,9 @@ namespace Poseidon.Persistence.Migrations
                         .HasColumnType("character varying(64)");
 
                     b.Property<Guid?>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("UnverifiedTenantId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
@@ -15581,7 +15588,7 @@ namespace Poseidon.Persistence.Migrations
 
                     b.ToTable("Accounts", "identity", t =>
                         {
-                            t.HasCheckConstraint("CK_Accounts_Closed", "\"AccountType\" = 'Human' AND \"Source\" IN ('ConfigurationImport','SyntheticUnverified','AdminProvisioned') AND length(\"Issuer\") > 0 AND (length(\"Subject\") > 0 OR \"Subject\" IS NULL AND \"Source\" = 'AdminProvisioned')");
+                            t.HasCheckConstraint("CK_Accounts_Closed", "\"AccountType\" = 'Human' AND \"Source\" IN ('ConfigurationImport','SyntheticUnverified','AdminProvisioned') AND length(\"Issuer\") > 0 AND (COALESCE(length(\"Subject\"), 0) > 0 OR (\"Subject\" IS NULL AND \"Source\" = 'AdminProvisioned'))");
                         });
                 });
 
