@@ -102,53 +102,21 @@ async function overlay(page: Page, boxes: { x: number; y: number; width: number;
     host.id = 'poseidon-doc-overlay'
     host.setAttribute('aria-hidden', 'true')
     host.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:2147483647'
-    // Visible text rectangles (page text incl. the sticky header) the badge must not cover.
-    const text: DOMRect[] = []
-    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT)
-    for (let node = walker.nextNode(); node; node = walker.nextNode()) {
-      if (!node.textContent?.trim()) continue
-      const range = document.createRange()
-      range.selectNodeContents(node)
-      for (const rect of range.getClientRects())
-        if (rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.top < window.innerHeight) text.push(rect)
-    }
-    const size = 28, gap = 6
-    const fits = (left: number, top: number) => left >= 2 && top >= 2 && left + size <= window.innerWidth - 2 &&
-      top + size <= window.innerHeight - footerHeight - 2
-    // Badges already placed for this step are obstacles too, as are the other targets' rings.
-    const placed: { left: number; top: number; right: number; bottom: number }[] = []
-    const rings = boxes.map(box => ({ left: box.x - 4, top: box.y - 4, right: box.x + box.width + 4, bottom: box.y + box.height + 4 }))
-    const free = (left: number, top: number, own: number) => ![...text, ...placed, ...rings.filter((_, i) => i !== own)].some(rect =>
-      rect.left < left + size + 2 && rect.right > left - 2 && rect.top < top + size + 2 && rect.bottom > top - 2)
-    const clamp = (left: number, top: number): [number, number] => [Math.min(window.innerWidth - size - 2, Math.max(2, left)),
-      Math.min(window.innerHeight - footerHeight - size - 2, Math.max(2, top))]
-    // QA N5 + mobile: the badge sits outside the ring in the first corner that neither leaves the viewport nor covers
-    // text: left of the ring, right of it, then above/below its start or end, finally inside its top-end corner.
-    const place = (own: number): [number, number] => {
-      const ring = rings[own]
-      const candidates: [number, number][] = [
-        [ring.left - size - gap, ring.top], [ring.right + gap, ring.top],
-        [ring.left, ring.top - size - gap], [ring.right - size, ring.top - size - gap],
-        [ring.left, ring.bottom + gap], [ring.right - size, ring.bottom + gap],
-        [ring.right - size - gap, ring.top + gap],
-      ]
-      // Last resort stays inside the viewport and above the commit footer.
-      return candidates.find(([left, top]) => fits(left, top) && free(left, top, own)) ??
-        candidates.find(([left, top]) => fits(left, top) && !placed.some(b => b.left < left + size + 2 && b.right > left - 2 &&
-          b.top < top + size + 2 && b.bottom > top - 2)) ?? clamp(ring.left, ring.top - size - gap)
-    }
     for (const [index, box] of boxes.entries()) {
       const ring = document.createElement('div')
       ring.style.cssText = `position:absolute;left:${box.x - 4}px;top:${box.y - 4}px;width:${box.width + 8}px;height:${box.height + 8}px;` +
         'border:3px solid var(--primary);border-radius:8px;box-shadow:0 0 0 3px color-mix(in oklch, var(--primary) 25%, transparent)'
       const badge = document.createElement('div')
       badge.textContent = String(step)
-      const [left, top] = place(index)
+      // QA N5: the badge sits outside the ring (left of it, or above it near the left edge) so it never covers text.
+      const outside = box.x >= 40
+      const left = outside ? box.x - 38 : Math.max(2, box.x - 4)
+      const top = Math.max(2, Math.min(window.innerHeight - footerHeight - 30, outside ? box.y - 4 : box.y - 36))
       badge.style.cssText = `position:absolute;left:${left}px;top:${top}px;width:28px;height:28px;border-radius:50%;display:flex;` +
         'align-items:center;justify-content:center;background:var(--primary);color:var(--primary-foreground);font:700 15px/1 system-ui,sans-serif;' +
         'box-shadow:0 0 0 2px var(--background)'
       // One number per step: only the first target gets the badge, so badges never cover adjacent rings.
-      if (index === 0) { host.append(ring, badge); placed.push({ left, top, right: left + size, bottom: top + size }) }
+      if (index === 0) host.append(ring, badge)
       else host.append(ring)
     }
     const footer = document.createElement('div')

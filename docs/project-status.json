@@ -18638,7 +18638,7 @@
     ]
   },
   "user_admin_03_20261122": {
-    "status": "AUTHORED_TARGETED_TESTS_PASS_PG_DEFERRED_TO_CI",
+    "status": "BRANCH_CI_GREEN_QA_FINDINGS_FIXED_IN_INTEGRATION",
     "branch": "feature/invite-email-20261122",
     "base": "36d5d183",
     "scope": "USER-ADMIN-03 invitation e-mail transactional outbox (protected payload, system-actor dispatcher, SMTP STARTTLS, retry/backoff, NOT_CONFIGURED) and 54.01 account.invite_hours tenant lifetime (1-168 h) with UI and 17 locales",
@@ -18653,14 +18653,15 @@
       "scripts s1/endpoint/critical 38/38"
     ],
     "deferred": [
-      "API PostgreSQL integration tests (CI)",
       "real SMTP server journey",
-      "independent security QA",
-      "human review of machine-drafted locale strings"
+      "human review of machine-drafted locale strings",
+      "persisted Data Protection key ring before enabling e-mail in production"
     ],
     "phase_reports": [
       "docs/phases/USER-ADMIN-03.md"
-    ]
+    ],
+    "ci": "branch CI run 45059569410 on 4ac9a7d6 SUCCESS (incl. API PostgreSQL InvitationDeliveryTests); earlier runs 45039612661/45040746196 (secret scan) and 45041780566 (PG instant precision) red, diagnosed and fixed",
+    "independent_qa": "security QA REJECT on 88bb67e0 (B1/M1/M2/L1-L6); fixes a7418de1+4ac9a7d6 re-reviewed in integration QA: fixed, notes N3/N4/L2 open"
   },
   "rate_limit_01_20261122": {
     "state": "AUTHORED_UNIT_VERIFIED_PG_DEFERRED_NOT_ACCEPTED",

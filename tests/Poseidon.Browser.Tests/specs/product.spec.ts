@@ -52,7 +52,7 @@ test('product navigation is keyboard accessible and direct technical route is pr
         await page.keyboard.press('Shift+Tab');
         // HELP-CENTER-01: a signed-in reader's drawer ends with the static Help center link.
         const helpCenter = drawer.getByRole('link', { name: 'Yardım merkezi', exact: true });
-        await expect(await helpCenter.count() ? helpCenter : workView).toBeFocused();
+        await expect(helpCenter).toBeFocused();
         await page.keyboard.press('Tab');
         await expect(brand).toBeFocused();
         await page.keyboard.press('Escape');

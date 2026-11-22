@@ -9,7 +9,7 @@ This is an integration package, not a canonical sprint or release gate. Accepted
 
 | # | Package | Head | Independent QA | Resolution |
 |---|---|---|---|---|
-| 1 | `fix/mobile-ui-defects-20261122` | 7f196f8c | ACCEPT-WITH-NOTES | notes fixed in 7f196f8c (mobile-only checkbox sizing, 44 px touch targets) |
+| 1 | `fix/mobile-ui-defects-20261122` | 7f196f8c | ACCEPT-WITH-NOTES | CSS notes fixed in 7f196f8c (mobile-only checkbox sizing, 44 px touch targets); branch CI was red on UG-2 screenshot provenance because `capture.ts` changed without regenerating the 196 screenshots, so the `capture.ts` badge-placement change is removed from this bundle (DEFERRED to a screenshot regeneration package) |
 | 2 | `feature/help-center-20261122` (HELP-CENTER-01) | a41fe952 | REJECT (deterministic test regression) | fixed in a41fe952 (drawer focus test, a11y, honest states) |
 | 3 | `feature/invite-email-20261122` (USER-ADMIN-03) | 4ac9a7d6 | security QA REJECT (B1; M1 poison row, M2 retention when transport disabled) | fixed in a7418de1 and 4ac9a7d6 |
 | 4 | `feature/rate-limit-20261122` (RATE-LIMIT-01) | 34205ea9 | ACCEPT-WITH-NOTES | M1, M2, L1, L4, N1 fixed in 34205ea9 |
@@ -59,3 +59,7 @@ browser/Playwright journeys and human review of machine-drafted locale strings.
 ## Next step
 
 Push the integration branch once invite-email CI is green, then run CI, independent QA on the integration head and one integration PR.
+
+## Integration QA (634b3bd5)
+
+Independent integration QA: REJECT on CI run 45063250285 (`frontend-and-browser` step "Help screenshot mapping and provenance tests", `tests/Poseidon.Browser.Tests/screenshots/provenance.test.ts:29`, `generator_blob` drift from the mobile branch's `capture.ts` change). All other jobs green (Persistence Integration 139/139, API PG gate 4 shards, migration model, secret scan). Code review of all post-QA fix commits and the migration renumber: ACCEPT-WITH-NOTES. Fix: `capture.ts` restored to main (screenshots and provenance unchanged; badge-placement improvement deferred until screenshots are regenerated in the lab); `product.spec.ts` Help center focus assertion made unconditional (N2). Open notes: N1 mobile `.tug-workspace label` visual check; N3 all API instances need the same `InvitationDelivery` transport config; N4 reissue idempotency fingerprint records only address presence; L2 persisted Data Protection key ring is a production precondition.
