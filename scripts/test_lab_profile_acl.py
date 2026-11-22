@@ -159,6 +159,32 @@ class ProfileAclTests(unittest.TestCase):
                 lab.prepare(self.profile, self.owner)
         backend.protect.assert_called_once_with(self.directory)
 
+    @unittest.skipIf(os.name == 'nt', 'POSIX mode path')
+    def test_posix_owned_pair_made_owner_only_and_read_back(self):
+        os.chmod(self.directory, 0o755)
+        os.chmod(self.profile, 0o775)
+        before = self.secret.read_bytes()
+        with patch.object(lab, 'PRIVATE', self.private):
+            lab.prepare_posix(self.profile, self.owner)
+        for path in (self.directory, self.profile):
+            self.assertEqual(0o700, os.lstat(path).st_mode & 0o7777)
+        self.assertEqual(before, self.secret.read_bytes())
+
+    @unittest.skipIf(os.name == 'nt', 'POSIX mode path')
+    def test_posix_wrong_owner_refuses_mode_change(self):
+        os.chmod(self.profile, 0o755)
+        self.marker.write_text(str(uuid.uuid4()), encoding='utf-8')
+        with patch.object(lab, 'PRIVATE', self.private), self.assertRaisesRegex(RuntimeError, '^profile_ownership$'):
+            lab.prepare_posix(self.profile, self.owner)
+        self.assertEqual(0o755, os.lstat(self.profile).st_mode & 0o7777)
+
+    def test_posix_readback_rejects_group_world_or_foreign_uid(self):
+        uid = 1001
+        for mode, owner in ((0o40750, uid), (0o40707, uid), (0o40700, uid + 1)):
+            with self.subTest(mode=oct(mode), owner=owner), self.assertRaisesRegex(RuntimeError, '^profile_acl_readback$'):
+                lab.validate_posix(Mock(st_mode=mode, st_uid=owner), uid)
+        lab.validate_posix(Mock(st_mode=0o40700, st_uid=uid), uid)
+
 
 if __name__ == '__main__':
     unittest.main()

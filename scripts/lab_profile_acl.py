@@ -3,6 +3,8 @@
 The credential root is never changed. Native QuotaManager initialization needs
 the normal SYSTEM/Administrators profile access that its owner-only parent lacks.
 No sandbox, storage or certificate checks are disabled. CLI errors are value-free.
+On POSIX (the Linux help-screenshot workflow) the same owned pair is made owner-only
+(0700, current effective uid) and read back; no other path is touched.
 """
 import ctypes as c
 from ctypes import wintypes as w
@@ -159,8 +161,24 @@ def prepare(profile, owner):
         validate_acl(backend.snapshot(path), backend.current_user)
 
 
+def validate_posix(metadata, uid):
+    if (metadata.st_mode & 0o7777) != 0o700 or metadata.st_uid != uid:
+        raise RuntimeError('profile_acl_readback')
+
+
+def prepare_posix(profile, owner):
+    """POSIX equivalent of prepare(): owner-only mode on the owned pair, rechecked before each write."""
+    if os.name == 'nt':
+        raise RuntimeError('unsupported_platform')
+    directory, target = owned_profile(profile, owner, PRIVATE)
+    for path in (directory, target):
+        owned_profile(profile, owner, PRIVATE)
+        os.chmod(path, 0o700, follow_symlinks=False)
+        validate_posix(os.lstat(path), os.geteuid())
+
+
 if __name__ == '__main__':
     try:
-        prepare(*sys.argv[1:])
+        (prepare if os.name == 'nt' else prepare_posix)(*sys.argv[1:])
     except Exception:
         sys.exit(1)

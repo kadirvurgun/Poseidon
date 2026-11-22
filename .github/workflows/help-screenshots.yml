@@ -1,0 +1,155 @@
+# USER-GUIDE-01 UG-2 / UG-4 (HELP-MANUAL-DOWNLOAD-01): NOT a required check.
+# Regenerates the help screenshots (desktop + mobile, TR/EN) on the disposable synthetic DEV-OIDC-LAB-01
+# lab and builds the TR/EN user manual (HTML + PDF) from them. Runs only on a push to screenshots/**
+# (workflow_dispatch cannot target a non-default branch). The workflow is read-only: it pushes nothing,
+# uses no repository secret, and uploads only screenshots, their provenance JSON, bounded run reports
+# and the manual. Lab credentials are generated inside the run and never leave .runtime/oidc-lab.
+name: Help screenshots
+
+on:
+  push:
+    branches: ['screenshots/**']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: help-screenshots-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      POSEIDON_SCREENSHOTS_THRESHOLD: '0.002'
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v6.0.0
+        with:
+          python-version: '3.13.13'
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 26.13.0
+          cache: npm
+          cache-dependency-path: |
+            frontend/package-lock.json
+            tests/Poseidon.Browser.Tests/package-lock.json
+      - uses: actions/setup-dotnet@v6.0.0
+        with:
+          global-json-file: global.json
+      - name: Restore packages and browsers
+        run: |
+          npm ci --prefix frontend
+          npm ci --prefix tests/Poseidon.Browser.Tests
+          cd tests/Poseidon.Browser.Tests && npx playwright install --with-deps firefox chromium
+      - name: Build frontend, API and migrator (Release)
+        run: |
+          npm run build --prefix frontend
+          dotnet restore backend/Poseidon.Api --locked-mode
+          dotnet build backend/Poseidon.Api --configuration Release --no-restore
+          dotnet restore backend/Poseidon.DbMigrator --locked-mode
+          dotnet build backend/Poseidon.DbMigrator --configuration Release --no-restore
+      - name: Generator must be clean (provenance dirty=false)
+        run: git diff --exit-code -- tests/Poseidon.Browser.Tests/screenshots frontend/src/help/screenshots/steps.json
+      - name: Initialise the private synthetic lab
+        run: |
+          python scripts/oidc_lab.py init
+          # Keycloak runs as uid 1000 in its container and reads the generated realm import through a
+          # read-only bind mount; the file stays owner-only plus one named read ACL on this ephemeral runner.
+          setfacl -m u:1000:r .runtime/oidc-lab/realm/poseidon-lab-realm.json
+          docker compose -p poseidon-lab-pull -f infra/oidc-lab/compose.yaml pull --quiet
+      - name: Start lab, prepare screenshot grants and demo fixtures
+        run: |
+          python scripts/oidc_lab.py start
+          python scripts/help_screenshots_lab.py prepare_screenshots
+          # owned_process() matches the API by Win32_Process (Windows only); stop the API started above by its pid.
+          kill "$(cat .runtime/oidc-lab/app.pid)"
+          for _ in $(seq 1 30); do (echo > /dev/tcp/127.0.0.1/5443) 2>/dev/null || break; sleep 1; done
+          python scripts/oidc_lab.py start
+      - name: Strict Firefox profile preflight (owned CA import)
+        run: |
+          firefox_path="$(cd tests/Poseidon.Browser.Tests && node -e "import('@playwright/test').then(m => console.log(m.firefox.executablePath()))")"
+          python - "$firefox_path" <<'PY'
+          import os, subprocess, sys, uuid
+          from pathlib import Path
+          private = Path('.runtime/oidc-lab').resolve()
+          directory = private / 'strict-profile-preflight'
+          profile = directory / 'profile'
+          owner = str(uuid.uuid4())
+          directory.mkdir(mode=0o700); profile.mkdir(mode=0o700)
+          (directory / '.owner').write_text(owner, encoding='utf-8')
+          acl = subprocess.run([sys.executable, 'scripts/lab_profile_acl.py', str(profile), owner]).returncode
+          ca = subprocess.run([sys.executable, 'scripts/lab_profile_ca.py', str(profile), sys.argv[1], owner]).returncode if acl == 0 else -1
+          print(f'profile_acl={acl} profile_ca={ca}')
+          if ca != 0 and acl == 0:
+              # Diagnostics of the public synthetic CA import only (no credential is read here).
+              for entry in sorted(Path(sys.argv[1]).parent.glob('lib*.so')):
+                  print('bundle', entry.name)
+              sys.path.insert(0, 'scripts')
+              import lab_profile_ca, traceback, shutil
+              shutil.rmtree(profile); profile.mkdir(mode=0o700)
+              try:
+                  lab_profile_ca.install(str(profile), sys.argv[1], owner)
+              except Exception:
+                  traceback.print_exc()
+          import shutil; shutil.rmtree(directory)
+          sys.exit(0 if acl == 0 and ca == 0 else 1)
+          PY
+      - name: Regenerate screenshots (update)
+        run: |
+          export POSEIDON_SCREENSHOTS_FIXED_CLOCK="$(date -u +%Y-%m-%dT00:00:00.000Z)"
+          mkdir -p .runtime/help-screenshots-ci
+          status=0
+          POSEIDON_SCREENSHOTS_MODE=update python scripts/help_screenshots_lab.py screenshots || status=$?
+          cp .runtime/oidc-lab/screenshot-report.json .runtime/help-screenshots-ci/update-report.json || true
+          exit $status
+      - name: Compare a second independent capture
+        run: |
+          export POSEIDON_SCREENSHOTS_FIXED_CLOCK="$(date -u +%Y-%m-%dT00:00:00.000Z)"
+          status=0
+          POSEIDON_SCREENSHOTS_MODE=compare python scripts/help_screenshots_lab.py screenshots || status=$?
+          cp .runtime/oidc-lab/screenshot-report.json .runtime/help-screenshots-ci/compare-report.json || true
+          exit $status
+      - name: Screenshot mapping, provenance and palette tests
+        run: node --test tests/Poseidon.Browser.Tests/screenshots/steps.test.ts tests/Poseidon.Browser.Tests/screenshots/provenance.test.ts tests/Poseidon.Browser.Tests/screenshots/png-palette.test.ts
+      - name: Build the TR/EN user manual (HTML + PDF)
+        run: |
+          npm run manual:pdf --prefix tests/Poseidon.Browser.Tests
+          node --test tests/Poseidon.Browser.Tests/manual/manual.test.ts
+          git rev-parse HEAD > .runtime/user-manual/generator-commit.txt
+      - name: Run summary (bounded names/results only)
+        if: always()
+        run: |
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          from pathlib import Path
+          from collections import Counter
+          for name in ('update', 'compare'):
+              path = Path(f'.runtime/help-screenshots-ci/{name}-report.json')
+              if not path.exists():
+                  print(f'- {name}: no report'); continue
+              report = json.loads(path.read_text())
+              shots = report.get('shots', [])
+              print(f"- {name}: status={report.get('status')} {dict(Counter(s.get('result') for s in shots))} max_ratio={max([s.get('ratio', 0) for s in shots] or [0])}")
+              for shot in shots:
+                  if shot.get('result') not in ('written', 'match'):
+                      print(f"  - {shot.get('name')}: {shot.get('result')} {shot.get('failure', '')} {shot.get('ratio', '')}")
+          PY
+          cat "$GITHUB_STEP_SUMMARY"
+      - name: Stop the lab
+        if: always()
+        run: |
+          [ -f .runtime/oidc-lab/app.pid ] && kill "$(cat .runtime/oidc-lab/app.pid)" 2>/dev/null || true
+          [ -f .runtime/oidc-lab/ready ] && python scripts/oidc_lab.py stop || true
+      - uses: actions/upload-artifact@v7.0.2
+        if: always()
+        with:
+          name: help-screenshots-and-manual
+          path: |
+            frontend/src/help/screenshots/**/*.png
+            frontend/src/help/screenshots/**/*.json
+            .runtime/help-screenshots-ci
+            .runtime/user-manual
+          if-no-files-found: warn
+          retention-days: 14

@@ -3,7 +3,10 @@
 Uses public NSS APIs from Playwright's pinned Firefox distribution, not an
 unverified certutil download or Windows certificate stores. Called privately by
 strict-browser.ts. All diagnostics are fixed codes; no exception text escapes.
+On Linux (the help-screenshot workflow) the same NSS API is loaded from the same
+pinned Playwright Firefox directory (libnss3.so and its bundled dependencies).
 """
+import contextlib
 import ctypes as c
 import os
 from pathlib import Path
@@ -12,6 +15,21 @@ import sys
 
 class Trust(c.Structure):
     _fields_ = [('sslFlags', c.c_uint), ('emailFlags', c.c_uint), ('objectSigningFlags', c.c_uint)]
+
+
+# Firefox's own dependency order; only libraries present in the pinned bundle are preloaded.
+POSIX_DEPENDENCIES = ('libnspr4.so', 'libplc4.so', 'libplds4.so', 'libmozsqlite3.so', 'libnssutil3.so')
+
+
+def load_nss(bundle):
+    if os.name == 'nt':
+        return c.CDLL(str(bundle / 'nss3.dll'))
+    # The bundle has no system install path; preload its own NSPR/NSS dependencies globally so
+    # libnss3.so resolves them from this directory only (never a system NSS or certutil).
+    for name in POSIX_DEPENDENCIES:
+        if (bundle / name).is_file():
+            c.CDLL(str(bundle / name), mode=c.RTLD_GLOBAL)
+    return c.CDLL(str(bundle / 'libnss3.so'), mode=c.RTLD_GLOBAL)
 
 
 def install(profile, executable, owner):
@@ -23,13 +41,13 @@ def install(profile, executable, owner):
         raise RuntimeError('profile_ownership')
     bundle = Path(executable).resolve(strict=True).parent
     # Only the distribution selected by the locked Playwright installation.
-    if bundle.name != 'firefox' or bundle.parent.name != 'firefox-1555' or os.name != 'nt':
+    if bundle.name != 'firefox' or bundle.parent.name != 'firefox-1555' or os.name not in ('nt', 'posix'):
         raise RuntimeError('unsupported_bundle')
     pem = (private / 'ca.pem').read_bytes()
     if pem.count(b'-----BEGIN CERTIFICATE-----') != 1:
         raise RuntimeError('single_owned_ca_required')
-    with os.add_dll_directory(str(bundle)):
-        nss = c.CDLL(str(bundle / 'nss3.dll'))
+    with os.add_dll_directory(str(bundle)) if os.name == 'nt' else contextlib.nullcontext():
+        nss = load_nss(bundle)
         def api(name, result, *args):
             f = getattr(nss, name)
             f.restype, f.argtypes = result, list(args)
