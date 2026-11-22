@@ -1084,7 +1084,7 @@
       "notice_uncertain": "O resultado é incerto. Tentar novamente envia o mesmo comando.",
       "notice_conflict": "O registro mudou. Recarregue e revise antes de agir novamente.",
       "notice_stale": "A avaliação mudou. Revise a avaliação atual antes de decidir.",
-      "notice_goBlocked": "GO só pode ser registrado com uma avaliação PRONTO ou CONDICIONAL.",
+      "notice_goBlocked": "GO só pode ser registrado com uma avaliação PRONTO.",
       "notice_denied": "Você não está autorizado para esta ação.",
       "notice_failed": "O comando foi recusado.",
       "READY": "Pronto",
@@ -1183,7 +1183,8 @@
       "notes": "Observações",
       "declarationHint": "Salvar registra uma declaração não verificada. Qualquer alteração exige nova verificação do chefe de máquinas.",
       "cancel": "Cancelar",
-      "openFromJob": "Atribuições e prontidão"
+      "openFromJob": "Atribuições e prontidão",
+      "goConditional": "Esta avaliação é CONDICIONAL. GO exige uma avaliação PRONTO: nenhuma fonte define quais condições permitiriam GO, por isso o servidor o recusa. Resolva as condições e reavalie, ou registre NO-GO."
     },
     "CrewCompliance_tsx_copy": {
       "titleCertificates": "Certificados da tripulação",
@@ -2388,7 +2389,13 @@
       "notice_stale": "A avaliação mudou. Revise a avaliação atual antes de decidir.",
       "notice_blocked": "A liberação não é permitida para esta avaliação.",
       "notice_denied": "Você não está autorizado para esta ação.",
-      "notice_failed": "O comando não foi aceito."
+      "notice_failed": "O comando não foi aceito.",
+      "releaseWhy": "Por que Liberar não está disponível",
+      "releaseForecast": "Esta janela é uma previsão. Liberar exige uma janela atual que inclua hoje.",
+      "releaseNotReady": "Liberar exige uma avaliação atual PRONTO, portanto todas as categorias devem ser aprovadas. Estas categorias ainda não foram aprovadas:",
+      "gap_EMERGENCY_SOURCE_UNAVAILABLE": "Emergência: ainda não há fonte de preparação para emergências conectada, portanto esta categoria permanece Desconhecida. Registros atuais de reunião e exercícios verificados por pessoas (SOLAS III/19), com a prontidão dos equipamentos de salvatagem e de combate a incêndio, a atenderiam assim que o módulo de preparação para emergências (61.02) for entregue.",
+      "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "Estatutário: nenhuma fonte define o conjunto de certificados exigidos para este navio, portanto a completude permanece Desconhecida mesmo que todos os certificados registrados sejam válidos e verificados. Uma linha de base controlada de certificados exigidos para o navio a atenderia.",
+      "releaseHoldDeny": "Reter e Negar sempre podem ser registrados com um motivo."
     },
     "S9Wpc_tsx_copy": {
       "eyebrow": "Inteligência de frota",
@@ -5235,7 +5242,6 @@
     "m_f80308c1376523e6": "Declarado pelo usuário e não verificado",
     "m_8164fd4adb2de542": "Horários declarados mantêm seu deslocamento UTC explícito. Quantidades não são somadas, convertidas nem usadas para inferir conformidade. Eventos portuários registrados não são instruções nem janelas planejadas aprovadas.",
     "m_c74b3cb63ce89b56": "Pendente; verificação não estabelecida",
-    "m_393f995a8e90462f": "Rascunho; finalização indisponível",
     "m_1cf31dc53d715270": "Fonte exata e fatos registrados",
     "m_c96c8fa43f9abb83": "Registros operacionais retornados",
     "m_f9e49e5d9319cf49": "Registros de combustível e ROB",
@@ -5666,7 +5672,6 @@
     "m_0ecc2a399cb4d49d": "Abrir rascunho de ordem de serviço vinculado",
     "m_f43a0a4d8ccef23e": "Fonte salva da ordem de serviço",
     "m_e81e83068386a55c": "Fase de execução declarada: ",
-    "m_36ce4f5246c28e39": "Liberação, aceitação de evidências, verificação e encerramento permanecem indisponíveis.",
     "m_a7baebb651ea8368": "Referência fixada do plano mantida",
     "m_ab9741448c1d77ac": "Contexto do plano de manutenção somente leitura",
     "m_48675e18dff978b4": "Plano de manutenção vinculado",
@@ -6879,6 +6884,12 @@
     "m_5b1e7c9d3a2f4e60": "Registros de UAT por função",
     "m_5b1e7c9d3a2f4e61": "Revisão go/no-go do piloto",
     "m_5b1e7c9d3a2f4e62": "Programa piloto: semanas e relatório de valor",
-    "m_7c3d9a1e5b2f4a68": "Users and permissions"
+    "m_7c3d9a1e5b2f4a68": "Users and permissions",
+    "m_d4ded3f8a1bec68c": "Liberação, registro de evidências, verificação independente e encerramento são registrados no painel de execução. A evidência enviada só é aceita por verificação humana independente, nunca pela pessoa que executou o trabalho; não há etapa separada de aceitação de evidências, e a verificação não é uma decisão de retorno ao serviço.",
+    "m_9c5fd87ade98df4b": "Rascunho (não finalizado)",
+    "m_081f7dc1f7c9881a": "Final (interno; não é uma assinatura)",
+    "m_821a3f35ca116281": "A finalização do SOF é um ato humano interno registrado no painel de finalização por um Comandante, Imediato ou Chefe de Máquinas designado. Assinaturas, aprovação operacional/jurídica e captura offline permanecem indisponíveis.",
+    "m_85cf3eb68c50b783": "Você redigiu esta revisão do registro; a revisão deve ser registrada por um revisor independente.",
+    "m_7c1e0a5b3d9f241b": "Recusado por segregação de funções: você registrou uma etapa anterior desta renovação, portanto outra pessoa deve executar esta etapa."
   }
 }

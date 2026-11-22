@@ -1084,7 +1084,7 @@
       "notice_uncertain": "Das Ergebnis ist unsicher. Erneut versuchen sendet denselben Befehl.",
       "notice_conflict": "Der Datensatz wurde geändert. Laden und prüfen Sie ihn vor einer erneuten Aktion.",
       "notice_stale": "Die Bewertung hat sich geändert. Prüfen Sie die aktuelle Bewertung vor der Entscheidung.",
-      "notice_goBlocked": "GO kann nur bei einer Bewertung BEREIT oder BEDINGT erfasst werden.",
+      "notice_goBlocked": "GO kann nur bei einer Bewertung BEREIT erfasst werden.",
       "notice_denied": "Sie sind für diese Aktion nicht berechtigt.",
       "notice_failed": "Der Befehl wurde abgelehnt.",
       "READY": "Bereit",
@@ -1183,7 +1183,8 @@
       "notes": "Notizen",
       "declarationHint": "Speichern erfasst eine ungeprüfte Erklärung. Jede Änderung erfordert eine neue Prüfung durch den Leitenden Ingenieur.",
       "cancel": "Abbrechen",
-      "openFromJob": "Zuweisungen und Bereitschaft"
+      "openFromJob": "Zuweisungen und Bereitschaft",
+      "goConditional": "Diese Bewertung ist BEDINGT. GO erfordert eine Bewertung BEREIT: Keine Quelle legt fest, welche Bedingungen GO erlauben, daher lehnt der Server es ab. Bedingungen beheben und neu bewerten oder NO-GO erfassen."
     },
     "CrewCompliance_tsx_copy": {
       "titleCertificates": "Besatzungszertifikate",
@@ -2388,7 +2389,13 @@
       "notice_stale": "Die Bewertung hat sich geändert. Prüfen Sie die aktuelle Bewertung vor der Entscheidung.",
       "notice_blocked": "Für diese Bewertung ist keine Freigabe zulässig.",
       "notice_denied": "Sie sind für diese Aktion nicht berechtigt.",
-      "notice_failed": "Der Befehl wurde nicht angenommen."
+      "notice_failed": "Der Befehl wurde nicht angenommen.",
+      "releaseWhy": "Warum Freigeben nicht verfügbar ist",
+      "releaseForecast": "Dieses Fenster ist eine Prognose. Freigeben erfordert ein aktuelles Fenster, das heute einschließt.",
+      "releaseNotReady": "Freigeben erfordert eine aktuelle Bewertung BEREIT, daher muss jede Kategorie bestehen. Diese Kategorien bestehen noch nicht:",
+      "gap_EMERGENCY_SOURCE_UNAVAILABLE": "Notfall: Es ist noch keine Quelle zur Notfallvorsorge angebunden, daher bleibt diese Kategorie Unbekannt. Aktuelle, von Menschen verifizierte Musterungs- und Übungsnachweise (SOLAS III/19) mit Einsatzbereitschaft der Rettungs- und Brandschutzmittel würden sie erfüllen, sobald das Modul Notfallvorsorge (61.02) geliefert ist.",
+      "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "Gesetzlich: Keine Quelle legt den erforderlichen Zertifikatssatz für dieses Schiff fest, daher bleibt die Vollständigkeit Unbekannt, auch wenn jedes erfasste Zertifikat gültig und verifiziert ist. Eine kontrollierte Basis der erforderlichen Zertifikate für das Schiff würde sie erfüllen.",
+      "releaseHoldDeny": "Anhalten und Ablehnen können jederzeit mit Begründung erfasst werden."
     },
     "S9Wpc_tsx_copy": {
       "eyebrow": "Flottenintelligenz",
@@ -5235,7 +5242,6 @@
     "m_f80308c1376523e6": "Vom Benutzer angegeben und ungeprüft",
     "m_8164fd4adb2de542": "Angegebene Zeiten behalten ihren ausdrücklichen UTC-Offset. Mengen werden weder summiert noch umgerechnet oder zur Ableitung von Konformität verwendet. Erfasste Hafenereignisse sind weder Anweisungen noch genehmigte Planzeitfenster.",
     "m_c74b3cb63ce89b56": "Ausstehend; Verifizierung nicht nachgewiesen",
-    "m_393f995a8e90462f": "Entwurf; Finalisierung nicht verfügbar",
     "m_1cf31dc53d715270": "Genaue Quelle und erfasste Fakten",
     "m_c96c8fa43f9abb83": "Zurückgegebene betriebliche Datensätze",
     "m_f9e49e5d9319cf49": "Brennstoff- und ROB-Datensätze",
@@ -5666,7 +5672,6 @@
     "m_0ecc2a399cb4d49d": "Verknüpften Arbeitsauftragsentwurf öffnen",
     "m_f43a0a4d8ccef23e": "Gespeicherte Arbeitsauftragsquelle",
     "m_e81e83068386a55c": "Angegebene Ausführungsphase: ",
-    "m_36ce4f5246c28e39": "Freigabe, Nachweisannahme, Verifizierung und Abschluss bleiben nicht verfügbar.",
     "m_a7baebb651ea8368": "Beibehaltene feste Planverknüpfung",
     "m_ab9741448c1d77ac": "Schreibgeschützter Instandhaltungsplankontext",
     "m_48675e18dff978b4": "Verknüpfter Instandhaltungsplan",
@@ -6879,6 +6884,12 @@
     "m_5b1e7c9d3a2f4e60": "Rollen-UAT-Aufzeichnungen",
     "m_5b1e7c9d3a2f4e61": "Pilot-Go/No-Go-Prüfung",
     "m_5b1e7c9d3a2f4e62": "Pilotprogramm: Wochen und Wertbericht",
-    "m_7c3d9a1e5b2f4a68": "Users and permissions"
+    "m_7c3d9a1e5b2f4a68": "Users and permissions",
+    "m_d4ded3f8a1bec68c": "Freigabe, Nachweiserfassung, unabhängige Verifizierung und Abschluss werden im Ausführungsbereich erfasst. Eingereichte Nachweise werden nur durch unabhängige menschliche Verifizierung angenommen, nie durch die Person, die die Arbeit ausgeführt hat; es gibt keinen separaten Schritt zur Nachweisannahme, und die Verifizierung ist keine Entscheidung über die Wiederinbetriebnahme.",
+    "m_9c5fd87ade98df4b": "Entwurf (nicht finalisiert)",
+    "m_081f7dc1f7c9881a": "Final (intern; keine Unterschrift)",
+    "m_821a3f35ca116281": "Die SOF-Finalisierung ist eine interne menschliche Handlung, die ein bestellter Kapitän, Erster Offizier oder Leitender Ingenieur im Finalisierungsbereich erfasst. Unterschriften, betriebliche/rechtliche Genehmigung und Offline-Erfassung bleiben nicht verfügbar.",
+    "m_85cf3eb68c50b783": "Sie haben diese Protokollrevision verfasst; die Prüfung muss eine unabhängige prüfende Person erfassen.",
+    "m_7c1e0a5b3d9f241b": "Wegen Funktionstrennung abgelehnt: Sie haben einen früheren Schritt dieser Erneuerung erfasst, daher muss eine andere Person diesen Schritt ausführen."
   }
 }

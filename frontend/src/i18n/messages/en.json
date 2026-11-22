@@ -1084,7 +1084,7 @@
       "notice_uncertain": "The outcome is uncertain. Retry sends the same command.",
       "notice_conflict": "The record changed. Reload and review before acting again.",
       "notice_stale": "The assessment changed. Review the current assessment before deciding.",
-      "notice_goBlocked": "GO can only be recorded against a READY or CONDITIONAL assessment.",
+      "notice_goBlocked": "GO can only be recorded against a READY assessment.",
       "notice_denied": "You are not authorized for this action.",
       "notice_failed": "The command was refused.",
       "READY": "Ready",
@@ -1183,7 +1183,8 @@
       "notes": "Notes",
       "declarationHint": "Saving records an unverified declaration. Any change needs a new Chief Engineer verification.",
       "cancel": "Cancel",
-      "openFromJob": "Assignments and readiness"
+      "openFromJob": "Assignments and readiness",
+      "goConditional": "This assessment is CONDITIONAL. GO needs a READY assessment: no source defines which conditions would permit GO, so the server refuses it. Resolve the conditions and reassess, or record NO-GO."
     },
     "CrewCompliance_tsx_copy": {
       "titleCertificates": "Crew certificates",
@@ -2388,7 +2389,13 @@
       "notice_stale": "The assessment changed. Review the current assessment before deciding.",
       "notice_blocked": "Release is not permitted for this assessment.",
       "notice_denied": "You are not authorized for this action.",
-      "notice_failed": "The command was not accepted."
+      "notice_failed": "The command was not accepted.",
+      "releaseWhy": "Why Release is unavailable",
+      "releaseForecast": "This window is a forecast. Release needs a current window that includes today.",
+      "releaseNotReady": "Release needs a current READY assessment, so every category must pass. These categories do not pass yet:",
+      "gap_EMERGENCY_SOURCE_UNAVAILABLE": "Emergency: no emergency preparedness source is connected yet, so this category stays Unknown. Current, human-verified muster and drill records (SOLAS III/19) with life-saving and fire-fighting appliance readiness would satisfy it once the emergency preparedness module (61.02) is delivered.",
+      "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "Statutory: no source defines the required-certificate set for this ship, so completeness stays Unknown even when every recorded certificate is valid and verified. A controlled required-certificate baseline for the ship would satisfy it.",
+      "releaseHoldDeny": "Hold and Deny can always be recorded with a reason."
     },
     "S9Wpc_tsx_copy": {
       "eyebrow": "Fleet intelligence",
@@ -5235,7 +5242,6 @@
     "m_f80308c1376523e6": "User-declared and unverified",
     "m_8164fd4adb2de542": "Declared times retain their explicit UTC offset. Quantities are not summed, converted or used to infer compliance. Recorded port events are not instructions or approved planned windows.",
     "m_c74b3cb63ce89b56": "Pending; verification not established",
-    "m_393f995a8e90462f": "Draft; finalization unavailable",
     "m_1cf31dc53d715270": "Exact source and recorded facts",
     "m_c96c8fa43f9abb83": "Returned operational records",
     "m_f9e49e5d9319cf49": "Fuel and ROB records",
@@ -5666,7 +5672,6 @@
     "m_0ecc2a399cb4d49d": "Open linked work order draft",
     "m_f43a0a4d8ccef23e": "Saved work order source",
     "m_e81e83068386a55c": "Declared execution phase: ",
-    "m_36ce4f5246c28e39": "Release, evidence acceptance, verification and closure remain unavailable.",
     "m_a7baebb651ea8368": "Retained plan pin",
     "m_ab9741448c1d77ac": "Read-only maintenance plan context",
     "m_48675e18dff978b4": "Linked maintenance plan",
@@ -6879,6 +6884,12 @@
     "m_5b1e7c9d3a2f4e60": "Role UAT records",
     "m_5b1e7c9d3a2f4e61": "Pilot go/no-go review",
     "m_5b1e7c9d3a2f4e62": "Pilot program weeks and value readout",
-    "m_7c3d9a1e5b2f4a68": "Users and permissions"
+    "m_7c3d9a1e5b2f4a68": "Users and permissions",
+    "m_d4ded3f8a1bec68c": "Release, evidence recording, independent verification and closure are recorded in the execution panel. Submitted evidence is accepted only by independent human verification, never by the person who did the work; there is no separate evidence-acceptance step, and verification is not a return-to-service decision.",
+    "m_9c5fd87ade98df4b": "Draft (not finalized)",
+    "m_081f7dc1f7c9881a": "Final (internal; not a signature)",
+    "m_821a3f35ca116281": "SOF finalization is an internal human act recorded in the finalization panel by an appointed Master, Chief Officer or Chief Engineer. Signatures, operational/legal approval and offline capture remain unavailable.",
+    "m_85cf3eb68c50b783": "You authored this log revision; an independent reviewer must record the review.",
+    "m_7c1e0a5b3d9f241b": "Refused for separation of duties: you recorded an earlier step of this renewal, so a different person must take this step."
   }
 }

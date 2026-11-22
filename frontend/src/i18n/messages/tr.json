@@ -1084,7 +1084,7 @@
       "notice_uncertain": "Sonuç belirsiz. Yeniden deneme aynı komutu gönderir.",
       "notice_conflict": "Kayıt değişti. Yeniden işlem yapmadan önce yeniden yükleyip inceleyin.",
       "notice_stale": "Değerlendirme değişti. Karar vermeden önce güncel değerlendirmeyi inceleyin.",
-      "notice_goBlocked": "GO yalnızca HAZIR veya KOŞULLU bir değerlendirmeye karşı kaydedilebilir.",
+      "notice_goBlocked": "GO yalnızca HAZIR bir değerlendirmeye karşı kaydedilebilir.",
       "notice_denied": "Bu işlem için yetkiniz yok.",
       "notice_failed": "Komut reddedildi.",
       "READY": "Hazır",
@@ -1183,7 +1183,8 @@
       "notes": "Notlar",
       "declarationHint": "Kaydetmek doğrulanmamış bir beyan oluşturur. Her değişiklik yeni bir Başmühendis doğrulaması gerektirir.",
       "cancel": "İptal",
-      "openFromJob": "Atamalar ve hazırlık"
+      "openFromJob": "Atamalar ve hazırlık",
+      "goConditional": "Bu değerlendirme KOŞULLU. GO için HAZIR değerlendirme gerekir: hangi koşulların GO'ya izin verdiğini tanımlayan bir kaynak yok, bu nedenle sunucu reddeder. Koşulları giderip yeniden değerlendirin veya NO-GO kaydedin."
     },
     "CrewCompliance_tsx_copy": {
       "titleCertificates": "Mürettebat sertifikaları",
@@ -2388,7 +2389,13 @@
       "notice_stale": "Değerlendirme değişti. Karar vermeden önce güncel değerlendirmeyi inceleyin.",
       "notice_blocked": "Bu değerlendirme için serbest bırakmaya izin verilmez.",
       "notice_denied": "Bu işlem için yetkiniz yok.",
-      "notice_failed": "Komut kabul edilmedi."
+      "notice_failed": "Komut kabul edilmedi.",
+      "releaseWhy": "Serbest bırakma neden kullanılamıyor",
+      "releaseForecast": "Bu pencere bir öngörüdür. Serbest bırakma, bugünü içeren güncel bir pencere gerektirir.",
+      "releaseNotReady": "Serbest bırakma güncel bir HAZIR değerlendirme gerektirir; bu nedenle her kategori geçmelidir. Henüz geçmeyen kategoriler:",
+      "gap_EMERGENCY_SOURCE_UNAVAILABLE": "Acil durum: henüz bağlı bir acil durum hazırlık kaynağı yok, bu nedenle bu kategori Bilinmiyor olarak kalır. Acil durum hazırlık modülü (61.02) teslim edildiğinde, can kurtarma ve yangınla mücadele donanımı hazırlığıyla birlikte güncel, insan tarafından doğrulanmış toplanma ve tatbikat kayıtları (SOLAS III/19) bu kategoriyi karşılar.",
+      "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "Yasal: bu gemi için gerekli sertifika setini tanımlayan bir kaynak yok, bu nedenle kayıtlı her sertifika geçerli ve doğrulanmış olsa bile bütünlük Bilinmiyor olarak kalır. Gemi için kontrollü bir gerekli sertifika temel çizgisi bunu karşılar.",
+      "releaseHoldDeny": "Beklet ve Reddet her zaman bir gerekçeyle kaydedilebilir."
     },
     "S9Wpc_tsx_copy": {
       "eyebrow": "Filo zekâsı",
@@ -5235,7 +5242,6 @@
     "m_f80308c1376523e6": "Kullanıcı beyanı ve doğrulanmamış",
     "m_8164fd4adb2de542": "Beyan zamanlarının açık UTC farkı korunur. Miktarlar toplanmaz, dönüştürülmez ve uyum varsayımı üretmez. Kayıtlı liman olayları talimat veya onaylı planlama aralığı değildir.",
     "m_c74b3cb63ce89b56": "Bekliyor; doğrulama kanıtlanmış değil",
-    "m_393f995a8e90462f": "Taslak; sonlandırma kullanılamıyor",
     "m_1cf31dc53d715270": "Kesin kaynak ve kayıtlı bilgiler",
     "m_c96c8fa43f9abb83": "Dönen operasyon kayıtları",
     "m_f9e49e5d9319cf49": "Yakıt ve ROB kayıtları",
@@ -5666,7 +5672,6 @@
     "m_0ecc2a399cb4d49d": "Bağlı iş emri taslağı aç",
     "m_f43a0a4d8ccef23e": "Kayıtlı iş emri kaynağı",
     "m_e81e83068386a55c": "Beyan edilen yürütme aşaması: ",
-    "m_36ce4f5246c28e39": "Serbest bırakma, kanıt kabulü, doğrulama ve kapanış kullanılamıyor.",
     "m_a7baebb651ea8368": "Korunan plan sabitlemesi",
     "m_ab9741448c1d77ac": "Salt okunur bakım planı bağlamı",
     "m_48675e18dff978b4": "Bağlı bakım planı",
@@ -6879,6 +6884,12 @@
     "m_5b1e7c9d3a2f4e60": "Rol UAT kayıtları",
     "m_5b1e7c9d3a2f4e61": "Pilot go/no-go incelemesi",
     "m_5b1e7c9d3a2f4e62": "Pilot program haftaları ve değer raporu",
-    "m_7c3d9a1e5b2f4a68": "Kullanıcılar ve yetkiler"
+    "m_7c3d9a1e5b2f4a68": "Kullanıcılar ve yetkiler",
+    "m_d4ded3f8a1bec68c": "Serbest bırakma, kanıt kaydı, bağımsız doğrulama ve kapanış yürütme panelinde kaydedilir. Sunulan kanıt yalnızca bağımsız insan doğrulamasıyla kabul edilir, işi yapan kişi tarafından asla; ayrı bir kanıt kabul adımı yoktur ve doğrulama hizmete dönüş kararı değildir.",
+    "m_9c5fd87ade98df4b": "Taslak (sonlandırılmadı)",
+    "m_081f7dc1f7c9881a": "Nihai (dahili; imza değildir)",
+    "m_821a3f35ca116281": "SOF sonlandırması, atanmış Kaptan, Birinci Zabit veya Başmühendis tarafından sonlandırma panelinde kaydedilen dahili bir insan eylemidir. İmza, operasyonel/hukuki onay ve çevrimdışı kayıt kullanılamıyor.",
+    "m_85cf3eb68c50b783": "Bu kayıt revizyonunu siz yazdınız; incelemeyi bağımsız bir inceleyici kaydetmelidir.",
+    "m_7c1e0a5b3d9f241b": "Görev ayrılığı nedeniyle reddedildi: bu yenilemenin önceki bir adımını siz kaydettiniz, bu adımı farklı bir kişi atmalıdır."
   }
 }

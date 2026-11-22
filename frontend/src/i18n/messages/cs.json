@@ -1084,7 +1084,7 @@
       "notice_uncertain": "Výsledek je nejistý. Opakování odešle stejný příkaz.",
       "notice_conflict": "Záznam se změnil. Před dalším krokem jej načtěte a zkontrolujte.",
       "notice_stale": "Hodnocení se změnilo. Před rozhodnutím zkontrolujte aktuální hodnocení.",
-      "notice_goBlocked": "GO lze zaznamenat pouze při hodnocení PŘIPRAVENO nebo PODMÍNĚNĚ.",
+      "notice_goBlocked": "GO lze zaznamenat pouze při hodnocení PŘIPRAVENO.",
       "notice_denied": "K této akci nemáte oprávnění.",
       "notice_failed": "Příkaz byl odmítnut.",
       "READY": "Připraveno",
@@ -1183,7 +1183,8 @@
       "notes": "Poznámky",
       "declarationHint": "Uložení zaznamená neověřené prohlášení. Každá změna vyžaduje nové ověření vrchním strojníkem.",
       "cancel": "Zrušit",
-      "openFromJob": "Přidělení a připravenost"
+      "openFromJob": "Přidělení a připravenost",
+      "goConditional": "Toto hodnocení je PODMÍNĚNĚ. GO vyžaduje hodnocení PŘIPRAVENO: žádný zdroj nedefinuje, které podmínky by GO dovolily, proto ho server odmítne. Vyřešte podmínky a znovu vyhodnoťte, nebo zaznamenejte NO-GO."
     },
     "CrewCompliance_tsx_copy": {
       "titleCertificates": "Certifikáty posádky",
@@ -2388,7 +2389,13 @@
       "notice_stale": "Hodnocení se změnilo. Před rozhodnutím zkontrolujte aktuální hodnocení.",
       "notice_blocked": "Uvolnění není pro toto hodnocení povoleno.",
       "notice_denied": "K této akci nemáte oprávnění.",
-      "notice_failed": "Příkaz nebyl přijat."
+      "notice_failed": "Příkaz nebyl přijat.",
+      "releaseWhy": "Proč není Uvolnit dostupné",
+      "releaseForecast": "Toto okno je předpověď. Uvolnění vyžaduje aktuální okno zahrnující dnešek.",
+      "releaseNotReady": "Uvolnění vyžaduje aktuální hodnocení PŘIPRAVENO, takže musí vyhovět každá kategorie. Tyto kategorie zatím nevyhovují:",
+      "gap_EMERGENCY_SOURCE_UNAVAILABLE": "Nouzová připravenost: zatím není připojen žádný zdroj nouzové připravenosti, proto tato kategorie zůstává Neznámá. Splnily by ji aktuální, člověkem ověřené záznamy o nástupech a cvičeních (SOLAS III/19) s připraveností záchranných a protipožárních prostředků, jakmile bude dodán modul nouzové připravenosti (61.02).",
+      "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "Zákonné: žádný zdroj nedefinuje požadovanou sadu osvědčení pro tuto loď, proto úplnost zůstává Neznámá, i když je každé zaznamenané osvědčení platné a ověřené. Splnil by ji řízený základ požadovaných osvědčení lodi.",
+      "releaseHoldDeny": "Pozdržet a Zamítnout lze vždy zaznamenat s odůvodněním."
     },
     "S9Wpc_tsx_copy": {
       "eyebrow": "Inteligence flotily",
@@ -5235,7 +5242,6 @@
     "m_f80308c1376523e6": "Uživatelem deklarované a neověřené",
     "m_8164fd4adb2de542": "Deklarované časy zachovávají výslovný posun UTC. Množství se nesčítají, nepřevádějí ani nepoužívají k odvozování souladu. Zaznamenané přístavní události nejsou pokyny ani schválené plánované intervaly.",
     "m_c74b3cb63ce89b56": "Čeká; ověření neprokázáno",
-    "m_393f995a8e90462f": "Koncept; dokončení není dostupné",
     "m_1cf31dc53d715270": "Přesný zdroj a zaznamenaná fakta",
     "m_c96c8fa43f9abb83": "Vrácené provozní záznamy",
     "m_f9e49e5d9319cf49": "Záznamy paliva a ROB",
@@ -5666,7 +5672,6 @@
     "m_0ecc2a399cb4d49d": "Otevřít propojený koncept pracovního příkazu",
     "m_f43a0a4d8ccef23e": "Uložený zdroj pracovního příkazu",
     "m_e81e83068386a55c": "Deklarovaná fáze provádění: ",
-    "m_36ce4f5246c28e39": "Uvolnění, přijetí důkazů, ověření a uzavření zůstávají nedostupné.",
     "m_a7baebb651ea8368": "Zachované přiřazení plánu",
     "m_ab9741448c1d77ac": "Kontext plánu údržby pouze pro čtení",
     "m_48675e18dff978b4": "Propojený plán údržby",
@@ -6879,6 +6884,12 @@
     "m_5b1e7c9d3a2f4e60": "Záznamy UAT podle rolí",
     "m_5b1e7c9d3a2f4e61": "Přezkum go/no-go pilotu",
     "m_5b1e7c9d3a2f4e62": "Pilotní program: týdny a zpráva o hodnotě",
-    "m_7c3d9a1e5b2f4a68": "Users and permissions"
+    "m_7c3d9a1e5b2f4a68": "Users and permissions",
+    "m_d4ded3f8a1bec68c": "Uvolnění, záznam důkazů, nezávislé ověření a uzavření se zaznamenávají v panelu provedení. Předložené důkazy přijímá pouze nezávislé lidské ověření, nikdy osoba, která práci provedla; samostatný krok přijetí důkazů neexistuje a ověření není rozhodnutím o návratu do provozu.",
+    "m_9c5fd87ade98df4b": "Koncept (nedokončeno)",
+    "m_081f7dc1f7c9881a": "Konečný (interní; nejde o podpis)",
+    "m_821a3f35ca116281": "Dokončení SOF je interní lidský úkon, který v panelu dokončení zaznamenává jmenovaný kapitán, první důstojník nebo první strojník. Podpisy, provozní/právní schválení a offline záznam zůstávají nedostupné.",
+    "m_85cf3eb68c50b783": "Tuto revizi deníku jste napsali vy; přezkoumání musí zaznamenat nezávislý posuzovatel.",
+    "m_7c1e0a5b3d9f241b": "Odmítnuto kvůli oddělení povinností: zaznamenali jste dřívější krok této obnovy, proto tento krok musí provést jiná osoba."
   }
 }

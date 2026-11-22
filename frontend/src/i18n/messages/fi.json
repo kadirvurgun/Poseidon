@@ -1084,7 +1084,7 @@
       "notice_uncertain": "Lopputulos on epävarma. Uudelleenyritys lähettää saman komennon.",
       "notice_conflict": "Tietue muuttui. Lataa ja tarkista ennen uutta toimenpidettä.",
       "notice_stale": "Arvio muuttui. Tarkista nykyinen arvio ennen päätöstä.",
-      "notice_goBlocked": "GO voidaan kirjata vain arviolle VALMIS tai EHDOLLINEN.",
+      "notice_goBlocked": "GO voidaan kirjata vain arviolle VALMIS.",
       "notice_denied": "Sinulla ei ole oikeutta tähän toimintoon.",
       "notice_failed": "Komento hylättiin.",
       "READY": "Valmis",
@@ -1183,7 +1183,8 @@
       "notes": "Huomautukset",
       "declarationHint": "Tallennus kirjaa varmentamattoman ilmoituksen. Jokainen muutos vaatii uuden konepäällikön varmennuksen.",
       "cancel": "Peruuta",
-      "openFromJob": "Osoitukset ja valmius"
+      "openFromJob": "Osoitukset ja valmius",
+      "goConditional": "Tämä arvio on EHDOLLINEN. GO edellyttää arviota VALMIS: mikään lähde ei määritä, mitkä ehdot sallisivat GO:n, joten palvelin hylkää sen. Poista ehdot ja arvioi uudelleen tai kirjaa NO-GO."
     },
     "CrewCompliance_tsx_copy": {
       "titleCertificates": "Miehistön pätevyyskirjat",
@@ -2388,7 +2389,13 @@
       "notice_stale": "Arvio muuttui. Tarkista nykyinen arvio ennen päätöstä.",
       "notice_blocked": "Vapautus ei ole sallittu tälle arviolle.",
       "notice_denied": "Sinulla ei ole oikeutta tähän toimintoon.",
-      "notice_failed": "Komentoa ei hyväksytty."
+      "notice_failed": "Komentoa ei hyväksytty.",
+      "releaseWhy": "Miksi Vapauta ei ole käytettävissä",
+      "releaseForecast": "Tämä ikkuna on ennuste. Vapautus edellyttää nykyistä ikkunaa, joka sisältää tämän päivän.",
+      "releaseNotReady": "Vapautus edellyttää nykyistä VALMIS-arviota, joten jokaisen luokan on läpäistävä. Nämä luokat eivät vielä läpäise:",
+      "gap_EMERGENCY_SOURCE_UNAVAILABLE": "Hätävalmius: hätävalmiuden lähdettä ei ole vielä liitetty, joten tämä luokka pysyy Tuntemattomana. Ajantasaiset, ihmisen todentamat kokoontumis- ja harjoituskirjaukset (SOLAS III/19) pelastus- ja palontorjuntavälineiden valmiuden kanssa täyttäisivät sen, kun hätävalmiusmoduuli (61.02) on toimitettu.",
+      "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "Lakisääteinen: mikään lähde ei määritä tälle alukselle vaadittavia todistuksia, joten kattavuus pysyy Tuntemattomana, vaikka jokainen kirjattu todistus olisi voimassa ja todennettu. Aluksen vaadittujen todistusten hallittu perustaso täyttäisi sen.",
+      "releaseHoldDeny": "Pidätä ja Hylkää voidaan aina kirjata perusteluineen."
     },
     "S9Wpc_tsx_copy": {
       "eyebrow": "Laivastotieto",
@@ -5235,7 +5242,6 @@
     "m_f80308c1376523e6": "Käyttäjän ilmoittama ja todentamaton",
     "m_8164fd4adb2de542": "Ilmoitetut ajat säilyttävät nimenomaisen UTC-siirtymänsä. Määriä ei lasketa yhteen, muunneta eikä käytetä vaatimustenmukaisuuden päättelemiseen. Kirjatut satamatapahtumat eivät ole ohjeita eivätkä hyväksyttyjä suunnitteluikkunoita.",
     "m_c74b3cb63ce89b56": "Odottaa; todentamista ei osoitettu",
-    "m_393f995a8e90462f": "Luonnos; viimeistely ei ole käytettävissä",
     "m_1cf31dc53d715270": "Täsmällinen lähde ja kirjatut tiedot",
     "m_c96c8fa43f9abb83": "Palautetut operatiiviset tietueet",
     "m_f9e49e5d9319cf49": "Polttoaine- ja varantotietueet",
@@ -5666,7 +5672,6 @@
     "m_0ecc2a399cb4d49d": "Avaa linkitetty työmääräysluonnos",
     "m_f43a0a4d8ccef23e": "Tallennettu työmääräyslähde",
     "m_e81e83068386a55c": "Ilmoitettu suoritusvaihe: ",
-    "m_36ce4f5246c28e39": "Vapautus, todisteen hyväksyntä, todentaminen ja sulkeminen eivät ole käytettävissä.",
     "m_a7baebb651ea8368": "Säilytetty suunnitelmakiinnitys",
     "m_ab9741448c1d77ac": "Vain luettava huoltosuunnitelmakonteksti",
     "m_48675e18dff978b4": "Linkitetty huoltosuunnitelma",
@@ -6879,6 +6884,12 @@
     "m_5b1e7c9d3a2f4e60": "Roolikohtaiset UAT-tiedot",
     "m_5b1e7c9d3a2f4e61": "Pilotin go/no-go-katselmus",
     "m_5b1e7c9d3a2f4e62": "Pilottiohjelman viikot ja arvoraportti",
-    "m_7c3d9a1e5b2f4a68": "Users and permissions"
+    "m_7c3d9a1e5b2f4a68": "Users and permissions",
+    "m_d4ded3f8a1bec68c": "Vapautus, todisteiden kirjaus, riippumaton todentaminen ja sulkeminen kirjataan suorituspaneeliin. Toimitettu todiste hyväksytään vain riippumattomalla ihmisen todentamisella, ei koskaan työn tehneen henkilön toimesta; erillistä todisteen hyväksymisvaihetta ei ole, eikä todentaminen ole päätös käyttöön palauttamisesta.",
+    "m_9c5fd87ade98df4b": "Luonnos (ei viimeistelty)",
+    "m_081f7dc1f7c9881a": "Lopullinen (sisäinen; ei allekirjoitus)",
+    "m_821a3f35ca116281": "SOF:n viimeistely on sisäinen ihmisen toimenpide, jonka nimitetty päällikkö, yliperämies tai konepäällikkö kirjaa viimeistelypaneeliin. Allekirjoitukset, operatiivinen/oikeudellinen hyväksyntä ja offline-kirjaus eivät ole käytettävissä.",
+    "m_85cf3eb68c50b783": "Olet laatinut tämän lokiversion; tarkastuksen on kirjattava riippumaton tarkastaja.",
+    "m_7c1e0a5b3d9f241b": "Hylätty tehtävien eriyttämisen vuoksi: kirjasit tämän uusimisen aiemman vaiheen, joten tämän vaiheen on tehtävä eri henkilö."
   }
 }

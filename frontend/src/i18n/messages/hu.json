@@ -1084,7 +1084,7 @@
       "notice_uncertain": "Az eredmény bizonytalan. Az újrapróbálás ugyanazt a parancsot küldi.",
       "notice_conflict": "A rekord megváltozott. Újbóli művelet előtt töltse újra és ellenőrizze.",
       "notice_stale": "Az értékelés megváltozott. Döntés előtt tekintse át az aktuális értékelést.",
-      "notice_goBlocked": "GO csak KÉSZ vagy FELTÉTELES értékelés mellett rögzíthető.",
+      "notice_goBlocked": "GO csak KÉSZ értékelés mellett rögzíthető.",
       "notice_denied": "Nincs jogosultsága ehhez a művelethez.",
       "notice_failed": "A parancsot elutasították.",
       "READY": "Kész",
@@ -1183,7 +1183,8 @@
       "notes": "Megjegyzések",
       "declarationHint": "A mentés igazolatlan nyilatkozatot rögzít. Minden változtatás új gépüzemvezetői ellenőrzést igényel.",
       "cancel": "Mégse",
-      "openFromJob": "Kiosztások és készenlét"
+      "openFromJob": "Kiosztások és készenlét",
+      "goConditional": "Ez az értékelés FELTÉTELES. A GO-hoz KÉSZ értékelés szükséges: egyetlen forrás sem határozza meg, mely feltételek engednék a GO-t, ezért a szerver elutasítja. Szüntesse meg a feltételeket és értékeljen újra, vagy rögzítsen NO-GO-t."
     },
     "CrewCompliance_tsx_copy": {
       "titleCertificates": "Személyzeti bizonyítványok",
@@ -2388,7 +2389,13 @@
       "notice_stale": "Az értékelés megváltozott. Döntés előtt tekintse át az aktuális értékelést.",
       "notice_blocked": "Ennél az értékelésnél az engedélyezés nem megengedett.",
       "notice_denied": "Nincs jogosultsága ehhez a művelethez.",
-      "notice_failed": "A parancsot nem fogadták el."
+      "notice_failed": "A parancsot nem fogadták el.",
+      "releaseWhy": "Miért nem érhető el az Engedélyez",
+      "releaseForecast": "Ez az ablak előrejelzés. Az engedélyezéshez a mai napot tartalmazó aktuális ablak szükséges.",
+      "releaseNotReady": "Az engedélyezéshez aktuális KÉSZ értékelés szükséges, ezért minden kategóriának meg kell felelnie. Ezek a kategóriák még nem felelnek meg:",
+      "gap_EMERGENCY_SOURCE_UNAVAILABLE": "Vészhelyzeti: még nincs csatlakoztatva vészhelyzeti felkészültségi forrás, ezért ez a kategória Ismeretlen marad. Az aktuális, ember által ellenőrzött riadó- és gyakorlati nyilvántartások (SOLAS III/19) az életmentő és tűzoltó eszközök készenlétével teljesítenék, amint a vészhelyzeti felkészültségi modul (61.02) elkészül.",
+      "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "Jogszabályi: egyetlen forrás sem határozza meg a hajóhoz szükséges bizonyítványok körét, ezért a teljesség Ismeretlen marad akkor is, ha minden rögzített bizonyítvány érvényes és ellenőrzött. A hajó szükséges bizonyítványainak ellenőrzött alapkészlete teljesítené.",
+      "releaseHoldDeny": "A Visszatart és az Elutasít indoklással mindig rögzíthető."
     },
     "S9Wpc_tsx_copy": {
       "eyebrow": "Flottaintelligencia",
@@ -5235,7 +5242,6 @@
     "m_f80308c1376523e6": "Felhasználó által megadott és nem ellenőrzött",
     "m_8164fd4adb2de542": "A megadott idők megőrzik kifejezett UTC-eltolásukat. A mennyiségeket nem összegezzük, váltjuk át vagy használjuk megfelelőség levezetésére. A rögzített kikötői események nem utasítások vagy jóváhagyott tervezett időablakok.",
     "m_c74b3cb63ce89b56": "Függőben; ellenőrzés nincs igazolva",
-    "m_393f995a8e90462f": "Piszkozat; véglegesítés nem érhető el",
     "m_1cf31dc53d715270": "Pontos forrás és rögzített tények",
     "m_c96c8fa43f9abb83": "Visszaadott üzemi rekordok",
     "m_f9e49e5d9319cf49": "Üzemanyag- és ROB-rekordok",
@@ -5666,7 +5672,6 @@
     "m_0ecc2a399cb4d49d": "Kapcsolt munkalappiszkozat megnyitása",
     "m_f43a0a4d8ccef23e": "Mentett munkalapforrás",
     "m_e81e83068386a55c": "Megadott végrehajtási fázis: ",
-    "m_36ce4f5246c28e39": "A feloldás, bizonyítékelfogadás, ellenőrzés és lezárás nem érhető el.",
     "m_a7baebb651ea8368": "Megőrzött tervrögzítés",
     "m_ab9741448c1d77ac": "Csak olvasható karbantartásiterv-kontextus",
     "m_48675e18dff978b4": "Kapcsolt karbantartási terv",
@@ -6879,6 +6884,12 @@
     "m_5b1e7c9d3a2f4e60": "Szerepkörös UAT-rekordok",
     "m_5b1e7c9d3a2f4e61": "Pilot go/no-go áttekintés",
     "m_5b1e7c9d3a2f4e62": "Pilotprogram: hetek és értékjelentés",
-    "m_7c3d9a1e5b2f4a68": "Users and permissions"
+    "m_7c3d9a1e5b2f4a68": "Users and permissions",
+    "m_d4ded3f8a1bec68c": "A feloldás, a bizonyítékrögzítés, a független ellenőrzés és a lezárás a végrehajtási panelen kerül rögzítésre. A benyújtott bizonyítékot csak független emberi ellenőrzés fogadja el, soha nem a munkát végző személy; külön bizonyítékelfogadási lépés nincs, és az ellenőrzés nem az üzembe való visszahelyezésről szóló döntés.",
+    "m_9c5fd87ade98df4b": "Piszkozat (nem véglegesített)",
+    "m_081f7dc1f7c9881a": "Végleges (belső; nem aláírás)",
+    "m_821a3f35ca116281": "A SOF véglegesítése belső emberi aktus, amelyet kijelölt kapitány, első tiszt vagy főgépész rögzít a véglegesítési panelen. Az aláírás, az üzemeltetési/jogi jóváhagyás és az offline rögzítés nem érhető el.",
+    "m_85cf3eb68c50b783": "Ön írta a napló ezen változatát; az áttekintést független áttekintőnek kell rögzítenie.",
+    "m_7c1e0a5b3d9f241b": "Elutasítva a feladatkörök szétválasztása miatt: ön rögzítette a megújítás egy korábbi lépését, ezért ezt a lépést másik személynek kell elvégeznie."
   }
 }
