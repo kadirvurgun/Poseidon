@@ -48,6 +48,6 @@ Shown in the menu as **Tug command**, this page shows the **source context** of 
 - **Access is not available:** check your role, tug and object context; contact your tenant administrator if needed (13.03 §10).
 - **"Current identity and vessel access must be checked" alert:** press **Recheck access**.
 - **Data unavailable:** check your connection and press **Retry**.
-- **Unexpected BP or equipment data:** note the source and version fields and review them with the source owner; if a record cannot be verified, check its evidence and provenance (13.03 §10).
+- **Unexpected BP or equipment values:** note the source and version fields and review them with the source owner; if a record cannot be verified, check its evidence and provenance (13.03 §10).
 
 ## Related pages
