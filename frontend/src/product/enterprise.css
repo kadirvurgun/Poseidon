@@ -98,10 +98,6 @@
 .enterprise-shell button.primary-button, .enterprise-shell a.primary-button { border-color: var(--primary); background: var(--primary); color: var(--primary-foreground); font-weight: 550; min-height: 38px; padding: 9px 15px; margin: 16px 0 0; box-shadow: 0 2px 4px color-mix(in srgb, var(--shadow-color) 12%, transparent); }
 .enterprise-shell button.primary-button:hover:not(:disabled) { background: var(--primary); border-color: var(--primary); }
 .enterprise-shell input, .enterprise-shell textarea { border: 1px solid var(--input); border-radius: max(0px, calc(7px + var(--radius-delta))); min-height: 38px; padding: 8px 11px; font-size: 12px; background: var(--card); color: var(--foreground); box-shadow: 0 1px 2px color-mix(in srgb, var(--shadow-color) 3%, transparent); }
-/* Checkboxes/radios keep their native box size; the text-field padding/min-height above (and the coarse-pointer
-   44px rule) would otherwise inflate them into large empty squares. The surrounding label is the touch target. */
-.enterprise-shell input[type="checkbox"], .enterprise-shell input[type="radio"] { flex:0 0 18px; inline-size:18px; block-size:18px; min-height:18px; min-width:18px; margin:2px 0 0; padding:0; box-shadow:none; accent-color:var(--primary); }
-.enterprise-shell label:has(> input[type="checkbox"]), .enterprise-shell label:has(> input[type="radio"]) { display:inline-flex; flex-direction:row; align-items:flex-start; gap:10px; min-height:var(--control-height,40px); }
 .enterprise-shell input::placeholder, .enterprise-shell textarea::placeholder { color: var(--muted-foreground); }
 .enterprise-shell input:focus, .enterprise-shell select:focus, .enterprise-shell textarea:focus { border-color: var(--focus-ring); }
 .enterprise-shell label, .enterprise-shell legend { color: var(--foreground); font-size: 12px; font-weight: 550; }
@@ -259,5 +255,16 @@
    (e.g. 200%/400% zoom) it scrolls with the page instead of occupying most of the screen. */
 html { scroll-padding-top: calc(var(--shell-sticky-offset, 0px) + 8px); }
 @media (max-height: 31.25rem) { .enterprise-shell .enterprise-topbar { position: relative; backdrop-filter: none; } }
-@media (pointer: coarse) { .enterprise-shell button, .enterprise-shell [data-slot="button"], .enterprise-shell select, .enterprise-shell input:not([type="checkbox"]):not([type="radio"]) { min-height: 44px; } .enterprise-shell label:has(> input[type="checkbox"]), .enterprise-shell label:has(> input[type="radio"]) { min-height: 44px; align-items:center; } .enterprise-shell label:has(> input[type="checkbox"]) > input, .enterprise-shell label:has(> input[type="radio"]) > input { margin-top:0; } }
+@media (pointer: coarse) {
+  .enterprise-shell button, .enterprise-shell [data-slot="button"], .enterprise-shell select, .enterprise-shell input:not([type="checkbox"]):not([type="radio"]) { min-height: 44px; }
+}
+/* Mobile QA note 3 (touch or narrow viewport only; desktop layout and stacking unchanged): a 44px min-height/text-field
+   padding inflated checkboxes/radios into large empty squares. The box stays a 24px control (low :where specificity, so
+   workspace-specific sizing still wins) and the 44px touch target moves to its label: the wrapping label, or the
+   adjacent label[for] used by user admin / data reconciliation. */
+@media (pointer: coarse), (max-width: 900px) {
+  :where(.enterprise-shell) input:is([type="checkbox"], [type="radio"]) { flex: 0 0 auto; inline-size: 24px; block-size: 24px; min-height: 24px; min-width: 24px; margin-block: 0; padding: 0; box-shadow: none; vertical-align: middle; accent-color: var(--primary); }
+  :where(.enterprise-shell) label:has(> input:is([type="checkbox"], [type="radio"])) { display: flex; flex-direction: row; align-items: center; gap: 10px; min-height: 44px; }
+  :where(.enterprise-shell) input:is([type="checkbox"], [type="radio"]) + label[for], :where(.enterprise-shell) label[for]:has(+ input:is([type="checkbox"], [type="radio"])) { display: inline-flex; align-items: center; min-height: 44px; padding-inline: 8px; vertical-align: middle; }
+}
 @media (prefers-reduced-motion: reduce) { .enterprise-shell *, .enterprise-shell *::before, .enterprise-shell *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
