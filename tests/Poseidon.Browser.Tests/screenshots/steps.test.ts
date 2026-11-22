@@ -2,11 +2,13 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { assertNonMutating, shotName, validateMapping, validateTarget } from './steps.ts'
+import { allowedClicks, shotName, validateClick, validateMapping, validateTarget } from './steps.ts'
 
-// USER-GUIDE-01 UG-2: closed step-mapping schema; a screenshot run can never click a mutating control.
+// USER-GUIDE-01 UG-2: closed step-mapping schema; a screenshot run can only perform allow-listed clicks.
 const committed = JSON.parse(readFileSync(resolve(import.meta.dirname, '../../../frontend/src/help/screenshots/steps.json'), 'utf8'))
 const clone = () => structuredClone(committed)
+const button = (tr: string, en: string = tr) => ({ role: 'button', name: { tr, en } })
+const withClick = (click: unknown) => { const mapping = clone(); mapping.guides.today.steps[0].actions = [{ click }]; return mapping }
 
 test('the committed mapping is valid and only marks steps unavailable for an explicit reason', () => {
   const mapping = validateMapping(committed)
@@ -31,15 +33,50 @@ test('rejects CSS selectors, unknown fields, missing locales and non-sequential 
   assert.throws(() => validateMapping(viewport))
 })
 
-test('a preparation click on a saving, approving, signing or lifecycle control is rejected (D5)', () => {
-  for (const name of ['Save', 'Kaydet', 'Create membership', 'Üyelik oluştur', 'Suspend', 'Askıya al', 'Revoke membership', 'Approve', 'Sign out', 'Submit'])
-    assert.throws(() => assertNonMutating({ role: 'button', name: { tr: name, en: name } }), /mutating_action/)
-  for (const name of ['Why?', 'Neden?', 'Synthetic Operator A', 'Open job', 'Apply filters', 'Edit grant'])
-    assertNonMutating({ role: 'button', name: { tr: name, en: name } })
-  const saving = clone(); saving.guides.today.steps[0].actions = [{ click: { role: 'button', name: { tr: 'Kaydet', en: 'Save' } } }]
-  assert.throws(() => validateMapping(saving), /mutating_action/)
-  const email = clone(); email.guides.today.steps[0].actions = [{ fill: { role: 'searchbox' }, value: 'someone@example.invalid' }]
-  assert.throws(() => validateMapping(email), /fill_value/)
+test('every allow-listed click is accepted with its exact names, optionally scoped (QA N1)', () => {
+  for (const entry of allowedClicks) {
+    const click = entry.kind === 'button' ? { role: 'button', name: entry.name } : { disclosure: entry.name }
+    validateClick(click)
+    validateClick({ ...click, within: { role: 'article', nth: 0 } })
+    validateMapping(withClick(click))
+  }
+})
+
+test('clicks outside the allow-list are rejected, including destructive words in both languages (QA N1)', () => {
+  const words = ['Save', 'Kaydet', 'Create membership', 'Üyelik oluştur', 'Suspend', 'Askıya al', 'Revoke membership', 'Approve', 'Sign out',
+    'Submit', 'Grant', 'Yetki ver', 'Confirm', 'Onayla', 'Assign', 'Ata', 'Remove', 'Kaldır', 'Reject', 'Reddet', 'Add', 'Ekle', 'Add member',
+    'İmzala', 'İptal', 'İçe aktar', 'Çıkış', 'Çıkış yap', 'Delete', 'Sil']
+  for (const word of words) {
+    assert.throws(() => validateClick(button(word)), /click_not_allowed/, word)
+    assert.throws(() => validateMapping(withClick(button(word))), /click_not_allowed/, word)
+  }
+})
+
+test('casing, Turkish dotted/dotless I and partial names never match an allowed click (QA N1)', () => {
+  const variants = [button('NEDEN?', 'WHY?'), button('neden?', 'why?'), button('Neden', 'Why'), button('Neden? ', 'Why? '),
+    button('HESAP ADD41584', 'ACCOUNT ADD41584'), button('Hesap add4158', 'Account add4158'), button('hesap add41584', 'account add41584'),
+    button('SYNTHETİC OPERATOR A', 'SYNTHETIC OPERATOR A'), button('Synthetıc Operator A', 'Synthetic Operator A'),
+    { disclosure: { tr: 'NEDEN / SONRAKİ ADIM', en: 'WHY / NEXT ACTION' } }, { disclosure: { tr: 'neden / sonraki adim', en: 'Why / next action' } },
+    // A correct name in one locale does not rescue a wrong name in the other.
+    button('Neden?', 'Save'), button('Kaydet', 'Why?')]
+  for (const click of variants) assert.throws(() => validateClick(click), /click_not_allowed/, JSON.stringify(click))
+})
+
+test('unnamed, nth-only, pattern, wrong-role and other action kinds are refused (QA N1)', () => {
+  assert.throws(() => validateClick({ role: 'button' }), /click_shape/)
+  assert.throws(() => validateClick({ role: 'button', nth: 0 }), /click_shape/)
+  assert.throws(() => validateClick({ role: 'button', name: { tr: 'Neden?', en: 'Why?' }, nth: 0 }), /click_shape/)
+  assert.throws(() => validateClick({ role: 'button', name: { tr: 're:.*', en: 're:.*' } }), /click_pattern/)
+  assert.throws(() => validateClick({ role: 'button', name: { tr: 're:^Neden', en: 're:^Why' } }), /click_pattern/)
+  assert.throws(() => validateClick({ role: 'link', name: { tr: 'Neden?', en: 'Why?' } }), /click_role/)
+  assert.throws(() => validateClick({ text: { tr: 'Neden?', en: 'Why?' } }), /click_shape/)
+  assert.throws(() => validateClick({ label: { tr: 'Neden?', en: 'Why?' } }), /click_shape/)
+  assert.throws(() => validateClick({ disclosure: { tr: 'Neden?', en: 'Why?' } }), /click_not_allowed/)
+  assert.throws(() => validateClick({ role: 'button', name: { tr: 'Neden?', en: 'Why?' }, within: { css: 'main' } }), /target_field/)
+  for (const action of [{ fill: { role: 'searchbox' }, value: 'x' }, { press: { role: 'searchbox' }, key: 'Enter' }, { click: button('Neden?', 'Why?'), extra: 1 }]) {
+    const mapping = clone(); mapping.guides.today.steps[0].actions = [action]
+    assert.throws(() => validateMapping(mapping), /action_kind/)
+  }
 })
 
 test('output names are locale/key/step-viewport', () => {

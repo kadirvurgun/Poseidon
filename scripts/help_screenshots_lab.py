@@ -3,7 +3,8 @@
 Explicit, local, synthetic only; never production bootstrap. Kept separate from oidc_lab.py so
 its independently reviewed source stays unchanged. Only safe stage results reach stdout.
 
-  prepare_screenshots  read-only grants for lab-manager in the private (gitignored) lab config,
+  prepare_screenshots  read grants plus vessel-kind visibility for lab-manager in the private
+                       (gitignored) lab config,
                        then the Development-only FICTIONAL demo fixtures (DbMigrator --demo-fixtures)
   screenshots          run tests/Poseidon.Browser.Tests/screenshots/capture.ts
                        (POSEIDON_SCREENSHOTS_MODE=compare|update|discover)
@@ -15,13 +16,19 @@ import sys
 
 import oidc_lab as lab
 
-# Read-only capabilities only; no write, manage, safety, verifier, signer, owner or
-# source-validation permission is ever added for screenshots.
-SCREENSHOT_READ_PERMISSIONS = ('regulatory.draft.read', 'maintenance.read', 'mode.tug', 'mode.cross', 'tug.read', 'membership.read')
+# Read permissions plus two vessel-kind visibility scopes. QA N2: mode.tug and mode.cross are NOT
+# read-only grants. They widen which vessels lab-manager sees (tug vessels; ship vessels again once
+# mode.tug is present), so any existing lab-manager write grant also applies to those vessels in this
+# private lab. They are required: the tug job board needs mode.tug + tug.read, and Today's ship context
+# disappears under mode.tug without mode.cross. No write, manage, safety, verifier, signer, owner or
+# source-validation permission is ever added here.
+SCREENSHOT_READ_PERMISSIONS = ('regulatory.draft.read', 'maintenance.read', 'tug.read', 'membership.read')
+SCREENSHOT_VISIBILITY_SCOPES = ('mode.tug', 'mode.cross')
+SCREENSHOT_PERMISSIONS = SCREENSHOT_READ_PERMISSIONS + SCREENSHOT_VISIBILITY_SCOPES
 
 
 def screenshot_membership(config, realm):
-    """Pure: returns a copy with lab-manager's read grants added; every other member is preserved."""
+    """Pure: returns a copy with lab-manager's read grants and visibility scopes added; others preserved."""
     candidate = deepcopy(config)
     subjects = [u['id'] for u in realm['users'] if u['username'] == 'lab-manager']
     if realm.get('realm') != 'poseidon-lab' or len(subjects) != 1:
@@ -30,7 +37,7 @@ def screenshot_membership(config, realm):
                if m['Issuer'] == lab.AUTHORITY and m['Subject'] == subjects[0]]
     if len(members) != 1 or members[0].get('TenantWideRead') is not True:
         raise RuntimeError('lab_screenshot_scope_invalid')
-    for permission in SCREENSHOT_READ_PERMISSIONS:
+    for permission in SCREENSHOT_PERMISSIONS:
         if permission not in members[0]['Permissions']:
             members[0]['Permissions'].append(permission)
     return candidate

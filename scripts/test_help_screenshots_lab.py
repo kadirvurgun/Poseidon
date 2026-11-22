@@ -16,8 +16,12 @@ class ScreenshotEnrollmentTests(unittest.TestCase):
         self.assertEqual(once, twice)
         manager = once['Authentication']['Oidc']['Memberships'][0]
         added = set(manager['Permissions']) - set(original['Authentication']['Oidc']['Memberships'][0]['Permissions'])
-        self.assertTrue(added <= set(shots.SCREENSHOT_READ_PERMISSIONS))
-        self.assertTrue(all(p.endswith('.read') or p.startswith('mode.') for p in shots.SCREENSHOT_READ_PERMISSIONS))
+        self.assertTrue(added <= set(shots.SCREENSHOT_PERMISSIONS))
+        self.assertTrue(all(p.endswith('.read') for p in shots.SCREENSHOT_READ_PERMISSIONS))
+        # QA N2: visibility scopes are named separately and are the only non-.read entries.
+        self.assertEqual({'mode.tug', 'mode.cross'}, set(shots.SCREENSHOT_VISIBILITY_SCOPES))
+        self.assertEqual(set(shots.SCREENSHOT_PERMISSIONS), set(shots.SCREENSHOT_READ_PERMISSIONS) | set(shots.SCREENSHOT_VISIBILITY_SCOPES))
+        self.assertFalse(any(p.endswith(('.write', '.manage', '.decide', '.approve', '.verify', '.sign')) for p in shots.SCREENSHOT_PERMISSIONS))
         self.assertEqual(original['Authentication']['Oidc']['Memberships'][1:], once['Authentication']['Oidc']['Memberships'][1:])
         self.assertEqual(original['ConnectionStrings'], once['ConnectionStrings'])
         self.assertEqual(original['Authentication']['Oidc']['ClientSecret'], once['Authentication']['Oidc']['ClientSecret'])

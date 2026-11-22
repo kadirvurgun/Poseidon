@@ -1,9 +1,11 @@
 // USER-GUIDE-01 UG-2 (D4, UG-DOC-02): closed schema of the per-step screenshot mapping that lives
 // next to the guides (frontend/src/help/screenshots/steps.json). Pure; no browser or filesystem.
 //
-// A step names the page route, an optional list of NON-MUTATING preparation actions (open a
-// disclosure, open an empty form, open a record) and the elements that receive the numbered marker.
-// Targets prefer accessible role + name; a CSS selector is never accepted.
+// A step names the page route, an optional list of preparation clicks and the elements that receive
+// the numbered marker. Marker targets use accessible role + name, label or text; a CSS selector is
+// never accepted. Preparation clicks are limited to the explicit allow-list below (QA N1): a mapping
+// edit alone can never introduce a new click, and the runner re-checks the element's real role and
+// accessible name in the browser immediately before clicking.
 
 export const screenshotLocales = ['tr', 'en'] as const
 export type ScreenshotLocale = (typeof screenshotLocales)[number]
@@ -20,7 +22,23 @@ export type Target = Readonly<{
   nth?: number
   within?: Target
 }>
-export type Action = Readonly<{ click: Target } | { fill: Target; value: string } | { press: Target; key: 'Enter' }>
+/** A preparation click: an allow-listed button or disclosure <summary>, exact names, optionally scoped. */
+export type ClickTarget = Readonly<{ role: 'button'; name: Localized; within?: Target } | { disclosure: Localized; within?: Target }>
+export type Action = Readonly<{ click: ClickTarget }>
+
+/**
+ * The only clicks a screenshot run may perform. Each one opens or reveals read-only content (a Why
+ * disclosure, a record's details); none saves, submits, approves, signs, grants or changes state.
+ * Names are exact per locale (no pattern, no case folding); adding an entry is a reviewed code change.
+ */
+export const allowedClicks: ReadonlyArray<Readonly<{ kind: 'button' | 'disclosure'; name: Localized }>> = Object.freeze([
+  { kind: 'button', name: { tr: 'Neden?', en: 'Why?' } },
+  { kind: 'disclosure', name: { tr: 'Neden / sonraki adım', en: 'Why / next action' } },
+  { kind: 'button', name: { tr: 'Synthetic Operator A', en: 'Synthetic Operator A' } },
+  { kind: 'button', name: { tr: 'Hesap add41584', en: 'Account add41584' } },
+])
+export const clickKind = (target: ClickTarget) => 'disclosure' in target ? 'disclosure' as const : 'button' as const
+export const clickName = (target: ClickTarget): Localized => 'disclosure' in target ? target.disclosure : target.name
 /**
  * A step the lab-manager screenshot account cannot honestly show (for example it needs a write grant
  * the read-only screenshot enrollment deliberately lacks). It is listed explicitly instead of staging
@@ -38,10 +56,6 @@ export type ScreenshotMapping = Readonly<{
 
 const roles = new Set(['button', 'link', 'heading', 'textbox', 'searchbox', 'combobox', 'table', 'row', 'article', 'region',
   'list', 'listitem', 'group', 'navigation', 'tab', 'tablist', 'status', 'note', 'form', 'checkbox', 'radio', 'cell', 'columnheader'])
-
-// Defence in depth: a screenshot run must never submit, approve, sign or otherwise change a record.
-// Any click whose accessible name matches one of these words is rejected before the browser starts.
-const mutatingWords = /\b(save|kaydet|create|oluştur|submit|gönder|approve|onayla|sign|imzala|verify|doğrula|delete|sil|revoke|iptal|suspend|askıya|resume|yeniden etkinleştir|release|start|başlat|complete|tamamla|import|içe aktar|upload|yükle|log ?out|sign out|çıkış)\b/i
 
 function fail(reason: string): never { throw new Error('screenshot_mapping_invalid:' + reason) }
 const object = (value: unknown): value is Record<string, unknown> => !!value && typeof value === 'object' && !Array.isArray(value)
@@ -71,22 +85,25 @@ export function validateTarget(value: unknown, depth = 0): Target {
   return value as Target
 }
 
-export function assertNonMutating(target: Target): void {
-  for (const text of [target.name, target.label, target.text].flatMap(item => item ? Object.values(item) : []))
-    if (mutatingWords.test(text.replace(/^re:/, ''))) fail('mutating_action:' + text)
+/** Accepts a click only when it is exactly one allow-listed (kind, TR name, EN name) entry. */
+export function validateClick(value: unknown): ClickTarget {
+  if (!object(value)) fail('click')
+  const keys = Object.keys(value).filter(key => key !== 'within').sort().join()
+  if (keys !== 'name,role' && keys !== 'disclosure') fail('click_shape')
+  if (keys === 'name,role' && value.role !== 'button') fail('click_role')
+  const name = localized(keys === 'disclosure' ? value.disclosure : value.name, 'click_name')
+  if (Object.values(name).some(text => text.startsWith('re:'))) fail('click_pattern')
+  if ('within' in value) validateTarget(value.within, 1)
+  const kind = keys === 'disclosure' ? 'disclosure' : 'button'
+  if (!allowedClicks.some(entry => entry.kind === kind && entry.name.tr === name.tr && entry.name.en === name.en))
+    fail('click_not_allowed:' + name.en)
+  return value as ClickTarget
 }
 
 function validateAction(value: unknown): Action {
-  if (!object(value)) fail('action')
-  const keys = Object.keys(value).sort().join()
-  if (keys === 'click') { const target = validateTarget(value.click); assertNonMutating(target); return value as Action }
-  if (keys === 'fill,value') {
-    validateTarget(value.fill)
-    if (typeof value.value !== 'string' || value.value.length > 40 || /[@]/.test(value.value)) fail('fill_value')
-    return value as Action
-  }
-  if (keys === 'key,press') { if (value.key !== 'Enter') fail('press_key'); validateTarget(value.press); return value as Action }
-  return fail('action_kind')
+  if (!object(value) || Object.keys(value).join() !== 'click') fail('action_kind')
+  validateClick(value.click)
+  return value as Action
 }
 
 export function validateMapping(value: unknown): ScreenshotMapping {

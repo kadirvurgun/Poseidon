@@ -190,9 +190,9 @@
      "actions": [
       {
        "click": {
-        "text": {
-         "tr": "re:^Neden / sonraki adım",
-         "en": "re:^Why / next action"
+        "disclosure": {
+         "tr": "Neden / sonraki adım",
+         "en": "Why / next action"
         }
        }
       }
@@ -301,7 +301,7 @@
      ],
      "targets": [
       {
-       "role": "heading",
+       "role": "region",
        "name": {
         "tr": "Ayrıntılar",
         "en": "Details"
@@ -380,8 +380,8 @@
        "click": {
         "role": "button",
         "name": {
-         "tr": "re:^Hesap ",
-         "en": "re:^Account "
+         "tr": "Hesap add41584",
+         "en": "Account add41584"
         }
        }
       }
@@ -426,8 +426,8 @@
        "click": {
         "role": "button",
         "name": {
-         "tr": "re:^Hesap ",
-         "en": "re:^Account "
+         "tr": "Hesap add41584",
+         "en": "Account add41584"
         }
        }
       }

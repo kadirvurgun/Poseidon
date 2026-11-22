@@ -9,13 +9,13 @@
 import { labRuntimeFromEnvironment } from '../lab/lab-runtime.ts'
 import { strictContext } from '../lab/strict-browser.ts'
 import { login } from '../lab/journeys.ts'
-import type { Locator, Page } from '@playwright/test'
+import { expect, type Locator, type Page } from '@playwright/test'
 import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
-import { screenshotLocales, shotName, validateMapping, viewports, type Localized, type ScreenshotLocale, type Target, type ViewportName } from './steps.ts'
-import { allowedDatasets, generator, provenanceSchema, scanDomText, visibleTenant, type Provenance } from './provenance.ts'
+import { clickKind, clickName, screenshotLocales, shotName, validateClick, validateMapping, viewports, type ClickTarget, type Localized, type ScreenshotLocale, type Target, type ViewportName } from './steps.ts'
+import { allowedDatasets, generator, generatorFiles, gitBlobSha1, provenanceSchema, scanDomText, visibleTenant, type Provenance } from './provenance.ts'
 
 const mode = process.env.POSEIDON_SCREENSHOTS_MODE ?? 'compare'
 if (!['compare', 'update', 'discover'].includes(mode)) throw new Error('screenshot_mode_invalid')
@@ -23,7 +23,15 @@ const root = resolve(import.meta.dirname, '../../..')
 const output = resolve(root, 'frontend/src/help/screenshots')
 const privateRoot = process.env.POSEIDON_LAB_PRIVATE!
 const mapping = validateMapping(JSON.parse(readFileSync(resolve(output, 'steps.json'), 'utf8')))
-const commit = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim()
+const git = (...args: string[]) => execFileSync('git', args, { cwd: root, encoding: 'utf8' }).trim()
+const commit = git('rev-parse', 'HEAD')
+// QA N3: provenance identifies the generator by the git blob of each generator file and records
+// whether the working tree differed from HEAD. `update` refuses a dirty generator, so committed
+// screenshots always point at a commit that contains exactly the capture code and mapping used.
+const generatorBlobs = Object.fromEntries(generatorFiles.map(path => [path, gitBlobSha1(readFileSync(resolve(root, path)))]))
+const dirty = git('status', '--porcelain', '--', ...generatorFiles) !== '' ||
+  generatorFiles.some(path => git('rev-parse', `HEAD:${path}`) !== generatorBlobs[path])
+if (mode === 'update' && dirty) throw new Error('screenshot_generator_dirty')
 const fixedClock = '2026-11-22T09:00:00.000Z'
 const footerHeight = 22
 const threshold = Number(process.env.POSEIDON_SCREENSHOTS_THRESHOLD ?? '0.002')
@@ -53,6 +61,28 @@ function locate(scope: Page | Locator, target: Target, locale: ScreenshotLocale)
   return target.nth === undefined ? found.first() : found.nth(target.nth)
 }
 
+/** QA N1: resolves an allow-listed click and re-checks the real element right before clicking. */
+async function verifiedClick(page: Page, target: ClickTarget, locale: ScreenshotLocale) {
+  validateClick(target)
+  const scope = target.within ? locate(page, target.within, locale) : page
+  const name = clickName(target)[locale]
+  const element = clickKind(target) === 'button'
+    ? scope.getByRole('button', { name, exact: true })
+    : scope.locator('summary').filter({ hasText: name })
+  await expect(element).toHaveCount(1)
+  if (clickKind(target) === 'button') {
+    await expect(element).toHaveRole('button')
+    await expect(element).toHaveAccessibleName(name)
+  } else {
+    // A disclosure's computed name also carries CSS-generated decoration (the +/− marker), so its own
+    // text content must equal the allow-listed name exactly, and it must be a closed <details> summary.
+    const state = await element.evaluate(node => ({ tag: node.tagName, text: node.textContent?.trim(),
+      closed: node.parentElement?.tagName === 'DETAILS' && !(node.parentElement as HTMLDetailsElement).open }))
+    if (state.tag !== 'SUMMARY' || state.text !== name || !state.closed) throw new Error('click_disclosure_mismatch')
+  }
+  await element.click()
+}
+
 async function settle(page: Page) {
   await page.waitForLoadState('networkidle')
   await page.evaluate(() => document.fonts.ready.then(() => undefined))
@@ -71,7 +101,10 @@ async function overlay(page: Page, boxes: { x: number; y: number; width: number;
         'border:3px solid var(--primary);border-radius:8px;box-shadow:0 0 0 3px color-mix(in oklch, var(--primary) 25%, transparent)'
       const badge = document.createElement('div')
       badge.textContent = String(step)
-      const left = Math.max(2, Math.min(window.innerWidth - 30, box.x - 16)), top = Math.max(2, Math.min(window.innerHeight - footerHeight - 30, box.y - 16))
+      // QA N5: the badge sits outside the ring (left of it, or above it near the left edge) so it never covers text.
+      const outside = box.x >= 40
+      const left = outside ? box.x - 38 : Math.max(2, box.x - 4)
+      const top = Math.max(2, Math.min(window.innerHeight - footerHeight - 30, outside ? box.y - 4 : box.y - 36))
       badge.style.cssText = `position:absolute;left:${left}px;top:${top}px;width:28px;height:28px;border-radius:50%;display:flex;` +
         'align-items:center;justify-content:center;background:var(--primary);color:var(--primary-foreground);font:700 15px/1 system-ui,sans-serif;' +
         'box-shadow:0 0 0 2px var(--background)'
@@ -84,6 +117,39 @@ async function overlay(page: Page, boxes: { x: number; y: number; width: number;
     host.append(footer)
     document.body.append(host)
   }, { boxes, step, footerHeight, stamp: `POSEIDON · ${commit.slice(0, 12)} · synthetic data · USER-GUIDE-01 UG-2` })
+}
+
+/**
+ * QA N5: brings the first target to the top of its scroll container, then moves it below any sticky or
+ * fixed header that would otherwise cover it, leaving a small margin for the marker badge.
+ */
+async function reveal(target: Locator) {
+  await target.evaluate((element, footerHeight) => {
+    // Bottom edge of any sticky/fixed layer painted above the target's top-left corner.
+    const covered = () => {
+      const box = element.getBoundingClientRect()
+      let cover = 0
+      for (const node of document.elementsFromPoint(Math.min(window.innerWidth - 1, Math.max(0, box.left + 8)), Math.min(window.innerHeight - 1, Math.max(0, box.top + 2)))) {
+        if (node === element || element.contains(node) || node.contains(element)) break
+        for (let current: Element | null = node; current; current = current.parentElement) {
+          const position = getComputedStyle(current).position
+          if (position === 'sticky' || position === 'fixed') { cover = Math.max(cover, current.getBoundingClientRect().bottom); break }
+        }
+      }
+      return { box, cover }
+    }
+    const before = covered()
+    // Already fully visible below any header and above the commit footer: keep the natural page composition.
+    if (before.box.top >= before.cover + 8 && before.box.bottom <= window.innerHeight - footerHeight - 4) return
+    element.scrollIntoView({ block: 'start', inline: 'nearest' })
+    const after = covered()
+    const delta = after.cover + 40 - after.box.top
+    if (delta <= 0) return
+    let container: Element | null = element.parentElement
+    while (container && !(container.scrollHeight > container.clientHeight && /(auto|scroll)/.test(getComputedStyle(container).overflowY))) container = container.parentElement
+    if (container) container.scrollTop -= delta
+    else window.scrollBy(0, -delta)
+  }, footerHeight)
 }
 
 /** Fraction of differing pixels (ignoring the commit footer) decoded in an isolated about:blank page. */
@@ -129,13 +195,11 @@ async function capture(page: Page, blank: Page, key: string, locale: ScreenshotL
       await page.goto(guide.route)
       await settle(page)
       for (const action of step.actions) {
-        if ('click' in action) await locate(page, action.click, locale).click()
-        else if ('fill' in action) await locate(page, action.fill, locale).fill(action.value)
-        else await locate(page, action.press, locale).press(action.key)
+        await verifiedClick(page, action.click, locale)
         await settle(page)
       }
       const targets = step.targets.map(target => locate(page, target, locale))
-      await targets[0].scrollIntoViewIfNeeded()
+      await reveal(targets[0])
       await page.waitForTimeout(150)
       const boxes = []
       for (const target of targets) {
@@ -160,7 +224,7 @@ async function capture(page: Page, blank: Page, key: string, locale: ScreenshotL
       if (mode === 'update') {
         mkdirSync(dirname(file), { recursive: true })
         writeFileSync(file, png)
-        const provenance: Provenance = { schemaVersion: provenanceSchema, generator, commit, key, locale, step: step.step, viewport,
+        const provenance: Provenance = { schemaVersion: provenanceSchema, generator, commit, generatorBlobs, dirty, key, locale, step: step.step, viewport,
           datasets: [...allowedDatasets], tenant: visibleTenant, fixedClock,
           png: { sha256: createHash('sha256').update(png).digest('hex'), ...pngSize(png) }, domText }
         writeFileSync(resolve(folder, name + '.json'), JSON.stringify(provenance, null, 1) + '\n')
@@ -187,7 +251,7 @@ async function discover(page: Page, key: string, locale: ScreenshotLocale) {
       await page.goto(guide.route)
       await settle(page)
       for (const action of step.actions) {
-        if ('click' in action) await locate(page, action.click, locale).click()
+        await verifiedClick(page, action.click, locale)
         await settle(page)
       }
       const main = page.locator('main')
