@@ -51,7 +51,7 @@ La page Renouvellement de certificat enregistre étape par étape la préparatio
 - **Aucune étape n’est disponible pour votre rôle dans cet état.** La prochaine étape appartient à un autre rôle ; vérifiez votre permission et votre désignation et contactez si nécessaire l’administrateur du locataire (13.03 §10).
 - **Le renouvellement a changé après son chargement.** ou **Ce n’est pas la révision actuelle.** Appuyez sur **Recharger** et examinez l’état actuel.
 - **Le résultat est inconnu. Réessayer renvoie la même requête.** Utilisez **Réessayer la même requête**.
-- **Refusé pour séparation des tâches : vous avez enregistré une étape antérieure de ce renouvellement, une autre personne doit donc effectuer cette étape.** L’enregistrement n’a pas changé ; recharger n’aide pas. Laissez l’étape à une autre personne autorisée.
+- **Refusé pour séparation des tâches : une autre personne doit effectuer cette étape. Vous avez enregistré, rédigé ou vérifié une étape antérieure de ce renouvellement, ou aucune vérification par une autre personne n'est encore enregistrée.** L’enregistrement n’a pas changé ; recharger n’aide pas. Laissez l’étape à une autre personne autorisée.
 - **L’étape n’a pas été enregistrée. Vérifiez les informations et réessayez.** Vérifiez les champs requis et les sélections de concordance.
 - Si le remplacement ne peut pas être vérifié, contrôlez le document et la traçabilité de la source et transmettez-le au vérificateur (13.03 §10).
 

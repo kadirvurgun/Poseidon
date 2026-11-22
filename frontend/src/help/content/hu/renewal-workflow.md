@@ -51,7 +51,7 @@ A Bizonyítvány megújítása oldal lépésről lépésre rögzíti egy bizony�
 - **Ebben az állapotban nincs elérhető lépés a szerepköréhez.** A következő lépés egy másik szerepkörhöz tartozik; ellenőrizze jogosultságát és kinevezését, és szükség esetén forduljon a bérlői adminisztrátorhoz (13.03 §10).
 - **The renewal changed after it was loaded.** vagy **Ez nem az aktuális revízió.** Nyomja meg az **Újratöltés** gombot, és vizsgálja felül az aktuális állapotot.
 - **Az eredmény ismeretlen. Az újrapróbálás ugyanazt a kérést küldi el újra.** Használja az **Ugyanazon kérés ismétlése** lehetőséget.
-- **Elutasítva a feladatkörök szétválasztása miatt: ön rögzítette a megújítás egy korábbi lépését, ezért ezt a lépést másik személynek kell elvégeznie.** A rekord nem változott; az újratöltés nem segít. Hagyja a lépést egy másik felhatalmazott személyre.
+- **Elutasítva a feladatkörök szétválasztása miatt: ezt a lépést másik személynek kell elvégeznie. Ön rögzítette, készítette vagy ellenőrizte a megújítás egy korábbi lépését, vagy még nincs rögzítve másik személy általi ellenőrzés.** A rekord nem változott; az újratöltés nem segít. Hagyja a lépést egy másik felhatalmazott személyre.
 - **A lépés nem rögzült. Ellenőrizze az adatokat, és próbálja újra.** Ellenőrizze a kötelező mezőket és az egyezési beállításokat.
 - Ha a helyettesítő nem ellenőrizhető, vizsgálja meg a dokumentumot és a forrás eredetét, és utalja az ellenőrzőhöz (13.03 §10).
 

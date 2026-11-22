@@ -51,7 +51,7 @@ Todistuksen uusiminen -sivu kirjaa todistuksen uusimisen valmistelun ja sisäise
 - **Roolillesi ei ole vaiheita tässä tilassa.** Seuraava vaihe kuuluu toiselle roolille; tarkista oikeutesi ja nimityksesi ja ota tarvittaessa yhteyttä Tenant Adminiin (13.03 §10).
 - **The renewal changed after it was loaded.** tai **Tämä ei ole nykyinen versio.** Paina **Lataa uudelleen** ja tarkista nykyinen tila.
 - **Lopputulos on tuntematon. Uudelleenyritys lähettää saman pyynnön uudelleen.** Käytä painiketta **Yritä samaa pyyntöä uudelleen**.
-- **Hylätty tehtävien eriyttämisen vuoksi: kirjasit tämän uusimisen aiemman vaiheen, joten tämän vaiheen on tehtävä eri henkilö.** Tietue ei muuttunut; uudelleenlataus ei auta. Jätä vaihe toiselle valtuutetulle henkilölle.
+- **Hylätty tehtävien eriyttämisen vuoksi: tämän vaiheen on tehtävä eri henkilö. Kirjasit, laadit tai varmensit tämän uusimisen aiemman vaiheen, tai toisen henkilön tekemää varmennusta ei ole vielä kirjattu.** Tietue ei muuttunut; uudelleenlataus ei auta. Jätä vaihe toiselle valtuutetulle henkilölle.
 - **Vaihetta ei tallennettu. Tarkista tiedot ja yritä uudelleen.** Tarkista pakolliset kentät ja täsmäysvalinnat.
 - Jos korvaavaa todistusta ei voi todentaa, tarkista asiakirja ja lähteen alkuperäketju ja ohjaa se todentajalle (13.03 §10).
 

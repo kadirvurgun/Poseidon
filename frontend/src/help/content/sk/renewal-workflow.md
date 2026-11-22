@@ -51,7 +51,7 @@ Stránka Obnovenie osvedčenia zaznamenáva krok za krokom prípravu obnovenia o
 - **Pre vašu rolu nie je v tomto stave dostupný žiadny krok.** Ďalší krok patrí inej role; skontrolujte svoje oprávnenie a vymenovanie a v prípade potreby sa obráťte na správcu nájomcu (Tenant Admin) (13.03 §10).
 - **Obnovenie sa po načítaní zmenilo.** alebo **Toto nie je aktuálna revízia.** Stlačte **Znova načítať** a posúďte aktuálny stav.
 - **Výsledok nie je známy. Opakovanie odošle rovnakú požiadavku znova.** Použite **Opakovať rovnakú požiadavku**.
-- **Odmietnuté pre oddelenie povinností: zaznamenali ste skorší krok tejto obnovy, preto tento krok musí vykonať iná osoba.** Záznam sa nezmenil; opätovné načítanie nepomôže. Krok prenechajte inej oprávnenej osobe.
+- **Zamietnuté pre oddelenie povinností: tento krok musí vykonať iná osoba. Zaznamenali, spísali alebo overili ste skorší krok tejto obnovy, alebo zatiaľ nie je zaznamenané overenie inou osobou.** Záznam sa nezmenil; opätovné načítanie nepomôže. Krok prenechajte inej oprávnenej osobe.
 - **Krok nebol zaznamenaný. Skontrolujte údaje a skúste to znova.** Skontrolujte povinné polia a výbery zhody.
 - Ak náhradu nemožno overiť, skontrolujte dokument a pôvod zdroja a postúpte ju overovateľovi (13.03 §10).
 

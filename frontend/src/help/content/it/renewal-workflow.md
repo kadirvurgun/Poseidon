@@ -51,7 +51,7 @@ La pagina Rinnovo del certificato registra passo dopo passo la preparazione del 
 - **Nessun passaggio disponibile per il tuo ruolo in questo stato.** Il prossimo passaggio spetta a un altro ruolo; controllate il vostro permesso e la vostra designazione e, se necessario, contattate il Tenant Admin (13.03 §10).
 - **The renewal changed after it was loaded.** oppure **Questa non è la revisione corrente.** Premete **Ricarica** ed esaminate lo stato attuale.
 - **L’esito è sconosciuto. Riprovare invia di nuovo la stessa richiesta.** Usate **Riprova la stessa richiesta**.
-- **Rifiutato per separazione dei compiti: hai registrato un passaggio precedente di questo rinnovo, quindi un’altra persona deve eseguire questo passaggio.** Il record non è cambiato; ricaricare non aiuta. Lasciate il passaggio a un'altra persona autorizzata.
+- **Rifiutato per separazione dei compiti: questo passaggio deve essere eseguito da un'altra persona. Lei ha registrato, redatto o verificato un passaggio precedente di questo rinnovo, oppure non è ancora registrata alcuna verifica da parte di un'altra persona.** Il record non è cambiato; ricaricare non aiuta. Lasciate il passaggio a un'altra persona autorizzata.
 - **Il passaggio non è stato registrato. Controlla i dati e riprova.** Controllate i campi obbligatori e le selezioni di corrispondenza.
 - Se il sostituto non può essere verificato, controllate il documento e la provenienza dalla fonte e rimandatelo al verificatore (13.03 §10).
 

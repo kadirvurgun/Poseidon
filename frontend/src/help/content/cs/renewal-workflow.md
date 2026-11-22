@@ -51,7 +51,7 @@ Stránka Obnova osvědčení zaznamenává krok za krokem přípravu obnovy osv�
 - **Pro vaši roli není v tomto stavu dostupný žádný krok.** Další krok patří jiné roli; zkontrolujte své oprávnění a jmenování a v případě potřeby se obraťte na Tenant Admin (13.03 §10).
 - **Obnova se po načtení změnila.** nebo **Toto není aktuální revize.** Stiskněte **Znovu načíst** a zkontrolujte aktuální stav.
 - **Výsledek není znám. Opakování odešle stejný požadavek znovu.** Použijte **Opakovat stejný požadavek**.
-- **Odmítnuto kvůli oddělení povinností: zaznamenali jste dřívější krok této obnovy, proto tento krok musí provést jiná osoba.** Záznam se nezměnil; opětovné načtení nepomůže. Krok přenechte jiné oprávněné osobě.
+- **Odmítnuto kvůli oddělení povinností: tento krok musí provést jiná osoba. Zaznamenali, sepsali nebo ověřili jste dřívější krok této obnovy, nebo dosud není zaznamenáno ověření jinou osobou.** Záznam se nezměnil; opětovné načtení nepomůže. Krok přenechte jiné oprávněné osobě.
 - **Krok nebyl zaznamenán. Zkontrolujte údaje a zkuste to znovu.** Zkontrolujte povinná pole a výběr shod.
 - Pokud náhradu nelze ověřit, zkontrolujte dokument a původ zdroje a předejte ji ověřovateli (13.03 §10).
 

@@ -51,7 +51,7 @@ La página de renovación de certificado registra paso a paso la preparación de
 - **No hay pasos disponibles para su rol en este estado.** El siguiente paso corresponde a otro rol; compruebe su permiso y su designación y, si es necesario, contacte con el Tenant Admin (13.03 §10).
 - **The renewal changed after it was loaded.** o **Esta no es la revisión actual.** Pulse **Recargar** y revise el estado actual.
 - **El resultado es desconocido. Reintentar envía la misma solicitud.** Use **Reintentar la misma solicitud**.
-- **Refused for separation of duties: you recorded an earlier step of this renewal, so a different person must take this step.** (rechazado por separación de funciones: usted registró un paso anterior de esta renovación, por lo que otra persona debe dar este paso). El registro no cambió; recargar no ayuda. Deje el paso a otra persona autorizada.
+- **Rechazado por segregación de funciones: otra persona debe realizar este paso. Usted registró, redactó o verificó un paso anterior de esta renovación, o todavía no consta ninguna verificación hecha por otra persona.**. El registro no cambió; recargar no ayuda. Deje el paso a otra persona autorizada.
 - **El paso no se registró. Revise los datos e inténtelo de nuevo.** Compruebe los campos obligatorios y las selecciones de coincidencia.
 - Si el reemplazo no se puede verificar, compruebe el documento y la trazabilidad de la fuente y remítalo al verificador (13.03 §10).
 

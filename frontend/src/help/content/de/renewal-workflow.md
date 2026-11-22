@@ -51,7 +51,7 @@ Die Seite Zeugniserneuerung erfasst Schritt für Schritt die Erneuerungsvorberei
 - **Für Ihre Rolle ist in diesem Status kein Schritt verfügbar.** Der nächste Schritt gehört zu einer anderen Rolle; prüfen Sie Ihre Berechtigung und Bestellung und wenden Sie sich bei Bedarf an den Mandantenadministrator (13.03 §10).
 - **Die Verlängerung wurde nach dem Laden geändert.** oder **Dies ist nicht die aktuelle Revision.** Drücken Sie **Neu laden** und prüfen Sie den aktuellen Stand.
 - **Das Ergebnis ist unbekannt. Erneutes Versuchen sendet dieselbe Anfrage noch einmal.** Verwenden Sie **Dieselbe Anfrage wiederholen**.
-- **Wegen Funktionstrennung abgelehnt: Sie haben einen früheren Schritt dieser Erneuerung erfasst, daher muss eine andere Person diesen Schritt ausführen.** Der Datensatz wurde nicht geändert; Neuladen hilft nicht. Überlassen Sie den Schritt einer anderen berechtigten Person.
+- **Wegen Funktionstrennung abgelehnt: Diesen Schritt muss eine andere Person ausführen. Sie haben einen früheren Schritt dieser Erneuerung erfasst, verfasst oder verifiziert, oder es ist noch keine Verifizierung durch eine andere Person erfasst.** Der Datensatz wurde nicht geändert; Neuladen hilft nicht. Überlassen Sie den Schritt einer anderen berechtigten Person.
 - **Der Schritt wurde nicht gespeichert. Angaben prüfen und erneut versuchen.** Prüfen Sie die Pflichtfelder und die Übereinstimmungsauswahl.
 - Kann der Ersatz nicht verifiziert werden, prüfen Sie das Dokument und die Quellenherkunft und verweisen Sie ihn an den Verifizierer (13.03 §10).
 

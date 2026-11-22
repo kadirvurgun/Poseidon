@@ -51,7 +51,7 @@ A página Renovação de certificado registra, passo a passo, a preparação da 
 - **Nenhuma etapa disponível para sua função neste estado.** A próxima etapa pertence a outra função; verifique sua permissão e designação e, se necessário, entre em contato com o Tenant Admin (13.03 §10).
 - **The renewal changed after it was loaded.** ou **Esta não é a revisão atual.** Pressione **Recarregar** e revise o estado atual.
 - **O resultado é desconhecido. Tentar novamente reenvia a mesma solicitação.** Use **Repetir a mesma solicitação**.
-- **Refused for separation of duties: you recorded an earlier step of this renewal, so a different person must take this step.** O registro não mudou; recarregar não ajuda. Deixe a etapa para outra pessoa autorizada.
+- **Recusado por segregação de funções: outra pessoa deve executar esta etapa. Você registrou, redigiu ou verificou uma etapa anterior desta renovação, ou ainda não há verificação registrada por outra pessoa.** O registro não mudou; recarregar não ajuda. Deixe a etapa para outra pessoa autorizada.
 - **A etapa não foi registrada. Verifique os dados e tente novamente.** Verifique os campos obrigatórios e as seleções de conferência.
 - Se o substituto não puder ser verificado, confira o documento e a linhagem da fonte e encaminhe-o ao verificador (13.03 §10).
 
