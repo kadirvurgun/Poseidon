@@ -1,6 +1,11 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
-## Yönetim + yardım paketi — kullanıcı/yetki ekranı ve sayfa kılavuzu, QA notlarla, kapı CI bekleniyor (22.11.2026)
+## Kılavuz paketi — davet/kabul, ekran görüntüleri, 54 sayfa kılavuzu, ürün düzeltmeleri; QA notlarla, kapı CI bekleniyor (22.11.2026)
+- `integration/guide-bundle-20261122` (main dde4bb50 + USER-ADMIN-02 + UG-2 + UG-3 + `fix/guide-findings-20261122`). Canonical sayım değişmez: 114/121 iş, 932/970 SP.
+- USER-ADMIN-02 davet/kabul; UG-2 ekran görüntüsü hattı (6 kılavuz, 64 PNG); UG-3 54/54 sayfa kılavuzu TR/EN (`reviewed:false`); kılavuz yazarken bulunan 6 ürün hatası düzeltildi (günlük inceleme bağımsızlığı migration'ı dahil). Ayrıntı: `docs/phases/GUIDE-BUNDLE-20261122.md`.
+- Yerel: frontend 2316/2316, typecheck/lint 0, günlük inceleme PG 21/21. DEFERRED: mobil görüntüler, UG-4/5/6.
+
+## Yönetim + yardım paketi — kullanıcı/yetki ekranı ve sayfa kılavuzu, #54 ile birleşti (22.11.2026)
 - `integration/admin-help-bundle-20261122` (main 4d3b75c4 + USER-ADMIN-01 577e2f57 + UG-1 7246f69d + user-admin kılavuzu). Canonical sayım değişmez: 114/121 iş, 932/970 SP.
 - USER-ADMIN-01: üyelikler uygulama içinden (DB) yönetilir; 13.03 rol paketleri; karar yetkileri pakette yok; yetki verenin yetkisini aşamaz; kendi üyeliği ve son yönetici korunur; config kimlikleri config'den yönetilir. Açık: USER-ADMIN-02 (tenant'lar arası kimlik kapma → davet/kabul).
 - UG-1: her sayfada `?` / Shift+? yardım paneli (Kılavuz/Neden/AI kapalı), ağ çağrısı yok, çevrimdışı; 4 sayfa TR/EN kılavuz; kapsam koruması. Tüm içerik `reviewed:false` (insan SME onayı UG-REV-01).

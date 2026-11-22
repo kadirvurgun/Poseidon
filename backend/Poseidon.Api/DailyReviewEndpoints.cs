@@ -25,6 +25,8 @@ public sealed record DailyReviewDto(Guid Id,Guid RecordId,Guid VesselId,string K
 
 public static class DailyReviewEndpoints
 {
+    // Must equal the RAISE text in migration 20261124110000_DailyReviewIndependence.
+    private const string ReviewerNotAuthorMessage="Daily log review requires an independent reviewer";
     private static readonly (string Kind,string Route)[] Families=[("Noon","noon-reports"),("Deck","deck-daily-logs"),("Engine","engine-daily-logs")];
     public static void MapDailyReviews(this IEndpointRouteBuilder app) {
         foreach(var family in Families) {
@@ -185,8 +187,8 @@ public static class DailyReviewEndpoints
             if(tx!=null)await tx.RollbackAsync(CancellationToken.None);db.ChangeTracker.Clear();return await Replay()??await Fail(h,409,"version_conflict");
         } catch(Exception e)when(PostgresFailure.IsDatabase(e)) {
             if(tx!=null)await tx.RollbackAsync(CancellationToken.None);db.ChangeTracker.Clear();var conflict=PostgresFailure.IsSerialization(e)||PostgresFailure.Provider(e)?.SqlState=="23505";
-            // 23514 from DailyReviewEvent_ReviewerNotAuthor: the database refused a reviewer who authored the record.
-            if(PostgresFailure.IsStateRule(e))return await Fail(h,403,"separation_of_duties");
+            // 23514 from DailyReviewEvent_ReviewerNotAuthor only (matched by its message; other CHECK constraints also raise 23514).
+            if(PostgresFailure.Provider(e) is {SqlState:"23514",MessageText:ReviewerNotAuthorMessage})return await Fail(h,403,"separation_of_duties");
             return await Replay()??await Fail(h,conflict?409:503,conflict?"version_conflict":"service_unavailable");
         } finally {if(tx!=null)await tx.DisposeAsync();}
         await Audit(h,"Success",id);

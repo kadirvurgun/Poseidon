@@ -18549,7 +18549,7 @@
     "phase_report": "docs/phases/POLISH-BUNDLE-20261121.md"
   },
   "admin_help_bundle_20261122": {
-    "status": "AUTHORED_QA_ACCEPT_WITH_NOTES_GATE_CI_PENDING",
+    "status": "MERGED_PR54",
     "branch": "integration/admin-help-bundle-20261122",
     "base": "4d3b75c4",
     "scope": "USER-ADMIN-01 in-app membership administration (DB-provisioned grants, 13.03 role bundles, delegations, lifecycle) + USER-GUIDE-01 UG-1 page help panel (TR/EN guides: today, tug-job-board, companies, user-admin)",
@@ -18567,6 +18567,32 @@
     "phase_reports": [
       "docs/phases/USER-ADMIN-01.md",
       "docs/phases/USER-GUIDE-01-UG1.md"
+    ]
+  },
+  "guide_bundle_20261122": {
+    "status": "AUTHORED_QA_ACCEPT_WITH_NOTES_GATE_CI_PENDING",
+    "branch": "integration/guide-bundle-20261122",
+    "base": "dde4bb50",
+    "scope": "USER-ADMIN-02 invitation/accept; UG-2 screenshot pipeline (6 guides); UG-3 54/54 page guides TR/EN; six product fixes found during guide writing (work order/SOF copy, departure Release explanation, daily log review independence, tug GO only on READY, renewal SoD message)",
+    "canonical_effect": "none; 114/121 tasks, 932/970 SP unchanged",
+    "qa": [
+      "USER-ADMIN-02 security QA ACCEPT-WITH-NOTES, fixed 1d093986",
+      "UG-2 QA ACCEPT-WITH-NOTES, fixed",
+      "guide content QA REJECT 6 guides -> fixed 4208983d -> ACCEPT-WITH-NOTES",
+      "product fixes 2b2ee89c ACCEPT-WITH-NOTES; N1/N2 fixed in bundle"
+    ],
+    "deferred": [
+      "mobile screenshots",
+      "offline Playwright help check",
+      "UG-4 manual",
+      "UG-5 locales",
+      "UG-6 human SME review",
+      "QA notes N3/N4 on product fixes"
+    ],
+    "phase_reports": [
+      "docs/phases/GUIDE-BUNDLE-20261122.md",
+      "docs/phases/USER-ADMIN-02.md",
+      "docs/phases/USER-GUIDE-01-UG2.md"
     ]
   }
 }
