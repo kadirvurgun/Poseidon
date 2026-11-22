@@ -35,6 +35,7 @@ public sealed class PoseidonDbContext(
     public DbSet<MembershipCommandReceipt> MembershipCommandReceipts => Set<MembershipCommandReceipt>();
     public DbSet<MembershipGrantRevision> MembershipGrantRevisions => Set<MembershipGrantRevision>();
     public DbSet<MembershipGrantVessel> MembershipGrantVessels => Set<MembershipGrantVessel>();
+    public DbSet<MembershipInvitation> MembershipInvitations => Set<MembershipInvitation>();
     public DbSet<VesselCertificate> VesselCertificates => Set<VesselCertificate>();
     public DbSet<VesselCertificateRevision> VesselCertificateRevisions => Set<VesselCertificateRevision>();
     public DbSet<CertificateRenewal> CertificateRenewals => Set<CertificateRenewal>();
@@ -324,6 +325,7 @@ public sealed class PoseidonDbContext(
         model.Entity<MembershipCommandReceipt>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<MembershipGrantRevision>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         model.Entity<MembershipGrantVessel>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
+        model.Entity<MembershipInvitation>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);
         FleetCatalogDraftStorage.Configure(model);
         ParameterStorage.Configure(model);
         model.Entity<ParameterRoot>().HasQueryFilter(x => IsAdministrativeImport || x.TenantId == TenantId);

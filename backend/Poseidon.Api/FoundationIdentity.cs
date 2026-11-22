@@ -113,6 +113,29 @@ public sealed class ActorResolver(FederationSettings settings, IHttpContextAcces
     public const string ProvisionedTenantClaim = "poseidon:tid";
     public const string SessionSourceClaim = "poseidon:src";
     public const string ProvisionedSource = "provisioned";
+    // USER-ADMIN-02: a short session for an IdP-validated identity WITHOUT any membership, issued only when the login
+    // was started for the invitation acceptance page. It resolves to no actor (every policy denies it); it can only
+    // preview/accept an invitation with its own validated issuer+subject.
+    public const string InvitationSource = "invitation";
+
+    // Exactly one validated issuer and subject of any authenticated session (configured, provisioned or invitation).
+    public static (string Issuer, string Subject)? AuthenticatedIdentity(ClaimsPrincipal principal)
+    {
+        if (principal.Identity?.IsAuthenticated != true) return null;
+        var subjects = principal.FindAll("sub").ToArray();
+        var issuers = principal.FindAll("iss").ToArray();
+        return subjects.Length == 1 && issuers.Length == 1 && subjects[0].Value.Length is > 0 and <= 255 && issuers[0].Value.Length is > 0 and <= 1024
+            ? (issuers[0].Value, subjects[0].Value) : null;
+    }
+
+    // An invitation session: the server-stamped source claim, no operator entry and no provisioned binding.
+    public (string Issuer, string Subject)? InvitationIdentityFor(ClaimsPrincipal principal)
+    {
+        if (AuthenticatedIdentity(principal) is not { } identity) return null;
+        var sources = principal.FindAll(SessionSourceClaim).ToArray();
+        if (sources.Length != 1 || sources[0].Value != InvitationSource || principal.FindAll(ProvisionedTenantClaim).Any()) return null;
+        return settings.Memberships.Any(x => x.Issuer == identity.Issuer && x.Subject == identity.Subject) ? null : identity;
+    }
 
     // USER-ADMIN-01: an identity without any operator entry whose server-issued session carries the provisioned
     // binding (tenant + actor). An identity present in the operator configuration is always governed by it.
@@ -222,6 +245,27 @@ public static class FoundationIdentity
         !value.Contains('%') && !value.Contains('\\') && !value.Split('?', '#')[0].Split('/').Any(x => x is "." or "..") &&
         !value.Any(char.IsControl) ? value : "/app";
 
+    // USER-ADMIN-02: the login was started from the invitation acceptance page (local return path only).
+    public const string InvitationPage = "/app/accept-invitation";
+    public static bool IsInvitationReturn(string? redirect) => redirect != null && LocalReturn(redirect) == redirect &&
+        redirect.StartsWith(InvitationPage, StringComparison.Ordinal) && (redirect.Length == InvitationPage.Length || redirect[InvitationPage.Length] is '?' or '#');
+
+    public static readonly TimeSpan InvitationSessionLifetime = TimeSpan.FromMinutes(10);
+
+    // USER-ADMIN-02 (QA N6): the decision OnTokenValidated applies to an IdP-validated identity that resolved to no
+    // membership. Only a login that returns to the invitation page, for an identity with exactly one issuer and subject and
+    // no operator entry, gets an invitation session: claims sub/iss/source only, lifetime min(ID token, 10 minutes).
+    public static (ClaimsPrincipal Principal, DateTimeOffset ExpiresUtc)? InvitationSession(ClaimsPrincipal validated, string? redirectUri,
+        FederationSettings settings, DateTimeOffset tokenValidTo, DateTimeOffset now)
+    {
+        if (!IsInvitationReturn(redirectUri) || ActorResolver.AuthenticatedIdentity(validated) is not { } invitee ||
+            settings.Memberships.Any(x => x.Issuer == invitee.Issuer && x.Subject == invitee.Subject) || tokenValidTo <= now) return null;
+        var principal = new ClaimsPrincipal(new ClaimsIdentity([new Claim("sub", invitee.Subject), new Claim("iss", invitee.Issuer),
+            new Claim(ActorResolver.SessionSourceClaim, ActorResolver.InvitationSource)], Oidc));
+        var limit = now + InvitationSessionLifetime;
+        return (principal, tokenValidTo < limit ? tokenValidTo : limit);
+    }
+
     public static void AddFoundationIdentity(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment)
     {
         var settings = configuration.GetSection("Authentication:Oidc").Get<FederationSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new();
@@ -238,6 +282,8 @@ public static class FoundationIdentity
         services.AddSingleton<ActorResolver>();
         services.AddSingleton<MembershipStateReader>();
         services.AddSingleton<ProvisionedIdentityLocator>();
+        services.AddSingleton<InvitationAttemptLimiter>();
+        services.AddSingleton(new InvitationIdentityReference(settings.ClientSecret));
         services.AddScoped<ICurrentMembershipResolver, CurrentMembershipResolver>();
         services.AddAntiforgery(o =>
         {
@@ -267,7 +313,8 @@ public static class FoundationIdentity
                 {
                     // A provisioned session is revalidated by MembershipSessionGate against the database on every request.
                     var actors = c.HttpContext.RequestServices.GetRequiredService<ActorResolver>();
-                    if (!settings.Configured || actors.Resolve(c.Principal!) == null && actors.ProvisionedIdentityFor(c.Principal!) == null)
+                    if (!settings.Configured || actors.Resolve(c.Principal!) == null && actors.ProvisionedIdentityFor(c.Principal!) == null &&
+                        actors.InvitationIdentityFor(c.Principal!) == null)
                         c.RejectPrincipal();
                     return Task.CompletedTask;
                 }
@@ -320,6 +367,14 @@ public static class FoundationIdentity
                         if (subjects.Length == 1 && issuers.Length == 1 && !settings.Memberships.Any(x => x.Issuer == issuers[0].Value && x.Subject == subjects[0].Value))
                             identity = await c.HttpContext.RequestServices.GetRequiredService<ProvisionedIdentityLocator>()
                                 .FindAsync(issuers[0].Value, subjects[0].Value, c.HttpContext.TraceIdentifier, c.HttpContext.RequestAborted);
+                    }
+                    if (identity == null && actor == null && InvitationSession(c.Principal!, c.Properties?.RedirectUri, settings,
+                            new DateTimeOffset(c.SecurityToken.ValidTo, TimeSpan.Zero), c.HttpContext.UtcNow()) is { } invitation)
+                    {
+                        c.Principal = invitation.Principal;
+                        c.Properties!.ExpiresUtc = invitation.ExpiresUtc;
+                        c.Properties.IsPersistent = false;
+                        return;
                     }
                     if (identity == null || !identity.Provisioned && (actor == null || !actor.Permissions.Contains("directory.read")))
                     {

@@ -3,7 +3,9 @@ namespace Poseidon.Domain;
 // PLAN-1511-5202 / 52.02 ACC04-ACC05 + 54.02 Rev4 paragraph:807 (last-admin narrowing).
 // Closed membership lifecycle. A persisted membership state can only narrow the
 // operator-provisioned grant; it never creates access, roles or vessel scope.
-public enum MembershipStatus { Active, Suspended, Revoked }
+// USER-ADMIN-02: Invited = an administrator-created membership awaiting acceptance by the identity holder; it grants
+// nothing and binds no IdP identity until accepted (MembershipInvitationPolicy).
+public enum MembershipStatus { Active, Suspended, Revoked, Invited }
 
 public enum MembershipTransition
 {
@@ -30,12 +32,14 @@ public static class MembershipLifecyclePolicy
     public static string Wire(MembershipStatus status) => status switch
     {
         MembershipStatus.Active => "Active", MembershipStatus.Suspended => "Suspended", MembershipStatus.Revoked => "Revoked",
+        MembershipStatus.Invited => "Invited",
         _ => throw new ArgumentOutOfRangeException(nameof(status))
     };
 
     public static MembershipStatus? Parse(string? value) => value switch
     {
-        "Active" => MembershipStatus.Active, "Suspended" => MembershipStatus.Suspended, "Revoked" => MembershipStatus.Revoked, _ => null
+        "Active" => MembershipStatus.Active, "Suspended" => MembershipStatus.Suspended, "Revoked" => MembershipStatus.Revoked,
+        "Invited" => MembershipStatus.Invited, _ => null
     };
 
     // isLastActiveAdministrator: the target is currently an active tenant identity
@@ -52,6 +56,8 @@ public static class MembershipLifecyclePolicy
                 return new(true, MembershipStatus.Suspended, null, false, "AdministrativeSuspension");
             case MembershipTransition.Revoke:
                 if (current == MembershipStatus.Revoked) return Deny(current, InvalidTransition);
+                // USER-ADMIN-02: revoking an unaccepted invitation ends it (its pending invitation closes with it).
+                if (current == MembershipStatus.Invited) return new(true, MembershipStatus.Revoked, null, false, "InvitationRevoked");
                 // A suspended member is already not an active administrator.
                 if (current == MembershipStatus.Active && isLastActiveAdministrator) return Deny(current, LastAdmin);
                 return new(true, MembershipStatus.Revoked, null, false, "AdministrativeRevocation");

@@ -39,7 +39,7 @@ public sealed record EffectiveDelegation(Guid DelegationId, Guid DelegatorActorI
 // operator allow-list live.
 internal static class DelegationAuthority
 {
-    internal static DelegationSource? Current(FederationSettings settings, Guid tenant, Guid accountId, string issuer, string subject,
+    internal static DelegationSource? Current(FederationSettings settings, Guid tenant, Guid accountId, string issuer, string? subject,
         string persistedStatus, Guid? persistedCompany, IReadOnlyCollection<AccountMembershipVesselGrant> persistedGrants, ProvisionedGrant? provisioned = null)
     {
         if (persistedStatus != "Active") return null;

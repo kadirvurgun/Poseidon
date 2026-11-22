@@ -79,3 +79,15 @@ created. The login lookup is the single cross-tenant read, keyed only by the IdP
 then carried in the protected session and every request revalidates the current grant. Audit records closed bundle
 codes/counts/flags and withholds permission lists and subjects. This is not production IAM rollout, IdP governance or
 GDPR/KVKK acceptance. [Decisions](tasks/USER-ADMIN-01.md).
+
+## USER-ADMIN-02 — invitation + acceptance by the identity holder (authored; targeted tests run, see phase report)
+
+Closes USER-ADMIN-01 N1 (cross-tenant identity squatting). An admin-created membership starts `Invited`, grants nothing and
+reserves no identity: its account has no subject until the identity holder, signed in through the trusted IdP in a
+short (≤10 min) invitation-only session (link token in the URL fragment, `Referrer-Policy: no-referrer`) that resolves to no actor, accepts a single-use 256-bit token. Only the SHA-256 of
+the token secret is stored; the token is returned once to the creating administrator and is never logged or audited.
+Uniqueness covers accepted bindings only (filtered unique index); one identity holds at most one accepted membership in
+any tenant (strict option). Acceptance runs SERIALIZABLE inside the token's tenant only (tenant-filtered context, no
+`IgnoreQueryFilters`); every refusal is one neutral `409 invitation_unavailable`, attempts are rate-limited per identity
+(process-local) and each step is a SecurityEvent with closed codes. Not production IAM rollout, e-mail delivery, IdP
+governance or GDPR/KVKK acceptance. [Decisions](tasks/USER-ADMIN-02.md).

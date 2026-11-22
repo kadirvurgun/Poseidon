@@ -122,6 +122,9 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             // Public diagnostics contain no tenant/user context and must not be cached.
             context.Response.Headers.CacheControl = "no-store";
             context.Response.Headers.XContentTypeOptions = "nosniff";
+            // USER-ADMIN-02 (QA N1): no URL (path, query or fragment-derived state) ever leaves in a Referer header. The
+            // OIDC code flow (state/nonce/PKCE via cookies and parameters) does not rely on Referer.
+            context.Response.Headers["Referrer-Policy"] = "no-referrer";
             try
             {
                 await next(context);
@@ -160,8 +163,13 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
             var operation = S1SecurityContract.Match(context);
             if (operation?.IsCritical == true)
             {
-                var actor = context.RequestServices.GetRequiredService<ActorResolver>().Resolve(context.User);
-                if (actor?.HasWriteAttribution != true)
+                var actors = context.RequestServices.GetRequiredService<ActorResolver>();
+                var actor = actors.Resolve(context.User);
+                // USER-ADMIN-02: invitation acceptance is the one critical write by an identity WITHOUT an actor. Its write
+                // attribution is server-derived by the handler (the invited account and its grant's role context, inside the
+                // token's tenant); only an invitation session is admitted, and only to this exact operation.
+                var invitationAcceptance = actor == null && operation.OperationId == "MembershipInvitationAccept" && actors.InvitationIdentityFor(context.User) != null;
+                if (actor?.HasWriteAttribution != true && !invitationAcceptance)
                 {
                     await context.RequestServices.GetRequiredService<SecurityAudit>().WriteAsync(context,
                         operation.DenialAction, actor == null ? "Unauthenticated" : "Denied");

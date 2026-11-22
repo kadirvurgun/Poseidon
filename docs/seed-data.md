@@ -333,3 +333,11 @@ decision and, for a real IdP subject, a working login. No IdP account, password,
 `SyntheticUnverified`, no grant) is unchanged and still confers nothing: only `AdminProvisioned` rows with a grant
 revision resolve to an actor. Demo use: an administrator creates memberships through `/app/user-admin`; every row is
 then attributed and EF-audited. Default seed import and its audit totals are unchanged.
+
+## USER-ADMIN-02 — membership invitations — no new seed rows by design
+
+`identity.MembershipInvitations` and `Invited` memberships get **no seed fixture**. An invitation row carries the hash of a
+live single-use credential (the link token); seeding one would fabricate a usable acceptance path or an administrator
+decision. Existing `AdminProvisioned` rows from USER-ADMIN-01 are not rewritten: they keep their subject and state and are
+treated as already accepted (migration `20261124100002_UserAdministrationInvitations`). Default seed import and its audit
+totals are unchanged.
