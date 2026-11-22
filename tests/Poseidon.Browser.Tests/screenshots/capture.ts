@@ -15,6 +15,7 @@ import { createHash } from 'node:crypto'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { clickKind, clickName, screenshotLocales, shotName, validateClick, validateMapping, viewports, type ClickTarget, type Localized, type ScreenshotLocale, type Target, type ViewportName } from './steps.ts'
+import { paletteScreenshot } from './png-palette.ts'
 import { allowedDatasets, generator, generatorFiles, gitBlobSha1, provenanceSchema, scanDomText, visibleTenant, type Provenance } from './provenance.ts'
 
 const mode = process.env.POSEIDON_SCREENSHOTS_MODE ?? 'compare'
@@ -234,7 +235,8 @@ async function capture(page: Page, blank: Page, key: string, locale: ScreenshotL
       const masks = [page.locator('time'),
         page.getByText(/\b\d{4}-\d{2}-\d{2}\b|\b\d{1,2}[./]\d{1,2}[./]\d{2,4}\b|\b\d{1,2}:\d{2}\b/),
         page.getByText(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|\b[0-9a-f]{8}…/i)]
-      const png = await page.screenshot({ animations: 'disabled', caret: 'hide', scale: 'css', mask: masks, maskColor: '#c8cdd3' })
+      // Deterministic palette reduction (png-palette.ts) in every mode, so compare diffs like against like.
+      const png = paletteScreenshot(await page.screenshot({ animations: 'disabled', caret: 'hide', scale: 'css', mask: masks, maskColor: '#c8cdd3' }))
       await page.evaluate(() => document.getElementById('poseidon-doc-overlay')?.remove())
       shot.bytes = png.length
       // Viewports not committed to the repository (see steps.json committedViewports) are written to the

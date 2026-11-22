@@ -171,7 +171,7 @@ jobs:
         run: node --test tests/Poseidon.Browser.Tests/lab/register-lane-fixture.test.ts tests/Poseidon.Browser.Tests/lab/signed-case.test.ts tests/Poseidon.Browser.Tests/lab/observation-fixture.test.ts tests/Poseidon.Browser.Tests/lab/lab-runtime.test.ts
       - name: Help screenshot mapping and provenance tests (USER-GUIDE-01 UG-2)
         run: |
-          node --test tests/Poseidon.Browser.Tests/screenshots/steps.test.ts tests/Poseidon.Browser.Tests/screenshots/provenance.test.ts
+          node --test tests/Poseidon.Browser.Tests/screenshots/steps.test.ts tests/Poseidon.Browser.Tests/screenshots/provenance.test.ts tests/Poseidon.Browser.Tests/screenshots/png-palette.test.ts
           python3 -m unittest discover -s scripts -p test_help_screenshots_lab.py -v
       - name: Qualified owning fixture protocol before provider
         run: |
