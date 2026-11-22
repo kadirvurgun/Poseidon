@@ -119,6 +119,7 @@ Taban `origin/integration/guide-bundle-20261122` (8a9d27f9). Kaynak: `docs/tasks
 - **Mobil kompozisyon:** `reveal()` artık tüm hedeflerin birleşik kutusunu yapışkan başlığın altına getirir (sığıyorsa), yoksa ilk hedefe düşer; ekran dışında kalan ek hedefe halka çizilmez, ilk hedef ekranda değilse adım başarısız olur (`target_off_screen`).
 - **Oturum:** uygulama oturumu 30 dk sabit (kaymasız); iki görünüm alanı × iki dil çalıştırması bunu aştığı için her (görünüm alanı, dil) bloğu yeni bağlam + gerçek Keycloak girişiyle çalışır (giriş masaüstü düzeninde, sonra görünüm alanı değişir).
 - **Sayfa içi maske:** zaman/tarih/UUID değerleri artık Playwright ekran görüntüsü katmanı yerine sayfada (satır içi stil: gri zemin, saydam metin) maskelenir; böylece yapışkan başlık ve commit damgası şeridi, altlarına kaymış maskelenmiş değerin üstünde kalır (mobilde önceden gri şeritler başlığın ve damganın üzerine biniyordu).
+- **Belirlenimci kompozisyon:** iki karşılaştırma turu 4/196 fark buldu ve düzeltildi: (1) değişken uzunluklu zaman damgaları maske genişliğini değiştiriyordu → maskelenen değer sabit genişlikli yer tutucuyla değiştirilir; (2) geç dolan ayrıntı paneli / "Yükleniyor…" durumu → `settle` `role=status`/`aria-busy` yükleme durumunu (sınırlı, 10 sn) bekler, `steady` hedef kutuları ve sayfa yüksekliği iki örnekte sabitlenene kadar bekler; (3) hazırlık tıklamasının bıraktığı kaydırma → kompozisyondan önce tüm kaydırma kapları ve pencere başa alınır.
 - **Sabit saat `2026-11-22T00:00Z`:** 09:00Z, aynı gün sunucunun verdiği 60 sn geçerlilikli kalkış değerlendirmesini tarayıcıda "eski" gösteriyordu; gün başı hiçbir sunucu zaman damgasından sonra değildir. Tarih/saat metinleri yine maskelenir.
 - **Boyut:** `png-palette.ts` (bağımlılıksız, saf) — en sık 256 renk paleti, kalan renkler en yakın girdiye; herhangi bir piksel bir kanalda 24'ten (karşılaştırma eşiği) fazla kayarsa veya saydamlık varsa özgün kayıpsız PNG korunur. Örnek: 88,5 kB → 37,0 kB, en büyük kanal hatası 18. Her modda uygulanır (karşılaştırma aynı biçimi kıyaslar) ve üreteç dosyası olarak köken blob'una bağlıdır (`generatorFiles` 3 dosya). `png-palette.test.ts` CI adımına eklendi.
 - **Per-step route:** `steps.json` adımı isteğe bağlı `route` alır (ör. gemi seçim adımı ile geminin sayfası); aynı `/app/...` (+ `?vessel=<uuid>`) deseni, `unavailable` adımda yasak.
@@ -138,7 +139,19 @@ Taban `origin/integration/guide-bundle-20261122` (8a9d27f9). Kaynak: `docs/tasks
 
 towage-plan / towage-risk-briefing eşlenmedi: lab'da "gönderilmiş römorkör işi" yok, sayfa yalnız "No submitted tug jobs" gösterir.
 
-Sonuçlar: GENERATION_RESULTS_PLACEHOLDER
+Üreteç commit'i `42629207` (temiz, `dirty=false`); görüntüler kendi lab'ımla (worktree `.runtime/worktrees/ug2-mobile`, özel dizin `.runtime/oidc-lab`, varsayılan portlar boştu; bu daldan derlenmiş Release API + `frontend/dist`) üretildi ve sonunda lab durduruldu.
+
+| Komut | Sonuç |
+|---|---|
+| `screenshots` `update` (desktop + mobile, TR/EN) | `status=passed`, 196/196 written (49 adım × 2 dil × 2 görünüm alanı) |
+| `screenshots` `compare` (ikinci bağımsız çalıştırma) | `status=passed`, 196/196 `match`, en büyük fark oranı 0 (eşik 0,002) |
+| `node --test steps.test.ts provenance.test.ts png-palette.test.ts` | 15/15 geçti |
+| `npx vitest run src/help` | 3 dosya, 96 test geçti |
+| `npm run typecheck`, `npm run lint` (frontend) | geçti |
+| `npm run build` (frontend) | geçti; `dist/assets` 196 PNG, `offline-shell.js` içinde 0 `.png` |
+| `py -3.13 -m unittest test_help_screenshots_lab test_oidc_lab` | 9/9 geçti |
+
+Boyut: **196 PNG, 8,85 MiB** (masaüstü 98 → 6,46 MiB, mobil 98 → 2,39 MiB; palet indirgemesi örnekte ~%58 küçültür) + 196 köken JSON (506 KiB). Önceki teslim: 64 PNG, 5,45 MB.
 
 ## Açık konular
 
