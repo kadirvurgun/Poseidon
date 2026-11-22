@@ -3888,7 +3888,10 @@
       "backToList": "Kaikki ohjeet",
       "notAvailable": "Tälle osoitteelle ei ole näytettävää ohjetta.",
       "manualTitle": "Käyttöopas",
-      "manualBody": "Kuvitettu käyttöopas (turkiksi ja englanniksi, HTML ja PDF) tuotetaan samoista ohjeista sovelluksen ulkopuolella, eikä se sisälly tähän versioon. Pyydä ajantasainen kappale ylläpitäjältä. Se on luonnos, kunnes asiantuntijatarkistus on kirjattu."
+      "manualBody": "Kuvitettu käyttöopas (turkiksi ja englanniksi, HTML ja PDF) tuotetaan samoista ohjeista sovelluksen ulkopuolella, eikä se sisälly tähän versioon. Pyydä ajantasainen kappale ylläpitäjältä. Se on luonnos, kunnes asiantuntijatarkistus on kirjattu.",
+      "sessionUnavailable": "Istuntoasi ei voitu tarkistaa, joten ohjeita ei näytetä. Lataa sivu uudelleen ja yritä uudestaan.",
+      "noAccess": "Tililläsi ei ole lukuoikeutta tähän työtilaan, joten ohjeita ei näytetä.",
+      "resultCount": "Näytettyjä ohjeita: {{count}}"
     },
     "AcceptInvitation_tsx_copy": {
       "title": "Hyväksy kutsu",

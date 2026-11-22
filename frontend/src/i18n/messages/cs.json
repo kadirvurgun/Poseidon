@@ -3888,7 +3888,10 @@
       "backToList": "Všechny návody",
       "notAvailable": "Pro tuto adresu není žádný návod k zobrazení.",
       "manualTitle": "Uživatelská příručka",
-      "manualBody": "Ilustrovaná uživatelská příručka (turecky a anglicky, HTML a PDF) se vytváří ze stejných návodů mimo aplikaci a není součástí tohoto sestavení. Aktuální kopii si vyžádejte od správce. Zůstává konceptem, dokud není zaznamenána odborná kontrola."
+      "manualBody": "Ilustrovaná uživatelská příručka (turecky a anglicky, HTML a PDF) se vytváří ze stejných návodů mimo aplikaci a není součástí tohoto sestavení. Aktuální kopii si vyžádejte od správce. Zůstává konceptem, dokud není zaznamenána odborná kontrola.",
+      "sessionUnavailable": "Vaši relaci se nepodařilo ověřit, proto se nezobrazují žádné návody. Obnovte stránku a zkuste to znovu.",
+      "noAccess": "Váš účet nemá v tomto pracovním prostoru oprávnění ke čtení, proto se nezobrazují žádné návody.",
+      "resultCount": "Zobrazené návody: {{count}}"
     },
     "AcceptInvitation_tsx_copy": {
       "title": "Přijmout pozvánku",

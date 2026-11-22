@@ -3888,7 +3888,10 @@
       "backToList": "Alle Anleitungen",
       "notAvailable": "Für diese Adresse gibt es keine Anleitung.",
       "manualTitle": "Benutzerhandbuch",
-      "manualBody": "Das bebilderte Benutzerhandbuch (Türkisch und Englisch, HTML und PDF) wird außerhalb der App aus denselben Anleitungen erstellt und ist in diesem Build nicht enthalten. Fragen Sie Ihre Administration nach der aktuellen Fassung. Es bleibt ein Entwurf, bis eine Expertenprüfung erfasst ist."
+      "manualBody": "Das bebilderte Benutzerhandbuch (Türkisch und Englisch, HTML und PDF) wird außerhalb der App aus denselben Anleitungen erstellt und ist in diesem Build nicht enthalten. Fragen Sie Ihre Administration nach der aktuellen Fassung. Es bleibt ein Entwurf, bis eine Expertenprüfung erfasst ist.",
+      "sessionUnavailable": "Ihre Sitzung konnte nicht geprüft werden, daher werden keine Anleitungen aufgeführt. Laden Sie die Seite neu und versuchen Sie es erneut.",
+      "noAccess": "Ihr Konto hat in diesem Arbeitsbereich keinen Lesezugriff, daher werden keine Anleitungen aufgeführt.",
+      "resultCount": "Angezeigte Anleitungen: {{count}}"
     },
     "AcceptInvitation_tsx_copy": {
       "title": "Einladung annehmen",

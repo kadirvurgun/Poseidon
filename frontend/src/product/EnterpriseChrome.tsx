@@ -255,8 +255,8 @@ export function EnterpriseChrome({ session, vessel = null, language, onLanguageC
             const label = labels[item.key];
             return label ? [{ ...item, label: localizedLabel(label, en), icon: label.icon }] : [];
         })} currentKey={currentKey} language={language} onNavigate={href => move(href)}/>
-        {/* HELP-CENTER-01: the help center is not a server navigation destination; it grants nothing and lists only granted pages' guides. */}
-        <a className="enterprise-help-center-link" href="/app/help" aria-current={/^\/app\/help\/?$/.test(path) ? 'page' : undefined} onClick={event => { event.preventDefault(); move('/app/help'); }}><BookOpen aria-hidden="true"/><span>{helpCenterCopy[language].title}</span></a>
+        {/* HELP-CENTER-01: the help center is not a server navigation destination; it grants nothing and lists only granted pages' guides; shown to a signed-in reader. */}
+        {session?.authenticated && session.canRead && <a className="enterprise-help-center-link" href="/app/help" aria-current={/^\/app\/help\/?$/.test(path) ? 'page' : undefined} onClick={event => { event.preventDefault(); move('/app/help'); }}><BookOpen aria-hidden="true"/><span>{helpCenterCopy[language].title}</span></a>}
         {navigation.loading && <div className="enterprise-nav-loading" role="status">{localizedText(en, "pairs.m_e6da24e466eb33e9")}</div>}
         {navigation.failed && <div className="enterprise-nav-loading" role="status"><p>{localizedText(en, "pairs.m_5f4cc449dea3b70e")}</p><Button variant="ghost" onClick={navigation.retry}>{localizedText(en, "pairs.m_80a0813ed59604de")}</Button></div>}
         {currentLens && menuItems.length === 0 && <p className="enterprise-nav-loading" role="status">{localizedText(en, "pairs.m_aa0ed8645844937f")}</p>}

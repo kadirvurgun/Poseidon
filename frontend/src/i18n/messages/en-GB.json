@@ -3870,7 +3870,7 @@
       "screenshotOffline": "Screenshot available when online."
     },
     "HelpCenter_tsx_copy": {
-      "title": "Help center",
+      "title": "Help centre",
       "eyebrow": "Help",
       "description": "Guides for the pages you can open. Reading a guide changes nothing and starts no AI call.",
       "listTitle": "Page guides",
@@ -3888,7 +3888,10 @@
       "backToList": "All guides",
       "notAvailable": "No guide to show for this address.",
       "manualTitle": "User manual",
-      "manualBody": "The illustrated user manual (Turkish and English, HTML and PDF) is generated from these same guides outside the app and is not included in this build. Ask your administrator for the current copy. It stays a draft until an expert review is recorded."
+      "manualBody": "The illustrated user manual (Turkish and English, HTML and PDF) is generated from these same guides outside the app and is not included in this build. Ask your administrator for the current copy. It stays a draft until an expert review is recorded.",
+      "sessionUnavailable": "Your session could not be checked, so no guides are listed. Reload the page and try again.",
+      "noAccess": "Your account has no read access to this workspace, so no guides are listed.",
+      "resultCount": "Guides shown: {{count}}"
     },
     "AcceptInvitation_tsx_copy": {
       "title": "Accept invitation",

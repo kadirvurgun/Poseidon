@@ -1,11 +1,11 @@
-import { act, render, screen, within } from '@testing-library/react'
+import { act, cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { changeAppLanguage } from '../i18n'
 import { EnterpriseChrome } from '../product/EnterpriseChrome'
 import type { Session } from '../product/directory-contract'
 import type { EnterpriseDestination } from '../product/enterprise-navigation'
-import { HelpCenter } from './HelpCenterWorkspace'
+import { HelpCenter, HelpCenterWorkspace } from './HelpCenterWorkspace'
 
 // HELP-CENTER-01: /app/help search, grouping by menu section, reviewed:false + machine-draft
 // notices, permission filtering (D3 / 65.03 p50) and deep links to the page.
@@ -24,7 +24,7 @@ function mount(props: Partial<Parameters<typeof HelpCenter>[0]> = {}, path = '/a
   const onNavigate = vi.fn()
   const fetcher = vi.fn()
   vi.stubGlobal('fetch', fetcher)
-  render(<HelpCenter language="en" signedIn online navigation={ready()} onNavigate={onNavigate} {...props}/>)
+  render(<HelpCenter language="en" access="allowed" online navigation={ready()} onNavigate={onNavigate} {...props}/>)
   return { onNavigate, fetcher }
 }
 afterEach(async () => {
@@ -35,7 +35,7 @@ afterEach(async () => {
 describe('help center', () => {
   it('groups only the granted pages by menu section and never names a hidden page', async () => {
     const { fetcher } = mount()
-    const list = await screen.findByRole('region', { name: 'Page guides' })
+    const list = await screen.findByRole('region', { name: 'Page guides' }, guideLoad)
     expect(await within(list).findByRole('link', { name: 'Today' }, guideLoad)).toBeVisible()
     const headings = within(list).getAllByRole('heading', { level: 3 }).map(item => item.textContent)
     expect(headings).toHaveLength(3) // overview, tug, assurance: sidebar section order
@@ -54,7 +54,7 @@ describe('help center', () => {
 
   it('searches titles and guide text with locale folding and reports no match', async () => {
     mount()
-    const list = await screen.findByRole('region', { name: 'Page guides' })
+    const list = await screen.findByRole('region', { name: 'Page guides' }, guideLoad)
     await within(list).findByRole('link', { name: 'Today' }, guideLoad)
     const search = screen.getByRole('searchbox', { name: 'Search guides' })
     await userEvent.type(search, 'JOB BOARD')
@@ -74,9 +74,13 @@ describe('help center', () => {
     expect(screen.getByRole('heading', { level: 2, name: 'Fleet' })).toBeVisible()
     expect(screen.getByRole('heading', { name: 'What this page is for' })).toBeVisible()
     expect(screen.getByRole('article')).toHaveTextContent('Draft guide — awaiting expert review')
-    // Related pages are limited to the granted ones (today is related to fleet and granted).
+    // a11y: the clicked link unmounted; focus moves to the opened guide's heading.
+    expect(screen.getByRole('heading', { level: 2, name: 'Fleet' })).toHaveFocus()
+    // Related pages are limited to the granted ones: fleet relates to today (granted) and to
+    // companies, certificate-command-center, data-trust-center, departure-signoff (hidden).
     const related = screen.getByRole('heading', { name: 'Related pages' }).closest('section')!
-    for (const link of within(related).queryAllByRole('link')) expect(granted.map(item => item.href)).toContain(link.getAttribute('href'))
+    expect(within(related).getAllByRole('link').map(link => [link.textContent, link.getAttribute('href')])).toEqual([['Today', '/app/today']])
+    for (const hidden of ['Companies', 'Data trust center', 'Departure sign-off']) expect(within(related).queryByText(hidden, { exact: false })).toBeNull()
     const open = screen.getByRole('link', { name: 'Open this page' })
     expect(open).toHaveAttribute('href', '/app/fleet')
     await userEvent.click(open)
@@ -84,6 +88,7 @@ describe('help center', () => {
     await userEvent.click(screen.getByRole('button', { name: 'All guides' }))
     expect(window.location.search).toBe('')
     expect(await screen.findByRole('region', { name: 'Page guides' })).toBeVisible()
+    expect(screen.getByRole('heading', { level: 2, name: 'Page guides' })).toHaveFocus()
   })
 
   it('honours a ?page= deep link only for a granted page and does not reveal whether a hidden one exists', async () => {
@@ -92,21 +97,32 @@ describe('help center', () => {
     expect(screen.getByRole('link', { name: 'Open this page' })).toHaveAttribute('href', '/app/today')
   })
 
-  it('treats a hidden page key like an unknown address', async () => {
-    mount({}, '/app/help?page=user-admin')
-    expect(await screen.findByText('No guide to show for this address.', {}, guideLoad)).toBeVisible()
-    expect(screen.queryByText('Users and permissions')).toBeNull()
-    expect(screen.queryByRole('link', { name: 'Open this page' })).toBeNull()
+  it('renders a hidden page key exactly like an unknown address', async () => {
+    const markup = async (key: string) => {
+      mount({}, `/app/help?page=${key}`)
+      await screen.findByText('No guide to show for this address.', {}, guideLoad)
+      const html = document.querySelector('.help-center')!.outerHTML.replace(/_r_[a-z0-9]+_|:r[a-z0-9]+:|«r[a-z0-9]+»/g, 'ID')
+      expect(document.body).not.toHaveTextContent('Users and permissions')
+      expect(screen.queryByRole('link', { name: 'Open this page' })).toBeNull()
+      cleanup()
+      return html
+    }
+    expect(await markup('user-admin')).toBe(await markup('no-such-page-zz'))
   })
 
   it('lists nothing while the navigation is unknown, failed, signed out or offline', () => {
-    const { unmount } = render(<HelpCenter language="en" signedIn online navigation={{ destinations: [], loading: true, failed: false }} onNavigate={vi.fn()}/>)
+    const { unmount } = render(<HelpCenter language="en" access="allowed" online navigation={{ destinations: [], loading: true, failed: false }} onNavigate={vi.fn()}/>)
     expect(screen.getByRole('status')).toHaveTextContent('Loading guides…'); unmount()
-    const failed = render(<HelpCenter language="en" signedIn online navigation={{ destinations: [], loading: false, failed: true }} onNavigate={vi.fn()}/>)
+    const failed = render(<HelpCenter language="en" access="allowed" online navigation={{ destinations: [], loading: false, failed: true }} onNavigate={vi.fn()}/>)
     expect(screen.getByRole('alert')).toHaveTextContent('Your page list could not be loaded'); failed.unmount()
-    const out = render(<HelpCenter language="en" signedIn={false} online navigation={ready([])} onNavigate={vi.fn()}/>)
+    const out = render(<HelpCenter language="en" access="signedOut" online navigation={ready([])} onNavigate={vi.fn()}/>)
     expect(screen.getByRole('alert')).toHaveTextContent('Sign in'); out.unmount()
-    render(<HelpCenter language="en" signedIn online={false} navigation={ready()} onNavigate={vi.fn()}/>)
+    // A failed session read and a reader without access get their own honest message, not "Sign in".
+    const unavailable = render(<HelpCenter language="en" access="unavailable" online navigation={ready()} onNavigate={vi.fn()}/>)
+    expect(screen.getByRole('alert')).toHaveTextContent('Your session could not be checked'); unavailable.unmount()
+    const denied = render(<HelpCenter language="en" access="denied" online navigation={ready()} onNavigate={vi.fn()}/>)
+    expect(screen.getByRole('alert')).toHaveTextContent('no read access'); denied.unmount()
+    render(<HelpCenter language="en" access="allowed" online={false} navigation={ready()} onNavigate={vi.fn()}/>)
     expect(screen.getByRole('status')).toHaveTextContent('You are offline')
     expect(screen.queryAllByRole('link')).toHaveLength(0)
     // The manual is described honestly: not bundled in this build.
@@ -123,9 +139,50 @@ describe('help center', () => {
     expect(within(list).getAllByText('Entwurf').length).toBeGreaterThan(0)
   })
 
+  it('says no page has a guide when granted pages have none, not that the search found nothing', async () => {
+    mount({ navigation: ready([{ key: 'equipment', href: '/app/equipment' }]) })
+    expect(await screen.findByText('None of your pages has a guide to show.', {}, guideLoad)).toBeVisible()
+    expect(screen.queryByText('No guide matches your search.')).toBeNull()
+  })
+
+  it('announces only the result count while searching', async () => {
+    mount()
+    const list = await screen.findByRole('region', { name: 'Page guides' }, guideLoad)
+    await within(list).findByRole('link', { name: 'Today' }, guideLoad)
+    expect(within(list).getByRole('status')).toHaveTextContent('Guides shown: 4')
+    expect(list.querySelector('[aria-live]')).toBeNull()
+    await userEvent.type(screen.getByRole('searchbox', { name: 'Search guides' }), 'fleet')
+    expect(within(list).getByRole('status').textContent).toMatch(/^Guides shown: \d+$/)
+  })
+
   it('has no draft-locale notice in English', () => {
     mount()
     expect(screen.queryByTestId('help-center-translation-unreviewed')).toBeNull()
+  })
+})
+
+describe('help center workspace', () => {
+  it('follows online/offline events instead of reading the connection once', async () => {
+    let online = false
+    vi.spyOn(navigator, 'onLine', 'get').mockImplementation(() => online)
+    history.replaceState(null, '', '/app/help')
+    vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL) => {
+      const url = String(input)
+      const body = url.includes('auth/session') ? { authenticated: true, canRead: true, canReadCompanies: false, canCreate: false, canSearch: false, setupRequired: false,
+        tenantId: '10000000-0000-0000-0000-000000000001', actorId: '20000000-0000-0000-0000-000000000001', tenantName: 'FICTIONAL workspace', csrfToken: 'synthetic' }
+        : { destinations: [{ key: 'today', href: '/app/today' }], canSearch: false, canWriteRegulatory: false }
+      return new Response(JSON.stringify(body), { headers: { 'Content-Type': 'application/json' } })
+    }))
+    // The workspace uses the app language (TR by default).
+    render(<HelpCenterWorkspace/>)
+    expect(screen.getByText(/Çevrimdışısınız/)).toBeVisible()
+    online = true
+    act(() => { window.dispatchEvent(new Event('online')) })
+    const list = await screen.findByRole('region', { name: 'Sayfa kılavuzları' }, guideLoad)
+    expect(await within(list).findByRole('link', { name: 'Bugün' }, guideLoad)).toBeVisible()
+    online = false
+    act(() => { window.dispatchEvent(new Event('offline')) })
+    expect(screen.getByText(/Çevrimdışısınız/)).toBeVisible()
   })
 })
 
@@ -141,5 +198,11 @@ describe('help center navigation entry', () => {
     expect(link).toHaveAttribute('href', '/app/help')
     await userEvent.click(link)
     expect(onNavigate).toHaveBeenCalledWith('/app/help', expect.any(Function))
+  })
+
+  it('is not offered before a signed-in reader is known', () => {
+    vi.stubGlobal('fetch', vi.fn())
+    render(<div className="product-shell enterprise-shell"><EnterpriseChrome session={null} language="en" onLanguageChange={vi.fn()} onNavigate={vi.fn()} title="Help" mainId="m"/><main id="m"/></div>)
+    expect(screen.queryByRole('link', { name: 'Help center' })).toBeNull()
   })
 })

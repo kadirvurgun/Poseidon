@@ -3888,7 +3888,10 @@
       "backToList": "Tutte le guide",
       "notAvailable": "Nessuna guida da mostrare per questo indirizzo.",
       "manualTitle": "Manuale utente",
-      "manualBody": "Il manuale utente illustrato (turco e inglese, HTML e PDF) è generato fuori dall’applicazione a partire da queste stesse guide e non è incluso in questa build. Chieda la copia aggiornata all’amministratore. Resta una bozza finché non viene registrata una revisione esperta."
+      "manualBody": "Il manuale utente illustrato (turco e inglese, HTML e PDF) è generato fuori dall’applicazione a partire da queste stesse guide e non è incluso in questa build. Chieda la copia aggiornata all’amministratore. Resta una bozza finché non viene registrata una revisione esperta.",
+      "sessionUnavailable": "Impossibile verificare la sessione, quindi non viene mostrata alcuna guida. Ricarichi la pagina e riprovi.",
+      "noAccess": "Il suo account non ha accesso in lettura a questo spazio di lavoro, quindi non viene mostrata alcuna guida.",
+      "resultCount": "Guide mostrate: {{count}}"
     },
     "AcceptInvitation_tsx_copy": {
       "title": "Accetta l’invito",

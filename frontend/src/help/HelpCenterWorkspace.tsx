@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useState } from 'react'
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { ArrowLeft, ArrowUpRight, Search } from 'lucide-react'
 import { useAppLanguage, type Locale as AppLocale } from '../i18n'
 import { localizedCopy, localizedText } from '../i18n/messages'
@@ -51,9 +51,11 @@ function selectedFromUrl(): string | null {
 }
 
 type Navigation = { destinations: readonly EnterpriseDestination[]; loading: boolean; failed: boolean }
-type Props = { language: AppLocale; signedIn: boolean | null; online: boolean; navigation: Navigation; onNavigate: (href: string) => void }
+/** What the session read said: still pending, usable, signed out, signed in without read access, or not checkable. */
+export type HelpCenterAccess = 'pending' | 'allowed' | 'signedOut' | 'denied' | 'unavailable'
+type Props = { language: AppLocale; access: HelpCenterAccess; online: boolean; navigation: Navigation; onNavigate: (href: string) => void }
 
-export function HelpCenter({ language, signedIn, online, navigation, onNavigate }: Props) {
+export function HelpCenter({ language, access, online, navigation, onNavigate }: Props) {
   const t = copy[language], p = panelCopy[language]
   const id = useId()
   const [query, setQuery] = useState('')
@@ -82,11 +84,23 @@ export function HelpCenter({ language, signedIn, online, navigation, onNavigate 
   const destinations = useMemo(() => new Map<string, HelpDestination>(entries.map(entry => [entry.key, { key: entry.key, href: entry.href, label: entry.document.meta.title }])), [entries])
   const draftLocale = isDraftTranslationLocale(helpLocaleFor(language).locale)
 
+  // a11y: the clicked link unmounts, so focus moves to the opened guide's heading or back to the list heading.
+  const pendingFocus = useRef<string | null>(null)
   const open = (key: string | null) => {
     history.pushState(null, '', key ? `${helpCenterPath}?page=${key}` : helpCenterPath)
+    pendingFocus.current = key ? `${id}-guide` : `${id}-list`
     setSelected(key)
-    document.querySelector('.help-center')?.scrollIntoView?.({ block: 'start' })
   }
+  useEffect(() => {
+    const target = pendingFocus.current
+    if (!target) return
+    const element = document.getElementById(target)
+    if (!element) return
+    pendingFocus.current = null
+    element.tabIndex = -1
+    element.focus()
+    element.scrollIntoView?.({ block: 'start' })
+  })
   const policy: HelpLinkPolicy = {
     allowedRoutes: new Set(entries.map(entry => entry.href.split('?')[0])),
     onNavigate,
@@ -97,13 +111,17 @@ export function HelpCenter({ language, signedIn, online, navigation, onNavigate 
   }
 
   const status = !online ? <p role="status">{t.offline}</p>
-    : signedIn === false ? <p role="alert">{t.signedOut}</p>
-    : signedIn === null || navigation.loading ? <p role="status">{t.loading}</p>
+    : access === 'unavailable' ? <p role="alert">{t.sessionUnavailable}</p>
+    : access === 'signedOut' ? <p role="alert">{t.signedOut}</p>
+    : access === 'denied' ? <p role="alert">{t.noAccess}</p>
+    : access === 'pending' || navigation.loading ? <p role="status">{t.loading}</p>
     : navigation.failed ? <p role="alert">{t.navigationUnavailable}</p>
     : !granted.length ? <p role="status">{t.noPages}</p>
     : current?.error ? <p role="alert">{t.failed}</p>
     : !current ? <p role="status">{t.loading}</p>
+    : !entries.length ? <p role="status">{t.noPages}</p>
     : null
+  const shown = groups.reduce((sum, group) => sum + group.entries.length, 0)
   const entry = selected ? entries.find(item => item.key === selected) : undefined
 
   return <div className="help-center">
@@ -117,7 +135,8 @@ export function HelpCenter({ language, signedIn, online, navigation, onNavigate 
         <h2 id={`${id}-guide`}>{entry.document.meta.title}</h2>
         <HelpGuideContent load={{ state: 'ready', document: entry.document, locale: entry.locale, fallback: entry.fallback }} t={p} policy={policy} granted={destinations} onNavigate={onNavigate}/>
       </> : <p id={`${id}-guide`} role="alert">{t.notAvailable}</p>}
-    </section> : <section className="help-center-list" aria-label={t.listTitle}>
+    </section> : <section className="help-center-list" aria-labelledby={`${id}-list`}>
+      <h2 id={`${id}-list`}>{t.listTitle}</h2>
       <div className="help-center-search" role="search">
         <label htmlFor={`${id}-search`}>{t.searchLabel}</label>
         <div className="help-center-search-field"><Search aria-hidden="true"/>
@@ -125,8 +144,10 @@ export function HelpCenter({ language, signedIn, online, navigation, onNavigate 
             onChange={event => setQuery(event.target.value)} onKeyDown={event => { if (event.key === 'Escape' && query) { event.preventDefault(); setQuery('') } }}/>
         </div>
       </div>
-      <div id={`${id}-results`} aria-live="polite">
-        {groups.length === 0 ? <p role="status">{t.noResults}</p> : groups.map(group => <section key={group.key} className="help-center-group" aria-labelledby={`${id}-g-${group.key}`}>
+      {/* Only the count is announced, not the whole list on every keystroke. */}
+      <p className="help-center-count" role="status">{shown ? t.resultCount.replace('{{count}}', String(shown)) : t.noResults}</p>
+      <div id={`${id}-results`}>
+        {groups.map(group => <section key={group.key} className="help-center-group" aria-labelledby={`${id}-g-${group.key}`}>
           <h3 id={`${id}-g-${group.key}`}>{group.label}</h3>
           <ul>{group.entries.map(item => <li key={item.key}>
             <a href={`${helpCenterPath}?page=${item.key}`} onClick={event => { event.preventDefault(); open(item.key) }}>{item.document.meta.title}</a>
@@ -142,10 +163,21 @@ export function HelpCenter({ language, signedIn, online, navigation, onNavigate 
   </div>
 }
 
+function useOnline() {
+  const [online, setOnline] = useState(() => navigator.onLine)
+  useEffect(() => {
+    const update = () => setOnline(navigator.onLine)
+    window.addEventListener('online', update)
+    window.addEventListener('offline', update)
+    return () => { window.removeEventListener('online', update); window.removeEventListener('offline', update) }
+  }, [])
+  return online
+}
+
 export function HelpCenterWorkspace() {
   const [language, setLanguage] = useAppLanguage()
   const [identity, setIdentity] = useState<{ user?: Session; error?: boolean } | null>(null)
-  const online = navigator.onLine
+  const online = useOnline()
   useEffect(() => {
     if (!online) return
     const controller = new AbortController()
@@ -158,12 +190,12 @@ export function HelpCenterWorkspace() {
   const navigation = useEnterpriseNavigation(user)
   const title = copy[language].title
   useEffect(() => { document.title = `POSEIDON · ${title}` }, [title])
-  const signedIn = identity?.error ? false : !user ? null : user.authenticated && user.canRead
+  const access: HelpCenterAccess = identity?.error ? 'unavailable' : !user ? 'pending' : !user.authenticated ? 'signedOut' : user.canRead ? 'allowed' : 'denied'
   const move = (href: string, committed?: () => void) => { committed?.(); window.location.assign(href) }
   return <div className="product-shell enterprise-shell"><EnterpriseChrome session={user} language={language} onLanguageChange={setLanguage} onNavigate={move} title={title} mainId="help-center-main"/>
     <main id="help-center-main" tabIndex={-1}>
       <EnterprisePageHeader title={title} eyebrow={copy[language].eyebrow} description={copy[language].description}/>
-      <HelpCenter language={language} signedIn={signedIn} online={online} navigation={navigation} onNavigate={href => move(href)}/>
+      <HelpCenter language={language} access={access} online={online} navigation={navigation} onNavigate={href => move(href)}/>
     </main>
   </div>
 }

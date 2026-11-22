@@ -3888,7 +3888,10 @@
       "backToList": "Todos os guias",
       "notAvailable": "Nenhum guia para exibir neste endereço.",
       "manualTitle": "Manual do usuário",
-      "manualBody": "O manual do usuário ilustrado (turco e inglês, HTML e PDF) é gerado fora do aplicativo a partir destes mesmos guias e não está incluído nesta versão. Peça a cópia atual ao seu administrador. Ele continua sendo um rascunho até que uma revisão especializada seja registrada."
+      "manualBody": "O manual do usuário ilustrado (turco e inglês, HTML e PDF) é gerado fora do aplicativo a partir destes mesmos guias e não está incluído nesta versão. Peça a cópia atual ao seu administrador. Ele continua sendo um rascunho até que uma revisão especializada seja registrada.",
+      "sessionUnavailable": "Não foi possível verificar sua sessão, por isso nenhum guia é exibido. Recarregue a página e tente novamente.",
+      "noAccess": "Sua conta não tem acesso de leitura a este espaço de trabalho, por isso nenhum guia é exibido.",
+      "resultCount": "Guias exibidos: {{count}}"
     },
     "AcceptInvitation_tsx_copy": {
       "title": "Aceitar convite",

@@ -3888,7 +3888,10 @@
       "backToList": "全部指南",
       "notAvailable": "此地址没有可显示的指南。",
       "manualTitle": "用户手册",
-      "manualBody": "带插图的用户手册（土耳其语和英语，HTML 和 PDF）在应用之外由这些指南生成，未包含在此版本中。请向管理员索取当前版本。在记录专家审核之前，它仍是草稿。"
+      "manualBody": "带插图的用户手册（土耳其语和英语，HTML 和 PDF）在应用之外由这些指南生成，未包含在此版本中。请向管理员索取当前版本。在记录专家审核之前，它仍是草稿。",
+      "sessionUnavailable": "无法检查您的会话，因此不列出任何指南。请重新加载页面后重试。",
+      "noAccess": "您的帐户没有此工作区的读取权限，因此不列出任何指南。",
+      "resultCount": "显示的指南：{{count}}"
     },
     "AcceptInvitation_tsx_copy": {
       "title": "接受邀请",

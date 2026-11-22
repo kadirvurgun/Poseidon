@@ -3888,7 +3888,10 @@
       "backToList": "Todas las guías",
       "notAvailable": "No hay ninguna guía para esta dirección.",
       "manualTitle": "Manual de usuario",
-      "manualBody": "El manual de usuario ilustrado (turco e inglés, HTML y PDF) se genera fuera de la aplicación a partir de estas mismas guías y no se incluye en esta versión. Solicite la copia actual a su administrador. Sigue siendo un borrador hasta que se registre una revisión experta."
+      "manualBody": "El manual de usuario ilustrado (turco e inglés, HTML y PDF) se genera fuera de la aplicación a partir de estas mismas guías y no se incluye en esta versión. Solicite la copia actual a su administrador. Sigue siendo un borrador hasta que se registre una revisión experta.",
+      "sessionUnavailable": "No se pudo comprobar su sesión, por lo que no se muestra ninguna guía. Recargue la página e inténtelo de nuevo.",
+      "noAccess": "Su cuenta no tiene acceso de lectura a este espacio de trabajo, por lo que no se muestra ninguna guía.",
+      "resultCount": "Guías mostradas: {{count}}"
     },
     "AcceptInvitation_tsx_copy": {
       "title": "Aceptar invitación",

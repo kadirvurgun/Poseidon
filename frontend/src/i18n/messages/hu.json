@@ -3888,7 +3888,10 @@
       "backToList": "Összes útmutató",
       "notAvailable": "Ehhez a címhez nincs megjeleníthető útmutató.",
       "manualTitle": "Felhasználói kézikönyv",
-      "manualBody": "Az illusztrált felhasználói kézikönyv (török és angol, HTML és PDF) ugyanezekből az útmutatókból készül az alkalmazáson kívül, és nem része ennek a buildnek. A jelenlegi példányt kérje a rendszergazdától. Szakértői átnézés rögzítéséig vázlat marad."
+      "manualBody": "Az illusztrált felhasználói kézikönyv (török és angol, HTML és PDF) ugyanezekből az útmutatókból készül az alkalmazáson kívül, és nem része ennek a buildnek. A jelenlegi példányt kérje a rendszergazdától. Szakértői átnézés rögzítéséig vázlat marad.",
+      "sessionUnavailable": "A munkamenetét nem sikerült ellenőrizni, ezért nem jelenik meg útmutató. Töltse be újra az oldalt, és próbálja újra.",
+      "noAccess": "A fiókjának nincs olvasási joga ehhez a munkaterülethez, ezért nem jelenik meg útmutató.",
+      "resultCount": "Megjelenített útmutatók: {{count}}"
     },
     "AcceptInvitation_tsx_copy": {
       "title": "Meghívó elfogadása",
