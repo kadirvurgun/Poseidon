@@ -190,9 +190,9 @@ describe('NAV-WORKSPACE-01 mocked component journeys, separate from real API/bro
         expect(within(drawer).getByRole('combobox', { name: 'Menü merceği' })).toBeVisible();
         within(drawer).getByRole('link', { name: /^POSEIDON\b/ }).focus();
         await user.tab({ shift: true });
-        // This fixture's workspace group follows its daily items. The actual final
-        // tabbable destination is Companies, after the visible role controls.
-        expect(within(drawer).getByRole('button', { name: 'Şirketler' })).toHaveFocus();
+        // HELP-CENTER-01: the static Help center link follows the granted destinations
+        // and the visible role controls, so it is the drawer's final tabbable stop.
+        expect(within(drawer).getByRole('link', { name: 'Yardım merkezi' })).toHaveFocus();
         await user.tab();
         expect(within(drawer).getByRole('link', { name: /^POSEIDON\b/ })).toHaveFocus();
         await user.keyboard('{Escape}');

@@ -4,7 +4,7 @@ import { localizedLabel, localizedText, sourceText } from "../i18n/messages";
 import { type Locale as AppLocale } from "../i18n";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Anchor, ArrowLeft, ArrowUpRight, Building2, ChevronRight, CircleHelp, ClipboardList, FileCheck2, FolderCheck, Gauge, LayoutDashboard, Menu, Search, ShieldCheck, Ship, UserCog, Users, Wrench, Upload, Waves, X } from 'lucide-react';
+import { Anchor, ArrowLeft, BookOpen, ArrowUpRight, Building2, ChevronRight, CircleHelp, ClipboardList, FileCheck2, FolderCheck, Gauge, LayoutDashboard, Menu, Search, ShieldCheck, Ship, UserCog, Users, Wrench, Upload, Waves, X } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import type { Session } from './directory-contract';
@@ -90,6 +90,7 @@ const labels: Record<string, {
     'data-reconciliation': { tr: sourceText("tr", "pairs.m_e5831d38d264db25"), en: sourceText("en", "pairs.m_e5831d38d264db25"), icon: FolderCheck, group: 'assurance' }
 };
 const helpCopy = localizedCopy('HelpPanel_tsx_copy');
+const helpCenterCopy = localizedCopy('HelpCenter_tsx_copy');
 /** Shift+? opens the page guide, except while typing or while another modal surface is open. */
 function isHelpShortcut(event: KeyboardEvent): boolean {
     if (event.key !== '?' || event.ctrlKey || event.metaKey || event.altKey || event.defaultPrevented)
@@ -254,6 +255,8 @@ export function EnterpriseChrome({ session, vessel = null, language, onLanguageC
             const label = labels[item.key];
             return label ? [{ ...item, label: localizedLabel(label, en), icon: label.icon }] : [];
         })} currentKey={currentKey} language={language} onNavigate={href => move(href)}/>
+        {/* HELP-CENTER-01: the help center is not a server navigation destination; it grants nothing and lists only granted pages' guides; shown to a signed-in reader. */}
+        {session?.authenticated && session.canRead && <a className="enterprise-help-center-link" href="/app/help" aria-current={/^\/app\/help\/?$/.test(path) ? 'page' : undefined} onClick={event => { event.preventDefault(); move('/app/help'); }}><BookOpen aria-hidden="true"/><span>{helpCenterCopy[language].title}</span></a>}
         {navigation.loading && <div className="enterprise-nav-loading" role="status">{localizedText(en, "pairs.m_e6da24e466eb33e9")}</div>}
         {navigation.failed && <div className="enterprise-nav-loading" role="status"><p>{localizedText(en, "pairs.m_5f4cc449dea3b70e")}</p><Button variant="ghost" onClick={navigation.retry}>{localizedText(en, "pairs.m_80a0813ed59604de")}</Button></div>}
         {currentLens && menuItems.length === 0 && <p className="enterprise-nav-loading" role="status">{localizedText(en, "pairs.m_aa0ed8645844937f")}</p>}
