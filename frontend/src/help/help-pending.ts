@@ -19,8 +19,6 @@ export const pendingHelpKeys: ReadonlySet<string> = new Set([
   'high-risk-work',
   'industry-assurance',
   'noon-report',
-  'notification-escalation',
-  'offline-conflict-center',
   'operational-downtime',
   'pilot-gate',
   'pilot-program',
@@ -38,9 +36,6 @@ export const pendingHelpKeys: ReadonlySet<string> = new Set([
   'sources',
   'survey-planner',
   'system-health',
-  'tug-demo-journey',
-  'tug-operation-history',
-  'tug-operations-offline',
   'voice-event-draft',
   'work-order-center',
 ])
