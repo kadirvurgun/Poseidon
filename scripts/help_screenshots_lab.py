@@ -22,7 +22,12 @@ import oidc_lab as lab
 # private lab. They are required: the tug job board needs mode.tug + tug.read, and Today's ship context
 # disappears under mode.tug without mode.cross. No write, manage, safety, verifier, signer, owner or
 # source-validation permission is ever added here.
-SCREENSHOT_READ_PERMISSIONS = ('regulatory.draft.read', 'maintenance.read', 'tug.read', 'membership.read')
+# Extended guide mapping (mobile + more guides): read-only page access for the noon report, certificate
+# center, safety events, departure readiness, work orders and action history. Read only: no report,
+# triage, decide, verify, release or write capability.
+SCREENSHOT_READ_PERMISSIONS = ('regulatory.draft.read', 'maintenance.read', 'tug.read', 'membership.read',
+                               'daily.noon.read', 'certificate.read', 'hse.safety_event.read', 'departure.readiness.read',
+                               'workorder.read', 'equipment.read', 'audit.read')
 SCREENSHOT_VISIBILITY_SCOPES = ('mode.tug', 'mode.cross')
 SCREENSHOT_PERMISSIONS = SCREENSHOT_READ_PERMISSIONS + SCREENSHOT_VISIBILITY_SCOPES
 

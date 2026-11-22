@@ -32,7 +32,9 @@ const generatorBlobs = Object.fromEntries(generatorFiles.map(path => [path, gitB
 const dirty = git('status', '--porcelain', '--', ...generatorFiles) !== '' ||
   generatorFiles.some(path => git('rev-parse', `HEAD:${path}`) !== generatorBlobs[path])
 if (mode === 'update' && dirty) throw new Error('screenshot_generator_dirty')
-const fixedClock = '2026-11-22T09:00:00.000Z'
+// Midnight UTC of the capture day: never later than a server timestamp issued that day, so a short-lived
+// server validity (departure readiness, 60 s) is not shown as stale merely because the browser clock is pinned.
+const fixedClock = '2026-11-22T00:00:00.000Z'
 const footerHeight = 22
 const threshold = Number(process.env.POSEIDON_SCREENSHOTS_THRESHOLD ?? '0.002')
 const onlyGuide = process.env.POSEIDON_SCREENSHOTS_GUIDE
@@ -122,36 +124,48 @@ async function overlay(page: Page, boxes: { x: number; y: number; width: number;
 }
 
 /**
- * QA N5: brings the first target to the top of its scroll container, then moves it below any sticky or
- * fixed header that would otherwise cover it, leaving a small margin for the marker badge.
+ * QA N5 + mobile composition: keeps the natural page when every target is already fully visible below
+ * any sticky/fixed header and above the commit footer. Otherwise it scrolls so that the union of all
+ * targets sits just below that header when the union fits the viewport (needed on the 390 px mobile
+ * viewport, where stacked targets rarely share one screen), else it falls back to the first target.
  */
-async function reveal(target: Locator) {
-  await target.evaluate((element, footerHeight) => {
-    // Bottom edge of any sticky/fixed layer painted above the target's top-left corner.
-    const covered = () => {
+async function reveal(page: Page, targets: Locator[]) {
+  const handles = await Promise.all(targets.map(target => target.elementHandle()))
+  await page.evaluate(([elements, footerHeight]) => {
+    const nodes = elements as Element[]
+    const union = (list: Element[]) => {
+      const boxes = list.map(node => node.getBoundingClientRect())
+      return { top: Math.min(...boxes.map(box => box.top)), bottom: Math.max(...boxes.map(box => box.bottom)) }
+    }
+    // Bottom edge of any sticky/fixed layer painted above the element's top-left corner.
+    const cover = (element: Element) => {
       const box = element.getBoundingClientRect()
-      let cover = 0
+      let bottom = 0
       for (const node of document.elementsFromPoint(Math.min(window.innerWidth - 1, Math.max(0, box.left + 8)), Math.min(window.innerHeight - 1, Math.max(0, box.top + 2)))) {
         if (node === element || element.contains(node) || node.contains(element)) break
         for (let current: Element | null = node; current; current = current.parentElement) {
           const position = getComputedStyle(current).position
-          if (position === 'sticky' || position === 'fixed') { cover = Math.max(cover, current.getBoundingClientRect().bottom); break }
+          if (position === 'sticky' || position === 'fixed') { bottom = Math.max(bottom, current.getBoundingClientRect().bottom); break }
         }
       }
-      return { box, cover }
+      return bottom
     }
-    const before = covered()
-    // Already fully visible below any header and above the commit footer: keep the natural page composition.
-    if (before.box.top >= before.cover + 8 && before.box.bottom <= window.innerHeight - footerHeight - 4) return
-    element.scrollIntoView({ block: 'start', inline: 'nearest' })
-    const after = covered()
-    const delta = after.cover + 40 - after.box.top
+    const topmost = (list: Element[]) => list.reduce((best, node) => node.getBoundingClientRect().top < best.getBoundingClientRect().top ? node : best)
+    const available = window.innerHeight - footerHeight - 4
+    const all = union(nodes)
+    if (all.top >= cover(topmost(nodes)) + 8 && all.bottom <= available) return
+    // The union fits below a header of similar height: compose all targets; otherwise only the first.
+    const group = all.bottom - all.top <= available - cover(topmost(nodes)) - 48 ? nodes : [nodes[0]]
+    const anchor = topmost(group)
+    anchor.scrollIntoView({ block: 'start', inline: 'nearest' })
+    const delta = cover(anchor) + 40 - union(group).top
     if (delta <= 0) return
-    let container: Element | null = element.parentElement
+    let container: Element | null = anchor.parentElement
     while (container && !(container.scrollHeight > container.clientHeight && /(auto|scroll)/.test(getComputedStyle(container).overflowY))) container = container.parentElement
     if (container) container.scrollTop -= delta
     else window.scrollBy(0, -delta)
-  }, footerHeight)
+  }, [handles, footerHeight] as const)
+  await Promise.all(handles.map(handle => handle?.dispose()))
 }
 
 /** Fraction of differing pixels (ignoring the commit footer) decoded in an isolated about:blank page. */
@@ -194,20 +208,24 @@ async function capture(page: Page, blank: Page, key: string, locale: ScreenshotL
     const shot: Shot = { name, result: 'error' }
     report.shots.push(shot)
     try {
-      await page.goto(guide.route)
+      await page.goto(step.route ?? guide.route)
       await settle(page)
       for (const action of step.actions) {
         await verifiedClick(page, action.click, locale)
         await settle(page)
       }
       const targets = step.targets.map(target => locate(page, target, locale))
-      await reveal(targets[0])
+      await reveal(page, targets)
       await page.waitForTimeout(150)
+      const size = viewports[viewport]
       const boxes = []
-      for (const target of targets) {
+      for (const [index, target] of targets.entries()) {
         const box = await target.boundingBox()
-        if (!box) throw new Error('target_not_visible:' + targets.indexOf(target))
-        boxes.push(box)
+        if (!box) throw new Error('target_not_visible:' + index)
+        // A ring is drawn only for a target that is on screen; the first target must always be.
+        const onScreen = box.y + box.height > 0 && box.y < size.height - footerHeight && box.x + box.width > 0 && box.x < size.width
+        if (!onScreen && index === 0) throw new Error('target_off_screen:0')
+        if (onScreen) boxes.push(box)
       }
       const domText = (await page.locator('body').innerText()).replace(/[ \t]+/g, ' ').replace(/\n{3,}/g, '\n\n').trim().slice(0, 20000)
       const findings = scanDomText(domText, secrets)
@@ -246,11 +264,14 @@ async function capture(page: Page, blank: Page, key: string, locale: ScreenshotL
 async function discover(page: Page, key: string, locale: ScreenshotLocale) {
   mkdirSync(resolve(privateRoot, 'screenshot-discovery'), { recursive: true })
   const guide = mapping.guides[key]
-  // The bare route plus the state after each step's own preparation actions (if any).
-  for (const step of [{ step: 0, actions: [] as typeof guide.steps[number]['actions'] }, ...guide.steps.filter(item => item.actions.length)]) {
+  // The bare route plus every distinct step route, and the state after each step's own preparation actions.
+  const routes = [...new Set(guide.steps.flatMap(item => item.route ? [item.route] : []))]
+  for (const step of [{ step: 0, route: guide.route, actions: [] as typeof guide.steps[number]['actions'] },
+    ...routes.map((route, index) => ({ step: 100 + index, route, actions: [] as typeof guide.steps[number]['actions'] })),
+    ...guide.steps.filter(item => item.actions.length)]) {
     const name = `${locale}/${key}/${step.step}`
     try {
-      await page.goto(guide.route)
+      await page.goto(step.route ?? guide.route)
       await settle(page)
       for (const action of step.actions) {
         await verifiedClick(page, action.click, locale)

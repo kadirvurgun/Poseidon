@@ -218,6 +218,25 @@ describe('page help panel', () => {
     expect(fetcher.mock.calls.length).toBe(before)
   })
 
+  it('offers the mobile capture for the full-page mobile panel and the desktop capture otherwise (UG-2, 65.03 p57-59)', async () => {
+    mount('/app/today')
+    await screen.findByRole('button', { name: 'Today' })
+    await userEvent.click(trigger())
+    const dialog = await openedGuide()
+    const step = within(dialog).getByRole('heading', { name: 'Step by step' }).closest('section')!
+    const images = within(step).getAllByRole('img')
+    expect(images).toHaveLength(6)
+    for (const [index, image] of images.entries()) {
+      const picture = image.parentElement!
+      expect(picture.tagName).toBe('PICTURE')
+      const sources = picture.querySelectorAll('source')
+      expect(sources).toHaveLength(1)
+      expect(sources[0]).toHaveAttribute('media', '(max-width: 767px)')
+      expect(sources[0].getAttribute('srcset')).toMatch(new RegExp(`${index + 1}-mobile\\.png`))
+      expect(image.getAttribute('src')).toMatch(new RegExp(`${index + 1}-desktop\\.png`))
+    }
+  })
+
   it('shows a neutral placeholder instead of the screenshot while offline (UG-2 / UG-DOC-04)', async () => {
     vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false)
     mount('/app/today')

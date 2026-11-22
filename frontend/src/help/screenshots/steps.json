@@ -1,7 +1,8 @@
 {
  "schemaVersion": "poseidon.help.screenshots.v1",
  "committedViewports": [
-  "desktop"
+  "desktop",
+  "mobile"
  ],
  "guides": {
   "today": {
@@ -857,6 +858,616 @@
        }
       }
      ]
+    }
+   ]
+  },
+  "noon-report": {
+   "route": "/app/noon-report/30000000-0000-0000-0000-000000000001",
+   "steps": [
+    {
+     "step": 1,
+     "actions": [],
+     "targets": [
+      {
+       "role": "heading",
+       "name": {
+        "tr": "Kayıtlı taslaklar",
+        "en": "Recorded drafts"
+       }
+      },
+      {
+       "role": "navigation",
+       "name": {
+        "tr": "Günlük kayıt sayfaları",
+        "en": "Daily record pages"
+       }
+      }
+     ]
+    },
+    {
+     "step": 2,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 3,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 4,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 5,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 6,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    }
+   ]
+  },
+  "certificate-command-center": {
+   "route": "/app/certificate-command-center/30000000-0000-0000-0000-000000000001",
+   "steps": [
+    {
+     "step": 1,
+     "route": "/app/certificate-command-center",
+     "actions": [],
+     "targets": [
+      {
+       "role": "region",
+       "name": {
+        "tr": "Sertifika aracını seç",
+        "en": "Select certificate vessel"
+       }
+      }
+     ]
+    },
+    {
+     "step": 2,
+     "actions": [],
+     "targets": [
+      {
+       "role": "combobox",
+       "name": {
+        "tr": "Sertifika kapsamı",
+        "en": "Certificate scope"
+       }
+      },
+      {
+       "role": "combobox",
+       "name": {
+        "tr": "Beyan takvim filtresi",
+        "en": "Declared calendar filter"
+       }
+      }
+     ]
+    },
+    {
+     "step": 3,
+     "actions": [],
+     "targets": [],
+     "unavailable": "synthetic_record_unavailable"
+    },
+    {
+     "step": 4,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 5,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 6,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 7,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    }
+   ]
+  },
+  "safety-events": {
+   "route": "/app/safety-events",
+   "steps": [
+    {
+     "step": 1,
+     "actions": [],
+     "targets": [
+      {
+       "role": "region",
+       "name": {
+        "tr": "Olaylar",
+        "en": "Events"
+       }
+      },
+      {
+       "role": "checkbox",
+       "name": {
+        "tr": "Yalnızca benim bildirimlerim",
+        "en": "Only my reports"
+       }
+      }
+     ]
+    },
+    {
+     "step": 2,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 3,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 4,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 5,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 6,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 7,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 8,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 9,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    }
+   ]
+  },
+  "departure-signoff": {
+   "route": "/app/departure-signoff/30000000-0000-0000-0000-000000000001",
+   "steps": [
+    {
+     "step": 1,
+     "route": "/app/departure-signoff",
+     "actions": [],
+     "targets": [
+      {
+       "role": "region",
+       "name": {
+        "tr": "Gemi seçin",
+        "en": "Choose a ship"
+       }
+      }
+     ]
+    },
+    {
+     "step": 2,
+     "actions": [],
+     "targets": [
+      {
+       "role": "textbox",
+       "name": {
+        "tr": "Kalkış tarihi",
+        "en": "Departure date"
+       }
+      },
+      {
+       "role": "textbox",
+       "name": {
+        "tr": "Sefer bitiş tarihi",
+        "en": "Voyage end date"
+       }
+      },
+      {
+       "role": "button",
+       "name": {
+        "tr": "Hazırlığı değerlendir",
+        "en": "Assess readiness"
+       }
+      }
+     ]
+    },
+    {
+     "step": 3,
+     "actions": [
+      {
+       "click": {
+        "role": "button",
+        "name": {
+         "tr": "Hazırlığı değerlendir",
+         "en": "Assess readiness"
+        }
+       }
+      }
+     ],
+     "targets": [
+      {
+       "text": {
+        "tr": "re:^Değerlendirme:",
+        "en": "re:^Assessment:"
+       }
+      },
+      {
+       "text": {
+        "tr": "re:^Değerlendirme zamanı",
+        "en": "re:^Assessed at"
+       }
+      }
+     ]
+    },
+    {
+     "step": 4,
+     "actions": [
+      {
+       "click": {
+        "role": "button",
+        "name": {
+         "tr": "Hazırlığı değerlendir",
+         "en": "Assess readiness"
+        }
+       }
+      }
+     ],
+     "targets": [
+      {
+       "role": "table",
+       "within": {
+        "role": "region",
+        "name": {
+         "tr": "Değerlendirme",
+         "en": "Assessment"
+        }
+       }
+      }
+     ]
+    },
+    {
+     "step": 5,
+     "actions": [
+      {
+       "click": {
+        "role": "button",
+        "name": {
+         "tr": "Hazırlığı değerlendir",
+         "en": "Assess readiness"
+        }
+       }
+      }
+     ],
+     "targets": [
+      {
+       "role": "list",
+       "name": {
+        "tr": "Neden",
+        "en": "Why"
+       }
+      }
+     ]
+    },
+    {
+     "step": 6,
+     "actions": [
+      {
+       "click": {
+        "role": "button",
+        "name": {
+         "tr": "Hazırlığı değerlendir",
+         "en": "Assess readiness"
+        }
+       }
+      }
+     ],
+     "targets": [
+      {
+       "role": "region",
+       "name": {
+        "tr": "Serbest bırakma neden kullanılamıyor",
+        "en": "Why Release is unavailable"
+       }
+      }
+     ]
+    },
+    {
+     "step": 7,
+     "actions": [
+      {
+       "click": {
+        "role": "button",
+        "name": {
+         "tr": "Hazırlığı değerlendir",
+         "en": "Assess readiness"
+        }
+       }
+      }
+     ],
+     "targets": [
+      {
+       "role": "heading",
+       "name": {
+        "tr": "Kaptan kararları",
+        "en": "Master decisions"
+       }
+      }
+     ]
+    },
+    {
+     "step": 8,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 9,
+     "actions": [
+      {
+       "click": {
+        "role": "button",
+        "name": {
+         "tr": "Hazırlığı değerlendir",
+         "en": "Assess readiness"
+        }
+       }
+      }
+     ],
+     "targets": [
+      {
+       "role": "button",
+       "name": {
+        "tr": "Yenile",
+        "en": "Refresh"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "work-order-center": {
+   "route": "/app/work-order-center/30000000-0000-0000-0000-000000000001",
+   "steps": [
+    {
+     "step": 1,
+     "actions": [],
+     "targets": [
+      {
+       "role": "heading",
+       "name": {
+        "tr": "Kayıtlı iş emirleri",
+        "en": "Recorded work orders"
+       }
+      },
+      {
+       "role": "searchbox",
+       "name": {
+        "tr": "Dönen iş emri numaralarında ara",
+        "en": "Search returned work order numbers"
+       }
+      }
+     ]
+    },
+    {
+     "step": 2,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 3,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 4,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 5,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 6,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 7,
+     "actions": [],
+     "targets": [],
+     "unavailable": "synthetic_record_unavailable"
+    }
+   ]
+  },
+  "audit": {
+   "route": "/app/audit",
+   "steps": [
+    {
+     "step": 1,
+     "actions": [],
+     "targets": [
+      {
+       "role": "textbox",
+       "name": {
+        "tr": "Araç kimliği",
+        "en": "Vessel ID"
+       }
+      },
+      {
+       "role": "textbox",
+       "name": {
+        "tr": "Nesne kimliği",
+        "en": "Object ID"
+       }
+      },
+      {
+       "role": "combobox",
+       "name": {
+        "tr": "Nesne türü",
+        "en": "Object type"
+       }
+      },
+      {
+       "role": "combobox",
+       "name": {
+        "tr": "Eylem",
+        "en": "Action"
+       },
+       "within": {
+        "role": "group",
+        "name": {
+         "tr": "İşlem geçmişi",
+         "en": "Action history"
+        }
+       }
+      }
+     ]
+    },
+    {
+     "step": 2,
+     "actions": [],
+     "targets": [
+      {
+       "role": "button",
+       "name": {
+        "tr": "Filtrele",
+        "en": "Filter"
+       }
+      },
+      {
+       "role": "button",
+       "name": {
+        "tr": "Filtreleri temizle",
+        "en": "Clear filters"
+       }
+      }
+     ]
+    },
+    {
+     "step": 3,
+     "actions": [],
+     "targets": [
+      {
+       "role": "table",
+       "within": {
+        "role": "region",
+        "name": {
+         "tr": "İşlem geçmişi",
+         "en": "Action history"
+        }
+       }
+      }
+     ]
+    },
+    {
+     "step": 4,
+     "actions": [],
+     "targets": [],
+     "unavailable": "record_selection_not_allowlisted"
+    },
+    {
+     "step": 5,
+     "actions": [],
+     "targets": [],
+     "unavailable": "record_selection_not_allowlisted"
+    }
+   ]
+  },
+  "tug-daily-log": {
+   "route": "/app/tug-daily-log?vessel=30000000-0000-0000-0000-000000000002",
+   "steps": [
+    {
+     "step": 1,
+     "actions": [],
+     "targets": [
+      {
+       "role": "region",
+       "name": {
+        "tr": "Römorkör günlük defteri",
+        "en": "Tug daily log"
+       }
+      }
+     ]
+    },
+    {
+     "step": 2,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 3,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 4,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 5,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 6,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 7,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 8,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
     }
    ]
   }
