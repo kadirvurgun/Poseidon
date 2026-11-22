@@ -36,6 +36,7 @@ export const allowedClicks: ReadonlyArray<Readonly<{ kind: 'button' | 'disclosur
   { kind: 'disclosure', name: { tr: 'Neden / sonraki adım', en: 'Why / next action' } },
   { kind: 'button', name: { tr: 'Synthetic Operator A', en: 'Synthetic Operator A' } },
   { kind: 'button', name: { tr: 'Hesap add41584', en: 'Account add41584' } },
+  { kind: 'button', name: { tr: 'Synthetic Ship A', en: 'Synthetic Ship A' } },
 ])
 export const clickKind = (target: ClickTarget) => 'disclosure' in target ? 'disclosure' as const : 'button' as const
 export const clickName = (target: ClickTarget): Localized => 'disclosure' in target ? target.disclosure : target.name

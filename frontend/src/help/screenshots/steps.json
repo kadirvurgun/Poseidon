@@ -421,6 +421,24 @@
     },
     {
      "step": 4,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 5,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 6,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 7,
      "actions": [
       {
        "click": {
@@ -443,16 +461,402 @@
      ]
     },
     {
-     "step": 5,
+     "step": 8,
      "actions": [],
      "targets": [],
      "unavailable": "write_permission_required"
     },
     {
-     "step": 6,
+     "step": 9,
      "actions": [],
      "targets": [],
      "unavailable": "write_permission_required"
+    }
+   ]
+  },
+  "fleet": {
+   "route": "/app/fleet",
+   "steps": [
+    {
+     "step": 1,
+     "actions": [],
+     "targets": [
+      {
+       "role": "region",
+       "name": {
+        "tr": "Geçerli sayfa özeti",
+        "en": "Current page overview"
+       }
+      }
+     ]
+    },
+    {
+     "step": 2,
+     "actions": [],
+     "targets": [
+      {
+       "role": "searchbox",
+       "name": {
+        "tr": "Kod veya ad ile ara",
+        "en": "Search by code or name"
+       }
+      },
+      {
+       "role": "combobox",
+       "name": {
+        "tr": "Araç türü",
+        "en": "Vessel type"
+       }
+      },
+      {
+       "role": "button",
+       "name": {
+        "tr": "Ara",
+        "en": "Search"
+       }
+      }
+     ]
+    },
+    {
+     "step": 3,
+     "actions": [
+      {
+       "click": {
+        "role": "button",
+        "name": {
+         "tr": "Synthetic Ship A",
+         "en": "Synthetic Ship A"
+        }
+       }
+      }
+     ],
+     "targets": [
+      {
+       "role": "region",
+       "name": {
+        "tr": "Ayrıntılar",
+        "en": "Details"
+       }
+      }
+     ]
+    },
+    {
+     "step": 4,
+     "actions": [
+      {
+       "click": {
+        "role": "button",
+        "name": {
+         "tr": "Synthetic Ship A",
+         "en": "Synthetic Ship A"
+        }
+       }
+      }
+     ],
+     "targets": [
+      {
+       "role": "button",
+       "name": {
+        "tr": "Mevzuat profili",
+        "en": "Regulatory profile"
+       },
+       "within": {
+        "role": "region",
+        "name": {
+         "tr": "Ayrıntılar",
+         "en": "Details"
+        }
+       }
+      },
+      {
+       "role": "button",
+       "name": {
+        "tr": "Pilot gemi ekleme",
+        "en": "Pilot vessel onboarding"
+       },
+       "within": {
+        "role": "region",
+        "name": {
+         "tr": "Ayrıntılar",
+         "en": "Details"
+        }
+       }
+      }
+     ]
+    },
+    {
+     "step": 5,
+     "actions": [
+      {
+       "click": {
+        "role": "button",
+        "name": {
+         "tr": "Synthetic Ship A",
+         "en": "Synthetic Ship A"
+        }
+       }
+      }
+     ],
+     "targets": [
+      {
+       "role": "button",
+       "name": {
+        "tr": "Dijital uyum pasaportu",
+        "en": "Digital compliance passport"
+       },
+       "within": {
+        "role": "region",
+        "name": {
+         "tr": "Ayrıntılar",
+         "en": "Details"
+        }
+       }
+      }
+     ]
+    },
+    {
+     "step": 6,
+     "actions": [
+      {
+       "click": {
+        "role": "button",
+        "name": {
+         "tr": "Synthetic Ship A",
+         "en": "Synthetic Ship A"
+        }
+       }
+      }
+     ],
+     "targets": [
+      {
+       "role": "link",
+       "name": {
+        "tr": "Kontrollü içe aktarma",
+        "en": "Controlled import"
+       },
+       "within": {
+        "role": "navigation",
+        "name": {
+         "tr": "Araç çalışma alanları",
+         "en": "Vessel workspaces"
+        }
+       }
+      },
+      {
+       "role": "link",
+       "name": {
+        "tr": "Ekipman ve bakım",
+        "en": "Equipment and maintenance"
+       },
+       "within": {
+        "role": "navigation",
+        "name": {
+         "tr": "Araç çalışma alanları",
+         "en": "Vessel workspaces"
+        }
+       }
+      },
+      {
+       "role": "link",
+       "name": {
+        "tr": "Mürettebat listesi",
+        "en": "Crew roster"
+       },
+       "within": {
+        "role": "navigation",
+        "name": {
+         "tr": "Araç çalışma alanları",
+         "en": "Vessel workspaces"
+        }
+       }
+      }
+     ]
+    },
+    {
+     "step": 7,
+     "actions": [
+      {
+       "click": {
+        "role": "button",
+        "name": {
+         "tr": "Synthetic Ship A",
+         "en": "Synthetic Ship A"
+        }
+       }
+      }
+     ],
+     "targets": [
+      {
+       "role": "button",
+       "name": {
+        "tr": "Araç ekleri",
+        "en": "Vessel attachments"
+       },
+       "within": {
+        "role": "navigation",
+        "name": {
+         "tr": "Ek bağlamı",
+         "en": "Attachment context"
+        }
+       }
+      },
+      {
+       "role": "button",
+       "name": {
+        "tr": "Belge taslakları",
+        "en": "Document drafts"
+       },
+       "within": {
+        "role": "navigation",
+        "name": {
+         "tr": "Ek bağlamı",
+         "en": "Attachment context"
+        }
+       }
+      }
+     ]
+    },
+    {
+     "step": 8,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    }
+   ]
+  },
+  "tug-command": {
+   "route": "/app/tug-command?vessel=30000000-0000-0000-0000-000000000002",
+   "steps": [
+    {
+     "step": 1,
+     "actions": [],
+     "targets": [
+      {
+       "role": "heading",
+       "name": {
+        "tr": "Römorkör bağlamı",
+        "en": "Tug context"
+       }
+      }
+     ]
+    },
+    {
+     "step": 2,
+     "actions": [],
+     "targets": [
+      {
+       "text": {
+        "tr": "Rol (sunucu ataması)",
+        "en": "Role (server assignment)"
+       }
+      },
+      {
+       "text": {
+        "tr": "Römorkör modu menü merceği",
+        "en": "Tug-mode menu lens"
+       }
+      }
+     ]
+    },
+    {
+     "step": 3,
+     "actions": [],
+     "targets": [
+      {
+       "text": {
+        "tr": "Mod görünürlüğü",
+        "en": "Mode visibility"
+       }
+      },
+      {
+       "role": "region",
+       "name": {
+        "tr": "Gemi Modu ekranları",
+        "en": "Ship Mode screens"
+       }
+      }
+     ]
+    },
+    {
+     "step": 4,
+     "actions": [],
+     "targets": [
+      {
+       "text": {
+        "tr": "Römorkör tipi",
+        "en": "Tug type"
+       }
+      },
+      {
+       "text": {
+        "tr": "Tip kaynağı / sürümü",
+        "en": "Type source / revision"
+       }
+      },
+      {
+       "text": {
+        "tr": "Tip kaynak gözlemi / politikası",
+        "en": "Type source observation / policy"
+       }
+      }
+     ]
+    },
+    {
+     "step": 5,
+     "actions": [],
+     "targets": [
+      {
+       "text": {
+        "tr": "Profil BP (doğrulanmamış)",
+        "en": "Profile BP (unverified)"
+       }
+      },
+      {
+       "text": {
+        "tr": "BP kaynağı / sürümü / niteliği",
+        "en": "BP source / version / provenance"
+       }
+      },
+      {
+       "text": {
+        "tr": "BP güncelliği / gözlemi",
+        "en": "BP freshness / observation"
+       }
+      }
+     ]
+    },
+    {
+     "step": 6,
+     "actions": [],
+     "targets": [
+      {
+       "role": "heading",
+       "name": {
+        "tr": "Ekipman bağlamı",
+        "en": "Equipment context"
+       }
+      }
+     ]
+    },
+    {
+     "step": 7,
+     "actions": [],
+     "targets": [
+      {
+       "role": "link",
+       "name": {
+        "tr": "İş panosu",
+        "en": "Job board"
+       },
+       "within": {
+        "role": "navigation",
+        "name": {
+         "tr": "Römorkör operasyonları",
+         "en": "Tug operations"
+        }
+       }
+      }
+     ]
     }
    ]
   }
