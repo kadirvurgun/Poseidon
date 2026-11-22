@@ -235,8 +235,17 @@ async function capture(page: Page, blank: Page, key: string, locale: ScreenshotL
       const masks = [page.locator('time'),
         page.getByText(/\b\d{4}-\d{2}-\d{2}\b|\b\d{1,2}[./]\d{1,2}[./]\d{2,4}\b|\b\d{1,2}:\d{2}\b/),
         page.getByText(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}|\b[0-9a-f]{8}…/i)]
+      // Masks are painted in the page itself (not as a screenshot layer), so they keep the page's stacking
+      // order: a sticky header or the commit footer still covers a masked value scrolled beneath it.
+      for (const mask of masks) await mask.evaluateAll(nodes => {
+        for (const node of nodes) for (const element of [node, ...node.querySelectorAll('*')] as HTMLElement[]) {
+          for (const [property, value] of [['color', 'transparent'], ['-webkit-text-fill-color', 'transparent'], ['background', '#c8cdd3'],
+            ['border-color', 'transparent'], ['box-shadow', 'none'], ['text-shadow', 'none'], ['fill', 'transparent'], ['stroke', 'transparent']])
+            element.style.setProperty(property, value, 'important')
+        }
+      })
       // Deterministic palette reduction (png-palette.ts) in every mode, so compare diffs like against like.
-      const png = paletteScreenshot(await page.screenshot({ animations: 'disabled', caret: 'hide', scale: 'css', mask: masks, maskColor: '#c8cdd3' }))
+      const png = paletteScreenshot(await page.screenshot({ animations: 'disabled', caret: 'hide', scale: 'css' }))
       await page.evaluate(() => document.getElementById('poseidon-doc-overlay')?.remove())
       shot.bytes = png.length
       // Viewports not committed to the repository (see steps.json committedViewports) are written to the
