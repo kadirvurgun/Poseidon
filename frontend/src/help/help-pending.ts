@@ -16,8 +16,6 @@ export const pendingHelpKeys: ReadonlySet<string> = new Set([
   'engine-daily-log',
   'fleet',
   'fuel-bunker-log',
-  'high-risk-work',
-  'industry-assurance',
   'noon-report',
   'notification-escalation',
   'offline-conflict-center',
@@ -30,10 +28,7 @@ export const pendingHelpKeys: ReadonlySet<string> = new Set([
   'regulatory-review',
   'renewal-workflow',
   'requirements',
-  'risk-assessment',
-  'risk-template-library',
   'role-uat',
-  'safety-events',
   'service-engineer-report',
   'sources',
   'survey-planner',
@@ -51,7 +46,6 @@ export const pendingHelpKeys: ReadonlySet<string> = new Set([
   'tug-operation-history',
   'tug-operations-offline',
   'tug-readiness',
-  'voice-event-draft',
   'work-order-center',
 ])
 
