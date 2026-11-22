@@ -3836,7 +3836,9 @@
       "failed": "The guide could not be loaded. Reload the page and try again.",
       "fallback": "No guide in this language yet; showing the English version.",
       "relatedNone": "No related pages to show.",
-      "shortcut": "Shortcut: Shift+?"
+      "shortcut": "Shortcut: Shift+?",
+      "screenshotAlt": "Screenshot, step",
+      "screenshotOffline": "Screenshot available when online."
     }
   },
   "pairs": {

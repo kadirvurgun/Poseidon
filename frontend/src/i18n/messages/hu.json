@@ -3836,7 +3836,9 @@
       "failed": "Az útmutatót nem sikerült betölteni. Töltse újra az oldalt, és próbálja újra.",
       "fallback": "Ezen a nyelven még nincs útmutató; az angol változat látható.",
       "relatedNone": "Nincs megjeleníthető kapcsolódó oldal.",
-      "shortcut": "Billentyűparancs: Shift+?"
+      "shortcut": "Billentyűparancs: Shift+?",
+      "screenshotAlt": "Képernyőkép, lépés",
+      "screenshotOffline": "A képernyőkép online érhető el."
     }
   },
   "pairs": {

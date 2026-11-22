@@ -3836,7 +3836,9 @@
       "failed": "No se pudo cargar la guía. Recargue la página e inténtelo de nuevo.",
       "fallback": "Aún no hay guía en este idioma; se muestra la versión en inglés.",
       "relatedNone": "No hay páginas relacionadas que mostrar.",
-      "shortcut": "Atajo: Mayús+?"
+      "shortcut": "Atajo: Mayús+?",
+      "screenshotAlt": "Captura de pantalla, paso",
+      "screenshotOffline": "Captura de pantalla disponible con conexión."
     }
   },
   "pairs": {

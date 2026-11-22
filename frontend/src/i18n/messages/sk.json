@@ -3836,7 +3836,9 @@
       "failed": "Návod sa nepodarilo načítať. Obnovte stránku a skúste to znova.",
       "fallback": "V tomto jazyku zatiaľ návod nie je; zobrazuje sa anglická verzia.",
       "relatedNone": "Žiadne súvisiace stránky na zobrazenie.",
-      "shortcut": "Skratka: Shift+?"
+      "shortcut": "Skratka: Shift+?",
+      "screenshotAlt": "Snímka obrazovky, krok",
+      "screenshotOffline": "Snímka obrazovky je dostupná online."
     }
   },
   "pairs": {

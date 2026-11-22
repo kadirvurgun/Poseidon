@@ -3836,7 +3836,9 @@
       "failed": "Die Anleitung konnte nicht geladen werden. Laden Sie die Seite neu und versuchen Sie es erneut.",
       "fallback": "In dieser Sprache gibt es noch keine Anleitung; die englische Fassung wird angezeigt.",
       "relatedNone": "Keine verwandten Seiten anzuzeigen.",
-      "shortcut": "Tastenkürzel: Umschalt+?"
+      "shortcut": "Tastenkürzel: Umschalt+?",
+      "screenshotAlt": "Bildschirmfoto, Schritt",
+      "screenshotOffline": "Bildschirmfoto ist online verfügbar."
     }
   },
   "pairs": {

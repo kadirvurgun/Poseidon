@@ -3836,7 +3836,9 @@
       "failed": "Kılavuz yüklenemedi. Sayfayı yenileyip tekrar deneyin.",
       "fallback": "Bu dilde kılavuz henüz yok; İngilizce sürüm gösteriliyor.",
       "relatedNone": "Gösterilecek ilgili sayfa yok.",
-      "shortcut": "Kısayol: Shift+?"
+      "shortcut": "Kısayol: Shift+?",
+      "screenshotAlt": "Ekran görüntüsü, adım",
+      "screenshotOffline": "Ekran görüntüsü çevrimiçiyken görüntülenir."
     }
   },
   "pairs": {

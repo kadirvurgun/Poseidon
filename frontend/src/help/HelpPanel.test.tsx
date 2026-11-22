@@ -197,4 +197,32 @@ describe('page help panel', () => {
     expect(within(dialog).getByText(/die englische Fassung wird angezeigt/)).toBeVisible()
     expect(within(dialog).getByRole('article')).toHaveAttribute('lang', 'en')
   })
+
+  it('shows the generated screenshot under each captured step, lazily and without an API request (UG-2)', async () => {
+    const { fetcher } = mount('/app/today')
+    await screen.findByRole('button', { name: 'Today' })
+    const before = fetcher.mock.calls.length
+    await userEvent.click(trigger())
+    const dialog = await openedGuide()
+    const step = within(dialog).getByRole('heading', { name: 'Step by step' }).closest('section')!
+    const images = within(step).getAllByRole('img')
+    expect(images.map(image => image.getAttribute('alt'))).toEqual([1, 2, 3, 4, 5, 6].map(n => `Screenshot, step ${n}`))
+    for (const image of images) {
+      expect(image).toHaveAttribute('loading', 'lazy')
+      expect(image.closest('li')).not.toBeNull()
+    }
+    // D2: an <img> is a same-origin static asset fetched by the browser, never an API fetch().
+    expect(fetcher.mock.calls.length).toBe(before)
+  })
+
+  it('shows a neutral placeholder instead of the screenshot while offline (UG-2 / UG-DOC-04)', async () => {
+    vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false)
+    mount('/app/today')
+    await screen.findByRole('button', { name: 'Today' })
+    await userEvent.click(trigger())
+    const dialog = await openedGuide()
+    const step = within(dialog).getByRole('heading', { name: 'Step by step' }).closest('section')!
+    expect(within(step).queryAllByRole('img')).toHaveLength(0)
+    expect(within(step).getAllByText('Screenshot available when online.')).toHaveLength(6)
+  })
 })

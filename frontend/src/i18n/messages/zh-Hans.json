@@ -3836,7 +3836,9 @@
       "failed": "无法加载指南。请刷新页面后重试。",
       "fallback": "此语言暂无指南；显示英文版本。",
       "relatedNone": "没有可显示的相关页面。",
-      "shortcut": "快捷键：Shift+?"
+      "shortcut": "快捷键：Shift+?",
+      "screenshotAlt": "截图，步骤",
+      "screenshotOffline": "联网时可查看截图。"
     }
   },
   "pairs": {
