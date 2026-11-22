@@ -34,7 +34,7 @@ Bu sayfa, seçilen gemi ve planlanan kalkış aralığı için **tavsiye niteli�
 - **Koşullu:** en az bir kaynak koşul bildiriyor. Bu değerlendirmede Serbest bırak seçeneği açılmaz.
 - **Hazır değil:** en az bir kaynak "Kaldı" sonucu veriyor. Diğer kategorilerin geçmesi bunu dengelemez.
 - **İnceleme gerekli:** en az bir girdi "Bilinmiyor". Yetkili bir kişinin bakması gerekir.
-- **Kategori sonuçları — Geçti / Koşul / Kaldı / Bilinmiyor:** her kategorinin sonucu. **Bilinmiyor**, kaynağın okunamadığını veya veri olmadığını gösterir; "Geçti" ya da "Hazır" anlamına gelmez. Acil durum kategorisi için bu sürümde bağlı bir kaynak modülü yoktur; bu satır Bilinmiyor görünür. Yasal kategorisi veri güven sinyallerini de (DATA_TRUST_*) içerir; veri güven okuma yetkisi yoksa Yasal Bilinmiyor görünür.
+- **Geçti / Koşul / Kaldı / Bilinmiyor:** kategori tablosundaki kategori sonucu. **Bilinmiyor**, kaynağın okunamadığını veya veri olmadığını gösterir; "Geçti" ya da "Hazır" anlamına gelmez. Acil durum kategorisi için bu sürümde bağlı bir kaynak modülü yoktur; bu satır Bilinmiyor görünür. Yasal kategorisi veri güven sinyallerini de (DATA_TRUST_*) içerir; veri güven okuma yetkisi yoksa Yasal Bilinmiyor görünür.
 - **Öngörü:** aralık bugünü kapsamıyor. Bu yalnızca planlama öngörüsüdür ve serbest bırakılamaz.
 - **Güncel / Bayat — girdiler değişti:** kayıtlı bir kararın geçerliliği. Girdiler değişince önceki karar bayat olur ve silinmez.
 

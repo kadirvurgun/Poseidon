@@ -34,7 +34,7 @@ This page shows an **advisory readiness assessment** for the selected ship and p
 - **Conditional:** at least one source reports a condition. Release is not offered for this assessment.
 - **Not ready:** at least one source returns "Fail". Other categories passing does not offset it.
 - **Review required:** at least one input is "Unknown". An authorised person needs to look at it.
-- **Category results — Pass / Condition / Fail / Unknown:** the result of each category. **Unknown** means the source could not be read or has no data; it does not mean "Pass" or "Ready". No source module is connected for the Emergency category in this version, so that row shows Unknown. Statutory also includes data trust signals (DATA_TRUST_*); without data trust read access Statutory shows Unknown.
+- **Pass / Condition / Fail / Unknown:** the category result in the category table. **Unknown** means the source could not be read or has no data; it does not mean "Pass" or "Ready". No source module is connected for the Emergency category in this version, so that row shows Unknown. Statutory also includes data trust signals (DATA_TRUST_*); without data trust read access Statutory shows Unknown.
 - **Forecast:** the window does not include today. It is a planning forecast only and cannot be released.
 - **Current / Stale — inputs changed:** the validity of a recorded decision. When inputs change, the earlier decision becomes stale and is not deleted.
 
