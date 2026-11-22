@@ -4,7 +4,7 @@ title: प्रमाणपत्र केंद्र
 roles: [Master, Chief Engineer / Technical Superintendent, Regulatory / Assurance]
 permissions: [certificate.read, certificate.write, certificate.extract, certificate.verify.record, file.read, directory.write]
 related: [renewal-workflow, pre-survey-checklist, survey-planner, audit]
-screenshots: []
+screenshots: [1, 2]
 reviewed: false
 ---
 ## यह पृष्ठ किसलिए है

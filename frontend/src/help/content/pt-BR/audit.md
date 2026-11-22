@@ -4,7 +4,7 @@ title: Histórico de ações
 roles: [DPA / HSEQ, Regulatory / Assurance, Tenant Admin]
 permissions: [audit.read]
 related: [audit-ready, user-admin, regulatory-review]
-screenshots: []
+screenshots: [1, 2, 3]
 reviewed: false
 ---
 ## Para que serve esta página

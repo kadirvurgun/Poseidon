@@ -4,7 +4,7 @@ title: Bizonyítványközpont
 roles: [Master, Chief Engineer / Technical Superintendent, Regulatory / Assurance]
 permissions: [certificate.read, certificate.write, certificate.extract, certificate.verify.record, file.read, directory.write]
 related: [renewal-workflow, pre-survey-checklist, survey-planner, audit]
-screenshots: []
+screenshots: [1, 2]
 reviewed: false
 ---
 ## Mire szolgál ez az oldal

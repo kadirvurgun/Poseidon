@@ -4,7 +4,7 @@ title: Ordini di lavoro
 roles: [Chief Engineer, Technical Superintendent, Crew / OOW / Engineer]
 permissions: [workorder.read, equipment.read, maintenance.read, workorder.write, workorder.release, workorder.execute, workorder.verify, workorder.close]
 related: [pms-command-center, defects, critical-spares, service-engineer-report, operational-downtime, offline-conflict-center]
-screenshots: []
+screenshots: [1]
 reviewed: false
 ---
 ## A cosa serve questa pagina

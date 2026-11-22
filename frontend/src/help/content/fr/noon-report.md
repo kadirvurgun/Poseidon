@@ -4,7 +4,7 @@ title: Rapport de midi
 roles: [Master, Crew / OOW]
 permissions: [daily.noon.read, daily.noon.write, daily.noon.review]
 related: [deck-daily-log, engine-daily-log, fuel-bunker-log, port-activity-sof, offline-conflict-center, today]
-screenshots: []
+screenshots: [1]
 reviewed: false
 ---
 ## À quoi sert cette page

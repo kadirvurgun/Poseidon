@@ -4,7 +4,7 @@ title: Eventi di sicurezza e near miss
 roles: [DPA / HSEQ, Master, Crew / OOW / Engineer]
 permissions: [hse.safety_event.read, hse.safety_event.report, hse.safety_event.triage, hse.safety_event.identity.read, hse.safety_event.investigate, hse.safety_event.review, hse.safety_action.write, hse.safety_action.verify, hse.safety_action.effectiveness]
 related: [voice-event-draft, risk-assessment, high-risk-work, industry-assurance]
-screenshots: []
+screenshots: [1]
 reviewed: false
 ---
 ## A cosa serve questa pagina

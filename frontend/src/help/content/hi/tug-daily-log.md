@@ -4,7 +4,7 @@ title: टग दैनिक लॉग
 roles: [Tug Master, Master, Crew]
 permissions: [mode.tug, tug.read, tug.write]
 related: [towage-execution, tug-operation-history, tug-operations-offline, offline-conflict-center]
-screenshots: []
+screenshots: [1]
 reviewed: false
 ---
 ## यह पृष्ठ किसलिए है
