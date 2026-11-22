@@ -1,9 +1,9 @@
 {
  "schemaVersion": "poseidon.help.screenshot-provenance.v2",
  "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
- "commit": "76834276c2d313c90eb6a4ce84dd23c3d47fc591",
+ "commit": "7db9a131562efcf71c42eb0b4cf8227760c5b49a",
  "generatorBlobs": {
-  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "c9960999bb38182c9484db901d94333860682e88",
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "e976955eeeb0739c6dd8205060b7dae2196e8899",
   "tests/Poseidon.Browser.Tests/screenshots/png-palette.ts": "3a0f780074c6da126fc96cee0869800475e2709d",
   "frontend/src/help/screenshots/steps.json": "5239b1cd352b1a5882e079f96e408f981587e66f"
  },
@@ -19,9 +19,9 @@
  "tenant": "Synthetic Fleet A",
  "fixedClock": "2026-11-22T00:00:00.000Z",
  "png": {
-  "sha256": "c5fb5976241e35f21c54f427ed22e0544ac4b94abb6af1d3f352c87a7b481886",
+  "sha256": "6c7b7c0ed6f992229352ab814b36c64065b27c46ae2b0334a5e47135688359e9",
   "width": 1440,
   "height": 900
  },
- "domText": "Skip to main content\nPOSEIDON\nFleet\nAppearance\nSearch workspace\nChoose language\nSynthetic Fleet A\nCompany context:\nUnavailable\nDEMO-SHIP · Synthetic Ship A\nVessel mode: Ship\nRole context: Not assigned\nChange vessel context\nOnline\nPOSEIDON\nMARITIME OPERATIONS\nWork view\nFilter menu\n\nOnly screens you are authorized to open are searched.\n\nOverview\nToday\nFleet\nShip operations\nTechnical and maintenance\nTug operations\nCompliance and assurance\nWorkspace\nSY\nSynthetic Fleet A\nAuthorized workspace\n\nMARITIME WORKSPACE\n\nFleet\n\nBrowse the records available in your workspace.\n\nCurrent vessel: Ship · Synthetic Ship A\nSwitch vessel\n\nWorkspace: Synthetic Fleet A\n\nSign out\nListed vessels\n2\nOn this page\nShips\n1\nOn this page\nTugs\n1\nOn this page\nEditable records\n0\nCurrent access on this page\nVessel composition\n\nVessel types in the returned list\n\n2 records\nShips: 1 · \nTugs: 1\n\nThis page only. Operational readiness is evaluated separately.\n\nWorkspace scope\n\nCurrent list and access context\n\nShips\n1\nTugs\n1\nRead-only records\n2\nNext page\nEnd of list\nSearch by code or name\nVessel type\nSearch\nCode Name Type\nDEMO-SHIP Synthetic Ship A Ship\nDEMO-TUG Synthetic Tug A Tug\nPage 1\nPrevious\nNext\nDetails\nClose\nRegulatory profile\nPilot vessel onboarding\nDigital compliance passport\nCode\nDEMO-SHIP\nName\nSynthetic Ship A\nType\nShip\nControlled import\nEquipment and maintenance\nCrew roster\nVessel attachments\nDocument drafts\nVessel files\n\nFile presence and a malware scan do not verify evidence or activate readiness.\n\nLoading files…\n\nRefresh files"
+ "domText": "Skip to main content\nPOSEIDON\nFleet\nAppearance\nSearch workspace\nChoose language\nSynthetic Fleet A\nCompany context:\nUnavailable\nDEMO-SHIP · Synthetic Ship A\nVessel mode: Ship\nRole context: Not assigned\nChange vessel context\nOnline\nPOSEIDON\nMARITIME OPERATIONS\nWork view\nFilter menu\n\nOnly screens you are authorized to open are searched.\n\nOverview\nToday\nFleet\nShip operations\nTechnical and maintenance\nTug operations\nCompliance and assurance\nWorkspace\nSY\nSynthetic Fleet A\nAuthorized workspace\n\nMARITIME WORKSPACE\n\nFleet\n\nBrowse the records available in your workspace.\n\nCurrent vessel: Ship · Synthetic Ship A\nSwitch vessel\n\nWorkspace: Synthetic Fleet A\n\nSign out\nListed vessels\n2\nOn this page\nShips\n1\nOn this page\nTugs\n1\nOn this page\nEditable records\n0\nCurrent access on this page\nVessel composition\n\nVessel types in the returned list\n\n2 records\nShips: 1 · \nTugs: 1\n\nThis page only. Operational readiness is evaluated separately.\n\nWorkspace scope\n\nCurrent list and access context\n\nShips\n1\nTugs\n1\nRead-only records\n2\nNext page\nEnd of list\nSearch by code or name\nVessel type\nSearch\nCode Name Type\nDEMO-SHIP Synthetic Ship A Ship\nDEMO-TUG Synthetic Tug A Tug\nPage 1\nPrevious\nNext\nDetails\nClose\nRegulatory profile\nPilot vessel onboarding\nDigital compliance passport\nCode\nDEMO-SHIP\nName\nSynthetic Ship A\nType\nShip\nControlled import\nEquipment and maintenance\nCrew roster\nVessel attachments\nDocument drafts\nVessel files\n\nFile presence and a malware scan do not verify evidence or activate readiness.\n\nFile service unavailable or request rejected.\n\nRefresh files"
 }

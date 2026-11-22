@@ -1,9 +1,9 @@
 {
  "schemaVersion": "poseidon.help.screenshot-provenance.v2",
  "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
- "commit": "76834276c2d313c90eb6a4ce84dd23c3d47fc591",
+ "commit": "7db9a131562efcf71c42eb0b4cf8227760c5b49a",
  "generatorBlobs": {
-  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "c9960999bb38182c9484db901d94333860682e88",
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "e976955eeeb0739c6dd8205060b7dae2196e8899",
   "tests/Poseidon.Browser.Tests/screenshots/png-palette.ts": "3a0f780074c6da126fc96cee0869800475e2709d",
   "frontend/src/help/screenshots/steps.json": "5239b1cd352b1a5882e079f96e408f981587e66f"
  },
@@ -19,7 +19,7 @@
  "tenant": "Synthetic Fleet A",
  "fixedClock": "2026-11-22T00:00:00.000Z",
  "png": {
-  "sha256": "e8990ef82d31f874f881fd0aa7609d36363df180f88c7f950a3b66282cdb70f8",
+  "sha256": "d9699bd7ac937cc6e61f8e97d4302d2c6df3da0708423d6c4430307c9ecbeec1",
   "width": 1440,
   "height": 900
  },
