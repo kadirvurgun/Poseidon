@@ -502,53 +502,6 @@ def prepare_bundle():
     write(path, json.dumps(config))
 
 
-# USER-GUIDE-01 UG-2: documentation screenshots. Read-only capabilities only; no write,
-# safety, verifier, signer, owner or source-validation permission is ever added here.
-SCREENSHOT_READ_PERMISSIONS = ('regulatory.draft.read', 'maintenance.read', 'mode.tug', 'mode.cross', 'tug.read', 'membership.read')
-
-
-def screenshot_membership(config, realm):
-    """Explicit lab-only read enrollment for lab-manager; preserves every other member and grant."""
-    candidate = deepcopy(config)
-    subjects = [u['id'] for u in realm['users'] if u['username'] == 'lab-manager']
-    if realm.get('realm') != 'poseidon-lab' or len(subjects) != 1:
-        raise RuntimeError('lab_screenshot_identity_invalid')
-    members = [m for m in candidate['Authentication']['Oidc']['Memberships']
-               if m['Issuer'] == AUTHORITY and m['Subject'] == subjects[0]]
-    if len(members) != 1 or members[0].get('TenantWideRead') is not True:
-        raise RuntimeError('lab_screenshot_scope_invalid')
-    for permission in SCREENSHOT_READ_PERMISSIONS:
-        if permission not in members[0]['Permissions']:
-            members[0]['Permissions'].append(permission)
-    return candidate
-
-
-def prepare_screenshots():
-    """Explicit: read grants in the private config, then opt-in FICTIONAL demo drafts (Development only)."""
-    stage('explicit_lab_screenshot_configuration')
-    init()
-    owned_process('stop')  # The app re-reads memberships on the next start.
-    path = PRIVATE / 'appsettings.json'
-    realm = json.loads((PRIVATE / 'realm/poseidon-lab-realm.json').read_text())
-    write(path, json.dumps(screenshot_membership(json.loads(path.read_text()), realm)))
-    stage('demo_fixture_import')
-    env = environment()
-    env['POSEIDON_DATABASE'] = json.loads(path.read_text())['ConnectionStrings']['Poseidon']
-    run([root_tool('dotnet'), 'run', '--project', 'backend/Poseidon.DbMigrator', '-c', 'Release', '--no-build',
-         '--', '--demo-fixtures', 'backend/seed/synthetic-demo.json'], env=env)
-
-
-def screenshots():
-    """Runs the documentation screenshot capture; set POSEIDON_SCREENSHOTS_MODE=update to regenerate."""
-    stage('real_provider_screenshots')
-    env = environment()
-    env['POSEIDON_LAB_PRIVATE'] = str(PRIVATE)
-    env['POSEIDON_LAB_PYTHON'] = sys.executable
-    env['NODE_EXTRA_CA_CERTS'] = str(PRIVATE / 'ca.pem')
-    env.pop('NODE_TLS_REJECT_UNAUTHORIZED', None)
-    run([root_tool('node'), str(ROOT / 'tests/Poseidon.Browser.Tests/screenshots/capture.ts')], env=env, timeout=1800)
-
-
 def prepare_humans():
     """Explicit real-provider reviewer setup; no session or source approval fabrication.
 
@@ -642,7 +595,7 @@ def prepare_humans():
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('action', choices=['init', 'start', 'stop', 'browser', 'prepare_register', 'prepare_humans', 'prepare_bundle', 'register_browser', 'prepare_screenshots', 'screenshots'])
+    parser.add_argument('action', choices=['init', 'start', 'stop', 'browser', 'prepare_register', 'prepare_humans', 'prepare_bundle', 'register_browser'])
     action = parser.parse_args().action
     try:
         if sys.version_info[:3] != (3, 13, 13):

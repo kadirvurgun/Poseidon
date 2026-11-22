@@ -163,7 +163,7 @@ async function capture(page: Page, blank: Page, key: string, locale: ScreenshotL
         const provenance: Provenance = { schemaVersion: provenanceSchema, generator, commit, key, locale, step: step.step, viewport,
           datasets: [...allowedDatasets], tenant: visibleTenant, fixedClock,
           png: { sha256: createHash('sha256').update(png).digest('hex'), ...pngSize(png) }, domText }
-        writeFileSync(resolve(output, name + '.json'), JSON.stringify(provenance, null, 1) + '\n')
+        writeFileSync(resolve(folder, name + '.json'), JSON.stringify(provenance, null, 1) + '\n')
         shot.result = 'written'
       } else if (!existsSync(file)) shot.result = 'missing'
       else {

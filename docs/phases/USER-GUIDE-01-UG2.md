@@ -15,7 +15,7 @@ Dal: `feature/help-screenshots-20261122` (taban `origin/main` dde4bb50, UG-1 dah
 ## Teslim edilen davranış
 
 - **Demo fixture komutu** (`backend/Poseidon.Persistence/Seeding/DemoFixtureCommand.cs`, `DbMigrator -- --demo-fixtures <seed.json>`): yalnız tam `Development`/`Test` ortamında (bağlantı açılmadan önce denetlenir), seed yoksa reddeder; tek denetimli yönetimsel işlemde `TugDemoFixtures` (çekme planı/brifing/römorkör günlüğü DRAFT) ve `AccountMembershipFixtures` (kiracı başına yetkisiz, `.invalid` issuer'lı KURGUSAL üye) ekler. Karar, onay, doğrulama, imza, yetki, kimlik bilgisi veya receipt yok. Tekrar çalıştırma bir şey eklemez.
-- **Lab eylemleri** (`scripts/oidc_lab.py`): `prepare_screenshots` lab-manager'a yalnız okuma yetkileri ekler (`regulatory.draft.read, maintenance.read, mode.tug, mode.cross, tug.read, membership.read`) — yalnız `.runtime/oidc-lab/appsettings.json` (gitignore, commit edilmez) — ve demo fixture komutunu çalıştırır. `screenshots` yakalama betiğini çalıştırır. Yazma/yönetim/emniyet yetkisi bilinçli olarak verilmez.
+- **Lab eylemleri** (`scripts/help_screenshots_lab.py`, `oidc_lab` modülünü kullanır; bağımsız incelenmiş `oidc_lab.py` kaynağı değiştirilmedi çünkü depo gizli tarayıcısının incelenmiş istisnaları satır + blob hash'ine bağlıdır): `prepare_screenshots` lab-manager'a yalnız okuma yetkileri ekler (`regulatory.draft.read, maintenance.read, mode.tug, mode.cross, tug.read, membership.read`) — yalnız `.runtime/oidc-lab/appsettings.json` (gitignore, commit edilmez) — ve demo fixture komutunu çalıştırır. `screenshots` yakalama betiğini çalıştırır. Yazma/yönetim/emniyet yetkisi bilinçli olarak verilmez.
 - **Yakalama betiği** (`tests/Poseidon.Browser.Tests/screenshots/capture.ts`): `lab/run.ts` gibi doğrudan Playwright kütüphane koşucusu (trace/video/HAR/test-runner DOM snapshot'ı yok), `strictContext` (yalnız lab CA'sı, Firefox), gerçek Keycloak girişi. Sabit 1440×900 (ve isteğe bağlı 390×844), açık mod + Zümrüt palet (`poseidon.appearance.v2`) ve dil (`poseidon.locale`) yüklemeden önce yerel depoya yazılır; `reducedMotion: reduce`, animasyon kapalı, imleç gizli, `page.clock.setFixedTime(2026-11-22T09:00Z)`. Sunucu zaman damgaları, tarih/saat metinleri ve UUID'ler maskelenir. Her adımın hedef öğelerine CSS token'lı numaralı halka + rozet, altta commit kimliği damgası eklenir.
   - Modlar: `compare` (varsayılan; PNG yazmaz, piksel farkı oranı ≤ `POSEIDON_SCREENSHOTS_THRESHOLD`, varsayılan 0,002; damga şeridi karşılaştırma dışı), `update` (PNG + köken JSON yeniden üretir), `discover` (erişilebilirlik ağacını özel dizine yazar). Commit edilmeyen görünüm alanı (mobil) yalnız `.runtime/oidc-lab/screenshots-uncommitted/` altına yazılır.
   - Hazırlık eylemleri kapalı şemadır: tıklama/doldurma/Enter; adı kaydet/oluştur/gönder/onayla/imzala/doğrula/sil/iptal/askıya al/çıkış vb. olan bir denetime tıklama **yürütme öncesi reddedilir** (D5). Hedefler rol + erişilebilir ad, etiket veya metin; CSS seçici kabul edilmez.
@@ -46,10 +46,10 @@ Toplam 18 adım × TR/EN = **36 PNG, 3,3 MB** (ortalama ~92 kB) + 36 köken JSON
 ```powershell
 py -3.13 scripts/oidc_lab.py init
 py -3.13 scripts/oidc_lab.py start
-py -3.13 scripts/oidc_lab.py prepare_screenshots   # okuma yetkileri (özel config) + demo fixture
+py -3.13 scripts/help_screenshots_lab.py prepare_screenshots   # okuma yetkileri (özel config) + demo fixture
 py -3.13 scripts/oidc_lab.py start                 # yeni üyelikleri okumak için yeniden başlat
-$env:POSEIDON_SCREENSHOTS_MODE='update'; py -3.13 scripts/oidc_lab.py screenshots   # yeniden üret
-Remove-Item Env:POSEIDON_SCREENSHOTS_MODE; py -3.13 scripts/oidc_lab.py screenshots # karşılaştır
+$env:POSEIDON_SCREENSHOTS_MODE='update'; py -3.13 scripts/help_screenshots_lab.py screenshots   # yeniden üret
+Remove-Item Env:POSEIDON_SCREENSHOTS_MODE; py -3.13 scripts/help_screenshots_lab.py screenshots # karşılaştır
 py -3.13 scripts/oidc_lab.py stop
 ```
 
@@ -59,13 +59,13 @@ Sonuç `.runtime/oidc-lab/screenshot-report.json` (yalnız ad/sonuç/oran/bayt/s
 
 | Komut | Sonuç |
 |---|---|
-| `oidc_lab.py init/start/prepare_screenshots/start` (kendi worktree lab'ı, proje `poseidon-lab-<hash>`) | PASS |
+| `oidc_lab.py init/start` + `prepare_screenshots` + `oidc_lab.py start` (kendi worktree lab'ı, proje `poseidon-lab-<hash>`) | PASS (eylemler ilk çalıştırmada oidc_lab.py içindeydi; aynı kod ayrı modüle taşındı, birim testleri yeniden geçti) |
 | `screenshots` `update`, desktop | `status=passed`, 36/36 written |
 | `screenshots` `compare` (ikinci bağımsız çalıştırma) | `status=passed`, 36/36 `match`, en büyük fark oranı 0,00028 (eşik 0,002) |
 | `screenshots` `update`, mobile (özel dizin) | `status=passed`, 36/36 written |
 | `node --test …/screenshots/steps.test.ts` | 4/4 geçti |
 | `node --test …/screenshots/provenance.test.ts` | 3/3 geçti (36 PNG köken + DOM metni taraması) |
-| `py -3.13 -m unittest test_oidc_lab` (scripts) | 8/8 geçti (yeni: okuma kaydı yalnız okuma izni ekler, idempotent) |
+| `py -3.13 -m unittest test_help_screenshots_lab test_oidc_lab` (scripts) | 9/9 geçti (yeni 2: okuma kaydı yalnız okuma izni ekler, idempotent, yanlış realm/hesapta kapanır) |
 | `dotnet test … --filter-class DemoFixtureCommandTests` | 7/7 geçti |
 | `dotnet test … --filter-class DemoFixtureCommandPostgresTests` (Testcontainers PG 18.6) | 1/1 geçti |
 | `dotnet test Api.Tests --filter-class *WallClockGuardTests` | 3/3 geçti |
@@ -73,7 +73,9 @@ Sonuç `.runtime/oidc-lab/screenshot-report.json` (yalnız ad/sonuç/oran/bayt/s
 | `npx vitest run src/help src/theme/hardcoded-colors.test.ts src/i18n` | 9 dosya, 179 test geçti |
 | `npm run build` (frontend) | geçti; 36 PNG asset, offline envanterde PNG yok |
 
-Tam frontend vitest sonucu ve CI çalıştırma kimliği teslim raporunda.
+| `npx vitest run` (tam frontend) | 230 dosya / 2296 test; ilk çalıştırmada 1 başarısız (yanlışlıkla depoya yazılmış mobil köken JSON'ları — yakalama betiği hatası düzeltildi, dosyalar kaldırıldı), düzeltme sonrası `help-coverage` yeniden geçti |
+
+CI: ilk push (`8053a871`, run 44966741552) kırmızıydı: (1) depo gizli tarayıcısı `oidc_lab.py` değişikliğini incelenmiş istisnaların dışına düşürdü → değişiklik geri alındı, eylemler `help_screenshots_lab.py`'ye taşındı; (2) aynı mobil JSON yetimi. Sonraki CI sonucu teslim raporunda.
 
 ## Açık konular
 
