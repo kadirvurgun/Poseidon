@@ -54,11 +54,10 @@ public static class RateLimitWindow
 {
     public static long Index(DateTimeOffset now, RateLimitPolicy policy) => now.ToUnixTimeSeconds() / policy.WindowSeconds;
     public static DateTimeOffset End(long index, RateLimitPolicy policy) => DateTimeOffset.FromUnixTimeSeconds((index + 1) * policy.WindowSeconds);
-    public static TimeSpan RetryAfter(DateTimeOffset now, long index, RateLimitPolicy policy)
-    {
-        var remaining = End(index, policy) - now;
-        return remaining < TimeSpan.FromSeconds(1) ? TimeSpan.FromSeconds(1) : remaining;
-    }
+    public static TimeSpan RetryAfter(DateTimeOffset now, long index, RateLimitPolicy policy) => Bound(End(index, policy) - now, policy);
+    // Retry-After is always within [1 s, policy window], whatever a store or clock reports (QA M1).
+    public static TimeSpan Bound(TimeSpan remaining, RateLimitPolicy policy) =>
+        remaining < TimeSpan.FromSeconds(1) ? TimeSpan.FromSeconds(1) : remaining > policy.Window ? policy.Window : remaining;
     // Exactly one attempt per window and partition observes Limited (the first refusal, audited once); later ones are
     // LimitedRepeat. With the store's atomic increment this holds across instances, too.
     public static RateLimitOutcome Classify(long count, RateLimitPolicy policy) =>
@@ -135,62 +134,69 @@ public sealed class RateLimitCounter
 
 public interface IRateLimitStore
 {
-    // Atomically increments the partition's counter for the window and returns (count, window) actually stored.
-    Task<(long Count, long WindowIndex)> IncrementAsync(RateLimitPolicy policy, string partitionHash, long windowIndex, CancellationToken cancellationToken);
-    // Deletes at most batchSize expired rows; returns the number deleted.
-    Task<int> DeleteExpiredAsync(DateTimeOffset now, int batchSize, CancellationToken cancellationToken);
+    // Atomically increments the partition's counter in the store's current window (store clock) and returns the stored
+    // count and the time until that window ends.
+    Task<(long Count, TimeSpan Remaining)> IncrementAsync(RateLimitPolicy policy, string partitionHash, CancellationToken cancellationToken);
+    // Deletes at most batchSize rows expired by the store clock; returns the number deleted.
+    Task<int> DeleteExpiredAsync(int batchSize, CancellationToken cancellationToken);
+}
+
+// The dedicated, small rate-limit connection pool as its own DI type (QA N1): a future UseNpgsql()/AddNpgsqlDataSource
+// consumer can never resolve this throttling pool by accident.
+public sealed class RateLimitDataSource(NpgsqlDataSource source) : IDisposable, IAsyncDisposable
+{
+    internal NpgsqlDataSource Source { get; } = source;
+    public void Dispose() => Source.Dispose();
+    public ValueTask DisposeAsync() => Source.DisposeAsync();
 }
 
 // Single-statement atomic upsert (row lock under READ COMMITTED; no SERIALIZABLE transaction, so no 40001 retry loop).
-// A row from an older window restarts at 1; a row already in a newer window (another instance's clock ahead) keeps
-// counting in that newer window, so a lagging clock can never reset a current counter.
-public sealed class PostgresRateLimitStore(NpgsqlDataSource dataSource, int commandTimeoutSeconds = 2) : IRateLimitStore
+// QA M1: the window and its expiry come from the DATABASE clock (now()), the one time source all instances share, so no
+// API instance clock (ahead or behind) can move a partition into another window. A stored row of any other window restarts
+// at 1. Controlled raw-SQL design (AGENTS.md, RATE-LIMIT-01): this store is the only allow-listed raw ADO.NET executor in
+// the business assemblies (S1AuditedWriteArchitectureTests) and both statements are pinned to the counter table
+// (RateLimitRawSqlBoundaryTests).
+public sealed class PostgresRateLimitStore(RateLimitDataSource dataSource, int commandTimeoutSeconds = 2) : IRateLimitStore
 {
     private const string Upsert = """
         INSERT INTO ratelimit."RateLimitCounters" AS c ("Policy", "PartitionHash", "WindowIndex", "Count", "ExpiresAt")
-        VALUES (@policy, @hash, @window, 1, @expires)
+        SELECT @policy, @hash, w.i, 1, to_timestamp((w.i + 1) * @seconds)
+        FROM (SELECT floor(extract(epoch FROM now()) / @seconds)::bigint AS i) w
         ON CONFLICT ("Policy", "PartitionHash") DO UPDATE SET
-          "Count" = CASE WHEN c."WindowIndex" >= EXCLUDED."WindowIndex" THEN LEAST(c."Count" + 1, @cap) ELSE 1 END,
-          "WindowIndex" = GREATEST(c."WindowIndex", EXCLUDED."WindowIndex"),
-          "ExpiresAt" = GREATEST(c."ExpiresAt", EXCLUDED."ExpiresAt")
-        RETURNING "Count", "WindowIndex"
+          "Count" = CASE WHEN c."WindowIndex" = EXCLUDED."WindowIndex" THEN LEAST(c."Count" + 1, @cap) ELSE 1 END,
+          "WindowIndex" = EXCLUDED."WindowIndex",
+          "ExpiresAt" = EXCLUDED."ExpiresAt"
+        RETURNING "Count", extract(epoch FROM ("ExpiresAt" - now()))::double precision
         """;
 
     // Bounded: SKIP LOCKED never waits on a counter being incremented; the expiry is re-checked under the row lock.
-    // Returns the deleted row count as a scalar. This is the second (and last) raw writer; RateLimitRawSqlBoundaryTests pins
-    // both statements to this one table, outside the S1 metadata guard that forbids ExecuteNonQuery in business assemblies.
+    // QA L1: expiry is judged by the database clock, never by an instance clock.
     private const string Cleanup = """
-        WITH expired AS (
-          SELECT "Policy", "PartitionHash" FROM ratelimit."RateLimitCounters"
-          WHERE "ExpiresAt" < @now ORDER BY "ExpiresAt" LIMIT @batch FOR UPDATE SKIP LOCKED),
-        deleted AS (
-          DELETE FROM ratelimit."RateLimitCounters" d USING expired e
-          WHERE d."Policy" = e."Policy" AND d."PartitionHash" = e."PartitionHash" AND d."ExpiresAt" < @now
-          RETURNING 1)
-        SELECT count(*)::integer FROM deleted
+        DELETE FROM ratelimit."RateLimitCounters" d
+        USING (SELECT "Policy", "PartitionHash" FROM ratelimit."RateLimitCounters"
+               WHERE "ExpiresAt" < now() ORDER BY "ExpiresAt" LIMIT @batch FOR UPDATE SKIP LOCKED) e
+        WHERE d."Policy" = e."Policy" AND d."PartitionHash" = e."PartitionHash" AND d."ExpiresAt" < now()
         """;
 
-    public async Task<(long Count, long WindowIndex)> IncrementAsync(RateLimitPolicy policy, string partitionHash, long windowIndex, CancellationToken cancellationToken)
+    public async Task<(long Count, TimeSpan Remaining)> IncrementAsync(RateLimitPolicy policy, string partitionHash, CancellationToken cancellationToken)
     {
-        await using var command = dataSource.CreateCommand(Upsert);
+        await using var command = dataSource.Source.CreateCommand(Upsert);
         command.CommandTimeout = commandTimeoutSeconds;
         command.Parameters.AddWithValue("policy", policy.Name);
         command.Parameters.AddWithValue("hash", partitionHash);
-        command.Parameters.AddWithValue("window", windowIndex);
-        command.Parameters.AddWithValue("expires", RateLimitWindow.End(windowIndex, policy));
+        command.Parameters.AddWithValue("seconds", policy.WindowSeconds);
         command.Parameters.AddWithValue("cap", RateLimitWindow.Cap(policy));
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         if (!await reader.ReadAsync(cancellationToken)) throw new InvalidOperationException("Rate-limit counter upsert returned no row.");
-        return (reader.GetInt64(0), reader.GetInt64(1));
+        return (reader.GetInt64(0), TimeSpan.FromSeconds(reader.GetDouble(1)));
     }
 
-    public async Task<int> DeleteExpiredAsync(DateTimeOffset now, int batchSize, CancellationToken cancellationToken)
+    public async Task<int> DeleteExpiredAsync(int batchSize, CancellationToken cancellationToken)
     {
-        await using var command = dataSource.CreateCommand(Cleanup);
+        await using var command = dataSource.Source.CreateCommand(Cleanup);
         command.CommandTimeout = Math.Max(commandTimeoutSeconds, 10);
-        command.Parameters.AddWithValue("now", now);
         command.Parameters.AddWithValue("batch", Math.Clamp(batchSize, 1, 10_000));
-        return Convert.ToInt32(await command.ExecuteScalarAsync(cancellationToken), System.Globalization.CultureInfo.InvariantCulture);
+        return await command.ExecuteNonQueryAsync(cancellationToken);
     }
 }
 
@@ -297,9 +303,8 @@ public sealed partial class SharedRateLimiter
         {
             try
             {
-                var now = clock.GetUtcNow();
-                var (count, window) = await store.IncrementAsync(policy, hash, RateLimitWindow.Index(now, policy), cancellationToken);
-                decision = new(RateLimitWindow.Classify(count, policy), RateLimitWindow.RetryAfter(now, window, policy), RateLimitSource.Shared);
+                var (count, remaining) = await store.IncrementAsync(policy, hash, cancellationToken);
+                decision = new(RateLimitWindow.Classify(count, policy), RateLimitWindow.Bound(remaining, policy), RateLimitSource.Shared);
             }
             catch (Exception error) when (IsStoreFailure(error, cancellationToken))
             {

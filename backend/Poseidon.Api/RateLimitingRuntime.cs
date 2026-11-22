@@ -17,6 +17,17 @@ public sealed class RateLimitingSettings
     public int? CleanupIntervalSeconds { get; set; }
     public int? CleanupBatchSize { get; set; }
 
+    // QA L4: out-of-range numeric settings stop startup instead of being clamped silently.
+    internal int Capacity => Checked(LocalCapacity, LocalRateLimitCounters.DefaultCapacity, 100, 1_000_000);
+    internal TimeSpan Fallback => TimeSpan.FromSeconds(Checked(FallbackSeconds, 10, 1, 300));
+    internal TimeSpan CleanupInterval => TimeSpan.FromSeconds(Checked(CleanupIntervalSeconds, 300, 10, 86_400));
+    internal int CleanupBatch => Checked(CleanupBatchSize, 500, 1, 10_000);
+
+    private static int Checked(int? value, int fallback, int min, int max) =>
+        value is null ? fallback : value >= min && value <= max ? value.Value : throw new InvalidOperationException("Rate-limit setting out of range.");
+
+    internal void Validate() { _ = Capacity; _ = Fallback; _ = CleanupInterval; _ = CleanupBatch; _ = UsesPostgres; }
+
     internal bool UsesPostgres => Store switch
     {
         null or "" or "InMemory" => false,
@@ -45,26 +56,27 @@ public static partial class RateLimitingRuntime
     internal static void AddSharedRateLimiting(this IServiceCollection services, IConfiguration configuration, IHostEnvironment environment, Func<string, string?> read)
     {
         var settings = configuration.GetSection("RateLimiting").Get<RateLimitingSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new();
+        settings.Validate();
         var postgres = settings.UsesPostgres;
         var secret = settings.PartitionSecret(environment, read);
         if (postgres && secret == null) throw new InvalidOperationException("Shared rate limiting requires operator partition key material.");
         var keys = secret != null ? RateLimitPartitionKeys.FromSecret(secret) : RateLimitPartitionKeys.Ephemeral();
         services.AddSingleton(settings);
-        services.AddSingleton(sp => new LocalRateLimitCounters(sp.GetRequiredService<TimeProvider>(),
-            Math.Clamp(settings.LocalCapacity ?? LocalRateLimitCounters.DefaultCapacity, 100, 1_000_000)));
+        services.AddSingleton(sp => new LocalRateLimitCounters(sp.GetRequiredService<TimeProvider>(), settings.Capacity));
         if (postgres)
         {
             var connection = OperatorSecretReferences.Database(configuration, environment, read);
             if (string.IsNullOrWhiteSpace(connection)) throw new InvalidOperationException("Shared rate limiting requires the database reference.");
             // A dedicated small pool: throttling must not exhaust the business connection pool.
             var builder = new NpgsqlConnectionStringBuilder(connection) { MaxPoolSize = 10, Timeout = 3 };
-            services.AddSingleton(_ => NpgsqlDataSource.Create(builder.ConnectionString));
-            services.AddSingleton<IRateLimitStore>(sp => new PostgresRateLimitStore(sp.GetRequiredService<NpgsqlDataSource>()));
+            // Own wrapper type, never a bare NpgsqlDataSource registration (QA N1).
+            services.AddSingleton(_ => new RateLimitDataSource(NpgsqlDataSource.Create(builder.ConnectionString)));
+            services.AddSingleton<IRateLimitStore>(sp => new PostgresRateLimitStore(sp.GetRequiredService<RateLimitDataSource>()));
             services.AddHostedService<RateLimitCounterCleanup>();
         }
         services.AddSingleton(sp => new SharedRateLimiter(keys, sp.GetService<IRateLimitStore>(), sp.GetRequiredService<LocalRateLimitCounters>(),
             sp.GetRequiredService<TimeProvider>(), sp.GetRequiredService<ILogger<SharedRateLimiter>>(),
-            TimeSpan.FromSeconds(Math.Clamp(settings.FallbackSeconds ?? 10, 1, 300))));
+            settings.Fallback));
         services.AddSingleton<InvitationAttemptLimiter>();
         services.AddSingleton<PilotTelemetryRateLimiter>();
         if (!postgres && !environment.IsDevelopment() && !environment.IsEnvironment("Test"))
@@ -98,20 +110,19 @@ internal sealed class RateLimitCounterCleanup(IRateLimitStore store, RateLimitin
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var interval = TimeSpan.FromSeconds(Math.Clamp(settings.CleanupIntervalSeconds ?? 300, 10, 86_400));
-        var batch = Math.Clamp(settings.CleanupBatchSize ?? 500, 1, 10_000);
-        using var timer = new PeriodicTimer(interval, clock);
-        while (await timer.WaitForNextTickAsync(stoppingToken)) await RunOnceAsync(store, clock, batch, logger, stoppingToken);
+        using var timer = new PeriodicTimer(settings.CleanupInterval, clock);
+        while (await timer.WaitForNextTickAsync(stoppingToken)) await RunOnceAsync(store, settings.CleanupBatch, logger, stoppingToken);
     }
 
-    internal static async Task<int> RunOnceAsync(IRateLimitStore store, TimeProvider clock, int batch, ILogger logger, CancellationToken ct)
+    // Expiry is judged by the database clock inside the store (QA L1); the timer clock only paces the ticks.
+    internal static async Task<int> RunOnceAsync(IRateLimitStore store, int batch, ILogger logger, CancellationToken ct)
     {
         var total = 0;
         try
         {
             for (var i = 0; i < MaxBatchesPerTick; i++)
             {
-                var deleted = await store.DeleteExpiredAsync(clock.GetUtcNow(), batch, ct);
+                var deleted = await store.DeleteExpiredAsync(batch, ct);
                 total += deleted;
                 if (deleted < batch) break;
             }

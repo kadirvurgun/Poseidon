@@ -50,6 +50,9 @@ public sealed class RateLimitingConfigurationTests
             new() { ["POSEIDON_RATE_LIMIT_KEY"] = Key, ["POSEIDON_DATABASE"] = "Host=127.0.0.1;Database=synthetic_rate_limit;Username=synthetic" });
         Assert.True(provider.GetRequiredService<SharedRateLimiter>().Shared);
         Assert.IsType<PostgresRateLimitStore>(provider.GetRequiredService<IRateLimitStore>());
+        // QA N1: the throttling pool is its own type; no bare NpgsqlDataSource is registered.
+        Assert.NotNull(provider.GetRequiredService<RateLimitDataSource>());
+        Assert.Null(provider.GetService<Npgsql.NpgsqlDataSource>());
     }
 
     [Theory]
@@ -66,6 +69,18 @@ public sealed class RateLimitingConfigurationTests
             ["POSEIDON_DATABASE"] = "Host=127.0.0.1;Database=synthetic_rate_limit;Username=synthetic" }));
         Assert.DoesNotContain(Key, error.Message);
     }
+
+    [Theory]
+    [InlineData("LocalCapacity", "99")]
+    [InlineData("LocalCapacity", "1000001")]
+    [InlineData("FallbackSeconds", "0")]
+    [InlineData("FallbackSeconds", "301")]
+    [InlineData("CleanupIntervalSeconds", "9")]
+    [InlineData("CleanupBatchSize", "0")]
+    [InlineData("CleanupBatchSize", "10001")]
+    public void Out_of_range_numeric_settings_stop_startup(string key, string value) =>
+        // QA L4: refused, never silently clamped.
+        Assert.Throws<InvalidOperationException>(() => Register("Test", new() { ["RateLimiting:" + key] = value }));
 
     [Fact]
     public void Unknown_settings_are_refused() =>

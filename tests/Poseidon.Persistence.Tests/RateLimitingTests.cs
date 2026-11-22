@@ -22,31 +22,41 @@ public sealed class RateLimitingTests
         public override DateTimeOffset GetUtcNow() => Now;
     }
 
-    // Shared in-memory stand-in for the PostgreSQL table: same upsert semantics, atomic under a lock.
-    private sealed class MemoryStore : IRateLimitStore
+    // Shared in-memory stand-in for the PostgreSQL table: same upsert semantics on its OWN clock (the database clock).
+    private sealed class MemoryStore(TimeProvider databaseClock) : IRateLimitStore
     {
         private readonly Dictionary<(string, string), (long Window, long Count)> rows = new();
         public List<string> Hashes { get; } = [];
-        public Task<(long Count, long WindowIndex)> IncrementAsync(RateLimitPolicy policy, string partitionHash, long windowIndex, CancellationToken cancellationToken)
+        public Task<(long Count, TimeSpan Remaining)> IncrementAsync(RateLimitPolicy policy, string partitionHash, CancellationToken cancellationToken)
         {
             lock (rows)
             {
                 Hashes.Add(partitionHash);
-                var next = rows.TryGetValue((policy.Name, partitionHash), out var row) && row.Window >= windowIndex
-                    ? (row.Window, Math.Min(row.Count + 1, RateLimitWindow.Cap(policy))) : (windowIndex, 1L);
+                var now = databaseClock.GetUtcNow();
+                var window = RateLimitWindow.Index(now, policy);
+                var next = rows.TryGetValue((policy.Name, partitionHash), out var row) && row.Window == window
+                    ? (window, Math.Min(row.Count + 1, RateLimitWindow.Cap(policy))) : (window, 1L);
                 rows[(policy.Name, partitionHash)] = next;
-                return Task.FromResult((next.Item2, next.Item1));
+                return Task.FromResult((next.Item2, RateLimitWindow.End(window, policy) - now));
             }
         }
-        public Task<int> DeleteExpiredAsync(DateTimeOffset now, int batchSize, CancellationToken cancellationToken) => Task.FromResult(0);
+        public Task<int> DeleteExpiredAsync(int batchSize, CancellationToken cancellationToken) => Task.FromResult(0);
+    }
+
+    // A store reporting an absurd remaining time (corrupt row or skewed store clock).
+    private sealed class SkewedStore(TimeSpan remaining) : IRateLimitStore
+    {
+        public Task<(long Count, TimeSpan Remaining)> IncrementAsync(RateLimitPolicy policy, string partitionHash, CancellationToken cancellationToken) =>
+            Task.FromResult((RateLimitWindow.Cap(policy), remaining));
+        public Task<int> DeleteExpiredAsync(int batchSize, CancellationToken cancellationToken) => Task.FromResult(0);
     }
 
     private sealed class FailingStore(Exception error) : IRateLimitStore
     {
         public int Calls { get; private set; }
-        public Task<(long Count, long WindowIndex)> IncrementAsync(RateLimitPolicy policy, string partitionHash, long windowIndex, CancellationToken cancellationToken)
+        public Task<(long Count, TimeSpan Remaining)> IncrementAsync(RateLimitPolicy policy, string partitionHash, CancellationToken cancellationToken)
         { Calls++; throw error; }
-        public Task<int> DeleteExpiredAsync(DateTimeOffset now, int batchSize, CancellationToken cancellationToken) => throw error;
+        public Task<int> DeleteExpiredAsync(int batchSize, CancellationToken cancellationToken) => throw error;
     }
 
     private sealed class CapturingLogger : ILogger<SharedRateLimiter>
@@ -93,7 +103,7 @@ public sealed class RateLimitingTests
 
     [Fact]
     public void A_shared_store_cannot_be_used_with_a_per_process_key() =>
-        Assert.Throws<InvalidOperationException>(() => new SharedRateLimiter(RateLimitPartitionKeys.Ephemeral(), new MemoryStore(),
+        Assert.Throws<InvalidOperationException>(() => new SharedRateLimiter(RateLimitPartitionKeys.Ephemeral(), new MemoryStore(TimeProvider.System),
             new LocalRateLimitCounters(TimeProvider.System), TimeProvider.System, Microsoft.Extensions.Logging.Abstractions.NullLogger<SharedRateLimiter>.Instance));
 
     [Theory]
@@ -112,6 +122,9 @@ public sealed class RateLimitingTests
         Assert.Equal(TimeSpan.FromSeconds(450), RateLimitWindow.RetryAfter(Now, index, Policy));
         // Never zero or negative (a lagging instance clock reports the stored, newer window).
         Assert.Equal(TimeSpan.FromSeconds(1), RateLimitWindow.RetryAfter(RateLimitWindow.End(index, Policy), index, Policy));
+        // QA M1: never more than one policy window, whatever the stored window says.
+        Assert.Equal(Policy.Window, RateLimitWindow.RetryAfter(Now, index + 40, Policy));
+        Assert.Equal(Policy.Window, RateLimitWindow.Bound(TimeSpan.FromHours(6), Policy));
         Assert.Equal([RateLimitOutcome.Allowed, RateLimitOutcome.Allowed, RateLimitOutcome.Allowed, RateLimitOutcome.Limited, RateLimitOutcome.LimitedRepeat],
             Enumerable.Range(1, 5).Select(c => RateLimitWindow.Classify(c, Policy)));
         Assert.Equal(5, RateLimitWindow.Cap(Policy));
@@ -123,7 +136,7 @@ public sealed class RateLimitingTests
     public async Task Two_limiters_on_one_store_share_a_window_and_only_one_attempt_sees_the_first_refusal()
     {
         var clock = new Clock(Now);
-        var store = new MemoryStore();
+        var store = new MemoryStore(clock);
         var a = Limiter(store, clock);
         var b = Limiter(store, clock);
         var outcomes = new List<RateLimitOutcome>();
@@ -136,6 +149,27 @@ public sealed class RateLimitingTests
         Assert.Equal((RateLimitSource.Shared, TimeSpan.FromSeconds(450)), (limited.Source, limited.RetryAfter));
         clock.Now = clock.Now.AddMinutes(15);
         Assert.Equal(RateLimitOutcome.Allowed, (await b.AcquireAsync(Policy, ["issuer", "subject"], Ct)).Outcome);
+    }
+
+    [Fact]
+    public async Task Instance_clocks_ahead_or_behind_cannot_move_a_shared_partition_into_another_window()
+    {
+        // QA M1: the store owns the window (database clock); API instance clocks hours apart share one window.
+        var database = new Clock(Now);
+        var store = new MemoryStore(database);
+        var fast = Limiter(store, new Clock(Now.AddHours(6)));
+        var slow = Limiter(store, new Clock(Now.AddHours(-6)));
+        var outcomes = new List<RateLimitDecision>();
+        for (var i = 0; i < 5; i++) outcomes.Add(await (i % 2 == 0 ? fast : slow).AcquireAsync(Policy, ["p"], Ct));
+        Assert.Equal([RateLimitOutcome.Allowed, RateLimitOutcome.Allowed, RateLimitOutcome.Allowed, RateLimitOutcome.Limited, RateLimitOutcome.LimitedRepeat],
+            outcomes.Select(x => x.Outcome));
+        Assert.All(outcomes, x => Assert.Equal(TimeSpan.FromSeconds(450), x.RetryAfter));
+        // When the database window ends, the partition is free again for every instance.
+        database.Now = database.Now.AddMinutes(8);
+        Assert.Equal(RateLimitOutcome.Allowed, (await fast.AcquireAsync(Policy, ["p"], Ct)).Outcome);
+        // A store reporting an hours-long remaining time is capped at the policy window.
+        var capped = await Limiter(new SkewedStore(TimeSpan.FromHours(9)), database).AcquireAsync(Policy, ["p"], Ct);
+        Assert.Equal((RateLimitOutcome.LimitedRepeat, Policy.Window, "900"), (capped.Outcome, capped.RetryAfter, capped.RetryAfterHeader));
     }
 
     [Fact]

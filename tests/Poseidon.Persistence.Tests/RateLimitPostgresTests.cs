@@ -35,11 +35,14 @@ public sealed class RateLimitPostgresTests(RateLimitPostgresFixture fixture) : I
         public override DateTimeOffset GetUtcNow() => Now;
     }
 
+    private static RateLimitDataSource Source(NpgsqlDataSource source) => new(source);
+
     private SharedRateLimiter Instance(NpgsqlDataSource source, TimeProvider clock) =>
-        new(RateLimitPartitionKeys.FromSecret(Secret), new PostgresRateLimitStore(source), new LocalRateLimitCounters(clock), clock,
+        new(RateLimitPartitionKeys.FromSecret(Secret), new PostgresRateLimitStore(Source(source)), new LocalRateLimitCounters(clock), clock,
             Microsoft.Extensions.Logging.Abstractions.NullLogger<SharedRateLimiter>.Instance);
 
-    private static RateLimitPolicy Policy(int limit = 4) => new("it." + Guid.NewGuid().ToString("N")[..12], limit, TimeSpan.FromMinutes(15));
+    // Database-clock windows: a one-day window (UTC-midnight boundary) keeps each sequence inside one window in practice.
+    private static RateLimitPolicy Policy(int limit = 4) => new("it." + Guid.NewGuid().ToString("N")[..12], limit, TimeSpan.FromDays(1));
 
     [Fact]
     public async Task Two_instances_share_one_counter_and_store_only_the_keyed_hash()
@@ -54,7 +57,7 @@ public sealed class RateLimitPostgresTests(RateLimitPostgresFixture fixture) : I
         Assert.Equal([RateLimitOutcome.Allowed, RateLimitOutcome.Allowed, RateLimitOutcome.Allowed, RateLimitOutcome.Allowed, RateLimitOutcome.Limited,
             RateLimitOutcome.LimitedRepeat], outcomes.Select(x => x.Outcome));
         Assert.All(outcomes, x => Assert.Equal(RateLimitSource.Shared, x.Source));
-        Assert.Equal(TimeSpan.FromSeconds(450), outcomes[^1].RetryAfter);
+        Assert.InRange(outcomes[^1].RetryAfter, TimeSpan.FromSeconds(1), policy.Window);
 
         await using var read = sourceA.CreateCommand("""SELECT "PartitionHash", "Count" FROM ratelimit."RateLimitCounters" WHERE "Policy" = @p""");
         read.Parameters.AddWithValue("p", policy.Name);
@@ -66,9 +69,9 @@ public sealed class RateLimitPostgresTests(RateLimitPostgresFixture fixture) : I
         Assert.Equal(RateLimitWindow.Cap(policy), reader.GetInt64(1)); // capped, never unbounded
         Assert.False(await reader.ReadAsync(Ct));
 
-        // A new window restarts the shared counter for both instances.
-        clock.Now = clock.Now.AddMinutes(15);
-        Assert.Equal(RateLimitOutcome.Allowed, (await b.AcquireAsync(policy, ["https://idp.example.invalid", "subject-4711"], Ct)).Outcome);
+        // Advancing an instance clock does not open a new window: the database clock owns it (QA M1).
+        clock.Now = clock.Now.AddDays(2);
+        Assert.Equal(RateLimitOutcome.LimitedRepeat, (await b.AcquireAsync(policy, ["https://idp.example.invalid", "subject-4711"], Ct)).Outcome);
     }
 
     [Fact]
@@ -87,41 +90,57 @@ public sealed class RateLimitPostgresTests(RateLimitPostgresFixture fixture) : I
     }
 
     [Fact]
-    public async Task A_lagging_instance_clock_never_resets_a_newer_window()
+    public async Task Instance_clocks_hours_ahead_or_behind_share_the_database_window_and_never_lock_out_beyond_it()
     {
+        // QA M1: a fast-clock node can no longer push a partition into a future window.
         await using var source = NpgsqlDataSource.Create(fixture.ConnectionString);
-        var ahead = new Clock(Now.AddMinutes(15));
-        var behind = new Clock(Now);
         var policy = Policy(limit: 2);
-        var fast = Instance(source, ahead);
-        var slow = Instance(source, behind);
-        await fast.AcquireAsync(policy, ["p"], Ct);
-        await fast.AcquireAsync(policy, ["p"], Ct);
-        var lagging = await slow.AcquireAsync(policy, ["p"], Ct);
-        Assert.Equal(RateLimitOutcome.Limited, lagging.Outcome);
-        // Retry-After follows the stored (newer) window, not the lagging clock's.
-        Assert.Equal(RateLimitWindow.End(RateLimitWindow.Index(ahead.Now, policy), policy) - behind.Now, lagging.RetryAfter);
+        var fast = Instance(source, new Clock(DateTimeOffset.UtcNow.AddHours(6)));
+        var slow = Instance(source, new Clock(DateTimeOffset.UtcNow.AddHours(-6)));
+        var results = new[]
+        {
+            await fast.AcquireAsync(policy, ["p"], Ct), await slow.AcquireAsync(policy, ["p"], Ct),
+            await fast.AcquireAsync(policy, ["p"], Ct), await slow.AcquireAsync(policy, ["p"], Ct)
+        };
+        Assert.Equal([RateLimitOutcome.Allowed, RateLimitOutcome.Allowed, RateLimitOutcome.Limited, RateLimitOutcome.LimitedRepeat], results.Select(x => x.Outcome));
+        Assert.All(results, x => Assert.InRange(x.RetryAfter, TimeSpan.FromSeconds(1), policy.Window));
+
+        await using var read = source.CreateCommand("""
+            SELECT "WindowIndex" = floor(extract(epoch FROM now()) / 86400)::bigint, "ExpiresAt" <= now() + interval '1 day'
+            FROM ratelimit."RateLimitCounters" WHERE "Policy" = @p
+            """);
+        read.Parameters.AddWithValue("p", policy.Name);
+        await using var reader = await read.ExecuteReaderAsync(Ct);
+        Assert.True(await reader.ReadAsync(Ct));
+        Assert.True(reader.GetBoolean(0) && reader.GetBoolean(1), "The stored window must be the database clock's current window.");
     }
 
     [Fact]
-    public async Task Expired_counters_are_deleted_in_bounded_batches_and_current_ones_stay()
+    public async Task Expired_counters_are_deleted_by_the_database_clock_in_bounded_batches_and_current_ones_stay()
     {
         await using var source = NpgsqlDataSource.Create(fixture.ConnectionString);
-        var clock = new Clock(Now);
-        var limiter = Instance(source, clock);
         var policy = Policy();
-        for (var i = 0; i < 7; i++) await limiter.AcquireAsync(policy, ["old-" + i], Ct);
-        clock.Now = clock.Now.AddMinutes(15);
-        await limiter.AcquireAsync(policy, ["current"], Ct);
-        var store = new PostgresRateLimitStore(source);
+        // Synthetic expired rows (test-only raw insert); the instance clock is irrelevant to expiry (QA L1).
+        for (var i = 0; i < 7; i++)
+        {
+            await using var insert = source.CreateCommand("""
+                INSERT INTO ratelimit."RateLimitCounters" ("Policy", "PartitionHash", "WindowIndex", "Count", "ExpiresAt")
+                VALUES (@p, @h, 1, 1, now() - interval '1 hour')
+                """);
+            insert.Parameters.AddWithValue("p", policy.Name);
+            insert.Parameters.AddWithValue("h", Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(BitConverter.GetBytes(i))).ToLowerInvariant());
+            await insert.ExecuteNonQueryAsync(Ct);
+        }
+        await Instance(source, new Clock(DateTimeOffset.UtcNow.AddDays(3))).AcquireAsync(policy, ["current"], Ct);
+        var store = new PostgresRateLimitStore(Source(source));
         // Other tests' rows may also be expired; delete until this policy has no expired rows, 3 at most per batch.
         var batches = 0;
-        while (await Count(source, policy, expiredAt: clock.Now) > 0)
+        while (await Count(source, policy, expired: true) > 0)
         {
-            Assert.InRange(await store.DeleteExpiredAsync(clock.Now, 3, Ct), 1, 3);
+            Assert.InRange(await store.DeleteExpiredAsync(3, Ct), 1, 3);
             Assert.True(++batches < 100);
         }
-        Assert.Equal(1, await Count(source, policy, expiredAt: null));
+        Assert.Equal(1, await Count(source, policy, expired: false));
     }
 
     [Fact]
@@ -136,13 +155,12 @@ public sealed class RateLimitPostgresTests(RateLimitPostgresFixture fixture) : I
         Assert.Equal(("23514", "CK_RateLimitCounters_Hash"), (error.SqlState, error.ConstraintName));
     }
 
-    private static async Task<long> Count(NpgsqlDataSource source, RateLimitPolicy policy, DateTimeOffset? expiredAt)
+    private static async Task<long> Count(NpgsqlDataSource source, RateLimitPolicy policy, bool expired)
     {
-        await using var command = source.CreateCommand(expiredAt == null
-            ? """SELECT count(*) FROM ratelimit."RateLimitCounters" WHERE "Policy" = @p"""
-            : """SELECT count(*) FROM ratelimit."RateLimitCounters" WHERE "Policy" = @p AND "ExpiresAt" < @now""");
+        await using var command = source.CreateCommand(expired
+            ? """SELECT count(*) FROM ratelimit."RateLimitCounters" WHERE "Policy" = @p AND "ExpiresAt" < now()"""
+            : """SELECT count(*) FROM ratelimit."RateLimitCounters" WHERE "Policy" = @p""");
         command.Parameters.AddWithValue("p", policy.Name);
-        if (expiredAt != null) command.Parameters.AddWithValue("now", expiredAt.Value);
         return (long)(await command.ExecuteScalarAsync())!;
     }
 }

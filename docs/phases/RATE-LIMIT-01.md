@@ -14,8 +14,9 @@ Branch `feature/rate-limit-20261122` (base main 36d5d183). Canonical count uncha
   - `RateLimitPartitionKeys`: HMAC-SHA256 over length-prefixed policy + parts, key = HKDF(operator secret,
     `poseidon.ratelimit.partition.v1`). Issuer/subject/tenant/actor ids are never stored; only a 64-hex hash.
   - `PostgresRateLimitStore`: one-statement `INSERT … ON CONFLICT DO UPDATE … RETURNING` (row lock under READ COMMITTED;
-    no SERIALIZABLE transaction, so no 40001 handling is needed). Older window ⇒ restart at 1; a newer stored window (another
-    instance's clock ahead) keeps counting, so a lagging clock never resets a counter. Count capped at limit+2.
+    no SERIALIZABLE transaction, so no 40001 handling is needed). The window index, expiry and remaining time are computed
+    from the **database clock** (`now()`), the single time source of all instances; a stored row of any other window
+    restarts at 1. Count capped at limit+2. Retry-After is bounded to [1 s, policy window].
   - `LocalRateLimitCounters`: bounded in-process counters (USER-ADMIN-02 QA N4 semantics kept: fail closed when full of
     current-window partitions, only expired entries evicted).
   - `SharedRateLimiter`: shared store when configured; on store failure (Npgsql/DbException/timeout/socket/IO) it falls back
@@ -40,13 +41,37 @@ Branch `feature/rate-limit-20261122` (base main 36d5d183). Canonical count uncha
   counters at 10 000 entries, now bounded fail-closed). Every 429 now carries `Retry-After` (delta-seconds to window end);
   problem bodies, codes and the OpenAPI contract are unchanged.
 
+## QA fixes (independent security QA on fe53e398: ACCEPT-WITH-NOTES)
+- M1: API-instance clocks no longer choose the window (a fast-clock node could push a partition into a future window and
+  lock it out for hours). Window/expiry/remaining come from PostgreSQL `now()`; Retry-After is capped at the policy window.
+  Tests: unit `Instance_clocks_ahead_or_behind_cannot_move_a_shared_partition_into_another_window`, PG
+  `Instance_clocks_hours_ahead_or_behind_share_the_database_window_and_never_lock_out_beyond_it`.
+- M2: the S1 raw-execution guard (`S1AuditedWriteArchitectureTests`) now also forbids `ExecuteReader*`/`ExecuteScalar*`
+  and attributes every IL call site to its outermost declaring type. The only allow-list entry is
+  `PostgresRateLimitStore` (`ExecuteReaderAsync`, `ExecuteNonQueryAsync`); every forbidden name referenced in assembly
+  metadata must be explained by an allow-listed call. Negative test: a probe type in the test assembly is detected.
+  The cleanup uses `ExecuteNonQueryAsync` openly again (the earlier scalar workaround is removed).
+- L1: expiry cleanup judges `"ExpiresAt" < now()` (database clock), not an instance clock.
+- L4: out-of-range `LocalCapacity`, `FallbackSeconds`, `CleanupIntervalSeconds`, `CleanupBatchSize` stop startup.
+- N1: the throttling pool is registered as `RateLimitDataSource` (wrapper type), never a bare `NpgsqlDataSource`.
+- L2 (local "limited-until" cache) not done: both endpoints are authenticated; noted for later hardening.
+- I1 (migration id `20261124110001` also used by invite-email): left for the coordinator's integration renumbering.
+
+## Operations notes
+- Fallback and the breaker are **per process**: while the store is unavailable (or the 10-connection pool is exhausted),
+  each of N instances enforces its own quota, so the effective limit is up to N × limit, and a flapping store can let both
+  the local and the shared quota be used within one window. It is enforced (never fail-open) and metered
+  (`poseidon.ratelimit.store.unavailable`, warning 4290). On a hanging store, in-flight requests wait up to 3 s (connect)
+  + 2 s (command) before falling back.
+- Counter correctness depends on the database clock only; API instance clock skew has no effect.
+
 ## Controlled raw-SQL design (AGENTS.md)
 Rate-limit counters are technical throttling state, not business mutations, and contain no tenant/actor/PII. The two
 statements in `PostgresRateLimitStore` (upsert, bounded expiry delete) are the only raw writers, run outside the audited
 business SaveChanges path deliberately (an audit row per attempt would itself be an amplification vector; refused attempts are
-still audited once per window by the existing SecurityEvent path). The S1 metadata guard (no `ExecuteNonQuery*` in business
-assemblies) is unchanged; the cleanup returns its count as a scalar. `RateLimitRawSqlBoundaryTests` pins both statements to
-`ratelimit."RateLimitCounters"` and asserts no other backend source (migrations excepted) references that table.
+still audited once per window by the existing SecurityEvent path). The S1 IL guard allow-lists exactly this store for raw ADO.NET
+execution (see QA fixes M2). `RateLimitRawSqlBoundaryTests` pins both statements to `ratelimit."RateLimitCounters"` and asserts
+no other backend source (migrations excepted) references that table.
 
 ## Not in scope / deferred decisions
 - Invitation **create/reissue** and the OIDC `/login` challenge were not rate limited before; adding a 429 there changes the
@@ -60,13 +85,13 @@ assemblies) is unchanged; the cleanup returns its count as a scalar. `RateLimitR
 |---|---|
 | `dotnet build Poseidon.slnx -c Release` | 0 warnings, 0 errors |
 | `dotnet ef migrations has-pending-model-changes` | No changes since the last migration |
-| Persistence tests, non-Integration | 185/185 passed (incl. `RateLimitingTests` 15/15) |
+| Persistence tests, non-Integration (after QA fixes) | 186/186 passed |
 | Domain tests | 1650/1650 passed |
-| API tests, non-Integration, non-Performance | 506/506 passed (incl. RATE-LIMIT-01 unit 11/11) |
-| `RateLimitPostgresTests` (two instances on one DB, 40 concurrent attempts → exactly 1 `Limited`, lagging clock, bounded cleanup, DB check constraint) | DEFERRED to CI (no local Docker/PostgreSQL by instruction) |
-| API invitation integration test (Retry-After assertion added) | DEFERRED to CI |
-| Repository secret scan | DEFERRED to CI (needs the review trust variable) |
-| Independent QA | PENDING |
+| API tests, non-Integration, non-Performance (after QA fixes) | 514/514 passed |
+| `RateLimitPostgresTests` (two instances on one DB, 40 concurrent attempts → exactly 1 `Limited`, ±6 h instance clocks, DB-clock bounded cleanup, DB check constraint) | not run locally (no Docker/PostgreSQL by instruction); fe53e398 version passed in CI run 45036847472; QA-fix version: CI |
+| API invitation integration test (Retry-After assertion added) | CI (fe53e398: passed) |
+| Repository secret scan | CI (fe53e398: passed) |
+| Independent QA | fe53e398: ACCEPT-WITH-NOTES; M1/M2/L1/L3/L4/N1 addressed in the follow-up commit |
 
 Tests authored: `tests/Poseidon.Persistence.Tests/RateLimitingTests.cs`, `RateLimitPostgresTests.cs`,
 `tests/Poseidon.Api.Tests/RateLimitingConfigurationTests.cs`, `RateLimitRawSqlBoundaryTests.cs`; updated

@@ -3,7 +3,7 @@
 ## RATE-LIMIT-01 — paylaşımlı (PostgreSQL) hız sınırlama; YAZILDI, birim testleri yerelde geçti, PG testleri CI'da (22.11.2026)
 - `feature/rate-limit-20261122` (main 36d5d183). Canonical sayım değişmez. USER-ADMIN-02 açık maddesi "process-local limiter" kapatıldı (opt-in `RateLimiting:Store=Postgres`).
 - HMAC anahtarlı bölüm özeti (ham kimlik/IP/token saklanmaz), tek ifadeli atomik sayaç, sınırlı arka plan temizliği, mağaza yoksa yerel sınırlayıcıya loglu/metrikli geri dönüş, 429 + Retry-After. Ayrıntı: `docs/phases/RATE-LIMIT-01.md`.
-- Yerel: build 0 uyarı; Persistence 185/185, Domain 1650/1650, API birim 506/506. PG entegrasyon testleri DEFERRED (CI). Açık: davet oluşturma/login sınırı (sözleşme değişikliği), bağımsız QA.
+- Bağımsız QA: ACCEPT-WITH-NOTES; M1 (pencere DB saatinden), M2 (S1 IL koruması + tek izinli tip), L1, L4, N1 düzeltildi. Yerel: build 0 uyarı; Persistence 186/186, Domain 1650/1650, API birim 514/514; PG testleri CI'da (fe53e398 yeşil). Açık: davet oluşturma/login sınırı (sözleşme değişikliği), migration numarası (entegrasyonda).
 
 ## Mobil ekran görüntüleri paketi — 196 görüntü, 13 kılavuz; QA notlarla, kapı CI bekleniyor (22.11.2026)
 - `integration/help-mobile-20261122` (main c4915375 + `feature/help-screenshots-mobile-20261122`). Canonical sayım değişmez.
