@@ -3909,7 +3909,12 @@
       "backToList": "Tüm kılavuzlar",
       "notAvailable": "Bu adres için gösterilecek kılavuz yok.",
       "manualTitle": "Kullanım kılavuzu",
-      "manualBody": "Resimli kullanım kılavuzu (Türkçe ve İngilizce, HTML ve PDF) aynı kılavuzlardan uygulama dışında üretilir ve bu sürüme dahil değildir. Güncel kopyayı yöneticinizden isteyin. Uzman incelemesi kaydedilene kadar taslaktır.",
+      "manualBody": "Resimli kullanım kılavuzu bu kılavuzlardan ve sentetik lab verisiyle alınmış ekran görüntülerinden üretilir.",
+      "manualDraft": "Taslak: kılavuz henüz bir uzman tarafından incelenmedi. Farklılık görürseniz sayfa kılavuzlarını esas alın.",
+      "manualOtherLocales": "Kılavuz yalnızca Türkçe ve İngilizce olarak sunulur.",
+      "manualTr": "Kullanım kılavuzu, Türkçe (PDF, {{size}})",
+      "manualEn": "Kullanım kılavuzu, İngilizce (PDF, {{size}})",
+      "manualOffline": "Kılavuz yeniden çevrimiçi olduğunuzda indirilebilir.",
       "sessionUnavailable": "Oturumunuz denetlenemediği için kılavuz listelenmiyor. Sayfayı yenileyip tekrar deneyin.",
       "noAccess": "Hesabınızın bu çalışma alanında okuma yetkisi olmadığı için kılavuz listelenmiyor.",
       "resultCount": "Gösterilen kılavuz: {{count}}"

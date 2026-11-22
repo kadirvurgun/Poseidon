@@ -1,5 +1,11 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
+
+## HELP-MANUAL-DOWNLOAD-01 — CI'da yeniden üretilen 196 görüntü + uygulama içinden TR/EN PDF kılavuz; yazıldı, QA bekleniyor (23.11.2026)
+- `feature/manual-download-20261123` (entegrasyon başı 4f7d87ca). Canonical sayım değişmez: 114/121 iş, 932/970 SP.
+- Zorunlu olmayan `help-screenshots` iş akışı (Ubuntu, sentetik lab): run 45075963418 başarılı; 196 written + 196/196 match. `/app/help` artık TR/EN PDF indirme bağlantıları sunar; boyut, taslak etiketi ve `reviewed:false` gösterilir. PDF'ler çevrimdışı önbelleğe girmez. Ayrıntı: `docs/phases/HELP-MANUAL-DOWNLOAD-01.md`.
+- Açık: bağımsız QA, UG-6 insan onayı, dil seçicide küre simgesinin metinle örtüşmesi (görüntülerde görünür, önceden de vardı).
+
 ## ADMIN-POLISH-BUNDLE-20261122 — mobil UI + yardım merkezi + davet e-postası + hız sınırlama entegrasyonu; yerelde doğrulandı, PG/CI bekleniyor (22.11.2026)
 - `integration/admin-polish-20261122` (main 36d5d183) ← 7f196f8c, a41fe952, 4ac9a7d6, 34205ea9. Canonical sayım değişmez: 114/121 iş, 932/970 SP (pilot işleri insan kapısı).
 - QA: mobil ACCEPT-WITH-NOTES→7f196f8c; yardım merkezi REJECT→a41fe952; davet e-postası güvenlik QA REJECT→a7418de1/4ac9a7d6; hız sınırlama ACCEPT-WITH-NOTES→34205ea9.

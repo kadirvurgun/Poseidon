@@ -18721,5 +18721,25 @@
     "accepted_tasks_added": 0,
     "accepted_story_points_added": 0,
     "report": "docs/phases/ADMIN-POLISH-BUNDLE-20261122.md"
+  },
+  "help_manual_download_20261123": {
+    "status": "AUTHORED_UNVERIFIED_QA_PENDING",
+    "branch": "feature/manual-download-20261123",
+    "base": "4f7d87ca",
+    "scope": "UG-2 screenshots regenerated in the non-required help-screenshots workflow (Ubuntu synthetic lab, badge placement 7f196f8c); TR/EN user manual PDFs shipped as hashed static assets and downloadable from /app/help (draft, reviewed:false)",
+    "canonical_effect": "none; 114/121 tasks, 932/970 SP unchanged",
+    "evidence": {
+      "screenshot_workflow_runs": {
+        "45075400512": "failure (NSS symbol in libsmime3 on Linux)",
+        "45075963418": "success: update 196 written, compare 196/196 match, manual PDF built"
+      },
+      "generator_commit": "5e7e2e0ebac2dd5d406524a06229f6276324dc1d"
+    },
+    "open": [
+      "independent QA",
+      "UG-6 human SME/UX review",
+      "language selector globe icon overlaps text (pre-existing, visible in screenshots)"
+    ],
+    "report": "docs/phases/HELP-MANUAL-DOWNLOAD-01.md"
   }
 }

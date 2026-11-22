@@ -3909,7 +3909,12 @@
       "backToList": "Všechny návody",
       "notAvailable": "Pro tuto adresu není žádný návod k zobrazení.",
       "manualTitle": "Uživatelská příručka",
-      "manualBody": "Ilustrovaná uživatelská příručka (turecky a anglicky, HTML a PDF) se vytváří ze stejných návodů mimo aplikaci a není součástí tohoto sestavení. Aktuální kopii si vyžádejte od správce. Zůstává konceptem, dokud není zaznamenána odborná kontrola.",
+      "manualBody": "Ilustrovaná uživatelská příručka se vytváří z těchto návodů a jejich snímků obrazovky se syntetickými laboratorními daty.",
+      "manualDraft": "Koncept: příručku zatím nezkontroloval odborník. Pokud se něco liší, řiďte se návody ke stránkám.",
+      "manualOtherLocales": "Příručka je k dispozici pouze v turečtině a angličtině.",
+      "manualTr": "Uživatelská příručka, turečtina (PDF, {{size}})",
+      "manualEn": "Uživatelská příručka, angličtina (PDF, {{size}})",
+      "manualOffline": "Příručku lze stáhnout, až budete znovu online.",
       "sessionUnavailable": "Vaši relaci se nepodařilo ověřit, proto se nezobrazují žádné návody. Obnovte stránku a zkuste to znovu.",
       "noAccess": "Váš účet nemá v tomto pracovním prostoru oprávnění ke čtení, proto se nezobrazují žádné návody.",
       "resultCount": "Zobrazené návody: {{count}}"

@@ -3909,7 +3909,12 @@
       "backToList": "Kaikki ohjeet",
       "notAvailable": "Tälle osoitteelle ei ole näytettävää ohjetta.",
       "manualTitle": "Käyttöopas",
-      "manualBody": "Kuvitettu käyttöopas (turkiksi ja englanniksi, HTML ja PDF) tuotetaan samoista ohjeista sovelluksen ulkopuolella, eikä se sisälly tähän versioon. Pyydä ajantasainen kappale ylläpitäjältä. Se on luonnos, kunnes asiantuntijatarkistus on kirjattu.",
+      "manualBody": "Kuvitettu käyttöopas luodaan näistä samoista ohjeista ja niiden synteettisellä laboratoriodatalla otetuista kuvakaappauksista.",
+      "manualDraft": "Luonnos: asiantuntija ei ole vielä tarkistanut opasta. Jos jokin poikkeaa, noudata sivujen ohjeita.",
+      "manualOtherLocales": "Opas on saatavilla vain turkiksi ja englanniksi.",
+      "manualTr": "Käyttöopas, turkki (PDF, {{size}})",
+      "manualEn": "Käyttöopas, englanti (PDF, {{size}})",
+      "manualOffline": "Oppaan voi ladata, kun olet taas verkossa.",
       "sessionUnavailable": "Istuntoasi ei voitu tarkistaa, joten ohjeita ei näytetä. Lataa sivu uudelleen ja yritä uudestaan.",
       "noAccess": "Tililläsi ei ole lukuoikeutta tähän työtilaan, joten ohjeita ei näytetä.",
       "resultCount": "Näytettyjä ohjeita: {{count}}"

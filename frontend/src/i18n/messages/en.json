@@ -3909,7 +3909,12 @@
       "backToList": "All guides",
       "notAvailable": "No guide to show for this address.",
       "manualTitle": "User manual",
-      "manualBody": "The illustrated user manual (Turkish and English, HTML and PDF) is generated from these same guides outside the app and is not included in this build. Ask your administrator for the current copy. It stays a draft until an expert review is recorded.",
+      "manualBody": "The illustrated user manual is generated from these same guides and their screenshots of synthetic lab data.",
+      "manualDraft": "Draft: the manual has not been reviewed by an expert yet. Check it against the page guides if anything differs.",
+      "manualOtherLocales": "The manual is available in Turkish and English only.",
+      "manualTr": "User manual, Turkish (PDF, {{size}})",
+      "manualEn": "User manual, English (PDF, {{size}})",
+      "manualOffline": "The manual can be downloaded when you are back online.",
       "sessionUnavailable": "Your session could not be checked, so no guides are listed. Reload the page and try again.",
       "noAccess": "Your account has no read access to this workspace, so no guides are listed.",
       "resultCount": "Guides shown: {{count}}"

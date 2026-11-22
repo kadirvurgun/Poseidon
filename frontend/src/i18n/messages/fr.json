@@ -3909,7 +3909,12 @@
       "backToList": "Tous les guides",
       "notAvailable": "Aucun guide à afficher pour cette adresse.",
       "manualTitle": "Manuel d’utilisation",
-      "manualBody": "Le manuel d’utilisation illustré (turc et anglais, HTML et PDF) est généré hors de l’application à partir de ces mêmes guides et n’est pas inclus dans cette version. Demandez l’exemplaire actuel à votre administrateur. Il reste un brouillon tant qu’une relecture d’expert n’est pas enregistrée.",
+      "manualBody": "Le manuel utilisateur illustré est généré à partir de ces mêmes guides et de leurs captures d’écran de données de laboratoire synthétiques.",
+      "manualDraft": "Brouillon : le manuel n’a pas encore été relu par un expert. En cas d’écart, référez-vous aux guides des pages.",
+      "manualOtherLocales": "Le manuel n’est disponible qu’en turc et en anglais.",
+      "manualTr": "Manuel utilisateur, turc (PDF, {{size}})",
+      "manualEn": "Manuel utilisateur, anglais (PDF, {{size}})",
+      "manualOffline": "Le manuel pourra être téléchargé une fois la connexion rétablie.",
       "sessionUnavailable": "Votre session n’a pas pu être vérifiée ; aucun guide n’est donc affiché. Rechargez la page et réessayez.",
       "noAccess": "Votre compte n’a pas d’accès en lecture à cet espace de travail ; aucun guide n’est donc affiché.",
       "resultCount": "Guides affichés : {{count}}"

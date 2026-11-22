@@ -3909,7 +3909,12 @@
       "backToList": "Todas las guías",
       "notAvailable": "No hay ninguna guía para esta dirección.",
       "manualTitle": "Manual de usuario",
-      "manualBody": "El manual de usuario ilustrado (turco e inglés, HTML y PDF) se genera fuera de la aplicación a partir de estas mismas guías y no se incluye en esta versión. Solicite la copia actual a su administrador. Sigue siendo un borrador hasta que se registre una revisión experta.",
+      "manualBody": "El manual de usuario ilustrado se genera a partir de estas mismas guías y de sus capturas de pantalla con datos sintéticos de laboratorio.",
+      "manualDraft": "Borrador: el manual aún no ha sido revisado por un experto. Si algo difiere, consulte las guías de las páginas.",
+      "manualOtherLocales": "El manual solo está disponible en turco e inglés.",
+      "manualTr": "Manual de usuario, turco (PDF, {{size}})",
+      "manualEn": "Manual de usuario, inglés (PDF, {{size}})",
+      "manualOffline": "El manual se podrá descargar cuando vuelva a estar en línea.",
       "sessionUnavailable": "No se pudo comprobar su sesión, por lo que no se muestra ninguna guía. Recargue la página e inténtelo de nuevo.",
       "noAccess": "Su cuenta no tiene acceso de lectura a este espacio de trabajo, por lo que no se muestra ninguna guía.",
       "resultCount": "Guías mostradas: {{count}}"

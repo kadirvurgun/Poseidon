@@ -59,6 +59,11 @@
 .help-center-guide > h2 { margin: 12px 0 4px; font-size: 1.15rem; }
 .help-center-manual { border-top: 1px solid var(--border); padding-top: 12px; }
 .help-center-manual h2 { font-size: 1rem; margin: 0 0 6px; }
+.help-center-manual-downloads { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; }
+.help-center-manual-downloads li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.help-center-manual-downloads a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--primary); text-decoration: underline; text-underline-offset: 2px; }
+.help-center-manual-downloads a:focus-visible { outline: 2px solid var(--ring); outline-offset: 2px; border-radius: var(--radius-sm); }
+.help-center-manual-downloads a > svg { width: 16px; height: 16px; flex: none; }
 .enterprise-help-center-link { display: flex; align-items: center; gap: 8px; min-height: 44px; padding-inline: 10px; margin-top: 8px; color: var(--sidebar-foreground); text-decoration: none; border-radius: var(--radius-sm); font-size: 13px; }
 .enterprise-help-center-link:hover, .enterprise-help-center-link[aria-current='page'] { background: var(--sidebar-accent); }
 .enterprise-help-center-link:focus-visible { outline: 2px solid var(--ring); outline-offset: -2px; }

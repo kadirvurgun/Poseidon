@@ -1,5 +1,5 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
-import { ArrowLeft, ArrowUpRight, Search } from 'lucide-react'
+import { ArrowLeft, ArrowUpRight, Download, Search } from 'lucide-react'
 import { useAppLanguage, type Locale as AppLocale } from '../i18n'
 import { localizedCopy, localizedText } from '../i18n/messages'
 import { Button } from '../components/ui/button'
@@ -14,6 +14,7 @@ import { HelpGuideContent, type HelpDestination } from './HelpPanel'
 import type { HelpLinkPolicy } from './HelpMarkdown'
 import { helpLocaleFor, loadHelpDocument } from './help-content'
 import { isDraftTranslationLocale, type HelpDocument, type HelpLocale } from './help-model'
+import { formatManualSize, userManualDownloads, userManualOtherLocale, userManualReviewed } from './user-manual'
 import '../product/enterprise.css'
 import './help-panel.css'
 
@@ -156,10 +157,19 @@ export function HelpCenter({ language, access, online, navigation, onNavigate }:
         </section>)}
       </div>
     </section>)}
-    <section className="help-center-manual" aria-labelledby={`${id}-manual`}>
+    {/* HELP-MANUAL-DOWNLOAD-01: same audience as the guide list (a signed-in reader); the PDFs are not offline-cached. */}
+    {access === 'allowed' && <section className="help-center-manual" aria-labelledby={`${id}-manual`}>
       <h2 id={`${id}-manual`}>{t.manualTitle}</h2>
       <p>{t.manualBody}</p>
-    </section>
+      {!userManualReviewed && <p className="help-guide-draft" role="note" data-testid="help-center-manual-draft">{t.manualDraft}</p>}
+      {userManualOtherLocale(language) && <p role="note">{t.manualOtherLocales}</p>}
+      {online ? <ul className="help-center-manual-downloads">{userManualDownloads(language).map(item => <li key={item.locale}>
+        <a href={item.url} download={item.fileName} type="application/pdf" hrefLang={item.locale} data-testid={`help-center-manual-${item.locale}`}>
+          <Download aria-hidden="true"/>{(item.locale === 'tr' ? t.manualTr : t.manualEn).replace('{{size}}', formatManualSize(item.bytes, language))}
+        </a>
+        {!userManualReviewed && <span className="help-center-badge">{t.draftBadge}</span>}
+      </li>)}</ul> : <p>{t.manualOffline}</p>}
+    </section>}
   </div>
 }
 

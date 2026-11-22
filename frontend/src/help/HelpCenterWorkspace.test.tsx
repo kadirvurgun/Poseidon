@@ -125,16 +125,57 @@ describe('help center', () => {
     render(<HelpCenter language="en" access="allowed" online={false} navigation={ready()} onNavigate={vi.fn()}/>)
     expect(screen.getByRole('status')).toHaveTextContent('You are offline')
     expect(screen.queryAllByRole('link')).toHaveLength(0)
-    // The manual is described honestly: not bundled in this build.
+    // Offline: the PDFs are not in the offline cache, so no download link is offered.
     expect(screen.getByRole('heading', { name: 'User manual' })).toBeVisible()
-    expect(screen.getByText(/not included in this build/)).toBeVisible()
+    expect(screen.getByText('The manual can be downloaded when you are back online.')).toBeVisible()
+    expect(screen.queryByTestId('help-center-manual-en')).toBeNull()
+  })
+
+  it('offers the TR and EN manual PDFs with size and a draft label to a signed-in reader only', async () => {
+    const { fetcher } = mount()
+    const manual = screen.getByRole('region', { name: 'User manual' })
+    const en = within(manual).getByRole('link', { name: /^User manual, English \(PDF, \d+(\.\d)? MB\)$/ })
+    const tr = within(manual).getByRole('link', { name: /^User manual, Turkish \(PDF, \d+(\.\d)? MB\)$/ })
+    expect(en).toHaveAttribute('download', 'poseidon-user-manual-en.pdf')
+    expect(tr).toHaveAttribute('download', 'poseidon-user-manual-tr.pdf')
+    expect(en).toHaveAttribute('type', 'application/pdf')
+    expect(en.getAttribute('href')).toMatch(/poseidon-user-manual-en.*\.pdf$/)
+    // The reader language comes first; reviewed:false keeps a draft note and a draft badge on each file.
+    expect(within(manual).getAllByRole('link').map(link => link.getAttribute('hreflang'))).toEqual(['en', 'tr'])
+    expect(within(manual).getByTestId('help-center-manual-draft')).toHaveTextContent('has not been reviewed by an expert')
+    expect(within(manual).getAllByText('Draft')).toHaveLength(2)
+    expect(within(manual).queryByText(/Turkish and English only/)).toBeNull()
+    expect(screen.queryByText(/reviewed and approved|approved manual/i)).toBeNull()
+    expect(fetcher).not.toHaveBeenCalled()
+    cleanup()
+    // Not a signed-in reader: no manual section, no link.
+    for (const access of ['signedOut', 'denied', 'unavailable', 'pending'] as const) {
+      const view = render(<HelpCenter language="en" access={access} online navigation={ready()} onNavigate={vi.fn()}/>)
+      expect(screen.queryByRole('region', { name: 'User manual' })).toBeNull()
+      expect(screen.queryByTestId('help-center-manual-en')).toBeNull()
+      view.unmount()
+    }
+  })
+
+  it('offers TR first in Turkish and notes TR/EN only for other languages', async () => {
+    await act(async () => { await changeAppLanguage('tr', false) })
+    const tr = render(<HelpCenter language="tr" access="allowed" online navigation={ready()} onNavigate={vi.fn()}/>)
+    const manual = screen.getByRole('region', { name: 'Kullanım kılavuzu' })
+    expect(within(manual).getAllByRole('link').map(link => link.getAttribute('hreflang'))).toEqual(['tr', 'en'])
+    expect(within(manual).getByRole('link', { name: /^Kullanım kılavuzu, Türkçe \(PDF, \d+(,\d)? MB\)$/ })).toBeVisible()
+    tr.unmount()
+    await act(async () => { await changeAppLanguage('de', false) })
+    render(<HelpCenter language="de" access="allowed" online navigation={ready()} onNavigate={vi.fn()}/>)
+    const de = screen.getByRole('region', { name: 'Benutzerhandbuch' })
+    expect(within(de).getByText('Das Handbuch ist nur auf Türkisch und Englisch verfügbar.')).toBeVisible()
+    expect(within(de).getAllByRole('link').map(link => link.getAttribute('hreflang'))).toEqual(['en', 'tr'])
   })
 
   it('shows the machine-drafted, not-reviewed notice for a draft locale and never for EN', async () => {
     await act(async () => { await changeAppLanguage('de', false) })
     mount({ language: 'de' })
     expect(screen.getByTestId('help-center-translation-unreviewed')).toHaveTextContent('nicht geprüft')
-    const list = await screen.findByRole('region', { name: 'Seitenanleitungen' })
+    const list = await screen.findByRole('region', { name: 'Seitenanleitungen' }, guideLoad)
     expect(await within(list).findByRole('link', { name: 'Heute' }, guideLoad)).toBeVisible()
     expect(within(list).getAllByText('Entwurf').length).toBeGreaterThan(0)
   })

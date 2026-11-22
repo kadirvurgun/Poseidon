@@ -3909,7 +3909,12 @@
       "backToList": "全部指南",
       "notAvailable": "此地址没有可显示的指南。",
       "manualTitle": "用户手册",
-      "manualBody": "带插图的用户手册（土耳其语和英语，HTML 和 PDF）在应用之外由这些指南生成，未包含在此版本中。请向管理员索取当前版本。在记录专家审核之前，它仍是草稿。",
+      "manualBody": "图文用户手册由这些指南及其使用合成实验数据截取的屏幕截图生成。",
+      "manualDraft": "草稿：手册尚未经过专家审核。如有不一致，请以页面指南为准。",
+      "manualOtherLocales": "手册仅提供土耳其语和英语版本。",
+      "manualTr": "用户手册，土耳其语（PDF，{{size}}）",
+      "manualEn": "用户手册，英语（PDF，{{size}}）",
+      "manualOffline": "恢复联网后即可下载手册。",
       "sessionUnavailable": "无法检查您的会话，因此不列出任何指南。请重新加载页面后重试。",
       "noAccess": "您的帐户没有此工作区的读取权限，因此不列出任何指南。",
       "resultCount": "显示的指南：{{count}}"
