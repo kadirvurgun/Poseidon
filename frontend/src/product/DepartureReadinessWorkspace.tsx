@@ -142,6 +142,24 @@ function WindowForm({ vessel, from, to, t, disabled, onSubmit }: { vessel: strin
   </form>
 }
 
+// Guide finding 22.11.2026: RELEASE needs a CURRENT READY assessment (60.01 p952). Explain exactly which categories keep it
+// unavailable and, for structural source gaps that no record in the product can close yet, what record would satisfy them.
+// The gate itself is server-owned and never lowered here; this only explains the server's categories.
+const sourceGaps = ['EMERGENCY_SOURCE_UNAVAILABLE', 'CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED'] as const
+export function ReleaseExplanation({ data, t }: { data: DepartureReadiness; t: Copy }) {
+  if (data.mode === 'CURRENT' && data.state === 'READY') return null
+  const open = data.categories.filter(c => c.result !== 'PASS')
+  const gaps = sourceGaps.filter(code => open.some(c => c.reasons.includes(code)))
+  return <section aria-label={t.releaseWhy} data-state="release-unavailable">
+    <h2>{t.releaseWhy}</h2>
+    {data.mode === 'FORECAST' && <p>{t.releaseForecast}</p>}
+    {open.length > 0 && <><p>{t.releaseNotReady}</p>
+      <ul>{open.map(c => <li key={c.category} data-category={c.category}>{word(t, 'cat_' + c.category)}: <ResultBadge result={c.result} t={t}/></li>)}</ul></>}
+    {gaps.map(code => <p key={code} data-gap={code}>{word(t, 'gap_' + code)}</p>)}
+    <p>{t.releaseHoldDeny}</p>
+  </section>
+}
+
 function ReadinessPanel({ data, vessel, t, stale, disabled, run }: { data: DepartureReadiness; vessel: string; t: Copy; stale: boolean; disabled: boolean; run: (c: Command) => Promise<void> }) {
   const [decision, setDecision] = useState<DepartureDecisionCode | ''>(''), [reason, setReason] = useState('')
   const [authority, setAuthority] = useState(data.authorities.length === 1 ? data.authorities[0].id : '')
@@ -159,6 +177,7 @@ function ReadinessPanel({ data, vessel, t, stale, disabled, run }: { data: Depar
       <ol className="departure-why" aria-label={t.why}>{data.why.map((w, i) => <li key={`${w.category}-${w.reason}-${w.sourceId ?? ''}-${i}`} data-result={w.result}>
         <ResultBadge result={w.result} t={t}/> {word(t, 'cat_' + w.category)} · <code>{w.reason}</code>
         {w.sourceKind && <> · <span>{w.sourceKind}{w.sourceRevision !== null ? ` r${w.sourceRevision}` : ''}</span></>}</li>)}</ol>}
+    <ReleaseExplanation data={data} t={t}/>
     <h2>{t.decisions}</h2>
     {data.decisions.length === 0 ? <p data-state="empty">{t.noDecisions}</p> :
       <ul aria-label={t.decisions}>{data.decisions.map(d => <li key={d.id} data-decision={d.decision} data-validity={d.validity}>

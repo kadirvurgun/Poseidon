@@ -22,4 +22,12 @@ public sealed class DailyReviewPolicyTests
         Assert.False(DailyReviewPolicy.Valid("Deck","REVIEWED","REVIEW_RECORDED"," "));
         Assert.False(DailyReviewPolicy.Valid("Deck","REVIEWED","REVIEW_RECORDED","hidden\0value"));
     }
+    [Fact]
+    public void Reviewer_who_authored_any_revision_is_never_independent() {
+        Guid reviewer=Guid.NewGuid(),other=Guid.NewGuid();
+        Assert.True(DailyReviewPolicy.IndependentReviewer(reviewer,[other]));
+        Assert.False(DailyReviewPolicy.IndependentReviewer(reviewer,[other,reviewer]));
+        Assert.False(DailyReviewPolicy.IndependentReviewer(Guid.Empty,[other]));
+        Assert.Equal("REVIEWER_IS_RECORD_AUTHOR",DailyReviewPolicy.ReviewerIsAuthor);
+    }
 }

@@ -1084,7 +1084,7 @@
       "notice_uncertain": "Le résultat est incertain. Réessayer envoie la même commande.",
       "notice_conflict": "L'enregistrement a changé. Rechargez et vérifiez avant d'agir à nouveau.",
       "notice_stale": "L'évaluation a changé. Examinez l'évaluation actuelle avant de décider.",
-      "notice_goBlocked": "Un GO ne peut être enregistré que sur une évaluation PRÊT ou CONDITIONNEL.",
+      "notice_goBlocked": "Un GO ne peut être enregistré que sur une évaluation PRÊT.",
       "notice_denied": "Vous n'êtes pas autorisé à effectuer cette action.",
       "notice_failed": "La commande a été refusée.",
       "READY": "Prêt",
@@ -1183,7 +1183,8 @@
       "notes": "Notes",
       "declarationHint": "L'enregistrement crée une déclaration non vérifiée. Toute modification exige une nouvelle vérification du chef mécanicien.",
       "cancel": "Annuler",
-      "openFromJob": "Affectations et préparation"
+      "openFromJob": "Affectations et préparation",
+      "goConditional": "Cette évaluation est CONDITIONNEL. Un GO exige une évaluation PRÊT : aucune source ne définit quelles conditions permettraient un GO, le serveur le refuse donc. Levez les conditions et réévaluez, ou enregistrez NO-GO."
     },
     "CrewCompliance_tsx_copy": {
       "titleCertificates": "Certificats de l'équipage",
@@ -2388,7 +2389,13 @@
       "notice_stale": "L’évaluation a changé. Vérifiez l’évaluation actuelle avant de décider.",
       "notice_blocked": "L’autorisation n’est pas permise pour cette évaluation.",
       "notice_denied": "Vous n’êtes pas autorisé à effectuer cette action.",
-      "notice_failed": "La commande n’a pas été acceptée."
+      "notice_failed": "La commande n’a pas été acceptée.",
+      "releaseWhy": "Pourquoi Autoriser est indisponible",
+      "releaseForecast": "Cette fenêtre est une prévision. Autoriser exige une fenêtre actuelle qui inclut aujourd’hui.",
+      "releaseNotReady": "Autoriser exige une évaluation actuelle PRÊT ; chaque catégorie doit donc être conforme. Ces catégories ne le sont pas encore :",
+      "gap_EMERGENCY_SOURCE_UNAVAILABLE": "Urgence : aucune source de préparation aux situations d’urgence n’est encore connectée ; cette catégorie reste donc Inconnue. Des registres actuels de rassemblement et d’exercices vérifiés par une personne (SOLAS III/19), avec l’état de préparation des engins de sauvetage et de lutte contre l’incendie, la satisferaient une fois le module de préparation aux urgences (61.02) livré.",
+      "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "Réglementaire : aucune source ne définit l’ensemble des certificats requis pour ce navire ; l’exhaustivité reste donc Inconnue même si chaque certificat enregistré est valide et vérifié. Une base contrôlée des certificats requis pour le navire la satisferait.",
+      "releaseHoldDeny": "Suspendre et Refuser peuvent toujours être enregistrés avec un motif."
     },
     "S9Wpc_tsx_copy": {
       "eyebrow": "Intelligence de flotte",
@@ -5299,7 +5306,6 @@
     "m_f80308c1376523e6": "Déclaré par l’utilisateur et non vérifié",
     "m_8164fd4adb2de542": "Les horaires déclarés conservent leur décalage UTC explicite. Les quantités ne sont ni additionnées, ni converties, ni utilisées pour déduire une conformité. Les événements portuaires enregistrés ne sont ni des instructions ni des plages prévues approuvées.",
     "m_c74b3cb63ce89b56": "En attente ; vérification non établie",
-    "m_393f995a8e90462f": "Brouillon ; finalisation indisponible",
     "m_1cf31dc53d715270": "Source exacte et faits enregistrés",
     "m_c96c8fa43f9abb83": "Enregistrements opérationnels renvoyés",
     "m_f9e49e5d9319cf49": "Relevés de combustible et de ROB",
@@ -5730,7 +5736,6 @@
     "m_0ecc2a399cb4d49d": "Ouvrir le brouillon d’ordre de travail lié",
     "m_f43a0a4d8ccef23e": "Source d’ordre de travail enregistrée",
     "m_e81e83068386a55c": "Phase d’exécution déclarée : ",
-    "m_36ce4f5246c28e39": "La remise en service, l’acceptation des preuves, la vérification et la clôture restent indisponibles.",
     "m_a7baebb651ea8368": "Référence épinglée du plan conservée",
     "m_ab9741448c1d77ac": "Contexte du plan de maintenance en lecture seule",
     "m_48675e18dff978b4": "Plan de maintenance lié",
@@ -6943,6 +6948,12 @@
     "m_5b1e7c9d3a2f4e60": "Enregistrements UAT par rôle",
     "m_5b1e7c9d3a2f4e61": "Revue go/no-go du pilote",
     "m_5b1e7c9d3a2f4e62": "Programme pilote : semaines et rapport de valeur",
-    "m_7c3d9a1e5b2f4a68": "Users and permissions"
+    "m_7c3d9a1e5b2f4a68": "Users and permissions",
+    "m_d4ded3f8a1bec68c": "La remise en service, l’enregistrement des preuves, la vérification indépendante et la clôture sont enregistrés dans le panneau d’exécution. Les preuves soumises ne sont acceptées que par une vérification humaine indépendante, jamais par la personne qui a réalisé le travail ; il n’existe pas d’étape distincte d’acceptation des preuves et la vérification n’est pas une décision de retour en service.",
+    "m_9c5fd87ade98df4b": "Brouillon (non finalisé)",
+    "m_081f7dc1f7c9881a": "Final (interne ; pas une signature)",
+    "m_821a3f35ca116281": "La finalisation du SOF est un acte humain interne enregistré dans le panneau de finalisation par un Capitaine, un Second capitaine ou un Chef mécanicien désigné. Les signatures, l’approbation opérationnelle/juridique et la saisie hors ligne restent indisponibles.",
+    "m_85cf3eb68c50b783": "Vous avez rédigé cette révision du journal ; la revue doit être enregistrée par un réviseur indépendant.",
+    "m_7c1e0a5b3d9f241b": "Refusé pour séparation des tâches : vous avez enregistré une étape antérieure de ce renouvellement, une autre personne doit donc effectuer cette étape."
   }
 }

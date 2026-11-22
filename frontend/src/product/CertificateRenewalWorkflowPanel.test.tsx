@@ -78,6 +78,17 @@ describe('DEV-044 renewal workflow panel', () => {
     await user.click(screen.getByRole('button', { name: 'Reload' })); expect(applied).toHaveBeenCalledTimes(1)
   })
 
+  it('explains a duty-separation refusal instead of reporting a changed renewal', async () => {
+    vi.spyOn(certificatesApi, 'transitionRenewal').mockRejectedValue(new ApiError(409, 'separation_of_duties'))
+    renderPanel(preparing()); const user = userEvent.setup()
+    const step = await screen.findByLabelText('Step'); await waitFor(() => expect(step).toBeEnabled())
+    await user.selectOptions(step, 'CANCEL'); await user.click(screen.getByRole('button', { name: 'Record step' }))
+    const alert = await screen.findByRole('alert')
+    expect(alert).toHaveTextContent(/separation of duties/); expect(alert).toHaveTextContent('separation_of_duties')
+    expect(alert).not.toHaveTextContent(/changed after it was loaded/)
+    expect(screen.queryByRole('button', { name: 'Reload' })).not.toBeInTheDocument()
+  })
+
   it('marks a historical revision stale and a closed case as having no steps', async () => {
     renderPanel({ ...renewalFixture(), currentRevision: false, canEdit: false, allowedTransitions: [] })
     expect(await screen.findByText(/not the current revision/)).toBeVisible()

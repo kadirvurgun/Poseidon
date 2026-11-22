@@ -12,8 +12,13 @@ namespace Poseidon.Api.Tests;
 
 public sealed partial class DirectoryWorkspaceTests
 {
-    private DailyReviewAuthority DailyAppointment(IServiceProvider services,Guid record,string kind,string duty,string actorKind="Human") {
+    // Independent review: the reviewer is never an author of the log (DailyReviewPolicy.IndependentReviewer). The harness has one
+    // configured membership, so a different person is simulated by giving that membership a separate synthetic reviewer actor id
+    // (the precedent in ApplicabilityOverrideApiTests / CertificateRenewalWorkflowApiTests). Revisions are append-only in the database.
+    private readonly Guid dailyReviewer=Guid.NewGuid();
+    private DailyReviewAuthority DailyAppointment(IServiceProvider services,Guid record,string kind,string duty,string actorKind="Human",bool independent=true) {
         var settings=services.GetRequiredService<FederationSettings>();var member=settings.Memberships[0];
+        if(independent)member=member with {ActorId=dailyReviewer};
         var grant=new DailyReviewAuthority(Guid.NewGuid(),SeedVessel.Id,record,kind,Guid.Parse(member.RoleReferences![0]),duty,
             DailyOperationsPolicy.SourceVersion,"FICTIONAL owned-test appointment",DateTimeOffset.UtcNow.AddDays(-1),DateTimeOffset.UtcNow.AddDays(1));
         settings.Memberships[0]=member with {ActorKind=actorKind,DailyReviewAuthorities=[grant],Permissions=[..member.Permissions,"daily."+kind.ToLowerInvariant()+".review"]};
@@ -41,11 +46,11 @@ public sealed partial class DirectoryWorkspaceTests
         var key=Guid.NewGuid().ToString("D");var saved=await ReviewSend(client,route,row.Id,command,key);Assert.Equal(HttpStatusCode.OK,saved.StatusCode);
         var bytes=await saved.Content.ReadAsStringAsync(Ct);var review=(await saved.Content.ReadFromJsonAsync<DailyReviewDto>(Ct))!;
         Assert.Equal("RECORDED_UNASSESSED",review.State);Assert.Equal(row.Hash,review.RecordHash);Assert.Equal(row.Revision,review.RecordRevision);
-        Assert.Equal(actorId,review.ActorId);Assert.Equal(grant.RoleId,review.RoleId);Assert.True(review.Version>0);
+        Assert.Equal(dailyReviewer,review.ActorId);Assert.Equal(grant.RoleId,review.RoleId);Assert.True(review.Version>0);
         Assert.Equal(bytes,await (await ReviewSend(client,route,row.Id,command,key)).Content.ReadAsStringAsync(Ct));
         Assert.Equal(HttpStatusCode.Conflict,(await ReviewSend(client,route,row.Id,command,Guid.NewGuid().ToString("D"))).StatusCode);
         var current=(await client.GetFromJsonAsync<DailyRecordDto>(DailyPath(route,row.Id),Ct))!;
-        Assert.Equal("RECORDED_UNASSESSED",current.ReviewState);Assert.Equal(actorId,current.ReviewedBy);Assert.Equal(row.Version,current.Version);
+        Assert.Equal("RECORDED_UNASSESSED",current.ReviewState);Assert.Equal(dailyReviewer,current.ReviewedBy);Assert.Equal(row.Version,current.Version);
         Assert.Equal(sourceReview,current.Fields[kind=="Engine"?"chief_engineer_review":"master_review"].Value);Assert.Equal("DRAFT",current.State);
         var edited=await DailySend(client,route,draft with {ExpectedVersion=row.Version,ReasonCode="AUTHORING_CORRECTION"},Guid.NewGuid().ToString("D"),true);
         Assert.Equal(HttpStatusCode.OK,edited.StatusCode);
@@ -95,7 +100,7 @@ public sealed partial class DirectoryWorkspaceTests
         var settings=host.Services.GetRequiredService<FederationSettings>();settings.Memberships[0].DailyReviewAuthorities=[grant with {ValidUntil=DateTimeOffset.UtcNow.AddMinutes(-1)}];
         var cap=(await client.GetFromJsonAsync<DailyReviewCapabilitiesDto>(DailyPath("noon-reports",row.Id,suffix:"/review-capabilities"),Ct))!;Assert.False(cap.CanRecord);
         var current=(await client.GetFromJsonAsync<DailyRecordDto>(DailyPath("noon-reports",row.Id),Ct))!;
-        Assert.Equal("RECORDED_UNASSESSED",current.ReviewState);Assert.Equal(actorId,current.ReviewedBy);Assert.Equal("DRAFT",current.State);
+        Assert.Equal("RECORDED_UNASSESSED",current.ReviewState);Assert.Equal(dailyReviewer,current.ReviewedBy);Assert.Equal("DRAFT",current.State);
         Assert.Equal(HttpStatusCode.Forbidden,(await ReviewSend(client,"noon-reports",row.Id,command,key)).StatusCode);
         Assert.Equal(HttpStatusCode.OK,(await client.GetAsync(DailyPath("noon-reports",row.Id,suffix:"/reviews"),Ct)).StatusCode);
         await using var db=Db();var entry=await db.DailyReviewEvents.SingleAsync(r=>r.RecordId==row.Id,Ct);
@@ -155,5 +160,54 @@ public sealed partial class DirectoryWorkspaceTests
             response??=await pending.WaitAsync(TimeSpan.FromSeconds(30),Ct);response.Dispose();
             await Sql("""DROP TRIGGER s5_pause_daily_review_response ON audit."SecurityEvents";DROP FUNCTION audit.s5_pause_daily_review_response();""");
         }
+    }
+    // Guide finding 22.11.2026: independent review of ship daily logs (13.03 p35-37/86-89; 60.01 Rev3 p544-546; ISM 10.2/12;
+    // tug precedent QA S9 N5). An exact appointment never lets an author of the reviewed revision record its review.
+    [Theory]
+    [InlineData("noon-reports","Noon","Master")]
+    [InlineData("deck-daily-logs","Deck","ChiefOfficer")]
+    [InlineData("engine-daily-logs","Engine","ChiefEngineer")]
+    public async Task Author_of_the_log_is_never_offered_or_allowed_to_record_its_review(string route,string kind,string duty) {
+        await using var host=Host();using var client=Client(host);DailyPermissions(host.Services);
+        var created=await DailySend(client,route,new DailyDraftCommand(Guid.NewGuid(),0,new(),"INITIAL_AUTHORING"),Guid.NewGuid().ToString("D"));
+        var row=(await created.Content.ReadFromJsonAsync<DailyRecordDto>(Ct))!;var grant=DailyAppointment(host.Services,row.Id,kind,duty,independent:false);
+        var cap=(await client.GetFromJsonAsync<DailyReviewCapabilitiesDto>(DailyPath(route,row.Id,suffix:"/review-capabilities"),Ct))!;
+        Assert.False(cap.CanRecord);Assert.Empty(cap.Authorities);Assert.Equal([DailyReviewPolicy.ReviewerIsAuthor],cap.Blockers);
+        var response=await ReviewSend(client,route,row.Id,new(row.Version,0,row.Revision,grant.Id,"REVIEWED","REVIEW_RECORDED","FICTIONAL self review attempt"),Guid.NewGuid().ToString("D"));
+        Assert.Equal(HttpStatusCode.Forbidden,response.StatusCode);Assert.Contains("separation_of_duties",await response.Content.ReadAsStringAsync(Ct));
+        await using var db=Db();Assert.Empty(await db.DailyReviewEvents.Where(r=>r.RecordId==row.Id).ToArrayAsync(Ct));
+        Assert.Empty(await db.DailyReviewHeads.Where(r=>r.RecordId==row.Id).ToArrayAsync(Ct));Assert.Empty(await db.DailyReviewReceipts.Where(r=>r.RecordId==row.Id).ToArrayAsync(Ct));
+    }
+    [Fact]
+    public async Task Author_of_an_earlier_revision_cannot_review_a_later_revision_written_by_someone_else() {
+        await using var host=Host();using var client=Client(host);DailyPermissions(host.Services);
+        var draft=new DailyDraftCommand(Guid.NewGuid(),0,new(),"INITIAL_AUTHORING");
+        var first=(await (await DailySend(client,"deck-daily-logs",draft,Guid.NewGuid().ToString("D"))).Content.ReadFromJsonAsync<DailyRecordDto>(Ct))!;
+        // A different person writes revision 2; the author of revision 1 then tries to review revision 2.
+        var settings=host.Services.GetRequiredService<FederationSettings>();var author=settings.Memberships[0];
+        settings.Memberships[0]=author with {ActorId=dailyReviewer};
+        var second=(await (await DailySend(client,"deck-daily-logs",draft with{ExpectedVersion=first.Version,ReasonCode="AUTHORING_CORRECTION"},Guid.NewGuid().ToString("D"),true)).Content.ReadFromJsonAsync<DailyRecordDto>(Ct))!;
+        Assert.Equal(first.Revision+1,second.Revision);settings.Memberships[0]=author;
+        var grant=DailyAppointment(host.Services,second.Id,"Deck","Master",independent:false);
+        var cap=(await client.GetFromJsonAsync<DailyReviewCapabilitiesDto>(DailyPath("deck-daily-logs",second.Id,suffix:"/review-capabilities"),Ct))!;
+        Assert.False(cap.CanRecord);Assert.Contains(DailyReviewPolicy.ReviewerIsAuthor,cap.Blockers);
+        var response=await ReviewSend(client,"deck-daily-logs",second.Id,new(second.Version,0,second.Revision,grant.Id,"RETURNED","RETURNED_FOR_CORRECTION","FICTIONAL co-author return attempt"),Guid.NewGuid().ToString("D"));
+        Assert.Equal(HttpStatusCode.Forbidden,response.StatusCode);
+    }
+    [Fact]
+    public async Task Database_refuses_a_review_event_by_an_author_outside_the_api_path() {
+        await using var host=Host();using var client=Client(host);DailyPermissions(host.Services);
+        var row=(await (await DailySend(client,"noon-reports",new DailyDraftCommand(Guid.NewGuid(),0,new(),"INITIAL_AUTHORING"),Guid.NewGuid().ToString("D"))).Content.ReadFromJsonAsync<DailyRecordDto>(Ct))!;
+        var grant=DailyAppointment(host.Services,row.Id,"Noon","Master");
+        var saved=await ReviewSend(client,"noon-reports",row.Id,new(row.Version,0,row.Revision,grant.Id,"REVIEWED","REVIEW_RECORDED","FICTIONAL independent review"),Guid.NewGuid().ToString("D"));
+        Assert.Equal(HttpStatusCode.OK,saved.StatusCode);var review=(await saved.Content.ReadFromJsonAsync<DailyReviewDto>(Ct))!;
+        var columns="\"TenantId\",\"VesselId\",\"RecordId\",\"Kind\",\"Id\",\"RecordRevision\",\"Sequence\",\"RecordVersion\",\"ReviewVersion\",\"ActorId\",\"RoleId\",\"AuthorityId\",\"Duty\",\"Decision\",\"ReasonCode\",\"Rationale\",\"SourceVersion\",\"AuthorityHash\",\"AuthorityJson\",\"RecordHash\",\"SavedAt\"";
+        var error=await Assert.ThrowsAsync<PostgresException>(()=>Sql($$"""
+            INSERT INTO operations."DailyReviewEvents" ({{columns}})
+            SELECT "TenantId","VesselId","RecordId","Kind",gen_random_uuid(),"RecordRevision","Sequence"+1,"RecordVersion","ReviewVersion",'{{actorId}}'::uuid,"RoleId","AuthorityId","Duty","Decision","ReasonCode","Rationale","SourceVersion","AuthorityHash","AuthorityJson","RecordHash","SavedAt"
+            FROM operations."DailyReviewEvents" WHERE "Id"='{{review.Id}}';
+            """));
+        Assert.Equal("23514",error.SqlState);
+        await using var db=Db();Assert.Equal(1,await db.DailyReviewEvents.CountAsync(r=>r.RecordId==row.Id,Ct));
     }
 }
