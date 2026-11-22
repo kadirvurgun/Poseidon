@@ -18570,7 +18570,7 @@
     ]
   },
   "guide_bundle_20261122": {
-    "status": "AUTHORED_QA_ACCEPT_WITH_NOTES_GATE_CI_PENDING",
+    "status": "MERGED_PR55",
     "branch": "integration/guide-bundle-20261122",
     "base": "dde4bb50",
     "scope": "USER-ADMIN-02 invitation/accept; UG-2 screenshot pipeline (6 guides); UG-3 54/54 page guides TR/EN; six product fixes found during guide writing (work order/SOF copy, departure Release explanation, daily log review independence, tug GO only on READY, renewal SoD message)",
