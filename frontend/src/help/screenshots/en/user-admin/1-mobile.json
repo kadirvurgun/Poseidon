@@ -1,0 +1,27 @@
+{
+ "schemaVersion": "poseidon.help.screenshot-provenance.v2",
+ "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
+ "commit": "7d0f385a660c1af2198f7c5bfb9494459522ccf4",
+ "generatorBlobs": {
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "cd215e8411cbe685c02f9b8a4d0ccae24d9035ae",
+  "tests/Poseidon.Browser.Tests/screenshots/png-palette.ts": "3a0f780074c6da126fc96cee0869800475e2709d",
+  "frontend/src/help/screenshots/steps.json": "5239b1cd352b1a5882e079f96e408f981587e66f"
+ },
+ "dirty": false,
+ "key": "user-admin",
+ "locale": "en",
+ "step": 1,
+ "viewport": "mobile",
+ "datasets": [
+  "backend/seed/synthetic-demo.json",
+  "DemoFixtureCommand"
+ ],
+ "tenant": "Synthetic Fleet A",
+ "fixedClock": "2026-11-22T00:00:00.000Z",
+ "png": {
+  "sha256": "a956b4fa580fac75faa14ece1475dece4e7f0fda5b955c6f3a5baf6c6ca8d1e9",
+  "width": 390,
+  "height": 844
+ },
+ "domText": "Skip to main content\nUsers and permissions\nAppearance\nChoose language\nNo vessel selected\nSynthetic Fleet A\nCompany context:\nUnavailable\nNo vessel selected\nRole context: Not assigned\nChange vessel context\nOnline\n\nTENANT ADMINISTRATION\n\nUsers and permissions\n\nAssign user, role, vessel and object scope with least privilege. You can grant only permissions you hold yourself; your own membership is edited by another administrator. Changes take effect on the member's next request; a new member gets access at the next login.\n\nRefresh\nSearch\nMembership or account id prefix, or the exact IdP subject\nStatus\nRole bundle\nApply\nMembers · Total: 1\nAccount\nadd41584\n Active No grant\n\nNone · Permissions: 0 · Vessels: 0\n\nPrevious\nNext"
+}

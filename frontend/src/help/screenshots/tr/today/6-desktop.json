@@ -1,10 +1,11 @@
 {
  "schemaVersion": "poseidon.help.screenshot-provenance.v2",
  "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
- "commit": "ffabd677418b73f964e85faf458946dc850eda91",
+ "commit": "7d0f385a660c1af2198f7c5bfb9494459522ccf4",
  "generatorBlobs": {
-  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "91ab4199809e7d12deb54f371232749e96fc1ade",
-  "frontend/src/help/screenshots/steps.json": "a0400619a48fe8d0f9811b031bc8f5d4a05d7cfc"
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "cd215e8411cbe685c02f9b8a4d0ccae24d9035ae",
+  "tests/Poseidon.Browser.Tests/screenshots/png-palette.ts": "3a0f780074c6da126fc96cee0869800475e2709d",
+  "frontend/src/help/screenshots/steps.json": "5239b1cd352b1a5882e079f96e408f981587e66f"
  },
  "dirty": false,
  "key": "today",
@@ -16,11 +17,11 @@
   "DemoFixtureCommand"
  ],
  "tenant": "Synthetic Fleet A",
- "fixedClock": "2026-11-22T09:00:00.000Z",
+ "fixedClock": "2026-11-22T00:00:00.000Z",
  "png": {
-  "sha256": "dd563b9c5b70259ad641473501174bf748d5f11b0140dd57f7f7e94603e82a2e",
+  "sha256": "0620ccf6772d11734279bc11a716964a3367a0789fd1d159e576864b76291307",
   "width": 1440,
   "height": 900
  },
- "domText": "Ana içeriğe geç\nPOSEIDON\nBugün\nGörünüm\nÇalışma alanında ara\nDil seçin\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nDEMO-SHIP · Synthetic Ship A\nGemi modu: Gemi\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\nPOSEIDON\nDENİZCİLİK OPERASYONLARI\nÇalışma görünümü\nMenüde ara\n\nYalnızca açmaya yetkili olduğunuz ekranlarda arar.\n\nGenel bakış\nBugün\nFilo\nRömorkör operasyonları\nUyum ve güvence\nÇalışma alanı\nSY\nSynthetic Fleet A\nYetkili çalışma alanı\n\nDENİZCİLİK ÇALIŞMA ALANI\n\nBugün\n\nYetkili olduğunuz kayıtları görüntüleyin.\n\nÇalışma alanı: Synthetic Fleet A\n\nOturumu kapat\nYenile\nAraç değiştir\nEtkin araç: Gemi · DEMO-SHIP · Synthetic Ship A\n\nGörüntülenen anlık veri eski olabilir. Kaynakları yeniden denetlemek için yenileyin.\n\nSunucudan okuma zamanı: 2026-11-22T03:10:54.3798449+00:00\n\nKısmi görünüm: bazı sahip kaynaklar bu bağlamda kullanılamıyor. Görünmeyen öğe, her şeyin uygun olduğu anlamına gelmez.\n\nDönen kartlar\n1\nKısmi kaynaklar: sıfır, her şeyin uygun olduğu anlamına gelmez\nPlanlama uyarıları\n0\nKısmi kaynaklar: sıfır, her şeyin uygun olduğu anlamına gelmez\nİnceleme gerekenler\n0\nKısmi kaynaklar: sıfır, her şeyin uygun olduğu anlamına gelmez\nKullanılabilir kaynaklar\n1 / 7\nKullanılabilirlik doğrulama değildir\nKaynak kapsamı\nMevzuat taslağı: Kullanılabilir (doğrulanmamış)\nOperasyonel görevler: Bu bağlamda kullanılamıyor\nEmniyet kararları: Bu bağlamda kullanılamıyor\nİzinler: Bu bağlamda kullanılamıyor\nKanıt doğrulama: Bu bağlamda kullanılamıyor\nBakım planları: Bu bağlamda kullanılamıyor\nRömorkör taslak planlaması: Bu bağlamda kullanılamıyor\nBilgilendirme · Mevzuat taslağı\nBilgilendirme\n\nKayıtlı mevzuat taslağı doğrulanmamış.\n\nKaynak sahibi\nMevzuat\nKaynak referansı\nMevzuat taslağı · 30000000-0000-0000-0000-000000000001\nKaynak sürümü\n1\nKaynak kayıt zamanı\n2026-11-22T02:59:44.193019+00:00\n\nSorumlu: desteklenen kaynak tarafından atanmamış\n\nTaslağı görüntüle\nNeden?\nÖnceki uyarılar\nSonraki uyarılar\n\nKuruluş kaynak taslaklarını incele (doğrulanmamış)"
+ "domText": "Ana içeriğe geç\nPOSEIDON\nBugün\nGörünüm\nÇalışma alanında ara\nDil seçin\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nDEMO-SHIP · Synthetic Ship A\nGemi modu: Gemi\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\nPOSEIDON\nDENİZCİLİK OPERASYONLARI\nÇalışma görünümü\nMenüde ara\n\nYalnızca açmaya yetkili olduğunuz ekranlarda arar.\n\nGenel bakış\nBugün\nFilo\nGemi operasyonları\nTeknik ve bakım\nRömorkör operasyonları\nUyum ve güvence\nÇalışma alanı\nSY\nSynthetic Fleet A\nYetkili çalışma alanı\n\nDENİZCİLİK ÇALIŞMA ALANI\n\nBugün\n\nYetkili olduğunuz kayıtları görüntüleyin.\n\nÇalışma alanı: Synthetic Fleet A\n\nOturumu kapat\nYenile\nAraç değiştir\nEtkin araç: Gemi · DEMO-SHIP · Synthetic Ship A\n\nGörüntülenen anlık veri eski olabilir. Kaynakları yeniden denetlemek için yenileyin.\n\nSunucudan okuma zamanı: 2026-11-22T05:53:49.5871641+00:00\n\nKısmi görünüm: bazı sahip kaynaklar bu bağlamda kullanılamıyor. Görünmeyen öğe, her şeyin uygun olduğu anlamına gelmez.\n\nDönen kartlar\n2\nKısmi kaynaklar: sıfır, her şeyin uygun olduğu anlamına gelmez\nPlanlama uyarıları\n0\nKısmi kaynaklar: sıfır, her şeyin uygun olduğu anlamına gelmez\nİnceleme gerekenler\n1\nKısmi kaynaklar: sıfır, her şeyin uygun olduğu anlamına gelmez\nKullanılabilir kaynaklar\n2 / 7\nKullanılabilirlik doğrulama değildir\nKaynak kapsamı\nMevzuat taslağı: Kullanılabilir (doğrulanmamış)\nOperasyonel görevler: Bu bağlamda kullanılamıyor\nEmniyet kararları: Bu bağlamda kullanılamıyor\nİzinler: Bu bağlamda kullanılamıyor\nKanıt doğrulama: Bu bağlamda kullanılamıyor\nBakım planları: Kullanılabilir (doğrulanmamış)\nRömorkör taslak planlaması: Bu bağlamda kullanılamıyor\nİnceleme gerekli · Bakım planı\nİnceleme gerekli\n\nBakım planlaması inceleme gerektiriyor.\n\nKaynak sahibi\nPlanlı bakım\nKaynak referansı\nBakım planı · 30000000-0000-0000-0000-000000000001\nKaynak sürümü\n1\nKaynak kayıt zamanı\n2026-11-22T05:33:52.495041+00:00\n\nSorumlu: desteklenen kaynak tarafından atanmamış\n\nBakım planını görüntüle\nNeden?\nBilgilendirme · Mevzuat taslağı\nBilgilendirme\n\nKayıtlı mevzuat taslağı doğrulanmamış.\n\nKaynak sahibi\nMevzuat\nKaynak referansı\nMevzuat taslağı · 30000000-0000-0000-0000-000000000001\nKaynak sürümü\n1\nKaynak kayıt zamanı\n2026-11-22T05:33:51.747671+00:00\n\nSorumlu: desteklenen kaynak tarafından atanmamış\n\nTaslağı görüntüle\nNeden?\nÖnceki uyarılar\nSonraki uyarılar\n\nKuruluş kaynak taslaklarını incele (doğrulanmamış)"
 }

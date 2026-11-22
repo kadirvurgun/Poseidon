@@ -1,10 +1,11 @@
 {
  "schemaVersion": "poseidon.help.screenshot-provenance.v2",
  "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
- "commit": "ffabd677418b73f964e85faf458946dc850eda91",
+ "commit": "7d0f385a660c1af2198f7c5bfb9494459522ccf4",
  "generatorBlobs": {
-  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "91ab4199809e7d12deb54f371232749e96fc1ade",
-  "frontend/src/help/screenshots/steps.json": "a0400619a48fe8d0f9811b031bc8f5d4a05d7cfc"
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "cd215e8411cbe685c02f9b8a4d0ccae24d9035ae",
+  "tests/Poseidon.Browser.Tests/screenshots/png-palette.ts": "3a0f780074c6da126fc96cee0869800475e2709d",
+  "frontend/src/help/screenshots/steps.json": "5239b1cd352b1a5882e079f96e408f981587e66f"
  },
  "dirty": false,
  "key": "tug-job-board",
@@ -16,11 +17,11 @@
   "DemoFixtureCommand"
  ],
  "tenant": "Synthetic Fleet A",
- "fixedClock": "2026-11-22T09:00:00.000Z",
+ "fixedClock": "2026-11-22T00:00:00.000Z",
  "png": {
-  "sha256": "1bd332d368dc12cd7fd78a2b38df9ad2bda05be4a8e57fad1bc7786d83a99228",
+  "sha256": "e9ee7ac861d6f7bd81ffc6afa7694cdb2be03e1c0b2394a8d2b18b3aadd1fbd7",
   "width": 1440,
   "height": 900
  },
- "domText": "Skip to main content\nPOSEIDON\nJob board\nAppearance\nSearch workspace\nChoose language\nSynthetic Fleet A\nCompany context:\nUnavailable\nDEMO-TUG · Synthetic Tug A\nVessel mode: Tug\nRole context: Not assigned\nChange vessel context\nOnline\nPOSEIDON\nMARITIME OPERATIONS\nWork view\nFilter menu\n\nOnly screens you are authorized to open are searched.\n\nOverview\nTug operations\nTug command\nJob board\nJob intake\nTug assignment\nTug readiness gate\nTow equipment readiness\nTug crew competence\nTowage plan\nTowage risk and briefing\nTug operation history\nTug offline operations\nTug demo journey\nCompliance and assurance\nWorkspace\nSY\nSynthetic Fleet A\nAuthorized workspace\n\nTUG OPERATIONS\n\nJob board\n\nRequests, draft plans and current source context.\n\nDraft declarations only. Draft planning is separate from operational assignment, availability, permits and safety approval.\n\nTug context: DEMO-TUG · Synthetic Tug A · Tug\n\nTug context\nJob board\nListed requests\n1\nThis returned page\nRecorded blockers\n0\nJobs with a current blocker\nReadiness review\n1\nThis returned page\nReadiness unknown\n0\nNo readiness conclusion\nSearch requests\nPriority\nState\nTime window\nApply filters\nRefresh board\nCurrent draft requests\nPlanning view · UTC\nDraft\nr1\nUnknown\nTUG-SYN-30000000000000000000000000000002\n\nUnknown\n\nUnknown\nRequested window · UTC\nUnknown\nUnknown\nStart missing\nDraft plan window · r1\nUnverified draft plan; no operational approval\nDraft assignments\n0 tugs\nCurrent draft assignments only\nRequested: Unknown\nRequired BP\nUnknown\nPlanning capacity: Unknown\nReadiness\nReview required\nOperational conflict\nUnknown\nNext action: Complete draft\nOpen job\nWhy / next action\nPage 1 · Counts cover this page only\nPrevious\nNext"
+ "domText": "Skip to main content\nPOSEIDON\nJob board\nAppearance\nSearch workspace\nChoose language\nSynthetic Fleet A\nCompany context:\nUnavailable\nDEMO-TUG · Synthetic Tug A\nVessel mode: Tug\nRole context: Not assigned\nChange vessel context\nOnline\nPOSEIDON\nMARITIME OPERATIONS\nWork view\nFilter menu\n\nOnly screens you are authorized to open are searched.\n\nOverview\nShip operations\nTechnical and maintenance\nTug operations\nTug command\nJob board\nJob intake\nTug assignment\nTug readiness gate\nTow equipment readiness\nTug crew competence\nTowage plan\nTowage risk and briefing\nTug operation history\nTug offline operations\nTug demo journey\nCompliance and assurance\nWorkspace\nSY\nSynthetic Fleet A\nAuthorized workspace\n\nTUG OPERATIONS\n\nJob board\n\nRequests, draft plans and current source context.\n\nDraft declarations only. Draft planning is separate from operational assignment, availability, permits and safety approval.\n\nTug context: DEMO-TUG · Synthetic Tug A · Tug\n\nTug context\nJob board\nListed requests\n1\nThis returned page\nRecorded blockers\n0\nJobs with a current blocker\nReadiness review\n1\nThis returned page\nReadiness unknown\n0\nNo readiness conclusion\nSearch requests\nPriority\nState\nTime window\nApply filters\nRefresh board\nCurrent draft requests\nPlanning view · UTC\nDraft\nr1\nUnknown\nTUG-SYN-30000000000000000000000000000002\n\nUnknown\n\nUnknown\nRequested window · UTC\nUnknown\nUnknown\nStart missing\nDraft plan window · r1\nUnverified draft plan; no operational approval\nDraft assignments\n0 tugs\nCurrent draft assignments only\nRequested: Unknown\nRequired BP\nUnknown\nPlanning capacity: Unknown\nReadiness\nReview required\nOperational conflict\nUnknown\nNext action: Complete draft\nOpen job\nWhy / next action\nPage 1 · Counts cover this page only\nPrevious\nNext"
 }

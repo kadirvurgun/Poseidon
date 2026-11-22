@@ -1,0 +1,27 @@
+{
+ "schemaVersion": "poseidon.help.screenshot-provenance.v2",
+ "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
+ "commit": "7d0f385a660c1af2198f7c5bfb9494459522ccf4",
+ "generatorBlobs": {
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "cd215e8411cbe685c02f9b8a4d0ccae24d9035ae",
+  "tests/Poseidon.Browser.Tests/screenshots/png-palette.ts": "3a0f780074c6da126fc96cee0869800475e2709d",
+  "frontend/src/help/screenshots/steps.json": "5239b1cd352b1a5882e079f96e408f981587e66f"
+ },
+ "dirty": false,
+ "key": "departure-signoff",
+ "locale": "tr",
+ "step": 3,
+ "viewport": "desktop",
+ "datasets": [
+  "backend/seed/synthetic-demo.json",
+  "DemoFixtureCommand"
+ ],
+ "tenant": "Synthetic Fleet A",
+ "fixedClock": "2026-11-22T00:00:00.000Z",
+ "png": {
+  "sha256": "79eb490b4df37aa218ed88474de787d91fb55190abae8ab9802339aa5aaf8684",
+  "width": 1440,
+  "height": 900
+ },
+ "domText": "Ana içeriğe geç\nPOSEIDON\nKalkış hazırlığı ve Kaptan kararı\nGörünüm\nÇalışma alanında ara\nDil seçin\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nDEMO-SHIP · Synthetic Ship A\nGemi modu: Gemi\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\nPOSEIDON\nDENİZCİLİK OPERASYONLARI\nÇalışma görünümü\nMenüde ara\n\nYalnızca açmaya yetkili olduğunuz ekranlarda arar.\n\nGenel bakış\nGemi operasyonları\nKalkış hazırlığı ve Kaptan kararı\nÖğle raporu\nTeknik ve bakım\nRömorkör operasyonları\nUyum ve güvence\nÇalışma alanı\nSY\nSynthetic Fleet A\nYetkili çalışma alanı\n\nOPERASYON VE HAZIRLIK\n\nKalkış hazırlığı ve Kaptan kararı\n\nYalnızca tavsiye niteliğindedir. Sistem kalkışa asla izin vermez; RELEASE, HOLD veya DENY kararını yalnızca atanmış Kaptan gerekçesiyle kaydeder. Onay, kalkış izni (clearance) değildir.\n\nYenile\nPlanlanan kalkış aralığı\nKalkış tarihiSefer bitiş tarihi\nHazırlığı değerlendir\n\nDeğerlendirme: İnceleme gerekli Güncel Tavsiye niteliğinde değerlendirme\n\nDeğerlendirme zamanı: 2026-11-22T05:55:01.2729847+00:00 · Geçerlilik sonu: 2026-11-22T05:56:01.2729847+00:00\n\nKategori Sonuç\nMürettebat Bilinmiyor\nTeknik Bilinmiyor\nYasal Bilinmiyor\nAcil durum Bilinmiyor\nEmniyet olayları Geçti\nNeden\nBilinmiyor Mürettebat · CREW_ACCESS_REQUIRED\nBilinmiyor Teknik · CONDITION_ALERTS:DEFECT_ACCESS_REQUIRED\nBilinmiyor Teknik · CRITICAL_OVERDUE_JOBS:MAINTENANCE_REVIEW_REQUIRED · MaintenancePlan r1\nBilinmiyor Teknik · CRITICAL_SPARE_GAPS:SPARE_ACCESS_REQUIRED\nBilinmiyor Yasal · CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED\nBilinmiyor Yasal · DATA_TRUST_UNAVAILABLE\nBilinmiyor Yasal · NO_VESSEL_CERTIFICATES_RECORDED\nBilinmiyor Acil durum · EMERGENCY_SOURCE_UNAVAILABLE\nSerbest bırakma neden kullanılamıyor\n\nSerbest bırakma güncel bir HAZIR değerlendirme gerektirir; bu nedenle her kategori geçmelidir. Henüz geçmeyen kategoriler:\n\nMürettebat: Bilinmiyor\nTeknik: Bilinmiyor\nYasal: Bilinmiyor\nAcil durum: Bilinmiyor\n\nAcil durum: henüz bağlı bir acil durum hazırlık kaynağı yok, bu nedenle bu kategori Bilinmiyor olarak kalır. Acil durum hazırlık modülü (61.02) teslim edildiğinde, can kurtarma ve yangınla mücadele donanımı hazırlığıyla birlikte güncel, insan tarafından doğrulanmış toplanma ve tatbikat kayıtları (SOLAS III/19) bu kategoriyi karşılar.\n\nYasal: bu gemi için gerekli sertifika setini tanımlayan bir kaynak yok, bu nedenle kayıtlı her sertifika geçerli ve doğrulanmış olsa bile bütünlük Bilinmiyor olarak kalır. Gemi için kontrollü bir gerekli sertifika temel çizgisi bunu karşılar.\n\nBeklet ve Reddet her zaman bir gerekçeyle kaydedilebilir.\n\nKaptan kararları\n\nKayıtlı karar yok.\n\nBu gemi için güncel Kaptan atamanız yok. Kararlar salt okunurdur."
+}
