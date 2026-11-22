@@ -4,6 +4,6 @@
   "private": true,
   "type": "module",
   "engines": { "node": ">=26.13.0" },
-  "scripts": { "test": "playwright test" },
+  "scripts": { "test": "playwright test", "manual": "node manual/build-manual.ts", "manual:pdf": "node manual/build-manual.ts --pdf", "test:manual": "node --test manual/manual.test.ts" },
   "devDependencies": { "@axe-core/playwright": "4.14.0", "@playwright/test": "1.64.1", "axe-core": "4.14.0" }
 }

@@ -18570,7 +18570,7 @@
     ]
   },
   "guide_bundle_20261122": {
-    "status": "AUTHORED_QA_ACCEPT_WITH_NOTES_GATE_CI_PENDING",
+    "status": "MERGED_PR55",
     "branch": "integration/guide-bundle-20261122",
     "base": "dde4bb50",
     "scope": "USER-ADMIN-02 invitation/accept; UG-2 screenshot pipeline (6 guides); UG-3 54/54 page guides TR/EN; six product fixes found during guide writing (work order/SOF copy, departure Release explanation, daily log review independence, tug GO only on READY, renewal SoD message)",
@@ -18593,6 +18593,26 @@
       "docs/phases/GUIDE-BUNDLE-20261122.md",
       "docs/phases/USER-ADMIN-02.md",
       "docs/phases/USER-GUIDE-01-UG2.md"
+    ]
+  },
+  "locales_manual_bundle_20261122": {
+    "status": "AUTHORED_QA_ACCEPT_WITH_NOTES_GATE_CI_PENDING",
+    "branch": "integration/help-locales-20261122",
+    "base": "integration/guide-bundle-20261122",
+    "scope": "UG-4 TR/EN illustrated manual generator (HTML/PDF); UG-5 locale infra + 14 machine-drafted locales x 54 guides; user-admin/invitation UI strings in 14 locales; N3/N4 product-fix notes",
+    "canonical_effect": "none; 114/121 tasks, 932/970 SP unchanged",
+    "qa": [
+      "locales+manual ACCEPT-WITH-NOTES; N1/N2/N4 fixed 8a05865b"
+    ],
+    "deferred": [
+      "UG-6 human SME/UX review",
+      "mobile screenshots",
+      "/app/help page",
+      "locale strings missing for some UI labels"
+    ],
+    "phase_reports": [
+      "docs/phases/LOCALES-MANUAL-BUNDLE-20261122.md",
+      "docs/phases/USER-GUIDE-01-UG4.md"
     ]
   }
 }

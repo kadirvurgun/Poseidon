@@ -4,6 +4,9 @@ import { WorkOrderSourceSummary } from './WorkOrderRecordView'
 import { ShipOpsRecordSummary } from './ShipOperationsRecordView'
 import { workOrderRecordFixture } from './work-order-test-fixtures'
 import { shipOpsRecordFixture } from './ship-operation-test-fixtures'
+import { shipOpsFields } from './ship-operation-fields'
+import { shipOpsFactLabel } from './ship-operation-copy'
+import { localizedLabel } from '../i18n/messages'
 
 // Guide findings 22.11.2026: summary copy must describe what the owning panels actually do.
 describe('Work order summary copy (DEV-054 execution lifecycle)', () => {
@@ -34,5 +37,10 @@ describe('Port activity SOF review state (DEV-101)', () => {
     const record = shipOpsRecordFixture('Port'); record.fields.sof_state = { state: 'Unknown', value: null }
     render(<ShipOpsRecordSummary value={record} language="tr"/>)
     expect(screen.queryByText(/Taslak \(sonlandırılmadı\)|Nihai/)).not.toBeInTheDocument()
+    // QA N4: the SOF state cell itself must say Unknown, not merely omit Draft/Final.
+    const sofField = shipOpsFields('Port').find(field => field.key === 'sof_state')!
+    const term = screen.getByText(localizedLabel(sofField, 'tr'), { selector: 'dt' })
+    expect(term.nextElementSibling).toHaveTextContent(shipOpsFactLabel('Unknown', false))
+    expect(shipOpsFactLabel('Unknown', false)).toBe('Bilinmiyor')
   })
 })

@@ -1,6 +1,11 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
-## Kılavuz paketi — davet/kabul, ekran görüntüleri, 54 sayfa kılavuzu, ürün düzeltmeleri; QA notlarla, kapı CI bekleniyor (22.11.2026)
+## Diller + kullanım kılavuzu paketi — resimli el kitabı, 14 dil kılavuz taslağı; QA notlarla, kapı CI bekleniyor (22.11.2026)
+- `integration/help-locales-20261122` (taban main f4e44501, kılavuz paketi #55 sonrası). Canonical sayım değişmez: 114/121 iş, 932/970 SP.
+- UG-4 TR/EN resimli el kitabı üreticisi (HTML + PDF); UG-5 14 dil × 54 kılavuz makine taslağı ("gözden geçirilmedi" uyarısı, sayfa bazlı EN yedeği); kullanıcı/davet ekranı 14 dile çevrildi. Ayrıntı: `docs/phases/LOCALES-MANUAL-BUNDLE-20261122.md`.
+- Yerel: frontend 3075/3075, el kitabı 25/25, build çevrimdışı envanter 36/128. Açık: UG-6 insan onayı, mobil görüntüler.
+
+## Kılavuz paketi — davet/kabul, ekran görüntüleri, 54 sayfa kılavuzu, ürün düzeltmeleri; #55 ile birleşti (22.11.2026)
 - `integration/guide-bundle-20261122` (main dde4bb50 + USER-ADMIN-02 + UG-2 + UG-3 + `fix/guide-findings-20261122`). Canonical sayım değişmez: 114/121 iş, 932/970 SP.
 - USER-ADMIN-02 davet/kabul; UG-2 ekran görüntüsü hattı (6 kılavuz, 64 PNG); UG-3 54/54 sayfa kılavuzu TR/EN (`reviewed:false`); kılavuz yazarken bulunan 6 ürün hatası düzeltildi (günlük inceleme bağımsızlığı migration'ı dahil). Ayrıntı: `docs/phases/GUIDE-BUNDLE-20261122.md`.
 - Yerel: frontend 2316/2316, typecheck/lint 0, günlük inceleme PG 21/21. DEFERRED: mobil görüntüler, UG-4/5/6.

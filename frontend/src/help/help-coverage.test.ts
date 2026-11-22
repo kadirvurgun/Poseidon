@@ -1,12 +1,15 @@
 import { describe, expect, it } from 'vitest'
 import { enterpriseDestinationKeys } from '../product/enterprise-navigation'
-import { helpSectionHeadings, parseHelpDocument, type HelpLocale } from './help-model'
+import { helpLocales, helpSectionHeadings, helpStepCount, isDraftTranslationLocale, parseHelpDocument, type HelpLocale } from './help-model'
 import { pendingHelpBaseline, pendingHelpKeys } from './help-pending'
 
 // USER-GUIDE-01 UG-HELP-03: every navigation destination has a TR and EN guide with the 8 fixed
 // sections, except keys in the explicit, shrink-only pending allowlist.
 const raw = import.meta.glob<string>('./content/*/*.md', { eager: true, query: '?raw', import: 'default' })
 const locales: HelpLocale[] = ['tr', 'en']
+const draftLocales = helpLocales.filter(isDraftTranslationLocale)
+const localeOf = (path: string) => /^\.\/content\/([^/]+)\//.exec(path)![1] as HelpLocale
+const bundleFiles = Object.keys(import.meta.glob('./content/*/help-*.ts'))
 const source = (locale: HelpLocale, key: string) => raw[`./content/${locale}/${key}.md`]
 const navigation = new Set(enterpriseDestinationKeys)
 
@@ -45,21 +48,23 @@ describe('help content coverage guard', () => {
     for (const key of ['today', 'tug-job-board', 'companies']) expect(pendingHelpKeys.has(key)).toBe(false)
   })
 
-  it('has no guide file for a key outside navigation and only TR/EN folders in UG-1', () => {
+  it('has no guide file for a key outside navigation, only known locale folders, and one bundle per folder', () => {
+    const folders = new Set<string>()
     for (const path of Object.keys(raw)) {
       const match = /^\.\/content\/([^/]+)\/([^/]+)\.md$/.exec(path)
       expect(match, path).not.toBeNull()
-      expect(locales).toContain(match![1])
+      expect(helpLocales, path).toContain(match![1])
       expect(navigation.has(match![2]), `${path} is not a navigation destination`).toBe(true)
+      folders.add(match![1])
     }
+    expect(bundleFiles.sort()).toEqual([...folders].sort().map(locale => `./content/${locale}/help-${locale}.ts`))
   })
 
   it('keeps every guide reviewed:false until the human UG-REV-01 sign-off flow replaces this guard (D7)', () => {
     // An AI author can never record SME/UX approval. When the human review flow lands, it replaces this
     // assertion explicitly; until then a `reviewed: { by, date }` value in a guide is a defect.
     for (const [path, text] of Object.entries(raw)) {
-      const locale = /^\.\/content\/(tr|en)\//.exec(path)?.[1] as HelpLocale
-      expect(parseHelpDocument(text, locale).meta.reviewed, path).toBe(false)
+      expect(parseHelpDocument(text, localeOf(path)).meta.reviewed, path).toBe(false)
       expect(text, path).toMatch(/^reviewed: false$/m)
     }
   })
@@ -79,6 +84,51 @@ describe('help content coverage guard', () => {
       expect(body, path).not.toMatch(/unknown\s*(=|means|is treated as)\s*(no|ready|not applicable)\b/)
       expect(body, path).not.toMatch(/(gemi|römorkör)\s+kalkabilir|is safe to (sail|depart)|may depart/)
     }
+  })
+})
+
+// USER-GUIDE-01 UG-5 (D6): a machine-drafted translation is optional per page (a missing file falls
+// back to EN and is NOT listed in help-pending.ts), but any file that exists must be a faithful
+// structural copy of its EN guide: same front matter except the title, reviewed:false, the locale's
+// 8 headings in order, the same number of steps and non-empty sections.
+const draftGuides = Object.keys(raw).filter(path => isDraftTranslationLocale(localeOf(path))).sort()
+
+describe('help translation drafts (UG-5)', () => {
+  it('defines 8 distinct, non-empty headings for every guide locale', () => {
+    expect(Object.keys(helpSectionHeadings).sort()).toEqual([...helpLocales].sort())
+    for (const locale of helpLocales) {
+      const headings = helpSectionHeadings[locale]
+      expect(headings, locale).toHaveLength(8)
+      expect(new Set(headings).size, locale).toBe(8)
+      for (const heading of headings) expect(heading.trim(), locale).toBe(heading)
+    }
+    expect(draftLocales).not.toContain('tr')
+    expect(draftLocales).not.toContain('en')
+    expect(draftLocales).toHaveLength(14)
+  })
+
+  it('keeps at least the de/today example draft so the path stays exercised', () => {
+    expect(draftGuides).toContain('./content/de/today.md')
+  })
+
+  it.each(draftGuides)('%s mirrors its EN guide', path => {
+    const locale = localeOf(path)
+    const key = /\/([^/]+)\.md$/.exec(path)![1]
+    const english = source('en', key)
+    expect(english, `${path} has no EN original`).toBeTypeOf('string')
+    const draft = parseHelpDocument(raw[path], locale)
+    const original = parseHelpDocument(english!, 'en')
+    const { title: draftTitle, ...draftMeta } = draft.meta
+    const { title: originalTitle, ...originalMeta } = original.meta
+    expect(draftMeta, `${path}: front matter must equal EN except title`).toEqual(originalMeta)
+    expect(draftTitle.trim(), path).not.toBe('')
+    expect(originalTitle).toBeTruthy()
+    expect(draft.meta.reviewed, path).toBe(false)
+    expect(raw[path], path).toMatch(/^reviewed: false$/m)
+    expect(draft.sections.map(section => section.heading)).toEqual(helpSectionHeadings[locale])
+    expect(helpStepCount(draft), `${path}: step count must equal EN`).toBe(helpStepCount(original))
+    for (const [index, section] of draft.sections.entries())
+      if (index !== 7) expect(section.body, `${path}: empty "${section.heading}"`).not.toBe('')
   })
 })
 
@@ -125,7 +175,9 @@ describe('help screenshot coverage (UG-2)', () => {
       expect(parseHelpDocument(source(locale as HelpLocale, key)!, locale as HelpLocale).meta.screenshots, path).toContain(Number(step))
     }
     for (const [path, text] of Object.entries(raw)) {
-      const [, locale, key] = /^\.\/content\/(tr|en)\/([^/]+)\.md$/.exec(path)!
+      const match = /^\.\/content\/(tr|en)\/([^/]+)\.md$/.exec(path)
+      if (!match) continue // A draft translation reuses the EN screenshots (front matter equality above).
+      const [, locale, key] = match
       if (parseHelpDocument(text, locale as HelpLocale).meta.screenshots.length) expect(mapping.guides[key], path).toBeDefined()
     }
   })

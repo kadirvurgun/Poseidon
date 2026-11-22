@@ -9,6 +9,11 @@ import { changeAppLanguage } from '../i18n'
 // UG-HELP-04 (related pages limited to the caller's navigation), draft label, missing content, mobile.
 vi.mock('../product/WorkspaceContextBar', () => ({ WorkspaceContextBar: () => <div>Scoped context</div> }))
 vi.mock('../product/WorkspaceRoleNavigation', () => ({ WorkspaceRoleNavigation: () => <div>Scoped work view</div> }))
+// Every locale now has every guide; drop one German page so the per-page EN fallback (D6) stays covered.
+vi.mock('./content/de/help-de.ts', async importOriginal => {
+  const actual = await importOriginal<{ default: Record<string, string> }>()
+  return { default: Object.fromEntries(Object.entries(actual.default).filter(([path]) => path !== './fleet.md')) }
+})
 const session = { authenticated: true, canRead: true, canReadCompanies: true, canCreate: false, canSearch: false, setupRequired: false,
   tenantId: '10000000-0000-0000-0000-000000000001', actorId: '20000000-0000-0000-0000-000000000001', tenantName: 'FICTIONAL workspace', csrfToken: 'synthetic' } as Session
 const restricted = { destinations: [{ key: 'today', href: '/app/today' }, { key: 'fleet', href: '/app/fleet' }], canSearch: false, canWriteRegulatory: false }
@@ -191,14 +196,35 @@ describe('page help panel', () => {
     expect(within(dialog).getByRole('note')).toHaveTextContent('Taslak kılavuz — uzman onayı bekliyor')
   })
 
-  it('falls back to the English guide for a locale without content and says so', async () => {
+  it('falls back, per page, to the English guide when the locale has no translation of it and says so (D6)', async () => {
     await act(async () => { await changeAppLanguage('de', false) })
-    mount('/app/today', restricted, 'de')
+    mount('/app/fleet', restricted, 'de')
     await userEvent.click(await screen.findByRole('button', { name: 'Seitenanleitung öffnen' }))
     const dialog = await screen.findByRole('dialog', { name: /Hilfe/ })
     expect(await within(dialog).findByRole('heading', { name: 'What this page is for' }, guideLoad)).toBeVisible()
     expect(within(dialog).getByText(/die englische Fassung wird angezeigt/)).toBeVisible()
     expect(within(dialog).getByRole('article')).toHaveAttribute('lang', 'en')
+    // The EN original is the authored guide, not a machine draft.
+    expect(within(dialog).queryByTestId('help-translation-unreviewed')).toBeNull()
+  })
+
+  it('renders a machine-drafted translation with the not-reviewed notice and EN screenshots (UG-5, D6)', async () => {
+    await act(async () => { await changeAppLanguage('de', false) })
+    mount('/app/today', restricted, 'de')
+    await userEvent.click(await screen.findByRole('button', { name: 'Seitenanleitung öffnen' }))
+    const dialog = await screen.findByRole('dialog', { name: /Hilfe/ })
+    expect(await within(dialog).findByRole('heading', { name: 'Wofür diese Seite dient' }, guideLoad)).toBeVisible()
+    expect(within(dialog).queryByText(/die englische Fassung wird angezeigt/)).toBeNull()
+    expect(within(dialog).getByRole('article')).not.toHaveAttribute('lang')
+    const notes = within(dialog).getAllByRole('note').map(note => note.textContent)
+    expect(notes).toContain('Maschinelle Übersetzung — nicht geprüft. Wenn etwas unklar ist, sehen Sie in der englischen Anleitung nach.')
+    expect(within(dialog).getByTestId('help-translation-unreviewed')).toBeVisible()
+    // reviewed:false still shows the draft label as well.
+    expect(notes).toContain('Anleitungsentwurf — Expertenprüfung ausstehend')
+    // Section anchors stay the stable EN ids in every locale.
+    expect(within(dialog).getByRole('heading', { name: 'Schritt für Schritt' })).toHaveAttribute('id', 'help-step-by-step')
+    const step = within(dialog).getByRole('heading', { name: 'Schritt für Schritt' }).closest('section')!
+    expect(within(step).getAllByRole('img')).toHaveLength(6)
   })
 
   it('shows the generated screenshot under each captured step, lazily and without an API request (UG-2)', async () => {

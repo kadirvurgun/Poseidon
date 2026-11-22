@@ -86,6 +86,11 @@ describe('DEV-044 renewal workflow panel', () => {
     const alert = await screen.findByRole('alert')
     expect(alert).toHaveTextContent(/separation of duties/); expect(alert).toHaveTextContent('separation_of_duties')
     expect(alert).not.toHaveTextContent(/changed after it was loaded/)
+    // QA N3: the same code also refuses COMPLETE when no independent verifier is recorded (CertificateRenewalWorkflow.Separated),
+    // so the copy must not claim the caller recorded an earlier step.
+    expect(alert).toHaveTextContent(/a different person must take this step/)
+    expect(alert).toHaveTextContent(/or no verification by another person is recorded yet/)
+    expect(alert).not.toHaveTextContent(/^Refused for separation of duties: you recorded an earlier step/)
     expect(screen.queryByRole('button', { name: 'Reload' })).not.toBeInTheDocument()
   })
 
