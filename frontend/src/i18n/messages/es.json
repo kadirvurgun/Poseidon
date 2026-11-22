@@ -3869,6 +3869,27 @@
       "screenshotAlt": "Captura de pantalla, paso",
       "screenshotOffline": "Captura de pantalla disponible con conexión."
     },
+    "HelpCenter_tsx_copy": {
+      "title": "Centro de ayuda",
+      "eyebrow": "Ayuda",
+      "description": "Guías de las páginas que puede abrir. Leer una guía no cambia nada ni inicia ninguna llamada de IA.",
+      "listTitle": "Guías de páginas",
+      "searchLabel": "Buscar en las guías",
+      "noResults": "Ninguna guía coincide con su búsqueda.",
+      "loading": "Cargando guías…",
+      "failed": "No se pudieron cargar las guías. Recargue la página e inténtelo de nuevo.",
+      "navigationUnavailable": "No se pudo cargar su lista de páginas, por lo que no se muestra ninguna guía. Las guías solo se muestran para las páginas que puede abrir.",
+      "signedOut": "Inicie sesión para ver las guías de sus páginas.",
+      "offline": "Está sin conexión. La lista de guías necesita los permisos de sus páginas y se mostrará cuando vuelva a estar en línea.",
+      "noPages": "Ninguna de sus páginas tiene una guía que mostrar.",
+      "draftBadge": "Borrador",
+      "draftLocale": "Las guías en este idioma son traducciones automáticas en borrador y no se han revisado. Si algo no está claro, consulte la guía en inglés.",
+      "openPage": "Abrir esta página",
+      "backToList": "Todas las guías",
+      "notAvailable": "No hay ninguna guía para esta dirección.",
+      "manualTitle": "Manual de usuario",
+      "manualBody": "El manual de usuario ilustrado (turco e inglés, HTML y PDF) se genera fuera de la aplicación a partir de estas mismas guías y no se incluye en esta versión. Solicite la copia actual a su administrador. Sigue siendo un borrador hasta que se registre una revisión experta."
+    },
     "AcceptInvitation_tsx_copy": {
       "title": "Aceptar invitación",
       "eyebrow": "Invitación de la organización",

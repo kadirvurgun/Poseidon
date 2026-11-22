@@ -3869,6 +3869,27 @@
       "screenshotAlt": "Kuvakaappaus, vaihe",
       "screenshotOffline": "Kuvakaappaus on saatavilla verkossa."
     },
+    "HelpCenter_tsx_copy": {
+      "title": "Ohjekeskus",
+      "eyebrow": "Ohje",
+      "description": "Ohjeet sivuille, jotka voit avata. Ohjeen lukeminen ei muuta mitään eikä käynnistä tekoälykutsua.",
+      "listTitle": "Sivujen ohjeet",
+      "searchLabel": "Hae ohjeista",
+      "noResults": "Hakuasi vastaavaa ohjetta ei löytynyt.",
+      "loading": "Ladataan ohjeita…",
+      "failed": "Ohjeita ei voitu ladata. Lataa sivu uudelleen ja yritä uudestaan.",
+      "navigationUnavailable": "Sivuluetteloasi ei voitu ladata, joten ohjeita ei näytetä. Ohjeet näytetään vain sivuille, jotka voit avata.",
+      "signedOut": "Kirjaudu sisään nähdäksesi sivujesi ohjeet.",
+      "offline": "Olet offline-tilassa. Ohjeluettelo tarvitsee sivujesi käyttöoikeudet, ja se näytetään, kun olet taas verkossa.",
+      "noPages": "Millekään sivullesi ei ole näytettävää ohjetta.",
+      "draftBadge": "Luonnos",
+      "draftLocale": "Tämän kielen ohjeet ovat konekäännettyjä luonnoksia, eikä niitä ole tarkistettu. Jos jokin on epäselvää, katso englanninkielinen ohje.",
+      "openPage": "Avaa tämä sivu",
+      "backToList": "Kaikki ohjeet",
+      "notAvailable": "Tälle osoitteelle ei ole näytettävää ohjetta.",
+      "manualTitle": "Käyttöopas",
+      "manualBody": "Kuvitettu käyttöopas (turkiksi ja englanniksi, HTML ja PDF) tuotetaan samoista ohjeista sovelluksen ulkopuolella, eikä se sisälly tähän versioon. Pyydä ajantasainen kappale ylläpitäjältä. Se on luonnos, kunnes asiantuntijatarkistus on kirjattu."
+    },
     "AcceptInvitation_tsx_copy": {
       "title": "Hyväksy kutsu",
       "eyebrow": "Organisaation kutsu",

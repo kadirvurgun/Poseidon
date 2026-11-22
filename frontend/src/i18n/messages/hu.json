@@ -3869,6 +3869,27 @@
       "screenshotAlt": "Képernyőkép, lépés",
       "screenshotOffline": "A képernyőkép online érhető el."
     },
+    "HelpCenter_tsx_copy": {
+      "title": "Súgóközpont",
+      "eyebrow": "Súgó",
+      "description": "Útmutatók az Ön által megnyitható oldalakhoz. Egy útmutató olvasása semmit sem módosít, és nem indít AI-hívást.",
+      "listTitle": "Oldalútmutatók",
+      "searchLabel": "Keresés az útmutatókban",
+      "noResults": "Egyetlen útmutató sem felel meg a keresésnek.",
+      "loading": "Útmutatók betöltése…",
+      "failed": "Az útmutatókat nem sikerült betölteni. Töltse be újra az oldalt, és próbálja újra.",
+      "navigationUnavailable": "Az oldallistáját nem sikerült betölteni, ezért nem jelenik meg útmutató. Útmutató csak az Ön által megnyitható oldalakhoz jelenik meg.",
+      "signedOut": "Jelentkezzen be az oldalai útmutatóinak megtekintéséhez.",
+      "offline": "Offline állapotban van. Az útmutatók listájához szükség van az oldaljogosultságaira; újra online állapotban megjelenik.",
+      "noPages": "Egyik oldalához sincs megjeleníthető útmutató.",
+      "draftBadge": "Vázlat",
+      "draftLocale": "Az ezen a nyelven elérhető útmutatók gépi fordítású vázlatok, és nem lettek átnézve. Ha valami nem egyértelmű, nézze meg az angol útmutatót.",
+      "openPage": "Oldal megnyitása",
+      "backToList": "Összes útmutató",
+      "notAvailable": "Ehhez a címhez nincs megjeleníthető útmutató.",
+      "manualTitle": "Felhasználói kézikönyv",
+      "manualBody": "Az illusztrált felhasználói kézikönyv (török és angol, HTML és PDF) ugyanezekből az útmutatókból készül az alkalmazáson kívül, és nem része ennek a buildnek. A jelenlegi példányt kérje a rendszergazdától. Szakértői átnézés rögzítéséig vázlat marad."
+    },
     "AcceptInvitation_tsx_copy": {
       "title": "Meghívó elfogadása",
       "eyebrow": "Szervezeti meghívó",

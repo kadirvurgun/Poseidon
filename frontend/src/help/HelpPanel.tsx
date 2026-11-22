@@ -19,7 +19,7 @@ const copy = localizedCopy('HelpPanel_tsx_copy')
 export type HelpDestination = { key: string; href: string; label: string }
 type Tab = 'guide' | 'why' | 'ai'
 const tabs: Tab[] = ['guide', 'why', 'ai']
-type Load = { state: 'loading' } | { state: 'ready'; document: HelpDocument; locale: HelpLocale; fallback: boolean } | { state: 'missing' } | { state: 'error' }
+export type HelpLoad = { state: 'loading' } | { state: 'ready'; document: HelpDocument; locale: HelpLocale; fallback: boolean } | { state: 'missing' } | { state: 'error' }
 
 const mobileQuery = '(max-width: 767px)'
 function useFullPage() {
@@ -51,7 +51,7 @@ export function HelpPanel({ pageKey, title, language, destinations, onNavigate, 
   const closeButton = useRef<HTMLButtonElement>(null)
   const tabRefs = useRef<Record<Tab, HTMLButtonElement | null>>({ guide: null, why: null, ai: null })
   const [tab, setTab] = useState<Tab>('guide')
-  const [loaded, setLoaded] = useState<{ owner: string; value: Load } | null>(null)
+  const [loaded, setLoaded] = useState<{ owner: string; value: HelpLoad } | null>(null)
   const fullPage = useFullPage()
   const owner = `${language}\0${pageKey ?? ''}`
   useInertBackground(panel)
@@ -64,7 +64,7 @@ export function HelpPanel({ pageKey, title, language, destinations, onNavigate, 
       () => { if (active) setLoaded({ owner, value: { state: 'error' } }) })
     return () => { active = false }
   }, [language, pageKey, owner])
-  const load: Load = !pageKey ? { state: 'missing' } : loaded?.owner === owner ? loaded.value : { state: 'loading' }
+  const load: HelpLoad = !pageKey ? { state: 'missing' } : loaded?.owner === owner ? loaded.value : { state: 'loading' }
 
   const granted = new Map(destinations.map(item => [item.key, item]))
   const policy: HelpLinkPolicy = {
@@ -100,7 +100,7 @@ export function HelpPanel({ pageKey, title, language, destinations, onNavigate, 
         aria-selected={tab === item} tabIndex={tab === item ? 0 : -1} onClick={() => setTab(item)} onKeyDown={event => onTabKey(event, item)}>{labels[item]}</button>)}
     </div>
     <div className="help-panel-body" role="tabpanel" id={`${id}-panel-${tab}`} aria-labelledby={`${id}-tab-${tab}`} tabIndex={0}>
-      {tab === 'guide' && <GuideTab load={load} t={t} policy={policy} granted={granted} onNavigate={onNavigate}/>}
+      {tab === 'guide' && <HelpGuideContent load={load} t={t} policy={policy} granted={granted} onNavigate={onNavigate}/>}
       {tab === 'why' && <p className="help-panel-note">{pageKey && pagesWithWhyView.has(pageKey) ? t.whyHint : t.whyEmpty}</p>}
       {tab === 'ai' && <p className="help-panel-note">{t.aiDisabled}</p>}
     </div>
@@ -108,8 +108,9 @@ export function HelpPanel({ pageKey, title, language, destinations, onNavigate, 
   </div>
 }
 
-type Copy = (typeof copy)['en']
-function GuideTab({ load, t, policy, granted, onNavigate }: { load: Load; t: Copy; policy: HelpLinkPolicy; granted: Map<string, HelpDestination>; onNavigate: (href: string) => void }) {
+export type HelpPanelCopy = (typeof copy)['en']
+/** The guide renderer shared by this panel and the /app/help help center (HELP-CENTER-01). */
+export function HelpGuideContent({ load, t, policy, granted, onNavigate }: { load: HelpLoad; t: HelpPanelCopy; policy: HelpLinkPolicy; granted: ReadonlyMap<string, HelpDestination>; onNavigate: (href: string) => void }) {
   if (load.state === 'loading') return <p role="status">{t.loading}</p>
   if (load.state === 'error') return <p role="alert">{t.failed}</p>
   if (load.state === 'missing') return <p className="help-panel-note" role="status">{t.pending}</p>

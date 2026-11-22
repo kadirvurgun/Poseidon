@@ -3869,6 +3869,27 @@
       "screenshotAlt": "Snímek obrazovky, krok",
       "screenshotOffline": "Snímek obrazovky je dostupný online."
     },
+    "HelpCenter_tsx_copy": {
+      "title": "Centrum nápovědy",
+      "eyebrow": "Nápověda",
+      "description": "Návody ke stránkám, které můžete otevřít. Čtení návodu nic nemění a nespouští žádné volání AI.",
+      "listTitle": "Návody ke stránkám",
+      "searchLabel": "Hledat v návodech",
+      "noResults": "Vašemu hledání neodpovídá žádný návod.",
+      "loading": "Načítání návodů…",
+      "failed": "Návody se nepodařilo načíst. Obnovte stránku a zkuste to znovu.",
+      "navigationUnavailable": "Seznam vašich stránek se nepodařilo načíst, proto se nezobrazují žádné návody. Návody se zobrazují jen pro stránky, které můžete otevřít.",
+      "signedOut": "Přihlaste se, abyste viděli návody ke svým stránkám.",
+      "offline": "Jste offline. Seznam návodů potřebuje oprávnění k vašim stránkám a zobrazí se, až budete znovu online.",
+      "noPages": "Žádná z vašich stránek nemá návod k zobrazení.",
+      "draftBadge": "Koncept",
+      "draftLocale": "Návody v tomto jazyce jsou strojově přeložené koncepty a nebyly zkontrolovány. Pokud je něco nejasné, podívejte se do anglického návodu.",
+      "openPage": "Otevřít tuto stránku",
+      "backToList": "Všechny návody",
+      "notAvailable": "Pro tuto adresu není žádný návod k zobrazení.",
+      "manualTitle": "Uživatelská příručka",
+      "manualBody": "Ilustrovaná uživatelská příručka (turecky a anglicky, HTML a PDF) se vytváří ze stejných návodů mimo aplikaci a není součástí tohoto sestavení. Aktuální kopii si vyžádejte od správce. Zůstává konceptem, dokud není zaznamenána odborná kontrola."
+    },
     "AcceptInvitation_tsx_copy": {
       "title": "Přijmout pozvánku",
       "eyebrow": "Pozvánka do organizace",

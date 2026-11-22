@@ -95,7 +95,8 @@ it('supports mobile menu focus containment, Escape dismissal and focus restorati
   const hiddenAction = within(dialog).getByText('Hidden work-view action').closest('button')!
   expect(hiddenAction.closest('details')).not.toHaveAttribute('open')
   brand.focus()
-  await user.tab({ shift: true }); expect(within(dialog).getByRole('button', { name: 'Fleet' })).toHaveFocus()
+  // HELP-CENTER-01: the help center link is the drawer's last stop, after the granted destinations.
+  await user.tab({ shift: true }); expect(within(dialog).getByRole('link', { name: 'Help center' })).toHaveFocus()
   expect(hiddenAction).not.toHaveFocus()
   await user.tab(); expect(brand).toHaveFocus()
   await user.keyboard('{Escape}')

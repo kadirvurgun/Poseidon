@@ -3869,6 +3869,27 @@
       "screenshotAlt": "Bildschirmfoto, Schritt",
       "screenshotOffline": "Bildschirmfoto ist online verfügbar."
     },
+    "HelpCenter_tsx_copy": {
+      "title": "Hilfecenter",
+      "eyebrow": "Hilfe",
+      "description": "Anleitungen für die Seiten, die Sie öffnen können. Das Lesen einer Anleitung ändert nichts und startet keinen KI-Aufruf.",
+      "listTitle": "Seitenanleitungen",
+      "searchLabel": "Anleitungen durchsuchen",
+      "noResults": "Keine Anleitung passt zu Ihrer Suche.",
+      "loading": "Anleitungen werden geladen…",
+      "failed": "Die Anleitungen konnten nicht geladen werden. Laden Sie die Seite neu und versuchen Sie es erneut.",
+      "navigationUnavailable": "Ihre Seitenliste konnte nicht geladen werden, daher werden keine Anleitungen aufgeführt. Anleitungen werden nur für Seiten angezeigt, die Sie öffnen können.",
+      "signedOut": "Melden Sie sich an, um die Anleitungen für Ihre Seiten zu sehen.",
+      "offline": "Sie sind offline. Die Anleitungsliste benötigt Ihre Seitenberechtigungen und wird angezeigt, sobald Sie wieder online sind.",
+      "noPages": "Für keine Ihrer Seiten gibt es eine Anleitung.",
+      "draftBadge": "Entwurf",
+      "draftLocale": "Anleitungen in dieser Sprache sind maschinell erstellte Übersetzungsentwürfe und wurden nicht geprüft. Wenn etwas unklar ist, lesen Sie die englische Anleitung.",
+      "openPage": "Diese Seite öffnen",
+      "backToList": "Alle Anleitungen",
+      "notAvailable": "Für diese Adresse gibt es keine Anleitung.",
+      "manualTitle": "Benutzerhandbuch",
+      "manualBody": "Das bebilderte Benutzerhandbuch (Türkisch und Englisch, HTML und PDF) wird außerhalb der App aus denselben Anleitungen erstellt und ist in diesem Build nicht enthalten. Fragen Sie Ihre Administration nach der aktuellen Fassung. Es bleibt ein Entwurf, bis eine Expertenprüfung erfasst ist."
+    },
     "AcceptInvitation_tsx_copy": {
       "title": "Einladung annehmen",
       "eyebrow": "Einladung der Organisation",

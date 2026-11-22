@@ -3869,6 +3869,27 @@
       "screenshotAlt": "螢幕截圖，步驟",
       "screenshotOffline": "連線時可檢視螢幕截圖。"
     },
+    "HelpCenter_tsx_copy": {
+      "title": "說明中心",
+      "eyebrow": "說明",
+      "description": "您可以開啟的頁面的指南。閱讀指南不會變更任何內容，也不會發起任何 AI 呼叫。",
+      "listTitle": "頁面指南",
+      "searchLabel": "搜尋指南",
+      "noResults": "沒有符合您搜尋的指南。",
+      "loading": "正在載入指南…",
+      "failed": "無法載入指南。請重新載入頁面後再試一次。",
+      "navigationUnavailable": "無法載入您的頁面清單，因此不列出任何指南。僅顯示您可以開啟的頁面的指南。",
+      "signedOut": "請登入以查看您頁面的指南。",
+      "offline": "您目前離線。指南清單需要您的頁面權限，恢復連線後將會顯示。",
+      "noPages": "您的頁面中沒有可顯示的指南。",
+      "draftBadge": "草稿",
+      "draftLocale": "此語言的指南是機器翻譯草稿，尚未經過審查。如有不清楚之處，請參閱英文指南。",
+      "openPage": "開啟此頁面",
+      "backToList": "全部指南",
+      "notAvailable": "此位址沒有可顯示的指南。",
+      "manualTitle": "使用手冊",
+      "manualBody": "附插圖的使用手冊（土耳其語和英語，HTML 和 PDF）在應用程式之外由這些指南產生，未包含在此版本中。請向管理員索取目前版本。在記錄專家審查之前，它仍是草稿。"
+    },
     "AcceptInvitation_tsx_copy": {
       "title": "接受邀請",
       "eyebrow": "組織邀請",
