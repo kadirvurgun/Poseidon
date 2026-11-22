@@ -169,6 +169,8 @@ jobs:
           npm run typecheck --prefix frontend
       - name: Signed lane fixture protocol unit tests
         run: node --test tests/Poseidon.Browser.Tests/lab/register-lane-fixture.test.ts tests/Poseidon.Browser.Tests/lab/signed-case.test.ts tests/Poseidon.Browser.Tests/lab/observation-fixture.test.ts tests/Poseidon.Browser.Tests/lab/lab-runtime.test.ts
+      - name: Help screenshot mapping and provenance tests (USER-GUIDE-01 UG-2)
+        run: node --test tests/Poseidon.Browser.Tests/screenshots/steps.test.ts tests/Poseidon.Browser.Tests/screenshots/provenance.test.ts
       - name: Qualified owning fixture protocol before provider
         run: |
           node --test tests/Poseidon.Browser.Tests/lab/qualified-owning-fixture.test.ts

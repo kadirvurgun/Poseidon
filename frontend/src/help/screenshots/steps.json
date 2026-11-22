@@ -1,0 +1,460 @@
+{
+ "schemaVersion": "poseidon.help.screenshots.v1",
+ "committedViewports": [
+  "desktop"
+ ],
+ "guides": {
+  "today": {
+   "route": "/app/today/30000000-0000-0000-0000-000000000001",
+   "steps": [
+    {
+     "step": 1,
+     "actions": [],
+     "targets": [
+      {
+       "role": "heading",
+       "name": {
+        "tr": "re:^Etkin araç",
+        "en": "re:^Current vessel"
+       }
+      },
+      {
+       "role": "button",
+       "name": {
+        "tr": "Araç değiştir",
+        "en": "Switch vessel"
+       }
+      }
+     ]
+    },
+    {
+     "step": 2,
+     "actions": [],
+     "targets": [
+      {
+       "role": "heading",
+       "name": {
+        "tr": "Kaynak kapsamı",
+        "en": "Source coverage"
+       }
+      }
+     ]
+    },
+    {
+     "step": 3,
+     "actions": [],
+     "targets": [
+      {
+       "role": "article",
+       "nth": 0
+      }
+     ]
+    },
+    {
+     "step": 4,
+     "actions": [
+      {
+       "click": {
+        "role": "button",
+        "name": {
+         "tr": "Neden?",
+         "en": "Why?"
+        },
+        "within": {
+         "role": "article",
+         "nth": 0
+        }
+       }
+      }
+     ],
+     "targets": [
+      {
+       "role": "region",
+       "name": {
+        "tr": "Neden?",
+        "en": "Why?"
+       },
+       "within": {
+        "role": "article",
+        "nth": 0
+       }
+      }
+     ]
+    },
+    {
+     "step": 5,
+     "actions": [],
+     "targets": [
+      {
+       "role": "button",
+       "name": {
+        "tr": "Taslağı görüntüle",
+        "en": "View draft"
+       },
+       "within": {
+        "role": "article",
+        "nth": 0
+       }
+      }
+     ]
+    },
+    {
+     "step": 6,
+     "actions": [],
+     "targets": [
+      {
+       "role": "button",
+       "name": {
+        "tr": "Yenile",
+        "en": "Refresh"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "tug-job-board": {
+   "route": "/app/tug-job-board?vessel=30000000-0000-0000-0000-000000000002",
+   "steps": [
+    {
+     "step": 1,
+     "actions": [],
+     "targets": [
+      {
+       "text": {
+        "tr": "Listelenen talepler",
+        "en": "Listed requests"
+       }
+      },
+      {
+       "text": {
+        "tr": "re:Sayılar yalnız bu sayfayı kapsar",
+        "en": "re:Counts cover this page only"
+       }
+      }
+     ]
+    },
+    {
+     "step": 2,
+     "actions": [],
+     "targets": [
+      {
+       "role": "searchbox",
+       "name": {
+        "tr": "Taleplerde ara",
+        "en": "Search requests"
+       }
+      },
+      {
+       "role": "combobox",
+       "name": {
+        "tr": "Öncelik",
+        "en": "Priority"
+       }
+      },
+      {
+       "role": "combobox",
+       "name": {
+        "tr": "Durum",
+        "en": "State"
+       }
+      },
+      {
+       "role": "combobox",
+       "name": {
+        "tr": "Zaman aralığı",
+        "en": "Time window"
+       }
+      },
+      {
+       "role": "button",
+       "name": {
+        "tr": "Filtreleri uygula",
+        "en": "Apply filters"
+       }
+      }
+     ]
+    },
+    {
+     "step": 3,
+     "actions": [],
+     "targets": [
+      {
+       "role": "article",
+       "nth": 0
+      }
+     ]
+    },
+    {
+     "step": 4,
+     "actions": [
+      {
+       "click": {
+        "text": {
+         "tr": "re:^Neden / sonraki adım",
+         "en": "re:^Why / next action"
+        }
+       }
+      }
+     ],
+     "targets": [
+      {
+       "text": {
+        "tr": "re:^Neden / sonraki adım",
+        "en": "re:^Why / next action"
+       }
+      }
+     ]
+    },
+    {
+     "step": 5,
+     "actions": [],
+     "targets": [
+      {
+       "role": "link",
+       "name": {
+        "tr": "İşi aç",
+        "en": "Open job"
+       }
+      }
+     ]
+    },
+    {
+     "step": 6,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 7,
+     "actions": [],
+     "targets": [
+      {
+       "role": "button",
+       "name": {
+        "tr": "Panoyu yenile",
+        "en": "Refresh board"
+       }
+      },
+      {
+       "role": "button",
+       "name": {
+        "tr": "Önceki",
+        "en": "Previous"
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "companies": {
+   "route": "/app/companies",
+   "steps": [
+    {
+     "step": 1,
+     "actions": [],
+     "targets": [
+      {
+       "role": "table"
+      },
+      {
+       "role": "button",
+       "name": {
+        "tr": "Önceki",
+        "en": "Previous"
+       }
+      }
+     ]
+    },
+    {
+     "step": 2,
+     "actions": [],
+     "targets": [
+      {
+       "role": "searchbox",
+       "name": {
+        "tr": "Kod veya ad ile ara",
+        "en": "Search by code or name"
+       }
+      },
+      {
+       "role": "button",
+       "name": {
+        "tr": "Ara",
+        "en": "Search"
+       }
+      }
+     ]
+    },
+    {
+     "step": 3,
+     "actions": [
+      {
+       "click": {
+        "role": "button",
+        "name": {
+         "tr": "Synthetic Operator A",
+         "en": "Synthetic Operator A"
+        }
+       }
+      }
+     ],
+     "targets": [
+      {
+       "role": "heading",
+       "name": {
+        "tr": "Ayrıntılar",
+        "en": "Details"
+       }
+      }
+     ]
+    },
+    {
+     "step": 4,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 5,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 6,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    }
+   ]
+  },
+  "user-admin": {
+   "route": "/app/user-admin",
+   "steps": [
+    {
+     "step": 1,
+     "actions": [],
+     "targets": [
+      {
+       "role": "heading",
+       "name": {
+        "tr": "re:^Üyeler ·",
+        "en": "re:^Members ·"
+       }
+      },
+      {
+       "role": "combobox",
+       "name": {
+        "tr": "Durum",
+        "en": "Status"
+       }
+      },
+      {
+       "role": "combobox",
+       "name": {
+        "tr": "Rol paketi",
+        "en": "Role bundle"
+       }
+      },
+      {
+       "role": "button",
+       "name": {
+        "tr": "Uygula",
+        "en": "Apply"
+       }
+      },
+      {
+       "role": "searchbox",
+       "name": {
+        "tr": "Ara",
+        "en": "Search"
+       }
+      }
+     ]
+    },
+    {
+     "step": 2,
+     "actions": [
+      {
+       "click": {
+        "role": "button",
+        "name": {
+         "tr": "re:^Hesap ",
+         "en": "re:^Account "
+        }
+       }
+      }
+     ],
+     "targets": [
+      {
+       "text": {
+        "tr": "Etkin yetkiler",
+        "en": "Effective permissions"
+       }
+      },
+      {
+       "text": {
+        "tr": "Gemi kapsamı",
+        "en": "Vessel scope"
+       }
+      },
+      {
+       "text": {
+        "tr": "Yetki geçmişi",
+        "en": "Grant history"
+       }
+      },
+      {
+       "text": {
+        "tr": "Vekaletler",
+        "en": "Delegations"
+       }
+      }
+     ]
+    },
+    {
+     "step": 3,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 4,
+     "actions": [
+      {
+       "click": {
+        "role": "button",
+        "name": {
+         "tr": "re:^Hesap ",
+         "en": "re:^Account "
+        }
+       }
+      }
+     ],
+     "targets": [
+      {
+       "role": "heading",
+       "name": {
+        "tr": "Yetkiyi düzenle",
+        "en": "Edit grant"
+       }
+      }
+     ]
+    },
+    {
+     "step": 5,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    },
+    {
+     "step": 6,
+     "actions": [],
+     "targets": [],
+     "unavailable": "write_permission_required"
+    }
+   ]
+  }
+ }
+}

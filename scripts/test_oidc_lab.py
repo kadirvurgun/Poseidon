@@ -48,6 +48,23 @@ class LabTests(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, 'lab_manager_scope_invalid'):
                 lab.register_membership(config)
 
+    def test_screenshot_enrollment_adds_only_read_permissions_idempotently_and_preserves_others(self):
+        realm, _, _, config = lab.make_configuration()
+        original = json.loads(json.dumps(config))
+        once = lab.screenshot_membership(config, realm)
+        twice = lab.screenshot_membership(once, realm)
+        self.assertEqual(config, original)  # Pure: the input configuration is never mutated.
+        self.assertEqual(once, twice)
+        manager = once['Authentication']['Oidc']['Memberships'][0]
+        added = set(manager['Permissions']) - set(original['Authentication']['Oidc']['Memberships'][0]['Permissions'])
+        self.assertTrue(added <= set(lab.SCREENSHOT_READ_PERMISSIONS))
+        self.assertFalse(any(p.endswith(('.write', '.manage', '.approve', '.sign', '.verify')) for p in lab.SCREENSHOT_READ_PERMISSIONS))
+        self.assertEqual(original['Authentication']['Oidc']['Memberships'][1:], once['Authentication']['Oidc']['Memberships'][1:])
+        self.assertEqual(original['ConnectionStrings'], once['ConnectionStrings'])
+        broken = json.loads(json.dumps(realm)); broken['users'] = [u for u in broken['users'] if u['username'] != 'lab-manager']
+        with self.assertRaises(RuntimeError):
+            lab.screenshot_membership(config, broken)
+
     def test_lab_environment_excludes_ambient_memberships_database_and_listeners(self):
         ambient = {'Authentication__Oidc__Memberships__9__Subject': 'ambient',
                    'ConnectionStrings__Poseidon': 'ambient', 'Kestrel__Endpoints__Other__Url': 'http://0.0.0.0:9999',
