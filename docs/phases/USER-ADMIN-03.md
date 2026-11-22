@@ -43,6 +43,12 @@ regression traits. Not run: full frontend suite, Playwright/axe, a real SMTP ser
 - Run 45040746196 (a2576c08, push): failure in the same step, now at `docs/phases/USER-ADMIN-03.md:41` (this report quoted
   the flagged assignment). Reworded in the QA-fix commit; a scan of every changed file with all `secret_scan.py` rules
   shows 0 hits.
+- Run 45041780566 (a7418de1, push): secret scan green; `PostgreSQL integration tests` red, 1198/1200, shard 2:
+  `An_invitation_email_is_queued_…` (`InvitationDeliveryTests.cs:114`) and `Transient_failures_retry_…` (`:151`). Both
+  are exact `DateTimeOffset` equality between an in-memory value (100 ns) and a PostgreSQL round-trip (microseconds);
+  the extra locations :133/:162 are the methods' rethrow point after `await using` disposal. The other 7 new PG tests
+  passed. Fix (test-only, within 1 ms): committed locally, **not pushed** — the branch has 3 consecutive red runs
+  (AGENTS.md stop limit). Not reproducible locally without PostgreSQL (Docker is reserved for another session).
 
 ## Independent QA on 88bb67e0 — REJECT (B1), fixed
 - B1 (CI secret scan `db-password` at `InvitationDelivery.cs:73`): fixed in a2576c08 (variable renamed, rule unchanged).

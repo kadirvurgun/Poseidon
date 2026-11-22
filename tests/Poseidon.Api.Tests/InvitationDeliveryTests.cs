@@ -78,6 +78,10 @@ public sealed partial class DirectoryWorkspaceTests
         }
     }
 
+    // Timestamps read back from PostgreSQL are microsecond-rounded; compare instants within that resolution.
+    private static void AssertSameInstant(DateTimeOffset expected, DateTimeOffset actual) =>
+        Assert.True((expected - actual).Duration() <= TimeSpan.FromMilliseconds(1), "instant differs beyond database resolution");
+
     private static async Task Dispatch(WebApplicationFactory<Program> host)
     {
         var dispatcher = host.Services.GetRequiredService<InvitationDeliveryDispatcher>();
@@ -111,7 +115,8 @@ public sealed partial class DirectoryWorkspaceTests
         var message = Assert.Single(mailer.Sent);
         Assert.Equal(InviteeEmail, message.To);
         Assert.Equal("https://poseidon.example.invalid/app/accept-invitation#token=" + Uri.EscapeDataString(issued.InvitationToken!), message.Link);
-        Assert.Equal(issued.ExpiresAt, message.ExpiresAt);
+        // PostgreSQL keeps microseconds; the API response carries the in-memory 100 ns value (CI run 45041780566).
+        AssertSameInstant(issued.ExpiresAt!.Value, message.ExpiresAt);
         var sent = Assert.Single(await Deliveries(membership));
         Assert.Equal(("SENT", 1, (string?)null, (string?)null), (sent.State, sent.Attempts, sent.ProtectedPayload, sent.LastErrorCode));
         Assert.NotNull(sent.CompletedAt);
@@ -148,7 +153,7 @@ public sealed partial class DirectoryWorkspaceTests
         await Dispatch(host);
         var retry = Assert.Single(await Deliveries(membership));
         Assert.Equal(("QUEUED", 1, "smtp_transient"), (retry.State, retry.Attempts, retry.LastErrorCode));
-        Assert.Equal(clock.Now.AddMinutes(1), retry.NextAttemptAt);
+        AssertSameInstant(clock.Now.AddMinutes(1), retry.NextAttemptAt!.Value);
         Assert.NotNull(retry.ProtectedPayload);
         // Not due yet: nothing is attempted.
         await Dispatch(host);
