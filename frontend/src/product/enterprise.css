@@ -220,7 +220,10 @@
   .product-shell.enterprise-shell > main { padding: 22px 18px 40px; }
   .product-shell.enterprise-shell .enterprise-sidebar { display:none; }
   .product-shell.enterprise-shell .enterprise-sidebar.is-open { display:flex; z-index: 30; width: min(290px, 85vw); box-shadow: 12px 0 60px color-mix(in srgb, var(--shadow-color) 27%, transparent); }
-  .enterprise-shell .enterprise-topbar { padding: 0 18px; min-height: 68px; }
+  /* Mobile QA note 1: the wrapped bar (breadcrumb, actions, context rows) is fully opaque and sized by its content,
+     so scrolled page text never shows through or below it as ghost text. */
+  .enterprise-shell .enterprise-topbar { padding: 0 18px; min-height: 68px; height: auto; align-content: flex-start; background: var(--card); backdrop-filter: none; box-shadow: 0 1px 0 var(--border); }
+  .enterprise-shell .enterprise-topbar > * { min-width: 0; max-width: 100%; }
   .enterprise-shell .enterprise-topbar .workspace-menu { display: inline-flex; min-height: 40px; }
   .enterprise-breadcrumb { min-height: 48px; gap: 7px; }
   .enterprise-breadcrumb > span { display: none; }
@@ -252,5 +255,16 @@
    (e.g. 200%/400% zoom) it scrolls with the page instead of occupying most of the screen. */
 html { scroll-padding-top: calc(var(--shell-sticky-offset, 0px) + 8px); }
 @media (max-height: 31.25rem) { .enterprise-shell .enterprise-topbar { position: relative; backdrop-filter: none; } }
-@media (pointer: coarse) { .enterprise-shell button, .enterprise-shell [data-slot="button"], .enterprise-shell select, .enterprise-shell input { min-height: 44px; } }
+@media (pointer: coarse) {
+  .enterprise-shell button, .enterprise-shell [data-slot="button"], .enterprise-shell select, .enterprise-shell input:not([type="checkbox"]):not([type="radio"]) { min-height: 44px; }
+}
+/* Mobile QA note 3 (touch or narrow viewport only; desktop layout and stacking unchanged): a 44px min-height/text-field
+   padding inflated checkboxes/radios into large empty squares. The box stays a 24px control (low :where specificity, so
+   workspace-specific sizing still wins) and the 44px touch target moves to its label: the wrapping label, or the
+   adjacent label[for] used by user admin / data reconciliation. */
+@media (pointer: coarse), (max-width: 900px) {
+  :where(.enterprise-shell) input:is([type="checkbox"], [type="radio"]) { flex: 0 0 auto; inline-size: 24px; block-size: 24px; min-height: 24px; min-width: 24px; margin-block: 0; padding: 0; box-shadow: none; vertical-align: middle; accent-color: var(--primary); }
+  :where(.enterprise-shell) label:has(> input:is([type="checkbox"], [type="radio"])) { display: flex; flex-direction: row; align-items: center; gap: 10px; min-height: 44px; }
+  :where(.enterprise-shell) input:is([type="checkbox"], [type="radio"]) + label[for], :where(.enterprise-shell) label[for]:has(+ input:is([type="checkbox"], [type="radio"])) { display: inline-flex; align-items: center; min-height: 44px; padding-inline: 8px; vertical-align: middle; }
+}
 @media (prefers-reduced-motion: reduce) { .enterprise-shell *, .enterprise-shell *::before, .enterprise-shell *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }

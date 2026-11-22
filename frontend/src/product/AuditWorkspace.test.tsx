@@ -4,6 +4,7 @@ import { afterEach, expect, it, vi } from 'vitest'
 import { AuditWorkspace } from './AuditWorkspace'
 import { changes, decodeAuditPage, decodeAuditRecord } from './audit-api'
 import { locationPath, readLocation } from './workspace-location'
+import { changeAppLanguage } from '../i18n'
 
 const id = '10000000-0000-0000-0000-000000000001'
 const vessel = '10000000-0000-0000-0000-000000000002'
@@ -153,4 +154,20 @@ it('rejects arrays, objects and coercible values at every wire enum and role bou
   for (const roleContext of [['operator'], 'directory.write', vessel + '\n', `${vessel},${vessel}`])
     expect(() => decodeAuditRecord({ ...record, roleContext })).toThrow()
   expect(decodeAuditRecord({ ...record, roleContext: vessel }).roleContext).toBe(vessel)
+})
+
+it.each([
+  ['tr', 'Added', 'Oluşturuldu'], ['tr', 'Modified', 'Güncellendi'], ['tr', 'Deleted', 'Silindi'],
+  ['en', 'Added', 'Created'], ['de', 'Added', 'Erstellt'],
+] as const)('shows the %s label for the server audit action %s in the history table', async (language, action, label) => {
+  // Additional locales are lazy catalogs: load the one under test, then restore the default TR runtime.
+  await changeAppLanguage(language, false)
+  try {
+    vi.stubGlobal('fetch', vi.fn(async () => response({ ...page, items: [{ ...record, action }] })))
+    render(<AuditWorkspace language={language} selected={null} allowed onNavigate={vi.fn()} />)
+    const table = await screen.findByRole('table')
+    const cells = table.querySelectorAll('tbody td')
+    expect(cells[2]).toHaveTextContent(label)
+    expect(cells[2]).not.toHaveTextContent(new RegExp(`^${action}$`))
+  } finally { await changeAppLanguage('tr', false) }
 })

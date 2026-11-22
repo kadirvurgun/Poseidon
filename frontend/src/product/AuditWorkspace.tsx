@@ -30,6 +30,12 @@ const reasons: Record<string, readonly [
     HUMAN_REVIEW_WORKFLOW: [sourceText("tr", "pairs.m_318ed74fe7335341"), sourceText("en", "pairs.m_318ed74fe7335341")],
     SOURCE_QUALIFICATION: [sourceText("tr", "pairs.m_69a95f5785d1fe05"), sourceText("en", "pairs.m_69a95f5785d1fe05")],
 };
+const actionKeys: Record<string, string> = { Added: "pairs.m_933d201dceb0376a", Modified: "pairs.m_1cb814c6f2835d9d", Deleted: "pairs.m_16978605d10ea04d" };
+/** Server write-audit enum (Added/Modified/Deleted) shown with the same localized labels as the action filter. */
+function auditActionText(action: string, language: AppLocale | boolean) {
+    const key = actionKeys[action];
+    return key ? localizedText(language, key) : action;
+}
 function reasonText(row: AuditRecord, en: boolean) {
     if (row.reasonStatus === 'SystemOperation')
         return localizedText(en, "pairs.m_b09e5aa499638cdd");
@@ -111,7 +117,7 @@ export function AuditWorkspace({ language, selected, query = '', allowed, onNavi
     {page.state === 'loading' && <p role="status">{localizedText(en, "pairs.m_9e04b8b6eafff876")}</p>}
     {page.state === 'error' && <div role="alert"><p>{page.status === 403 ? (localizedText(en, "pairs.m_15521da446dac71b")) : page.status === 401 ? (localizedText(en, "pairs.m_a5811cfb5b422a85")) : page.status === 404 ? (localizedText(en, "pairs.m_a7941e4ded9276d0")) : (localizedText(en, "pairs.m_2d0cefd2d465cddd"))}</p><Button variant="outline" onClick={() => setAttempt(x => x + 1)}><RotateCcw aria-hidden="true"/>{localizedText(en, "pairs.m_044bf27da41fda96")}</Button></div>}
     {page.state === 'ok' && <><p>{localizedText(en, "pairs.m_f84203f3d0dbb0a4")}: {page.data.total}</p>
-      {!page.data.items.length ? <p>{localizedText(en, "pairs.m_b6bca76490f43354")}</p> : <div className="product-table"><table><thead><tr><th scope="col">{localizedText(en, "pairs.m_c4caad84b0f6020d")}</th><th scope="col">{localizedText(en, "pairs.m_d0c23c0c7de86db7")}</th><th scope="col">{localizedText(en, "pairs.m_d3e6f26569c924d2")}</th></tr></thead><tbody>{page.data.items.map(row => <tr key={row.id}><td><time dateTime={row.occurredAt}>{row.occurredAt}</time></td><td><Button variant="link" className="audit-record-link" onClick={() => onNavigate(href(row.id))}>{row.entityType} · {row.resourceId ?? (localizedText(en, "pairs.m_28ccb09d3de4eb4e"))}</Button></td><td>{row.action}</td></tr>)}</tbody></table></div>}
+      {!page.data.items.length ? <p>{localizedText(en, "pairs.m_b6bca76490f43354")}</p> : <div className="product-table"><table><thead><tr><th scope="col">{localizedText(en, "pairs.m_c4caad84b0f6020d")}</th><th scope="col">{localizedText(en, "pairs.m_d0c23c0c7de86db7")}</th><th scope="col">{localizedText(en, "pairs.m_d3e6f26569c924d2")}</th></tr></thead><tbody>{page.data.items.map(row => <tr key={row.id}><td><time dateTime={row.occurredAt}>{row.occurredAt}</time></td><td><Button variant="link" className="audit-record-link" onClick={() => onNavigate(href(row.id))}>{row.entityType} · {row.resourceId ?? (localizedText(en, "pairs.m_28ccb09d3de4eb4e"))}</Button></td><td>{auditActionText(row.action, language)}</td></tr>)}</tbody></table></div>}
       <EnterprisePagination label={localizedText(en, "pairs.m_9f8662ba28b5b4fc")} previous={localizedText(en, "pairs.m_85b1371021e15e99")} next={localizedText(en, "pairs.m_93a493ffda9a1959")} previousDisabled={!new URLSearchParams(query).has('cursor')} nextDisabled={!page.data.nextCursor} onPrevious={() => { const q = new URLSearchParams(query); q.delete('cursor'); onNavigate(href(null, q.toString())); }} onNext={() => { const q = new URLSearchParams(query); q.set('cursor', page.data.nextCursor!); onNavigate(href(null, q.toString())); }}/></>}
     {selected && detail.state === 'ok' && page.state === 'ok' && <section className="product-detail" aria-label={localizedText(en, "pairs.m_2c31f8cf42dde138")}><EnterpriseSectionHeader title={localizedText(en, "pairs.m_2c31f8cf42dde138")} actions={<Button variant="outline" onClick={() => onNavigate(href(null))}><X aria-hidden="true"/>{localizedText(en, "pairs.m_99627faa6a096fa8")}</Button>}/><dl className="enterprise-record-summary">
       <div><dt>{localizedText(en, "pairs.m_ec4066bcd7e4ac55")}</dt><dd>{detail.data.actorReference ?? (localizedText(en, "pairs.m_cd6839b0e3657d73"))}</dd></div>
