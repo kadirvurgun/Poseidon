@@ -4,7 +4,7 @@
 - `integration/admin-polish-20261122` (main 36d5d183) ← 7f196f8c, a41fe952, 4ac9a7d6, 34205ea9. Canonical sayım değişmez: 114/121 iş, 932/970 SP (pilot işleri insan kapısı).
 - QA: mobil ACCEPT-WITH-NOTES→7f196f8c; yardım merkezi REJECT→a41fe952; davet e-postası güvenlik QA REJECT→a7418de1/4ac9a7d6; hız sınırlama ACCEPT-WITH-NOTES→34205ea9.
 - Migration çakışması: rate-limit `20261124110002_RateLimitCounters` olarak yeniden üretildi (Up/Down aynı), bekleyen model değişikliği yok.
-- Yerel: Release build 0 uyarı; domain 1673/1673, persistence birim 198/198, API birim 522/522; frontend typecheck/lint 0, vitest 3100/3100 (Node 26); i18n 17 katalog aynı anahtar seti. DEFERRED: PG/API integration (CI), OpenAPI yeniden üretimi, entegrasyon başı bağımsız QA. Ayrıntı: `docs/phases/ADMIN-POLISH-BUNDLE-20261122.md`.
+- Yerel: Release build 0 uyarı; domain 1673/1673, persistence birim 198/198, API birim 522/522; frontend typecheck/lint 0, vitest 3100/3100 (Node 26); i18n 17 katalog aynı anahtar seti; OpenAPI yeniden üretimi fark yok (501 yol). DEFERRED: PG/API integration (CI), entegrasyon başı bağımsız QA. Ayrıntı: `docs/phases/ADMIN-POLISH-BUNDLE-20261122.md`.
 
 ## USER-ADMIN-03 — davet e-postası (outbox) + kiracı davet süresi; yazıldı, PG testleri CI'da (22.11.2026)
 - `feature/invite-email-20261122` (main 36d5d183). Canonical sayım değişmez: 114/121 iş, 932/970 SP.

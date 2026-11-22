@@ -18715,7 +18715,7 @@
       "frontend_vitest": "PASS_3100_3100_NODE_26",
       "i18n_key_sets": "PASS_17_CATALOGS_0_MISSING_0_EXTRA",
       "postgres_api_integration": "DEFERRED_CI",
-      "openapi_regeneration": "DEFERRED"
+      "openapi_regeneration": "PASS_NO_DIFF_501_PATHS_946_SCHEMAS"
     },
     "accepted_tasks_added": 0,
     "accepted_story_points_added": 0,

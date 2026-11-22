@@ -49,9 +49,11 @@ Both packages added migration id `20261124110001`. The rate-limit migration is n
 | API tests (non-Integration) | 522/522 |
 | frontend `npm ci`, `typecheck`, `lint` (Node 26.13.0) | exit 0 |
 | frontend `npx vitest run` (Node 26.13.0) | 233/233 files, 3100/3100 tests |
+| `py scripts/export_openapi.py` (Release host, no DB) | exported 501 paths / 946 schemas; `contracts/openapi.v1.json` unchanged |
+| `py scripts/test_project_status_consistency.py`, `test_ops_runtime.py` | 7/7, 19/19 |
 | `py scripts/i18n_untranslated.py` | exit 0; 0 missing/extra keys in every catalog. The only new untranslated value against main is `copies.UserAdmin_tsx_copy.delivery` = "E-mail" in cs/fr/hu/it/pt-BR/sk, a correct cognate |
 
-DEFERRED: PostgreSQL persistence and API integration tests (CI), OpenAPI regeneration (needs the full host), real SMTP journey,
+DEFERRED: PostgreSQL persistence and API integration tests (CI), real SMTP journey,
 browser/Playwright journeys and human review of machine-drafted locale strings.
 
 ## Next step
