@@ -89,7 +89,7 @@ the token secret is stored; the token is returned once to the creating administr
 Uniqueness covers accepted bindings only (filtered unique index); one identity holds at most one accepted membership in
 any tenant (strict option). Acceptance runs SERIALIZABLE inside the token's tenant only (tenant-filtered context, no
 `IgnoreQueryFilters`); every refusal is one neutral `409 invitation_unavailable`, attempts are rate-limited per identity
-(process-local) and each step is a SecurityEvent with closed codes. Not production IAM rollout, e-mail delivery, IdP
+(shared PostgreSQL counters with keyed-hash partitions when `RateLimiting:Store=Postgres`, otherwise process-local; see [RATE-LIMIT-01](phases/RATE-LIMIT-01.md)) and each step is a SecurityEvent with closed codes. Not production IAM rollout, e-mail delivery, IdP
 governance or GDPR/KVKK acceptance. [Decisions](tasks/USER-ADMIN-02.md).
 
 ## USER-ADMIN-03 — invitation e-mail outbox and tenant invitation lifetime (authored; PG tests deferred to CI)

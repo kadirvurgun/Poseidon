@@ -18661,5 +18661,30 @@
     "phase_reports": [
       "docs/phases/USER-ADMIN-03.md"
     ]
+  },
+  "rate_limit_01_20261122": {
+    "state": "AUTHORED_UNIT_VERIFIED_PG_DEFERRED_NOT_ACCEPTED",
+    "branch": "feature/rate-limit-20261122",
+    "base": "36d5d183",
+    "report": "docs/phases/RATE-LIMIT-01.md",
+    "closes": "USER-ADMIN-02 open item: process-local invitation limiter",
+    "verification": {
+      "build_release": "PASS_0_WARNINGS",
+      "pending_model_changes": "PASS_NONE",
+      "persistence_unit": "PASS_186_186",
+      "domain": "PASS_1650_1650",
+      "api_unit": "PASS_514_514",
+      "postgres_integration": "CI_PASS_fe53e398_QA_FIX_PENDING_CI",
+      "api_integration": "CI_PASS_fe53e398",
+      "independent_qa": "ACCEPT_WITH_NOTES_fe53e398_FIXES_M1_M2_L1_L4_N1",
+      "required_ci": "fe53e398_PASS_QA_FIX_PENDING"
+    },
+    "open": [
+      "invitation create/reissue and /login limits need a public contract change",
+      "operator key provisioning and Store=Postgres rollout",
+      "migration id 20261124110001 shared with invite-email: renumber at integration"
+    ],
+    "accepted_tasks_added": 0,
+    "accepted_story_points_added": 0
   }
 }

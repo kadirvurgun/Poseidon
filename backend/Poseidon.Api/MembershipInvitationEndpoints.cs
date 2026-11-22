@@ -31,44 +31,17 @@ public sealed record InvitationSettingsDto(int LifetimeHours, int MinHours, int 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record InvitationSettingsCommand(uint? ExpectedVersion, int? LifetimeHours);
 
-public enum InvitationAttempt { Allowed, Limited, LimitedRepeat }
-
-// Technical abuse guard per validated identity (hash of issuer+subject), not an approved quota: preview and accept
-// attempts share one fixed 15-minute window. Process-local; a multi-instance deployment needs a shared limiter.
-// QA N4: bounded and time-bucketed. At capacity only entries of past windows are evicted; counters of the current window
-// are never reset, and while the table is full of current-window identities a NEW identity is refused (fail closed) until
-// the window rolls over. Limited = the first refused attempt of a window (audited once); LimitedRepeat = later ones.
-public sealed class InvitationAttemptLimiter(TimeProvider clock, int capacity = InvitationAttemptLimiter.DefaultCapacity)
+// Technical abuse guard per validated identity (keyed HMAC of issuer+subject), not an approved quota: preview and accept
+// attempts share one fixed 15-minute window. RATE-LIMIT-01: counted by the SharedRateLimiter (PostgreSQL store shared by all
+// API instances when RateLimiting:Store=Postgres; bounded fail-closed in-process counters otherwise or as logged fallback).
+// Limited = the first refused attempt of a window (audited once); LimitedRepeat = later ones.
+public sealed class InvitationAttemptLimiter(SharedRateLimiter limiter)
 {
     public const int AttemptsPerWindow = 10;
-    public const int DefaultCapacity = 10_000;
-    private const long WindowSeconds = 15 * 60;
-    private readonly Dictionary<string, (long Window, int Count)> windows = new(StringComparer.Ordinal);
-    private readonly Lock gate = new();
+    public static readonly RateLimitPolicy Policy = new("invitation.attempt", AttemptsPerWindow, TimeSpan.FromMinutes(15));
 
-    public int Tracked { get { lock (gate) return windows.Count; } }
-
-    public InvitationAttempt TryAcquire(string issuer, string subject)
-    {
-        var key = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(issuer + "\n" + subject)));
-        var window = clock.GetUtcNow().ToUnixTimeSeconds() / WindowSeconds;
-        lock (gate)
-        {
-            if (windows.TryGetValue(key, out var entry) && entry.Window == window)
-            {
-                if (entry.Count > AttemptsPerWindow) return InvitationAttempt.LimitedRepeat;
-                windows[key] = (window, entry.Count + 1);
-                return entry.Count + 1 > AttemptsPerWindow ? InvitationAttempt.Limited : InvitationAttempt.Allowed;
-            }
-            if (!windows.ContainsKey(key) && windows.Count >= capacity)
-            {
-                foreach (var stale in windows.Where(x => x.Value.Window != window).Select(x => x.Key).ToArray()) windows.Remove(stale);
-                if (windows.Count >= capacity) return InvitationAttempt.LimitedRepeat;
-            }
-            windows[key] = (window, 1);
-            return InvitationAttempt.Allowed;
-        }
-    }
+    public Task<RateLimitDecision> AcquireAsync(string issuer, string subject, CancellationToken cancellationToken) =>
+        limiter.AcquireAsync(Policy, [issuer, subject], cancellationToken);
 }
 
 // QA N3: pseudonymous reference to the authenticated identity of a not-yet-bound caller, for SecurityEvent attribution.
@@ -284,10 +257,12 @@ public static partial class MembershipEndpoints
         async Task<(InvitationRequest?, IResult?)> Fail(int status, string code, string? auditCode = null)
         { await audit.WriteAsync(h, InvitationAction, auditCode ?? code, identityReference: reference, unverifiedTenant: claimedTenant); return (null, Problem(h, status, code)); }
         // QA N4: the limiter runs before any SecurityEvent write; only the first refused attempt of a window is audited.
-        switch (h.RequestServices.GetRequiredService<InvitationAttemptLimiter>().TryAcquire(identity.Issuer, identity.Subject))
+        var limit = await h.RequestServices.GetRequiredService<InvitationAttemptLimiter>().AcquireAsync(identity.Issuer, identity.Subject, h.RequestAborted);
+        if (!limit.Allowed) RateLimitingRuntime.RetryAfter(h, limit);
+        switch (limit.Outcome)
         {
-            case InvitationAttempt.Limited: return await Fail(429, "request_limit");
-            case InvitationAttempt.LimitedRepeat: return (null, Problem(h, 429, "request_limit"));
+            case RateLimitOutcome.Limited: return await Fail(429, "request_limit");
+            case RateLimitOutcome.LimitedRepeat: return (null, Problem(h, 429, "request_limit"));
         }
         await audit.WriteAsync(h, InvitationAction, "Attempted", identityReference: reference);
         try { await h.RequestServices.GetRequiredService<IAntiforgery>().ValidateRequestAsync(h); }
