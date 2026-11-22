@@ -6,10 +6,8 @@ export const pendingHelpKeys: ReadonlySet<string> = new Set([
   'audit',
   'audit-ready',
   'certificate-command-center',
-  'critical-spares',
   'data-trust-center',
   'deck-daily-log',
-  'defects',
   'departure-signoff',
   'document-compare',
   'drydock-planning',
@@ -24,7 +22,6 @@ export const pendingHelpKeys: ReadonlySet<string> = new Set([
   'operational-downtime',
   'pilot-gate',
   'pilot-program',
-  'pms-command-center',
   'port-activity-sof',
   'pre-survey-checklist',
   'regulatory-review',
@@ -52,7 +49,6 @@ export const pendingHelpKeys: ReadonlySet<string> = new Set([
   'tug-operations-offline',
   'tug-readiness',
   'voice-event-draft',
-  'work-order-center',
 ])
 
 /** UG-1 baseline size: 53 destinations minus today, tug-job-board and companies. Only ever lowered. */
