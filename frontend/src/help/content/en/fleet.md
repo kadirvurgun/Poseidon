@@ -20,7 +20,7 @@ reviewed: false
 - You need read access to see the list. "New record" and "Edit" appear only for vessels you have write access to.
 
 ## Step by step
-1. In the summary cards at the top, see the number of listed vessels, ships, tugs and editable records on this page. **Counts cover this page only.**
+1. In the summary cards at the top, see the number of listed vessels, ships, tugs and editable records on this page. **Counts cover this page only**.
 2. Type in **Search by code or name**, choose "Ship" or "Tug" in **Vessel type** if needed, and press **Search**.
 3. Press a vessel's name in the table. **Details** shows its code, name and type; the selected vessel appears as "Current vessel".
 4. Open the vessel's profile with **Regulatory profile**, or its onboarding inputs with **Pilot vessel onboarding**.

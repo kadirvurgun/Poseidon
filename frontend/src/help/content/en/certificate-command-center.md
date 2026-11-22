@@ -2,7 +2,7 @@
 key: certificate-command-center
 title: Certificate center
 roles: [Master, Chief Engineer / Technical Superintendent, Regulatory / Assurance]
-permissions: [certificate.read, certificate.write, certificate.extract, certificate.verify.record, file.read]
+permissions: [certificate.read, certificate.write, certificate.extract, certificate.verify.record, file.read, directory.write]
 related: [renewal-workflow, pre-survey-checklist, survey-planner, audit]
 screenshots: []
 reviewed: false
@@ -16,7 +16,7 @@ The Certificate command center lists the certificate **declarations** of the sel
 - Users with read access only see the list and cannot change it.
 
 ## Before you start
-- Viewing needs certificate read. Entering drafts needs certificate write and edit scope on that vessel; extracting document suggestions needs file read and extraction; recording a human assertion needs the verification-record permission and a current appointment.
+- Viewing needs certificate read. Entering drafts needs certificate write and edit scope on that vessel; extracting document suggestions needs file read and extraction; recording a human assertion needs directory write, the verification-record permission and a current **Auditor** appointment for this vessel and certificate. Protected crew declarations also need crew read, crew certificate read, crew identity read and file read.
 - Choose the right vessel first: press it in the **Select a vessel** list (13.03 §1).
 - The page needs a live online read. Offline you see "Current certificate sources unavailable offline or hidden." and no offline grant is inferred.
 

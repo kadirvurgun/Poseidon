@@ -17,7 +17,7 @@ The deck daily log keeps the selected ship's **deck watch records** as drafts wi
 ## Before you start
 - In the top context bar, select the **right company and ship**. If no ship is selected, the page shows "Select a ship".
 - Reading needs `daily.deck.read`. Creating and saving needs `daily.deck.write` and edit rights on this ship; otherwise you see "Read-only access. Editing and saving are not granted."
-- Recording a review needs `daily.deck.review` plus a current Master or Chief Officer appointment for this exact record.
+- Recording a review needs `daily.deck.write` with edit rights on this ship, `daily.deck.review`, plus a current Master or Chief Officer appointment for this exact record.
 
 ## Step by step
 1. Pick the ship. **Recorded drafts** lists each log by date and revision with "Draft · review required".
@@ -37,6 +37,7 @@ The deck daily log keeps the selected ship's **deck watch records** as drafts wi
 
 ## What you cannot do / caution
 - The system never reviews or finalizes the log. Review is a human act by the appointed Master or Chief Officer (13.03 §2).
+- The system does not stop the officer who wrote the log from recording a review if they hold the appointment; separation is an organisational rule.
 - Keep entries real time and chronological; do not rewrite an old watch to look like a new one (13.03 §6).
 - Do not change someone else's reviewed record; a later save is a new revision and needs a new review (13.03 §6).
 - Offline capture only covers explicitly classified fields. An offline conflict is never merged automatically; do not assume your record wins (13.03 §6).

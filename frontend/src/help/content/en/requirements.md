@@ -16,6 +16,7 @@ The Requirement drafts page keeps the **requirements** derived from a source rev
 
 ## Before you start
 - Viewing needs tenant-wide read and regulatory draft read; editing also needs regulatory draft write.
+- Sub-views need their own permissions, always with tenant-wide read scope. **Lifecycle and applicability** needs applicability read; editing rules needs rules write, requesting review needs rules review and evaluating needs applicability evaluate; qualification and fact attestation need regulatory qualify or facts attest plus a server-recorded appointment. **Controls and evidence** needs control read, evidence read, file read and applicability read; linking needs control write or evidence write with edit rights on the vessel, and approval needs control approve.
 - Record the source first on the **Source drafts** page. A requirement can be bound only to an existing source revision.
 - Saving needs a live server connection; offline, edits are kept in the tab.
 

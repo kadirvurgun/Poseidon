@@ -30,11 +30,11 @@ Olaylar ve ramak kala sayfası, bir gemide yaşanan emniyet olayını hızlıca 
 6. Ön değerlendirme yetkiliniz **Ön değerlendirme** bölümünde şiddeti ve **İnceleme gerekli mi** değerini gerekçeyle girip **Ön değerlendirmeyi kaydet** düğmesine basar ya da **Bildirene iade et** ile iade eder.
 7. İnceleyici **İncelemeyi başlat**, ardından **Katkıda bulunan faktörler**, **Kök nedenler**, **Bariyerler** ve **Belirsizlikler** bölümlerini doldurur, **İncelemeyi kaydet** ve **Onaya gönder** düğmelerine basar. **Bağımsız onay** bölümünde başka bir kişi **Onayla**, **İade et** veya **Reddet** kararı verir.
 8. **Düzeltici ve önleyici aksiyonlar** bölümünde **Aksiyon ekle** ile sorumlu, termin ve ele aldığı bulguyu girin. Sorumlu **Tamamlandığını bildir**, başka bir kişi **Doğrula**, üçüncü bir kişi **Etkinliği değerlendir** adımını kaydeder.
-9. **Kapanışı engelleyenler** listesi boşaldığında yetkili kişi **Olayı kapat** düğmesine basar. **Mesajlar** bölümünde **Yalnızca ekip** veya **Bildirenle paylaşılan** görünürlükle mesaj gönderebilirsiniz.
+9. **Kapanışı engelleyenler** listesi boşaldığında, inceleme yetkisi olan ve ne bildiren ne de inceleme yazarı olan bir gözden geçiren **Olayı kapat** düğmesine basar. **Mesajlar** bölümünde **Yalnızca ekip** veya **Bildirenle paylaşılan** görünürlükle mesaj gönderebilirsiniz.
 
 ## Durumlar ne anlama gelir
 - **Taslak / Gönderildi / İade edildi / Ön değerlendirildi / İnceleniyor / Aksiyon takibi / Kapalı / Geri çekildi:** olayın yaşam döngüsü.
-- **Şiddet — Değerlendirilmedi:** henüz insan sınıflandırması yok. **Bildirenin tahmini** yalnız bir öneridir. **Şiddet politikası: yapılandırılmadı – yalnızca insan sınıflandırması** sistemin şiddet türetmediğini gösterir.
+- **Şiddet — Ön değerlendirme yapılmadı / Değerlendirilmedi:** henüz insan sınıflandırması yok. **Bildirenin tahmini** yalnız bir öneridir. **Şiddet politikası: yapılandırılmadı – yalnızca insan sınıflandırması** sistemin şiddet türetmediğini gösterir.
 - **İnceleme ihtiyacı BİLİNMİYOR:** karar verilmemiştir; "hayır" anlamına gelmez ve kapanışı engeller.
 - **Aksiyon — Açık / Tamamlandı / Doğrulandı:** Tamamlandı, doğrulandı demek değildir; Doğrulandı da etkili demek değildir.
 - **Etkinlik — Bekliyor / Etkili / Etkili değil / Sonuçsuz / Aksiyon yok / Görünmüyor:** etkinlik, aksiyon başına insan değerlendirmesidir ve kapanıştan ayrıdır. **Aksiyon yok** etkili anlamına gelmez.
@@ -44,11 +44,11 @@ Olaylar ve ramak kala sayfası, bir gemide yaşanan emniyet olayını hızlıca 
 
 ## Yapamazsınız / dikkat
 - Bildiren kendi bildirimini değerlendiremez. İnceleme yazarı, gönderen veya bildiren bağımsız onay veremez.
-- Aksiyonu tamamlayan kişi doğrulayamaz; sorumlu, tamamlayan veya doğrulayan kişi etkinliği değerlendiremez. Bu adımlar farklı kişilerin ayrı kayıtlarıdır.
+- Tamamlandığını yalnız aksiyon sorumlusu bildirir. Sorumlu da tamamlayan da doğrulayamaz; sorumlu, tamamlayan veya doğrulayan kişilerden hiçbiri etkinliği değerlendiremez. Bu adımlar farklı kişilerin ayrı kayıtlarıdır.
 - Kök nedenler insan ifadeleridir; sistem asla kök neden önermez.
 - Gönderilmiş bir bildirim yazarı tarafından geri çekilemez veya silinemez.
 - Gizli bildirimde kimlik yalnız bilmesi gereken (need-to-know) ve kimlik okuma yetkisi olan kişiye, **Amaç** seçilerek açılır; her okuma amacıyla birlikte kaydedilir. Anonim bildirim için genel giriş kanalı gerekir ve bu kanal yapılandırılmamıştır.
-- Etkili değil sonucu kesindir; işe yaramayan aksiyon için yeni bir takip aksiyonu açılmalıdır.
+- Sonuçsuz değerlendirme tekrarlanabilir; Etkili ve Etkili değil sonuçları kesindir; işe yaramayan aksiyon için yeni bir takip aksiyonu açılmalıdır.
 
 ## Sorun olursa
 - **Sunucu komutu reddetti:** altında listelenen eksik veya engelleyen öğeleri tamamlayın.

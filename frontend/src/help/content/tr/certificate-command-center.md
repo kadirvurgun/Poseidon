@@ -2,7 +2,7 @@
 key: certificate-command-center
 title: Sertifika merkezi
 roles: [Master, Chief Engineer / Technical Superintendent, Regulatory / Assurance]
-permissions: [certificate.read, certificate.write, certificate.extract, certificate.verify.record, file.read]
+permissions: [certificate.read, certificate.write, certificate.extract, certificate.verify.record, file.read, directory.write]
 related: [renewal-workflow, pre-survey-checklist, survey-planner, audit]
 screenshots: []
 reviewed: false
@@ -16,7 +16,7 @@ Sertifika merkezi, seçili geminin sertifika **beyanlarını** ve beyan edilen t
 - Yalnız okuma yetkisi olan kullanıcılar listeyi görür, değişiklik yapamaz.
 
 ## Başlamadan önce
-- Sayfayı görmek için sertifika okuma yetkisi gerekir. Taslak girmek için sertifika yazma yetkisi ve o gemide düzenleme kapsamı, belge önerisi çıkarmak için belge okuma ve çıkarım yetkisi, insan beyanı kaydetmek için doğrulama kaydı yetkisi ve güncel bir atama gerekir.
+- Sayfayı görmek için sertifika okuma yetkisi gerekir. Taslak girmek için sertifika yazma yetkisi ve o gemide düzenleme kapsamı, belge önerisi çıkarmak için belge okuma ve çıkarım yetkisi, insan beyanı kaydetmek için dizin yazma yetkisi, doğrulama kaydı yetkisi ve bu gemi ve sertifika için güncel bir **Auditor** ataması gerekir. Korumalı mürettebat beyanları ayrıca personel okuma, personel sertifikası okuma, personel kimliği okuma ve belge okuma yetkisi gerektirir.
 - Önce doğru gemiyi seçin: **Araç seçin** listesinden gemiye basın (13.03 §1).
 - Sayfa çevrimiçi okuma gerektirir. Çevrimdışıyken "Çevrimdışı veya gizliyken güncel sertifika kaynakları kullanılamıyor." mesajı görünür ve çevrimdışı yetki türetilmez.
 

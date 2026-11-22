@@ -17,7 +17,7 @@ Liman faaliyeti ve SOF sayfası, seçili geminin **liman olaylarını** kanıt r
 ## Başlamadan önce
 - Üst bağlam çubuğunda **doğru şirket ve gemiyi** seçin. Gemi seçili değilse sayfa "Gemi seçin" listesini gösterir.
 - Okumak için `operations.port.read`, taslak kaydetmek için `operations.port.write` ve bu gemide düzenleme hakkı gerekir.
-- Kesinleştirmek için `operations.port.finalize` ve bu gemi için geçerli bir kesinleştirme ataması (Kaptan, Birinci Zabit veya Başmühendis) gerekir.
+- Kesinleştirmek için `operations.port.write`, bu gemide düzenleme hakkı ve `operations.port.finalize` ile birlikte bu gemi için geçerli bir kesinleştirme ataması (Kaptan, Birinci Zabit veya Başmühendis) gerekir.
 
 ## Adım adım
 1. Gemiyi seçin. **Kayıtlı liman olay çizelgesi** dönen olayları sunucunun UTC sırasıyla listeler. **Dönen sayfayı filtrele** yalnız bu sayfayı daraltır.
@@ -39,6 +39,7 @@ Liman faaliyeti ve SOF sayfası, seçili geminin **liman olaylarını** kanıt r
 - Sistem SOF'u kesinleştirmez. Kesinleştirme, atanmış Kaptan, Birinci Zabit veya Başmühendisin insan eylemidir (13.03 §2).
 - Zorunlu bilgi eksikken, atama yokken veya çözümlenmemiş referanslar onaylanmadan SOF’u kesinleştir düğmesi kapalı kalır.
 - Kesinleştirme imza, dış mutabakat, laytime veya demuraj değildir.
+- Kesinleştirme durumu yalnız **Statement of Facts kesinleştirme** bölümünde (TASLAK / KESİN (içsel)) gösterilir. "SOF inceleme durumu" alanı, zaman çizelgesi notu ve sayfa altbilgisi kesinleştirmeyi yansıtmaz ve kesinleştirmenin kullanılamadığını söyleyebilir.
 - Taslak kaydı ve kesinleştirme güncel çevrimiçi oturum gerektirir; bu sayfada çevrimdışı kayıt yoktur.
 
 ## Sorun olursa

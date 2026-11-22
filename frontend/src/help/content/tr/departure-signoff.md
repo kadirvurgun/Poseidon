@@ -8,7 +8,7 @@ screenshots: []
 reviewed: false
 ---
 ## Bu sayfa ne işe yarar
-Bu sayfa, seçilen gemi ve planlanan kalkış aralığı için **tavsiye niteliğinde bir hazırlık değerlendirmesi** gösterir ve atanmış Kaptanın kararını kaydeder. Cevapladığı soru şudur: "Mürettebat, teknik, yasal, acil durum ve emniyet olayları kaynakları bu aralık için ne söylüyor ve neden?" Kalkışı serbest bırakma, koşula bağlama veya durdurma kararı **Kaptanındır** (13.03 §2). Sistem kalkışa izin vermez; kaydedilen onay bir kalkış izni (clearance) değildir.
+Bu sayfa, seçilen gemi ve planlanan kalkış aralığı için **tavsiye niteliğinde bir hazırlık değerlendirmesi** gösterir ve atanmış Kaptanın kararını kaydeder. Cevapladığı soru şudur: "Mürettebat, teknik, yasal, acil durum ve emniyet olayları kaynakları bu aralık için ne söylüyor ve neden?" Kalkışı serbest bırakma, bekletme veya reddetme kararı **Kaptanındır** (13.03 §2). Sistem kalkışa izin vermez; kaydedilen onay bir kalkış izni (clearance) değildir.
 
 ## Kim kullanır
 - **Master:** değerlendirmeyi ve "Neden" listesini inceleyip Serbest bırak, Beklet veya Reddet kararını gerekçesiyle kaydetmek için (13.03 §2).
@@ -34,13 +34,13 @@ Bu sayfa, seçilen gemi ve planlanan kalkış aralığı için **tavsiye niteli�
 - **Koşullu:** en az bir kaynak koşul bildiriyor. Bu değerlendirmede Serbest bırak seçeneği açılmaz.
 - **Hazır değil:** en az bir kaynak "Kaldı" sonucu veriyor. Diğer kategorilerin geçmesi bunu dengelemez.
 - **İnceleme gerekli:** en az bir girdi "Bilinmiyor". Yetkili bir kişinin bakması gerekir.
-- **Bilinmiyor:** kaynak okunamadı veya veri yok. Bilinmiyor; "Geçti" ya da "Hazır" anlamına gelmez. Acil durum kategorisi için bu sürümde bağlı bir kaynak modülü yoktur; bu satır Bilinmiyor görünür.
+- **Kategori sonuçları — Geçti / Koşul / Kaldı / Bilinmiyor:** her kategorinin sonucu. **Bilinmiyor**, kaynağın okunamadığını veya veri olmadığını gösterir; "Geçti" ya da "Hazır" anlamına gelmez. Acil durum kategorisi için bu sürümde bağlı bir kaynak modülü yoktur; bu satır Bilinmiyor görünür. Yasal kategorisi veri güven sinyallerini de (DATA_TRUST_*) içerir; veri güven okuma yetkisi yoksa Yasal Bilinmiyor görünür.
 - **Öngörü:** aralık bugünü kapsamıyor. Bu yalnızca planlama öngörüsüdür ve serbest bırakılamaz.
 - **Güncel / Bayat — girdiler değişti:** kayıtlı bir kararın geçerliliği. Girdiler değişince önceki karar bayat olur ve silinmez.
 
 ## Yapamazsınız / dikkat
 - Sistem kalkışa izin vermez ve hiçbir durumu kalkış izni olarak göstermez. Kaydedilen karar, atanmış Kaptanın kendi insan kaydıdır.
-- Serbest bırakma yalnızca güncel bir "Hazır" değerlendirmede mümkündür. Beklet ve Reddet her zaman gerekçeyle kaydedilebilir.
+- Serbest bırakma yalnızca güncel bir "Hazır" değerlendirmede mümkündür. Acil durum kategorisi bu sürümde her zaman Bilinmiyor olduğundan değerlendirme Hazır olamaz; bu nedenle Serbest bırak seçeneği şu an hiç sunulmaz. Beklet ve Reddet her zaman gerekçeyle kaydedilebilir.
 - Her karar için gerekçe zorunludur. Kayıtlı kararlar değiştirilmez; yeni karar yeni bir kayıt olur.
 - Değerlendirme bayatsa veya çevrimdışıysanız karar kaydedilemez; önce yenileyin.
 

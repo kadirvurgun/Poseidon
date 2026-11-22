@@ -20,7 +20,7 @@ reviewed: false
 - Listeyi görmek için okuma yetkisi gerekir. "Yeni kayıt" ve "Düzenle" yalnız yazma yetkiniz olan araçlarda görünür.
 
 ## Adım adım
-1. Üstteki özet kartlarında bu sayfadaki araç, gemi, römorkör ve düzenlenebilir kayıt sayısını görün. **Sayılar yalnız bu sayfa içindir.**
+1. Üstteki özet kartlarında bu sayfadaki araç, gemi, römorkör ve düzenlenebilir kayıt sayısını görün. **Sayılar yalnız bu sayfayı kapsar**.
 2. **Kod veya ad ile ara** alanına yazın, gerekirse **Araç türü** listesinden "Gemi" veya "Römorkör" seçin ve **Ara** düğmesine basın.
 3. Tabloda aracın adına basın. **Ayrıntılar** bölümü kod, ad ve türü gösterir; seçili araç "Etkin araç" olarak görünür.
 4. **Mevzuat profili** ile aracın mevzuat profilini, **Pilot gemi ekleme** ile ekleme girdilerini açın.

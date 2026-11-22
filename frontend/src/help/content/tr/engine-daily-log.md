@@ -16,7 +16,7 @@ Makine günlük kaydı, seçili geminin **makine vardiya kayıtlarını** kayıt
 
 ## Başlamadan önce
 - Üst bağlam çubuğunda **doğru şirket ve gemiyi** seçin.
-- Okumak için `daily.engine.read`, kaydetmek için `daily.engine.write` ve bu gemide düzenleme hakkı gerekir. İnceleme kaydetmek için `daily.engine.review` ve bu kesin kayıt için geçerli Başmühendis görevlendirmesi gerekir.
+- Okumak için `daily.engine.read`, kaydetmek için `daily.engine.write` ve bu gemide düzenleme hakkı gerekir. İnceleme kaydetmek için bu gemide düzenleme hakkıyla `daily.engine.write`, `daily.engine.review` ve bu kesin kayıt için geçerli Başmühendis görevlendirmesi gerekir.
 - İş emri veya arıza bağlamak için o kayıtları okuma yetkisi de gerekir.
 
 ## Adım adım
@@ -37,6 +37,7 @@ Makine günlük kaydı, seçili geminin **makine vardiya kayıtlarını** kayıt
 
 ## Yapamazsınız / dikkat
 - Sistem jurnali incelemez veya kesinleştirmez. İnceleme, görevlendirilmiş Başmühendisin insan eylemidir (13.03 §5).
+- Kaydı yazan zabit görevlendirmeye sahipse sistem onun inceleme kaydetmesini engellemez; görev ayrımı bir kuruluş kuralıdır.
 - Kayıtları gerçek zamanlı ve kronolojik tutun; başkasının incelenmiş kaydını değiştirmeyin (13.03 §6).
 - Burada arıza bağlamak kısıtlama kaydetmez veya arızayı kapatmaz; bunu arıza veya iş emri sayfasında yapın (13.03 §5).
 - Bağlantılar güncel çevrimiçi bağlantı gerektirir; çevrimdışı bağlantı yapılmaz. Çevrimdışı çakışmalar asla otomatik birleşmez.

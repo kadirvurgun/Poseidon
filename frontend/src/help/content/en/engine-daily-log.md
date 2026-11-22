@@ -16,7 +16,7 @@ The engine daily log keeps the selected ship's **engine watch records** as draft
 
 ## Before you start
 - In the top context bar, select the **right company and ship**.
-- Reading needs `daily.engine.read`; saving needs `daily.engine.write` and edit rights on this ship. Recording a review needs `daily.engine.review` plus a current Chief Engineer appointment for this exact record.
+- Reading needs `daily.engine.read`; saving needs `daily.engine.write` and edit rights on this ship. Recording a review needs `daily.engine.write` with edit rights on this ship, `daily.engine.review`, plus a current Chief Engineer appointment for this exact record.
 - Linking work orders or defects also needs read access to those records.
 
 ## Step by step
@@ -37,6 +37,7 @@ The engine daily log keeps the selected ship's **engine watch records** as draft
 
 ## What you cannot do / caution
 - The system never reviews or finalizes the log. Review is a human act by the appointed Chief Engineer (13.03 §5).
+- The system does not stop the officer who wrote the log from recording a review if they hold the appointment; separation is an organisational rule.
 - Keep entries real time and chronological; do not change someone else's reviewed record (13.03 §6).
 - Linking a defect here does not record a restriction or close it; do that on the defect or work order page (13.03 §5).
 - Links need a current online connection; nothing is linked offline. Offline conflicts are never merged automatically.

@@ -24,7 +24,7 @@ Risk değerlendirmesi sayfası, bir gemideki iş veya operasyon için tehlikeler
 1. Gemiyi seçin ve listeden bir değerlendirmeyi açın ya da **Yeni değerlendirme** düğmesine basın.
 2. **Değerlendirme numarası** girin. İsterseniz **İş türü** girip **Yayımlanmış şablondan başla (yalnız kopya)** ile uygun bir şablonu seçin; şablon yeni taslağa yalnız kopyalanır.
 3. **Başlık**, **Operasyon / iş bağlamı**, **İş türü**, **İş kapsamı** ve **Risk yöntemi** alanlarını doldurun. **İşi durdurma gerekli** için **Evet**, **Hayır** veya **Bilinmiyor** seçin ve gerekiyorsa **İşi durdurma koşulları** yazın.
-4. **Tehlike ekle** ile her tehlike için **İş adımı**, **Olası sonuçlar**, **Başlangıç riski** ve **Kalıntı riski** (Olasılık, Şiddet, Gerekçe) girin. **Kontrol ekle** ile **Kontrol önlemleri**, **Kontrol sorumlusu** ve **Bariyer referansları** ekleyin.
+4. **Tehlike ekle** ile her tehlike için **İş adımı**, **Olası sonuçlar**, **Başlangıç riski** ve **Kalıntı risk** (Olasılık, Şiddet, Gerekçe) girin. **Kontrol ekle** ile **Kontrol önlemleri**, **Kontrol sorumlusu** ve **Bariyer referansları** ekleyin.
 5. **Katılımcılar** alanına satır başına aktör kimliği ve rol yazın. Gerekirse **Bağlantı ekle** ile ilgili kayıtları bağlayın.
 6. **Taslağı kaydet**, ardından **İncelemeye gönder** düğmesine basın. **Engelleyen maddeler** listesi eksikleri gösterir.
 7. İnceleyici, en az 10 karakterlik **Gerekçe** yazıp **Onayla (insan inceleme kaydı)** veya **İade et** düğmesine basar.

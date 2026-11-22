@@ -17,7 +17,7 @@ The noon report page keeps the selected ship's **daily noon declarations** as dr
 ## Before you start
 - In the top context bar, select the **right company and ship**. If no ship is selected, the page shows "Select a ship".
 - Reading needs `daily.noon.read`. Creating and saving drafts needs `daily.noon.write` and edit rights on this ship; without them you see "Read-only access. Editing and saving are not granted."
-- Recording a review needs `daily.noon.review` plus a current Master appointment for this exact record.
+- Recording a review needs `daily.noon.write` with edit rights on this ship, `daily.noon.review`, plus a current Master appointment for this exact record.
 
 ## Step by step
 1. Pick the ship. The **Recorded drafts** list shows each report by date and revision with the badge "Draft · review required". Use **Previous drafts** / **More drafts** to page.
@@ -36,6 +36,7 @@ The noon report page keeps the selected ship's **daily noon declarations** as dr
 
 ## What you cannot do / caution
 - The system never reviews or finalizes the report. Recording a review is a human act by the appointed Master (13.03 §2).
+- The system does not stop the officer who wrote the log from recording a review if they hold the appointment; separation is an organisational rule.
 - A new save creates a new revision; the earlier review stays on its own revision. Review again after changes.
 - A typed free-text reference cannot replace an authorized lookup; keep the field Missing or Unknown.
 - Offline, only explicitly classified fields can go to the encrypted queue. Review, approval and verification fields are excluded.

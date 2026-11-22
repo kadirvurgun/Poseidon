@@ -17,7 +17,7 @@ Veri güven merkezi, seçilen gemi için kontrol, kanıt ve gemi profil alanlar�
 
 ## Başlamadan önce
 - Üst bağlam çubuğunda **doğru şirketin** seçili olduğunu doğrulayın (13.03 §1).
-- Sayfa; kontrol, kanıt, dosya, uygulanabilirlik ve kuruluş mevzuat taslağı okuma yetkilerinin hepsini birlikte gerektirir.
+- Sayfa; kontrol, kanıt, dosya, uygulanabilirlik ve kuruluş mevzuat taslağı okuma yetkilerinin hepsini birlikte ve tenant geneli okuma kapsamıyla gerektirir.
 - Gemi seçili değilse sayfa önce "Gemi seçin" listesini gösterir.
 
 ## Adım adım
@@ -42,7 +42,7 @@ Veri güven merkezi, seçilen gemi için kontrol, kanıt ve gemi profil alanlar�
 ## Yapamazsınız / dikkat
 - Bu sayfadan kayıt düzeltilmez, doğrulanmaz veya kapatılmaz; işlem kaydın kendi sayfasında, yetkili kişi tarafından yapılır.
 - Yalnız ilk konular değerlendirildiyse özet inceleme gerekli olarak kalır.
-- Okuyamadığınız konular sayılır ama gösterilmez. Görünmeyen kayıt, sorun olmadığı anlamına gelmez.
+- Okuyamadığınız konular sayılır ama gösterilmez ve özet bu durumda İnceleme gerekli kalır. Görünmeyen kayıt, sorun olmadığı anlamına gelmez.
 - Çevrimdışıyken veri güven sinyalleri yenilenemez.
 
 ## Sorun olursa

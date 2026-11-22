@@ -16,6 +16,7 @@ The Source drafts page keeps the regulatory and rule sources your organisation r
 
 ## Before you start
 - Viewing needs tenant-wide read and regulatory draft read. Creating and saving drafts also needs regulatory draft write; without it the **New draft** button is not shown.
+- Sub-views need their own permissions, always with tenant-wide read scope. **Lifecycle and applicability** needs applicability read; editing rules needs rules write, requesting review needs rules review and evaluating needs applicability evaluate; qualification and fact attestation need regulatory qualify or facts attest plus a server-recorded appointment. **Controls and evidence** needs control read, evidence read, file read and applicability read; linking needs control write or evidence write with edit rights on the vessel, and approval needs control approve.
 - Have the official text of the source and its version/amendment details at hand. POSEIDON does not download or verify the source text; you declare it.
 - Saving needs a live server connection. Offline, your edits are kept in the tab but not saved.
 

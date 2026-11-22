@@ -8,7 +8,7 @@ screenshots: []
 reviewed: false
 ---
 ## What this page is for
-This page shows **two revisions of a controlled document side by side, read-only**, for the selected vessel. It answers: "What differs between these two revisions at file and metadata level, and what is the publication, verification and custody history of each?" The page shows differences; it does not approve, publish or judge changes. It does not put a revision into force and does not make it supersede an earlier one. Evidence originals are never changed silently; when a new revision replaces an earlier one, this is recorded as a "Superseded" relation (13.03 §1).
+This page shows **two revisions of a controlled document side by side, read-only**, for the selected vessel. It answers: "What differs between these two revisions at file and metadata level, and what is the publication, verification and custody history of each?" The page shows differences; it does not approve, publish or judge changes. It does not put a revision into force and does not make it supersede an earlier one. Evidence originals are never changed silently; when a new revision replaces an earlier one, the earlier revision's publication state becomes Superseded and the event appears in its custody history (13.03 §1).
 
 ## Who uses it
 - **Master / Chief Engineer / Crew:** to compare the effective revision with the previous one and record a reading acknowledgement (13.03 §2, §5, §6).
@@ -26,7 +26,7 @@ This page shows **two revisions of a controlled document side by side, read-only
 4. Read the byte statement and the **Metadata comparison** table: **File type**, **Size (bytes)**, **Content SHA-256**, **Intake**, **Publication**, **Verification** and the time fields.
 5. Review the **Approval and custody history** on each side.
 6. To see the content, press **Load content (recorded access)**. The content is shown with an attribution watermark.
-7. If you have read the effective revision, tick **I have read this revision and could access its content.** and press **Record acknowledgement**.
+7. After **Load content**, if you have read the effective revision, tick **I have read this revision and could access its content.** and press **Record acknowledgement**.
 
 ## What the states mean
 - **Unpublished / Effective / Superseded:** the revision's publication state. A revision that is not effective shows **Not in operational force**.
@@ -39,7 +39,7 @@ This page shows **two revisions of a controlled document side by side, read-only
 ## What you cannot do / caution
 - You cannot publish, approve, put into force or supersede a document from this page.
 - The page does not interpret content differences automatically; an authorized person decides their significance.
-- An acknowledgement is recorded only for the effective revision and only once. It is not an approval or a verification.
+- An acknowledgement is recorded only for the effective revision, once per person per revision. It is not an approval or a verification.
 - A printed copy is uncontrolled. Content is not cached and not kept offline.
 - While offline, the comparison is stale and new content cannot be loaded.
 

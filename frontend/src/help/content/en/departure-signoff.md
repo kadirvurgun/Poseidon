@@ -34,13 +34,13 @@ This page shows an **advisory readiness assessment** for the selected ship and p
 - **Conditional:** at least one source reports a condition. Release is not offered for this assessment.
 - **Not ready:** at least one source returns "Fail". Other categories passing does not offset it.
 - **Review required:** at least one input is "Unknown". An authorised person needs to look at it.
-- **Unknown:** the source could not be read or has no data. Unknown does not mean "Pass" or "Ready". No source module is connected for the Emergency category in this version, so that row shows Unknown.
+- **Category results — Pass / Condition / Fail / Unknown:** the result of each category. **Unknown** means the source could not be read or has no data; it does not mean "Pass" or "Ready". No source module is connected for the Emergency category in this version, so that row shows Unknown. Statutory also includes data trust signals (DATA_TRUST_*); without data trust read access Statutory shows Unknown.
 - **Forecast:** the window does not include today. It is a planning forecast only and cannot be released.
 - **Current / Stale — inputs changed:** the validity of a recorded decision. When inputs change, the earlier decision becomes stale and is not deleted.
 
 ## What you cannot do / caution
 - The system never releases a departure and shows no state as a departure clearance. A recorded decision is the appointed Master's own human record.
-- Release is possible only for a current READY assessment. Hold and Deny can always be recorded with a reason.
+- Release is possible only for a current READY assessment. Because the Emergency category is always Unknown in this version, the assessment cannot reach Ready, so Release is currently never offered. Hold and Deny can always be recorded with a reason.
 - A reason is required for every decision. Recorded decisions are not changed; a new decision is a new record.
 - You cannot record a decision while the assessment is stale or you are offline; refresh first.
 

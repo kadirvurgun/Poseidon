@@ -8,7 +8,7 @@ screenshots: []
 reviewed: false
 ---
 ## Bu sayfa ne işe yarar
-Bu sayfa, seçili gemideki bir kontrollü dokümanın **iki revizyonunu salt okunur olarak yan yana** gösterir. Cevapladığı soru şudur: "Bu iki revizyon arasında dosya ve üst veri düzeyinde ne farklı, her revizyonun yayım, doğrulama ve muhafaza geçmişi ne?" Sayfa farkları gösterir; değişiklikleri onaylamaz, yayımlamaz veya değerlendirmez. Bir revizyonu yürürlüğe sokmaz ve öncekinin yerine geçirmez. Kanıt orijinali sessizce değiştirilmez; yeni revizyon öncekinin yerine geçtiğinde bu "Yerini aldı" ilişkisiyle kayıtlıdır (13.03 §1).
+Bu sayfa, seçili gemideki bir kontrollü dokümanın **iki revizyonunu salt okunur olarak yan yana** gösterir. Cevapladığı soru şudur: "Bu iki revizyon arasında dosya ve üst veri düzeyinde ne farklı, her revizyonun yayım, doğrulama ve muhafaza geçmişi ne?" Sayfa farkları gösterir; değişiklikleri onaylamaz, yayımlamaz veya değerlendirmez. Bir revizyonu yürürlüğe sokmaz ve öncekinin yerine geçirmez. Kanıt orijinali sessizce değiştirilmez; yeni revizyon öncekinin yerine geçtiğinde önceki revizyonun yayım durumu Yerini aldı olur ve olay muhafaza geçmişinde görünür (13.03 §1).
 
 ## Kim kullanır
 - **Master / Başmühendis / Mürettebat:** yürürlükteki revizyonu öncekiyle karşılaştırmak ve okuma onayını kaydetmek için (13.03 §2, §5, §6).
@@ -26,7 +26,7 @@ Bu sayfa, seçili gemideki bir kontrollü dokümanın **iki revizyonunu salt oku
 4. Bayt ifadesini ve **Üst veri karşılaştırması** tablosunu okuyun: **Dosya türü**, **Boyut (bayt)**, **İçerik SHA-256**, **Kabul**, **Yayım**, **Doğrulama** ve zaman alanları.
 5. Her tarafta **Onay ve muhafaza geçmişi** listesini inceleyin.
 6. İçeriği görmek için **İçeriği yükle (erişim kaydedilir)** düğmesine basın. İçerik atıf filigranıyla gösterilir.
-7. Yürürlükteki revizyonu okuduysanız **Bu revizyonu okudum ve içeriğe erişebildim.** kutusunu işaretleyip **Okuma onayını kaydet** düğmesine basın.
+7. **İçeriği yükle** sonrasında yürürlükteki revizyonu okuduysanız **Bu revizyonu okudum ve içeriğe erişebildim.** kutusunu işaretleyip **Okuma onayını kaydet** düğmesine basın.
 
 ## Durumlar ne anlama gelir
 - **Yayımlanmadı / Yürürlükte / Yerini aldı:** revizyonun yayım durumu. Yürürlükte olmayan revizyonda **Operasyonel yürürlükte değil** etiketi görünür.
@@ -39,7 +39,7 @@ Bu sayfa, seçili gemideki bir kontrollü dokümanın **iki revizyonunu salt oku
 ## Yapamazsınız / dikkat
 - Bu sayfadan doküman yayımlanamaz, onaylanamaz, yürürlüğe sokulamaz veya başka bir revizyonun yerine geçirilemez.
 - Sayfa içerik farkını otomatik yorumlamaz; önemine yetkili bir kişi karar verir.
-- Okuma onayı yalnız yürürlükteki revizyon için ve bir kez kaydedilir. Bu bir onay veya doğrulama değildir.
+- Okuma onayı yalnız yürürlükteki revizyon için, kişi ve revizyon başına bir kez kaydedilir. Bu bir onay veya doğrulama değildir.
 - Basılı kopya kontrolsüzdür. İçerik önbelleğe alınmaz ve çevrimdışı saklanmaz.
 - Çevrimdışıyken karşılaştırma güncel değildir ve yeni içerik yüklenemez.
 

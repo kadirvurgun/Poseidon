@@ -16,6 +16,7 @@ Kaynak taslakları sayfası, kuruluşunuzun dayandığı mevzuat ve kural kaynak
 
 ## Başlamadan önce
 - Sayfayı görmek için tenant geneli okuma ve mevzuat taslağı okuma yetkisi gerekir. Taslak oluşturmak ve kaydetmek için ayrıca mevzuat taslağı yazma yetkisi gerekir; bu yetki yoksa **Yeni taslak** düğmesi görünmez.
+- Alt görünümler kendi yetkilerini ister ve her zaman tenant geneli okuma kapsamı gerekir. **Yaşam döngüsü ve uygulanabilirlik** için uygulanabilirlik okuma; kural düzenlemek için kural yazma, inceleme istemek için kural inceleme, değerlendirmek için uygulanabilirlik değerlendirme yetkisi gerekir; yeterlilik ve olgu teyidi için mevzuat yeterlilik veya olgu teyit yetkisi ile sunucuda kayıtlı bir atama gerekir. **Kontroller ve kanıtlar** için kontrol okuma, kanıt okuma, belge okuma ve uygulanabilirlik okuma; bağlamak için gemide düzenleme hakkıyla kontrol yazma veya kanıt yazma, onay için kontrol onaylama yetkisi gerekir.
 - Kaynağın resmî metnini ve sürüm/değişiklik bilgisini elinizde bulundurun. POSEIDON kaynağın metnini indirmez veya doğrulamaz; siz beyan edersiniz.
 - Kaydetme canlı sunucu bağlantısı gerektirir. Çevrimdışıyken düzenlemeleriniz sekmede korunur ama kaydedilmez.
 

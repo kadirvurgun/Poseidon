@@ -27,7 +27,7 @@ Menüde **Römorkör merkezi** olarak görünen bu sayfa, seçili römorkörün 
 4. **Römorkör tipi**, **Tip kaynağı / sürümü** ve **Tip kaynak gözlemi / politikası** alanlarından tipin hangi kaynak ve sürümden geldiğini kontrol edin.
 5. **Profil BP (doğrulanmamış)**, **BP kaynağı / sürümü / niteliği** ve **BP güncelliği / gözlemi** alanlarını okuyun. Bu değer beyan edilmiş bir değerdir, ölçülmüş değildir.
 6. **Ekipman bağlamı** bölümünde ekipman beyanlarını, seviyelerini, revizyonlarını ve kaynak niteliklerini görün.
-7. Sayfadaki sekmelerden **İş panosu** veya (yazma yetkiniz varsa) **İş talebi** ekranına geçin ya da **Yeni talep** düğmesini kullanın.
+7. Sayfadaki sekmelerden **İş panosu** veya (yazma yetkiniz varsa) **İş talebi** ekranına geçin ya da (yazma yetkiniz varsa) **Yeni talep** düğmesini kullanın.
 
 ## Durumlar ne anlama gelir
 - **Bilinmiyor — rol ataması yok:** sunucuda bu römorkör için size rol ataması kayıtlı değil. Bu bir "rol yok, sorun yok" sonucu değildir; yönetici ataması gerekir.

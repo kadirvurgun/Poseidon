@@ -25,14 +25,14 @@ Havuzlama planlaması, seçili geminin **havuzlama paketlerini** (proje, tersane
 3. **Kapsam kalemi ekle** ile kalem ekleyin; **Kapsam kalemi** türünü, **Başlık**, **İş paketi**, **Klas gerekliliği**, **Yasal gereklilik** ve **Öncelik** alanlarını girin.
 4. Her kalemde **Bağlantı ekle** ile **Kayıt türü**, **Kayıt tanımlayıcısı** ve **Sabitlenmiş revizyon** girin.
 5. Tamamlama için **Tamamlama kanıtı** bölümüne **Ekle** ile kanıt referansı ekleyin. Ardından **Kaydet** düğmesine basın.
-6. **Planlama engelleri** veya **Tamamlama engelleri** listesini kontrol edin. **Durumu değiştir** bölümünde **İşlem** seçip (**Planla**, **Taslağa geri al**, **Havuzlamayı başlat**, **Havuzlamayı tamamla**, **Paketi iptal et**) onaylayın. İptal için not zorunludur.
+6. **Planlama engelleri** veya **Tamamlama engelleri** listesini kontrol edin. **Durumu değiştir** bölümünde **İşlem** seçip (**Planla**, **Taslağa geri al**, **Havuzlamayı başlat**, **Havuzlamayı tamamla**, **Paketi iptal et**) onaylayın. İptal için not zorunludur. Yalnız mevcut duruma uygun işlemler sunulur; paket yalnız Taslak veya Planlandı durumundayken iptal edilebilir.
 7. Tamamlanmış ve sizin tamamlamadığınız bir pakette en az 10 karakterlik **Gerekçe** yazıp **Kaydı doğrula** ya da **Doğrulamayı reddet** düğmesini kullanın.
 8. **Zaman çizelgesi** bölümünde planlanan ve fiili tarihleri ve her revizyonu izleyin.
 
 ## Durumlar ne anlama gelir
 - **Taslak / Planlandı / Devam ediyor / Tamamlandı / Doğrulandı / İptal edildi:** paketin yaşam döngüsü. Tamamlandı ile Doğrulandı aynı şey değildir.
 - **Bağlantılar güncel / Dikkat / İnceleme gerekli / Eksik:** bağlantı hazırlığı. Bağlantılar güncel olsa bile bu bir sörvey sonucu değildir.
-- **Bağlı / Bağlanmamış / Süresi geçmiş:** kapsam kaleminin bağlantı durumu.
+- **Bağlı / Bağlanmamış / Süresi geçmiş / İnceleme gerekli:** kapsam kaleminin bağlantı durumu (bağlantılardan biri Güncelliğini yitirmiş veya Kullanılamıyor ise İnceleme gerekli).
 - **Güncel / Güncelliğini yitirmiş / Kullanılamıyor:** bağlı kaydın sabitlenen revizyonla karşılaştırması. Güncelliğini yitirmiş bağlantıyı inceleyip **Şuna yeniden sabitle** ile yeni revizyona sabitleyebilirsiniz.
 - **Bilinmiyor / ayarlanmadı:** öncelik girilmedi. Bilinmiyor; "Normal" ya da "Düşük" anlamına gelmez.
 
