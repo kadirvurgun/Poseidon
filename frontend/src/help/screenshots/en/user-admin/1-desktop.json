@@ -1,0 +1,26 @@
+{
+ "schemaVersion": "poseidon.help.screenshot-provenance.v2",
+ "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
+ "commit": "7fdbe06127aa527849086d8789b9d3eaf784e38b",
+ "generatorBlobs": {
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "d3bbdcc1affcc5973826404c4fedd69f13378b18",
+  "frontend/src/help/screenshots/steps.json": "dc6b3a7f9b72e45ce1a921f8c5f0c54c9b7d6b81"
+ },
+ "dirty": false,
+ "key": "user-admin",
+ "locale": "en",
+ "step": 1,
+ "viewport": "desktop",
+ "datasets": [
+  "backend/seed/synthetic-demo.json",
+  "DemoFixtureCommand"
+ ],
+ "tenant": "Synthetic Fleet A",
+ "fixedClock": "2026-11-22T09:00:00.000Z",
+ "png": {
+  "sha256": "45c3af626dd82ad187e9b7fc1e5ec4e73f53db5cdb6d8dc1d27154b537d30c09",
+  "width": 1440,
+  "height": 900
+ },
+ "domText": "Skip to main content\nPOSEIDON\nUsers and permissions\nAppearance\nSearch workspace\nChoose language\nSynthetic Fleet A\nCompany context:\nUnavailable\nNo vessel selected\nRole context: Not assigned\nChange vessel context\nOnline\nPOSEIDON\nMARITIME OPERATIONS\nWork view\nFilter menu\n\nOnly screens you are authorized to open are searched.\n\nOverview\nTug operations\nCompliance and assurance\nWorkspace\nCompanies\nMaterial conflict center\nUsers and permissions\nSY\nSynthetic Fleet A\nAuthorized workspace\n\nTENANT ADMINISTRATION\n\nUsers and permissions\n\nAssign user, role, vessel and object scope with least privilege. You can grant only permissions you hold yourself; your own membership is edited by another administrator. Changes take effect on the member's next request; a new member gets access at the next login.\n\nRefresh\nSearch\nMembership or account id prefix, or the exact IdP subject\nStatus\nRole bundle\nApply\nMembers · Total: 1\nAccount\nadd41584\n Active No grant\n\nNone · Permissions: 0 · Vessels: 0\n\nPrevious\nNext"
+}

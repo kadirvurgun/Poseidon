@@ -3857,7 +3857,9 @@
       "failed": "無法載入指南。請重新整理頁面後再試。",
       "fallback": "此語言尚無指南；顯示英文版本。",
       "relatedNone": "沒有可顯示的相關頁面。",
-      "shortcut": "快捷鍵：Shift+?"
+      "shortcut": "快捷鍵：Shift+?",
+      "screenshotAlt": "螢幕截圖，步驟",
+      "screenshotOffline": "連線時可檢視螢幕截圖。"
     },
     "AcceptInvitation_tsx_copy": {
       "title": "Accept invitation",

@@ -6,8 +6,9 @@ import { trapTab, useInertBackground } from '../components/a11y/modal'
 import { localizedCopy } from '../i18n/messages'
 import type { Locale as AppLocale } from '../i18n'
 import { HelpMarkdown, helpAnchorId, type HelpLinkPolicy } from './HelpMarkdown'
-import { loadHelpDocument } from './help-content'
-import { pagesWithWhyView, relatedSectionIndex, type HelpDocument } from './help-model'
+import { helpLocaleFor, loadHelpDocument } from './help-content'
+import { HelpScreenshot, helpScreenshotUrl } from './help-screenshots'
+import { pagesWithWhyView, relatedSectionIndex, stepSectionIndex, type HelpDocument, type HelpLocale } from './help-model'
 import './help-panel.css'
 
 // USER-GUIDE-01 UG-1 / 65.03 paragraphs 57-59: help panel with separate Guide, Why and AI tabs.
@@ -99,7 +100,7 @@ export function HelpPanel({ pageKey, title, language, destinations, onNavigate, 
         aria-selected={tab === item} tabIndex={tab === item ? 0 : -1} onClick={() => setTab(item)} onKeyDown={event => onTabKey(event, item)}>{labels[item]}</button>)}
     </div>
     <div className="help-panel-body" role="tabpanel" id={`${id}-panel-${tab}`} aria-labelledby={`${id}-tab-${tab}`} tabIndex={0}>
-      {tab === 'guide' && <GuideTab load={load} t={t} policy={policy} granted={granted} onNavigate={onNavigate}/>}
+      {tab === 'guide' && <GuideTab load={load} locale={helpLocaleFor(language).locale} t={t} policy={policy} granted={granted} onNavigate={onNavigate}/>}
       {tab === 'why' && <p className="help-panel-note">{pageKey && pagesWithWhyView.has(pageKey) ? t.whyHint : t.whyEmpty}</p>}
       {tab === 'ai' && <p className="help-panel-note">{t.aiDisabled}</p>}
     </div>
@@ -108,7 +109,7 @@ export function HelpPanel({ pageKey, title, language, destinations, onNavigate, 
 }
 
 type Copy = (typeof copy)['en']
-function GuideTab({ load, t, policy, granted, onNavigate }: { load: Load; t: Copy; policy: HelpLinkPolicy; granted: Map<string, HelpDestination>; onNavigate: (href: string) => void }) {
+function GuideTab({ load, locale, t, policy, granted, onNavigate }: { load: Load; locale: HelpLocale; t: Copy; policy: HelpLinkPolicy; granted: Map<string, HelpDestination>; onNavigate: (href: string) => void }) {
   if (load.state === 'loading') return <p role="status">{t.loading}</p>
   if (load.state === 'error') return <p role="alert">{t.failed}</p>
   if (load.state === 'missing') return <p className="help-panel-note" role="status">{t.pending}</p>
@@ -116,6 +117,12 @@ function GuideTab({ load, t, policy, granted, onNavigate }: { load: Load; t: Cop
   // D3 / 65.03 p50: related pages are intersected with the caller's own navigation; a related key the
   // user cannot open contributes nothing - no name, no count, no placeholder.
   const related = document.meta.related.flatMap(key => granted.get(key) ?? [])
+  // UG-2: a step shows its generated screenshot only when the guide lists it and the file exists.
+  const shots = new Set(document.meta.screenshots)
+  const afterStep = (step: number) => {
+    const src = shots.has(step) ? helpScreenshotUrl(fallback ? 'en' : locale, document.meta.key, step) : undefined
+    return src ? <HelpScreenshot src={src} step={step} t={t}/> : null
+  }
   return <article className="help-guide" lang={fallback ? 'en' : undefined}>
     {document.meta.reviewed === false && <p className="help-guide-draft" role="note">{t.draft}</p>}
     {fallback && <p className="help-panel-note" role="note">{t.fallback}</p>}
@@ -123,7 +130,7 @@ function GuideTab({ load, t, policy, granted, onNavigate }: { load: Load; t: Cop
       <h3 id={helpAnchorId(section.heading)}>{section.heading}</h3>
       {index === relatedSectionIndex
         ? related.length ? <ul className="help-guide-related">{related.map(item => <li key={item.key}><a href={item.href} onClick={event => { event.preventDefault(); onNavigate(item.href) }}>{item.label}</a></li>)}</ul> : <p>{t.relatedNone}</p>
-        : <HelpMarkdown source={section.body} policy={policy} idPrefix={`s${index}`}/>}
+        : <HelpMarkdown source={section.body} policy={policy} idPrefix={`s${index}`} afterStep={index === stepSectionIndex ? afterStep : undefined}/>}
     </section>)}
   </article>
 }

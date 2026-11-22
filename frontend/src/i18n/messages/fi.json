@@ -3857,7 +3857,9 @@
       "failed": "Opasta ei voitu ladata. Lataa sivu uudelleen ja yritä uudelleen.",
       "fallback": "Tällä kielellä ei vielä ole opasta; näytetään englanninkielinen versio.",
       "relatedNone": "Ei näytettäviä liittyviä sivuja.",
-      "shortcut": "Pikanäppäin: Vaihto+?"
+      "shortcut": "Pikanäppäin: Vaihto+?",
+      "screenshotAlt": "Kuvakaappaus, vaihe",
+      "screenshotOffline": "Kuvakaappaus on saatavilla verkossa."
     },
     "AcceptInvitation_tsx_copy": {
       "title": "Accept invitation",

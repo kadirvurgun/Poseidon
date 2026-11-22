@@ -3857,7 +3857,9 @@
       "failed": "Le guide n’a pas pu être chargé. Rechargez la page et réessayez.",
       "fallback": "Pas encore de guide dans cette langue ; la version anglaise est affichée.",
       "relatedNone": "Aucune page associée à afficher.",
-      "shortcut": "Raccourci : Maj+?"
+      "shortcut": "Raccourci : Maj+?",
+      "screenshotAlt": "Capture d’écran, étape",
+      "screenshotOffline": "Capture d’écran disponible en ligne."
     },
     "AcceptInvitation_tsx_copy": {
       "title": "Accept invitation",

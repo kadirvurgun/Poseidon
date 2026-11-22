@@ -3857,7 +3857,9 @@
       "failed": "Não foi possível carregar o guia. Recarregue a página e tente novamente.",
       "fallback": "Ainda não há guia neste idioma; exibindo a versão em inglês.",
       "relatedNone": "Nenhuma página relacionada para mostrar.",
-      "shortcut": "Atalho: Shift+?"
+      "shortcut": "Atalho: Shift+?",
+      "screenshotAlt": "Captura de tela, etapa",
+      "screenshotOffline": "Captura de tela disponível on-line."
     },
     "AcceptInvitation_tsx_copy": {
       "title": "Accept invitation",

@@ -3857,7 +3857,9 @@
       "failed": "Impossibile caricare la guida. Ricarica la pagina e riprova.",
       "fallback": "Nessuna guida in questa lingua; viene mostrata la versione inglese.",
       "relatedNone": "Nessuna pagina correlata da mostrare.",
-      "shortcut": "Scorciatoia: Maiusc+?"
+      "shortcut": "Scorciatoia: Maiusc+?",
+      "screenshotAlt": "Schermata, passaggio",
+      "screenshotOffline": "Schermata disponibile online."
     },
     "AcceptInvitation_tsx_copy": {
       "title": "Accept invitation",
