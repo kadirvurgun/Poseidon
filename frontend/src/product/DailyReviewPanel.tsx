@@ -161,7 +161,8 @@ export function DailyReviewPanel({ owner, session, record, language, enabled, on
     {hidden ? <p role="status">{localizedText(en, "pairs.m_a10400e2625ebde7")}</p> : !current ? <p role="status">{localizedText(en, "pairs.m_013a5d19df10dc43")}</p> : current.failed || !caps ? <p role="alert">{localizedText(en, "pairs.m_f79a924339a7cbf0")}</p> : <>
       {notice && <p role="status">{localizedText(en, "pairs.m_c61cc3d7a48ee006")}</p>}
       <p>{localizedText(en, "pairs.m_6685390770bf4cab")}: <strong>{record.revision}</strong> · <time dateTime={record.savedAt}>{record.savedAt}</time></p><details><summary>{localizedText(en, "pairs.m_dcfba0c4a6d76b18")}</summary><code>{record.hash}</code></details>
-      {!caps.canRecord && <p>{localizedText(en, "pairs.m_a3430440ebf71ff6")}</p>}
+      {!caps.canRecord && !caps.blockers.includes('REVIEWER_IS_RECORD_AUTHOR') && <p>{localizedText(en, "pairs.m_a3430440ebf71ff6")}</p>}
+      {caps.blockers.includes('REVIEWER_IS_RECORD_AUTHOR') && <p role="note" data-state="reviewer-is-author">{reviewBlocker('REVIEWER_IS_RECORD_AUTHOR', en)}</p>}
       {!sameRecord && <div role="alert"><p>{localizedText(en, "pairs.m_db34f7f32fb56882")}</p><Button variant="outline" disabled={busy || !!frozen} onClick={onReloadRecord}>{localizedText(en, "pairs.m_2c645170152ddcda")}</Button></div>}
       {!enabled && <p>{localizedText(en, "pairs.m_2c726df11ea5a3c0")}</p>}
       {failure && <p role="alert">{frozen ? (localizedText(en, "pairs.m_5dc4689e941f999b")) : failure.status === 409 ? (localizedText(en, "pairs.m_927989d0657a99df")) : (localizedText(en, "pairs.m_b1180e10b124a6e4"))}</p>}

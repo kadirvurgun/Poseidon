@@ -89,6 +89,10 @@ public static class DailyReviewEndpoints
         var vessels=actor.Scope(db.Vessels).Where(v=>v.Id==vessel && v.Kind==VesselKind.Ship);
         return db.DailyOperations.Where(r=>r.VesselId==vessel && r.Kind==kind && r.Id==id && vessels.Any());
     }
+    // Authors are the actors of every immutable revision up to and including the reviewed one.
+    private static async Task<Guid[]> Authors(PoseidonDbContext db,Guid vessel,string kind,Guid id,long revision,CancellationToken ct)=>
+        await db.DailyOperationRevisions.AsNoTracking().Where(r=>r.VesselId==vessel && r.Kind==kind && r.RecordId==id && r.Revision<=revision)
+            .Select(r=>r.ActorId).Distinct().ToArrayAsync(ct);
     private static DailyReviewDto Dto(DailyReviewEvent row)=>new(row.Id,row.RecordId,row.VesselId,row.Kind,row.RecordRevision,row.Sequence,checked((uint)row.ReviewVersion),
         row.ActorId,row.RoleId,row.AuthorityId,row.Duty,row.Decision,row.ReasonCode,row.Rationale,row.SourceVersion,row.AuthorityHash,row.RecordHash,row.SavedAt);
     private static string GrantsHash(HttpContext h,TrustedActor actor,Guid vessel,string kind,Guid id)=>RegisterStorage.Hash(JsonSerializer.Serialize(
@@ -104,8 +108,11 @@ public static class DailyReviewEndpoints
         if(capabilities) {
             var head=await db.DailyReviewHeads.AsNoTracking().SingleOrDefaultAsync(r=>r.RecordId==id && r.VesselId==vessel && r.Kind==kind,h.RequestAborted);
             var authorities=Authorities(h,actor,vessel,kind,id).Select(g=>new DailyReviewerDto(g.Id,g.RoleId,g.Duty,DailyReviewPolicy.Decisions(kind))).ToArray();
+            // An author of the current revision is never offered the review, even with an exact appointment.
+            var independent=DailyReviewPolicy.IndependentReviewer(actor!.Id,await Authors(db,vessel,kind,id,row.Revision,h.RequestAborted));
+            if(!independent)authorities=[];
             result=new DailyReviewCapabilitiesDto(id,vessel,kind,row.Revision,row.Version,head?.Version??0,authorities.Length>0,authorities,
-                authorities.Length==0?["HUMAN_REVIEW_AUTHORITY_UNAVAILABLE"]:[]);
+                !independent?[DailyReviewPolicy.ReviewerIsAuthor]:authorities.Length==0?["HUMAN_REVIEW_AUTHORITY_UNAVAILABLE"]:[]);
         } else {
             var rows=await db.DailyReviewEvents.AsNoTracking().Where(r=>r.RecordId==id && r.VesselId==vessel && r.Kind==kind)
                 .OrderByDescending(r=>r.Sequence).Skip(offset).Take(26).ToArrayAsync(h.RequestAborted);
@@ -160,6 +167,7 @@ public static class DailyReviewEndpoints
             if(row==null)return await Fail(h,404,"resource_not_found");
             if(row.Version!=command.ExpectedVersion || row.Revision!=command.ReviewedRevision)return await Fail(h,409,"version_conflict");
             if(row.SourceVersion!=DailyOperationsPolicy.SourceVersion)return await Fail(h,409,"source_contract_changed");
+            if(!DailyReviewPolicy.IndependentReviewer(actor.Id,await Authors(db,vessel,kind,id,row.Revision,ct)))return await Fail(h,403,"separation_of_duties");
             var head=await db.DailyReviewHeads.SingleOrDefaultAsync(r=>r.RecordId==id && r.VesselId==vessel && r.Kind==kind,ct);
             if((head?.Version??0)!=command.ExpectedReviewVersion)return await Replay()??await Fail(h,409,"version_conflict");
             if(head==null){head=new(){TenantId=actor.TenantId,VesselId=vessel,RecordId=id,Kind=kind};db.DailyReviewHeads.Add(head);}else head.Sequence++;
@@ -177,6 +185,8 @@ public static class DailyReviewEndpoints
             if(tx!=null)await tx.RollbackAsync(CancellationToken.None);db.ChangeTracker.Clear();return await Replay()??await Fail(h,409,"version_conflict");
         } catch(Exception e)when(PostgresFailure.IsDatabase(e)) {
             if(tx!=null)await tx.RollbackAsync(CancellationToken.None);db.ChangeTracker.Clear();var conflict=PostgresFailure.IsSerialization(e)||PostgresFailure.Provider(e)?.SqlState=="23505";
+            // 23514 from DailyReviewEvent_ReviewerNotAuthor: the database refused a reviewer who authored the record.
+            if(PostgresFailure.IsStateRule(e))return await Fail(h,403,"separation_of_duties");
             return await Replay()??await Fail(h,conflict?409:503,conflict?"version_conflict":"service_unavailable");
         } finally {if(tx!=null)await tx.DisposeAsync();}
         await Audit(h,"Success",id);

@@ -42,6 +42,13 @@ describe('T-OPS2 real review metadata interaction sources (authored; not execute
     expect(screen.getByText(/does not establish verification, submission/)).toBeVisible()
     expect(fetch.mock.calls.filter(([, init]) => init?.method === 'POST')).toHaveLength(0)
   })
+  it('tells an author that an independent reviewer must record the review and offers no review form', async () => {
+    const { state, fetch } = transport(false); state.caps.blockers = ['REVIEWER_IS_RECORD_AUTHOR']; render(<DailyReviewPanel {...props()} />)
+    await waitFor(() => expect(document.querySelector('[data-state="reviewer-is-author"]')?.textContent).toBe('You authored this log revision; an independent reviewer must record the review.'))
+    expect(screen.queryByText('No current source-authorized human appointment is available for this record.')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Record review entry' })).not.toBeInTheDocument()
+    expect(fetch.mock.calls.filter(([, init]) => init?.method === 'POST')).toHaveLength(0)
+  })
   it('records an explicit appointed review against exact saved record and review versions with no automatic write', async () => {
     const { fetch } = transport(), p = props(); render(<DailyReviewPanel {...p} />)
     await screen.findByLabelText('Authorized human appointment')
