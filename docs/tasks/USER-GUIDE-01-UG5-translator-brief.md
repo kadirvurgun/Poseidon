@@ -53,6 +53,6 @@ npm run typecheck
 npm run lint
 ```
 
-The guard (`src/help/help-coverage.test.ts`, "help translation drafts (UG-5)") checks, for every file present: front matter equals EN except `title`, `reviewed: false`, the locale's 8 headings in order, the same step count as EN, non-empty sections, safe Markdown and the UNKNOWN/decision wording patterns.
+The guard (`src/help/help-coverage.test.ts`, "help translation drafts (UG-5)") checks, for every file present: front matter equals EN except `title`, `reviewed: false`, the locale's 8 headings in order, the same step count as EN, non-empty sections, safe Markdown. The UNKNOWN/decision wording patterns exist only for TR and EN; draft locales rely on translator care and the human review in UG-6 (UG-REV-01).
 
 Note for the integrator: each new locale folder adds one lazily loaded help chunk to the offline shell inventory (limit 128 entries, `frontend/scripts/offline-shell-build.ts`). After the 14 folders exist, confirm the production build still passes that limit.

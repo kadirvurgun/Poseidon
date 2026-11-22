@@ -240,7 +240,9 @@ function renderGuide(guide: HelpDocument, inputs: ManualInputs, context: Context
     const body = index === relatedSectionIndex
       ? (guide.meta.related.length ? `<ul class="related">\n${guide.meta.related.map(item => `<li><a href="#${pageId(item)}">${escapeHtml(titles.get(item) ?? item)}</a></li>`).join('\n')}\n</ul>` : `<p>${escapeHtml(t.relatedNone)}</p>`)
       : blocks(section.body, guideContext, index === stepSectionIndex ? afterStep : undefined)
-    return `<section class="guide-section">\n<h4>${escapeHtml(section.heading)}</h4>\n${body}\n</section>`
+    // Section ids use the EN heading slug in every locale, as the help panel does, so in-guide "#anchor" links resolve.
+    const sectionId = `${guideContext.anchorPrefix}-${helpAnchorId(helpSectionHeadings.en[index]).slice('help-'.length)}`
+    return `<section class="guide-section">\n<h4 id="${sectionId}">${escapeHtml(section.heading)}</h4>\n${body}\n</section>`
   }).join('\n')
   return `<article class="guide" id="${pageId(key)}">
 <h3>${escapeHtml(guide.meta.title)}</h3>

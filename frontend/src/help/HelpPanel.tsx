@@ -124,7 +124,7 @@ function GuideTab({ load, t, policy, granted, onNavigate }: { load: Load; t: Cop
     const src = shots.has(step) ? helpScreenshotUrl(locale, document.meta.key, step) ?? helpScreenshotUrl('en', document.meta.key, step) : undefined
     return src ? <HelpScreenshot src={src} step={step} t={t}/> : null
   }
-  return <article className="help-guide" lang={fallback ? 'en' : undefined}>
+  return <article className="help-guide" lang={fallback ? 'en' : undefined} dir={fallback ? 'ltr' : undefined}>
     {document.meta.reviewed === false && <p className="help-guide-draft" role="note">{t.draft}</p>}
     {/* UG-5 / D6: a machine-drafted translation always says so, independently of `reviewed`. */}
     {isDraftTranslationLocale(locale) && <p className="help-guide-draft" role="note" data-testid="help-translation-unreviewed">{t.translationUnreviewed}</p>}
