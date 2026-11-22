@@ -9,6 +9,11 @@ import { changeAppLanguage } from '../i18n'
 // UG-HELP-04 (related pages limited to the caller's navigation), draft label, missing content, mobile.
 vi.mock('../product/WorkspaceContextBar', () => ({ WorkspaceContextBar: () => <div>Scoped context</div> }))
 vi.mock('../product/WorkspaceRoleNavigation', () => ({ WorkspaceRoleNavigation: () => <div>Scoped work view</div> }))
+// Every locale now has every guide; drop one German page so the per-page EN fallback (D6) stays covered.
+vi.mock('./content/de/help-de.ts', async importOriginal => {
+  const actual = await importOriginal<{ default: Record<string, string> }>()
+  return { default: Object.fromEntries(Object.entries(actual.default).filter(([path]) => path !== './fleet.md')) }
+})
 const session = { authenticated: true, canRead: true, canReadCompanies: true, canCreate: false, canSearch: false, setupRequired: false,
   tenantId: '10000000-0000-0000-0000-000000000001', actorId: '20000000-0000-0000-0000-000000000001', tenantName: 'FICTIONAL workspace', csrfToken: 'synthetic' } as Session
 const restricted = { destinations: [{ key: 'today', href: '/app/today' }, { key: 'fleet', href: '/app/fleet' }], canSearch: false, canWriteRegulatory: false }
