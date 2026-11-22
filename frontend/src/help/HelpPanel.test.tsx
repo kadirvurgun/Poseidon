@@ -144,7 +144,8 @@ describe('page help panel', () => {
   })
 
   it('shows a neutral pending state for a page without a guide and the Why/AI tabs make no call', async () => {
-    const { fetcher } = mount('/app/fleet')
+    // A real page outside the navigation contract has no guide key; every destination key now has (or will have) a guide.
+    const { fetcher } = mount('/app/data-reconciliation')
     await screen.findByRole('button', { name: 'Today' })
     const before = fetcher.mock.calls.length
     await userEvent.click(trigger())
