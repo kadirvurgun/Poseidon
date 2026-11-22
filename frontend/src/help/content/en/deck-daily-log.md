@@ -37,7 +37,7 @@ The deck daily log keeps the selected ship's **deck watch records** as drafts wi
 
 ## What you cannot do / caution
 - The system never reviews or finalizes the log. Review is a human act by the appointed Master or Chief Officer (13.03 §2).
-- The system does not stop the officer who wrote the log from recording a review if they hold the appointment; separation is an organisational rule.
+- Whoever authored any revision of the log cannot review it. No appointment is offered to an author and the page says "You authored this log revision; an independent reviewer must record the review."; the server also refuses such a review for separation of duties.
 - Keep entries real time and chronological; do not rewrite an old watch to look like a new one (13.03 §6).
 - Do not change someone else's reviewed record; a later save is a new revision and needs a new review (13.03 §6).
 - Offline capture only covers explicitly classified fields. An offline conflict is never merged automatically; do not assume your record wins (13.03 §6).

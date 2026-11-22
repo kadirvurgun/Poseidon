@@ -37,7 +37,7 @@ The engine daily log keeps the selected ship's **engine watch records** as draft
 
 ## What you cannot do / caution
 - The system never reviews or finalizes the log. Review is a human act by the appointed Chief Engineer (13.03 §5).
-- The system does not stop the officer who wrote the log from recording a review if they hold the appointment; separation is an organisational rule.
+- Whoever authored any revision of the log cannot review it. No appointment is offered to an author and the page says "You authored this log revision; an independent reviewer must record the review."; the server also refuses such a review for separation of duties.
 - Keep entries real time and chronological; do not change someone else's reviewed record (13.03 §6).
 - Linking a defect here does not record a restriction or close it; do that on the defect or work order page (13.03 §5).
 - Links need a current online connection; nothing is linked offline. Offline conflicts are never merged automatically.

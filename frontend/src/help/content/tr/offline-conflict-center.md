@@ -15,7 +15,7 @@ reviewed: false
 - Önemli çakışma bir insan çözümü gerektirir; bu sayfa 13.03 §10'daki "Material conflict → Conflict Center" akışının hedefidir.
 
 ## Başlamadan önce
-- Sayfa yalnız sizin kaydettiğiniz çakışmaları listeler ve en az bir okunabilir kaynak (ör. personel ataması, römorkör operasyonları, günlük kayıt, iş emri kanıtı, sertifika yenileme taslağı) için okuma yetkisi gerektirir. Okunabilir tek bir kaynak sayfayı açmaya yeter; listelenen yetkiler birbirinin alternatifidir.
+- Sayfa yalnız sizin kaydettiğiniz çakışmaları listeler ve en az bir okunabilir kaynak (ör. personel ataması, römorkör operasyonları, günlük kayıt, iş emri kanıtı (ekipman ve bakım okuma yetkisiyle birlikte), sertifika yenileme taslağı) için okuma yetkisi gerektirir. Okunabilir tek bir kaynak sayfayı açmaya yeter; listelenen yetkiler birbirinin alternatifidir.
 - Liste ve kararlar güncel bir sunucu bağlantısı ister. Çevrimdışıyken yerel değişiklikleriniz cihazda saklanmaya devam eder.
 - **Gemi** listesinden gemiyi veya römorkörü seçin.
 

@@ -34,12 +34,13 @@ The port activity and SOF page keeps the selected ship's **port events** as an o
 - **Amended after FINAL: a new review and finalization are required.:** the record was saved again after finalization and is back to DRAFT.
 - **UNKNOWN (unresolved references):** no owning lookup exists for these required references. Acknowledging them does not make them known.
 - **Review required / Unverified draft record:** port events are declarations; nothing is verified.
+- **Draft (not finalized) / Final (internal; not a signature):** the SOF state the server recorded for this revision, shown in the record summary. Final comes only from a recorded human finalization.
 
 ## What you cannot do / caution
 - The system never finalizes the SOF. Finalization is a human act by an appointed Master, Chief Officer or Chief Engineer (13.03 §2).
 - Finalize SOF stays disabled while required facts are missing, no appointment exists or unresolved references are not acknowledged.
 - Finalization is not a signature, not an external agreement and not laytime or demurrage.
-- The finalization state is shown only in **Statement of Facts finalization** (DRAFT / FINAL (internal)). The "SOF review state" field, the timeline note and the page footer do not reflect finalization and may say finalization is unavailable.
+- The page footer states: "SOF finalization is an internal human act recorded in the finalization panel by an appointed Master, Chief Officer or Chief Engineer. Signatures, operational/legal approval and offline capture remain unavailable."
 - Saving drafts and finalizing need a current online session; this page has no offline capture.
 
 ## If something goes wrong

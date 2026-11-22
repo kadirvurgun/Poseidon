@@ -15,7 +15,7 @@ The material conflict center lists, for the selected vessel or tug, **material c
 - A material conflict needs a human resolution; this page is the target of the "Material conflict → Conflict Center" flow in 13.03 §10.
 
 ## Before you start
-- The page lists only conflicts you recorded and needs read access to at least one readable source (for example crew assignment, tug operations, daily record, work order evidence, certificate renewal draft). Any one readable source opens the page; the listed permissions are alternatives.
+- The page lists only conflicts you recorded and needs read access to at least one readable source (for example crew assignment, tug operations, daily record, work order evidence (with equipment and maintenance read), certificate renewal draft). Any one readable source opens the page; the listed permissions are alternatives.
 - The list and decisions need a current server connection. While offline your local changes stay retained on the device.
 - Choose the vessel or tug from the **Vessel** list.
 

@@ -29,14 +29,14 @@ The readiness gate assesses a tug assignment's operational readiness from source
 
 ## What the states mean
 - **Ready (READY):** every source check passes (no blocker, unknown or condition). This is information, not a decision; the GO decision is still recorded by the Tug Master or Master.
-- **Conditional (CONDITIONAL):** the conditions in "Conditions" apply; GO is not accepted on a CONDITIONAL assessment in this version.
+- **Conditional (CONDITIONAL):** the conditions in "Conditions" apply. GO is disabled and the page explains: "This assessment is CONDITIONAL. GO needs a READY assessment: no source defines which conditions would permit GO, so the server refuses it. Resolve the conditions and reassess, or record NO-GO."
 - **Not ready (NOT_READY):** at least one critical blocker exists.
 - **Review required (REVIEW_REQUIRED):** some sources are unknown or await review. An unknown check is never counted as "Ready".
 - **Pass / Fail / Unknown:** the result of a single category or check.
 - **GO / NO-GO:** the human decision and reason recorded by the Tug Master or Master.
 
 ## What you cannot do / caution
-- GO can only be recorded against a READY assessment; the server refuses GO on CONDITIONAL, NOT_READY or REVIEW_REQUIRED. NO-GO can always be recorded with a reason. The page may still offer GO on a CONDITIONAL assessment; the server refuses it.
+- GO can only be recorded against a READY assessment; the server refuses GO on CONDITIONAL, NOT_READY or REVIEW_REQUIRED. The page enables GO only on a READY assessment; otherwise it says "GO can only be recorded against a READY assessment." NO-GO can always be recorded with a reason.
 - There is no READY while the risk and briefing are incomplete or participant acknowledgements are missing; the GO option is then disabled (13.03 §3).
 - A shore user's assignment proposal never overrides the Tug Master's onboard safety decision (13.03 §7).
 - If the assessment changes before your decision, the decision is refused; review the current assessment again.

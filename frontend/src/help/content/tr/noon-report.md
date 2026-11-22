@@ -36,7 +36,7 @@ reviewed: false
 
 ## Yapamazsınız / dikkat
 - Sistem raporu incelemez veya kesinleştirmez. İnceleme kaydı, görevlendirilmiş Kaptanın insan eylemidir (13.03 §2).
-- Kaydı yazan zabit görevlendirmeye sahipse sistem onun inceleme kaydetmesini engellemez; görev ayrımı bir kuruluş kuralıdır.
+- Kaydın herhangi bir revizyonunu yazan kişi onu inceleyemez. Yazara görevlendirme sunulmaz ve sayfa "Bu kayıt revizyonunu siz yazdınız; incelemeyi bağımsız bir inceleyici kaydetmelidir." der; sunucu da böyle bir incelemeyi görev ayrılığı nedeniyle reddeder. Raporu Kaptan yazdıysa da incelemeyi, inceleme yetkisi olan bağımsız bir inceleyici kaydetmelidir.
 - Yeni kayıt yeni sürüm oluşturur; önceki inceleme kendi sürümünde kalır. Değişiklikten sonra yeniden inceleme gerekir.
 - Serbest metinle yazılan referans yetkili kaynak seçiminin yerini tutmaz; alanı Eksik veya Bilinmiyor bırakın.
 - Çevrimdışıyken yalnız açıkça sınıflandırılmış alanlar şifreli kuyruğa alınır. İnceleme, onay ve doğrulama alanları kapsam dışıdır.

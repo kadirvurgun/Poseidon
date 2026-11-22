@@ -37,7 +37,7 @@ Güverte günlük kaydı, seçili geminin **güverte vardiya kayıtlarını** ka
 
 ## Yapamazsınız / dikkat
 - Sistem jurnali incelemez veya kesinleştirmez. İnceleme, görevlendirilmiş Kaptan veya Birinci Zabitin insan eylemidir (13.03 §2).
-- Kaydı yazan zabit görevlendirmeye sahipse sistem onun inceleme kaydetmesini engellemez; görev ayrımı bir kuruluş kuralıdır.
+- Kaydın herhangi bir revizyonunu yazan kişi onu inceleyemez. Yazara görevlendirme sunulmaz ve sayfa "Bu kayıt revizyonunu siz yazdınız; incelemeyi bağımsız bir inceleyici kaydetmelidir." der; sunucu da böyle bir incelemeyi görev ayrılığı nedeniyle reddeder.
 - Kayıtları gerçek zamanlı ve kronolojik tutun; eski bir vardiyayı yeniymiş gibi yeniden yazmayın (13.03 §6).
 - Başkasının incelenmiş kaydını değiştirmeyin; sonraki kayıt yeni sürümdür ve yeni inceleme gerektirir (13.03 §6).
 - Çevrimdışı kayıt yalnız açıkça sınıflandırılmış alanları kapsar. Çevrimdışı çakışma asla otomatik birleşmez; kendi kaydınızın kazanacağını varsaymayın (13.03 §6).

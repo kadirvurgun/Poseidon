@@ -39,7 +39,7 @@ reviewed: false
 ## Yapamazsınız / dikkat
 - İşi siz uyguladıysanız doğrulayamaz veya kapatamazsınız. Sayfa bunu "Bu işi siz uyguladınız; doğrulayamaz veya kapatamazsınız." diye belirtir.
 - Kanıt gönderildi, Doğrulandı ve Kapatıldı ayrı insan kayıtlarıdır. Sayfa bir ekipmanı hizmete hazır ilan etmez.
-- "Kayıtlı iş emri kaynağı" özeti yalnız kayıtlı taslak alanlarını anlatır. Her zaman Taslak / İnceleme gerekli gösterir ve "Serbest bırakma, kanıt kabulü, doğrulama ve kapanış kullanılamıyor." diyebilir. Gerçek durum ve kullanılabilir işlemler **Uygulama ve kanıt** bölümündedir.
+- "Kayıtlı iş emri kaynağı" özeti kayıtlı taslak alanlarını anlatır ve şunu belirtir: "Serbest bırakma, kanıt kaydı, bağımsız doğrulama ve kapanış yürütme panelinde kaydedilir. Sunulan kanıt yalnızca bağımsız insan doğrulamasıyla kabul edilir, işi yapan kişi tarafından asla; ayrı bir kanıt kabul adımı yoktur ve doğrulama hizmete dönüş kararı değildir." Bu işlemler **Uygulama ve kanıt** bölümünde yapılır.
 - Okuma değerleri beyan edildiği gibi saklanır; birim dönüşümü veya eşik uygulanmaz.
 - Çevrimdışı kanıt kuyruğu yalnız onaylı çevrimdışı politika varsa ve iş devam ederken kullanılır. Çakışmalar otomatik birleştirilmez; **Çakışma merkezini aç** ile insan karar verir.
 

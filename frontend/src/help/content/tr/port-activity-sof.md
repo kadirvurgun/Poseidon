@@ -34,12 +34,13 @@ Liman faaliyeti ve SOF sayfası, seçili geminin **liman olaylarını** kanıt r
 - **KESİN sonrası değiştirildi: yeni inceleme ve kesinleştirme gerekir.:** kayıt kesinleştirmeden sonra yeniden kaydedildi ve TASLAK durumuna döndü.
 - **BİLİNMİYOR (çözümlenmemiş referanslar):** bu zorunlu referanslar için sahip arama kaynağı yok. Onaylamak onları bilinir hale getirmez.
 - **İnceleme gerekli / Doğrulanmamış taslak kaydı:** liman olayları beyandır; hiçbir şey doğrulanmamıştır.
+- **Taslak (sonlandırılmadı) / Nihai (dahili; imza değildir):** kayıt özetinde bu sürüm için sunucunun kaydettiği SOF durumu. Nihai yalnız kaydedilmiş bir insan kesinleştirmesinden gelir.
 
 ## Yapamazsınız / dikkat
 - Sistem SOF'u kesinleştirmez. Kesinleştirme, atanmış Kaptan, Birinci Zabit veya Başmühendisin insan eylemidir (13.03 §2).
 - Zorunlu bilgi eksikken, atama yokken veya çözümlenmemiş referanslar onaylanmadan SOF’u kesinleştir düğmesi kapalı kalır.
 - Kesinleştirme imza, dış mutabakat, laytime veya demuraj değildir.
-- Kesinleştirme durumu yalnız **Statement of Facts kesinleştirme** bölümünde (TASLAK / KESİN (içsel)) gösterilir. "SOF inceleme durumu" alanı, zaman çizelgesi notu ve sayfa altbilgisi kesinleştirmeyi yansıtmaz ve kesinleştirmenin kullanılamadığını söyleyebilir.
+- Sayfa altbilgisi şunu belirtir: "SOF sonlandırması, atanmış Kaptan, Birinci Zabit veya Başmühendis tarafından sonlandırma panelinde kaydedilen dahili bir insan eylemidir. İmza, operasyonel/hukuki onay ve çevrimdışı kayıt kullanılamıyor."
 - Taslak kaydı ve kesinleştirme güncel çevrimiçi oturum gerektirir; bu sayfada çevrimdışı kayıt yoktur.
 
 ## Sorun olursa

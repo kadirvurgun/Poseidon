@@ -25,22 +25,23 @@ Bu sayfa, seçilen gemi ve planlanan kalkış aralığı için **tavsiye niteli�
 3. **Değerlendirme** satırında durum rozetini, "Güncel" veya "Öngörü" kipini, "Değerlendirme zamanı" ve "Geçerlilik sonu" bilgisini okuyun.
 4. Kategori tablosunda Mürettebat, Teknik, Yasal, Acil durum ve Emniyet olayları sonuçlarına bakın.
 5. **Neden** listesini okuyun. Her satır geçmeyen bir gözlemi, gerekçe kodunu ve kaynağını gösterir. Beklenmeyen bir satırı kaynağın kendi sayfasında inceleyin.
-6. **Kaptan kararları** bölümünde daha önce kaydedilmiş kararları ve geçerliliklerini görün.
-7. Kaptan iseniz **Kaptan kararını kaydet** bölümünde Serbest bırak, Beklet veya Reddet seçin, "Atama" listesinden atamanızı seçin, "Gerekçe" yazın (10–2000 karakter) ve **Kaydet** düğmesine basın.
-8. Değerlendirmeyi tazelemek için **Yenile** düğmesini kullanın.
+6. Değerlendirme güncel ve Hazır değilse **Serbest bırakma neden kullanılamıyor** bölümünü okuyun. Bölüm, aralık öngörüyse bunu belirtir, henüz geçmeyen kategorileri sonuçlarıyla listeler ve Acil durum (61.02 tatbikat kaynağı henüz bağlı değil) ile Yasal (gerekli sertifika seti tanımlı değil) kaynak boşluklarını hangi kaydın karşılayacağını açıklar. Bu yalnız sunucunun kategorilerini açıklar; kapıyı değiştirmez.
+7. **Kaptan kararları** bölümünde daha önce kaydedilmiş kararları ve geçerliliklerini görün.
+8. Kaptan iseniz **Kaptan kararını kaydet** bölümünde Serbest bırak, Beklet veya Reddet seçin, "Atama" listesinden atamanızı seçin, "Gerekçe" yazın (10–2000 karakter) ve **Kaydet** düğmesine basın.
+9. Değerlendirmeyi tazelemek için **Yenile** düğmesini kullanın.
 
 ## Durumlar ne anlama gelir
 - **Hazır:** kayıtlı kaynaklarda geçmeyen gözlem yok. Bu yalnız bilgidir; kalkış kararı yine Kaptanındır.
 - **Koşullu:** en az bir kaynak koşul bildiriyor. Bu değerlendirmede Serbest bırak seçeneği açılmaz.
 - **Hazır değil:** en az bir kaynak "Kaldı" sonucu veriyor. Diğer kategorilerin geçmesi bunu dengelemez.
 - **İnceleme gerekli:** en az bir girdi "Bilinmiyor". Yetkili bir kişinin bakması gerekir.
-- **Geçti / Koşul / Kaldı / Bilinmiyor:** kategori tablosundaki kategori sonucu. **Bilinmiyor**, kaynağın okunamadığını veya veri olmadığını gösterir; "Geçti" ya da "Hazır" anlamına gelmez. Acil durum kategorisi için bu sürümde bağlı bir kaynak modülü yoktur; bu satır Bilinmiyor görünür. Yasal kategorisi veri güven sinyallerini de (DATA_TRUST_*) içerir; veri güven okuma yetkisi yoksa Yasal Bilinmiyor görünür.
+- **Geçti / Koşul / Kaldı / Bilinmiyor:** kategori tablosundaki kategori sonucu. **Bilinmiyor**, kaynağın okunamadığını veya veri olmadığını gösterir; "Geçti" ya da "Hazır" anlamına gelmez. Acil durum kategorisi için bu sürümde bağlı bir acil durum hazırlık kaynağı yoktur; bu satır Bilinmiyor görünür. Yasal kategorisi, gemi için gerekli sertifika setini tanımlayan bir kaynak olmadığından, kayıtlı sertifikalar geçerli olsa bile Bilinmiyor kalabilir. Yasal kategorisi veri güven sinyallerini de (DATA_TRUST_*) içerir; veri güven okuma yetkisi yoksa Yasal Bilinmiyor görünür.
 - **Öngörü:** aralık bugünü kapsamıyor. Bu yalnızca planlama öngörüsüdür ve serbest bırakılamaz.
 - **Güncel / Bayat — girdiler değişti:** kayıtlı bir kararın geçerliliği. Girdiler değişince önceki karar bayat olur ve silinmez.
 
 ## Yapamazsınız / dikkat
 - Sistem kalkışa izin vermez ve hiçbir durumu kalkış izni olarak göstermez. Kaydedilen karar, atanmış Kaptanın kendi insan kaydıdır.
-- Serbest bırakma yalnızca güncel bir "Hazır" değerlendirmede mümkündür. Acil durum kategorisi bu sürümde her zaman Bilinmiyor olduğundan değerlendirme Hazır olamaz; bu nedenle Serbest bırak seçeneği şu an hiç sunulmaz. Beklet ve Reddet her zaman gerekçeyle kaydedilebilir.
+- Serbest bırakma yalnızca güncel bir "Hazır" değerlendirmede kaydedilebilir; her kategori geçmelidir. Acil durum kategorisi bu sürümde Bilinmiyor kaldığından değerlendirme Hazır olamaz ve Serbest bırak sunulmaz; nedeni **Serbest bırakma neden kullanılamıyor** bölümünde yazar. Hazır olsa bile serbest bırakma kararı Kaptanındır; sistem onay vermez. "Beklet ve Reddet her zaman bir gerekçeyle kaydedilebilir."
 - Her karar için gerekçe zorunludur. Kayıtlı kararlar değiştirilmez; yeni karar yeni bir kayıt olur.
 - Değerlendirme bayatsa veya çevrimdışıysanız karar kaydedilemez; önce yenileyin.
 

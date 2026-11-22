@@ -36,7 +36,7 @@ The noon report page keeps the selected ship's **daily noon declarations** as dr
 
 ## What you cannot do / caution
 - The system never reviews or finalizes the report. Recording a review is a human act by the appointed Master (13.03 §2).
-- The system does not stop the officer who wrote the log from recording a review if they hold the appointment; separation is an organisational rule.
+- Whoever authored any revision of the log cannot review it. No appointment is offered to an author and the page says "You authored this log revision; an independent reviewer must record the review."; the server also refuses such a review for separation of duties. If the Master wrote the report, an independent reviewer with review authority must still record the review.
 - A new save creates a new revision; the earlier review stays on its own revision. Review again after changes.
 - A typed free-text reference cannot replace an authorized lookup; keep the field Missing or Unknown.
 - Offline, only explicitly classified fields can go to the encrypted queue. Review, approval and verification fields are excluded.

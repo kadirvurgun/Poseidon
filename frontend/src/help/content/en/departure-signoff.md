@@ -25,22 +25,23 @@ This page shows an **advisory readiness assessment** for the selected ship and p
 3. In the **Assessment** line, read the state badge, the "Current" or "Forecast" mode, "Assessed at" and "Valid until".
 4. In the category table, check the Crew, Technical, Statutory, Emergency and Safety events results.
 5. Read the **Why** list. Each row shows an observation that did not pass, its reason code and its source. Review an unexpected row on the source's own page.
-6. Under **Master decisions**, see earlier recorded decisions and their validity.
-7. If you are the Master, in **Record Master decision** choose Release, Hold or Deny, pick your appointment in "Appointment", write a "Reason" (10–2000 characters) and press **Record**.
-8. Use **Refresh** to read the assessment again.
+6. If the assessment is not current and Ready, read **Why Release is unavailable**. It says when the window is a forecast, lists the categories that do not pass yet with their results, and explains which record would close the Emergency (no 61.02 drill source connected yet) and Statutory (no required-certificate set defined) source gaps. It only explains the server's categories; it does not change the gate.
+7. Under **Master decisions**, see earlier recorded decisions and their validity.
+8. If you are the Master, in **Record Master decision** choose Release, Hold or Deny, pick your appointment in "Appointment", write a "Reason" (10–2000 characters) and press **Record**.
+9. Use **Refresh** to read the assessment again.
 
 ## What the states mean
 - **Ready:** no recorded source has an observation that did not pass. This is information only; the departure decision is still the Master's.
 - **Conditional:** at least one source reports a condition. Release is not offered for this assessment.
 - **Not ready:** at least one source returns "Fail". Other categories passing does not offset it.
 - **Review required:** at least one input is "Unknown". An authorised person needs to look at it.
-- **Pass / Condition / Fail / Unknown:** the category result in the category table. **Unknown** means the source could not be read or has no data; it does not mean "Pass" or "Ready". No source module is connected for the Emergency category in this version, so that row shows Unknown. Statutory also includes data trust signals (DATA_TRUST_*); without data trust read access Statutory shows Unknown.
+- **Pass / Condition / Fail / Unknown:** the category result in the category table. **Unknown** means the source could not be read or has no data; it does not mean "Pass" or "Ready". No emergency preparedness source is connected for the Emergency category in this version, so that row shows Unknown. Statutory can stay Unknown even when every recorded certificate is valid, because no source defines the required-certificate set for the ship. Statutory also includes data trust signals (DATA_TRUST_*); without data trust read access Statutory shows Unknown.
 - **Forecast:** the window does not include today. It is a planning forecast only and cannot be released.
 - **Current / Stale — inputs changed:** the validity of a recorded decision. When inputs change, the earlier decision becomes stale and is not deleted.
 
 ## What you cannot do / caution
 - The system never releases a departure and shows no state as a departure clearance. A recorded decision is the appointed Master's own human record.
-- Release is possible only for a current READY assessment. Because the Emergency category is always Unknown in this version, the assessment cannot reach Ready, so Release is currently never offered. Hold and Deny can always be recorded with a reason.
+- Release can be recorded only for a current READY assessment; every category must pass. Because the Emergency category stays Unknown in this version, the assessment cannot reach Ready and Release is not offered; **Why Release is unavailable** shows why. Even on Ready the release decision is the Master's; the system approves nothing. "Hold and Deny can always be recorded with a reason."
 - A reason is required for every decision. Recorded decisions are not changed; a new decision is a new record.
 - You cannot record a decision while the assessment is stale or you are offline; refresh first.
 

@@ -29,14 +29,14 @@ Hazırlık kapısı, bir römorkör atamasının operasyona hazırlığını kay
 
 ## Durumlar ne anlama gelir
 - **Hazır (READY):** tüm kaynak kontrolleri geçiyor (engel, bilinmeyen veya koşul yok). Bu bilgilendirmedir, karar değildir; GO kararını yine Tug Master veya Kaptan kaydeder.
-- **Koşullu (CONDITIONAL):** "Koşullar" listesindeki koşullar geçerlidir; bu sürümde KOŞULLU değerlendirmede GO kabul edilmez.
+- **Koşullu (CONDITIONAL):** "Koşullar" listesindeki koşullar geçerlidir. GO seçeneği kapalıdır ve sayfa şunu açıklar: "Bu değerlendirme KOŞULLU. GO için HAZIR değerlendirme gerekir: hangi koşulların GO'ya izin verdiğini tanımlayan bir kaynak yok, bu nedenle sunucu reddeder. Koşulları giderip yeniden değerlendirin veya NO-GO kaydedin."
 - **Hazır değil (NOT_READY):** en az bir kritik engel var.
 - **İnceleme gerekli (REVIEW_REQUIRED):** bazı kaynaklar bilinmiyor veya inceleme bekliyor. Bilinmeyen kontrol asla "Hazır" sayılmaz.
 - **Geçti / Başarısız / Bilinmiyor:** tek bir kategori veya kontrolün sonucu.
 - **GO / NO-GO:** Tug Master veya Kaptan tarafından kaydedilen insan kararı ve gerekçesi.
 
 ## Yapamazsınız / dikkat
-- GO yalnızca READY (Hazır) bir değerlendirmeye karşı kaydedilebilir; sunucu CONDITIONAL, NOT_READY veya REVIEW_REQUIRED durumunda GO'yu reddeder. NO-GO her durumda gerekçesiyle kaydedilebilir. Sayfa KOŞULLU değerlendirmede GO seçeneğini yine de sunabilir; sunucu bunu reddeder.
+- GO yalnızca READY (Hazır) bir değerlendirmeye karşı kaydedilebilir; sunucu CONDITIONAL, NOT_READY veya REVIEW_REQUIRED durumunda GO'yu reddeder. Sayfa GO seçeneğini yalnız HAZIR değerlendirmede açar; diğer durumlarda "GO yalnızca HAZIR bir değerlendirmeye karşı kaydedilebilir." der. NO-GO her durumda gerekçesiyle kaydedilebilir.
 - Risk ve brifing tamamlanmadan veya katılımcı teyitleri eksikken READY oluşmaz; bu durumda GO seçeneği kapalıdır (13.03 §3).
 - Kıyı kullanıcısının atama önerisi Tug Master'ın gemideki emniyet kararını ortadan kaldırmaz (13.03 §7).
 - Değerlendirme kararınızdan önce değişirse karar kabul edilmez; güncel değerlendirmeyi yeniden inceleyin.
