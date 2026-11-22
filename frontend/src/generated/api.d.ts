@@ -855,7 +855,7 @@ export interface paths {
         put?: never;
         /**
          * CreateMembership
-         * @description Invites an IdP identity to a database membership (USER-ADMIN-02). The membership starts Invited and grants nothing; it binds an identity only when the identity holder, signed in through the trusted issuer, accepts the single-use invitation token returned once in this response (expiry 24 hours: the 54.01 account.invite_hours default). subject is optional and, when given, is the only identity allowed to accept; it reserves nothing. Role bundles and individual permissions are limited to the trusted allow-list and to the caller's own permissions (400 exceeds_grantor_authority). A subject present in the operator configuration, already bound in this tenant or with a pending invitation here returns 409 identity_unavailable.
+         * @description Invites an IdP identity to a database membership (USER-ADMIN-02). The membership starts Invited and grants nothing; it binds an identity only when the identity holder, signed in through the trusted issuer, accepts the single-use invitation token returned once in this response (expiry: the tenant's 54.01 account.invite_hours value, 1-168 hours, default 24). deliveryEmail is optional and queues the invitation e-mail in the same transaction (delivery state QUEUED, or NOT_CONFIGURED without a mail transport); the address is never returned, logged or audited. subject is optional and, when given, is the only identity allowed to accept; it reserves nothing. Role bundles and individual permissions are limited to the trusted allow-list and to the caller's own permissions (400 exceeds_grantor_authority). A subject present in the operator configuration, already bound in this tenant or with a pending invitation here returns 409 identity_unavailable.
          */
         post: operations["CreateMembership"];
         delete?: never;
@@ -1106,6 +1106,27 @@ export interface paths {
          * @description Issues a new single-use invitation link for an Invited membership (the previous pending link stops working). The token is returned only in this response. expectedVersion is the membership version; a membership that is no longer Invited returns 409 invalid_transition.
          */
         post: operations["ReissueMembershipInvitation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/memberships/invitation-settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The tenant's invitation lifetime (54.01 account.invite_hours, 1-168 h, default 24) and whether invitation e-mail delivery is configured. Requires membership.read or membership.manage with tenant-wide scope. */
+        get: operations["GetInvitationSettings"];
+        put?: never;
+        /**
+         * UpdateInvitationSettings
+         * @description Sets the tenant's invitation lifetime in hours (54.01 account.invite_hours: 1-168). Applies to invitations issued afterwards; existing invitations keep their expiry. expectedVersion is the settings version (0 while the source default applies); stale => 409 version_conflict; out of range => 400 validation_failed.
+         */
+        post: operations["UpdateInvitationSettings"];
         delete?: never;
         options?: never;
         head?: never;
@@ -13829,6 +13850,32 @@ export interface components {
             /** Format: date-time */
             expiresAt: string;
         };
+        InvitationReissueCommand: {
+            /** Format: uint32 */
+            expectedVersion: null | number;
+            deliveryEmail?: null | string;
+        };
+        InvitationSettingsCommand: {
+            /** Format: uint32 */
+            expectedVersion: null | number;
+            /** Format: int32 */
+            lifetimeHours: null | number;
+        };
+        InvitationSettingsDto: {
+            /** Format: int32 */
+            lifetimeHours: number;
+            /** Format: int32 */
+            minHours: number;
+            /** Format: int32 */
+            maxHours: number;
+            /** Format: int32 */
+            defaultHours: number;
+            tenantValue: boolean;
+            /** Format: uint32 */
+            version: number;
+            deliveryConfigured: boolean;
+            canManage: boolean;
+        };
         InvitationTokenCommand: {
             token: null | string;
         };
@@ -14281,6 +14328,7 @@ export interface components {
             invitationExpiresAt?: null | string;
             /** @default false */
             invitationSubjectExpected: boolean;
+            invitationDeliveryState?: null | string;
         };
         MembershipCatalogDto: {
             bundles: components["schemas"]["RoleBundleDto"][];
@@ -14306,6 +14354,7 @@ export interface components {
             /** Format: uuid */
             activeCompanyId: null | string;
             vesselGrants: null | components["schemas"]["MembershipVesselGrantCommand"][];
+            deliveryEmail?: null | string;
         };
         MembershipDto: {
             /** Format: uuid */
@@ -23887,7 +23936,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["MembershipTransitionCommand"];
+                "application/json": components["schemas"]["InvitationReissueCommand"];
             };
         };
         responses: {
@@ -23898,6 +23947,126 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MembershipInvitationIssueDto"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GetInvitationSettings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvitationSettingsDto"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    UpdateInvitationSettings: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string;
+                "X-CSRF-TOKEN"?: string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InvitationSettingsCommand"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvitationSettingsDto"];
                 };
             };
             /** @description Bad Request */

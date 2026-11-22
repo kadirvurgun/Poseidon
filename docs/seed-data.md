@@ -345,3 +345,11 @@ live single-use credential (the link token); seeding one would fabricate a usabl
 decision. Existing `AdminProvisioned` rows from USER-ADMIN-01 are not rewritten: they keep their subject and state and are
 treated as already accepted (migration `20261124100002_UserAdministrationInvitations`). Default seed import and its audit
 totals are unchanged.
+
+## USER-ADMIN-03 — invitation e-mail outbox and tenant invitation lifetime — no new seed rows by design
+
+`identity.InvitationDeliveries` gets **no seed fixture**: a queued row carries a live invitation token ciphertext and a
+terminal row claims a delivery outcome (`SENT`) that never happened. `identity.TenantInvitationSettings` gets none
+either: a tenant lifetime is an attributed administrator setting; without a row the 24 h 54.01 source default applies.
+No SMTP host, user or password is seeded or committed (operator secret reference only). Default seed import and its
+audit totals are unchanged.

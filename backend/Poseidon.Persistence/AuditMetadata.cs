@@ -23,7 +23,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             CommandReceipt r when r.Action is "HrLegalEntityUpdate" or "HrLegalEntityStatus" or "HrIdentifierAdd" or "HrIdentifierRetire" or "HrRoleAdd" or "HrRoleEnd" or "HrRoleCancel" => "Tenant",
             CommandReceipt r when r.Action is "CrewPersonSave" or "CrewIdentityConvert" or "CrewProfileSave" or "CrewPhotoSave" => "TenantPerson",
             UserAccount or AccountMembership or AccountMembershipVesselGrant or MembershipDelegation or DelegationVesselScope or TenantAccessRecovery or MembershipCommandReceipt => "Tenant",
-            MembershipGrantRevision or MembershipGrantVessel or MembershipInvitation => "Tenant",
+            MembershipGrantRevision or MembershipGrantVessel or MembershipInvitation or InvitationDelivery or TenantInvitationSettings => "Tenant",
             Tenant or Company or RegisterDraft or RegisterRevision or RuleDraft or RuleRevision or FleetCatalogDraft or FleetCatalogDraftRevision or
                 RegulatoryQualificationHead or RegulatoryQualificationEvent or RegulatoryQualificationReceipt or
                 ParameterRoot or ParameterRevision or ParameterDecision or ParameterCommandReceipt => "Tenant",
@@ -401,7 +401,22 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             return new(null, membershipReceipt.ResourceId, "MembershipCommandReceipt", null, null,
                 Fields(Field("Action", null, Closed(membershipReceipt.Action, "MembershipImport", "MembershipSuspend", "MembershipResume", "MembershipRevoke",
                     "MembershipSecuritySuspend", "DelegationCreate", "DelegationRevoke", "MembershipCreate", "MembershipGrantUpdate",
-                    "MembershipInvitationReissue", "MembershipInvitationAccept")), Field("Binding", null, "CommittedResource")));
+                    "MembershipInvitationReissue", "MembershipInvitationAccept", "InvitationLifetimeUpdate")), Field("Binding", null, "CommittedResource")));
+        // USER-ADMIN-03: the recipient address and token (ProtectedPayload) are never copied; closed state, attempt count and
+        // closed error code only. A dispatcher change is a System actor write (ReasonStatus SystemOperation).
+        if (entry.Entity is InvitationDelivery delivery)
+            return new(null, delivery.MembershipId, "InvitationDelivery", null, null, Fields(
+                Field("InvitationId", null, delivery.InvitationId.ToString("D")),
+                Field("DeliveryState", entry.State == EntityState.Added ? null : Closed((string)entry.Property(nameof(InvitationDelivery.State)).OriginalValue!, Poseidon.Domain.InvitationDeliveryPolicy.States),
+                    Closed(delivery.State, Poseidon.Domain.InvitationDeliveryPolicy.States)),
+                Field("Attempts", entry.State == EntityState.Added ? null : Number((int)entry.Property(nameof(InvitationDelivery.Attempts)).OriginalValue!), Number(delivery.Attempts)),
+                Field("ErrorCode", null, delivery.LastErrorCode is { } code ? Closed(code, Poseidon.Domain.InvitationDeliveryPolicy.ErrorCodes) : null),
+                Field("Recipient", null, null, "ValuesWithheld"),
+                Field("Binding", OwnerBinding(), "OwnerReference")));
+        if (entry.Entity is TenantInvitationSettings lifetime)
+            return new(null, lifetime.TenantId, "TenantInvitationSettings", null, null, Fields(
+                Field("LifetimeHours", entry.State == EntityState.Added ? null : Number((int)entry.Property(nameof(TenantInvitationSettings.LifetimeHours)).OriginalValue!), Number(lifetime.LifetimeHours)),
+                Field("Binding", OwnerBinding(), "OwnerReference")));
         // Never copy the declared reference text, value or observation time into audit.
         if (entry.Entity is VesselProfileFieldSource fieldSource)
             return new(fieldSource.VesselId, fieldSource.VesselId, "VesselProfileFieldSource", null, fieldSource.Sequence,

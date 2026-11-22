@@ -458,6 +458,7 @@ public static partial class MembershipEndpoints
                 // USER-ADMIN-02: revoking an unaccepted membership closes its pending invitation in the same transaction.
                 foreach (var open in await db.MembershipInvitations.Where(i => i.MembershipId == id && i.Status == "Pending").ToArrayAsync(h.RequestAborted))
                 { open.Status = MembershipInvitationPolicy.Wire(InvitationStatus.Revoked); open.ClosedAt = now; }
+            if (status == MembershipStatus.Invited) await CancelQueuedDeliveries(db, id, now, h.RequestAborted);
             if (decision.RecoveryRequired)
                 db.TenantAccessRecoveries.Add(new TenantAccessRecovery { TenantId = actor.TenantId, Id = Guid.NewGuid(), MembershipId = id,
                     Cause = "SecuritySuspension", RaisedAt = now });

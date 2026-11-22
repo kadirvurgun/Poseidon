@@ -171,11 +171,11 @@ rate-limit, offline and error states. TR/EN copy; the other 15 locales carry the
 
 ## Open items
 
-- `account.invite_hours` tenant override (54.01, 1–168 h) is not wired: every tenant uses the 24 h source default.
+- ~~`account.invite_hours` tenant override (54.01, 1–168 h) is not wired~~ — wired by USER-ADMIN-03 (`docs/tasks/USER-ADMIN-03.md`).
 - A revoked accepted binding keeps the identity bound to its tenant (strict UA2-D04); re-homing a person to another
   organisation needs an operator procedure (not built). Multi-organisation membership with a login picker is a future
   product decision.
-- No e-mail/outbox delivery (52.02 paragraph:342); the administrator hands the link out of band.
+- ~~No e-mail/outbox delivery (52.02 paragraph:342)~~ — optional e-mail outbox added by USER-ADMIN-03; the copy link stays available.
 - The attempt limiter is process-local; a multi-instance deployment needs a shared limiter.
 - No real-IdP (Keycloak) journey or Playwright run for the invitation login. The invitation-session decision is unit-tested
   through `FoundationIdentity.InvitationSession`; the OIDC event wiring itself (`OnTokenValidated` assigning the result)

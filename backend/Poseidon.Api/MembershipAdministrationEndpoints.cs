@@ -23,7 +23,9 @@ public sealed record MembershipAccessSummaryDto(Guid Id, Guid AccountId, string 
     string[] Bundles, int PermissionCount, bool TenantWideRead, bool TenantWideManage, int VesselGrantCount, bool Administrator, bool Self,
     DateTimeOffset StatusChangedAt, uint Version, long AccessRevision, int? GrantRevision,
     // USER-ADMIN-02: latest invitation of an admin-provisioned membership (Pending | Expired | Accepted | Revoked | Superseded).
-    string? InvitationState = null, DateTimeOffset? InvitationExpiresAt = null, bool InvitationSubjectExpected = false);
+    string? InvitationState = null, DateTimeOffset? InvitationExpiresAt = null, bool InvitationSubjectExpected = false,
+    // USER-ADMIN-03: e-mail delivery of the latest invitation (QUEUED | SENT | FAILED | NOT_CONFIGURED | CANCELLED); null = no e-mail requested.
+    string? InvitationDeliveryState = null);
 public sealed record MembershipAccessPageDto(MembershipAccessSummaryDto[] Items, int Offset, int Limit, bool HasMore, int Total);
 public sealed record GrantRevisionDto(int Revision, string[] Bundles, string[] IndividualPermissions, int PermissionCount, bool TenantWideRead,
     bool TenantWideManage, Guid? ActiveCompanyId, int VesselGrantCount, Guid GrantedBy, DateTimeOffset CreatedAt);
@@ -37,7 +39,9 @@ public sealed record MembershipVesselGrantCommand(Guid VesselId, bool CanEdit = 
 // invitation. It never reserves the identity; the account binds only when its holder accepts.
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record MembershipCreateCommand(string? Issuer, string? Subject, string[]? Bundles, string[]? Permissions, bool? TenantWideRead,
-    bool? TenantWideManage, Guid? ActiveCompanyId, MembershipVesselGrantCommand[]? VesselGrants);
+    bool? TenantWideManage, Guid? ActiveCompanyId, MembershipVesselGrantCommand[]? VesselGrants,
+    // USER-ADMIN-03: optional recipient for the invitation e-mail (outbox). Never returned, logged or audited.
+    string? DeliveryEmail = null);
 // ExpectedVersion is the current grant revision (optimistic concurrency).
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record MembershipGrantCommand(long? ExpectedVersion, string[]? Bundles, string[]? Permissions, bool? TenantWideRead,
@@ -60,7 +64,7 @@ public static partial class MembershipEndpoints
             .WithSummary("Effective grant, scope and immutable grant revision history of one membership.")
             .Produces<MembershipAccessDto>().Produces(401).ProducesProblem(403).ProducesProblem(404).Produces(503);
         Command(app.MapPost("/api/v1/memberships", (HttpContext h, [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey, [FromHeader(Name = "X-CSRF-TOKEN")] string? csrfToken) =>
-            CreateMembership(h)), "CreateMembership", "Invites an IdP identity to a database membership (USER-ADMIN-02). The membership starts Invited and grants nothing; it binds an identity only when the identity holder, signed in through the trusted issuer, accepts the single-use invitation token returned once in this response (expiry 24 hours: the 54.01 account.invite_hours default). subject is optional and, when given, is the only identity allowed to accept; it reserves nothing. Role bundles and individual permissions are limited to the trusted allow-list and to the caller's own permissions (400 exceeds_grantor_authority). A subject present in the operator configuration, already bound in this tenant or with a pending invitation here returns 409 identity_unavailable.")
+            CreateMembership(h)), "CreateMembership", "Invites an IdP identity to a database membership (USER-ADMIN-02). The membership starts Invited and grants nothing; it binds an identity only when the identity holder, signed in through the trusted issuer, accepts the single-use invitation token returned once in this response (expiry: the tenant's 54.01 account.invite_hours value, 1-168 hours, default 24). deliveryEmail is optional and queues the invitation e-mail in the same transaction (delivery state QUEUED, or NOT_CONFIGURED without a mail transport); the address is never returned, logged or audited. subject is optional and, when given, is the only identity allowed to accept; it reserves nothing. Role bundles and individual permissions are limited to the trusted allow-list and to the caller's own permissions (400 exceeds_grantor_authority). A subject present in the operator configuration, already bound in this tenant or with a pending invitation here returns 409 identity_unavailable.")
             .Accepts<MembershipCreateCommand>("application/json").Produces<MembershipInvitationIssueDto>();
         Command(app.MapPost("/api/v1/memberships/{id:guid}/grant", (Guid id, HttpContext h, [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey, [FromHeader(Name = "X-CSRF-TOKEN")] string? csrfToken) =>
             UpdateGrant(h, id)), "UpdateMembershipGrant", "Appends a new immutable grant revision to an admin-provisioned membership. expectedVersion is the current grant revision (stale ⇒ 409 version_conflict). Own membership ⇒ 403 self_modification; configuration-managed ⇒ 409 configuration_managed; removing the last active administrator ⇒ 409 last_admin. Takes effect on the member's next request.")
@@ -70,7 +74,7 @@ public static partial class MembershipEndpoints
     // Shadowed (QA N4): the operator configuration has an entry for this identity that is not this exact tenant/actor
     // binding. Configuration always governs the identity (ActorResolver), so a database grant on it never applies.
     private sealed record AccessRow(AccountMembership Membership, string Issuer, string? Subject, ProvisionedGrant? Grant, Membership? Config, bool Shadowed,
-        MembershipInvitation? Invitation = null);
+        MembershipInvitation? Invitation = null, InvitationDelivery? Delivery = null);
 
     private static async Task<AccessRow[]> AccessRows(PoseidonDbContext db, FederationSettings settings, Guid tenant, IQueryable<AccountMembership> query, CancellationToken ct)
     {
@@ -80,16 +84,20 @@ public static partial class MembershipEndpoints
         var grants = await ProvisionedGrants.LoadAsync(db, provisionedIds, ct);
         var invitations = provisionedIds.Length == 0 ? [] : (await db.MembershipInvitations.AsNoTracking().Where(i => provisionedIds.Contains(i.MembershipId)).ToArrayAsync(ct))
             .GroupBy(i => i.MembershipId).ToDictionary(g => g.Key, g => g.OrderByDescending(i => i.CreatedAt).ThenBy(i => i.Id).First());
+        var latestIds = invitations.Values.Select(i => i.Id).ToArray();
+        var deliveries = latestIds.Length == 0 ? [] : (await db.InvitationDeliveries.AsNoTracking().Where(d => latestIds.Contains(d.InvitationId)).ToArrayAsync(ct))
+            .ToDictionary(d => d.InvitationId);
         return rows.Select(r =>
         {
             var config = r.Subject == null ? [] : settings.Memberships.Where(c => c.Issuer == r.Issuer && c.Subject == r.Subject).ToArray();
             var exact = config.Length == 1 && config[0].TenantId == tenant && config[0].ActorId == r.m.AccountId ? config[0] : null;
-            return new AccessRow(r.m, r.Issuer, r.Subject, grants.GetValueOrDefault(r.m.Id), exact, exact == null && config.Length > 0, invitations.GetValueOrDefault(r.m.Id));
+            return new AccessRow(r.m, r.Issuer, r.Subject, grants.GetValueOrDefault(r.m.Id), exact, exact == null && config.Length > 0, invitations.GetValueOrDefault(r.m.Id),
+                invitations.GetValueOrDefault(r.m.Id) is { } latest ? deliveries.GetValueOrDefault(latest.Id) : null);
         }).ToArray();
     }
 
     private static MembershipAccessSummaryDto Summary(AccessRow r, HashSet<Guid> admins, Guid self, DateTimeOffset now) =>
-        InvitationSummary(SummaryCore(r, admins, self), r.Invitation, now);
+        InvitationSummary(SummaryCore(r, admins, self), r.Invitation, now) with { InvitationDeliveryState = r.Invitation == null ? null : r.Delivery?.State };
 
     private static MembershipAccessSummaryDto InvitationSummary(MembershipAccessSummaryDto summary, MembershipInvitation? invitation, DateTimeOffset now) =>
         invitation == null || MembershipInvitationPolicy.Parse(invitation.Status) is not { } status ? summary
@@ -285,7 +293,8 @@ public static partial class MembershipEndpoints
         var now = h.RequestServices.GetRequiredService<TimeProvider>().GetUtcNow();
         const string action = "MembershipCreate";
         bool read = command.TenantWideRead ?? false, manage = command.TenantWideManage ?? false;
-        var fingerprint = Fingerprint(new { action, command.Issuer, command.Subject, bundles = MembershipGrantPolicy.Canonical(command.Bundles ?? []),
+        // USER-ADMIN-03: only whether an e-mail was requested enters the fingerprint (no hash of the address is stored).
+        var fingerprint = Fingerprint(new { action, command.Issuer, command.Subject, email = command.DeliveryEmail != null, bundles = MembershipGrantPolicy.Canonical(command.Bundles ?? []),
             permissions = MembershipGrantPolicy.Canonical(command.Permissions ?? []), read, manage, command.ActiveCompanyId, scope = Scope(command.VesselGrants) });
         return await Run(h, null, async db =>
         {
@@ -302,6 +311,7 @@ public static partial class MembershipEndpoints
             var errors = new Dictionary<string, string[]>(StringComparer.Ordinal);
             if (!ValidIssuer(command.Issuer, settings)) errors["issuer"] = [command.Issuer is { Length: > 0 } ? "issuer_not_trusted" : "required"];
             if (command.Subject != null && !MembershipInvitationPolicy.ValidExpectedSubject(command.Subject)) errors["subject"] = ["invalid"];
+            if (command.DeliveryEmail != null && !InvitationDeliveryPolicy.ValidEmail(command.DeliveryEmail)) errors["deliveryEmail"] = ["invalid"];
             if (await CurrentGrantor(db, h, actor, h.RequestAborted) is not { } grantor) return (Problem(h, 409, "conflict_changed"), "conflict_changed");
             var (outcome, grantErrors) = await CheckGrant(db, grantor, command.Bundles, command.Permissions, read, manage, command.ActiveCompanyId, command.VesselGrants, h.RequestAborted);
             foreach (var (k, v) in grantErrors) errors[k] = v;
@@ -321,8 +331,11 @@ public static partial class MembershipEndpoints
             db.AccountMemberships.Add(new AccountMembership { TenantId = actor.TenantId, Id = membership, AccountId = account, Status = "Invited",
                 StatusReason = "AdminInvitation", StatusChangedAt = now, AccessRevision = 0, Source = ProvisionedGrants.Source, CreatedAt = now });
             AddRevision(db, actor, membership, 1, outcome, read, manage, command.ActiveCompanyId, now);
-            var invitation = NewInvitation(actor.TenantId, membership, command.Subject, actor.Id.ToString("D"), now, out var token);
+            var invitation = NewInvitation(actor.TenantId, membership, command.Subject, actor.Id.ToString("D"), now,
+                await InvitationLifetime(db, h.RequestAborted), out var token);
             db.MembershipInvitations.Add(invitation);
+            // Outbox row in the same audited transaction as the invitation.
+            if (command.DeliveryEmail != null) db.InvitationDeliveries.Add(NewDelivery(h, invitation, command.DeliveryEmail, token, actor.Id.ToString("D"), now));
             await db.SaveChangesAsync(h.RequestAborted);
             AddReceipt(db, actor, prelude.Key, action, fingerprint, membership, now);
             await db.SaveChangesAsync(h.RequestAborted);

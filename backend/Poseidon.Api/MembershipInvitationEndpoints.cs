@@ -22,6 +22,14 @@ public sealed record InvitationAcceptedDto(Guid MembershipId, InvitationGrantDto
 
 [JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
 public sealed record InvitationTokenCommand(string? Token);
+// USER-ADMIN-03: reissue with an optional e-mail recipient for the new link. expectedVersion = membership version.
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
+public sealed record InvitationReissueCommand(uint? ExpectedVersion, string? DeliveryEmail = null);
+// USER-ADMIN-03: 54.01 account.invite_hours for the caller's tenant. Version 0 = no tenant value yet (source default).
+public sealed record InvitationSettingsDto(int LifetimeHours, int MinHours, int MaxHours, int DefaultHours, bool TenantValue, uint Version,
+    bool DeliveryConfigured, bool CanManage);
+[JsonUnmappedMemberHandling(JsonUnmappedMemberHandling.Disallow)]
+public sealed record InvitationSettingsCommand(uint? ExpectedVersion, int? LifetimeHours);
 
 public enum InvitationAttempt { Allowed, Limited, LimitedRepeat }
 
@@ -91,12 +99,19 @@ public static partial class MembershipEndpoints
     private const string InvitationAction = "MembershipInvitation";
     private const string AcceptAction = "MembershipInvitationAccept";
     private const string ReissueAction = "MembershipInvitationReissue";
+    private const string LifetimeAction = "InvitationLifetimeUpdate";
 
     private static void MapMembershipInvitations(IEndpointRouteBuilder app)
     {
         Command(app.MapPost("/api/v1/memberships/{id:guid}/invitation", (Guid id, HttpContext h, [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey, [FromHeader(Name = "X-CSRF-TOKEN")] string? csrfToken) =>
             ReissueInvitation(h, id)), "ReissueMembershipInvitation", "Issues a new single-use invitation link for an Invited membership (the previous pending link stops working). The token is returned only in this response. expectedVersion is the membership version; a membership that is no longer Invited returns 409 invalid_transition.")
-            .Accepts<MembershipTransitionCommand>("application/json").Produces<MembershipInvitationIssueDto>();
+            .Accepts<InvitationReissueCommand>("application/json").Produces<MembershipInvitationIssueDto>();
+        app.MapGet("/api/v1/memberships/invitation-settings", InvitationSettings).RequireAuthorization("DirectoryRead").WithName("GetInvitationSettings")
+            .WithSummary("The tenant's invitation lifetime (54.01 account.invite_hours, 1-168 h, default 24) and whether invitation e-mail delivery is configured. Requires membership.read or membership.manage with tenant-wide scope.")
+            .Produces<InvitationSettingsDto>().Produces(401).ProducesProblem(403).Produces(503);
+        Command(app.MapPost("/api/v1/memberships/invitation-settings", (HttpContext h, [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey, [FromHeader(Name = "X-CSRF-TOKEN")] string? csrfToken) =>
+            UpdateInvitationSettings(h)), "UpdateInvitationSettings", "Sets the tenant's invitation lifetime in hours (54.01 account.invite_hours: 1-168). Applies to invitations issued afterwards; existing invitations keep their expiry. expectedVersion is the settings version (0 while the source default applies); stale => 409 version_conflict; out of range => 400 validation_failed.")
+            .Accepts<InvitationSettingsCommand>("application/json").Produces<InvitationSettingsDto>();
         app.MapPost("/api/v1/invitations/preview", (HttpContext h, [FromHeader(Name = "X-CSRF-TOKEN")] string? csrfToken) => PreviewInvitation(h))
             .RequireAuthorization().WithName("PreviewMembershipInvitation").WithSummary("PreviewMembershipInvitation")
             .WithDescription("Shows the signed-in identity what a pending invitation grants in its tenant. No change is made. Every refusal (unknown, expired, used, revoked, another identity, identity already bound or configured) returns the same 409 invitation_unavailable; repeated attempts return 429 request_limit.")
@@ -109,13 +124,94 @@ public static partial class MembershipEndpoints
             .ProducesProblem(400).Produces(401).ProducesProblem(403).ProducesProblem(409).ProducesProblem(429).Produces(503);
     }
 
-    private static MembershipInvitation NewInvitation(Guid tenant, Guid membership, string? expectedSubject, string createdBy, DateTimeOffset now, out string token)
+    // USER-ADMIN-03: the tenant's 54.01 account.invite_hours value, or the 24 h source default.
+    private static async Task<TimeSpan> InvitationLifetime(PoseidonDbContext db, CancellationToken ct) =>
+        InvitationLifetimePolicy.For((await db.TenantInvitationSettings.AsNoTracking().SingleOrDefaultAsync(ct))?.LifetimeHours);
+
+    // USER-ADMIN-03: outbox row. With a valid transport the recipient and token are protected (Data Protection, bound to
+    // tenant + delivery id) until the dispatcher sends; without one the row is recorded NOT_CONFIGURED at once and keeps
+    // nothing, so nothing personal waits for a transport that does not exist.
+    private static InvitationDelivery NewDelivery(HttpContext h, MembershipInvitation invitation, string email, string token, string createdBy, DateTimeOffset now)
+    {
+        var id = Guid.NewGuid();
+        var configured = h.RequestServices.GetRequiredService<IInvitationMailer>().Configured;
+        return new InvitationDelivery { TenantId = invitation.TenantId, Id = id, InvitationId = invitation.Id, MembershipId = invitation.MembershipId,
+            State = InvitationDeliveryPolicy.Wire(configured ? InvitationDeliveryState.Queued : InvitationDeliveryState.NotConfigured), Attempts = 0, CreatedAt = now,
+            NextAttemptAt = configured ? now : null, CompletedAt = configured ? null : now,
+            LastErrorCode = configured ? null : InvitationDeliveryPolicy.ErrorNotConfigured, CreatedBy = createdBy,
+            ProtectedPayload = configured ? h.RequestServices.GetRequiredService<InvitationPayloadProtection>().Protect(invitation.TenantId, id, email, token) : null };
+    }
+
+    // A queued e-mail for a closed invitation is cancelled in the closing transaction and its payload erased.
+    private static async Task CancelQueuedDeliveries(PoseidonDbContext db, Guid membership, DateTimeOffset now, CancellationToken ct)
+    {
+        foreach (var queued in await db.InvitationDeliveries.Where(d => d.MembershipId == membership && d.State == "QUEUED").ToArrayAsync(ct))
+        {
+            queued.State = InvitationDeliveryPolicy.Wire(InvitationDeliveryState.Cancelled); queued.LastErrorCode = InvitationDeliveryPolicy.ErrorInvitationClosed;
+            queued.ProtectedPayload = null; queued.LeaseUntil = null; queued.CompletedAt = now;
+        }
+    }
+
+    private static async Task<IResult> InvitationSettings(HttpContext h, PoseidonDbContext db, SecurityAudit audit)
+    {
+        var actor = Actor(h);
+        if (!CanReadMemberships(actor)) { await audit.WriteAsync(h, "MembershipRead", "permission_denied"); return Problem(h, 403, "permission_denied"); }
+        var row = await db.TenantInvitationSettings.AsNoTracking().SingleOrDefaultAsync(h.RequestAborted);
+        await audit.WriteAsync(h, "MembershipRead", "Success");
+        return Results.Ok(SettingsDto(h, actor, row));
+    }
+
+    private static InvitationSettingsDto SettingsDto(HttpContext h, TrustedActor actor, TenantInvitationSettings? row) =>
+        new(row?.LifetimeHours ?? InvitationLifetimePolicy.DefaultHours, InvitationLifetimePolicy.MinHours, InvitationLifetimePolicy.MaxHours,
+            InvitationLifetimePolicy.DefaultHours, row != null, row?.Version ?? 0, h.RequestServices.GetRequiredService<IInvitationMailer>().Configured,
+            CanManageMemberships(actor));
+
+    private static async Task<IResult> UpdateInvitationSettings(HttpContext h)
+    {
+        var (prelude, failure) = await Begin(h, null, CanManageMemberships);
+        if (prelude == null) return failure!;
+        var audit = h.RequestServices.GetRequiredService<SecurityAudit>();
+        var command = Parse<InvitationSettingsCommand>(prelude.Body);
+        if (command == null) { await audit.WriteAsync(h, "MembershipCommand", "invalid_request"); return Problem(h, 400, "invalid_request"); }
+        var errors = new Dictionary<string, string[]>(StringComparer.Ordinal);
+        if (command.ExpectedVersion is null) errors["expectedVersion"] = ["required"];
+        if (command.LifetimeHours is not { } hours) errors["lifetimeHours"] = ["required"];
+        else if (!InvitationLifetimePolicy.ValidHours(hours)) errors["lifetimeHours"] = ["out_of_range"];
+        if (errors.Count > 0) { await audit.WriteAsync(h, "MembershipCommand", "validation_failed"); return Problem(h, 400, "validation_failed", errors); }
+        var actor = prelude.Actor;
+        var now = h.RequestServices.GetRequiredService<TimeProvider>().GetUtcNow();
+        var fingerprint = Fingerprint(new { action = LifetimeAction, command.ExpectedVersion, command.LifetimeHours });
+        return await Run(h, actor.TenantId, async db =>
+        {
+            var receipt = await Receipt(db, actor, prelude.Key, LifetimeAction, fingerprint, h.RequestAborted);
+            if (receipt.Found && !receipt.Matches) return (Problem(h, 409, "idempotency_key_reused"), "idempotency_key_reused");
+            var row = await db.TenantInvitationSettings.SingleOrDefaultAsync(h.RequestAborted);
+            if (receipt.Found)
+            {
+                h.Response.Headers["Idempotency-Replayed"] = "true";
+                return (Results.Ok(SettingsDto(h, actor, row)), "Success");
+            }
+            if ((row?.Version ?? 0) != command.ExpectedVersion) return (Problem(h, 409, "version_conflict"), "version_conflict");
+            if (row == null)
+            {
+                row = new TenantInvitationSettings { TenantId = actor.TenantId, LifetimeHours = command.LifetimeHours!.Value, UpdatedAt = now, UpdatedBy = actor.Id.ToString("D") };
+                db.TenantInvitationSettings.Add(row);
+            }
+            else { row.LifetimeHours = command.LifetimeHours!.Value; row.UpdatedAt = now; row.UpdatedBy = actor.Id.ToString("D"); }
+            await db.SaveChangesAsync(h.RequestAborted);
+            AddReceipt(db, actor, prelude.Key, LifetimeAction, fingerprint, actor.TenantId, now);
+            await db.SaveChangesAsync(h.RequestAborted);
+            return (Results.Ok(SettingsDto(h, actor, row)), "Success");
+        });
+    }
+
+    private static MembershipInvitation NewInvitation(Guid tenant, Guid membership, string? expectedSubject, string createdBy, DateTimeOffset now, TimeSpan lifetime, out string token)
     {
         var secret = MembershipInvitationPolicy.NewSecret();
         token = MembershipInvitationPolicy.Format(tenant, secret);
         return new MembershipInvitation { TenantId = tenant, Id = Guid.NewGuid(), MembershipId = membership, TokenHash = MembershipInvitationPolicy.Hash(secret),
             ExpectedSubject = expectedSubject, Status = MembershipInvitationPolicy.Wire(InvitationStatus.Pending), CreatedAt = now,
-            ExpiresAt = now + MembershipInvitationPolicy.Lifetime, CreatedBy = createdBy };
+            ExpiresAt = now + lifetime, CreatedBy = createdBy };
     }
 
     private static async Task<IResult> ReissueInvitation(HttpContext h, Guid id)
@@ -123,17 +219,17 @@ public static partial class MembershipEndpoints
         var (prelude, failure) = await Begin(h, id, CanManageMemberships);
         if (prelude == null) return failure!;
         var audit = h.RequestServices.GetRequiredService<SecurityAudit>();
-        var command = Parse<MembershipTransitionCommand>(prelude.Body);
+        var command = Parse<InvitationReissueCommand>(prelude.Body);
         if (command == null) { await audit.WriteAsync(h, "MembershipCommand", "invalid_request", resourceId: id); return Problem(h, 400, "invalid_request"); }
-        if (command.ExpectedVersion is null)
+        if (command.ExpectedVersion is null || command.DeliveryEmail != null && !InvitationDeliveryPolicy.ValidEmail(command.DeliveryEmail))
         {
             await audit.WriteAsync(h, "MembershipCommand", "validation_failed", resourceId: id);
-            return Problem(h, 400, "validation_failed", new() { ["expectedVersion"] = ["required"] });
+            return Problem(h, 400, "validation_failed", command.ExpectedVersion is null ? new() { ["expectedVersion"] = ["required"] } : new() { ["deliveryEmail"] = ["invalid"] });
         }
         var actor = prelude.Actor;
         var settings = h.RequestServices.GetRequiredService<FederationSettings>();
         var now = h.RequestServices.GetRequiredService<TimeProvider>().GetUtcNow();
-        var fingerprint = Fingerprint(new { action = ReissueAction, id, command.ExpectedVersion });
+        var fingerprint = Fingerprint(new { action = ReissueAction, id, command.ExpectedVersion, email = command.DeliveryEmail != null });
         return await Run(h, id, async db =>
         {
             // Fresh object authorization precedes receipt reads (tenant filter ⇒ cross-tenant 404).
@@ -155,10 +251,13 @@ public static partial class MembershipEndpoints
                 .ToArrayAsync(h.RequestAborted);
             foreach (var open in previous.Where(i => i.Status == "Pending"))
             { open.Status = MembershipInvitationPolicy.Wire(InvitationStatus.Superseded); open.ClosedAt = now; }
+            await CancelQueuedDeliveries(db, id, now, h.RequestAborted);
             // Superseded first: the partial unique index allows exactly one pending invitation per membership.
             await db.SaveChangesAsync(h.RequestAborted);
-            var invitation = NewInvitation(actor.TenantId, id, previous.FirstOrDefault()?.ExpectedSubject, actor.Id.ToString("D"), now, out var issued);
+            var invitation = NewInvitation(actor.TenantId, id, previous.FirstOrDefault()?.ExpectedSubject, actor.Id.ToString("D"), now,
+                await InvitationLifetime(db, h.RequestAborted), out var issued);
             db.MembershipInvitations.Add(invitation);
+            if (command.DeliveryEmail != null) db.InvitationDeliveries.Add(NewDelivery(h, invitation, command.DeliveryEmail, issued, actor.Id.ToString("D"), now));
             await db.SaveChangesAsync(h.RequestAborted);
             AddReceipt(db, actor, prelude.Key, ReissueAction, fingerprint, id, now);
             await db.SaveChangesAsync(h.RequestAborted);

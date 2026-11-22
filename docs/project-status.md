@@ -1,5 +1,10 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
+## USER-ADMIN-03 — davet e-postası (outbox) + kiracı davet süresi; yazıldı, PG testleri CI'da (22.11.2026)
+- `feature/invite-email-20261122` (main 36d5d183). Canonical sayım değişmez: 114/121 iş, 932/970 SP.
+- İsteğe bağlı davet e-postası: aynı denetimli işlemde outbox satırı, şifreli alıcı+token (terminalde silinir), sistem aktörü dağıtıcı, SMTP STARTTLS, 5 deneme/geri çekilme, `NOT_CONFIGURED` dürüst durum; kiracı davet süresi 1–168 sa (varsayılan 24). Ayrıntı: `docs/phases/USER-ADMIN-03.md`.
+- Yerel: build 0/0, domain 1673/1673, persistence birim 182/182, API birim 502/502, frontend hedefli 959/959, typecheck/lint 0. DEFERRED: API PG testleri (CI), gerçek SMTP, bağımsız QA.
+
 ## Mobil ekran görüntüleri paketi — 196 görüntü, 13 kılavuz; QA notlarla, kapı CI bekleniyor (22.11.2026)
 - `integration/help-mobile-20261122` (main c4915375 + `feature/help-screenshots-mobile-20261122`). Canonical sayım değişmez.
 - Masaüstü + mobil (390×844) TR/EN 196 PNG, köken kaydı 196/196; yardım paneli 768 px altında mobil görüntüyü gösterir; el kitabı 49 görüntü. Ayrıntı: `docs/phases/USER-GUIDE-01-UG2.md`.
