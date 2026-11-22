@@ -22,6 +22,7 @@ export const RENEWAL_TEXT = {
   actions: 'pairs.m_7c1e0a5b3d9f2410', applicationDate: 'pairs.m_7c1e0a5b3d9f2411', authorityReference: 'pairs.m_7c1e0a5b3d9f2412', evidence: 'pairs.m_7c1e0a5b3d9f2413',
   sod: 'pairs.m_7c1e0a5b3d9f2414', choose: 'pairs.m_7c1e0a5b3d9f2415', step: 'pairs.m_7c1e0a5b3d9f2416', unavailable: 'pairs.m_7c1e0a5b3d9f2417',
   notLegal: 'pairs.m_7c1e0a5b3d9f2418', replacementMissing: 'pairs.m_7c1e0a5b3d9f2419', loading: 'pairs.m_7c1e0a5b3d9f241a',
+  sodRefused: 'pairs.m_7c1e0a5b3d9f241b',
 } as const
 export const RENEWAL_STATES: Record<RenewalState, string> = {
   DRAFT: 'pairs.m_7c1e0a5b3d9f2420', PREPARING: 'pairs.m_7c1e0a5b3d9f2421', READY_TO_APPLY: 'pairs.m_7c1e0a5b3d9f2422', APPLICATION_RECORDED: 'pairs.m_7c1e0a5b3d9f2423',
@@ -67,7 +68,9 @@ export function CertificateRenewalWorkflowPanel({ vessel, record, enabled, langu
     return () => c.abort()
   }, [record.id, record.version])
   useEffect(() => { onDirty(!!action || !!pending) }, [action, pending, onDirty])
-  const stale = !record.currentRevision, conflict = failure?.status === 409 && !pending
+  // separation_of_duties is a 409 from the server, but it is a refusal for this person, not a changed record.
+  const sodRefused = failure?.code === 'separation_of_duties' && !pending
+  const stale = !record.currentRevision, conflict = failure?.status === 409 && !pending && !sodRefused
   const allowed = record.allowedTransitions, may = enabled && online && !!owner && !stale && !busy && !pending && !conflict
   const choose = (next: RenewalTransition | '') => { if (!may) return; setAction(next); setDecision(emptyRenewalDecision()); setReplacement(null); setFailure(null); setRecorded(false) }
   const patch = (value: Partial<RenewalDecision>) => { if (may) setDecision(previous => ({ ...previous, ...value })) }
@@ -124,7 +127,7 @@ export function CertificateRenewalWorkflowPanel({ vessel, record, enabled, langu
     {!owner && online && <p role="status">{t(RENEWAL_TEXT.loading)}</p>}
     {stale && <p role="alert">{t(RENEWAL_TEXT.stale)}</p>}
     {recorded && !failure && <p role="status">{t(RENEWAL_TEXT.recorded)}</p>}
-    {failure && <p role="alert">{pending ? t(RENEWAL_TEXT.unknown) : conflict ? t(RENEWAL_TEXT.conflict) : t(RENEWAL_TEXT.failed)}{failure.code && <> · <code>{failure.code}</code></>}</p>}
+    {failure && <p role="alert">{pending ? t(RENEWAL_TEXT.unknown) : sodRefused ? t(RENEWAL_TEXT.sodRefused) : conflict ? t(RENEWAL_TEXT.conflict) : t(RENEWAL_TEXT.failed)}{failure.code && <> · <code>{failure.code}</code></>}</p>}
     {!allowed.length ? <p>{t(RENEWAL_TEXT.noSteps)}</p> : <form noValidate aria-label={t(RENEWAL_TEXT.next)} onSubmit={event => { event.preventDefault(); void submit() }}>
       <EnterpriseFormGrid disabled={!may}><legend>{t(RENEWAL_TEXT.next)}</legend>
         {select('action', RENEWAL_TEXT.step, action || null, Object.fromEntries(allowed.map(a => [a, RENEWAL_ACTIONS[a]])), value => choose((value ?? '') as RenewalTransition | ''))}
