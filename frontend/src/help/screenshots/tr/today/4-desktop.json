@@ -1,0 +1,26 @@
+{
+ "schemaVersion": "poseidon.help.screenshot-provenance.v2",
+ "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
+ "commit": "ffabd677418b73f964e85faf458946dc850eda91",
+ "generatorBlobs": {
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "91ab4199809e7d12deb54f371232749e96fc1ade",
+  "frontend/src/help/screenshots/steps.json": "a0400619a48fe8d0f9811b031bc8f5d4a05d7cfc"
+ },
+ "dirty": false,
+ "key": "today",
+ "locale": "tr",
+ "step": 4,
+ "viewport": "desktop",
+ "datasets": [
+  "backend/seed/synthetic-demo.json",
+  "DemoFixtureCommand"
+ ],
+ "tenant": "Synthetic Fleet A",
+ "fixedClock": "2026-11-22T09:00:00.000Z",
+ "png": {
+  "sha256": "b80b3454b50fcebe8492084328e8f16e86c7075b52e4c2a08a8629cc72437c7e",
+  "width": 1440,
+  "height": 900
+ },
+ "domText": "Ana içeriğe geç\nPOSEIDON\nBugün\nGörünüm\nÇalışma alanında ara\nDil seçin\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nDEMO-SHIP · Synthetic Ship A\nGemi modu: Gemi\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\nPOSEIDON\nDENİZCİLİK OPERASYONLARI\nÇalışma görünümü\nMenüde ara\n\nYalnızca açmaya yetkili olduğunuz ekranlarda arar.\n\nGenel bakış\nBugün\nFilo\nRömorkör operasyonları\nUyum ve güvence\nÇalışma alanı\nSY\nSynthetic Fleet A\nYetkili çalışma alanı\n\nDENİZCİLİK ÇALIŞMA ALANI\n\nBugün\n\nYetkili olduğunuz kayıtları görüntüleyin.\n\nÇalışma alanı: Synthetic Fleet A\n\nOturumu kapat\nYenile\nAraç değiştir\nEtkin araç: Gemi · DEMO-SHIP · Synthetic Ship A\n\nGörüntülenen anlık veri eski olabilir. Kaynakları yeniden denetlemek için yenileyin.\n\nSunucudan okuma zamanı: 2026-11-22T03:10:50.4492339+00:00\n\nKısmi görünüm: bazı sahip kaynaklar bu bağlamda kullanılamıyor. Görünmeyen öğe, her şeyin uygun olduğu anlamına gelmez.\n\nDönen kartlar\n1\nKısmi kaynaklar: sıfır, her şeyin uygun olduğu anlamına gelmez\nPlanlama uyarıları\n0\nKısmi kaynaklar: sıfır, her şeyin uygun olduğu anlamına gelmez\nİnceleme gerekenler\n0\nKısmi kaynaklar: sıfır, her şeyin uygun olduğu anlamına gelmez\nKullanılabilir kaynaklar\n1 / 7\nKullanılabilirlik doğrulama değildir\nKaynak kapsamı\nMevzuat taslağı: Kullanılabilir (doğrulanmamış)\nOperasyonel görevler: Bu bağlamda kullanılamıyor\nEmniyet kararları: Bu bağlamda kullanılamıyor\nİzinler: Bu bağlamda kullanılamıyor\nKanıt doğrulama: Bu bağlamda kullanılamıyor\nBakım planları: Bu bağlamda kullanılamıyor\nRömorkör taslak planlaması: Bu bağlamda kullanılamıyor\nBilgilendirme · Mevzuat taslağı\nBilgilendirme\n\nKayıtlı mevzuat taslağı doğrulanmamış.\n\nKaynak sahibi\nMevzuat\nKaynak referansı\nMevzuat taslağı · 30000000-0000-0000-0000-000000000001\nKaynak sürümü\n1\nKaynak kayıt zamanı\n2026-11-22T02:59:44.193019+00:00\n\nSorumlu: desteklenen kaynak tarafından atanmamış\n\nTaslağı görüntüle\nNeden ayrıntısını kapat\n\nKayıtlı mevzuat taslağı doğrulanmamış.\n\nKural: TW-DRAFT-01\n\nKaynak\nMevzuat taslağı\nKaynak referansı\n30000000-0000-0000-0000-000000000001\nKaynak sürümü\n1\n\nSunucudan okuma zamanı: 2026-11-22T03:10:51.4423867+00:00\n\nGüncel kaynak sorumlu rolü: Bilinmiyor\n\nBeyan edilen / eksik / bilinmeyen girdiler: 1 / 17 / 2\n\nGirdi kaynağı beyanı: Synthetic\n\nTaslak kayıt zamanı: 2026-11-22T02:59:44.193019+00:00\n\nGirdi kaynak gözlemi: Bilinmiyor\n\nGirdi güncelliği doğrulanmadı. Kayıt/okuma zamanı kaynağı doğrulamaz.\n\nKullanılamayan ön koşullar\n\nDoğrulama kaynağı kullanılamıyor\nOperasyonel kaynaklar kullanılamıyor\nÖnceki uyarılar\nSonraki uyarılar\n\nKuruluş kaynak taslaklarını incele (doğrulanmamış)"
+}

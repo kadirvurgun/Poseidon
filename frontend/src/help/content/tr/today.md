@@ -4,7 +4,7 @@ title: Bugün
 roles: [Master, Tug Master, Chief Engineer, Crew / OOW]
 permissions: [canRead]
 related: [fleet, tug-job-board, offline-conflict-center, sources]
-screenshots: []
+screenshots: [1, 2, 3, 4, 5, 6]
 reviewed: false
 ---
 ## Bu sayfa ne işe yarar

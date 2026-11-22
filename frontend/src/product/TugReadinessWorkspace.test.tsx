@@ -83,3 +83,17 @@ it('decoders refuse contradictory projections instead of displaying them', () =>
   expect(() => decodeTowEquipment({ assessment: { tugId: vessel, state: 'OK', items: [], checks: [], assessedAt: '2026-11-20T08:00:00Z' }, canWrite: false, canVerify: false,
     authorities: [], kinds: [], conditions: [], sourceLocator: 'x' }, vessel)).toThrow()
 })
+
+it('keeps GO disabled on a CONDITIONAL assessment and explains the server rule (GO only on READY)', async () => {
+  readinessBody = readiness({ state: 'CONDITIONAL', categories: [{ category: 'weather', result: 'CONDITIONAL', reasons: ['FICTIONAL_WIND_LIMIT'] }], reviewReasons: [],
+    conditions: ['weather:FICTIONAL_WIND_LIMIT'], checks: [check('weather', 'CONDITIONAL', 'FICTIONAL_WIND_LIMIT')] })
+  history.replaceState(null, '', `/app/tug-readiness?vessel=${vessel}&assignment=${assignmentId}`)
+  render(<TugReadinessWorkspace/>)
+  expect(await screen.findAllByText('Conditional')).not.toHaveLength(0)
+  expect(screen.getByRole('radio', { name: 'GO' })).toBeDisabled()
+  expect(screen.getByRole('radio', { name: 'NO-GO' })).toBeEnabled()
+  const hint = document.getElementById('tug-go-hint')!
+  expect(hint.getAttribute('data-state')).toBe('go-conditional')
+  expect(hint.textContent).toMatch(/GO needs a READY assessment/)
+  expect(commands).toHaveLength(0)
+})

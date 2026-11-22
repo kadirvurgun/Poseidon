@@ -12,6 +12,14 @@ if (args.Length > 0 && args[0] == "--legacy-crew-browser-fixture") {
     Console.WriteLine("Disposable synthetic legacy fixture preserved or authored; no checks executed.");
     return;
 }
+if (args.Length > 0 && args[0] == DemoFixtureCommand.Flag) {
+    // USER-GUIDE-01 UG-2: explicit opt-in FICTIONAL demo drafts for screenshots; Development/Test only.
+    if (args.Length != 2) throw new ArgumentException("Usage: --demo-fixtures path/to/synthetic-demo.json");
+    DemoFixtureCommand.EnsureAllowed(environment);
+    await DemoFixtureCommand.RunAsync(connection, environment, SeedData.Load(args[1]));
+    Console.WriteLine("Synthetic demo fixtures added where missing; no decision, verification or signature seeded.");
+    return;
+}
 SeedData? data = null;
 if (args.Length != 0)
 {

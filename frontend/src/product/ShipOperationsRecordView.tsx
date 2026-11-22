@@ -7,6 +7,13 @@ import { EnterprisePagination, EnterpriseToolbar } from './EnterprisePatterns';
 import { mutableShipOpsFields, shipOpsFields, shipOpsCodeOptions, type ShipOpsKind } from './ship-operation-fields';
 import { shipOpsBlockerLabel, shipOpsFactLabel, shipOpsOptionLabel } from './ship-operation-copy';
 import type { ShipOpsHistory, ShipOpsPage, ShipOpsRecord } from './ship-operations-api';
+// DEV-101: sof_state is server-owned per revision (DRAFT, or FINAL only from a recorded human finalization).
+// Show the recorded lifecycle state of this exact revision; anything else stays its fact state, never FINAL.
+export function sofStateLabel(fact: ShipOpsRecord['fields'][string] | undefined, en: boolean) {
+    if (fact?.state === 'Known' && fact.value === 'FINAL') return localizedText(en, "pairs.m_081f7dc1f7c9881a");
+    if (fact?.state === 'Known' && fact.value === 'DRAFT') return localizedText(en, "pairs.m_9c5fd87ade98df4b");
+    return shipOpsFactLabel(fact?.state ?? 'Unknown', en);
+}
 export function ShipOpsRecordSummary({ value, language, compact = false, contextOnly = false }: {
     value: ShipOpsRecord;
     language: AppLocale;
@@ -20,7 +27,7 @@ export function ShipOpsRecordSummary({ value, language, compact = false, context
     <p>r{value.revision} · <time dateTime={value.savedAt}>{value.savedAt}</time> · {value.provenance === 'SyntheticUnverified' ? (localizedText(en, "pairs.m_30fec0acc3d134b1")) : (localizedText(en, "pairs.m_f80308c1376523e6"))}</p>
     <dl className="ship-operations-summary-grid">{definitions.map(field => { const fact = value.fields[field.key]; return <div key={field.key}><dt>{localizedLabel(field, en)}{field.key.endsWith('_mt') ? ' (mt)' : ''}</dt><dd>{fact.state === 'Known' ? field.type === 'Code' ? shipOpsOptionLabel(fact.value!, en) : field.type === 'Instant' ? <time dateTime={fact.value!}>{fact.value}</time> : fact.value : shipOpsFactLabel(fact.state, en)}</dd></div>; })}</dl>
     {!compact && <>{!contextOnly && <p>{localizedText(en, "pairs.m_8164fd4adb2de542")}</p>}
-      <dl className="ship-operations-summary-grid">{shipOpsFields(value.kind).filter(field => field.readOnly && field.key !== 'vessel_id').map(field => <div key={field.key}><dt>{localizedLabel(field, en)}</dt><dd>{field.key === 'compliance_state' ? (localizedText(en, "pairs.m_6edb7d9a4aca3fd7")) : field.key === 'verification_state' ? (localizedText(en, "pairs.m_c74b3cb63ce89b56")) : (localizedText(en, "pairs.m_393f995a8e90462f"))}</dd></div>)}</dl>
+      <dl className="ship-operations-summary-grid">{shipOpsFields(value.kind).filter(field => field.readOnly && field.key !== 'vessel_id').map(field => <div key={field.key}><dt>{localizedLabel(field, en)}</dt><dd>{field.key === 'compliance_state' ? (localizedText(en, "pairs.m_6edb7d9a4aca3fd7")) : field.key === 'verification_state' ? (localizedText(en, "pairs.m_c74b3cb63ce89b56")) : sofStateLabel(value.fields[field.key], en)}</dd></div>)}</dl>
     </>}
     <details><summary>{localizedText(en, "pairs.m_1cf31dc53d715270")}</summary><p>{value.id} / {value.revision} / {value.version}</p><code>{value.hash}</code><p><code>{value.sourceVersion}</code></p><dl className="ship-operations-summary-grid">{mutableShipOpsFields(value.kind).map(field => <div key={field.key}><dt>{localizedLabel(field, en)}</dt><dd className="ship-operations-declared-text">{value.fields[field.key].state === 'Known' ? value.fields[field.key].value : shipOpsFactLabel(value.fields[field.key].state, en)}</dd></div>)}</dl><ul>{value.blockers.map(code => <li key={code}>{shipOpsBlockerLabel(code, en)} · <code>{code}</code></li>)}</ul></details>
   </section>;

@@ -74,7 +74,7 @@ public static class TugReadinessEndpoints
     }
 
     // Master/Tug Master GO/NO_GO human record bound to the exact assessment the decider saw. The server
-    // re-evaluates; a changed assessment is stale; GO is refused unless READY/CONDITIONAL; NO_GO is always
+    // re-evaluates; a changed assessment is stale; GO is refused unless READY (no source permits release on CONDITIONAL, 60.02 p201); NO_GO is always
     // recordable with a reason. The record changes no assignment/job state (release is later work).
     private static async Task<IResult> Decision(HttpContext h, PoseidonDbContext db) {
         var a = TugReadinessHttp.Actor(h);

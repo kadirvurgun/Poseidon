@@ -23,7 +23,7 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
             CommandReceipt r when r.Action is "HrLegalEntityUpdate" or "HrLegalEntityStatus" or "HrIdentifierAdd" or "HrIdentifierRetire" or "HrRoleAdd" or "HrRoleEnd" or "HrRoleCancel" => "Tenant",
             CommandReceipt r when r.Action is "CrewPersonSave" or "CrewIdentityConvert" or "CrewProfileSave" or "CrewPhotoSave" => "TenantPerson",
             UserAccount or AccountMembership or AccountMembershipVesselGrant or MembershipDelegation or DelegationVesselScope or TenantAccessRecovery or MembershipCommandReceipt => "Tenant",
-            MembershipGrantRevision or MembershipGrantVessel => "Tenant",
+            MembershipGrantRevision or MembershipGrantVessel or MembershipInvitation => "Tenant",
             Tenant or Company or RegisterDraft or RegisterRevision or RuleDraft or RuleRevision or FleetCatalogDraft or FleetCatalogDraftRevision or
                 RegulatoryQualificationHead or RegulatoryQualificationEvent or RegulatoryQualificationReceipt or
                 ParameterRoot or ParameterRevision or ParameterDecision or ParameterCommandReceipt => "Tenant",
@@ -332,16 +332,21 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         // Immutable owner-bound rows (account, grant/scope snapshots) and the zero-revision membership/delegation/recovery
         // creations carry the closed Binding=OwnerReference marker; a later lifecycle change keeps it as its before value.
         string? OwnerBinding() => entry.State == EntityState.Added ? null : "OwnerReference";
+        // USER-ADMIN-02: an invitation account is Pending (no subject) until the identity holder accepts; the one allowed
+        // change records Pending -> Bound. The subject itself is never copied (IdentityLink withheld).
         if (entry.Entity is UserAccount account)
             return new(null, account.Id, "Account", null, null, Fields(Field("IdentityLink", null, null, "ValuesWithheld"),
-                Field("Source", null, Closed(account.Source, "ConfigurationImport", "SyntheticUnverified", "AdminProvisioned")), Field("Binding", null, "OwnerReference")));
+                Field("Source", null, Closed(account.Source, "ConfigurationImport", "SyntheticUnverified", "AdminProvisioned")),
+                Field("BindingState", entry.State == EntityState.Added ? null : "Pending", account.Subject == null ? "Pending" : "Bound"),
+                Field("Binding", OwnerBinding(), "OwnerReference")));
         if (entry.Entity is AccountMembership membership)
         {
             string? Prior(string name) => entry.State == EntityState.Added ? null : entry.Property(name).OriginalValue?.ToString();
             return new(null, membership.Id, "Membership", entry.State == EntityState.Added ? null : (long?)entry.Property(nameof(membership.AccessRevision)).OriginalValue,
                 membership.AccessRevision, Fields(
-                    Field("Status", Prior(nameof(membership.Status)) is { } s ? Closed(s, "Active", "Suspended", "Revoked") : null, Closed(membership.Status, "Active", "Suspended", "Revoked")),
-                    Field("StatusReason", null, Closed(membership.StatusReason, "ConfigurationImport", "SyntheticFixture", "AdministrativeSuspension", "AdministrativeResume", "AdministrativeRevocation", "SecuritySuspension", "SecurityResume", "AdminProvisioning")),
+                    Field("Status", Prior(nameof(membership.Status)) is { } s ? Closed(s, "Active", "Suspended", "Revoked", "Invited") : null, Closed(membership.Status, "Active", "Suspended", "Revoked", "Invited")),
+                    Field("StatusReason", null, Closed(membership.StatusReason, "ConfigurationImport", "SyntheticFixture", "AdministrativeSuspension", "AdministrativeResume", "AdministrativeRevocation", "SecuritySuspension", "SecurityResume", "AdminProvisioning",
+                        "AdminInvitation", "InvitationAccepted", "InvitationRevoked")),
                     Field("AccessRevision", Prior(nameof(membership.AccessRevision)), Number(membership.AccessRevision)),
                     Field("AccountId", null, membership.AccountId.ToString("D")), Field("Binding", OwnerBinding(), "OwnerReference")));
         }
@@ -360,6 +365,16 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if (entry.Entity is MembershipGrantVessel grantVessel)
             return new(grantVessel.VesselId, grantVessel.MembershipId, "MembershipGrantVessel", null, grantVessel.Revision,
                 Fields(Field("CanEdit", null, grantVessel.CanEdit ? "true" : "false"), Field("Binding", null, "OwnerReference")));
+        // USER-ADMIN-02: token hash and expected subject are withheld; status, expiry and the creating actor only.
+        if (entry.Entity is MembershipInvitation invitation)
+            return new(null, invitation.MembershipId, "MembershipInvitation", null, null, Fields(
+                Field("InvitationId", null, invitation.Id.ToString("D")),
+                Field("InvitationStatus", entry.State == EntityState.Added ? null : "Pending", Closed(invitation.Status, "Pending", "Accepted", "Revoked", "Superseded")),
+                Field("TokenHash", null, null, "ValuesWithheld"),
+                Field("ExpectedSubject", null, null, "ValuesWithheld"),
+                Field("SubjectExpected", null, invitation.ExpectedSubject == null ? "false" : "true"),
+                Field("ExpiresAt", null, invitation.ExpiresAt.ToUniversalTime().ToString("O", System.Globalization.CultureInfo.InvariantCulture)),
+                Field("Binding", OwnerBinding(), "OwnerReference")));
         if (entry.Entity is AccountMembershipVesselGrant grant)
             return new(grant.VesselId, grant.MembershipId, "MembershipVesselGrant", null, null,
                 Fields(Field("CanEdit", null, grant.CanEdit ? "true" : "false"), Field("Binding", null, "OwnerReference")));
@@ -385,7 +400,8 @@ internal sealed record AuditMetadata(Guid? VesselId, Guid? ResourceId, string? K
         if (entry.Entity is MembershipCommandReceipt membershipReceipt)
             return new(null, membershipReceipt.ResourceId, "MembershipCommandReceipt", null, null,
                 Fields(Field("Action", null, Closed(membershipReceipt.Action, "MembershipImport", "MembershipSuspend", "MembershipResume", "MembershipRevoke",
-                    "MembershipSecuritySuspend", "DelegationCreate", "DelegationRevoke", "MembershipCreate", "MembershipGrantUpdate")), Field("Binding", null, "CommittedResource")));
+                    "MembershipSecuritySuspend", "DelegationCreate", "DelegationRevoke", "MembershipCreate", "MembershipGrantUpdate",
+                    "MembershipInvitationReissue", "MembershipInvitationAccept")), Field("Binding", null, "CommittedResource")));
         // Never copy the declared reference text, value or observation time into audit.
         if (entry.Entity is VesselProfileFieldSource fieldSource)
             return new(fieldSource.VesselId, fieldSource.VesselId, "VesselProfileFieldSource", null, fieldSource.Sequence,

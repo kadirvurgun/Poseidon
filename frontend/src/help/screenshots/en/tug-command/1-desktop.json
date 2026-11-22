@@ -1,0 +1,26 @@
+{
+ "schemaVersion": "poseidon.help.screenshot-provenance.v2",
+ "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
+ "commit": "ffabd677418b73f964e85faf458946dc850eda91",
+ "generatorBlobs": {
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "91ab4199809e7d12deb54f371232749e96fc1ade",
+  "frontend/src/help/screenshots/steps.json": "a0400619a48fe8d0f9811b031bc8f5d4a05d7cfc"
+ },
+ "dirty": false,
+ "key": "tug-command",
+ "locale": "en",
+ "step": 1,
+ "viewport": "desktop",
+ "datasets": [
+  "backend/seed/synthetic-demo.json",
+  "DemoFixtureCommand"
+ ],
+ "tenant": "Synthetic Fleet A",
+ "fixedClock": "2026-11-22T09:00:00.000Z",
+ "png": {
+  "sha256": "220da19cfc001aed1a29e5155d5b69e1db47247bed9a947215a6b4e37483ec66",
+  "width": 1440,
+  "height": 900
+ },
+ "domText": "Skip to main content\nPOSEIDON\nTug operations\nAppearance\nSearch workspace\nChoose language\nSynthetic Fleet A\nCompany context:\nUnavailable\nDEMO-TUG · Synthetic Tug A\nVessel mode: Tug\nRole context: Not assigned\nChange vessel context\nOnline\nPOSEIDON\nMARITIME OPERATIONS\nWork view\nFilter menu\n\nOnly screens you are authorized to open are searched.\n\nOverview\nTug operations\nTug command\nJob board\nJob intake\nTug assignment\nTug readiness gate\nTow equipment readiness\nTug crew competence\nTowage plan\nTowage risk and briefing\nTug operation history\nTug offline operations\nTug demo journey\nCompliance and assurance\nWorkspace\nSY\nSynthetic Fleet A\nAuthorized workspace\n\nTUG OPERATIONS\n\nTug operations\n\nRequests, draft plans and current source context.\n\nDraft declarations only. Draft planning is separate from operational assignment, availability, permits and safety approval.\n\nTug context: DEMO-TUG · Synthetic Tug A · Tug\n\nTug context\nJob board\nTug context\nSource declarations · operational readiness unknown\nRole (server assignment)\nUnknown — no role assignment\nTug-mode menu lens\nUnknown — no role assignment\nRole references\nUnknown\nMode visibility\nCross-mode permission declared; each destination still requires server authorization.\nTug type\nUnavailable\nType source / revision\nUnavailable\nType source observation / policy\nUnknown / Unavailable\nProfile BP (unverified)\n65.00 · tonnes\nBP source / version / provenance\nTugProfile / 860 / Legacy profile measurement, unverified\nBP freshness / observation\nUnknown / Unknown\nEquipment context\n\nUnavailable\n\nEquipment source unavailable or not granted. No empty inventory is inferred.\n\nShip Mode screens\n\nCross-mode role declared, but no Ship Mode screen is granted.\n\nVerified measurement, certificate, crew and operational assignment inputs unavailable"
+}

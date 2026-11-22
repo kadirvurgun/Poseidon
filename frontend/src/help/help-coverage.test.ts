@@ -81,3 +81,52 @@ describe('help content coverage guard', () => {
     }
   })
 })
+
+// USER-GUIDE-01 UG-2 (UG-DOC-02 / UG-DOC-03): every "Step by step" item of a guide with a capture
+// mapping has a generated screenshot (or an explicit, reasoned "unavailable" entry), the front matter
+// lists exactly those steps, and every committed PNG carries its provenance record.
+type StepMapping = { committedViewports: string[]; guides: Record<string, { steps: { step: number; unavailable?: string }[] }> }
+const mappingSource = import.meta.glob<StepMapping>('./screenshots/steps.json', { eager: true, import: 'default' })
+const mapping = mappingSource['./screenshots/steps.json']
+const pngs = new Set(Object.keys(import.meta.glob('./screenshots/*/*/*.png', { query: '?url', import: 'default' })))
+const provenance = import.meta.glob<{ generator: string; key: string; locale: string; step: number; viewport: string; datasets: string[] }>(
+  './screenshots/*/*/*.json', { eager: true, import: 'default' })
+const stepItems = (text: string, locale: HelpLocale) => parseHelpDocument(text, locale).sections[3].body.split('\n').filter(line => /^\d+\. /.test(line.trim())).length
+
+describe('help screenshot coverage (UG-2)', () => {
+  it('reads a capture mapping that only names real guides', () => {
+    expect(mapping).toBeDefined()
+    expect(mapping.committedViewports).toContain('desktop')
+    for (const key of Object.keys(mapping.guides)) for (const locale of locales) expect(source(locale, key), `${key}/${locale}`).toBeTypeOf('string')
+  })
+
+  it.each(locales)('maps every step of every captured %s guide and lists exactly the captured steps', locale => {
+    for (const [key, guide] of Object.entries(mapping.guides)) {
+      const text = source(locale, key)!
+      expect(guide.steps.map(step => step.step), `${key}: mapping must follow the guide steps`).toEqual(Array.from({ length: stepItems(text, locale) }, (_, index) => index + 1))
+      const captured = guide.steps.filter(step => !step.unavailable).map(step => step.step)
+      expect(parseHelpDocument(text, locale).meta.screenshots, `${key}/${locale}: screenshots front matter`).toEqual(captured)
+      for (const step of captured) {
+        const base = `./screenshots/${locale}/${key}/${step}-desktop`
+        expect(pngs.has(base + '.png'), base + '.png').toBe(true)
+        const record = provenance[base + '.json']
+        expect(record, base + '.json').toBeDefined()
+        expect(record).toMatchObject({ generator: 'tests/Poseidon.Browser.Tests/screenshots/capture.ts', key, locale, step, viewport: 'desktop' })
+      }
+    }
+  })
+
+  it('has no orphan screenshot and no screenshot for a guide without a capture mapping', () => {
+    for (const path of [...pngs, ...Object.keys(provenance)]) {
+      const match = /^\.\/screenshots\/(tr|en)\/([a-z0-9-]+)\/(\d+)-(desktop|mobile)\.(png|json)$/.exec(path)
+      expect(match, path).not.toBeNull()
+      const [, locale, key, step, viewport] = match!
+      expect(mapping.committedViewports, path).toContain(viewport)
+      expect(parseHelpDocument(source(locale as HelpLocale, key)!, locale as HelpLocale).meta.screenshots, path).toContain(Number(step))
+    }
+    for (const [path, text] of Object.entries(raw)) {
+      const [, locale, key] = /^\.\/content\/(tr|en)\/([^/]+)\.md$/.exec(path)!
+      if (parseHelpDocument(text, locale as HelpLocale).meta.screenshots.length) expect(mapping.guides[key], path).toBeDefined()
+    }
+  })
+})

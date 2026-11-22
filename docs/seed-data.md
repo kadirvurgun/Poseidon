@@ -1,3 +1,7 @@
+## USER-GUIDE-01 UG-2 — demo fixture command for documentation screenshots (optional)
+
+`dotnet run --project backend/Poseidon.DbMigrator -- --demo-fixtures backend/seed/synthetic-demo.json` (`DemoFixtureCommand`) is the explicit administrative command that loads opt-in FICTIONAL demo fixtures into an already seeded database. It runs only when `DOTNET_ENVIRONMENT` is exactly `Development` or `Test` (checked before any connection is opened), refuses a database without the synthetic seed vessels, and is never wired into startup, normal seed import or an HTTP endpoint. In one audited administrative transaction (actor `system:synthetic-demo-fixture`) it composes `TugDemoFixtures` (towage plan DRAFT, briefing DRAFT, tug daily log DRAFT) and `AccountMembershipFixtures` (one grant-less FICTIONAL member per tenant on the reserved `.invalid` issuer). No readiness GO, release, execution, acknowledgement, review, verification, signature, grant, credential or receipt is seeded (D5): screenshots show pending/UNKNOWN states only. Add-missing; a second run adds nothing. The lab exposes it as `py -3.13 scripts/help_screenshots_lab.py prepare_screenshots`. Unit test `DemoFixtureCommandTests` (environment guard) executed; the composed fixtures keep their existing real-PostgreSQL tests.
+
 ## S11-WPA DEV-070 — reconciliation report fixture (optional)
 
 `ImportReconciliationFixtures.AddMissingAsync` is an explicit administrative fixture, not wired into normal startup/seed import (default seed and audit totals unchanged). Per vessel without a current report it adds one FICTIONAL, empty reconciliation report `AWAITING_SIGN_OFF` (`SyntheticUnverified`; no pinned batch, all counts zero, no sample). No import provenance, data owner sign-off or receipt is seeded; the DB CHECK rejects a synthetic report that carries a sign-off. Add-missing; operator reports are preserved. Real-PostgreSQL test `Reconciliation_fixture_is_opt_in_idempotent_fictional_and_seeds_no_sign_off` is AUTHORED, execution DEFERRED to CI.
@@ -333,3 +337,11 @@ decision and, for a real IdP subject, a working login. No IdP account, password,
 `SyntheticUnverified`, no grant) is unchanged and still confers nothing: only `AdminProvisioned` rows with a grant
 revision resolve to an actor. Demo use: an administrator creates memberships through `/app/user-admin`; every row is
 then attributed and EF-audited. Default seed import and its audit totals are unchanged.
+
+## USER-ADMIN-02 — membership invitations — no new seed rows by design
+
+`identity.MembershipInvitations` and `Invited` memberships get **no seed fixture**. An invitation row carries the hash of a
+live single-use credential (the link token); seeding one would fabricate a usable acceptance path or an administrator
+decision. Existing `AdminProvisioned` rows from USER-ADMIN-01 are not rewritten: they keep their subject and state and are
+treated as already accepted (migration `20261124100002_UserAdministrationInvitations`). Default seed import and its audit
+totals are unchanged.

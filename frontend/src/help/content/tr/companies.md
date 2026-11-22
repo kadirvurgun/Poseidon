@@ -4,7 +4,7 @@ title: Şirketler
 roles: [Tenant Admin, Shore Operations]
 permissions: [canReadCompanies, canCreate]
 related: [fleet, audit, today]
-screenshots: []
+screenshots: [1, 2, 3]
 reviewed: false
 ---
 ## Bu sayfa ne işe yarar

@@ -1,0 +1,26 @@
+{
+ "schemaVersion": "poseidon.help.screenshot-provenance.v2",
+ "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
+ "commit": "ffabd677418b73f964e85faf458946dc850eda91",
+ "generatorBlobs": {
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "91ab4199809e7d12deb54f371232749e96fc1ade",
+  "frontend/src/help/screenshots/steps.json": "a0400619a48fe8d0f9811b031bc8f5d4a05d7cfc"
+ },
+ "dirty": false,
+ "key": "companies",
+ "locale": "en",
+ "step": 3,
+ "viewport": "desktop",
+ "datasets": [
+  "backend/seed/synthetic-demo.json",
+  "DemoFixtureCommand"
+ ],
+ "tenant": "Synthetic Fleet A",
+ "fixedClock": "2026-11-22T09:00:00.000Z",
+ "png": {
+  "sha256": "6742e2507a40e903bbef285e61f821b456c7aeb2f6a32b460beb4efcb5f4f449",
+  "width": 1440,
+  "height": 900
+ },
+ "domText": "Skip to main content\nPOSEIDON\nCompanies\nAppearance\nSearch workspace\nChoose language\nSynthetic Fleet A\nCompany context:\nUnavailable\nNo vessel selected\nRole context: Not assigned\nChange vessel context\nOnline\nPOSEIDON\nMARITIME OPERATIONS\nWork view\nFilter menu\n\nOnly screens you are authorized to open are searched.\n\nOverview\nTug operations\nCompliance and assurance\nWorkspace\nCompanies\nMaterial conflict center\nUsers and permissions\nSY\nSynthetic Fleet A\nAuthorized workspace\n\nMARITIME WORKSPACE\n\nCompanies\n\nBrowse the records available in your workspace.\n\nWorkspace: Synthetic Fleet A\n\nSign out\nListed companies\n1\nOn this page\nPage\n1\nLast returned page\nRead-only\n1\nOn this page\nEditable records\n0\nCurrent access on this page\nSearch by code or name\nSearch\nCode Name\nDEMO-OP Synthetic Operator A\nPage 1\nPrevious\nNext\nDetails\nClose\nCode\nDEMO-OP\nName\nSynthetic Operator A"
+}

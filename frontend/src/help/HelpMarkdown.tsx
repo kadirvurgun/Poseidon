@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 // USER-GUIDE-01 UG-1: strict Markdown subset rendered to React elements.
 // There is no HTML path at all: no dangerouslySetInnerHTML, no raw HTML pass-through, no
 // script/style/iframe/image element. Every character of authored text becomes a React text node
-// (escaped by React). Supported: paragraphs, "- " and "1. " lists, "### " sub-headings,
+// (escaped by React); step screenshots are appended only by the caller (afterStep), never by content. Supported: paragraphs, "- " and "1. " lists, "### " sub-headings,
 // **bold**, `code` and [text](href) links. A link is rendered only when its href is an internal
 // route the current user's navigation already contains, or a relative "#anchor" inside the
 // panel; any other target (external URL, javascript:, data:, hidden route) renders as plain text.
@@ -83,12 +83,17 @@ function blocks(source: string): Block[] {
   return result
 }
 
-export function HelpMarkdown({ source, policy, idPrefix }: { source: string; policy: HelpLinkPolicy; idPrefix: string }) {
+/**
+ * `afterStep` lets the caller append trusted, non-Markdown content (the build-time screenshot of
+ * that step) under each item of a numbered list. Authored text can never produce an image itself.
+ */
+export function HelpMarkdown({ source, policy, idPrefix, afterStep }: { source: string; policy: HelpLinkPolicy; idPrefix: string; afterStep?: (step: number) => ReactNode }) {
   return <>{blocks(source).map((block, index) => {
     const key = `${idPrefix}-${index}`
     if (block.kind === 'h') return <h4 key={key} id={helpAnchorId(block.text)}>{inline(block.text, policy, key)}</h4>
     if (block.kind === 'p') return <p key={key}>{inline(block.text, policy, key)}</p>
-    const items = block.items.map((item, itemIndex) => <li key={`${key}-${itemIndex}`}>{inline(item, policy, `${key}-${itemIndex}`)}</li>)
+    const items = block.items.map((item, itemIndex) => <li key={`${key}-${itemIndex}`}>{inline(item, policy, `${key}-${itemIndex}`)}
+      {block.kind === 'ol' && afterStep?.(itemIndex + 1)}</li>)
     return block.kind === 'ul' ? <ul key={key}>{items}</ul> : <ol key={key}>{items}</ol>
   })}</>
 }

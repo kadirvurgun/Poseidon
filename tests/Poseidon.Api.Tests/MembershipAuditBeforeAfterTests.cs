@@ -169,4 +169,48 @@ public sealed class MembershipAuditBeforeAfterTests
             Assert.True(Proven(Added(db, Receipt(command)), command));
         }
     }
+    // USER-ADMIN-02: invitation create, reissue, acceptance and revocation rows prove themselves; the token hash and the
+    // expected/accepted subject never enter an audit summary.
+    [Fact]
+    [Trait("Requirement", "USER-ADMIN-02")]
+    public void Invitation_rows_are_proven_without_token_or_subject()
+    {
+        using var db = Db();
+        var hash = new string('B', 64);
+        MembershipInvitation Invitation(Guid membership) => new() { TenantId = Tenant, Id = Guid.NewGuid(), MembershipId = membership, TokenHash = hash,
+            ExpectedSubject = Subject, Status = "Pending", CreatedAt = T0, ExpiresAt = T0.AddDays(7), CreatedBy = Guid.NewGuid().ToString("D"), Version = 21 };
+        var membershipId = Guid.NewGuid();
+        Assert.True(Proven(Added(db, new UserAccount { TenantId = Tenant, Id = Guid.NewGuid(), Issuer = Issuer, Subject = null, Source = "AdminProvisioned", CreatedAt = T0 }), "MembershipCreate"));
+        Assert.True(Proven(Added(db, new AccountMembership { TenantId = Tenant, Id = membershipId, AccountId = Guid.NewGuid(), Status = "Invited",
+            StatusReason = "AdminInvitation", StatusChangedAt = T0, AccessRevision = 0, Source = "AdminProvisioned", CreatedAt = T0 }), "MembershipCreate"));
+        foreach (var command in new[] { "MembershipCreate", "MembershipInvitationReissue" })
+        {
+            var (row, _) = Row(Added(db, Invitation(membershipId)), command);
+            Assert.DoesNotContain(hash, row.ChangeSummary, StringComparison.Ordinal);
+            Assert.True(Proven(Added(db, Invitation(membershipId)), command));
+        }
+        foreach (var (status, command) in new[] { ("Superseded", "MembershipInvitationReissue"), ("Accepted", "MembershipInvitationAccept"), ("Revoked", "MembershipRevoke") })
+        {
+            var pending = Invitation(membershipId);
+            var entry = db.Attach(pending);
+            pending.Status = status; pending.ClosedAt = T0.AddHours(1);
+            entry.DetectChanges();
+            Assert.Equal(EntityState.Modified, entry.State);
+            Assert.True(Proven(entry, command));
+        }
+        // Acceptance: the account binds (Pending -> Bound) and the membership becomes Active at access revision 1.
+        var account = new UserAccount { TenantId = Tenant, Id = Guid.NewGuid(), Issuer = Issuer, Subject = null, Source = "AdminProvisioned", CreatedAt = T0, Version = 31 };
+        var accountEntry = db.Attach(account);
+        account.Subject = Subject;
+        accountEntry.DetectChanges();
+        Assert.True(Proven(accountEntry, "MembershipInvitationAccept"));
+        var invited = Membership(account.Id);
+        invited.Status = "Invited"; invited.StatusReason = "AdminInvitation"; invited.Source = "AdminProvisioned";
+        var membershipEntry = db.Attach(invited);
+        invited.Status = "Active"; invited.StatusReason = "InvitationAccepted"; invited.AccessRevision = 1;
+        membershipEntry.DetectChanges();
+        Assert.True(Proven(membershipEntry, "MembershipInvitationAccept"));
+        Assert.True(Proven(Added(db, Receipt("MembershipInvitationAccept")), "MembershipInvitationAccept"));
+        Assert.True(Proven(Added(db, Receipt("MembershipInvitationReissue")), "MembershipInvitationReissue"));
+    }
 }

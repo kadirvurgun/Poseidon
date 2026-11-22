@@ -58,8 +58,25 @@ describe('help content model', () => {
     ['reviewed true', front.replace('reviewed: false', 'reviewed: true')],
     ['self related', front.replace('related: [fleet]', 'related: [today]')],
     ['non-list roles', front.replace('roles: [Master]', 'roles: Master')],
+    ['screenshot step zero', front.replace('screenshots: []', 'screenshots: [0]')],
+    ['screenshot step not a number', front.replace('screenshots: []', 'screenshots: [1-desktop]')],
+    ['screenshot steps not ascending', front.replace('screenshots: []', 'screenshots: [2, 1]')],
+    ['screenshot steps duplicated', front.replace('screenshots: []', 'screenshots: [1, 1]')],
   ])('rejects %s', (_name, value) => {
     expect(() => parseHelpDocument(doc(value), 'en')).toThrow(HelpContentError)
+  })
+
+  it('parses screenshot step numbers (UG-2)', () => {
+    expect(parseHelpDocument(doc(front.replace('screenshots: []', 'screenshots: [1, 2, 4, 12]')), 'en').meta.screenshots).toEqual([1, 2, 4, 12])
+  })
+
+  it('appends caller content only under numbered steps, never from authored text', () => {
+    render(<HelpMarkdown source={'1. First\n2. Second\n\n- bullet'} policy={policy()} idPrefix="t"
+      afterStep={step => <span data-testid={`after-${step}`}/>}/>)
+    expect(screen.getByTestId('after-1').closest('li')).toHaveTextContent('First')
+    expect(screen.getByTestId('after-2').closest('li')).toHaveTextContent('Second')
+    expect(screen.queryByTestId('after-3')).toBeNull()
+    expect(document.querySelector('img')).toBeNull()
   })
 
   it('rejects missing, reordered or wrong-language sections', () => {

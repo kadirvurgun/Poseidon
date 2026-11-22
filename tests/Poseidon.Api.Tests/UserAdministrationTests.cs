@@ -26,10 +26,12 @@ public sealed partial class DirectoryWorkspaceTests
         b.ConfigureAppConfiguration((_, c) => c.AddInMemoryCollection(AdminExtra.Select((p, i) =>
             new KeyValuePair<string, string?>($"Authentication:Oidc:Memberships:0:Permissions:{50 + i}", p)))));
 
-    private static async Task<HttpClient> Provisioned(WebApplicationFactory<Program> host, string subject, Guid tenant, Guid account)
+    // accessRevision: the revision the login stamps; an accepted invitation is at access revision 1 (USER-ADMIN-02).
+    private static async Task<HttpClient> Provisioned(WebApplicationFactory<Program> host, string subject, Guid tenant, Guid account, long accessRevision = 1)
     {
         var client = host.CreateClient(new() { BaseAddress = new("https://localhost"), AllowAutoRedirect = false });
         client.DefaultRequestHeaders.Add("X-Membership-Subject", subject);
+        client.DefaultRequestHeaders.Add("X-Membership-Arv", accessRevision.ToString(System.Globalization.CultureInfo.InvariantCulture));
         client.DefaultRequestHeaders.Add("X-Membership-Provisioned", $"{tenant:D}/{account:D}");
         using var session = await client.GetAsync("/api/v1/auth/session", TestContext.Current.CancellationToken);
         if (session.IsSuccessStatusCode && (await session.Content.ReadFromJsonAsync<SessionDto>(TestContext.Current.CancellationToken))?.CsrfToken is { Length: > 0 } csrf)
@@ -43,11 +45,16 @@ public sealed partial class DirectoryWorkspaceTests
     private static object Create(string subject, string[] bundles, bool read = true, bool manage = false, string[]? permissions = null, object[]? vessels = null, string issuer = MemberIssuer) =>
         new { issuer, subject, bundles, permissions = permissions ?? [], tenantWideRead = read, tenantWideManage = manage, vesselGrants = vessels ?? [] };
 
-    private async Task<MembershipAccessDto> Created(HttpClient admin, object body)
+    // USER-ADMIN-02: a created membership is an invitation; the identity holder (subject of the body) accepts it, after
+    // which the administrator's view is the accepted, Active membership.
+    private async Task<MembershipAccessDto> Created(WebApplicationFactory<Program> host, HttpClient admin, object body)
     {
-        using var response = await Post(admin, "memberships", body);
-        Assert.True(response.StatusCode == HttpStatusCode.OK, await response.Content.ReadAsStringAsync(Ct));
-        return (await response.Content.ReadFromJsonAsync<MembershipAccessDto>(Ct))!;
+        var issued = await Invited(admin, body);
+        var subject = System.Text.Json.JsonSerializer.SerializeToElement(body).GetProperty("subject").GetString()!;
+        using var invitee = await Invitee(host, subject);
+        using var accepted = await Post(invitee, "invitations/accept", new { token = issued.InvitationToken });
+        Assert.True(accepted.StatusCode == HttpStatusCode.OK, await accepted.Content.ReadAsStringAsync(Ct));
+        return (await admin.GetFromJsonAsync<MembershipAccessDto>($"/api/v1/memberships/{issued.Membership.Membership.Id}/access", Ct))!;
     }
 
     [Fact]
@@ -86,22 +93,37 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Equal(HttpStatusCode.OK, created.StatusCode);
         var text = await created.Content.ReadAsStringAsync(Ct);
         Assert.DoesNotContain("provisioned-e", text); Assert.DoesNotContain(MemberIssuer, text);
-        var view = (await created.Content.ReadFromJsonAsync<MembershipAccessDto>(Ct))!;
-        Assert.Equal(("Database", "AdminProvisioned", "Active", 1), (view.Membership.ManagedBy, view.Membership.Source, view.Membership.Status, view.Membership.GrantRevision));
-        Assert.Equal(["read-only"], view.Membership.Bundles);
-        Assert.False(view.Membership.Administrator);
-        Assert.True(view.Editable);
+        var issued = (await created.Content.ReadFromJsonAsync<MembershipInvitationIssueDto>(Ct))!;
+        var invited = issued.Membership;
+        // USER-ADMIN-02: the membership starts Invited (grants nothing) with a single-use token shown only here.
+        Assert.Equal(("Database", "AdminProvisioned", "Invited", 1, "Pending"), (invited.Membership.ManagedBy, invited.Membership.Source, invited.Membership.Status,
+            invited.Membership.GrantRevision, invited.Membership.InvitationState));
+        Assert.True(issued.InvitationToken is { Length: > 40 });
+        Assert.Equal(["read-only"], invited.Membership.Bundles);
+        Assert.False(invited.Membership.Administrator);
         using (var replay = await Post(admin, "memberships", Create("provisioned-e", ["read-only"]), key))
         {
             Assert.Equal(HttpStatusCode.OK, replay.StatusCode);
             Assert.Equal("true", Assert.Single(replay.Headers.GetValues("Idempotency-Replayed")));
-            Assert.Equal(view.Membership.Id, (await replay.Content.ReadFromJsonAsync<MembershipAccessDto>(Ct))!.Membership.Id);
+            var replayed = (await replay.Content.ReadFromJsonAsync<MembershipInvitationIssueDto>(Ct))!;
+            Assert.Equal(invited.Membership.Id, replayed.Membership.Membership.Id);
+            Assert.Null(replayed.InvitationToken); // The token is never stored.
         }
+        using (var duplicate = await Post(admin, "memberships", Create("provisioned-e", ["read-only"])))
+            Assert.Equal("identity_unavailable", await MembershipCode(duplicate));
+        var account = invited.Membership.AccountId;
+        using (var early = await Provisioned(host, "provisioned-e", tenant, account))
+            Assert.Equal(HttpStatusCode.Unauthorized, (await early.GetAsync("/api/v1/vessels", Ct)).StatusCode);
+        using (var invitee = await Invitee(host, "provisioned-e"))
+        using (var accept = await Post(invitee, "invitations/accept", new { token = issued.InvitationToken }))
+            Assert.Equal(HttpStatusCode.OK, accept.StatusCode);
+        var view = (await admin.GetFromJsonAsync<MembershipAccessDto>($"/api/v1/memberships/{invited.Membership.Id}/access", Ct))!;
+        Assert.Equal(("Active", "Accepted"), (view.Membership.Status, view.Membership.InvitationState));
+        Assert.True(view.Editable);
         using (var duplicate = await Post(admin, "memberships", Create("provisioned-e", ["read-only"])))
             Assert.Equal("identity_unavailable", await MembershipCode(duplicate));
 
         // The provisioned session resolves to the database grant on its next request; without the binding nothing.
-        var account = view.Membership.AccountId;
         using var member = await Provisioned(host, "provisioned-e", tenant, account);
         var fleet = (await member.GetFromJsonAsync<PageDto<VesselDto>>("/api/v1/vessels?limit=100", Ct))!;
         Assert.NotEmpty(fleet.Items);
@@ -159,7 +181,7 @@ public sealed partial class DirectoryWorkspaceTests
         using var admin = await Member(host, "synthetic");
         await Imported(admin);
         var tenant = seed.Tenants[0].Id;
-        var p = await Created(admin, Create("provisioned-admin", ["tenant-admin"], manage: true));
+        var p = await Created(host, admin, Create("provisioned-admin", ["tenant-admin"], manage: true));
         Assert.True(p.Membership.Administrator);
         using var provisionedAdmin = await Provisioned(host, "provisioned-admin", tenant, p.Membership.AccountId);
         Assert.Equal(HttpStatusCode.OK, (await provisionedAdmin.GetAsync("/api/v1/memberships/catalog", Ct)).StatusCode);
@@ -212,7 +234,7 @@ public sealed partial class DirectoryWorkspaceTests
         using var admin = await Member(host, "synthetic");
         await Imported(admin);
         var tenant = seed.Tenants[0].Id;
-        var source = await Created(admin, Create("provisioned-source", ["read-only"], permissions: ["crew.read"], read: false,
+        var source = await Created(host, admin, Create("provisioned-source", ["read-only"], permissions: ["crew.read"], read: false,
             vessels: [new { vesselId = SeedVessel.Id, canEdit = false }]));
         var b = await MembershipOf(admin, memberB);
         var now = DateTimeOffset.UtcNow;
@@ -255,7 +277,7 @@ public sealed partial class DirectoryWorkspaceTests
         }
         var created = new List<Guid>();
         foreach (var subject in new[] { "bulk-reader-1", "bulk-reader-2", "bulk-reader-3" })
-            created.Add((await Created(admin, Create(subject, ["read-only"]))).Membership.Id);
+            created.Add((await Created(host, admin, Create(subject, ["read-only"]))).Membership.Id);
 
         var all = (await admin.GetFromJsonAsync<MembershipAccessPageDto>("/api/v1/memberships/access?limit=100", Ct))!;
         Assert.Equal(synthetic + 3, all.Total);
@@ -283,7 +305,7 @@ public sealed partial class DirectoryWorkspaceTests
         await using var host = UserAdminHost();
         using var admin = await Member(host, "synthetic");
         var tenant = seed.Tenants[0].Id;
-        var view = await Created(admin, Create("provisioned-shadow", ["read-only"]));
+        var view = await Created(host, admin, Create("provisioned-shadow", ["read-only"]));
         using var member = await Provisioned(host, "provisioned-shadow", tenant, view.Membership.AccountId);
         Assert.Equal(HttpStatusCode.OK, (await member.GetAsync("/api/v1/vessels", Ct)).StatusCode);
         var settings = host.Services.GetRequiredService<FederationSettings>();

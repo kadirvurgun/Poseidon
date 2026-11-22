@@ -187,7 +187,9 @@ function AssignmentItemView({ item, vessel, t, disabled, run, move }: PanelProps
 function ReadinessPanel({ data, vessel, t, disabled, run }: PanelProps & { data: Readiness }) {
   const [decision, setDecision] = useState<'GO' | 'NO_GO' | ''>(''), [reason, setReason] = useState('');
   const [authority, setAuthority] = useState(data.authorities.length === 1 ? data.authorities[0].id : '');
-  const goAllowed = data.state === 'READY' || data.state === 'CONDITIONAL';
+  // TugReadinessDecisionPolicy (60.02 paragraph 201): GO only on READY; CONDITIONAL needs a source-permitted condition set
+  // that no source defines yet, so the server refuses it (tug_go_not_permitted). The UI must not offer what the server refuses.
+  const goAllowed = data.state === 'READY';
   return <section aria-label={t.screenReadiness}>
     <p>{t.assessment}: <StateBadge state={data.state} t={t}/> <small>{t.advisory}</small></p>
     <dl className="tug-readiness-bp"><dt>{t.bpRequired}</dt><dd>{data.requiredBollardPull ?? t.unknownValue}</dd><dt>{t.bpAvailable}</dt><dd>{data.availableBollardPull ?? t.unknownValue}</dd>
@@ -205,7 +207,7 @@ function ReadinessPanel({ data, vessel, t, disabled, run }: PanelProps & { data:
         <label><input type="radio" name="tug-decision" value="NO_GO" checked={decision === 'NO_GO'} onChange={() => setDecision('NO_GO')}/>{t.noGo}</label>
         <label><input type="radio" name="tug-decision" value="GO" checked={decision === 'GO'} disabled={!goAllowed} aria-describedby="tug-go-hint" onChange={() => setDecision('GO')}/>{t.go}</label>
       </fieldset>
-      {!goAllowed && <p id="tug-go-hint">{t.notice_goBlocked}</p>}
+      {!goAllowed && <p id="tug-go-hint" data-state={data.state === 'CONDITIONAL' ? 'go-conditional' : 'go-blocked'}>{data.state === 'CONDITIONAL' ? t.goConditional : t.notice_goBlocked}</p>}
       <AuthorityPicker id="decision-authority" authorities={data.authorities} value={authority} onChange={setAuthority} t={t} disabled={disabled}/>
       <label htmlFor="decision-reason">{t.reason}</label><textarea id="decision-reason" required maxLength={2000} value={reason} onChange={e => setReason(e.target.value)}/>
       <EnterpriseActions layout="form" aria-label={t.decide}><Button type="submit" disabled={disabled || !decision || !authority || !reason.trim() || decision === 'GO' && !goAllowed}>{t.record}</Button></EnterpriseActions>

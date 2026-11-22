@@ -2,7 +2,7 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { UserAdminWorkspace, readUserAdminRoute } from './UserAdminWorkspace'
-import { decodeAccess, decodeCatalog, decodeSummary, listPath } from './user-admin-api'
+import { decodeAccess, decodeCatalog, decodeInvitationIssue, decodeSummary, listPath } from './user-admin-api'
 import { changeAppLanguage } from '../i18n'
 
 // USER-ADMIN-01 UI. Synthetic identities only; no IdP account, credential or verified grant is fabricated.
@@ -25,7 +25,7 @@ const catalog = (patch: Record<string, unknown> = {}) => ({
   delegationReasons: ['PlannedAbsence', 'Handover'], trustedIssuer: 'https://idp.example.invalid', actorId, ...patch })
 const summary = (patch: Record<string, unknown> = {}) => ({ id: memberId, accountId, status: 'Active', statusReason: 'AdminProvisioning', source: 'AdminProvisioned',
   managedBy: 'Database', bundles: ['read-only'], permissionCount: 2, tenantWideRead: false, tenantWideManage: false, vesselGrantCount: 1, administrator: false, self: false,
-  statusChangedAt: at, version: 7, accessRevision: 0, grantRevision: 1, ...patch })
+  statusChangedAt: at, version: 7, accessRevision: 0, grantRevision: 1, invitationState: null, invitationExpiresAt: null, invitationSubjectExpected: false, ...patch })
 const access = (patch: Record<string, unknown> = {}, member: Record<string, unknown> = {}) => ({ membership: summary(member), individualPermissions: [],
   permissions: ['crew.read', 'directory.read'], activeCompanyId: null, vesselGrants: [{ vesselId, canEdit: false }], editable: true, editBlockedReason: null,
   history: [{ revision: 1, bundles: ['read-only'], individualPermissions: [], permissionCount: 2, tenantWideRead: false, tenantWideManage: false, activeCompanyId: null,
@@ -108,7 +108,7 @@ it('creates a membership with only grantable bundles, CSRF and an idempotency ke
   expect((within(form).getByLabelText('IdP issuer') as HTMLInputElement).value).toBe('https://idp.example.invalid')
   expect((within(form).getByLabelText(/^Master/) as HTMLInputElement).disabled).toBe(true)
   expect((within(form).getByLabelText(/departure\.decide/) as HTMLInputElement).disabled).toBe(true)
-  await user.type(within(form).getByLabelText('IdP subject'), 'synthetic-subject')
+  await user.type(within(form).getByLabelText('Expected IdP subject (optional)'), 'synthetic-subject')
   await user.click(within(form).getByLabelText(/^Read-only/))
   await user.click(within(form).getByLabelText(/DEMO-SHIP/))
   await user.click(within(form).getByRole('button', { name: 'Create membership' }))
@@ -146,4 +146,64 @@ it('shows a conflict with a reload action when the grant revision is stale', asy
   await waitFor(() => expect(document.querySelector('[data-notice=conflict]')).not.toBeNull())
   expect(document.querySelector('[data-code]')?.getAttribute('data-code')).toBe('version_conflict')
   expect(screen.getByRole('button', { name: 'Reload current state' })).toBeTruthy()
+})
+
+// USER-ADMIN-02: invitation state, one-time link and reissue. The token below is synthetic and grants nothing.
+const token = 'pi1.55555555555545558555555555555555.' + 'A'.repeat(43)
+const invited = (patch: Record<string, unknown> = {}) => summary({ status: 'Invited', statusReason: 'AdminInvitation', invitationState: 'Pending',
+  invitationExpiresAt: '2026-11-28T08:00:00Z', ...patch })
+
+it('decodes invitation states and the one-time token strictly', () => {
+  expect(decodeSummary(invited()).invitationState).toBe('Pending')
+  expect(() => decodeSummary(invited({ invitationState: null, invitationExpiresAt: null }))).toThrow() // an invited membership has its invitation
+  expect(() => decodeSummary(invited({ invitationState: 'Lost' }))).toThrow()
+  expect(() => decodeSummary(invited({ source: 'ConfigurationImport', managedBy: 'Configuration', grantRevision: null, bundles: [] }))).toThrow()
+  expect(() => decodeSummary(summary({ invitationSubjectExpected: true }))).toThrow()
+  const issue = decodeInvitationIssue({ membership: access({}, invited()), invitationToken: token, expiresAt: '2026-11-28T08:00:00Z' })
+  expect(issue.token).toBe(token)
+  expect(decodeInvitationIssue({ membership: access({}, invited()), invitationToken: null, expiresAt: null }).token).toBeNull()
+  expect(() => decodeInvitationIssue({ membership: access({}, invited()), invitationToken: 'pi1.short', expiresAt: '2026-11-28T08:00:00Z' })).toThrow()
+  expect(() => decodeInvitationIssue({ membership: access({}, invited()), invitationToken: token, expiresAt: null })).toThrow()
+})
+
+it('invites without a subject, then shows the one-time link with copy and never grants before acceptance', async () => {
+  const user = userEvent.setup()
+  const writeText = vi.fn(async () => undefined)
+  Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true })
+  history.replaceState(null, '', '/app/user-admin/new')
+  detail = access({}, invited())
+  postReply = () => json({ membership: access({}, invited()), invitationToken: token, expiresAt: '2026-11-28T08:00:00Z' })
+  render(<UserAdminWorkspace/>)
+  const form = await screen.findByRole('form', { name: 'Create membership' })
+  await user.click(within(form).getByLabelText(/^Read-only/))
+  await user.click(within(form).getByLabelText('Tenant-wide manage'))
+  await user.click(within(form).getByRole('button', { name: 'Create membership' }))
+  await waitFor(() => expect(posts).toHaveLength(1))
+  expect(JSON.parse(String(posts[0].init.body)).subject).toBeNull()
+  await waitFor(() => expect(window.location.pathname).toBe(`/app/user-admin/${memberId}`))
+  const link = await screen.findByRole('textbox', { name: 'Invitation link' }) as HTMLInputElement
+  expect(link.value).toBe(`${window.location.origin}/app/accept-invitation#token=${encodeURIComponent(token)}`)
+  expect(new URL(link.value).search).toBe('') // QA N1: the token is never in the query string
+  expect(screen.getByText('Invitation pending')).toBeTruthy()
+  expect(document.querySelector('[data-status=Invited]')).not.toBeNull()
+  await user.click(screen.getByRole('button', { name: 'Copy invitation link' }))
+  expect(writeText).toHaveBeenCalledWith(link.value)
+  expect(await screen.findByText('Invitation link copied.')).toBeTruthy()
+  expect(screen.queryByRole('button', { name: 'Suspend' })).toBeNull()
+  expect(screen.getByRole('button', { name: 'Revoke invitation' })).toBeTruthy()
+})
+
+it('reissues an expired invitation with the membership version and hides the old link', async () => {
+  const user = userEvent.setup()
+  history.replaceState(null, '', `/app/user-admin/${memberId}`)
+  detail = access({}, invited({ invitationState: 'Expired' }))
+  postReply = () => json({ membership: access({}, invited()), invitationToken: token, expiresAt: '2026-11-28T08:00:00Z' })
+  render(<UserAdminWorkspace/>)
+  expect(await screen.findByText('Invitation expired')).toBeTruthy()
+  expect(screen.queryByRole('textbox', { name: 'Invitation link' })).toBeNull() // the server keeps only a hash; nothing to show
+  await user.click(screen.getByRole('button', { name: 'Create a new invitation link' }))
+  await waitFor(() => expect(posts).toHaveLength(1))
+  expect(posts[0].url).toBe(`/api/v1/memberships/${memberId}/invitation`)
+  expect(JSON.parse(String(posts[0].init.body))).toEqual({ expectedVersion: 7 })
+  expect(((await screen.findByRole('textbox', { name: 'Invitation link' })) as HTMLInputElement).value).toContain(encodeURIComponent(token))
 })

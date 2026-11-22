@@ -1,0 +1,26 @@
+{
+ "schemaVersion": "poseidon.help.screenshot-provenance.v2",
+ "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
+ "commit": "ffabd677418b73f964e85faf458946dc850eda91",
+ "generatorBlobs": {
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "91ab4199809e7d12deb54f371232749e96fc1ade",
+  "frontend/src/help/screenshots/steps.json": "a0400619a48fe8d0f9811b031bc8f5d4a05d7cfc"
+ },
+ "dirty": false,
+ "key": "user-admin",
+ "locale": "tr",
+ "step": 1,
+ "viewport": "desktop",
+ "datasets": [
+  "backend/seed/synthetic-demo.json",
+  "DemoFixtureCommand"
+ ],
+ "tenant": "Synthetic Fleet A",
+ "fixedClock": "2026-11-22T09:00:00.000Z",
+ "png": {
+  "sha256": "12a3fcbee413cc90ee867e45435e3d42e7b9eabce96a8a169f572ffbf3348beb",
+  "width": 1440,
+  "height": 900
+ },
+ "domText": "Ana içeriğe geç\nPOSEIDON\nKullanıcılar ve yetkiler\nGörünüm\nÇalışma alanında ara\nDil seçin\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nAraç seçilmedi\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\nPOSEIDON\nDENİZCİLİK OPERASYONLARI\nÇalışma görünümü\nMenüde ara\n\nYalnızca açmaya yetkili olduğunuz ekranlarda arar.\n\nGenel bakış\nRömorkör operasyonları\nUyum ve güvence\nÇalışma alanı\nŞirketler\nÖnemli çakışma merkezi\nKullanıcılar ve yetkiler\nSY\nSynthetic Fleet A\nYetkili çalışma alanı\n\nTENANT YÖNETİMİ\n\nKullanıcılar ve yetkiler\n\nKullanıcı, rol, gemi ve nesne kapsamı en az yetki ilkesiyle atanır. Yalnız kendinizde olan yetkileri verebilirsiniz; kendi üyeliğinizi başka bir yönetici düzenler. Değişiklik üyenin bir sonraki isteğinde, yeni üyenin erişimi bir sonraki girişte geçerli olur.\n\nYenile\nAra\nÜyelik veya hesap kimliği başlangıcı ya da tam IdP subject değeri\nDurum\nRol paketi\nUygula\nÜyeler · Toplam: 1\nHesap\nadd41584\n Aktif Yetki yok\n\nYok · Yetkiler: 0 · Gemiler: 0\n\nÖnceki\nSonraki"
+}

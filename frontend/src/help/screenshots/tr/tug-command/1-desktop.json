@@ -1,0 +1,26 @@
+{
+ "schemaVersion": "poseidon.help.screenshot-provenance.v2",
+ "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
+ "commit": "ffabd677418b73f964e85faf458946dc850eda91",
+ "generatorBlobs": {
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "91ab4199809e7d12deb54f371232749e96fc1ade",
+  "frontend/src/help/screenshots/steps.json": "a0400619a48fe8d0f9811b031bc8f5d4a05d7cfc"
+ },
+ "dirty": false,
+ "key": "tug-command",
+ "locale": "tr",
+ "step": 1,
+ "viewport": "desktop",
+ "datasets": [
+  "backend/seed/synthetic-demo.json",
+  "DemoFixtureCommand"
+ ],
+ "tenant": "Synthetic Fleet A",
+ "fixedClock": "2026-11-22T09:00:00.000Z",
+ "png": {
+  "sha256": "8f3637ac8d895f7098f6cec0cd97860766cace7f6461e4a92e9020826c3592c9",
+  "width": 1440,
+  "height": 900
+ },
+ "domText": "Ana içeriğe geç\nPOSEIDON\nRömorkör operasyonları\nGörünüm\nÇalışma alanında ara\nDil seçin\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nDEMO-TUG · Synthetic Tug A\nGemi modu: Römorkör\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\nPOSEIDON\nDENİZCİLİK OPERASYONLARI\nÇalışma görünümü\nMenüde ara\n\nYalnızca açmaya yetkili olduğunuz ekranlarda arar.\n\nGenel bakış\nRömorkör operasyonları\nRömorkör merkezi\nİş panosu\nİş talebi\nRömorkör atama\nRömorkör hazırlık kapısı\nÇekme ekipmanı hazırlığı\nRömorkör mürettebat yetkinliği\nRömorkaj operasyon planı\nRömorkaj risk ve brifing\nRömorkör operasyon geçmişi\nRömorkör çevrimdışı operasyonlar\nRömorkör demo yolculuğu\nUyum ve güvence\nÇalışma alanı\nSY\nSynthetic Fleet A\nYetkili çalışma alanı\n\nRÖMORKÖR OPERASYONLARI\n\nRömorkör operasyonları\n\nTalepler, taslak planlar ve güncel kaynak bağlamı.\n\nYalnız taslak beyanlar. Taslak planlama; operasyonel atama, uygunluk, izin ve emniyet onayından ayrıdır.\n\nRömorkör bağlamı: DEMO-TUG · Synthetic Tug A · Tug\n\nRömorkör bağlamı\nİş panosu\nRömorkör bağlamı\nKaynak beyanları · operasyonel hazırlık bilinmiyor\nRol (sunucu ataması)\nBilinmiyor — rol ataması yok\nRömorkör modu menü merceği\nBilinmiyor — rol ataması yok\nRol referansları\nBilinmiyor\nMod görünürlüğü\nModlar arası yetki beyan edilmiş; her hedef sunucu yetkisi gerektirir.\nRömorkör tipi\nKullanılamıyor\nTip kaynağı / sürümü\nKullanılamıyor\nTip kaynak gözlemi / politikası\nBilinmiyor / Kullanılamıyor\nProfil BP (doğrulanmamış)\n65.00 · ton\nBP kaynağı / sürümü / niteliği\nTugProfile / 860 / Eski profil ölçümü, doğrulanmamış\nBP güncelliği / gözlemi\nBilinmiyor / Bilinmiyor\nEkipman bağlamı\n\nKullanılamıyor\n\nEkipman kaynağı kullanılamıyor veya yetki verilmemiş. Envanterin boş olduğu varsayılmaz.\n\nGemi Modu ekranları\n\nMod-arası rol beyan edilmiş ancak hiçbir Gemi Modu ekranı yetkilendirilmemiş.\n\nDoğrulanmış ölçüm, sertifika, ekip ve operasyonel atama girdileri kullanılamıyor"
+}

@@ -13,6 +13,11 @@ public sealed class SecurityEvent
     public required string Result { get; set; }
     public required string CorrelationId { get; set; }
     public DateTimeOffset OccurredAt { get; set; }
+    // USER-ADMIN-02 (QA N3): for a caller WITHOUT a trusted actor (an invitation session before binding) only. A keyed,
+    // pseudonymous reference to the IdP-validated identity (never the subject) and the tenant a token CLAIMS, unverified
+    // (no foreign key: recording it must never depend on, or reveal, whether that tenant exists).
+    public string? IdentityReference { get; set; }
+    public Guid? UnverifiedTenantId { get; set; }
 
     internal static void Configure(ModelBuilder model)
     {
@@ -24,6 +29,7 @@ public sealed class SecurityEvent
             b.Property(x => x.Action).HasMaxLength(64);
             b.Property(x => x.Result).HasMaxLength(64);
             b.Property(x => x.CorrelationId).HasMaxLength(128);
+            b.Property(x => x.IdentityReference).HasMaxLength(48);
             b.HasIndex(x => new { x.TenantId, x.OccurredAt });
             b.HasOne<Tenant>().WithMany().HasForeignKey(x => x.TenantId).OnDelete(DeleteBehavior.Restrict);
         });
@@ -48,6 +54,9 @@ public sealed class SecurityEventWriter(DbContextOptions<SecurityEventWriter> op
             throw new InvalidOperationException("Unknown security event code.");
         if (entry.TenantId == Guid.Empty || (entry.ActorId != null && entry.TenantId == null))
             throw new InvalidOperationException("Attributed events require trusted tenant scope.");
+        if (entry.IdentityReference != null && (entry.ActorId != null || !System.Text.RegularExpressions.Regex.IsMatch(entry.IdentityReference, "^idref:(v1|p1):[0-9a-f]{32}$")) ||
+            entry.UnverifiedTenantId != null && (entry.TenantId != null || entry.UnverifiedTenantId == Guid.Empty))
+            throw new InvalidOperationException("Pseudonymous references are only for events without a trusted actor or tenant.");
         Add(entry);
         await base.SaveChangesAsync(true, cancellationToken);
         ChangeTracker.Clear();

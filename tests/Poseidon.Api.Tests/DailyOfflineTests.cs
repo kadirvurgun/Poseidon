@@ -236,13 +236,16 @@ public sealed partial class DirectoryWorkspaceTests
     [Fact]
     public async Task Keeping_current_server_records_only_resolution_and_preserves_exact_head_revision_hash_time_and_human_review() {
         var clock=new DailyOfflineClock();await using var host=DailyOfflineHost(clock);using var c=Client(host);DailyOfflinePermissions(host.Services);await Token(c);
-        var id=Guid.NewGuid();var grant=DailyAppointment(host.Services,id,"Noon","Master");
+        var id=Guid.NewGuid();var grant=DailyAppointment(host.Services,id,"Noon","Master",independent:false);
         var draft=new DailyDraftCommand(id,0,new(){["position_lat"]=new("Known","1")},"INITIAL_AUTHORING");
         var initial=await DailySend(c,"noon-reports",draft,Guid.NewGuid().ToString("D"));var original=(await initial.Content.ReadFromJsonAsync<DailyRecordDto>(Ct))!;
         var e=await EnrollDailyOffline(c,"Noon",id);var local=DailyCaptured(e,new("Known","2"));
         var updated=await DailySend(c,"noon-reports",draft with{ExpectedVersion=original.Version,ReasonCode="AUTHORING_CORRECTION",Fields=new(){["position_lat"]=new("Known","3")}},Guid.NewGuid().ToString("D"),true);
         var current=(await updated.Content.ReadFromJsonAsync<DailyRecordDto>(Ct))!;
+        // Independent review (reviewer is never the author): a separate reviewer records it, then the author's offline device delivers.
+        var settings=host.Services.GetRequiredService<FederationSettings>();var author=settings.Memberships[0];settings.Memberships[0]=author with {ActorId=dailyReviewer};
         Assert.Equal(HttpStatusCode.OK,(await ReviewSend(c,"noon-reports",id,new(current.Version,0,current.Revision,grant.Id,"REVIEWED","REVIEW_RECORDED","FICTIONAL exact revision review"),Guid.NewGuid().ToString("D"))).StatusCode);
+        settings.Memberships[0]=author;
         using var conflicted=await DeliverDaily(c,e,local);Assert.Equal("MaterialConflict",(await conflicted.Content.ReadFromJsonAsync<DailyOfflineResult>(Ct))!.Result);
         var before=(await c.GetFromJsonAsync<DailyRecordDto>(DailyPath("noon-reports",id),Ct))!;Assert.Equal("RECORDED_UNASSESSED",before.ReviewState);
         var keep=DailyCaptured(e) with{BaseVersion=before.Version,Fields=[],ParentCommandId=local.CommandId,ExpectedServerVersion=before.Version,Choice="keepServer",ReasonCode="CURRENT_SERVER_RETAINED"};

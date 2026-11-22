@@ -10,7 +10,8 @@ export type HelpFrontMatter = {
   roles: string[]
   permissions: string[]
   related: string[]
-  screenshots: string[]
+  /** "Step by step" step numbers that have a generated screenshot (USER-GUIDE-01 UG-2, D4). */
+  screenshots: number[]
   reviewed: HelpReview
 }
 export type HelpSection = { heading: string; body: string }
@@ -23,6 +24,8 @@ export const helpSectionHeadings: Readonly<Record<HelpLocale, readonly string[]>
 })
 /** Index of the "Related pages" section; its body is computed from front matter and the caller's own navigation. */
 export const relatedSectionIndex = 7
+/** Index of the "Step by step" section; its numbered items receive the generated screenshots (UG-2). */
+export const stepSectionIndex = 3
 
 /**
  * Pages whose screen has its own record-level "Why" disclosure. The help panel only points to it;
@@ -44,6 +47,12 @@ function parseList(raw: string, field: string): string[] {
   const items = inner.split(',').map(item => item.trim())
   if (items.some(item => !item)) fail(`help_front_matter_list_invalid:${field}`)
   return items
+}
+
+function parseScreenshots(raw: string): number[] {
+  const steps = parseList(raw, 'screenshots').map(item => /^[1-9][0-9]?$/.test(item) ? Number(item) : fail('help_front_matter_screenshots_invalid'))
+  if (steps.some((step, index) => index > 0 && step <= steps[index - 1])) fail('help_front_matter_screenshots_invalid')
+  return steps
 }
 
 function parseReview(raw: string): HelpReview {
@@ -76,7 +85,7 @@ export function parseHelpDocument(source: string, locale: HelpLocale): HelpDocum
   if (related.some(item => !pageKey.test(item) || item === key) || new Set(related).size !== related.length) fail('help_front_matter_related_invalid')
   const meta: HelpFrontMatter = {
     key, title, roles: parseList(values.get('roles')!, 'roles'), permissions: parseList(values.get('permissions')!, 'permissions'),
-    related, screenshots: parseList(values.get('screenshots')!, 'screenshots'), reviewed: parseReview(values.get('reviewed')!),
+    related, screenshots: parseScreenshots(values.get('screenshots')!), reviewed: parseReview(values.get('reviewed')!),
   }
   const sections: HelpSection[] = []
   let current: HelpSection | null = null

@@ -265,7 +265,7 @@ function ShipOpsSurface({ route, language, onLanguage, onNavigate, onCanonical, 
                                     : current.page ? <><ShipOpsRecordList kind={route.kind} page={current.page} language={language} offset={route.offset} onOffset={offset => onNavigate(shipOpsLocationPath({ ...route, offset }))} onOpen={id => onNavigate(shipOpsLocationPath({ kind: route.kind, vessel: route.vessel, id, offset: 0 }))}/>
                                         {route.vessel && <ShipOperationsLedgerPanel kind={route.kind} vessel={route.vessel} language={language} onOpen={id => onNavigate(shipOpsLocationPath({ kind: route.kind, vessel: route.vessel, id, offset: 0 }))}/>}</>
                                         : <p role="alert">{localizedText(en, "pairs.m_900492ac3734bc78")}</p>}
-      <p className="ship-operations-hint">{localizedText(en, "pairs.m_c3cb745115573974")}</p>
+      <p className="ship-operations-hint">{localizedText(en, route.kind === 'Port' ? "pairs.m_821a3f35ca116281" : "pairs.m_c3cb745115573974")}</p>
     </main>
   </div>;
 }

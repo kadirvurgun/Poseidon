@@ -92,6 +92,8 @@
     "DelegationRevoke": "PREPARATION_COMMAND",
     "MembershipCreate": "PREPARATION_COMMAND",
     "MembershipGrantUpdate": "PREPARATION_COMMAND",
+    "MembershipInvitationReissue": "PREPARATION_COMMAND",
+    "MembershipInvitationAccept": "PREPARATION_COMMAND",
     "DowntimeCreate": "PREPARATION_COMMAND",
     "DowntimeUpdate": "PREPARATION_COMMAND",
     "DowntimeLifecycleCommand": "HUMAN_REVIEW_WORKFLOW",

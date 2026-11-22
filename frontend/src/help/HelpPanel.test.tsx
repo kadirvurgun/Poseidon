@@ -23,10 +23,12 @@ function mount(path: string, menu = restricted, language: 'en' | 'tr' | 'de' = '
     <main id="test-main"><label>Notes<input aria-label="Notes"/></label><button>Work action</button></main></div>)
   return { fetcher, onNavigate }
 }
+// The locale chunk bundles every guide (54 pages); its first import can exceed the default 1 s wait.
+const guideLoad = { timeout: 10000 }
 const trigger = (name = 'Open page guide') => screen.getByRole('button', { name })
 async function openedGuide() {
   const dialog = await screen.findByRole('dialog', { name: /Help/ })
-  await within(dialog).findByRole('heading', { name: 'What this page is for' })
+  await within(dialog).findByRole('heading', { name: 'What this page is for' }, guideLoad)
   return dialog
 }
 afterEach(() => { vi.restoreAllMocks(); history.replaceState(null, '', '/') })
@@ -144,7 +146,8 @@ describe('page help panel', () => {
   })
 
   it('shows a neutral pending state for a page without a guide and the Why/AI tabs make no call', async () => {
-    const { fetcher } = mount('/app/fleet')
+    // A real page outside the navigation contract has no guide key; every destination key now has (or will have) a guide.
+    const { fetcher } = mount('/app/data-reconciliation')
     await screen.findByRole('button', { name: 'Today' })
     const before = fetcher.mock.calls.length
     await userEvent.click(trigger())
@@ -183,7 +186,7 @@ describe('page help panel', () => {
     await screen.findByRole('button', { name: 'Bugün' })
     await userEvent.click(trigger('Sayfa kılavuzunu aç'))
     const dialog = await screen.findByRole('dialog', { name: /Yardım/ })
-    expect(await within(dialog).findByRole('heading', { name: 'Bu sayfa ne işe yarar' })).toBeVisible()
+    expect(await within(dialog).findByRole('heading', { name: 'Bu sayfa ne işe yarar' }, guideLoad)).toBeVisible()
     expect(dialog).toHaveClass('help-panel--side')
     expect(within(dialog).getByRole('note')).toHaveTextContent('Taslak kılavuz — uzman onayı bekliyor')
   })
@@ -193,8 +196,36 @@ describe('page help panel', () => {
     mount('/app/today', restricted, 'de')
     await userEvent.click(await screen.findByRole('button', { name: 'Seitenanleitung öffnen' }))
     const dialog = await screen.findByRole('dialog', { name: /Hilfe/ })
-    expect(await within(dialog).findByRole('heading', { name: 'What this page is for' })).toBeVisible()
+    expect(await within(dialog).findByRole('heading', { name: 'What this page is for' }, guideLoad)).toBeVisible()
     expect(within(dialog).getByText(/die englische Fassung wird angezeigt/)).toBeVisible()
     expect(within(dialog).getByRole('article')).toHaveAttribute('lang', 'en')
+  })
+
+  it('shows the generated screenshot under each captured step, lazily and without an API request (UG-2)', async () => {
+    const { fetcher } = mount('/app/today')
+    await screen.findByRole('button', { name: 'Today' })
+    const before = fetcher.mock.calls.length
+    await userEvent.click(trigger())
+    const dialog = await openedGuide()
+    const step = within(dialog).getByRole('heading', { name: 'Step by step' }).closest('section')!
+    const images = within(step).getAllByRole('img')
+    expect(images.map(image => image.getAttribute('alt'))).toEqual([1, 2, 3, 4, 5, 6].map(n => `Screenshot, step ${n}`))
+    for (const image of images) {
+      expect(image).toHaveAttribute('loading', 'lazy')
+      expect(image.closest('li')).not.toBeNull()
+    }
+    // D2: an <img> is a same-origin static asset fetched by the browser, never an API fetch().
+    expect(fetcher.mock.calls.length).toBe(before)
+  })
+
+  it('shows a neutral placeholder instead of the screenshot while offline (UG-2 / UG-DOC-04)', async () => {
+    vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false)
+    mount('/app/today')
+    await screen.findByRole('button', { name: 'Today' })
+    await userEvent.click(trigger())
+    const dialog = await openedGuide()
+    const step = within(dialog).getByRole('heading', { name: 'Step by step' }).closest('section')!
+    expect(within(step).queryAllByRole('img')).toHaveLength(0)
+    expect(within(step).getAllByText('Screenshot available when online.')).toHaveLength(6)
   })
 })
