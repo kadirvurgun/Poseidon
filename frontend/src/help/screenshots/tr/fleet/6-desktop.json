@@ -1,0 +1,26 @@
+{
+ "schemaVersion": "poseidon.help.screenshot-provenance.v2",
+ "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
+ "commit": "ffabd677418b73f964e85faf458946dc850eda91",
+ "generatorBlobs": {
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "91ab4199809e7d12deb54f371232749e96fc1ade",
+  "frontend/src/help/screenshots/steps.json": "a0400619a48fe8d0f9811b031bc8f5d4a05d7cfc"
+ },
+ "dirty": false,
+ "key": "fleet",
+ "locale": "tr",
+ "step": 6,
+ "viewport": "desktop",
+ "datasets": [
+  "backend/seed/synthetic-demo.json",
+  "DemoFixtureCommand"
+ ],
+ "tenant": "Synthetic Fleet A",
+ "fixedClock": "2026-11-22T09:00:00.000Z",
+ "png": {
+  "sha256": "f2f9544e3ce8f09cc85782d76aea35aaf406f42736d06eef8c7e10f3d234099d",
+  "width": 1440,
+  "height": 900
+ },
+ "domText": "Ana içeriğe geç\nPOSEIDON\nFilo\nGörünüm\nÇalışma alanında ara\nDil seçin\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nDEMO-SHIP · Synthetic Ship A\nGemi modu: Gemi\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\nPOSEIDON\nDENİZCİLİK OPERASYONLARI\nÇalışma görünümü\nMenüde ara\n\nYalnızca açmaya yetkili olduğunuz ekranlarda arar.\n\nGenel bakış\nBugün\nFilo\nRömorkör operasyonları\nUyum ve güvence\nÇalışma alanı\nSY\nSynthetic Fleet A\nYetkili çalışma alanı\n\nDENİZCİLİK ÇALIŞMA ALANI\n\nFilo\n\nYetkili olduğunuz kayıtları görüntüleyin.\n\nEtkin araç: Gemi · Synthetic Ship A\nAraç değiştir\n\nÇalışma alanı: Synthetic Fleet A\n\nOturumu kapat\nListelenen araçlar\n2\nBu sayfada\nGemiler\n1\nBu sayfada\nRömorkörler\n1\nBu sayfada\nDüzenlenebilir kayıtlar\n0\nBu sayfadaki güncel erişim\nAraç dağılımı\n\nDönen listedeki araç türleri\n\n2 kayıt\nGemiler: 1 · \nRömorkörler: 1\n\nYalnız bu sayfa. Operasyonel hazırlık ayrıca değerlendirilir.\n\nÇalışma kapsamı\n\nGüncel liste ve erişim bağlamı\n\nGemiler\n1\nRömorkörler\n1\nSalt okunur kayıtlar\n2\nSonraki sayfa\nListe sonu\nKod veya ad ile ara\nAraç türü\nAra\nKod Ad Tür\nDEMO-SHIP Synthetic Ship A Gemi\nDEMO-TUG Synthetic Tug A Römorkör\nSayfa 1\nÖnceki\nSonraki\nAyrıntılar\nKapat\nMevzuat profili\nPilot gemi ekleme\nDijital uyum pasaportu\nKod\nDEMO-SHIP\nAd\nSynthetic Ship A\nTür\nGemi\nKontrollü içe aktarma\nEkipman ve bakım\nMürettebat listesi\nAraç ekleri\nBelge taslakları\nAraç dosyaları\n\nDosyanın bulunması ve zararlı yazılım taraması kanıtı doğrulamaz, hazırlığı etkinleştirmez.\n\nDosya servisi kullanılamıyor veya istek reddedildi.\n\nDosyaları yenile"
+}

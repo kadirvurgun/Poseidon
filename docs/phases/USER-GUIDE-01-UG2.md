@@ -99,7 +99,16 @@ Yeniden doğrulama (22.11.2026, kendi lab'ı yeniden başlatıldı ve sonunda du
 | `dotnet test Api.Tests --filter-method *A_membership_not_provisioned_by_an_administrator*` (Testcontainers PG) | 4/4 geçti |
 | `npx vitest run src/help` | 3 dosya, 95 test geçti |
 
-Görüntü commit'i ve CI sonucu teslim raporunda.
+Görüntü commit'i `2010e6c3` → CI run **44973811866: success** (4/4 iş).
+
+## Rehber paketi entegrasyonu (`integration/guide-bundle-20261122`, 22.11.2026)
+
+USER-ADMIN-02 davet akışı user-admin kılavuzunu 9 adıma çıkardı; UG-3 50 yeni kılavuz ekledi.
+
+- **user-admin (9 adım):** 1, 2 ve 7 (salt-okunur "Yetkiyi düzenle" bölümü) görüntülü. 3–6 (davet oluşturma, bağlantı, yenileme/iptal, kabul) ve 8–9 (vekalet, yaşam döngüsü) `membership.manage` gerektirir → açıkça `unavailable`. Eski `user-admin/4` görüntüsü (artık başka bir adım) kaldırıldı.
+- **Yeni eşlemeler (yalnız okuma):** `fleet` 1–7 (8 yazma gerektirir), `tug-command` 1–7. İzin listesine tek tıklama eklendi: salt-okunur araç ayrıntısını açan `Synthetic Ship A` satır düğmesi. noon-report / certificate-command-center / safety-events adımlarının çoğu yazma veya ek okuma yetkisi istediği için bu turda eşlenmedi.
+- **Rozet:** adım başına tek numara (ilk hedefte); bitişik hedef halkaları artık rozetle örtülmez.
+- Üreteç commit'leri `1ff000a8` (eşleme) ve `ffabd677` (rozet); görüntüler bu son üreteç commit'inden kendi lab'ımla (bu daldan derlenmiş Release API + frontend/dist) yeniden üretildi: **64 PNG, 5,45 MB** (yalnız masaüstü, TR/EN). Sonuçlar teslim raporunda.
 
 ## Açık konular
 

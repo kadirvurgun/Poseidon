@@ -4,7 +4,7 @@ title: Römorkör operasyonları
 roles: [Tug Master, Tug Operations Coordinator, Shore Operations, Crew]
 permissions: [mode.tug, tug.read]
 related: [tug-job-board, tug-job-intake, tug-assignment, tug-readiness, today]
-screenshots: []
+screenshots: [1, 2, 3, 4, 5, 6, 7]
 reviewed: false
 ---
 ## Bu sayfa ne işe yarar

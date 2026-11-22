@@ -4,7 +4,7 @@ title: Fleet
 roles: [Master, Tug Master, Chief Engineer, Shore Operations, Tenant Admin]
 permissions: [directory.read, directory.write]
 related: [today, companies, certificate-command-center, data-trust-center, departure-signoff]
-screenshots: []
+screenshots: [1, 2, 3, 4, 5, 6, 7]
 reviewed: false
 ---
 ## What this page is for
