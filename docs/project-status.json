@@ -18682,9 +18682,43 @@
     "open": [
       "invitation create/reissue and /login limits need a public contract change",
       "operator key provisioning and Store=Postgres rollout",
-      "migration id 20261124110001 shared with invite-email: renumber at integration"
+      "RESOLVED: migration renumbered to 20261124110002_RateLimitCounters at admin-polish integration"
     ],
     "accepted_tasks_added": 0,
     "accepted_story_points_added": 0
+  },
+  "admin_polish_bundle_20261122": {
+    "state": "INTEGRATED_LOCAL_VERIFIED_PG_CI_PENDING_NOT_ACCEPTED",
+    "branch": "integration/admin-polish-20261122",
+    "base": "36d5d183",
+    "packages": {
+      "fix/mobile-ui-defects-20261122": "7f196f8c",
+      "feature/help-center-20261122": "a41fe952",
+      "feature/invite-email-20261122": "4ac9a7d6",
+      "feature/rate-limit-20261122": "34205ea9"
+    },
+    "qa": {
+      "mobile_ui": "ACCEPT_WITH_NOTES_FIXED_7f196f8c",
+      "help_center": "REJECT_FIXED_a41fe952",
+      "invite_email_security": "REJECT_FIXED_a7418de1_4ac9a7d6",
+      "rate_limit": "ACCEPT_WITH_NOTES_FIXED_34205ea9",
+      "integration_head": "PENDING"
+    },
+    "migration_renumber": "20261124110001_RateLimitCounters -> 20261124110002_RateLimitCounters (regenerated, Up/Down identical, no pending model changes)",
+    "verification": {
+      "build_release": "PASS_0_WARNINGS",
+      "pending_model_changes": "PASS_NONE",
+      "domain": "PASS_1673_1673",
+      "persistence_unit": "PASS_198_198",
+      "api_unit": "PASS_522_522",
+      "frontend_typecheck_lint": "PASS",
+      "frontend_vitest": "PASS_3100_3100_NODE_26",
+      "i18n_key_sets": "PASS_17_CATALOGS_0_MISSING_0_EXTRA",
+      "postgres_api_integration": "DEFERRED_CI",
+      "openapi_regeneration": "DEFERRED"
+    },
+    "accepted_tasks_added": 0,
+    "accepted_story_points_added": 0,
+    "report": "docs/phases/ADMIN-POLISH-BUNDLE-20261122.md"
   }
 }

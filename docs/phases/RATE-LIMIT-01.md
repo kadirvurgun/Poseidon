@@ -25,7 +25,7 @@ Branch `feature/rate-limit-20261122` (base main 36d5d183). Canonical count uncha
     cancellation and programming errors propagate. Never fails open. Closed-label metric `poseidon.ratelimit.decisions`.
   - `Limited` is observed by exactly one attempt per window/partition (atomic increment), so "audit only the first refusal"
     also holds across instances.
-- Entity `RateLimitCounter` → migration `20261124110001_RateLimitCounters`: schema `ratelimit`, PK (Policy, PartitionHash),
+- Entity `RateLimitCounter` → migration `20261124110002_RateLimitCounters` (renumbered from 20261124110001 at admin-polish integration): schema `ratelimit`, PK (Policy, PartitionHash),
   check constraints on hash/policy shape and count, index on ExpiresAt. Tenant-agnostic by design (invitation identities
   have no tenant yet; pilot partitions hash the tenant id in). No seed rows (technical state only, nothing to seed).
 - `PoseidonDbContext` refuses tracked `RateLimitCounter` changes: counters never enter the audited business SaveChanges path.
@@ -55,7 +55,7 @@ Branch `feature/rate-limit-20261122` (base main 36d5d183). Canonical count uncha
 - L4: out-of-range `LocalCapacity`, `FallbackSeconds`, `CleanupIntervalSeconds`, `CleanupBatchSize` stop startup.
 - N1: the throttling pool is registered as `RateLimitDataSource` (wrapper type), never a bare `NpgsqlDataSource`.
 - L2 (local "limited-until" cache) not done: both endpoints are authenticated; noted for later hardening.
-- I1 (migration id `20261124110001` also used by invite-email): left for the coordinator's integration renumbering.
+- I1 (migration id `20261124110001` also used by invite-email): RESOLVED at admin-polish integration — renumbered to `20261124110002_RateLimitCounters` (regenerated; Up/Down identical).
 
 ## Operations notes
 - Fallback and the breaker are **per process**: while the store is unavailable (or the 10-connection pool is exhausted),

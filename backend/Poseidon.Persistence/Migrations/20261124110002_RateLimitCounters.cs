@@ -8,6 +8,7 @@ namespace Poseidon.Persistence.Migrations
     // RATE-LIMIT-01: shared technical rate-limit counters (no tenant, actor, subject, IP or token; keyed HMAC partitions only).
     // Written exclusively by PostgresRateLimitStore (single-statement upsert, bounded expiry delete) outside the audited
     // business SaveChanges path; PoseidonDbContext refuses tracked counter changes.
+    // Renumbered from 20261124110001 at admin-polish integration (id shared with UserAdministrationInvitationDelivery).
     /// <inheritdoc />
     public partial class RateLimitCounters : Migration
     {
