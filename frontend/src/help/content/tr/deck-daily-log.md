@@ -17,7 +17,7 @@ Güverte günlük kaydı, seçili geminin **güverte vardiya kayıtlarını** ka
 ## Başlamadan önce
 - Üst bağlam çubuğunda **doğru şirket ve gemiyi** seçin. Gemi seçili değilse sayfa "Gemi seçin" listesini gösterir.
 - Okumak için `daily.deck.read` gerekir. Oluşturup kaydetmek için `daily.deck.write` ve bu gemide düzenleme hakkı gerekir; yoksa "Salt okunur erişim. Düzenleme ve kayıt yetkisi verilmemiş." yazar.
-- İnceleme kaydetmek için `daily.deck.review` ve bu kesin kayıt için geçerli Kaptan veya Birinci Zabit görevlendirmesi gerekir.
+- İnceleme kaydetmek için bu gemide düzenleme hakkıyla `daily.deck.write`, `daily.deck.review` ve bu kesin kayıt için geçerli Kaptan veya Birinci Zabit görevlendirmesi gerekir.
 
 ## Adım adım
 1. Gemiyi seçin. **Kayıtlı taslaklar** her kaydı tarih ve sürümle, "Taslak · inceleme gerekli" etiketiyle listeler.
@@ -37,6 +37,7 @@ Güverte günlük kaydı, seçili geminin **güverte vardiya kayıtlarını** ka
 
 ## Yapamazsınız / dikkat
 - Sistem jurnali incelemez veya kesinleştirmez. İnceleme, görevlendirilmiş Kaptan veya Birinci Zabitin insan eylemidir (13.03 §2).
+- Kaydı yazan zabit görevlendirmeye sahipse sistem onun inceleme kaydetmesini engellemez; görev ayrımı bir kuruluş kuralıdır.
 - Kayıtları gerçek zamanlı ve kronolojik tutun; eski bir vardiyayı yeniymiş gibi yeniden yazmayın (13.03 §6).
 - Başkasının incelenmiş kaydını değiştirmeyin; sonraki kayıt yeni sürümdür ve yeni inceleme gerektirir (13.03 §6).
 - Çevrimdışı kayıt yalnız açıkça sınıflandırılmış alanları kapsar. Çevrimdışı çakışma asla otomatik birleşmez; kendi kaydınızın kazanacağını varsaymayın (13.03 §6).

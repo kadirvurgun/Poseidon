@@ -30,11 +30,11 @@ The Safety events & near misses page lets you report a safety event on a vessel 
 6. A triager records severity and **Investigation required** with a reason in **Triage** and presses **Record triage**, or sends it back with **Return to reporter**.
 7. An investigator presses **Open investigation**, fills in **Contributing factors**, **Root causes**, **Barriers** and **Uncertainties**, then presses **Save investigation** and **Submit for review**. In **Independent review** another person chooses **Approve**, **Return** or **Reject**.
 8. In **Corrective and preventive actions** use **Add action** with an owner, due date and the finding it addresses. The owner records **Report completion**, another person records **Verify** and a third records **Review effectiveness**.
-9. When **Closure blockers** is empty an authorised person presses **Close event**. In **Messages** you can send messages with **Team only** or **Shared with reporter** visibility.
+9. When **Closure blockers** is empty, a reviewer (review permission) who is neither the reporter nor an investigation author presses **Close event**. In **Messages** you can send messages with **Team only** or **Shared with reporter** visibility.
 
 ## What the states mean
 - **Draft / Submitted / Returned / Triaged / Investigating / Action tracking / Closed / Withdrawn:** the event lifecycle.
-- **Severity — Unassessed:** no human classification yet. The **Reporter estimate** is only a suggestion. **Severity policy: not configured – human classification only** shows that the system derives no severity.
+- **Severity — Not triaged / Unassessed:** no human classification yet. The **Reporter estimate** is only a suggestion. **Severity policy: not configured – human classification only** shows that the system derives no severity.
 - **Investigation need is UNKNOWN:** no decision has been made; it does not mean "no" and it blocks closure.
 - **Action — Open / Completed / Verified:** Completed is not Verified, and Verified is not Effective.
 - **Effectiveness — Pending / Effective / Not effective / Inconclusive / No actions / Not visible:** effectiveness is a human review per action and is separate from closure. **No actions** does not mean effective.
@@ -44,11 +44,11 @@ The Safety events & near misses page lets you report a safety event on a vessel 
 
 ## What you cannot do / caution
 - A reporter cannot triage their own report. An investigation author, the submitter or the reporter cannot give the independent review.
-- The person who completed an action cannot verify it; the owner, completer or verifier cannot review its effectiveness. These are separate records by different people.
+- Only the action owner reports completion. Neither the owner nor the completer can verify; none of the owner, completer or verifier can review effectiveness. These are separate records by different people.
 - Root causes are human statements; the system never proposes one.
 - A submitted report can never be withdrawn or deleted by its author.
 - In a confidential report the identity is opened only on a need-to-know basis, by someone holding the identity read permission and choosing a **Purpose**; each reading is recorded with its purpose. Anonymous reporting needs the public intake channel, which is not configured.
-- A Not effective result is final; an action that did not work needs a new follow-up action.
+- An Inconclusive review can be repeated; Effective and Not effective are final; an action that did not work needs a new follow-up action.
 
 ## If something goes wrong
 - **The server refused the command:** complete the missing or blocking items listed below it.

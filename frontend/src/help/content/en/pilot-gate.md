@@ -17,6 +17,7 @@ The Pilot go/no-go review page shows the state of the gates required for a pilot
 
 ## Before you start
 - Viewing needs tenant-wide read and pilot gate read. Marking a support item needs support record permission; deciding needs decide permission plus a current Product Owner appointment provisioned on the server. The permission alone is not enough.
+- Only a human account can mark support or decide; the appointment must match your active role and be within its validity period.
 - Gate inputs come from other pages; for example the Ship UAT and Tug UAT gates are computed from attested runs on the **Role UAT records** page.
 - Recording needs a live connection; it is disabled offline.
 
@@ -37,16 +38,17 @@ The Pilot go/no-go review page shows the state of the gates required for a pilot
 
 ## What you cannot do / caution
 - "GO is possible only when every gate is PASS and open P0 is zero." Otherwise the GO option is disabled.
-- Conditional GO cannot be recorded while a gate is failed or unknown, or while P0 is open.
+- Conditional GO needs the same state as GO (every gate PASS, open P0 known to be zero) and at least one condition. It cannot be recorded while any gate is failed, unknown or deferred, or while P0 is open or unknown. NO-GO is always recordable, without conditions.
 - The system, AI or automation never makes the pilot decision and never fabricates gates or sign-offs. Pilot gates and decisions are human records.
 - You cannot change a recorded decision; a new decision is added with a new sequence number.
 
 ## If something goes wrong
 - **You hold no current Product Owner appointment. Decisions are read-only.** Appointments are provisioned on the server; contact the Tenant Admin (13.03 §10).
 - **You do not have access to these records.** Check your role and tenant scope.
-- **The record changed or was already used. Reload.** The review changed while you were deciding; open the current review with **Reload**.
+- **The record changed or was already used. Reload.** The review changed while you were deciding; open the current review with **Reload**. This is also shown when gate states changed so the decision is no longer allowed.
 - **The outcome is uncertain. Retry sends the identical command.** Use **Retry** to resend the same command safely.
-- **Refused by the rules.** The chosen decision does not fit the current gate states.
+- **Refused by the rules.** A gate is deferred.
+- **Not permitted.** Your appointment is not current or your account is not a human account.
 - **The service is unavailable. Try again.** If it persists, report the correlation ID, time and steps to support (13.03 §10).
 
 ## Related pages

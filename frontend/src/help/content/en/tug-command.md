@@ -1,6 +1,6 @@
 ---
 key: tug-command
-title: Tug operations
+title: Tug command
 roles: [Tug Master, Tug Operations Coordinator, Shore Operations, Crew]
 permissions: [mode.tug, tug.read]
 related: [tug-job-board, tug-job-intake, tug-assignment, tug-readiness, today]
@@ -27,7 +27,7 @@ Shown in the menu as **Tug command**, this page shows the **source context** of 
 4. Check from **Tug type**, **Type source / revision** and **Type source observation / policy** which source and revision the type comes from.
 5. Read **Profile BP (unverified)**, **BP source / version / provenance** and **BP freshness / observation**. This is a declared value, not a measured one.
 6. In **Equipment context**, see the equipment declarations, their levels, revisions and provenance.
-7. Use the page tabs to move to **Job board** or (with write access) **Job intake**, or press **New request**.
+7. Use the page tabs to move to **Job board** or (with write access) **Job intake**, or (with write access) press **New request**.
 
 ## What the states mean
 - **Unknown — no role assignment:** the server has no role assignment for you on this tug. This is not "no role, no problem"; an administrator assignment is needed.

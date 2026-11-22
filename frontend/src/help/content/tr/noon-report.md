@@ -17,7 +17,7 @@ reviewed: false
 ## Başlamadan önce
 - Üst bağlam çubuğunda **doğru şirket ve gemiyi** seçin. Gemi seçili değilse sayfa "Gemi seçin" listesini gösterir.
 - Okumak için `daily.noon.read` gerekir. Taslak oluşturup kaydetmek için `daily.noon.write` ve bu gemide düzenleme hakkı gerekir; yoksa "Salt okunur erişim. Düzenleme ve kayıt yetkisi verilmemiş." yazar.
-- İnceleme kaydetmek için `daily.noon.review` ve bu kesin kayıt için geçerli bir Kaptan görevlendirmesi gerekir.
+- İnceleme kaydetmek için bu gemide düzenleme hakkıyla `daily.noon.write`, `daily.noon.review` ve bu kesin kayıt için geçerli bir Kaptan görevlendirmesi gerekir.
 
 ## Adım adım
 1. Gemiyi seçin. **Kayıtlı taslaklar** listesi her raporu tarih ve sürümle, "Taslak · inceleme gerekli" etiketiyle gösterir. Sayfalar için **Önceki taslaklar** / **Diğer taslaklar** düğmelerini kullanın.
@@ -36,6 +36,7 @@ reviewed: false
 
 ## Yapamazsınız / dikkat
 - Sistem raporu incelemez veya kesinleştirmez. İnceleme kaydı, görevlendirilmiş Kaptanın insan eylemidir (13.03 §2).
+- Kaydı yazan zabit görevlendirmeye sahipse sistem onun inceleme kaydetmesini engellemez; görev ayrımı bir kuruluş kuralıdır.
 - Yeni kayıt yeni sürüm oluşturur; önceki inceleme kendi sürümünde kalır. Değişiklikten sonra yeniden inceleme gerekir.
 - Serbest metinle yazılan referans yetkili kaynak seçiminin yerini tutmaz; alanı Eksik veya Bilinmiyor bırakın.
 - Çevrimdışıyken yalnız açıkça sınıflandırılmış alanlar şifreli kuyruğa alınır. İnceleme, onay ve doğrulama alanları kapsam dışıdır.

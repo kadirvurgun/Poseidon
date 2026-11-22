@@ -2,7 +2,7 @@
 key: renewal-workflow
 title: Certificate renewal
 roles: [Master, Chief Engineer / Technical Superintendent, Regulatory / Assurance]
-permissions: [certificate.read, certificate.write, certificate.renewal.write, certificate.renewal.verify, certificate.renewal.complete]
+permissions: [certificate.read, certificate.write, certificate.renewal.write, certificate.renewal.verify, certificate.renewal.complete, certificate.renewal.owner, file.read]
 related: [certificate-command-center, pre-survey-checklist, survey-planner, audit]
 screenshots: []
 reviewed: false
@@ -12,7 +12,7 @@ The Certificate renewal page records a certificate's renewal preparation and int
 
 ## Who uses it
 - **Master, Chief Engineer / Technical Superintendent:** prepare the renewal draft and record requirements and the application.
-- **Assigned renewal owner:** moves the workflow forward. The owner is chosen only from explicitly assigned roles.
+- **Assigned renewal owner:** moves the workflow forward. It is a role held by members with the renewal-owner permission; the workflow cannot open or be validated without one.
 - **Verifier and completer:** compare the issued replacement with its source and verify it, and, as a different person, complete the renewal (13.03 §1, §8).
 
 ## Before you start
@@ -40,7 +40,7 @@ The Certificate renewal page records a certificate's renewal preparation and int
 - A requirement can be **Complete / Not required / Unknown**. **Unknown** does not mean "Not required"; the server does not advance the flow on an unknown requirement.
 
 ## What you cannot do / caution
-- A different person must verify, and another different person must complete. You cannot verify or complete a step you recorded yourself.
+- The person who recorded the issued replacement, or who entered that replacement certificate, cannot verify it. The completer must differ from the verifier, from the person who recorded the issued replacement and from the replacement certificate's author.
 - Verification and completion are human decisions only; Completed ≠ Verified.
 - Planning declarations do not establish completed surveys, approved applications, voyage fitness or verification.
 - Draft replacement links do not supersede the original. The old certificate closes only through the completion step with a traceable supersede link (13.03 §1).
@@ -51,6 +51,7 @@ The Certificate renewal page records a certificate's renewal preparation and int
 - **No step is available for your role in this state.** The next step belongs to another role; check your permission and appointment and contact the Tenant Admin if needed (13.03 §10).
 - **The renewal changed after it was loaded.** or **This is not the current revision.** Press **Reload** and review the current state.
 - **The outcome is unknown. Retry sends the same request again.** Use **Retry same request**.
+- If **The renewal changed after it was loaded.** appears on verify or complete, you may be the recorder of the replacement or the verifier; another person must take that step.
 - **The step was not recorded. Check the details and try again.** Check the required fields and match selections.
 - If the replacement cannot be verified, check the document and source lineage and refer it to the verifier (13.03 §10).
 

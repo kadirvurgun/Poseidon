@@ -17,7 +17,7 @@ The data trust center shows **data quality signals** for controls, evidence and 
 
 ## Before you start
 - In the top context bar, check that the **right company** is selected (13.03 §1).
-- The page needs control, evidence, file, applicability and tenant regulatory draft read access, all together.
+- The page needs control, evidence, file, applicability and tenant regulatory draft read access, all together, with tenant-wide read scope.
 - If no vessel is selected, the page first shows the "Choose a vessel" list.
 
 ## Step by step
@@ -42,7 +42,7 @@ The data trust center shows **data quality signals** for controls, evidence and 
 ## What you cannot do / caution
 - Records are not corrected, verified or closed from this page; that happens on the record's own page by an authorised person.
 - If only the first subjects were assessed, the summary stays review required.
-- Subjects you cannot read are counted but not shown. A record you cannot see does not mean there is no issue.
+- Subjects you cannot read are counted but not shown, and the summary then stays Review required. A record you cannot see does not mean there is no issue.
 - Offline, data trust signals cannot be refreshed.
 
 ## If something goes wrong

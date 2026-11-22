@@ -2,7 +2,7 @@
 key: renewal-workflow
 title: Sertifika yenileme
 roles: [Master, Chief Engineer / Technical Superintendent, Regulatory / Assurance]
-permissions: [certificate.read, certificate.write, certificate.renewal.write, certificate.renewal.verify, certificate.renewal.complete]
+permissions: [certificate.read, certificate.write, certificate.renewal.write, certificate.renewal.verify, certificate.renewal.complete, certificate.renewal.owner, file.read]
 related: [certificate-command-center, pre-survey-checklist, survey-planner, audit]
 screenshots: []
 reviewed: false
@@ -12,7 +12,7 @@ Sertifika yenileme sayfası, bir sertifikanın yenilenme hazırlığını ve iç
 
 ## Kim kullanır
 - **Master, Chief Engineer / Technical Superintendent:** yenileme taslağı hazırlamak, gereksinimleri ve başvuruyu kaydetmek için.
-- **Atanmış yenileme sorumlusu:** iş akışını ilerletmek için. Sorumlu yalnız açıkça atanmış rollerden seçilir.
+- **Atanmış yenileme sorumlusu:** iş akışını ilerletmek için. Yenileme sorumlusu yetkisine sahip üyelerin taşıdığı bir roldür; sorumlu olmadan iş akışı açılamaz veya doğrulanamaz.
 - **Doğrulayıcı ve tamamlayıcı:** düzenlenen yeni sertifikayı kaynakla karşılaştırıp doğrulamak ve ayrı bir kişi olarak yenilemeyi tamamlamak için (13.03 §1, §8).
 
 ## Başlamadan önce
@@ -40,7 +40,7 @@ Sertifika yenileme sayfası, bir sertifikanın yenilenme hazırlığını ve iç
 - Gereksinim durumu **Tamamlandı / Gerekli değil / Bilinmiyor** olabilir. **Bilinmiyor**, "Gerekli değil" anlamına gelmez; sunucu bilinmeyen gereksinimle akışı ilerletmez.
 
 ## Yapamazsınız / dikkat
-- Doğrulamayı farklı bir kişi, tamamlamayı ise yine farklı bir kişi yapmalıdır. Kendi kaydettiğiniz adımı doğrulayamaz veya tamamlayamazsınız.
+- Düzenlenen yeni sertifikayı kaydeden veya o yeni sertifika kaydını giren kişi onu doğrulayamaz. Tamamlayan kişi; doğrulayıcıdan, düzenlenen yeni sertifikayı kaydedenden ve yeni sertifika kaydının yazarından farklı olmalıdır.
 - Doğrulama ve tamamlama yalnız insan kararıdır; Tamamlandı ≠ Doğrulandı.
 - Planlama beyanları tamamlanmış sörvey, onaylı başvuru, sefer uygunluğu veya doğrulama oluşturmaz.
 - Taslak değiştirme bağlantıları özgün kaydın yerine geçmez. Eski sertifika ancak tamamlama adımıyla ve izlenebilir bir yerine geçme ilişkisiyle kapanır (13.03 §1).
@@ -51,6 +51,7 @@ Sertifika yenileme sayfası, bir sertifikanın yenilenme hazırlığını ve iç
 - **Bu durumda rolünüz için kullanılabilir adım yok.** Sıradaki adım başka bir role aittir; yetkinizi ve atamanızı kontrol edin, gerekirse Tenant Admin ile görüşün (13.03 §10).
 - **Yenileme yüklendikten sonra değişti.** veya **Bu güncel revizyon değil.** **Yeniden yükle** düğmesine basıp güncel durumu inceleyin.
 - **Sonuç bilinmiyor. Yeniden deneme aynı isteği tekrar gönderir.** **Aynı isteği yeniden dene** düğmesini kullanın.
+- Doğrulama veya tamamlamada **Yenileme yüklendikten sonra değişti.** görünürse yeni sertifikayı kaydeden veya doğrulayıcı siz olabilirsiniz; o adımı başka bir kişi atmalıdır.
 - **Adım kaydedilmedi. Ayrıntıları kontrol edip yeniden deneyin.** Zorunlu alanları ve eşleşme seçimlerini kontrol edin.
 - Yeni sertifika doğrulanamıyorsa belgeyi ve kaynak bağını kontrol edip doğrulayıcıya yönlendirin (13.03 §10).
 

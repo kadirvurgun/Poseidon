@@ -27,7 +27,7 @@ The Role UAT records page records user acceptance test (UAT) runs with ship and 
 3. If no threshold exists, fill in **Minimum scenario pass rate**, **Maximum open major findings**, **Design conformance**, **Agreement reference** and **Rationale** in **Record agreed threshold** and press **Record**.
 4. In **UAT runs** use the **New UAT run** form to enter **Role**, **Environment**, **Build commit** and **Participant pseudonym**, then press **Record**.
 5. Open the run. With **Record outcome** choose the **Scenario** and **Outcome**; add **Assistance given** and an **Automated evidence reference** if relevant. For a problem use **Record finding** with **Severity** and **Finding summary**.
-6. When all scenarios are recorded press **Submit run for attestation**. A person other than the facilitator writes an **Attestation statement** in **Attest run** and presses **Record**.
+6. When you have recorded the scenarios press **Submit run for attestation** (facilitator only). Scenarios without a result count as **Not executed**. A person other than the facilitator writes an **Attestation statement** in **Attest run** and presses **Record**.
 7. In **Open findings** close a finding with a **Resolution** and **Resolution note**, then press **Resolve**.
 
 ## What the states mean
@@ -51,7 +51,8 @@ The Role UAT records page records user acceptance test (UAT) runs with ship and 
 - **The record was not found in your tenant.** Check the run link and the selected mode.
 - **The record changed or was already used. Reload.** Open the current state with **Reload**.
 - **The outcome is uncertain. Retry sends the identical command.** Use **Retry** to resend the same command safely.
-- **Refused by the rules.** For example the attester may be the same person as the facilitator.
+- **Refused by the rules.** For example the scenario does not belong to the run's role, or a blocker cannot be closed as risk accepted.
+- **Not permitted.** For example you facilitated this run and cannot attest it, or you reported this finding and cannot resolve it.
 - **You are offline. Recording is disabled until the connection returns.** When it returns press **Refresh**.
 
 ## Related pages

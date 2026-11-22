@@ -17,6 +17,7 @@ Pilot go/no-go incelemesi sayfası, pilota geçiş için gereken kapıların dur
 
 ## Başlamadan önce
 - Sayfayı görmek için tenant geneli okuma ve pilot kapı okuma yetkisi gerekir. Destek maddesi işaretlemek için destek kayıt yetkisi, karar için karar yetkisi ve ayrıca sunucuda tanımlı geçerli Ürün Sahibi ataması gerekir. Yetki tek başına yeterli değildir.
+- Destek işaretlemeyi ve kararı yalnız insan hesabı kaydedebilir; atama etkin rolünüzle eşleşmeli ve geçerlilik süresi içinde olmalıdır.
 - Kapıların kaynakları başka sayfalardan gelir; örneğin Gemi UAT ve Römorkör UAT kapıları **Rol UAT kayıtları** sayfasındaki teyitli koşulardan hesaplanır.
 - Kayıt canlı bağlantı gerektirir; çevrimdışıyken kayıt devre dışıdır.
 
@@ -37,16 +38,17 @@ Pilot go/no-go incelemesi sayfası, pilota geçiş için gereken kapıların dur
 
 ## Yapamazsınız / dikkat
 - "GO yalnız tüm kapılar PASS ve açık P0 sıfır olduğunda mümkündür." Diğer durumlarda GO seçeneği kapalıdır.
-- Koşullu GO, başarısız veya bilinmeyen kapı varken ya da açık P0 varken kaydedilemez.
+- Koşullu GO, GO ile aynı durumu (tüm kapılar PASS, açık P0'ın sıfır olduğu biliniyor) ve en az bir koşulu gerektirir. Herhangi bir kapı başarısız, bilinmiyor veya ertelenmişken ya da P0 açık veya bilinmiyorken kaydedilemez. NO-GO her zaman, koşulsuz kaydedilebilir.
 - Sistem, yapay zekâ veya otomasyon pilot kararı vermez ve kapı ya da imza üretmez. Pilot kapıları ve kararlar insan kayıtlarıdır.
 - Kayıtlı bir kararı değiştiremezsiniz; yeni karar yeni bir sıra numarasıyla eklenir.
 
 ## Sorun olursa
 - **Geçerli bir Ürün Sahibi atamanız yok. Kararlar salt okunur.** Atama sunucuda tanımlanır; Tenant Admin'e başvurun (13.03 §10).
 - **Bu kayıtlara erişiminiz yok.** Rol ve tenant kapsamınızı kontrol edin.
-- **Kayıt değişti veya daha önce kullanıldı. Yeniden yükleyin.** İnceleme siz karar verirken değişti; **Yeniden yükle** ile güncel incelemeyi açın.
+- **Kayıt değişti veya daha önce kullanıldı. Yeniden yükleyin.** İnceleme siz karar verirken değişti; **Yeniden yükle** ile güncel incelemeyi açın. Kapı durumları değiştiği için karar artık izin verilmiyorsa da bu mesaj görünür.
 - **Sonuç belirsiz. Yeniden deneme aynı komutu gönderir.** **Yeniden dene** ile aynı komutu güvenle gönderin.
-- **Kurallar gereği reddedildi.** Seçtiğiniz karar mevcut kapı durumlarıyla uyumlu değil.
+- **Kurallar gereği reddedildi.** Bir kapı ertelenmiş durumda.
+- **İzin verilmiyor.** Atamanız geçerli değil veya hesabınız insan hesabı değil.
 - **Hizmet kullanılamıyor. Yeniden deneyin.** Sorun sürerse correlation ID, zaman ve adımlarla destek ekibine bildirin (13.03 §10).
 
 ## İlgili sayfalar

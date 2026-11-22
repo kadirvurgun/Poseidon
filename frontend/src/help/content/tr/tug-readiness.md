@@ -1,6 +1,6 @@
 ---
 key: tug-readiness
-title: Operasyon hazırlık kapısı
+title: Römorkör hazırlık kapısı
 roles: [Tug Master, Master, Tug Operations Coordinator, Shore Operations]
 permissions: [mode.tug, tug.read, tug.write]
 related: [tug-assignment, tug-crew-readiness, tug-equipment-readiness, towage-risk-briefing, towage-execution]
@@ -16,7 +16,7 @@ Hazırlık kapısı, bir römorkör atamasının operasyona hazırlığını kay
 
 ## Başlamadan önce
 - Sayfayı bir atamadan açın: **Atama ve çakışmalar** sayfasında öneri altındaki **Operasyon hazırlık kapısı** bağlantısını kullanın. Atama seçili değilse sayfa "İşin atama listesinden bir atama seçin." gösterir.
-- Karar kaydetmek için römorkör yazma yetkisi ve o römorkör için sunucuda kayıtlı bir **Görevlendirme** (Römorkör Kaptanı veya Kaptan) gerekir.
+- Karar kaydetmek için römorkör yazma yetkisi ve o römorkör için sunucuda kayıtlı bir **Görevlendirme** (Römorkör Kaptanı veya Kaptan) gerekir; atama da hâlâ Önerildi durumunda olmalıdır.
 - Brifing tamamlanmadan READY olmaz: **Römorkaj risk ve brifing** yayımlanmış ve tüm katılımcılar tarafından teyit edilmiş olmalıdır (13.03 §3).
 
 ## Adım adım
@@ -28,15 +28,15 @@ Hazırlık kapısı, bir römorkör atamasının operasyona hazırlığını kay
 6. Kayıtlı kararları **Kaptan kararları** listesinde görün.
 
 ## Durumlar ne anlama gelir
-- **Hazır (READY):** kaynak kontrolleri bir engel göstermiyor. Bu bilgilendirmedir, karar değildir; GO kararını yine Tug Master veya Kaptan kaydeder.
-- **Koşullu (CONDITIONAL):** "Koşullar" listesindeki koşullar sağlanırsa ilerlenebilir; koşulları karar veren kişi değerlendirir.
+- **Hazır (READY):** tüm kaynak kontrolleri geçiyor (engel, bilinmeyen veya koşul yok). Bu bilgilendirmedir, karar değildir; GO kararını yine Tug Master veya Kaptan kaydeder.
+- **Koşullu (CONDITIONAL):** "Koşullar" listesindeki koşullar geçerlidir; bu sürümde KOŞULLU değerlendirmede GO kabul edilmez.
 - **Hazır değil (NOT_READY):** en az bir kritik engel var.
 - **İnceleme gerekli (REVIEW_REQUIRED):** bazı kaynaklar bilinmiyor veya inceleme bekliyor. Bilinmeyen kontrol asla "Hazır" sayılmaz.
 - **Geçti / Başarısız / Bilinmiyor:** tek bir kategori veya kontrolün sonucu.
 - **GO / NO-GO:** Tug Master veya Kaptan tarafından kaydedilen insan kararı ve gerekçesi.
 
 ## Yapamazsınız / dikkat
-- GO yalnızca HAZIR veya KOŞULLU bir değerlendirmeye karşı kaydedilebilir; NO-GO her durumda kaydedilebilir.
+- GO yalnızca READY (Hazır) bir değerlendirmeye karşı kaydedilebilir; sunucu CONDITIONAL, NOT_READY veya REVIEW_REQUIRED durumunda GO'yu reddeder. NO-GO her durumda gerekçesiyle kaydedilebilir. Sayfa KOŞULLU değerlendirmede GO seçeneğini yine de sunabilir; sunucu bunu reddeder.
 - Risk ve brifing tamamlanmadan veya katılımcı teyitleri eksikken READY oluşmaz; bu durumda GO seçeneği kapalıdır (13.03 §3).
 - Kıyı kullanıcısının atama önerisi Tug Master'ın gemideki emniyet kararını ortadan kaldırmaz (13.03 §7).
 - Değerlendirme kararınızdan önce değişirse karar kabul edilmez; güncel değerlendirmeyi yeniden inceleyin.

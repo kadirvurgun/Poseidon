@@ -2,7 +2,7 @@
 key: towage-risk-briefing
 title: Towage risk and briefing
 roles: [Tug Master, Master, Crew, Tug Operations Coordinator]
-permissions: [mode.tug, tug.read, tug.write]
+permissions: [mode.tug, tug.read, tug.write, hse.risk.read]
 related: [towage-plan, tug-readiness, towage-execution, tug-operations-offline]
 screenshots: []
 reviewed: false
@@ -18,7 +18,7 @@ This page prepares and issues the **towage risk and briefing record** for a subm
 ## Before you start
 - Open the tug from **Tug operations** and choose the job from **Select a submitted tug job**.
 - The job's **Towage plan** must be approved and the linked risk assessment approved; otherwise the briefing cannot be issued.
-- Issuing needs a server-recorded **Appointment** (Tug Master or Master) for the coordinating tug. Acknowledgement is only for people in the participant list.
+- Issuing needs a server-recorded **Appointment** (Tug Master or Master) for the coordinating tug. Issuing also needs risk assessment read access and tug write on the coordinating tug. Acknowledgement is only for people in the participant list.
 
 ## Step by step
 1. On the top line, read **State**, **Revision**, **Acknowledgement**, **Risk state** and **Plan state**.
@@ -33,11 +33,11 @@ This page prepares and issues the **towage risk and briefing record** for a subm
 - **Draft / Issued:** the briefing state. Issued means acknowledgements can start; on its own it is not a readiness result.
 - **Not issued / Pending / Complete / Disputed:** the participant acknowledgement state. It becomes **Complete** only when every participant has acknowledged the issued revision.
 - **Approved and acknowledged / Attention / Blocked / Review required:** the state of the linked risk assessment.
-- **Pass / Fail / Unknown / Conditional:** the check result sent to the readiness gate. A missing or unissued briefing and pending acknowledgements are a **Fail** that blocks READY.
+- **Pass / Fail / Unknown:** the check result sent to the readiness gate. A missing or unissued briefing and pending acknowledgements are a **Fail** that blocks READY.
 
 ## What you cannot do / caution
 - No READY decision is made before risk and briefing are complete and participant acknowledgements are recorded (13.03 §3).
-- A dispute blocks the start of the operation; its reason appears in the **Acknowledgements** list and must be assessed by the person who issued the briefing.
+- A dispute makes the acknowledgement state **Disputed** and sends a Fail to the readiness gate, so READY and GO are blocked. The reason appears in **Acknowledgements**. An acknowledgement cannot be changed for the same revision; to clear a dispute the briefing is amended (new revision), issued again and acknowledged again by every participant.
 - If the plan or risk assessment changes after the briefing, the briefing must be reviewed again; earlier acknowledgements do not count for a new revision.
 - Nobody acknowledges on someone else's behalf; each participant records their own acknowledgement (13.03 §6).
 - No command is sent from this page while offline. An acknowledgement can be queued on **Tug offline operations**.

@@ -17,7 +17,7 @@ The port activity and SOF page keeps the selected ship's **port events** as an o
 ## Before you start
 - In the top context bar, select the **right company and ship**. If no ship is selected, the page shows "Select a ship".
 - Reading needs `operations.port.read`; saving drafts needs `operations.port.write` and edit rights on this ship.
-- Finalizing needs `operations.port.finalize` plus a current finalization appointment (Master, Chief Officer or Chief Engineer) for this ship.
+- Finalizing needs `operations.port.write`, edit rights on this ship and `operations.port.finalize`, plus a current finalization appointment (Master, Chief Officer or Chief Engineer) for this ship.
 
 ## Step by step
 1. Pick the ship. **Recorded port event timeline** lists the returned events in the server's UTC order. **Filter returned page** narrows this page only.
@@ -39,6 +39,7 @@ The port activity and SOF page keeps the selected ship's **port events** as an o
 - The system never finalizes the SOF. Finalization is a human act by an appointed Master, Chief Officer or Chief Engineer (13.03 §2).
 - Finalize SOF stays disabled while required facts are missing, no appointment exists or unresolved references are not acknowledged.
 - Finalization is not a signature, not an external agreement and not laytime or demurrage.
+- The finalization state is shown only in **Statement of Facts finalization** (DRAFT / FINAL (internal)). The "SOF review state" field, the timeline note and the page footer do not reflect finalization and may say finalization is unavailable.
 - Saving drafts and finalizing need a current online session; this page has no offline capture.
 
 ## If something goes wrong

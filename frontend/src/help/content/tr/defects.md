@@ -1,6 +1,6 @@
 ---
 key: defects
-title: Arıza ve geçici tedbirler
+title: Arızalar ve önlemler
 roles: [Chief Engineer, Technical Superintendent, Master, Crew / OOW / Engineer]
 permissions: [defect.read, equipment.read, defect.write, defect.verify, defect.effectiveness, defect.close]
 related: [pms-command-center, work-order-center, operational-downtime, service-engineer-report, drydock-planning]

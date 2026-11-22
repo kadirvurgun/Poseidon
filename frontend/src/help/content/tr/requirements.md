@@ -16,6 +16,7 @@ Gereksinim taslakları sayfası, bir kaynak sürümünden çıkan **gereksinimle
 
 ## Başlamadan önce
 - Sayfayı görmek için tenant geneli okuma ve mevzuat taslağı okuma, düzenlemek için ayrıca mevzuat taslağı yazma yetkisi gerekir.
+- Alt görünümler kendi yetkilerini ister ve her zaman tenant geneli okuma kapsamı gerekir. **Yaşam döngüsü ve uygulanabilirlik** için uygulanabilirlik okuma; kural düzenlemek için kural yazma, inceleme istemek için kural inceleme, değerlendirmek için uygulanabilirlik değerlendirme yetkisi gerekir; yeterlilik ve olgu teyidi için mevzuat yeterlilik veya olgu teyit yetkisi ile sunucuda kayıtlı bir atama gerekir. **Kontroller ve kanıtlar** için kontrol okuma, kanıt okuma, belge okuma ve uygulanabilirlik okuma; bağlamak için gemide düzenleme hakkıyla kontrol yazma veya kanıt yazma, onay için kontrol onaylama yetkisi gerekir.
 - Önce dayanılan kaynağı **Kaynak taslakları** sayfasında kaydedin. Gereksinim yalnız var olan bir kaynak sürümüne bağlanabilir.
 - Kaydetme canlı sunucu bağlantısı gerektirir; çevrimdışıyken düzenlemeler sekmede korunur.
 

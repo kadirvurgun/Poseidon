@@ -1,6 +1,6 @@
 ---
 key: work-order-center
-title: Work order center
+title: Work orders
 roles: [Chief Engineer, Technical Superintendent, Crew / OOW / Engineer]
 permissions: [workorder.read, equipment.read, maintenance.read, workorder.write, workorder.release, workorder.execute, workorder.verify, workorder.close]
 related: [pms-command-center, defects, critical-spares, service-engineer-report, operational-downtime, offline-conflict-center]
@@ -22,7 +22,7 @@ The work order center holds the **draft work orders and declared execution recor
 ## Step by step
 1. Choose the vessel. In **Recorded work orders**, filter this page with **Search returned work order numbers** and open a record.
 2. For new work, press **New work order draft**, fill in the fields and press **Save unassessed draft**. Incomplete drafts can be saved.
-3. In **Execution and evidence**, if you have release permission, choose **Declare required evidence** under **Required evidence policy**, tick the evidence kinds and press **Release work order**.
+3. In **Execution and evidence**, if you have release permission, choose **Declare required evidence** under **Required evidence policy**, tick the evidence kinds and press **Release work order**. If you release without declaring, verification stays blocked until a releaser uses **Change required evidence** → **Save required evidence**.
 4. The executor presses **Start work**, fills in **Readings**, **Spares consumed**, **Photo and document evidence**, **Work done** and **Findings**, presses **Save evidence** and then **Submit evidence**.
 5. An authorised verifier who did not execute the work reviews the evidence. They press **Record verification**, or choose a **Return reason** and press **Return to executor**.
 6. For a verified work order, an authorised person presses **Record closure**.
@@ -39,6 +39,7 @@ The work order center holds the **draft work orders and declared execution recor
 ## What you cannot do / caution
 - If you executed the work, you cannot verify or close it. The page says "You executed this work, so you cannot verify or close it."
 - Evidence submitted, Verified and Closed are separate human records. The page never declares equipment ready for service.
+- The "Saved work order source" summary describes the saved draft fields only. It always shows Draft / Review required and may say "Release, evidence acceptance, verification and closure remain unavailable." The actual state and the available actions are in **Execution and evidence**.
 - Readings are kept as declared; no unit conversion or threshold is applied.
 - The offline evidence queue works only when an approved offline policy exists and while work is in progress. Conflicts are never merged automatically; use **Open conflict center** and a person decides.
 

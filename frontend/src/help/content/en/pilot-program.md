@@ -53,6 +53,8 @@ The Pilot program page keeps the pilot weeks for a ship (and optionally a tug), 
 - **The record changed or was already used. Reload.** Open the current state with **Reload**.
 - **The outcome is uncertain. Retry sends the identical command.** Use **Retry** to resend the same command safely.
 - **Refused by the rules.** For example the linked record may not exist, be out of scope or not be completed.
+- **Not permitted.** You authored links, feedback or measurements that this week close or decision rests on; another person must record it.
+- A week that has not started cannot be closed (shown as "The record changed or was already used. Reload.").
 - **You do not have access to these records.** Check your role and tenant scope (13.03 §10).
 
 ## Related pages

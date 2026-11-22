@@ -2,7 +2,7 @@
 key: offline-conflict-center
 title: Material conflict center
 roles: [Crew, Tug Master, Master, Chief Engineer]
-permissions: [canRead, crew.read, mode.tug, tug.read]
+permissions: [directory.read, crew.read, mode.tug, tug.read, daily.noon.read, daily.deck.read, daily.engine.read, workorder.read, certificate.read]
 related: [tug-operations-offline, tug-daily-log, today]
 screenshots: []
 reviewed: false
@@ -15,7 +15,7 @@ The material conflict center lists, for the selected vessel or tug, **material c
 - A material conflict needs a human resolution; this page is the target of the "Material conflict → Conflict Center" flow in 13.03 §10.
 
 ## Before you start
-- The page lists only conflicts you recorded and needs read access to at least one readable source (for example crew assignment, tug operations, daily record, work order evidence, certificate renewal draft).
+- The page lists only conflicts you recorded and needs read access to at least one readable source (for example crew assignment, tug operations, daily record, work order evidence, certificate renewal draft). Any one readable source opens the page; the listed permissions are alternatives.
 - The list and decisions need a current server connection. While offline your local changes stay retained on the device.
 - Choose the vessel or tug from the **Vessel** list.
 

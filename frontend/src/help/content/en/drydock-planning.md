@@ -25,14 +25,14 @@ Drydock planning holds the selected vessel's **drydock packages** (project, ship
 3. Add items with **Add scope item**; enter the **Scope item** type, **Title**, **Work package**, **Class requirement**, **Statutory requirement** and **Priority**.
 4. On each item, use **Add link** and enter the **Record type**, **Record identifier** and **Pinned revision**.
 5. For completion, add an evidence reference under **Completion evidence** with **Add**. Then press **Save**.
-6. Check the **Planning blockers** or **Completion blockers** list. Under **Change status**, choose an **Action** (**Plan**, **Back to draft**, **Start drydock**, **Complete drydock**, **Cancel package**) and confirm it. Cancelling needs a note.
+6. Check the **Planning blockers** or **Completion blockers** list. Under **Change status**, choose an **Action** (**Plan**, **Back to draft**, **Start drydock**, **Complete drydock**, **Cancel package**) and confirm it. Cancelling needs a note. Only the actions valid for the current state are offered; a package can be cancelled only while Draft or Planned.
 7. On a completed package that you did not complete, write a **Reason** of at least 10 characters and use **Verify record** or **Reject verification**.
 8. Follow the planned and actual dates and every revision in the **Timeline**.
 
 ## What the states mean
 - **Draft / Planned / In progress / Completed / Verified / Cancelled:** the package lifecycle. Completed and Verified are not the same.
 - **Links current / Attention / Review required / Incomplete:** linkage readiness. Even with links current, this is not a survey result.
-- **Linked / Unlinked / Overdue:** the link state of a scope item.
+- **Linked / Unlinked / Overdue / Review required:** the link state of a scope item (Review required when any link is Stale or Unavailable).
 - **Current / Stale / Unavailable:** a linked record compared with its pinned revision. Review a stale link and use **Re-pin to** to pin it to the new revision.
 - **Unknown / not set:** no priority was entered. Unknown does not mean "Normal" or "Low".
 

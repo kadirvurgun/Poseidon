@@ -1,6 +1,6 @@
 ---
 key: work-order-center
-title: İş emri merkezi
+title: İş emirleri
 roles: [Chief Engineer, Technical Superintendent, Crew / OOW / Engineer]
 permissions: [workorder.read, equipment.read, maintenance.read, workorder.write, workorder.release, workorder.execute, workorder.verify, workorder.close]
 related: [pms-command-center, defects, critical-spares, service-engineer-report, operational-downtime, offline-conflict-center]
@@ -22,7 +22,7 @@ reviewed: false
 ## Adım adım
 1. Aracı seçin. **Kayıtlı iş emirleri** listesinde **Dönen iş emri numaralarında ara** alanıyla bu sayfadaki kayıtları süzün ve bir kaydı açın.
 2. Yeni iş için **Yeni iş emri taslağı** düğmesine basın, alanları doldurun ve **Değerlendirilmemiş taslağı kaydet** ile kaydedin. Eksik taslak kaydedilebilir.
-3. **Uygulama ve kanıt** bölümünde yayım yetkiniz varsa **Zorunlu kanıt politikası** altında **Zorunlu kanıtı belirle** seçip kanıt türlerini işaretleyin ve **İş emrini yayımla** düğmesine basın.
+3. **Uygulama ve kanıt** bölümünde yayım yetkiniz varsa **Zorunlu kanıt politikası** altında **Zorunlu kanıtı belirle** seçip kanıt türlerini işaretleyin ve **İş emrini yayımla** düğmesine basın. Belirlemeden yayımlarsanız, yayım yetkili biri **Zorunlu kanıtı değiştir** → **Zorunlu kanıtı kaydet** adımını kullanana kadar doğrulama engelli kalır.
 4. Uygulayıcı **İşe başla** ile işi başlatır. **Okumalar**, **Kullanılan yedek parçalar**, **Fotoğraf ve doküman kanıtı**, **Yapılan iş** ve **Bulgular** alanlarını doldurup **Kanıtı kaydet**, sonra **Kanıtı gönder** düğmesine basar.
 5. İşi uygulamamış yetkili doğrulayıcı kanıtı inceler. **Doğrulamayı kaydet** ile doğrular veya bir **İade nedeni** seçip **Uygulayıcıya iade et** ile geri gönderir.
 6. Doğrulanmış iş emri için yetkili kişi **Kapanışı kaydet** düğmesine basar.
@@ -39,6 +39,7 @@ reviewed: false
 ## Yapamazsınız / dikkat
 - İşi siz uyguladıysanız doğrulayamaz veya kapatamazsınız. Sayfa bunu "Bu işi siz uyguladınız; doğrulayamaz veya kapatamazsınız." diye belirtir.
 - Kanıt gönderildi, Doğrulandı ve Kapatıldı ayrı insan kayıtlarıdır. Sayfa bir ekipmanı hizmete hazır ilan etmez.
+- "Kayıtlı iş emri kaynağı" özeti yalnız kayıtlı taslak alanlarını anlatır. Her zaman Taslak / İnceleme gerekli gösterir ve "Serbest bırakma, kanıt kabulü, doğrulama ve kapanış kullanılamıyor." diyebilir. Gerçek durum ve kullanılabilir işlemler **Uygulama ve kanıt** bölümündedir.
 - Okuma değerleri beyan edildiği gibi saklanır; birim dönüşümü veya eşik uygulanmaz.
 - Çevrimdışı kanıt kuyruğu yalnız onaylı çevrimdışı politika varsa ve iş devam ederken kullanılır. Çakışmalar otomatik birleştirilmez; **Çakışma merkezini aç** ile insan karar verir.
 

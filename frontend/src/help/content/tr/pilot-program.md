@@ -53,6 +53,8 @@ Pilot program sayfası, bir gemi (ve isteğe bağlı bir römorkör) için pilot
 - **Kayıt değişti veya daha önce kullanıldı. Yeniden yükleyin.** **Yeniden yükle** ile güncel durumu açın.
 - **Sonuç belirsiz. Yeniden deneme aynı komutu gönderir.** **Yeniden dene** ile aynı komutu güvenle gönderin.
 - **Kurallar gereği reddedildi.** Örneğin bağlanan kayıt yok, kapsam dışında veya tamamlanmamış olabilir.
+- **İzin verilmiyor.** Bu hafta kapanışının veya kararın dayandığı bağlantıları, geri bildirimleri veya ölçümleri siz yazdınız; kaydı başka bir kişi yapmalıdır.
+- Başlamamış bir hafta kapatılamaz ("Kayıt değişti veya daha önce kullanıldı. Yeniden yükleyin." olarak görünür).
 - **Bu kayıtlara erişiminiz yok.** Rol ve tenant kapsamınızı kontrol edin (13.03 §10).
 
 ## İlgili sayfalar

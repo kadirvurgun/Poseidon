@@ -24,15 +24,15 @@ The tug daily log records, for one date and watch, **jobs, engine runtime meters
 2. Enter the **Time zone (IANA)**.
 3. In **Engine runtime meters**, enter the **Opening reading**, **Closing reading** and, if needed, **Reset or rollover evidence** for each **Meter**.
 4. In **Fuel used**, enter the value, unit and **Fuel source reference**.
-5. Tick the executions that belong to this log in **Towage executions of the day**; fill in **Linked defect identifiers** and **Daily summary**.
+5. Tick the executions that belong to this log in **Towage executions of the day**; fill in **Linked defect identifiers** and **Daily summary** (summary at least 20 characters).
 6. Press **Save**. On the **Reconciliation** line, check jobs completed, execution hours, meter hours and defects reported.
 7. When the **Blockers** list is empty, press **Submit for Master review**.
 8. As Master, choose your **Appointment**, write a reason and press **Master: verify log** or **Master: return log**.
 
 ## What the states mean
-- **Draft / Submitted / Returned / Reviewed:** the log state.
-- **Master review — Pending / Verified / Returned:** the Master's human record. A submitted log is not a verified log.
-- **Reconciled / Attention / Review required / Incomplete:** the advisory comparison result. Reason codes are listed below it.
+- **Draft / Submitted / Returned / Verified:** the log state.
+- **Master review — Pending / Attention / Reviewed:** Pending = awaiting review; Attention = returned, or submitted while reconciliation is not Reconciled; Reviewed = verified by the Master. A submitted log is not a verified log.
+- **Reconciled / Review required / Incomplete:** the advisory comparison result. Reason codes are listed below it.
 - **open interval:** an execution is still running; execution hours are not final yet.
 - **Safety events — Unknown:** this page does not count safety events; no "no events" conclusion is drawn.
 - **Synced / Waiting to sync / Conflict / Failed:** the sync state. Waiting to sync shows the change has not reached the server yet.
@@ -48,6 +48,6 @@ The tug daily log records, for one date and watch, **jobs, engine runtime meters
 - **"The server listed missing or blocking items." message:** clear the codes in **Blockers**.
 - **"The record changed or the command conflicts." message:** use **Reload latest** to review the current log; the retained local change is dropped.
 - **"The outcome is unknown." message:** **Retry** sends the identical command again.
-- **Material conflict:** if offline captures conflict, use **Material conflict center** (13.03 §10).
+- **Conflict:** a change kept on this page is never merged; use **Reload latest**. Daily entries captured on **Tug offline operations** that conflict are resolved there; they are also listed in the **Material conflict center** (13.03 §10).
 
 ## Related pages

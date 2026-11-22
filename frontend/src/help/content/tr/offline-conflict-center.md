@@ -2,7 +2,7 @@
 key: offline-conflict-center
 title: Önemli çakışma merkezi
 roles: [Crew, Tug Master, Master, Chief Engineer]
-permissions: [canRead, crew.read, mode.tug, tug.read]
+permissions: [directory.read, crew.read, mode.tug, tug.read, daily.noon.read, daily.deck.read, daily.engine.read, workorder.read, certificate.read]
 related: [tug-operations-offline, tug-daily-log, today]
 screenshots: []
 reviewed: false
@@ -15,7 +15,7 @@ reviewed: false
 - Önemli çakışma bir insan çözümü gerektirir; bu sayfa 13.03 §10'daki "Material conflict → Conflict Center" akışının hedefidir.
 
 ## Başlamadan önce
-- Sayfa yalnız sizin kaydettiğiniz çakışmaları listeler ve en az bir okunabilir kaynak (ör. personel ataması, römorkör operasyonları, günlük kayıt, iş emri kanıtı, sertifika yenileme taslağı) için okuma yetkisi gerektirir.
+- Sayfa yalnız sizin kaydettiğiniz çakışmaları listeler ve en az bir okunabilir kaynak (ör. personel ataması, römorkör operasyonları, günlük kayıt, iş emri kanıtı, sertifika yenileme taslağı) için okuma yetkisi gerektirir. Okunabilir tek bir kaynak sayfayı açmaya yeter; listelenen yetkiler birbirinin alternatifidir.
 - Liste ve kararlar güncel bir sunucu bağlantısı ister. Çevrimdışıyken yerel değişiklikleriniz cihazda saklanmaya devam eder.
 - **Gemi** listesinden gemiyi veya römorkörü seçin.
 
