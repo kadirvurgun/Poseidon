@@ -1,6 +1,6 @@
 ---
 key: certificate-command-center
-title: Certificate command center
+title: Certificate center
 roles: [Master, Chief Engineer / Technical Superintendent, Regulatory / Assurance]
 permissions: [certificate.read, certificate.write, certificate.extract, certificate.verify.record, file.read]
 related: [renewal-workflow, pre-survey-checklist, survey-planner, audit]

@@ -2,7 +2,7 @@
 key: towage-risk-briefing
 title: Römorkaj risk ve brifing
 roles: [Tug Master, Master, Crew, Tug Operations Coordinator]
-permissions: [mode.tug, tug.read, tug.write]
+permissions: [mode.tug, tug.read, tug.write, hse.risk.read]
 related: [towage-plan, tug-readiness, towage-execution, tug-operations-offline]
 screenshots: []
 reviewed: false
@@ -18,7 +18,7 @@ Bu sayfa, gönderilmiş bir römorkör işi için **römorkaj risk ve brifing ka
 ## Başlamadan önce
 - Römorkörü **Römorkör operasyonları** sayfasından açın ve **Gönderilmiş bir römorkör işi seçin** listesinden işi seçin.
 - Bu işin **Römorkaj operasyon planı** onaylanmış olmalı ve bağlı risk değerlendirmesi onaylanmış olmalıdır; aksi halde brifing yayımlanamaz.
-- Yayımlamak için koordinatör römorkör için sunucuda kayıtlı bir **Görevlendirme** (Römorkör Kaptanı veya Kaptan) gerekir. Teyit yalnız katılımcı listesindeki kişiler içindir.
+- Yayımlamak için koordinatör römorkör için sunucuda kayıtlı bir **Görevlendirme** (Römorkör Kaptanı veya Kaptan) gerekir. Yayımlamak ayrıca risk değerlendirmesi okuma yetkisi ve koordinatör römorkörde römorkör yazma yetkisi gerektirir. Teyit yalnız katılımcı listesindeki kişiler içindir.
 
 ## Adım adım
 1. Üst satırda **Durum**, **Revizyon**, **Teyit**, **Risk durumu** ve **Plan durumu** bilgilerini okuyun.
@@ -33,11 +33,11 @@ Bu sayfa, gönderilmiş bir römorkör işi için **römorkaj risk ve brifing ka
 - **Taslak / Yayınlandı:** brifingin durumu. Yayınlandı, teyitlerin başlayabileceğini gösterir; tek başına hazırlık sonucu değildir.
 - **Yayınlanmadı / Beklemede / Tamamlandı / İtiraz edildi:** katılımcı teyitlerinin durumu. Yalnız tüm katılımcılar yayımlanan revizyonu teyit ettiğinde **Tamamlandı** olur.
 - **Onaylandı ve teyit edildi / Dikkat / Engellendi / İnceleme gerekli:** bağlı risk değerlendirmesinin durumu.
-- **Geçti / Kaldı / Bilinmiyor / Koşullu:** hazırlık kapısına giden kontrol sonucu. Eksik veya yayımlanmamış brifing ve bekleyen teyit **Kaldı** olarak READY durumunu engeller.
+- **Geçti / Kaldı / Bilinmiyor:** hazırlık kapısına giden kontrol sonucu. Eksik veya yayımlanmamış brifing ve bekleyen teyit **Kaldı** olarak READY durumunu engeller.
 
 ## Yapamazsınız / dikkat
 - Risk ve brifing tamamlanmadan ve katılımcı teyitleri kaydedilmeden READY kararı verilmez (13.03 §3).
-- Bir itiraz operasyon başlatmayı engeller; itirazın gerekçesi **Teyitler** listesinde görünür ve brifingi yayımlayan kişi tarafından değerlendirilmelidir.
+- Bir itiraz teyit durumunu **İtiraz edildi** yapar ve hazırlık kapısına Kaldı gönderir; böylece READY ve GO engellenir. Gerekçe **Teyitler** listesinde görünür. Aynı revizyon için teyit değiştirilemez; itirazı kaldırmak için brifing değiştirilir (yeni revizyon), yeniden yayımlanır ve tüm katılımcılar tarafından yeniden teyit edilir.
 - Plan veya risk değerlendirmesi brifingten sonra değişirse brifing yeniden gözden geçirilmelidir; eski teyitler yeni revizyon için geçerli değildir.
 - Başkası adına teyit kaydedilmez; her katılımcı kendi teyidini verir (13.03 §6).
 - Çevrimdışıyken bu sayfadan komut gönderilmez. Teyit, **Römorkör çevrimdışı operasyonlar** sayfasında kuyruğa alınabilir.

@@ -1,6 +1,6 @@
 ---
 key: tug-command
-title: Römorkör operasyonları
+title: Römorkör merkezi
 roles: [Tug Master, Tug Operations Coordinator, Shore Operations, Crew]
 permissions: [mode.tug, tug.read]
 related: [tug-job-board, tug-job-intake, tug-assignment, tug-readiness, today]

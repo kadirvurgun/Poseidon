@@ -24,15 +24,15 @@ Römorkör günlük defteri; bir tarih ve vardiya için **işleri, makine çalı
 2. **Saat dilimi (IANA)** alanını girin.
 3. **Makine çalışma saati sayaçları** bölümünde her **Sayaç** için **Açılış okuması**, **Kapanış okuması** ve gerekirse **Sıfırlama veya tur atma kanıtı** girin.
 4. **Kullanılan yakıt** bölümünde değer, birim ve **Yakıt kaynağı referansı** girin.
-5. **Günün römorkaj icraları** listesinden bu kayda ait icraları işaretleyin; **Bağlı arıza tanımlayıcıları** ve **Günlük özet** alanlarını doldurun.
+5. **Günün römorkaj icraları** listesinden bu kayda ait icraları işaretleyin; **Bağlı arıza tanımlayıcıları** ve **Günlük özet** (özet en az 20 karakter) alanlarını doldurun.
 6. **Kaydet** düğmesine basın. **Mutabakat** satırında tamamlanan işleri, icra saatlerini, sayaç saatlerini ve bildirilen arızaları kontrol edin.
 7. **Engeller** listesi boşsa **Kaptan incelemesine gönder** düğmesine basın.
 8. Kaptan olarak **Atama** seçip gerekçe yazın ve **Kaptan: kaydı doğrula** ya da **Kaptan: kaydı iade et** düğmesine basın.
 
 ## Durumlar ne anlama gelir
-- **Taslak / Gönderildi / İade edildi / İncelendi:** kaydın durumu.
-- **Kaptan incelemesi — Beklemede / Doğrulandı / İade edildi:** Kaptan'ın insan kaydı. Gönderilmiş kayıt doğrulanmış kayıt değildir.
-- **Mutabakat sağlandı / Dikkat / İnceleme gerekli / Eksik:** tavsiye niteliğindeki karşılaştırma sonucu. Gerekçe kodları altında listelenir.
+- **Taslak / Gönderildi / İade edildi / Doğrulandı:** kaydın durumu.
+- **Kaptan incelemesi — Beklemede / Dikkat / İncelendi:** Beklemede = inceleme bekleniyor; Dikkat = iade edildi veya mutabakat sağlanmadan gönderildi; İncelendi = Kaptan tarafından doğrulandı. Gönderilmiş kayıt doğrulanmış kayıt değildir.
+- **Mutabakat sağlandı / İnceleme gerekli / Eksik:** tavsiye niteliğindeki karşılaştırma sonucu. Gerekçe kodları altında listelenir.
 - **açık aralık:** süren bir icra var; icra saatleri henüz kesin değildir.
 - **Emniyet olayları — Bilinmiyor:** bu sayfa emniyet olaylarını saymaz; "olay yok" sonucu çıkarılmaz.
 - **Eşitlendi / Eşitleme bekliyor / Çakışma / Başarısız:** eşitleme durumu. Eşitleme bekliyor, değişikliğin henüz sunucuya ulaşmadığını gösterir.
@@ -48,6 +48,6 @@ Römorkör günlük defteri; bir tarih ve vardiya için **işleri, makine çalı
 - **"Sunucu eksik veya engelleyici kalemleri listeledi." mesajı:** **Engeller** listesindeki kodları giderin.
 - **"Kayıt değişti veya komut çakışıyor." mesajı:** **En güncelini yükle** ile güncel kaydı inceleyin; tutulan yerel değişiklik bırakılır.
 - **"Sonuç bilinmiyor." mesajı:** **Yeniden dene** aynı komutu tekrar gönderir.
-- **Esaslı çakışma:** çevrimdışı kayıtlarda çakışma çıkarsa **Önemli çakışma merkezi** sayfasını kullanın (13.03 §10).
+- **Çakışma:** bu sayfada tutulan değişiklik asla birleştirilmez; **En güncelini yükle** düğmesini kullanın. **Römorkör çevrimdışı operasyonlar** sayfasında alınıp çakışan günlük kayıtlar orada çözülür; bunlar **Önemli çakışma merkezi** sayfasında da listelenir (13.03 §10).
 
 ## İlgili sayfalar

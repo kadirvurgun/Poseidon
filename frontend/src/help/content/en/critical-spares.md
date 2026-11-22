@@ -8,7 +8,7 @@ screenshots: []
 reviewed: false
 ---
 ## What this page is for
-The critical spares and requisitions page shows the selected vessel's **declared stock, minimum and maximum, low-stock alerts and technical requisition proposals**. It answers: "Which critical spare fell below its minimum, how much do open work orders need, and has a technical requisition been proposed and decided?" Counts are human declarations and are not verified against a store.
+The critical spares and requisitions page shows the selected vessel's **declared stock, minimum and maximum, low-stock alerts and technical requisition proposals**. It answers: "Which critical spare reached its minimum, how many open work orders reference it, and has a technical requisition been proposed and decided?" Counts are human declarations and are not verified against a store.
 
 ## Who uses it
 - **Chief Engineer / Technical Superintendent:** to follow critical spare minimum thresholds and start a technical requisition (13.03 §5). The person who proposes a requisition and the person who approves it are different people.
@@ -23,13 +23,13 @@ The critical spares and requisitions page shows the selected vessel's **declared
 2. On each table row, read **Spare criticality**, **Equipment criticality**, **Stock state**, **Projected**, **Min / max** and **Open work orders**.
 3. Press **New critical spare** for a new spare or **Edit** for an existing one. Enter **Part number**, **Name**, **Unit**, **Minimum stock** and **Maximum stock**. Leave thresholds empty when not decided.
 4. To enter a count, tick **Record a new stock count**, fill in **Counted quantity** and press **Save**.
-5. On a **Low stock** row with no open requisition, press **Propose requisition**. The server computes the proposed quantity.
+5. On a **Low stock** row with no open requisition, press **Propose requisition**. The server computes the proposed quantity (maximum minus projected stock). If no maximum is set, no quantity is proposed and the approver must enter **Approved quantity**.
 6. In the **Technical requisitions** view, an authorised person who did not make the proposal checks **Approved quantity** and presses **Approve for ERP export**, or chooses a **Rejection reason** and presses **Reject**.
 7. Open **ERP export reference** on an approved requisition to see the reference.
 
 ## What the states mean
-- **Low stock:** the declared stock is below the minimum. The requisition proposal is offered on this row.
-- **Above minimum (declared):** the declared stock is above the minimum. It does not mean the count was verified.
+- **Low stock:** projected stock (last declared count minus spares recorded on work orders submitted since that count) is at or below the minimum. The requisition proposal is offered on this row.
+- **Above minimum (declared):** projected stock is above the minimum; the count is not verified.
 - **Minimum not configured:** no threshold was entered. An empty threshold is reported as review required, never as healthy.
 - **Stock unknown / Consumption unresolved:** stock could not be calculated. Unknown does not mean "enough stock".
 - **Proposed / Approved for ERP export / Rejected:** the state of the technical requisition.

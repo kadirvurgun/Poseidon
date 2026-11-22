@@ -1,6 +1,6 @@
 ---
 key: tug-crew-readiness
-title: Crew and towage competence
+title: Tug crew competence
 roles: [Tug Master, Tug Operations Coordinator, Shore Operations]
 permissions: [mode.tug, tug.read, crew.read, human.review.read, applicability.read]
 related: [tug-readiness, tug-assignment, tug-equipment-readiness]

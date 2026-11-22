@@ -27,7 +27,7 @@ Rol UAT kayıtları sayfası, gemi ve römorkör rolleriyle yapılan kullanıcı
 3. Eşik yoksa **Kabul edilen eşiği kaydet** formunda **Asgari senaryo geçme oranı**, **Azami açık majör bulgu**, **Tasarım uyumu**, **Mutabakat referansı** ve **Gerekçe** girip **Kaydet** düğmesine basın.
 4. **UAT koşuları** bölümünde **Yeni UAT koşusu** formuyla **Rol**, **Ortam**, **Build commit** ve **Katılımcı takma adı** girip **Kaydet** düğmesine basın.
 5. Koşuyu açın. **Sonuç kaydet** ile **Senaryo** ve **Sonuç** seçin; gerekiyorsa **Yardım alındı** ve **Otomatik kanıt referansı** ekleyin. Sorun için **Bulgu kaydet** ile **Önem** ve **Bulgu özeti** girin.
-6. Tüm senaryolar kaydedilince **Koşuyu teyide gönder** düğmesine basın. Kolaylaştırıcıdan farklı bir kişi **Koşuyu teyit et** formunda **Teyit beyanı** yazıp **Kaydet** düğmesine basar.
+6. Senaryoları kaydettiğinizde **Koşuyu teyide gönder** düğmesine basın (yalnız kolaylaştırıcı). Sonucu olmayan senaryolar **Koşulmadı** sayılır. Kolaylaştırıcıdan farklı bir kişi **Koşuyu teyit et** formunda **Teyit beyanı** yazıp **Kaydet** düğmesine basar.
 7. **Açık bulgular** listesinde bir bulguyu **Çözüm** ve **Çözüm notu** ile **Çöz** düğmesine basarak kapatın.
 
 ## Durumlar ne anlama gelir
@@ -51,7 +51,8 @@ Rol UAT kayıtları sayfası, gemi ve römorkör rolleriyle yapılan kullanıcı
 - **Kayıt kiracınızda bulunamadı.** Koşu bağlantısını ve seçili modu kontrol edin.
 - **Kayıt değişti veya daha önce kullanıldı. Yeniden yükleyin.** **Yeniden yükle** ile güncel durumu açın.
 - **Sonuç belirsiz. Yeniden deneme aynı komutu gönderir.** **Yeniden dene** ile aynı komutu güvenle gönderin.
-- **Kurallar gereği reddedildi.** Örneğin teyit eden kişi kolaylaştırıcıyla aynı olabilir.
+- **Kurallar gereği reddedildi.** Örneğin senaryo koşunun rolüne ait değildir veya engelleyici bulgu risk kabulüyle kapatılamaz.
+- **İzin verilmiyor.** Örneğin bu koşuyu siz kolaylaştırdınız ve teyit edemezsiniz ya da bu bulguyu siz bildirdiniz ve çözemezsiniz.
 - **Çevrimdışısınız. Bağlantı dönene kadar kayıt devre dışı.** Bağlantı dönünce **Yenile** düğmesine basın.
 
 ## İlgili sayfalar

@@ -1,6 +1,6 @@
 ---
 key: defects
-title: Defects and temporary measures
+title: Defects and safeguards
 roles: [Chief Engineer, Technical Superintendent, Master, Crew / OOW / Engineer]
 permissions: [defect.read, equipment.read, defect.write, defect.verify, defect.effectiveness, defect.close]
 related: [pms-command-center, work-order-center, operational-downtime, service-engineer-report, drydock-planning]

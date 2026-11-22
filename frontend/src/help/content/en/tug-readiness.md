@@ -1,6 +1,6 @@
 ---
 key: tug-readiness
-title: Operation readiness gate
+title: Tug readiness gate
 roles: [Tug Master, Master, Tug Operations Coordinator, Shore Operations]
 permissions: [mode.tug, tug.read, tug.write]
 related: [tug-assignment, tug-crew-readiness, tug-equipment-readiness, towage-risk-briefing, towage-execution]
@@ -16,7 +16,7 @@ The readiness gate assesses a tug assignment's operational readiness from source
 
 ## Before you start
 - Open the page from an assignment: on **Assignment and conflicts**, use the **Operation readiness gate** link under a proposal. Without a selected assignment the page shows "Select an assignment from the job's assignment list."
-- Recording a decision needs tug write access and a server-recorded **Appointment** (Tug Master or Master) for that tug.
+- Recording a decision needs tug write access and a server-recorded **Appointment** (Tug Master or Master) for that tug, and the assignment must still be Proposed.
 - There is no READY without the briefing: **Towage risk and briefing** must be issued and acknowledged by every participant (13.03 §3).
 
 ## Step by step
@@ -28,15 +28,15 @@ The readiness gate assesses a tug assignment's operational readiness from source
 6. See recorded decisions in the **Master decisions** list.
 
 ## What the states mean
-- **Ready (READY):** the source checks show no blocker. This is information, not a decision; the GO decision is still recorded by the Tug Master or Master.
-- **Conditional (CONDITIONAL):** work may proceed if the conditions in "Conditions" are met; the person deciding assesses them.
+- **Ready (READY):** every source check passes (no blocker, unknown or condition). This is information, not a decision; the GO decision is still recorded by the Tug Master or Master.
+- **Conditional (CONDITIONAL):** the conditions in "Conditions" apply; GO is not accepted on a CONDITIONAL assessment in this version.
 - **Not ready (NOT_READY):** at least one critical blocker exists.
 - **Review required (REVIEW_REQUIRED):** some sources are unknown or await review. An unknown check is never counted as "Ready".
 - **Pass / Fail / Unknown:** the result of a single category or check.
 - **GO / NO-GO:** the human decision and reason recorded by the Tug Master or Master.
 
 ## What you cannot do / caution
-- GO can only be recorded against a READY or CONDITIONAL assessment; NO-GO can always be recorded.
+- GO can only be recorded against a READY assessment; the server refuses GO on CONDITIONAL, NOT_READY or REVIEW_REQUIRED. NO-GO can always be recorded with a reason. The page may still offer GO on a CONDITIONAL assessment; the server refuses it.
 - There is no READY while the risk and briefing are incomplete or participant acknowledgements are missing; the GO option is then disabled (13.03 §3).
 - A shore user's assignment proposal never overrides the Tug Master's onboard safety decision (13.03 §7).
 - If the assessment changes before your decision, the decision is refused; review the current assessment again.

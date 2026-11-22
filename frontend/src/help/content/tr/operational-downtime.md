@@ -1,6 +1,6 @@
 ---
 key: operational-downtime
-title: Operasyon kesintisi merkezi
+title: Operasyonel duruşlar
 roles: [Master, Chief Engineer, Technical Superintendent, DPA]
 permissions: [operations.downtime.read, operations.downtime.write, operations.downtime.review]
 related: [defects, work-order-center, engine-daily-log, today]

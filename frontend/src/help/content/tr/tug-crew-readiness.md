@@ -1,6 +1,6 @@
 ---
 key: tug-crew-readiness
-title: Mürettebat ve çekme yetkinliği
+title: Römorkör mürettebat yetkinliği
 roles: [Tug Master, Tug Operations Coordinator, Shore Operations]
 permissions: [mode.tug, tug.read, crew.read, human.review.read, applicability.read]
 related: [tug-readiness, tug-assignment, tug-equipment-readiness]

@@ -1,6 +1,6 @@
 ---
 key: tug-assignment
-title: Atama ve çakışmalar
+title: Römorkör atama
 roles: [Tug Operations Coordinator, Shore Operations, Tug Master]
 permissions: [mode.tug, tug.read, tug.write, tug.plan.write]
 related: [tug-job-board, tug-readiness, tug-crew-readiness, tug-equipment-readiness, towage-plan]
