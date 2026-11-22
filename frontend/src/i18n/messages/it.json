@@ -6955,6 +6955,6 @@
     "m_081f7dc1f7c9881a": "Finale (interno; non è una firma)",
     "m_821a3f35ca116281": "La finalizzazione del SOF è un atto umano interno registrato nel pannello di finalizzazione da un Comandante, Primo Ufficiale o Direttore di Macchina designato. Firme, approvazione operativa/legale e acquisizione offline rimangono non disponibili.",
     "m_85cf3eb68c50b783": "Hai redatto questa revisione del registro; la revisione deve essere registrata da un revisore indipendente.",
-    "m_7c1e0a5b3d9f241b": "Rifiutato per separazione dei compiti: hai registrato un passaggio precedente di questo rinnovo, quindi un’altra persona deve eseguire questo passaggio."
+    "m_7c1e0a5b3d9f241b": "Rifiutato per separazione dei compiti: questo passaggio deve essere eseguito da un'altra persona. Lei ha registrato, redatto o verificato un passaggio precedente di questo rinnovo, oppure non è ancora registrata alcuna verifica da parte di un'altra persona."
   }
 }

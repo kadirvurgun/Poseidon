@@ -6955,6 +6955,6 @@
     "m_081f7dc1f7c9881a": "Final (internal; not a signature)",
     "m_821a3f35ca116281": "SOF finalisation is an internal human act recorded in the finalisation panel by an appointed Master, Chief Officer or Chief Engineer. Signatures, operational/legal approval and offline capture remain unavailable.",
     "m_85cf3eb68c50b783": "You authored this log revision; an independent reviewer must record the review.",
-    "m_7c1e0a5b3d9f241b": "Refused for separation of duties: you recorded an earlier step of this renewal, so a different person must take this step."
+    "m_7c1e0a5b3d9f241b": "Refused for separation of duties: a different person must take this step. You recorded, authored or verified an earlier step of this renewal, or no verification by another person is recorded yet."
   }
 }

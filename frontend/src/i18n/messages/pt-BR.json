@@ -6955,6 +6955,6 @@
     "m_081f7dc1f7c9881a": "Final (interno; não é uma assinatura)",
     "m_821a3f35ca116281": "A finalização do SOF é um ato humano interno registrado no painel de finalização por um Comandante, Imediato ou Chefe de Máquinas designado. Assinaturas, aprovação operacional/jurídica e captura offline permanecem indisponíveis.",
     "m_85cf3eb68c50b783": "Você redigiu esta revisão do registro; a revisão deve ser registrada por um revisor independente.",
-    "m_7c1e0a5b3d9f241b": "Recusado por segregação de funções: você registrou uma etapa anterior desta renovação, portanto outra pessoa deve executar esta etapa."
+    "m_7c1e0a5b3d9f241b": "Recusado por segregação de funções: outra pessoa deve executar esta etapa. Você registrou, redigiu ou verificou uma etapa anterior desta renovação, ou ainda não há verificação registrada por outra pessoa."
   }
 }

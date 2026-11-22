@@ -51,7 +51,7 @@ Sertifika yenileme sayfası, bir sertifikanın yenilenme hazırlığını ve iç
 - **Bu durumda rolünüz için kullanılabilir adım yok.** Sıradaki adım başka bir role aittir; yetkinizi ve atamanızı kontrol edin, gerekirse Tenant Admin ile görüşün (13.03 §10).
 - **Yenileme yüklendikten sonra değişti.** veya **Bu güncel revizyon değil.** **Yeniden yükle** düğmesine basıp güncel durumu inceleyin.
 - **Sonuç bilinmiyor. Yeniden deneme aynı isteği tekrar gönderir.** **Aynı isteği yeniden dene** düğmesini kullanın.
-- **Görev ayrılığı nedeniyle reddedildi: bu yenilemenin önceki bir adımını siz kaydettiniz, bu adımı farklı bir kişi atmalıdır.** Kayıt değişmedi; yeniden yüklemek sorunu çözmez. Adımı başka bir yetkili kişiye bırakın.
+- **Görev ayrılığı nedeniyle reddedildi: bu adımı farklı bir kişi atmalıdır.** Sunucu, düzenlenen sertifikayı kaydeden veya yeni sertifika kaydını yazan kişinin doğrulamasını; bu kişilerden birinin veya doğrulayıcının tamamlamasını reddeder. Başka bir kişinin kaydettiği doğrulama henüz yoksa tamamlama da reddedilir. Kayıt değişmedi; yeniden yüklemek sorunu çözmez. Adımı başka bir yetkili kişiye bırakın veya önce doğrulamanın kaydedilmesini sağlayın.
 - **Adım kaydedilmedi. Ayrıntıları kontrol edip yeniden deneyin.** Zorunlu alanları ve eşleşme seçimlerini kontrol edin.
 - Yeni sertifika doğrulanamıyorsa belgeyi ve kaynak bağını kontrol edip doğrulayıcıya yönlendirin (13.03 §10).
 
