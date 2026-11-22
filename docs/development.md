@@ -45,4 +45,17 @@ Playwright öncesinde manuel API/UI süreçlerini kapatın; test kendi iki sunuc
 
 Browser suite desktop ve dar mobil viewport'ta Chromium çalıştırır; ilk yolculuk gerçek API, ikinci yolculuk yapay ağ kesintisi ardından gerçek API'ye yeniden bağlantıdır. Bu suite Ship/Tug operasyon regresyonu veya Safari/native mobil kanıtı değildir. Rapor `tests/Poseidon.Browser.Tests/playwright-report/`, hata trace/screenshot'ları `test-results/` altındadır.
 
+### Kullanım kılavuzu (USER-GUIDE-01 UG-4)
+
+Resimli TR/EN kullanım kılavuzu commit edilmez; commit edilmiş sayfa kılavuzlarından (`frontend/src/help/content/{tr,en}/*.md`), kılavuz bölümlerinden (`frontend/src/help/content/{tr,en}/_manual/*.md`) ve UG-2 ekran görüntülerinden (`frontend/src/help/screenshots/`) üretilir:
+
+```powershell
+npm ci --prefix tests/Poseidon.Browser.Tests
+npm run manual --prefix tests/Poseidon.Browser.Tests       # yalnız HTML
+npm run manual:pdf --prefix tests/Poseidon.Browser.Tests   # HTML + PDF (kurulu Playwright Chromium ile)
+node --test tests/Poseidon.Browser.Tests/manual/manual.test.ts
+```
+
+Çıktı `.runtime/user-manual/poseidon-user-manual-{tr,en}.{html,pdf}` dosyalarıdır (`--out <klasör>`, `--locale tr|en` seçenekleri vardır). HTML tek dosyadır ve ağsız açılır (CSS gömülü, görüntüler data URI); aynı girdilerden bayt bayt aynı çıkar. PDF yazdırma CSS'iyle A4 basılır, sayfa numarası ve PDF ana hatları içerir (PDF bayt düzeyinde deterministik değildir: Chromium oluşturma zamanı yazar). Kılavuz `reviewed:false` olduğu sürece her sayfada TASLAK bandı vardır; insan SME/UX onayı (UG-REV-01) gelmeden onaylı denmez.
+
 MTP'de bütün testleri Integration olan API projesi unit filtresinde sıfır test üretir ve hata verir. Unit aşaması bu nedenle unit test projesini açıkça hedefler; integration aşaması iki projeyi kapsar. Sıfır-test başarısı veya skip istisnası tanımlanmaz.

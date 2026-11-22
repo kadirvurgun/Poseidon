@@ -173,6 +173,8 @@ jobs:
         run: |
           node --test tests/Poseidon.Browser.Tests/screenshots/steps.test.ts tests/Poseidon.Browser.Tests/screenshots/provenance.test.ts
           python3 -m unittest discover -s scripts -p test_help_screenshots_lab.py -v
+      - name: Offline user manual generator tests (USER-GUIDE-01 UG-4)
+        run: node --test tests/Poseidon.Browser.Tests/manual/manual.test.ts
       - name: Qualified owning fixture protocol before provider
         run: |
           node --test tests/Poseidon.Browser.Tests/lab/qualified-owning-fixture.test.ts

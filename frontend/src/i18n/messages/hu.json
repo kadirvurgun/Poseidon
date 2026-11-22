@@ -6954,6 +6954,6 @@
     "m_081f7dc1f7c9881a": "Végleges (belső; nem aláírás)",
     "m_821a3f35ca116281": "A SOF véglegesítése belső emberi aktus, amelyet kijelölt kapitány, első tiszt vagy főgépész rögzít a véglegesítési panelen. Az aláírás, az üzemeltetési/jogi jóváhagyás és az offline rögzítés nem érhető el.",
     "m_85cf3eb68c50b783": "Ön írta a napló ezen változatát; az áttekintést független áttekintőnek kell rögzítenie.",
-    "m_7c1e0a5b3d9f241b": "Elutasítva a feladatkörök szétválasztása miatt: ön rögzítette a megújítás egy korábbi lépését, ezért ezt a lépést másik személynek kell elvégeznie."
+    "m_7c1e0a5b3d9f241b": "Elutasítva a feladatkörök szétválasztása miatt: ezt a lépést másik személynek kell elvégeznie. Ön rögzítette, készítette vagy ellenőrizte a megújítás egy korábbi lépését, vagy még nincs rögzítve másik személy általi ellenőrzés."
   }
 }

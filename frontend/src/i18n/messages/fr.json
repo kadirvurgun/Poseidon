@@ -6954,6 +6954,6 @@
     "m_081f7dc1f7c9881a": "Final (interne ; pas une signature)",
     "m_821a3f35ca116281": "La finalisation du SOF est un acte humain interne enregistré dans le panneau de finalisation par un Capitaine, un Second capitaine ou un Chef mécanicien désigné. Les signatures, l’approbation opérationnelle/juridique et la saisie hors ligne restent indisponibles.",
     "m_85cf3eb68c50b783": "Vous avez rédigé cette révision du journal ; la revue doit être enregistrée par un réviseur indépendant.",
-    "m_7c1e0a5b3d9f241b": "Refusé pour séparation des tâches : vous avez enregistré une étape antérieure de ce renouvellement, une autre personne doit donc effectuer cette étape."
+    "m_7c1e0a5b3d9f241b": "Refusé pour séparation des tâches : une autre personne doit effectuer cette étape. Vous avez enregistré, rédigé ou vérifié une étape antérieure de ce renouvellement, ou aucune vérification par une autre personne n'est encore enregistrée."
   }
 }

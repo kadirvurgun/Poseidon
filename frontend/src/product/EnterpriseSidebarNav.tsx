@@ -3,21 +3,15 @@ import { type Locale as AppLocale } from "../i18n";
 import { useId, useRef, useState } from 'react';
 import { ChevronDown, Search, X, type LucideIcon } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import { enterpriseSections } from './enterprise-sections';
 export type SidebarDestination = {
     key: string;
     href: string;
     label: string;
     icon: LucideIcon;
 };
-const sections = [
-    { key: 'overview', tr: sourceText("tr", "pairs.m_5f50c36af429c54d"), en: sourceText("en", "pairs.m_5f50c36af429c54d"), keys: ['today', 'fleet'] },
-    { key: 'operations', tr: sourceText("tr", "pairs.m_d045227afb1d4aaa"), en: sourceText("en", "pairs.m_d045227afb1d4aaa"), keys: ['noon-report', 'deck-daily-log', 'engine-daily-log', 'fuel-bunker-log', 'port-activity-sof', 'operational-downtime', 'departure-signoff'] },
-    { key: 'technical', tr: sourceText("tr", "pairs.m_470cefc094dedfe3"), en: sourceText("en", "pairs.m_470cefc094dedfe3"), keys: ['equipment', 'maintenance', 'pms-command-center', 'defects', 'service-engineer-report', 'work-order-center', 'critical-spares', 'drydock-planning'] },
-    { key: 'crew', tr: sourceText("tr", "pairs.m_a6f7eeadcb7b0ca5"), en: sourceText("en", "pairs.m_a6f7eeadcb7b0ca5"), keys: ['crew', 'crew-certificates', 'crew-competence', 'safe-manning'] },
-    { key: 'tug', tr: sourceText("tr", "pairs.m_8d10fb1a220cd756"), en: sourceText("en", "pairs.m_8d10fb1a220cd756"), keys: ['tug-command', 'tug-job-board', 'tug-job-intake', 'tug-assignment', 'tug-readiness', 'tug-equipment-readiness', 'tug-crew-readiness', 'towage-plan', 'towage-risk-briefing', 'tug-operation-history', 'tug-operations-offline', 'tug-demo-journey'] },
-    { key: 'assurance', tr: sourceText("tr", "pairs.m_dda1fc9a101a6728"), en: sourceText("en", "pairs.m_dda1fc9a101a6728"), keys: ['risk-assessment', 'voice-event-draft', 'document-compare', 'role-uat', 'pilot-gate', 'pilot-program', 'risk-template-library', 'high-risk-work', 'safety-events', 'industry-assurance', 'data-trust-center', 'certificate-command-center', 'renewal-workflow', 'pre-survey-checklist', 'survey-planner', 'regulatory-review', 'sources', 'requirements', 'audit', 'audit-ready', 'import', 'data-reconciliation'] },
-    { key: 'workspace', tr: sourceText("tr", "pairs.m_c3e5a55de61effb3"), en: sourceText("en", "pairs.m_c3e5a55de61effb3"), keys: ['companies', 'user-admin', 'system-health', 'notification-escalation', 'offline-conflict-center'] },
-];
+// Section keys and order are shared with the user manual generator (enterprise-sections.ts).
+const sections = enterpriseSections.map(section => ({ key: section.key, tr: sourceText("tr", section.label), en: sourceText("en", section.label), keys: section.keys }));
 // DEV-022 / 65.03 paragraph 51: the menu filter only ever sees the authorized items the
 // server already projected; it never requests, counts or hints at hidden entries.
 // Locale-aware folding (65.03 paragraph 226): Turkish I/İ/ı/i and diacritics match

@@ -51,7 +51,7 @@ The Certificate renewal page records a certificate's renewal preparation and int
 - **No step is available for your role in this state.** The next step belongs to another role; check your permission and appointment and contact the Tenant Admin if needed (13.03 §10).
 - **The renewal changed after it was loaded.** or **This is not the current revision.** Press **Reload** and review the current state.
 - **The outcome is unknown. Retry sends the same request again.** Use **Retry same request**.
-- **Refused for separation of duties: you recorded an earlier step of this renewal, so a different person must take this step.** The record did not change; reloading does not help. Leave the step to another authorised person.
+- **Refused for separation of duties: a different person must take this step.** The server refuses a verification by the person who recorded the issued certificate or authored the new certificate record, and a completion by any of them or by the verifier. Completion is also refused while no verification by another person is recorded. The record did not change; reloading does not help. Leave the step to another authorised person, or have the verification recorded first.
 - **The step was not recorded. Check the details and try again.** Check the required fields and match selections.
 - If the replacement cannot be verified, check the document and source lineage and refer it to the verifier (13.03 §10).
 
