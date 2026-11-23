@@ -82,6 +82,8 @@ const withBlockers = (blockers: unknown) => {
 it('never shows an all-clear while the severity policy is unconfigured', async () => {
   expect(blockerDisplayState(emptyBlockers(['SeverityPolicyUnconfigured']) as never)).toEqual({ state: 'POLICY_UNCONFIGURED', unconfigured: true })
   expect(blockerDisplayState(emptyBlockers([]) as never)).toEqual({ state: 'NO_OPEN_HIGH_SEVERITY_EVENT', unconfigured: false })
+  expect(blockerDisplayState(emptyBlockers(['SafetyEventSourceLimitExceeded']) as never)).toEqual({ state: 'REVIEW_REQUIRED', unconfigured: false })
+  expect(blockerDisplayState(emptyBlockers(['SomethingNew']) as never)).toEqual({ state: 'REVIEW_REQUIRED', unconfigured: false })
   withBlockers(emptyBlockers(['SeverityPolicyUnconfigured']))
   history.replaceState(null, '', `/app/safety-events?vessel=${vessel}`)
   render(<SafetyEventsWorkspace/>)

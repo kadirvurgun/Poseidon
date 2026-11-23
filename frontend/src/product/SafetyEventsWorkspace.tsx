@@ -147,7 +147,10 @@ export function SafetyEventsWorkspace() {
 // never derived automatically), so that state is shown as review-required, never as an all-clear.
 export function blockerDisplayState(b: Page['blockers']) {
   const unconfigured = b.coverage.includes('SeverityPolicyUnconfigured');
-  return { state: unconfigured && b.state === 'NO_OPEN_HIGH_SEVERITY_EVENT' ? 'POLICY_UNCONFIGURED' : b.state, unconfigured };
+  // Matches the departure engine: any coverage gap means the all-clear is not observed.
+  const allClear = b.state === 'NO_OPEN_HIGH_SEVERITY_EVENT';
+  const state = allClear && unconfigured ? 'POLICY_UNCONFIGURED' : allClear && b.coverage.length > 0 ? 'REVIEW_REQUIRED' : b.state;
+  return { state, unconfigured };
 }
 
 function BlockerSummary({ page, t }: { page: Page; t: Copy }) {

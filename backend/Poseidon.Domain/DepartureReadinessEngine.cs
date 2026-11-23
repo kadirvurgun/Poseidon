@@ -84,7 +84,8 @@ public static class DepartureReadinessEngine
     public static DepartureCheck[] SafetyChecks(string? state, IEnumerable<DepartureSafetyItem>? items, IEnumerable<string>? coverage = null)
     {
         var list = (items ?? []).Where(i => i != null).Take(SafetyItemMax + 1).ToArray();
-        var gaps = (coverage ?? []).Where(c => !string.IsNullOrWhiteSpace(c)).Distinct(StringComparer.Ordinal).ToArray();
+        // A blank or null coverage code is malformed input, not "no gap": it fails closed as an unrecognised gap.
+        var gaps = (coverage ?? []).Select(c => string.IsNullOrWhiteSpace(c) ? "" : c).Distinct(StringComparer.Ordinal).ToArray();
         var result = new List<DepartureCheck>();
         DepartureCheck Item(DepartureSafetyItem i, string r) => new("safety", r, "SAFETY_EVENT:" + Code(i.Reason), SafetySourceKind, i.EventId);
         switch (state)

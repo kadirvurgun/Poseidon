@@ -227,6 +227,9 @@ public sealed class DepartureReadinessTests
         // A coverage code this gate does not recognise is an unknown gap, never silently ignored into PASS.
         var unknownGap = Assert.Single(DepartureReadinessEngine.SafetyChecks("NO_OPEN_HIGH_SEVERITY_EVENT", [], ["FictionalFutureCoverageGap"]));
         Assert.Equal((DepartureReadinessEngine.Unknown, "SAFETY_EVENT_COVERAGE_INCOMPLETE"), (unknownGap.Result, unknownGap.Reason));
+        // A blank coverage code is malformed input, not an empty gap list: it fails closed too.
+        var blankGap = Assert.Single(DepartureReadinessEngine.SafetyChecks("NO_OPEN_HIGH_SEVERITY_EVENT", [], [" "]));
+        Assert.Equal((DepartureReadinessEngine.Unknown, "SAFETY_EVENT_COVERAGE_INCOMPLETE"), (blankGap.Result, blankGap.Reason));
         // An UNAVAILABLE source reports its own reason; its ReadRequired coverage is not double-counted.
         var unavailable = Assert.Single(DepartureReadinessEngine.SafetyChecks("UNAVAILABLE", [], ["SafetyEventReadRequired"]));
         Assert.Equal((DepartureReadinessEngine.Unknown, "SAFETY_EVENT_SOURCE_UNAVAILABLE"), (unavailable.Result, unavailable.Reason));
