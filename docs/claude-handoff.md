@@ -1,8 +1,8 @@
 # Claude handoff
 
 STATUS: IN_PROGRESS
-Güncelleme: 2026-11-23 06:45 (zamanlanmış oturum)
-in_progress: 2026-11-23 06:45 followup-bundle-20261123 (zamanlanmış oturum)
+Güncelleme: 2026-11-23 21:45 (zamanlanmış oturum)
+in_progress: 2026-11-23 21:45 followup-bundle-20261123 entegrasyonu (zamanlanmış oturum)
 
 ## KOTA KURALI (zorunlu)
 Her büyük adımdan önce `C:\Users\avurgun\.claude-poseidon\statusline\cache\usage.json` oku (`fiveHourPct`, `resetsAt`). `fiveHourPct >= 97` ise yeni iş başlatma, durumu bu dosyaya yaz, commit et ve çık. `>= 90` ise yeni alt-ajan başlatma, yalnız mevcut işi bitir. Alt-ajanları aynı anda en fazla 3 tut.
