@@ -75,13 +75,18 @@ def verify_mapped(bundle, maps_text):
         if len(fields) < 6:
             continue
         path = fields[5]
-        name = os.path.basename(path.removesuffix(' (deleted)'))
-        if not name.startswith(MAPPED_PREFIXES) or name.startswith('libnss_'):
+        mapped = path.removesuffix(' (deleted)')
+        real = os.path.realpath(mapped)
+        # Classify by both the mapped name and the resolved target name, so an alias with an
+        # innocuous name that resolves to an NSS-family object is still checked.
+        names = [n for n in (os.path.basename(mapped), os.path.basename(real))
+                 if n.startswith(MAPPED_PREFIXES) and not n.startswith('libnss_')]
+        if not names:
             continue
         # A replaced/deleted mapping cannot be attributed to the bundle.
-        if path.endswith(' (deleted)') or os.path.dirname(os.path.realpath(path)) != root:
+        if path.endswith(' (deleted)') or os.path.dirname(real) != root:
             raise RuntimeError('nss_foreign_library')
-        seen.add(name)
+        seen.update(names)
     if not all(name in seen for name in MAPPED_REQUIRED):
         raise RuntimeError('nss_foreign_library')
 
