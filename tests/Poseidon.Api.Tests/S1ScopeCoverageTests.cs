@@ -72,9 +72,10 @@ public sealed partial class DirectoryWorkspaceTests
         // QA S9/S10 notes hardening adds 1 (N7 late voice draft -> safety event DRAFT hand-off by the confirming human).
         // USER-ADMIN-01 adds 2 (membership create, membership grant revision).
         // USER-ADMIN-02 adds 3 (invitation reissue and acceptance as critical writes, invitation preview as a session observation).
-        Assert.Equal(303, observed.Count);
-        Assert.Equal(293, observed.Count(x => x.IsCritical));
-        Assert.Equal(318, S1SecurityContract.CriticalOperationIds.Count);
+        // USER-ADMIN-03 adds 1 (tenant invitation lifetime update).
+        Assert.Equal(304, observed.Count);
+        Assert.Equal(294, observed.Count(x => x.IsCritical));
+        Assert.Equal(319, S1SecurityContract.CriticalOperationIds.Count);
         Assert.Equal(10, observed.Count(x => !x.IsCritical));
         var extra = new RouteEndpoint(_ => Task.CompletedTask, RoutePatternFactory.Parse("/api/v1/unclassified-write"), 0,
             new EndpointMetadataCollection(new HttpMethodMetadata(["POST"]), new AuthorizeAttribute("DirectoryRead")), "unclassified");
@@ -247,18 +248,126 @@ public sealed partial class DirectoryWorkspaceTests
 
 public sealed class S1AuditedWriteArchitectureTests
 {
+    // EF bulk/raw execution and every raw ADO.NET executor (QA M2 on RATE-LIMIT-01: ExecuteReader*/ExecuteScalar* too).
+    private static readonly string[] Forbidden = ["ExecuteUpdate", "ExecuteUpdateAsync", "ExecuteDelete", "ExecuteDeleteAsync", "ExecuteSql", "ExecuteSqlAsync",
+        "ExecuteSqlRaw", "ExecuteSqlRawAsync", "ExecuteSqlInterpolated", "ExecuteSqlInterpolatedAsync", "ExecuteNonQuery", "ExecuteNonQueryAsync",
+        "ExecuteReader", "ExecuteReaderAsync", "ExecuteScalar", "ExecuteScalarAsync"];
+
+    // The only controlled exception (AGENTS.md, RATE-LIMIT-01): technical rate-limit counters, no business/tenant data.
+    private static readonly Dictionary<string, string[]> Allowed = new(StringComparer.Ordinal)
+    {
+        ["Poseidon.Persistence.PostgresRateLimitStore"] = ["ExecuteReaderAsync", "ExecuteNonQueryAsync"]
+    };
+
     [Theory]
     [InlineData(typeof(Startup))]
     [InlineData(typeof(PoseidonDbContext))]
     public void Business_write_assemblies_do_not_reference_unaudited_bulk_or_raw_execution(Type marker)
     {
-        using var stream = File.OpenRead(marker.Assembly.Location);
+        var scan = RawExecutionScanner.Scan(marker.Assembly.Location, Forbidden);
+        var violations = scan.Calls.Where(c => !(Allowed.TryGetValue(c.Owner, out var names) && names.Contains(c.Member, StringComparer.Ordinal)))
+            .Select(c => $"{c.Owner}: {c.Member}").Distinct(StringComparer.Ordinal).ToArray();
+        Assert.Empty(violations);
+        // Every forbidden name referenced anywhere in the assembly metadata is explained by an allow-listed IL call.
+        Assert.Empty(scan.Referenced.Except(scan.Calls.Select(c => c.Member), StringComparer.Ordinal));
+    }
+
+    [Fact]
+    public void The_guard_detects_a_raw_executor_outside_the_allow_list()
+    {
+        var scan = RawExecutionScanner.Scan(typeof(S1RawExecutionProbe).Assembly.Location, Forbidden);
+        Assert.Contains(scan.Calls, c => c.Owner == typeof(S1RawExecutionProbe).FullName && c.Member == "ExecuteScalarAsync");
+        Assert.Contains(scan.Calls, c => c.Owner == typeof(S1RawExecutionProbe).FullName && c.Member == "ExecuteReader");
+        Assert.DoesNotContain(scan.Calls, c => Allowed.ContainsKey(c.Owner));
+    }
+}
+
+// Never executed: a fixture for the guard's negative test (a raw executor in a non-allow-listed type).
+internal static class S1RawExecutionProbe
+{
+    internal static async Task<object?> Probe(System.Data.Common.DbCommand command)
+    {
+        using var reader = command.ExecuteReader();
+        return await command.ExecuteScalarAsync();
+    }
+}
+
+// Minimal IL call-site scanner: attributes each call/callvirt/newobj/ldftn of a forbidden member to the outermost declaring
+// type of the calling method (async/lambda state machines roll up to their user type).
+internal static class RawExecutionScanner
+{
+    private static readonly Dictionary<short, System.Reflection.Emit.OpCode> Codes = typeof(System.Reflection.Emit.OpCodes)
+        .GetFields(BindingFlags.Public | BindingFlags.Static).Select(f => (System.Reflection.Emit.OpCode)f.GetValue(null)!).ToDictionary(o => o.Value);
+
+    internal sealed record Result((string Owner, string Member)[] Calls, string[] Referenced);
+
+    internal static Result Scan(string path, string[] forbidden)
+    {
+        using var stream = File.OpenRead(path);
         using var pe = new PEReader(stream);
-        var metadata = pe.GetMetadataReader();
-        string[] forbidden = ["ExecuteUpdate", "ExecuteUpdateAsync", "ExecuteDelete", "ExecuteDeleteAsync", "ExecuteSql", "ExecuteSqlAsync", "ExecuteSqlRaw",
-            "ExecuteSqlRawAsync", "ExecuteSqlInterpolated", "ExecuteSqlInterpolatedAsync", "ExecuteNonQuery", "ExecuteNonQueryAsync"];
-        var bypasses = metadata.MemberReferences.Select(handle => metadata.GetString(metadata.GetMemberReference(handle).Name))
-            .Where(name => forbidden.Contains(name, StringComparer.Ordinal)).Distinct(StringComparer.Ordinal).ToArray();
-        Assert.Empty(bypasses);
+        var md = pe.GetMetadataReader();
+        var referenced = md.MemberReferences.Select(h => md.GetString(md.GetMemberReference(h).Name))
+            .Where(n => forbidden.Contains(n, StringComparer.Ordinal)).Distinct(StringComparer.Ordinal).ToArray();
+        var calls = new List<(string, string)>();
+        foreach (var th in md.TypeDefinitions)
+        {
+            var owner = Outermost(md, th);
+            foreach (var mh in md.GetTypeDefinition(th).GetMethods())
+            {
+                var method = md.GetMethodDefinition(mh);
+                if (method.RelativeVirtualAddress == 0) continue;
+                var il = pe.GetMethodBody(method.RelativeVirtualAddress).GetILReader();
+                while (il.RemainingBytes > 0)
+                {
+                    short value = il.ReadByte();
+                    if (value == 0xFE) value = unchecked((short)(0xFE00 | il.ReadByte()));
+                    var op = Codes[value];
+                    switch (op.OperandType)
+                    {
+                        case System.Reflection.Emit.OperandType.InlineNone: break;
+                        case System.Reflection.Emit.OperandType.ShortInlineBrTarget or System.Reflection.Emit.OperandType.ShortInlineI or System.Reflection.Emit.OperandType.ShortInlineVar:
+                            il.ReadByte(); break;
+                        case System.Reflection.Emit.OperandType.InlineVar: il.ReadInt16(); break;
+                        case System.Reflection.Emit.OperandType.InlineI8 or System.Reflection.Emit.OperandType.InlineR: il.ReadInt64(); break;
+                        case System.Reflection.Emit.OperandType.InlineSwitch:
+                            var count = il.ReadInt32();
+                            for (var i = 0; i < count; i++) il.ReadInt32();
+                            break;
+                        case System.Reflection.Emit.OperandType.InlineMethod:
+                            var handle = System.Reflection.Metadata.Ecma335.MetadataTokens.EntityHandle(il.ReadInt32());
+                            var name = handle.Kind switch
+                            {
+                                HandleKind.MemberReference => md.GetString(md.GetMemberReference((MemberReferenceHandle)handle).Name),
+                                HandleKind.MethodDefinition => md.GetString(md.GetMethodDefinition((MethodDefinitionHandle)handle).Name),
+                                HandleKind.MethodSpecification => Spec(md, (MethodSpecificationHandle)handle),
+                                _ => null
+                            };
+                            if (name != null && forbidden.Contains(name, StringComparer.Ordinal)) calls.Add((owner, name));
+                            break;
+                        default: il.ReadInt32(); break;
+                    }
+                }
+            }
+        }
+        return new(calls.Distinct().ToArray(), referenced);
+    }
+
+    private static string? Spec(MetadataReader md, MethodSpecificationHandle handle)
+    {
+        var method = md.GetMethodSpecification(handle).Method;
+        return method.Kind switch
+        {
+            HandleKind.MemberReference => md.GetString(md.GetMemberReference((MemberReferenceHandle)method).Name),
+            HandleKind.MethodDefinition => md.GetString(md.GetMethodDefinition((MethodDefinitionHandle)method).Name),
+            _ => null
+        };
+    }
+
+    private static string Outermost(MetadataReader md, TypeDefinitionHandle handle)
+    {
+        var type = md.GetTypeDefinition(handle);
+        while (!type.GetDeclaringType().IsNil) type = md.GetTypeDefinition(type.GetDeclaringType());
+        var ns = md.GetString(type.Namespace);
+        return (ns.Length > 0 ? ns + "." : "") + md.GetString(type.Name);
     }
 }

@@ -1,9 +1,9 @@
 {
  "schemaVersion": "poseidon.help.screenshot-provenance.v2",
  "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
- "commit": "426292077c468c0856c7b15db77f243c6141fd0e",
+ "commit": "5e7e2e0ebac2dd5d406524a06229f6276324dc1d",
  "generatorBlobs": {
-  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "438630399fb470fd06a4946bb772746698fe3fa7",
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "a473e17d44c9ed72ab530d9b343f72129e08968c",
   "tests/Poseidon.Browser.Tests/screenshots/png-palette.ts": "3a0f780074c6da126fc96cee0869800475e2709d",
   "frontend/src/help/screenshots/steps.json": "5239b1cd352b1a5882e079f96e408f981587e66f"
  },
@@ -19,9 +19,9 @@
  "tenant": "Synthetic Fleet A",
  "fixedClock": "2026-11-22T00:00:00.000Z",
  "png": {
-  "sha256": "d26d3672298b597ebed20e68fe6e82358695b461160c0a8e9b70294c51236925",
+  "sha256": "ee9f70aceb987c25dd9197101b991910ddb024957993472b791a9dc08544a8bd",
   "width": 390,
   "height": 844
  },
- "domText": "Ana içeriğe geç\nRömorkör operasyonları\nGörünüm\nDil seçin\nDEMO-TUG\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nDEMO-TUG · Synthetic Tug A\nGemi modu: Römorkör\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\n\nRÖMORKÖR OPERASYONLARI\n\nRömorkör operasyonları\n\nTalepler, taslak planlar ve güncel kaynak bağlamı.\n\nYalnız taslak beyanlar. Taslak planlama; operasyonel atama, uygunluk, izin ve emniyet onayından ayrıdır.\n\nRömorkör bağlamı: DEMO-TUG · Synthetic Tug A · Tug\n\nRömorkör bağlamı\nİş panosu\nRömorkör bağlamı\nKaynak beyanları · operasyonel hazırlık bilinmiyor\nRol (sunucu ataması)\nBilinmiyor — rol ataması yok\nRömorkör modu menü merceği\nBilinmiyor — rol ataması yok\nRol referansları\nBilinmiyor\nMod görünürlüğü\nModlar arası yetki beyan edilmiş; her hedef sunucu yetkisi gerektirir.\nRömorkör tipi\nKullanılamıyor\nTip kaynağı / sürümü\nKullanılamıyor\nTip kaynak gözlemi / politikası\nBilinmiyor / Kullanılamıyor\nProfil BP (doğrulanmamış)\n65.00 · ton\nBP kaynağı / sürümü / niteliği\nTugProfile / 861 / Eski profil ölçümü, doğrulanmamış\nBP güncelliği / gözlemi\nBilinmiyor / Bilinmiyor\nEkipman bağlamı\n\nYalnız taslak beyanlar\n\nBilinmiyor · Equipment · r1 · Sentetik, doğrulanmamış\n30000000-0000-0000-0000-000000000002\nGemi Modu ekranları\nÖğle raporu\n\nDoğrulanmış ölçüm, sertifika, ekip ve operasyonel atama girdileri kullanılamıyor"
+ "domText": "Ana içeriğe geç\nRömorkör operasyonları\nGörünüm\nDil seçin\nDEMO-TUG\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nDEMO-TUG · Synthetic Tug A\nGemi modu: Römorkör\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\n\nRÖMORKÖR OPERASYONLARI\n\nRömorkör operasyonları\n\nTalepler, taslak planlar ve güncel kaynak bağlamı.\n\nYalnız taslak beyanlar. Taslak planlama; operasyonel atama, uygunluk, izin ve emniyet onayından ayrıdır.\n\nRömorkör bağlamı: DEMO-TUG · Synthetic Tug A · Tug\n\nRömorkör bağlamı\nİş panosu\nRömorkör bağlamı\nKaynak beyanları · operasyonel hazırlık bilinmiyor\nRol (sunucu ataması)\nBilinmiyor — rol ataması yok\nRömorkör modu menü merceği\nBilinmiyor — rol ataması yok\nRol referansları\nBilinmiyor\nMod görünürlüğü\nModlar arası yetki beyan edilmiş; her hedef sunucu yetkisi gerektirir.\nRömorkör tipi\nKullanılamıyor\nTip kaynağı / sürümü\nKullanılamıyor\nTip kaynak gözlemi / politikası\nBilinmiyor / Kullanılamıyor\nProfil BP (doğrulanmamış)\n65.00 · ton\nBP kaynağı / sürümü / niteliği\nTugProfile / 852 / Eski profil ölçümü, doğrulanmamış\nBP güncelliği / gözlemi\nBilinmiyor / Bilinmiyor\nEkipman bağlamı\n\nYalnız taslak beyanlar\n\nBilinmiyor · Equipment · r1 · Sentetik, doğrulanmamış\n30000000-0000-0000-0000-000000000002\nGemi Modu ekranları\nÖğle raporu\n\nDoğrulanmış ölçüm, sertifika, ekip ve operasyonel atama girdileri kullanılamıyor"
 }

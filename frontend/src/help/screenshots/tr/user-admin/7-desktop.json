@@ -1,9 +1,9 @@
 {
  "schemaVersion": "poseidon.help.screenshot-provenance.v2",
  "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
- "commit": "426292077c468c0856c7b15db77f243c6141fd0e",
+ "commit": "5e7e2e0ebac2dd5d406524a06229f6276324dc1d",
  "generatorBlobs": {
-  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "438630399fb470fd06a4946bb772746698fe3fa7",
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "a473e17d44c9ed72ab530d9b343f72129e08968c",
   "tests/Poseidon.Browser.Tests/screenshots/png-palette.ts": "3a0f780074c6da126fc96cee0869800475e2709d",
   "frontend/src/help/screenshots/steps.json": "5239b1cd352b1a5882e079f96e408f981587e66f"
  },
@@ -19,9 +19,9 @@
  "tenant": "Synthetic Fleet A",
  "fixedClock": "2026-11-22T00:00:00.000Z",
  "png": {
-  "sha256": "5aaba175087a9e037d21cd02fd17044751a56dc6646038a2524967d6e35ef7ad",
+  "sha256": "182ae7352f9ba5bd347251d7d6b4f3be42cb32ac735270347cda6807af98accb",
   "width": 1440,
   "height": 900
  },
- "domText": "Ana içeriğe geç\nPOSEIDON\nKullanıcılar ve yetkiler\nGörünüm\nÇalışma alanında ara\nDil seçin\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nAraç seçilmedi\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\nPOSEIDON\nDENİZCİLİK OPERASYONLARI\nÇalışma görünümü\nMenüde ara\n\nYalnızca açmaya yetkili olduğunuz ekranlarda arar.\n\nGenel bakış\nGemi operasyonları\nTeknik ve bakım\nRömorkör operasyonları\nUyum ve güvence\nÇalışma alanı\nŞirketler\nÖnemli çakışma merkezi\nKullanıcılar ve yetkiler\nSY\nSynthetic Fleet A\nYetkili çalışma alanı\n\nTENANT YÖNETİMİ\n\nKullanıcılar ve yetkiler\n\nKullanıcı, rol, gemi ve nesne kapsamı en az yetki ilkesiyle atanır. Yalnız kendinizde olan yetkileri verebilirsiniz; kendi üyeliğinizi başka bir yönetici düzenler. Değişiklik üyenin bir sonraki isteğinde, yeni üyenin erişimi bir sonraki girişte geçerli olur.\n\nÜyelere dön\nYenile\nHesap add41584-4585-c6b9-0958-a82a8c152a50\n\nAktif Yetki yok\n\nYetki kaynağı\nYetki yok\nKayıt kaynağı\nSyntheticUnverified\nDurum gerekçesi\nSyntheticFixture · 2026-11-22T05:34:18.171483+00:00\nErişim revizyonu\n0\nRol paketleri\nYok\nTenant geneli okuma\n—\nTenant geneli yönetim\n—\nAktif şirket\nYok\n\nİşlem geçmişini aç (audit.read gerekir)\n\nGemi kapsamı\n\nYok\n\nEtkin yetkiler\n\nYetki yok.\n\nYetkiyi düzenle\n\nÜyelikleri görebilir ama değiştiremezsiniz.\n\nYetki geçmişi\n\nBurada yetki revizyonu yok; yetki operatör yapılandırmasından gelir ya da yoktur.\n\nVekaletler\n\nBaşlangıç, bitiş ve kapsam audit edilir (13.03 paragraph:104). Vekalet kaynağın güncel yetkisini aşamaz, tenant geneli olamaz ve kaynak ya da vekil olduğunuz vekaleti onaylayamazsınız.\n\nVekalet yok."
+ "domText": "Ana içeriğe geç\nPOSEIDON\nKullanıcılar ve yetkiler\nGörünüm\nÇalışma alanında ara\nDil seçin\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nAraç seçilmedi\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\nPOSEIDON\nDENİZCİLİK OPERASYONLARI\nÇalışma görünümü\nMenüde ara\n\nYalnızca açmaya yetkili olduğunuz ekranlarda arar.\n\nGenel bakış\nGemi operasyonları\nTeknik ve bakım\nRömorkör operasyonları\nUyum ve güvence\nÇalışma alanı\nŞirketler\nÖnemli çakışma merkezi\nKullanıcılar ve yetkiler\nYardım merkezi\nSY\nSynthetic Fleet A\nYetkili çalışma alanı\n\nTENANT YÖNETİMİ\n\nKullanıcılar ve yetkiler\n\nKullanıcı, rol, gemi ve nesne kapsamı en az yetki ilkesiyle atanır. Yalnız kendinizde olan yetkileri verebilirsiniz; kendi üyeliğinizi başka bir yönetici düzenler. Değişiklik üyenin bir sonraki isteğinde, yeni üyenin erişimi bir sonraki girişte geçerli olur.\n\nÜyelere dön\nYenile\nHesap add41584-4585-c6b9-0958-a82a8c152a50\n\nAktif Yetki yok\n\nYetki kaynağı\nYetki yok\nKayıt kaynağı\nSyntheticUnverified\nDurum gerekçesi\nSyntheticFixture · 2026-11-22T22:11:28.866604+00:00\nErişim revizyonu\n0\nRol paketleri\nYok\nTenant geneli okuma\n—\nTenant geneli yönetim\n—\nAktif şirket\nYok\n\nİşlem geçmişini aç (audit.read gerekir)\n\nGemi kapsamı\n\nYok\n\nEtkin yetkiler\n\nYetki yok.\n\nYetkiyi düzenle\n\nÜyelikleri görebilir ama değiştiremezsiniz.\n\nYetki geçmişi\n\nBurada yetki revizyonu yok; yetki operatör yapılandırmasından gelir ya da yoktur.\n\nVekaletler\n\nBaşlangıç, bitiş ve kapsam audit edilir (13.03 paragraph:104). Vekalet kaynağın güncel yetkisini aşamaz, tenant geneli olamaz ve kaynak ya da vekil olduğunuz vekaleti onaylayamazsınız.\n\nVekalet yok."
 }

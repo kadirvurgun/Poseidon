@@ -1,9 +1,9 @@
 {
  "schemaVersion": "poseidon.help.screenshot-provenance.v2",
  "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
- "commit": "426292077c468c0856c7b15db77f243c6141fd0e",
+ "commit": "5e7e2e0ebac2dd5d406524a06229f6276324dc1d",
  "generatorBlobs": {
-  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "438630399fb470fd06a4946bb772746698fe3fa7",
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "a473e17d44c9ed72ab530d9b343f72129e08968c",
   "tests/Poseidon.Browser.Tests/screenshots/png-palette.ts": "3a0f780074c6da126fc96cee0869800475e2709d",
   "frontend/src/help/screenshots/steps.json": "5239b1cd352b1a5882e079f96e408f981587e66f"
  },
@@ -19,9 +19,9 @@
  "tenant": "Synthetic Fleet A",
  "fixedClock": "2026-11-22T00:00:00.000Z",
  "png": {
-  "sha256": "69732c39ec6b803370917838635b4ee5db7110e3e955f3ac9b4ade52068986be",
+  "sha256": "f6ef89c1acd2d97f4c9f2af36a3aeefd3fffde79ec6bd71815fa82d0d7b71bcd",
   "width": 1440,
   "height": 900
  },
- "domText": "Skip to main content\nPOSEIDON\nNoon report\nAppearance\nSearch workspace\nChoose language\nSynthetic Fleet A\nCompany context:\nUnavailable\nDEMO-SHIP · Synthetic Ship A\nVessel mode: Ship\nRole context: Not assigned\nChange vessel context\nOnline\nPOSEIDON\nMARITIME OPERATIONS\nWork view\nFilter menu\n\nOnly screens you are authorized to open are searched.\n\nOverview\nShip operations\nDeparture readiness and Master sign-off\nNoon report\nTechnical and maintenance\nTug operations\nCompliance and assurance\nWorkspace\nSY\nSynthetic Fleet A\nAuthorized workspace\n\nSHIP DAILY OPERATIONS\n\nNoon report\n\nControlled declarations with recorded source versions. Saving a draft does not establish Master or Chief Engineer approval.\n\nDraft · declarations unverified\nControlled source references\n\nSource freshness is unverified. Unresolved measurement units and lookup references remain explicitly unavailable.\n\nRecorded drafts\n\nNo authorized daily drafts returned on this page. This is not evidence of completed daily reporting.\n\nPrevious drafts\nMore drafts\n\nDraft data is not converted into emissions, fuel assurance, charts or readiness conclusions."
+ "domText": "Skip to main content\nPOSEIDON\nNoon report\nAppearance\nSearch workspace\nChoose language\nSynthetic Fleet A\nCompany context:\nUnavailable\nDEMO-SHIP · Synthetic Ship A\nVessel mode: Ship\nRole context: Not assigned\nChange vessel context\nOnline\nPOSEIDON\nMARITIME OPERATIONS\nWork view\nFilter menu\n\nOnly screens you are authorized to open are searched.\n\nOverview\nShip operations\nDeparture readiness and Master sign-off\nNoon report\nTechnical and maintenance\nTug operations\nCompliance and assurance\nWorkspace\nHelp center\nSY\nSynthetic Fleet A\nAuthorized workspace\n\nSHIP DAILY OPERATIONS\n\nNoon report\n\nControlled declarations with recorded source versions. Saving a draft does not establish Master or Chief Engineer approval.\n\nDraft · declarations unverified\nControlled source references\n\nSource freshness is unverified. Unresolved measurement units and lookup references remain explicitly unavailable.\n\nRecorded drafts\n\nNo authorized daily drafts returned on this page. This is not evidence of completed daily reporting.\n\nPrevious drafts\nMore drafts\n\nDraft data is not converted into emissions, fuel assurance, charts or readiness conclusions."
 }

@@ -153,6 +153,10 @@ towage-plan / towage-risk-briefing eşlenmedi: lab'da "gönderilmiş römorkör 
 
 Boyut: **196 PNG, 8,85 MiB** (masaüstü 98 → 6,46 MiB, mobil 98 → 2,39 MiB; palet indirgemesi örnekte ~%58 küçültür) + 196 köken JSON (506 KiB). Önceki teslim: 64 PNG, 5,45 MB.
 
+## CI'da yeniden üretim (`feature/manual-download-20261123`, 23.11.2026)
+
+Ayrıntı: `docs/phases/HELP-MANUAL-DOWNLOAD-01.md`. Görüntüler artık zorunlu olmayan `.github/workflows/help-screenshots.yml` iş akışında üretilir. Bu iş akışı Ubuntu üzerinde, sentetik lab ile ve yalnız `screenshots/**` push'unda çalışır. Rozet yerleşimi (7f196f8c) geri uygulandı. Üreteç commit'i `5e7e2e0e` (`dirty=false`), run **45075963418**: `update` 196/196 written, ardından `compare` 196/196 match (en büyük oran 0). **Referans platform değişti:** görüntüler Linux Firefox yazı tipleriyle üretildi. Windows'taki yerel `compare` yazı tipi farkı yüzünden `diff` verebilir; yeniden üretim CI iş akışıyla yapılır.
+
 ## Açık konular
 
 - Yazma/yönetim gerektiren adımlar (yukarıdaki tablolar) görüntüsüz. Görüntü için ayrı, yalnız lab'a özgü ve yalnız formu **açan** (kaydetmeyen) bir yazma hesabı gerekir; bu pakette bilinçli olarak eklenmedi.

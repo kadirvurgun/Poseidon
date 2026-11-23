@@ -30,9 +30,9 @@
     "TenantPerson",
     "Unresolved"
   ],
-  "mutationRouteTemplates": 303,
-  "criticalRouteTemplates": 293,
-  "criticalOperations": 318,
+  "mutationRouteTemplates": 304,
+  "criticalRouteTemplates": 294,
+  "criticalOperations": 319,
   "scopeMeaning": "Current exposed HTTP command surface, including aliases. Counts are authoring definitions until actual EndpointDataSource drift and real audit observations pass the phase gate. Technical codes describe accepted commands, never human justification or safety authority.",
   "operations": [
     {"operationId": "MeasurementPointSave", "method": "POST", "routePattern": "/api/v1/equipment-hierarchy/{vessel:guid}/measurement-points", "family": "Maintenance", "scope": "Vessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "MeasurementCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"]},
@@ -1994,6 +1994,7 @@
     { "operationId": "MembershipGrantUpdate", "method": "POST", "routePattern": "/api/v1/memberships/{id:guid}/grant", "family": "Membership", "scope": "Tenant", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "MembershipCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "MembershipInvitationReissue", "method": "POST", "routePattern": "/api/v1/memberships/{id:guid}/invitation", "family": "Membership", "scope": "Tenant", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "MembershipCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "MembershipInvitationAccept", "method": "POST", "routePattern": "/api/v1/invitations/accept", "family": "Membership", "scope": "Tenant", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "MembershipInvitation", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
+    { "operationId": "InvitationLifetimeUpdate", "method": "POST", "routePattern": "/api/v1/memberships/invitation-settings", "family": "Membership", "scope": "Tenant", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "MembershipCommand", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "MembershipInvitationPreview", "method": "POST", "routePattern": "/api/v1/invitations/preview", "family": "Membership", "scope": "Session", "kind": "SecurityObservation", "reasonCode": null, "denialAction": "MembershipInvitation", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "CreateControlledDocument", "method": "POST", "routePattern": "/api/v1/vessels/{vessel:guid}/controlled-documents", "family": "ControlledDocument", "scope": "Vessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "ControlledDocument", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },
     { "operationId": "RegisterControlledDocumentRevision", "method": "POST", "routePattern": "/api/v1/vessels/{vessel:guid}/controlled-documents/{document:guid}/revisions", "family": "ControlledDocument", "scope": "Vessel", "kind": "CriticalWrite", "reasonCode": "PREPARATION_COMMAND", "denialAction": "ControlledDocument", "variants": [], "traceIds": ["T-S1-002", "T-S1-003", "T-S1-004", "T-S1-007"] },

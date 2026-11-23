@@ -169,7 +169,7 @@ public static class AccountMembershipStorage
     internal static readonly string[] Sources = ["ConfigurationImport", "SyntheticUnverified", "AdminProvisioned"];
     internal static readonly string[] Actions = ["MembershipImport", "MembershipSuspend", "MembershipResume", "MembershipRevoke",
         "MembershipSecuritySuspend", "DelegationCreate", "DelegationRevoke", "MembershipCreate", "MembershipGrantUpdate",
-        "MembershipInvitationReissue", "MembershipInvitationAccept"];
+        "MembershipInvitationReissue", "MembershipInvitationAccept", "InvitationLifetimeUpdate"];
 
     internal static void Configure(ModelBuilder model)
     {
@@ -296,7 +296,7 @@ public static class AccountMembershipStorage
         {
             b.ToTable("MembershipCommandReceipts", IdentitySchema, t => t.HasCheckConstraint("CK_MembershipCommandReceipts_Action",
                 "\"Action\" IN ('MembershipImport','MembershipSuspend','MembershipResume','MembershipRevoke','MembershipSecuritySuspend','DelegationCreate','DelegationRevoke','MembershipCreate','MembershipGrantUpdate'," +
-                "'MembershipInvitationReissue','MembershipInvitationAccept')"));
+                "'MembershipInvitationReissue','MembershipInvitationAccept','InvitationLifetimeUpdate')"));
             b.HasKey(x => new { x.TenantId, x.ActorId, x.Key });
             b.Property(x => x.Key).HasMaxLength(80);
             b.Property(x => x.Action).HasMaxLength(32);

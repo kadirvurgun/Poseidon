@@ -6653,6 +6653,78 @@ namespace Poseidon.Persistence.Migrations
                     b.ToTable("ImportRowResults", "integration");
                 });
 
+            modelBuilder.Entity("Poseidon.Persistence.InvitationDelivery", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Attempts")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<Guid>("InvitationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("LastErrorCode")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<DateTimeOffset?>("LeaseUntil")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("MembershipId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset?>("NextAttemptAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ProtectedPayload")
+                        .HasMaxLength(4096)
+                        .HasColumnType("character varying(4096)");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("TenantId", "Id");
+
+                    b.HasIndex("NextAttemptAt")
+                        .HasDatabaseName("IX_InvitationDeliveries_Due")
+                        .HasFilter("\"State\" = 'QUEUED'");
+
+                    b.HasIndex("TenantId", "InvitationId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_InvitationDeliveries_Invitation");
+
+                    b.HasIndex("TenantId", "MembershipId")
+                        .HasDatabaseName("IX_InvitationDeliveries_Membership");
+
+                    b.ToTable("InvitationDeliveries", "identity", t =>
+                        {
+                            t.HasCheckConstraint("CK_InvitationDeliveries_Closed", "\"State\" IN ('QUEUED','SENT','FAILED','NOT_CONFIGURED','CANCELLED') AND \"Attempts\" >= 0 AND \"Attempts\" <= 5 AND length(\"CreatedBy\") > 0 AND (\"LastErrorCode\" IS NULL OR \"LastErrorCode\" IN ('smtp_transient','smtp_rejected','smtp_retries_exhausted','not_configured','payload_unavailable','invitation_closed','invitation_expired')) AND ((\"State\" = 'QUEUED' AND \"ProtectedPayload\" IS NOT NULL AND \"NextAttemptAt\" IS NOT NULL AND \"CompletedAt\" IS NULL) OR (\"State\" <> 'QUEUED' AND \"ProtectedPayload\" IS NULL AND \"CompletedAt\" IS NOT NULL AND \"LeaseUntil\" IS NULL))");
+                        });
+                });
+
             modelBuilder.Entity("Poseidon.Persistence.LegalEntityFieldRevision", b =>
                 {
                     b.Property<Guid>("TenantId")
@@ -7452,7 +7524,7 @@ namespace Poseidon.Persistence.Migrations
 
                     b.ToTable("MembershipCommandReceipts", "identity", t =>
                         {
-                            t.HasCheckConstraint("CK_MembershipCommandReceipts_Action", "\"Action\" IN ('MembershipImport','MembershipSuspend','MembershipResume','MembershipRevoke','MembershipSecuritySuspend','DelegationCreate','DelegationRevoke','MembershipCreate','MembershipGrantUpdate','MembershipInvitationReissue','MembershipInvitationAccept')");
+                            t.HasCheckConstraint("CK_MembershipCommandReceipts_Action", "\"Action\" IN ('MembershipImport','MembershipSuspend','MembershipResume','MembershipRevoke','MembershipSecuritySuspend','DelegationCreate','DelegationRevoke','MembershipCreate','MembershipGrantUpdate','MembershipInvitationReissue','MembershipInvitationAccept','InvitationLifetimeUpdate')");
                         });
                 });
 
@@ -9770,6 +9842,40 @@ namespace Poseidon.Persistence.Migrations
                     b.ToTable("PreSurveyReceipts", "assurance", t =>
                         {
                             t.HasCheckConstraint("CK_PreSurveyReceipt_Action", "\"Action\" IN ('PreSurveySave','PreSurveyVerify')");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.RateLimitCounter", b =>
+                {
+                    b.Property<string>("Policy")
+                        .HasMaxLength(48)
+                        .HasColumnType("character varying(48)");
+
+                    b.Property<string>("PartitionHash")
+                        .HasMaxLength(64)
+                        .HasColumnType("character(64)")
+                        .IsFixedLength();
+
+                    b.Property<long>("Count")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long>("WindowIndex")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Policy", "PartitionHash");
+
+                    b.HasIndex("ExpiresAt");
+
+                    b.ToTable("RateLimitCounters", "ratelimit", t =>
+                        {
+                            t.HasCheckConstraint("CK_RateLimitCounters_Count", "\"Count\" >= 1 AND \"WindowIndex\" >= 0");
+
+                            t.HasCheckConstraint("CK_RateLimitCounters_Hash", "\"PartitionHash\" ~ '^[0-9a-f]{64}$'");
+
+                            t.HasCheckConstraint("CK_RateLimitCounters_Policy", "\"Policy\" ~ '^[a-z0-9][a-z0-9.-]{0,47}$'");
                         });
                 });
 
@@ -13213,6 +13319,36 @@ namespace Poseidon.Persistence.Migrations
                             t.HasCheckConstraint("CK_AccessRecoveries_Cause", "\"Cause\" IN ('SecuritySuspension')");
 
                             t.HasCheckConstraint("CK_AccessRecoveries_Resolution", "(\"ResolvedAt\" IS NULL AND \"Resolution\" IS NULL) OR (\"ResolvedAt\" IS NOT NULL AND \"Resolution\" IS NOT NULL AND \"Resolution\" IN ('SecuritySuspensionResumed'))");
+                        });
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.TenantInvitationSettings", b =>
+                {
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("LifetimeHours")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("TenantId");
+
+                    b.ToTable("TenantInvitationSettings", "identity", t =>
+                        {
+                            t.HasCheckConstraint("CK_TenantInvitationSettings_Lifetime", "\"LifetimeHours\" >= 1 AND \"LifetimeHours\" <= 168 AND length(\"UpdatedBy\") > 0");
                         });
                 });
 
@@ -18284,6 +18420,16 @@ namespace Poseidon.Persistence.Migrations
                         .HasConstraintName("FK_ImportRowResults_ImportPreviews_Scope");
                 });
 
+            modelBuilder.Entity("Poseidon.Persistence.InvitationDelivery", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.MembershipInvitation", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId", "InvitationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_InvitationDeliveries_Invitation");
+                });
+
             modelBuilder.Entity("Poseidon.Persistence.LegalEntityFieldRevision", b =>
                 {
                     b.HasOne("Poseidon.Persistence.Company", null)
@@ -19523,6 +19669,16 @@ namespace Poseidon.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("FK_AccessRecoveries_Membership");
+                });
+
+            modelBuilder.Entity("Poseidon.Persistence.TenantInvitationSettings", b =>
+                {
+                    b.HasOne("Poseidon.Persistence.Tenant", null)
+                        .WithMany()
+                        .HasForeignKey("TenantId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_TenantInvitationSettings_Tenant");
                 });
 
             modelBuilder.Entity("Poseidon.Persistence.TowEquipmentItem", b =>

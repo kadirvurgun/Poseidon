@@ -48,6 +48,7 @@ import { SurveyWorkspace } from './product/SurveyWorkspace';
 import { ShipDemoJourney } from './product/ShipDemoJourney';
 import { DataReconciliationWorkspace } from './product/DataReconciliationWorkspace';
 import { AppearanceControls } from './theme/AppearanceControls';
+import { HelpCenterWorkspace } from './help/HelpCenterWorkspace';
 type Connection = 'loading' | 'available' | 'error';
 const content = localizedCopy("App_tsx_content");
 export function App() {
@@ -64,6 +65,9 @@ export function App() {
         return <DailyReportWorkspace />;
     if (/^\/app\/audit-ready(?:\/|$)/.test(window.location.pathname))
         return <AuditReadyWorkspace />;
+    // HELP-CENTER-01: page guide index; lists only guides of the caller's own granted pages.
+    if (/^\/app\/help\/?$/.test(window.location.pathname))
+        return <HelpCenterWorkspace />;
     if (window.location.pathname === '/app/system-health')
         return <SystemHealthWorkspace />;
     if (window.location.pathname === '/app/notification-escalation')

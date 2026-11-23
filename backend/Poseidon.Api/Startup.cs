@@ -22,7 +22,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddSingleton<TimeProvider>(TimeProvider.System);
         // S11 WP-B DEV-072: operator retention configuration; unset = no pilot telemetry is collected.
         services.AddSingleton(configuration.GetSection("PilotTelemetry").Get<PilotTelemetrySettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
-        services.AddSingleton<PilotTelemetryRateLimiter>();
+        // RATE-LIMIT-01: shared (PostgreSQL) or in-process technical rate limiting for invitation and pilot telemetry.
+        services.AddSharedRateLimiting(configuration, hostEnvironment);
         // Pilot program kit: absent operator retention configuration leaves pilot feedback capture unavailable.
         services.AddSingleton(configuration.GetSection("PilotProgram").Get<PilotProgramSettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<IProfileFreshnessPolicySource, UnconfiguredProfileFreshnessPolicy>();
@@ -60,6 +61,13 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddSingleton<NotificationServiceContexts>();
         services.AddSingleton<NotificationScheduler>();
         services.AddHostedService(sp => sp.GetRequiredService<NotificationScheduler>());
+        // USER-ADMIN-03: invitation e-mail outbox. Absent/invalid operator configuration = NOT_CONFIGURED (copy link only).
+        services.AddSingleton(configuration.GetSection("InvitationDelivery").Get<InvitationDeliverySettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
+        Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddSingleton<IInvitationMailer>(services,
+            sp => new SmtpInvitationMailer(sp.GetRequiredService<InvitationDeliverySettings>(), sp.GetRequiredService<ILogger<SmtpInvitationMailer>>()));
+        services.AddSingleton<InvitationPayloadProtection>();
+        services.AddSingleton<InvitationDeliveryDispatcher>();
+        services.AddHostedService(sp => sp.GetRequiredService<InvitationDeliveryDispatcher>());
         services.AddSingleton(configuration.GetSection("OfflineApplication").Get<OfflineApplicationPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton(configuration.GetSection("CrewPositionPolicy").Get<CrewPositionPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton(configuration.GetSection("CrewIdentityPolicy").Get<CrewIdentityPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());

@@ -50,6 +50,10 @@ test('product navigation is keyboard accessible and direct technical route is pr
         // Start the separate keyboard boundary check from its original first target.
         await brand.focus();
         await page.keyboard.press('Shift+Tab');
+        // HELP-CENTER-01: this smoke runs without a signed-in session, so the Help center link
+        // (signed-in readers only; covered by EnterpriseChrome/Workspace component tests) must be
+        // absent and the drawer still ends with the work-view summary.
+        await expect(drawer.getByRole('link', { name: 'Yardım merkezi', exact: true })).toHaveCount(0);
         await expect(workView).toBeFocused();
         await page.keyboard.press('Tab');
         await expect(brand).toBeFocused();

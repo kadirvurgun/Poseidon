@@ -1,0 +1,211 @@
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
+import { ArrowLeft, ArrowUpRight, Download, Search } from 'lucide-react'
+import { useAppLanguage, type Locale as AppLocale } from '../i18n'
+import { localizedCopy, localizedText } from '../i18n/messages'
+import { Button } from '../components/ui/button'
+import { EnterpriseChrome } from '../product/EnterpriseChrome'
+import { EnterprisePageHeader } from '../product/EnterprisePatterns'
+import { foldMenuText } from '../product/EnterpriseSidebarNav'
+import { enterpriseSections } from '../product/enterprise-sections'
+import { useEnterpriseNavigation, type EnterpriseDestination } from '../product/enterprise-navigation'
+import type { Session } from '../product/directory-contract'
+import * as api from '../product/api'
+import { HelpGuideContent, type HelpDestination } from './HelpPanel'
+import type { HelpLinkPolicy } from './HelpMarkdown'
+import { helpLocaleFor, loadHelpDocument } from './help-content'
+import { isDraftTranslationLocale, type HelpDocument, type HelpLocale } from './help-model'
+import { formatManualSize, userManualDownloads, userManualOtherLocale, userManualReviewed } from './user-manual'
+import '../product/enterprise.css'
+import './help-panel.css'
+
+// HELP-CENTER-01 (USER-GUIDE-01 UG-4 "/app/help"): searchable, grouped list of the page guides.
+// D3 / 65.03 p50: only guides of pages in the caller's own server-granted navigation are listed;
+// a page the user cannot open contributes nothing (no title, no count, no placeholder). While the
+// navigation is unknown (loading, failed, signed out, offline) no guide is listed at all.
+// D2: reading guides is a bundled static asset; it starts no command or AI call.
+
+const copy = localizedCopy('HelpCenter_tsx_copy')
+const panelCopy = localizedCopy('HelpPanel_tsx_copy')
+export const helpCenterPath = '/app/help'
+
+export type HelpCenterEntry = { key: string; href: string; document: HelpDocument; locale: HelpLocale; fallback: boolean; text: string }
+export type HelpCenterGroup = { key: string; label: string; entries: HelpCenterEntry[] }
+
+/** Groups entries by the sidebar sections (same order as the menu and the user manual). Pure. */
+export function groupHelpEntries(entries: readonly HelpCenterEntry[], query: string, language: AppLocale): HelpCenterGroup[] {
+  const needle = foldMenuText(query, language)
+  const visible = needle ? entries.filter(entry => entry.text.includes(needle)) : entries
+  return enterpriseSections.map(section => ({
+    key: section.key,
+    label: localizedText(language, section.label),
+    entries: section.keys.flatMap(key => visible.find(entry => entry.key === key) ?? []),
+  })).filter(group => group.entries.length > 0)
+}
+
+function searchText(document: HelpDocument, language: AppLocale): string {
+  return foldMenuText([document.meta.title, ...document.sections.map(section => section.body)].join('\n'), language)
+}
+
+function selectedFromUrl(): string | null {
+  const value = new URLSearchParams(window.location.search).get('page')
+  return value && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value) ? value : null
+}
+
+type Navigation = { destinations: readonly EnterpriseDestination[]; loading: boolean; failed: boolean }
+/** What the session read said: still pending, usable, signed out, signed in without read access, or not checkable. */
+export type HelpCenterAccess = 'pending' | 'allowed' | 'signedOut' | 'denied' | 'unavailable'
+type Props = { language: AppLocale; access: HelpCenterAccess; online: boolean; navigation: Navigation; onNavigate: (href: string) => void }
+
+export function HelpCenter({ language, access, online, navigation, onNavigate }: Props) {
+  const t = copy[language], p = panelCopy[language]
+  const id = useId()
+  const [query, setQuery] = useState('')
+  const [selected, setSelected] = useState<string | null>(selectedFromUrl)
+  const [loaded, setLoaded] = useState<{ owner: string; entries?: HelpCenterEntry[]; error?: boolean } | null>(null)
+  const granted = navigation.destinations
+  const owner = `${language}\0${granted.map(item => `${item.key}=${item.href}`).join('\0')}`
+  useEffect(() => {
+    const pop = () => setSelected(selectedFromUrl())
+    window.addEventListener('popstate', pop)
+    return () => window.removeEventListener('popstate', pop)
+  }, [])
+  useEffect(() => {
+    if (!granted.length) return
+    let active = true
+    Promise.all(granted.map(item => loadHelpDocument(language, item.key).then(result => result.document
+      ? [{ key: item.key, href: item.href, document: result.document, locale: result.locale, fallback: result.fallback, text: searchText(result.document, language) }]
+      : []))).then(
+      rows => { if (active) setLoaded({ owner, entries: rows.flat() }) },
+      () => { if (active) setLoaded({ owner, error: true }) })
+    return () => { active = false }
+  }, [language, owner, granted])
+  const current = loaded?.owner === owner ? loaded : null
+  const entries = useMemo(() => current?.entries ?? [], [current])
+  const groups = useMemo(() => groupHelpEntries(entries, query, language), [entries, query, language])
+  const destinations = useMemo(() => new Map<string, HelpDestination>(entries.map(entry => [entry.key, { key: entry.key, href: entry.href, label: entry.document.meta.title }])), [entries])
+  const draftLocale = isDraftTranslationLocale(helpLocaleFor(language).locale)
+
+  // a11y: the clicked link unmounts, so focus moves to the opened guide's heading or back to the list heading.
+  const pendingFocus = useRef<string | null>(null)
+  const open = (key: string | null) => {
+    history.pushState(null, '', key ? `${helpCenterPath}?page=${key}` : helpCenterPath)
+    pendingFocus.current = key ? `${id}-guide` : `${id}-list`
+    setSelected(key)
+  }
+  useEffect(() => {
+    const target = pendingFocus.current
+    if (!target) return
+    const element = document.getElementById(target)
+    if (!element) return
+    pendingFocus.current = null
+    element.tabIndex = -1
+    element.focus()
+    element.scrollIntoView?.({ block: 'start' })
+  })
+  const policy: HelpLinkPolicy = {
+    allowedRoutes: new Set(entries.map(entry => entry.href.split('?')[0])),
+    onNavigate,
+    onAnchor: target => {
+      const element = document.querySelector<HTMLElement>(`.help-center-guide [id="${target}"]`) // target matches help-[a-z0-9-]+
+      if (element) { element.tabIndex = -1; element.focus(); element.scrollIntoView?.({ block: 'start' }) }
+    },
+  }
+
+  const status = !online ? <p role="status">{t.offline}</p>
+    : access === 'unavailable' ? <p role="alert">{t.sessionUnavailable}</p>
+    : access === 'signedOut' ? <p role="alert">{t.signedOut}</p>
+    : access === 'denied' ? <p role="alert">{t.noAccess}</p>
+    : access === 'pending' || navigation.loading ? <p role="status">{t.loading}</p>
+    : navigation.failed ? <p role="alert">{t.navigationUnavailable}</p>
+    : !granted.length ? <p role="status">{t.noPages}</p>
+    : current?.error ? <p role="alert">{t.failed}</p>
+    : !current ? <p role="status">{t.loading}</p>
+    : !entries.length ? <p role="status">{t.noPages}</p>
+    : null
+  const shown = groups.reduce((sum, group) => sum + group.entries.length, 0)
+  const entry = selected ? entries.find(item => item.key === selected) : undefined
+
+  return <div className="help-center">
+    {draftLocale && <p className="help-guide-draft" role="note" data-testid="help-center-translation-unreviewed">{t.draftLocale}</p>}
+    {status ?? (selected ? <section className="help-center-guide" aria-labelledby={`${id}-guide`}>
+      <div className="help-center-guide-actions">
+        <Button variant="ghost" onClick={() => open(null)}><ArrowLeft aria-hidden="true"/>{t.backToList}</Button>
+        {entry && <Button variant="outline" asChild><a href={entry.href} onClick={event => { event.preventDefault(); onNavigate(entry.href) }}>{t.openPage}<ArrowUpRight aria-hidden="true"/></a></Button>}
+      </div>
+      {entry ? <>
+        <h2 id={`${id}-guide`}>{entry.document.meta.title}</h2>
+        <HelpGuideContent load={{ state: 'ready', document: entry.document, locale: entry.locale, fallback: entry.fallback }} t={p} policy={policy} granted={destinations} onNavigate={onNavigate}/>
+      </> : <p id={`${id}-guide`} role="alert">{t.notAvailable}</p>}
+    </section> : <section className="help-center-list" aria-labelledby={`${id}-list`}>
+      <h2 id={`${id}-list`}>{t.listTitle}</h2>
+      <div className="help-center-search" role="search">
+        <label htmlFor={`${id}-search`}>{t.searchLabel}</label>
+        <div className="help-center-search-field"><Search aria-hidden="true"/>
+          <input id={`${id}-search`} type="search" autoComplete="off" spellCheck={false} maxLength={80} value={query} aria-controls={`${id}-results`}
+            onChange={event => setQuery(event.target.value)} onKeyDown={event => { if (event.key === 'Escape' && query) { event.preventDefault(); setQuery('') } }}/>
+        </div>
+      </div>
+      {/* Only the count is announced, not the whole list on every keystroke. */}
+      <p className="help-center-count" role="status">{shown ? t.resultCount.replace('{{count}}', String(shown)) : t.noResults}</p>
+      <div id={`${id}-results`}>
+        {groups.map(group => <section key={group.key} className="help-center-group" aria-labelledby={`${id}-g-${group.key}`}>
+          <h3 id={`${id}-g-${group.key}`}>{group.label}</h3>
+          <ul>{group.entries.map(item => <li key={item.key}>
+            <a href={`${helpCenterPath}?page=${item.key}`} onClick={event => { event.preventDefault(); open(item.key) }}>{item.document.meta.title}</a>
+            {item.document.meta.reviewed === false && <span className="help-center-badge">{t.draftBadge}</span>}
+          </li>)}</ul>
+        </section>)}
+      </div>
+    </section>)}
+    {/* HELP-MANUAL-DOWNLOAD-01: same audience as the guide list (a signed-in reader); the PDFs are not offline-cached. */}
+    {access === 'allowed' && <section className="help-center-manual" aria-labelledby={`${id}-manual`}>
+      <h2 id={`${id}-manual`}>{t.manualTitle}</h2>
+      <p>{t.manualBody}</p>
+      {!userManualReviewed && <p className="help-guide-draft" role="note" data-testid="help-center-manual-draft">{t.manualDraft}</p>}
+      {userManualOtherLocale(language) && <p role="note">{t.manualOtherLocales}</p>}
+      {online ? <ul className="help-center-manual-downloads">{userManualDownloads(language).map(item => <li key={item.locale}>
+        <a href={item.url} download={item.fileName} type="application/pdf" hrefLang={item.locale} data-testid={`help-center-manual-${item.locale}`}>
+          <Download aria-hidden="true"/>{(item.locale === 'tr' ? t.manualTr : t.manualEn).replace('{{size}}', formatManualSize(item.bytes, language))}
+        </a>
+        {!userManualReviewed && <span className="help-center-badge">{t.draftBadge}</span>}
+      </li>)}</ul> : <p>{t.manualOffline}</p>}
+    </section>}
+  </div>
+}
+
+function useOnline() {
+  const [online, setOnline] = useState(() => navigator.onLine)
+  useEffect(() => {
+    const update = () => setOnline(navigator.onLine)
+    window.addEventListener('online', update)
+    window.addEventListener('offline', update)
+    return () => { window.removeEventListener('online', update); window.removeEventListener('offline', update) }
+  }, [])
+  return online
+}
+
+export function HelpCenterWorkspace() {
+  const [language, setLanguage] = useAppLanguage()
+  const [identity, setIdentity] = useState<{ user?: Session; error?: boolean } | null>(null)
+  const online = useOnline()
+  useEffect(() => {
+    if (!online) return
+    const controller = new AbortController()
+    let active = true
+    const timer = setTimeout(() => controller.abort(), 10000)
+    api.session(controller.signal).then(user => { if (active) setIdentity({ user }) }, () => { if (active) setIdentity({ error: true }) }).finally(() => clearTimeout(timer))
+    return () => { active = false; controller.abort(); clearTimeout(timer) }
+  }, [online])
+  const user = identity?.user ?? null
+  const navigation = useEnterpriseNavigation(user)
+  const title = copy[language].title
+  useEffect(() => { document.title = `POSEIDON · ${title}` }, [title])
+  const access: HelpCenterAccess = identity?.error ? 'unavailable' : !user ? 'pending' : !user.authenticated ? 'signedOut' : user.canRead ? 'allowed' : 'denied'
+  const move = (href: string, committed?: () => void) => { committed?.(); window.location.assign(href) }
+  return <div className="product-shell enterprise-shell"><EnterpriseChrome session={user} language={language} onLanguageChange={setLanguage} onNavigate={move} title={title} mainId="help-center-main"/>
+    <main id="help-center-main" tabIndex={-1}>
+      <EnterprisePageHeader title={title} eyebrow={copy[language].eyebrow} description={copy[language].description}/>
+      <HelpCenter language={language} access={access} online={online} navigation={navigation} onNavigate={href => move(href)}/>
+    </main>
+  </div>
+}

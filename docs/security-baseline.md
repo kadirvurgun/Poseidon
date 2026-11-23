@@ -89,5 +89,18 @@ the token secret is stored; the token is returned once to the creating administr
 Uniqueness covers accepted bindings only (filtered unique index); one identity holds at most one accepted membership in
 any tenant (strict option). Acceptance runs SERIALIZABLE inside the token's tenant only (tenant-filtered context, no
 `IgnoreQueryFilters`); every refusal is one neutral `409 invitation_unavailable`, attempts are rate-limited per identity
-(process-local) and each step is a SecurityEvent with closed codes. Not production IAM rollout, e-mail delivery, IdP
+(shared PostgreSQL counters with keyed-hash partitions when `RateLimiting:Store=Postgres`, otherwise process-local; see [RATE-LIMIT-01](phases/RATE-LIMIT-01.md)) and each step is a SecurityEvent with closed codes. Not production IAM rollout, e-mail delivery, IdP
 governance or GDPR/KVKK acceptance. [Decisions](tasks/USER-ADMIN-02.md).
+
+## USER-ADMIN-03 — invitation e-mail outbox and tenant invitation lifetime (authored; PG tests deferred to CI)
+
+An optional invitation e-mail is an outbox row written in the invitation's audited transaction. Recipient and token are
+held only as Data Protection ciphertext bound to tenant + row and erased at the terminal state; the address is never
+returned, audited or logged and the idempotency fingerprint records only that an address was given. The link origin is
+operator configuration (https), never the request Host header. The dispatcher writes only as the explicit system actor
+`system:invitation-delivery` through tenant-scoped contexts (one read-only due scan of tenant ids); logs carry closed
+outcome codes and exception type names only. SMTP uses STARTTLS (plaintext only to loopback) and a secret reference for
+the password. Without a transport the state is `NOT_CONFIGURED`, never delivered; `SENT` means mail-server acceptance
+only. The 54.01 `account.invite_hours` tenant value (1-168 h) is a permission-gated, version-checked, audited command.
+Not production mail operations, bounce handling, Data Protection key management or GDPR/KVKK acceptance.
+[Decisions](tasks/USER-ADMIN-03.md).

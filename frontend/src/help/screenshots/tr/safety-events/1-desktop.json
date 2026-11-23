@@ -1,9 +1,9 @@
 {
  "schemaVersion": "poseidon.help.screenshot-provenance.v2",
  "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
- "commit": "426292077c468c0856c7b15db77f243c6141fd0e",
+ "commit": "5e7e2e0ebac2dd5d406524a06229f6276324dc1d",
  "generatorBlobs": {
-  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "438630399fb470fd06a4946bb772746698fe3fa7",
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "a473e17d44c9ed72ab530d9b343f72129e08968c",
   "tests/Poseidon.Browser.Tests/screenshots/png-palette.ts": "3a0f780074c6da126fc96cee0869800475e2709d",
   "frontend/src/help/screenshots/steps.json": "5239b1cd352b1a5882e079f96e408f981587e66f"
  },
@@ -19,9 +19,9 @@
  "tenant": "Synthetic Fleet A",
  "fixedClock": "2026-11-22T00:00:00.000Z",
  "png": {
-  "sha256": "317993f589742f223afdc8eaa744fa535a7995e131633d7e8c2be256f6e1ecdd",
+  "sha256": "74d5b3d84a4fac808bd4b2e367aa418d7e51cd3b263a4c08679cb62de8da9cad",
   "width": 1440,
   "height": 900
  },
- "domText": "Ana içeriğe geç\nPOSEIDON\nOlaylar ve ramak kala\nGörünüm\nÇalışma alanında ara\nDil seçin\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nDEMO-SHIP · Synthetic Ship A\nGemi modu: Gemi\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\nPOSEIDON\nDENİZCİLİK OPERASYONLARI\nÇalışma görünümü\nMenüde ara\n\nYalnızca açmaya yetkili olduğunuz ekranlarda arar.\n\nGenel bakış\nGemi operasyonları\nTeknik ve bakım\nRömorkör operasyonları\nUyum ve güvence\nİşlem geçmişi\nOlaylar ve ramak kala\nSertifika merkezi\nSertifika yenileme\nSörvey öncesi kontrol listesi\nSörvey planlayıcı\nKaynaklar\nGereksinimler\nÇalışma alanı\nSY\nSynthetic Fleet A\nYetkili çalışma alanı\nOlaylar ve ramak kala\n\nNe olduğunu hızlıca bildirin. Ön değerlendirme, inceleme onayı, doğrulama, etkinlik ve kapanış ayrı insan kayıtlarıdır; burada şiddet, kök neden veya kapanış otomatik belirlenmez. Kapalı, etkili demek değildir.\n\nAçık emniyet olayları Açık yüksek şiddetli olay yok\n\nKaynak kapsamı: SeverityPolicyUnconfigured\n\nOlaylar\nYalnızca benim bildirimlerim\n\nGösterilecek olay yok."
+ "domText": "Ana içeriğe geç\nPOSEIDON\nOlaylar ve ramak kala\nGörünüm\nÇalışma alanında ara\nDil seçin\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nDEMO-SHIP · Synthetic Ship A\nGemi modu: Gemi\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\nPOSEIDON\nDENİZCİLİK OPERASYONLARI\nÇalışma görünümü\nMenüde ara\n\nYalnızca açmaya yetkili olduğunuz ekranlarda arar.\n\nGenel bakış\nGemi operasyonları\nTeknik ve bakım\nRömorkör operasyonları\nUyum ve güvence\nİşlem geçmişi\nOlaylar ve ramak kala\nSertifika merkezi\nSertifika yenileme\nSörvey öncesi kontrol listesi\nSörvey planlayıcı\nKaynaklar\nGereksinimler\nÇalışma alanı\nYardım merkezi\nSY\nSynthetic Fleet A\nYetkili çalışma alanı\nOlaylar ve ramak kala\n\nNe olduğunu hızlıca bildirin. Ön değerlendirme, inceleme onayı, doğrulama, etkinlik ve kapanış ayrı insan kayıtlarıdır; burada şiddet, kök neden veya kapanış otomatik belirlenmez. Kapalı, etkili demek değildir.\n\nAçık emniyet olayları Açık yüksek şiddetli olay yok\n\nKaynak kapsamı: SeverityPolicyUnconfigured\n\nOlaylar\nYalnızca benim bildirimlerim\n\nGösterilecek olay yok."
 }

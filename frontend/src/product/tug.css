@@ -32,3 +32,4 @@
 .field-ops-ledger dt { font-weight: 600; }
 .field-ops-timeline { display: grid; gap: 0.25rem; padding-inline-start: 1.25rem; }
 .field-ops-scope-item { border: 1px solid var(--border, currentColor); border-radius: 0.5rem; padding: 0.5rem; margin-block: 0.5rem; }
+.enterprise-shell .safety-toolbar { display:flex; flex-wrap:wrap; align-items:center; gap:8px 16px; margin-block:8px; }

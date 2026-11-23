@@ -8,3 +8,4 @@ contracts/golden/applicability.sample-rules.json -text -whitespace
 *.xlsx binary
 *.pptx binary
 *.zip binary
+*.pdf binary

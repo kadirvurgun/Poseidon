@@ -280,7 +280,11 @@ public sealed partial class DirectoryWorkspaceTests
         for (var i = 0; i < InvitationAttemptLimiter.AttemptsPerWindow; i++)
             await AssertNeutral(await Post(prober, "invitations/preview", new { token = issued.InvitationToken }));
         using (var limited = await Post(prober, "invitations/preview", new { token = issued.InvitationToken }))
-        { Assert.Equal((HttpStatusCode)429, limited.StatusCode); Assert.Equal("request_limit", await MembershipCode(limited)); }
+        {
+            Assert.Equal((HttpStatusCode)429, limited.StatusCode); Assert.Equal("request_limit", await MembershipCode(limited));
+            // RATE-LIMIT-01: delta-seconds until the 15-minute window ends.
+            Assert.InRange(limited.Headers.RetryAfter?.Delta?.TotalSeconds ?? 0, 1, 900);
+        }
         // Another identity is unaffected; the holder can still accept.
         using (var accept = await Post(guarded, "invitations/accept", new { token = issued.InvitationToken }))
             Assert.Equal(HttpStatusCode.OK, accept.StatusCode);

@@ -17,10 +17,9 @@ public sealed record InvitationFacts(InvitationStatus Status, DateTimeOffset Exp
 
 public static class MembershipInvitationPolicy
 {
-    // 54.01 account.invite_hours (paragraph:10025: Tenant, integer, default 24, range 1-168) consumed by 52.02 paragraph:277
-    // (expired or used token refused). The registered tenant override is not wired yet (USER-ADMIN-02 open item), so the
-    // source default applies to every tenant; it is the source's default, not an approved tenant value.
-    public static readonly TimeSpan Lifetime = TimeSpan.FromHours(24);
+    // 54.01 account.invite_hours (paragraph:10025: Tenant, integer, default 24, range 1-168) consumed by 52.02 paragraph:277.
+    // USER-ADMIN-03 wires the tenant override (InvitationLifetimePolicy); this is the source default for a tenant without one.
+    public static readonly TimeSpan Lifetime = TimeSpan.FromHours(InvitationLifetimePolicy.DefaultHours);
     public const string NeutralRefusal = "invitation_unavailable";
     public const string Prefix = "pi1";
     public const int SecretBytes = 32;

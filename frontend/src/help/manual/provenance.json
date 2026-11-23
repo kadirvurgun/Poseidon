@@ -1,0 +1,21 @@
+{
+ "schemaVersion": "poseidon.help.user-manual-provenance.v1",
+ "generator": "tests/Poseidon.Browser.Tests/manual/build-manual.ts",
+ "generatorCommit": "5e7e2e0ebac2dd5d406524a06229f6276324dc1d",
+ "workflowRun": 45075963418,
+ "generatedAt": "2026-11-22T22:23:00Z",
+ "reviewed": false,
+ "screenshots": "frontend/src/help/screenshots (196 PNG captured by the same run, provenance commit 5e7e2e0e)",
+ "files": {
+  "tr": {
+   "file": "poseidon-user-manual-tr.pdf",
+   "sha256": "395b29034defacf233f35c5e05d9b290bcc1b6a0a8e672e7bd2bf78bc06423ec",
+   "bytes": 9410888
+  },
+  "en": {
+   "file": "poseidon-user-manual-en.pdf",
+   "sha256": "28c1e7f2e12b589bf4738572a16908380c0c08d878dd248086876afcfc5ec68c",
+   "bytes": 9458970
+  }
+ }
+}
