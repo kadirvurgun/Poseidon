@@ -2285,6 +2285,8 @@
       "b_BLOCKERS_PRESENT": "Otvorené udalosti s vysokou závažnosťou",
       "b_REVIEW_REQUIRED": "Vyžaduje sa posúdenie",
       "b_NO_OPEN_HIGH_SEVERITY_EVENT": "Žiadna otvorená udalosť s vysokou závažnosťou",
+      "b_POLICY_UNCONFIGURED": "Zásady závažnosti nie sú nakonfigurované – vyžaduje sa posúdenie",
+      "policyUnconfigured": "Nie sú nakonfigurované žiadne zásady závažnosti, preto nemožno vylúčiť udalosti vysokej závažnosti. Otvorené udalosti posúďte ručne; nejde o stav pripravenosti ani o stav bez nálezov.",
       "r_HIGH_SEVERITY_OPEN": "Vysoká závažnosť, otvorené",
       "r_UNTRIAGED_EVENT": "Zatiaľ netriedené",
       "r_SEVERITY_UNASSESSED": "Závažnosť neposúdená",

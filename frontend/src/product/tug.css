@@ -4,7 +4,7 @@
 .tug-workspace nav a[aria-current="page"] { font-weight: 700; text-decoration-thickness: 3px; }
 .tug-workspace fieldset { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 1rem; margin-block: 1rem; padding: 1rem; }
 .tug-workspace label { display: grid; gap: .4rem; margin-block: .5rem; min-width: 0; }
-.tug-workspace input, .tug-workspace select { width: 100%; min-width: 0; min-height: 44px; padding: .6rem; box-sizing: border-box; font: inherit; }
+.tug-workspace input:where(:not([type="checkbox"], [type="radio"])), .tug-workspace select { width: 100%; min-width: 0; min-height: 44px; padding: .6rem; box-sizing: border-box; font: inherit; }
 .tug-workspace .product-table { max-width: 100%; }
 .tug-workspace table { min-width: 960px; }
 .tug-workspace td { max-width: 270px; overflow-wrap: anywhere; vertical-align: top; }
@@ -33,3 +33,15 @@
 .field-ops-timeline { display: grid; gap: 0.25rem; padding-inline-start: 1.25rem; }
 .field-ops-scope-item { border: 1px solid var(--border, currentColor); border-radius: 0.5rem; padding: 0.5rem; margin-block: 0.5rem; }
 .enterprise-shell .safety-toolbar { display:flex; flex-wrap:wrap; align-items:center; gap:8px 16px; margin-block:8px; }
+
+/* N6 (desktop and mobile): the text-field rule above used to inflate checkboxes/radios into a large empty square and the
+   grid label stacked the text under it. Choice inputs keep a compact native box beside their text; the label is the
+   touch target (44px on touch or narrow viewports, matching enterprise.css). */
+.tug-workspace input:is([type="checkbox"], [type="radio"]) { flex: 0 0 auto; inline-size: 18px; block-size: 18px; min-inline-size: 18px; min-block-size: 18px; margin: 0; padding: 0; box-shadow: none; accent-color: var(--primary); }
+.tug-workspace label:has(> input:is([type="checkbox"], [type="radio"])) { display: inline-flex; flex-direction: row; align-items: center; gap: .6rem; min-block-size: 40px; }
+@media (pointer: coarse), (max-width: 900px) {
+  .tug-workspace input:is([type="checkbox"], [type="radio"]) { inline-size: 24px; block-size: 24px; min-inline-size: 24px; min-block-size: 24px; }
+  .tug-workspace label:has(> input:is([type="checkbox"], [type="radio"])) { min-block-size: 44px; }
+}
+/* N6: long localized state badges (e.g. the unconfigured severity-policy notice) wrap instead of overflowing on mobile. */
+.enterprise-shell .safety-blockers [data-slot="badge"] { white-space: normal; overflow-wrap: anywhere; max-inline-size: 100%; }

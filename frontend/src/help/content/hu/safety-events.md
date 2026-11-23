@@ -38,7 +38,7 @@ A Biztonsági események és majdnem-balesetek oldalon gyorsan bejelenthet egy h
 - **A vizsgálat szükségessége UNKNOWN:** még nem született döntés; ez nem jelent „nem”-et, és akadályozza a lezárást.
 - **Intézkedés — Nyitott / Befejezve / Ellenőrizve:** a Befejezve nem azonos az Ellenőrizve állapottal, és az Ellenőrizve nem azonos a Hatékony állapottal.
 - **Hatékonyság — Függőben / Hatékony / Nem hatékony / Nem egyértelmű / Nincs intézkedés / Nem látható:** a hatékonyság intézkedésenkénti emberi felülvizsgálat, és független a lezárástól. A **Nincs intézkedés** nem jelenti azt, hogy hatékony.
-- **Nyitott biztonsági események** összesítés: **Nyitott, nagy súlyosságú események**, **Felülvizsgálat szükséges** vagy **Nincs nyitott, nagy súlyosságú esemény**. Ez csak figyelmeztetés; nem ad készenléti döntést.
+- **Nyitott biztonsági események** összesítés: **Nyitott, nagy súlyosságú események**, **Felülvizsgálat szükséges** vagy **Nincs nyitott, nagy súlyosságú esemény**. Amíg nincs beállítva súlyossági szabályzat, e „minden rendben” állapot helyett **Nincs beállítva súlyossági szabályzat – felülvizsgálat szükséges** jelenik meg, mert a nagy súlyosságú események nem zárhatók ki. Ez csak figyelmeztetés; nem ad készenléti döntést.
 - **Bizalmas (védett):** a bejelentő személyazonossága korlátozott hozzáférésű tárolóban van, és az olvasók nem látják.
 - **Offline rögzítve / Szinkronizálásra vár / Mentve ezen az eszközön. Még nincs elküldve.** A sorba állított nem azonos az elküldöttel.
 

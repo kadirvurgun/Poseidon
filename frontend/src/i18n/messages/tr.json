@@ -2285,6 +2285,8 @@
       "b_BLOCKERS_PRESENT": "Açık yüksek şiddetli olay var",
       "b_REVIEW_REQUIRED": "İnceleme gerekli",
       "b_NO_OPEN_HIGH_SEVERITY_EVENT": "Açık yüksek şiddetli olay yok",
+      "b_POLICY_UNCONFIGURED": "Şiddet politikası yapılandırılmadı – inceleme gerekli",
+      "policyUnconfigured": "Şiddet politikası yapılandırılmadığı için yüksek şiddetli olay olmadığı doğrulanamaz. Açık olayları elle gözden geçirin; bu bir hazır veya sorun yok durumu değildir.",
       "r_HIGH_SEVERITY_OPEN": "Yüksek şiddet, açık",
       "r_UNTRIAGED_EVENT": "Henüz değerlendirilmedi",
       "r_SEVERITY_UNASSESSED": "Şiddet değerlendirilmedi",

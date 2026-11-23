@@ -2285,6 +2285,8 @@
       "b_BLOCKERS_PRESENT": "存在未結案的高嚴重程度事件",
       "b_REVIEW_REQUIRED": "需要審查",
       "b_NO_OPEN_HIGH_SEVERITY_EVENT": "無未結案的高嚴重程度事件",
+      "b_POLICY_UNCONFIGURED": "嚴重性政策未設定 – 需要審查",
+      "policyUnconfigured": "尚未設定嚴重性政策，因此無法排除高嚴重性事件。請人工審查未結事件；這不是就緒或一切正常的狀態。",
       "r_HIGH_SEVERITY_OPEN": "高嚴重程度，未結案",
       "r_UNTRIAGED_EVENT": "尚未分類評估",
       "r_SEVERITY_UNASSESSED": "嚴重程度未評估",

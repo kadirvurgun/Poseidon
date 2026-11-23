@@ -2285,6 +2285,8 @@
       "b_BLOCKERS_PRESENT": "Otevřené události s vysokou závažností",
       "b_REVIEW_REQUIRED": "Vyžadováno posouzení",
       "b_NO_OPEN_HIGH_SEVERITY_EVENT": "Žádná otevřená událost s vysokou závažností",
+      "b_POLICY_UNCONFIGURED": "Zásady závažnosti nejsou nakonfigurovány – vyžadováno posouzení",
+      "policyUnconfigured": "Nejsou nakonfigurovány žádné zásady závažnosti, proto nelze vyloučit události vysoké závažnosti. Otevřené události posuďte ručně; nejde o stav připravenosti ani o stav bez nálezů.",
       "r_HIGH_SEVERITY_OPEN": "Vysoká závažnost, otevřeno",
       "r_UNTRIAGED_EVENT": "Dosud netříděno",
       "r_SEVERITY_UNASSESSED": "Závažnost neposouzena",

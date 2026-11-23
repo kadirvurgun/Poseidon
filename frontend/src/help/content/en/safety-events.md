@@ -38,7 +38,7 @@ The Safety events & near misses page lets you report a safety event on a vessel 
 - **Investigation need is UNKNOWN:** no decision has been made; it does not mean "no" and it blocks closure.
 - **Action — Open / Completed / Verified:** Completed is not Verified, and Verified is not Effective.
 - **Effectiveness — Pending / Effective / Not effective / Inconclusive / No actions / Not visible:** effectiveness is a human review per action and is separate from closure. **No actions** does not mean effective.
-- **Open safety events** summary: **High-severity events open**, **Review required** or **No open high-severity event**. It is a warning only; it gives no readiness decision.
+- **Open safety events** summary: **High-severity events open**, **Review required** or **No open high-severity event**. While no severity policy is configured, **Severity policy not configured – review required** is shown instead of that all-clear, because high-severity events cannot be ruled out. It is a warning only; it gives no readiness decision.
 - **Confidential (protected):** the reporter identity is in a restricted vault and is not shown to readers.
 - **Captured offline / Waiting to sync / Saved on this device. Not yet sent.** Queued is not sent.
 

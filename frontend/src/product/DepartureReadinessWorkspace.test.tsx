@@ -67,6 +67,10 @@ it('shows categories and the Why list, never a ready tone, disables RELEASE and 
   const badge = document.querySelector('[data-readiness]')!
   expect(badge.getAttribute('data-tone')).toBe('warning')
   expect(screen.getByText('EMERGENCY_SOURCE_UNAVAILABLE')).toBeInTheDocument()
+  // N6 mobile: long reason codes wrap (enterprise.css) and keep the full closed code in the title.
+  const code = screen.getByText('CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED', { selector: 'code' })
+  expect(code).toHaveClass('departure-reason-code')
+  expect(code).toHaveAttribute('title', 'CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED')
   expect(document.querySelector('[data-category="emergency"] [data-result="UNKNOWN"]')).not.toBeNull()
   expect(document.querySelector('[data-validity="STALE"]')).not.toBeNull()
   expect(screen.getByRole('radio', { name: 'Release' })).toBeDisabled()

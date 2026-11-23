@@ -2285,6 +2285,8 @@
       "b_BLOCKERS_PRESENT": "Avoimia vakavia tapahtumia",
       "b_REVIEW_REQUIRED": "Katselmointi vaaditaan",
       "b_NO_OPEN_HIGH_SEVERITY_EVENT": "Ei avoimia vakavia tapahtumia",
+      "b_POLICY_UNCONFIGURED": "Vakavuuskäytäntöä ei ole määritetty – katselmointi vaaditaan",
+      "policyUnconfigured": "Vakavuuskäytäntöä ei ole määritetty, joten vakavia tapahtumia ei voida sulkea pois. Käy avoimet tapahtumat läpi manuaalisesti; tämä ei ole valmis- eikä kaikki kunnossa -tila.",
       "r_HIGH_SEVERITY_OPEN": "Korkea vakavuus, avoin",
       "r_UNTRIAGED_EVENT": "Ei vielä luokiteltu",
       "r_SEVERITY_UNASSESSED": "Vakavuus arvioimatta",
