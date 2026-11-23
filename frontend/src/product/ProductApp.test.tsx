@@ -35,6 +35,18 @@ describe('FOUNDATION-APP-01 product states (mocked HTTP, not backend acceptance)
         expect(document.documentElement.lang).toBe('en');
         expect(screen.getByRole('link', { name: 'Sign in' })).toBeVisible();
     });
+    // INVITE-RATELIMIT-FOLLOWUPS: a rate-limited sign-in returns to /app?auth=request_limit with its own localized notice.
+    it('shows the localized sign-in limit notice instead of the generic sign-in failure', async () => {
+        vi.stubGlobal('fetch', vi.fn().mockResolvedValue(reply(anonymous)));
+        history.replaceState(null, '', '/app?auth=request_limit');
+        try {
+            render(<ProductApp />);
+            const notice = await screen.findByText('Bu ağdan çok fazla oturum açma denemesi yapıldı. Birkaç dakika bekleyip yeniden deneyin.');
+            expect(notice).toHaveAttribute('data-auth', 'request_limit');
+            expect(screen.queryByText('Oturum açma tamamlanamadı. Lütfen tekrar deneyin.')).not.toBeInTheDocument();
+            expect(screen.getByRole('link', { name: 'Oturum aç' })).toBeVisible();
+        } finally { history.replaceState(null, '', '/app'); }
+    });
     it.each([401, 403, 503])('distinguishes HTTP %s from an empty list', async (status) => {
         vi.stubGlobal('fetch', vi.fn().mockResolvedValueOnce(reply(signedIn)).mockResolvedValue(reply({}, status)));
         render(<ProductApp />);
