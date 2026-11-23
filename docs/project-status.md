@@ -1,6 +1,11 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
 
+## LAB-FOLLOWUPS-20261123 — lab NSS yükleme QA notları; yazıldı, CI ve uçtan uca ekran görüntüsü koşusu bekleniyor (23.11.2026)
+- `fix/lab-followups-20261123` (main 494045ee). Yalnız sentetik DEV-OIDC lab aracı; ürün davranışı ve canonical sayım değişmez (114/121 iş, 932/970 SP).
+- `lab_profile_ca.py`: Windows'ta da tam set (nss3/mozglue/softokn3/freebl3); Linux'ta `LD_PRELOAD`/`LD_AUDIT` reddi (`nss_preload_refused`) ve NSS_InitReadWrite sonrası `/proc/self/maps` ile her NSS ailesi nesnesinin pinned paketten yüklendiği doğrulaması (`nss_foreign_library`). Ekran görüntüsü ön kontrolü artık traceback yazmaz; Linux no-skip kapısı en az 41 test ister. Ayrıntı: `docs/phases/LAB-FOLLOWUPS-20261123.md`.
+- Yerel (Windows): lab profil testleri 41 koşu OK, 4 skip (POSIX-yalnız). Açık: bu commit için Application foundation CI ve help-screenshots uçtan uca koşusu, pull_request CI.
+
 ## HELP-MANUAL-DOWNLOAD-01 — CI'da yeniden üretilen 196 görüntü + uygulama içinden TR/EN PDF kılavuz; yazıldı, QA bekleniyor (23.11.2026)
 - `feature/manual-download-20261123` (entegrasyon başı 4f7d87ca). Canonical sayım değişmez: 114/121 iş, 932/970 SP.
 - Zorunlu olmayan `help-screenshots` iş akışı (Ubuntu, sentetik lab): run 45075963418 başarılı; 196 written + 196/196 match. `/app/help` artık TR/EN PDF indirme bağlantıları sunar; boyut, taslak etiketi ve `reviewed:false` gösterilir. PDF'ler çevrimdışı önbelleğe girmez. Ayrıntı: `docs/phases/HELP-MANUAL-DOWNLOAD-01.md`.

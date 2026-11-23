@@ -137,8 +137,10 @@ jobs:
           result = unittest.TextTestRunner(verbosity=2).run(suite)
           print(f'lab_profile_posix ran={result.testsRun} skipped={len(result.skipped)} '
                 f'failures={len(result.failures)} errors={len(result.errors)}')
-          # Every POSIX-only path must actually execute here; a skip on Linux is a gate failure.
-          sys.exit(0 if result.wasSuccessful() and result.testsRun > 0 and not result.skipped else 1)
+          # Every POSIX-only path must actually execute here; a skip on Linux is a gate failure, and
+          # the minimum catches silently dropped tests (41 at LAB-FOLLOWUPS-20261123; raise, never lower).
+          minimum = 41
+          sys.exit(0 if result.wasSuccessful() and result.testsRun >= minimum and not result.skipped else 1)
           PY
       - name: Verify current analysis byte hashes and chunk lineage
         run: python3 scripts/verify_sources.py

@@ -25,3 +25,19 @@ Kaynak: `docs/phases/HELP-MANUAL-DOWNLOAD-01.md` bağımsız QA (ACCEPT-WITH-NOT
 | Branch CI | Aşağıda / teslim raporunda |
 
 Help screenshots iş akışı bu dalda tetiklenmez (yalnız `screenshots/**`); NSS yükleme değişikliği bir sonraki ekran görüntüsü koşusunda gerçek paketle uçtan uca doğrulanacak (DEFERRED).
+
+## QA notları (a5c98435 ACCEPT-WITH-NOTES) — takip commit'i
+
+Kaynak: bağımsız QA raporu, notlar 1, 2, 3, 5.
+
+- **Not 1, yüklenen yolların doğrulanması:** NSS_InitReadWrite başarılı olunca, sertifika okunmadan önce `/proc/self/maps` okunur. Temel adı `libnss`, `libsmime`, `libnspr`, `libplc`, `libplds`, `libsoftokn`, `libfreebl` veya `libmozsqlite` ile başlayan her eşlenmiş nesnenin gerçek yolunun (realpath) üst dizini, pinned paket dizini olmalıdır. Alt dizin, `(deleted)` eşlemesi, okunamayan maps dosyası ya da `libnss3.so`/`libsoftokn3.so` eşlenmemişse `nss_foreign_library` verilir ve NSS kapatılır. Böylece NSS'in kendi düz adla softoken yedeğine düşmesi ve listede olmayan geçişli bağımlılıklar da yakalanır. glibc'nin `libnss_*` ad hizmeti modülleri Mozilla NSS değildir ve hariç tutulur.
+- **LD_PRELOAD/LD_AUDIT:** Bunlar düşürülmez, reddedilir (`nss_preload_refused`, hiçbir kitaplık yüklenmeden). Yükleyici bu değişkenleri betik çalışmaya başlamadan uygular. Bu yüzden kendi sürecimizden silmek, enjekte edilmiş nesneyi çıkarmaz. Bir lab aracı için güvenli olan, reddetmektir.
+- **Not 2, Windows:** `mozglue.dll`, `softokn3.dll` ve `freebl3.dll` de paket içinde olmalıdır. Varlık ve kapsam denetimi Linux'takiyle aynıdır. Yalnız `nss3.dll` yüklenir. Yerel `firefox-1555` Windows paketinde dördü de mevcut.
+- **Not 3:** `help-screenshots.yml` ön kontrolü artık `install()` çağırmaz ve traceback basmaz. Alt sürecin stderr'ine yazdığı sabit kod (`lab_profile_ca: <code>`) ile paket kitaplık adları yeterlidir.
+- **Not 5:** Linux no-skip kapısı `testsRun >= 41` ister. Test sayısı yükseltilebilir, düşürülemez. Bu commit ile 12 yeni test geldi: maps doğrulaması (sahte maps metniyle) 9, Windows tam set 1, preload 2.
+
+| Kontrol | Sonuç |
+| --- | --- |
+| `py -m unittest discover -s scripts -p "test_lab_profile*.py" -v` (Windows) | 41 koşu OK, 4 skip (POSIX-yalnız symlink/ACL) |
+| Application foundation CI (push) | Teslim raporunda |
+| help-screenshots uçtan uca (`screenshots/lab-followups-20261123`) | Teslim raporunda. Gerçek pinned paketle ilk NSS yükleme kanıtı |
