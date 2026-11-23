@@ -108,6 +108,23 @@ public sealed partial class DirectoryWorkspaceTests
         using var admin = await Member(host, "synthetic");
         using var foreignAdmin = await Member(host, "other-tenant-admin");
         var issued = await Invited(admin, Invite(null));
+        // Invite QA N1 (followups-20261123): cross-site requests without a valid antiforgery token are refused (audited
+        // csrf_invalid) and never consume the administrator's budget; otherwise the final reissue below would be 429.
+        for (var i = 0; i < 5; i++)
+        {
+            using var forged = new HttpRequestMessage(HttpMethod.Post, "/api/v1/memberships") { Content = JsonContent.Create(Invite(null)) };
+            forged.Headers.Add("Idempotency-Key", Guid.NewGuid().ToString());
+            forged.Headers.TryAddWithoutValidation("X-CSRF-TOKEN", "forged-token");
+            var saved = admin.DefaultRequestHeaders.GetValues("X-CSRF-TOKEN").ToArray();
+            admin.DefaultRequestHeaders.Remove("X-CSRF-TOKEN");
+            try
+            {
+                using var refused = await admin.SendAsync(forged, Ct);
+                Assert.Equal(HttpStatusCode.Forbidden, refused.StatusCode);
+                Assert.Equal("csrf_invalid", await MembershipCode(refused));
+            }
+            finally { admin.DefaultRequestHeaders.Add("X-CSRF-TOKEN", saved); }
+        }
         // Refused bodies count too: the limit is taken before parsing or any write (1 create above + 58 + 1 reissue = 60).
         for (var i = 0; i < InvitationIssueRateLimiter.IssuesPerWindow - 2; i++)
             using (var invalid = await Post(admin, "memberships", new { unknownField = i }))

@@ -225,7 +225,13 @@ public static partial class MembershipEndpoints
         var audit = h.RequestServices.GetRequiredService<SecurityAudit>();
         async Task<(Prelude?, IResult?)> Fail(int status, string code) { await audit.WriteAsync(h, "MembershipCommand", code, resourceId: resource); return (null, Problem(h, status, code)); }
         var actor = Actor(h);
-        if (issuesInvitation)
+        // Invitation QA N1 (followups-20261123): a cross-site request (invalid antiforgery token) must not consume the
+        // administrator's invitation budget, so only a request with a valid token draws on the limiter; an invalid one
+        // falls through to the audited csrf_invalid refusal below.
+        var csrfValid = true;
+        try { await h.RequestServices.GetRequiredService<IAntiforgery>().ValidateRequestAsync(h); }
+        catch (AntiforgeryValidationException) { csrfValid = false; }
+        if (issuesInvitation && csrfValid)
         {
             var decision = await h.RequestServices.GetRequiredService<InvitationIssueRateLimiter>().AcquireAsync(actor.TenantId, actor.Id, h.RequestAborted);
             if (!decision.Allowed)
@@ -236,8 +242,7 @@ public static partial class MembershipEndpoints
         }
         await audit.WriteAsync(h, "MembershipCommand", "Attempted", resourceId: resource);
         if (!authorized(actor)) return await Fail(403, "permission_denied");
-        try { await h.RequestServices.GetRequiredService<IAntiforgery>().ValidateRequestAsync(h); }
-        catch (AntiforgeryValidationException) { return await Fail(403, "csrf_invalid"); }
+        if (!csrfValid) return await Fail(403, "csrf_invalid");
         if (!h.Request.HasJsonContentType() || h.Request.ContentLength > limit) return await Fail(400, "invalid_request");
         using var buffer = new MemoryStream();
         var bytes = new byte[1024]; int read;

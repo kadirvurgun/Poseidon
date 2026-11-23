@@ -229,6 +229,26 @@ it('shows a rate-limited reissue as refused with the request_limit message and n
   expect(screen.queryByRole('textbox', { name: 'Invitation link' })).toBeNull()
 })
 
+// Invite QA N2 (followups-20261123): a 429 answering the retry of an uncertain reissue keeps the outcome uncertain and the
+// same Idempotency-Key, so the next retry replays instead of issuing a second invitation.
+it('keeps an uncertain reissue retryable with the same key when the retry is rate limited', async () => {
+  const user = userEvent.setup()
+  history.replaceState(null, '', `/app/user-admin/${memberId}`)
+  detail = access({}, invited({ invitationState: 'Expired' }))
+  postReply = () => json({ code: 'unexpected' }, 500)
+  render(<UserAdminWorkspace/>)
+  await user.click(await screen.findByRole('button', { name: 'Create a new invitation link' }))
+  await waitFor(() => expect(document.querySelector('[data-notice=uncertain]')).not.toBeNull())
+  postReply = () => new Response(JSON.stringify({ code: 'request_limit' }), { status: 429, headers: { 'Content-Type': 'application/problem+json', 'Retry-After': '120' } })
+  await user.click(screen.getByRole('button', { name: 'Retry' }))
+  await waitFor(() => expect(document.querySelector('[data-code=request_limit]')).not.toBeNull())
+  expect(document.querySelector('[data-notice=uncertain]')).not.toBeNull()
+  expect(screen.getByRole('button', { name: 'Retry' })).toBeTruthy()
+  const keys = posts.map(p => (p.init.headers as Record<string, string>)['Idempotency-Key'])
+  expect(keys).toHaveLength(2)
+  expect(keys[1]).toBe(keys[0])
+})
+
 // USER-ADMIN-03: e-mail delivery status (outbox) and the tenant invitation lifetime. Synthetic .invalid address only.
 it('decodes delivery states and invitation settings strictly', () => {
   expect(decodeSummary(invited({ invitationDeliveryState: 'SENT' })).invitationDeliveryState).toBe('SENT')

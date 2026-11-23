@@ -117,8 +117,9 @@ public sealed class InvitationIssueRateLimiter(SharedRateLimiter limiter)
 // the IdP, which owns password brute-force protection and account lockout; this guard bounds challenge/audit
 // amplification. Partition: IPv4 address, or the IPv6 /64 (one subscriber prefix), keyed-HMAC'd like every partition
 // (the address is personal data and is never stored). The client address is the connection's remote address; behind a
-// reverse proxy the operator must enable forwarded-header processing (ASPNETCORE_FORWARDEDHEADERS_ENABLED or equivalent
-// trusted-proxy configuration), otherwise all callers share the proxy's partition.
+// reverse proxy the operator must configure forwarded-header processing restricted to the known proxies (KnownProxies /
+// KnownNetworks), otherwise all callers share the proxy's partition. Do not use ASPNETCORE_FORWARDEDHEADERS_ENABLED on a
+// host the client can reach directly: it trusts X-Forwarded-For from any source and lets a caller rotate its partition.
 public sealed class LoginRateLimiter(SharedRateLimiter limiter, int permitLimit)
 {
     public const int DefaultPermitLimit = 60;

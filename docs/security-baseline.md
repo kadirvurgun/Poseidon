@@ -121,7 +121,9 @@ Not production mail operations, bounce handling, Data Protection key management 
   network (IPv4 address / IPv6 /64; `RateLimiting:LoginPermitLimit` 10-100000). Refusal = `429 request_limit` with
   `Retry-After`; the first refusal of a window is a SecurityEvent, repeats are not (no amplification). A browser
   navigation to the login gets the 429 with a minimal page that returns to `/app?auth=request_limit` (localized
-  notice). Behind a reverse proxy, forwarded-header processing must be configured or all callers share one partition. The
+  notice). Behind a reverse proxy, forwarded-header processing must be configured and restricted to the known proxies (KnownProxies/KnownNetworks), or
+  all callers share one partition; `ASPNETCORE_FORWARDEDHEADERS_ENABLED` trusts `X-Forwarded-For` from any source and
+  must not be used where clients can reach the API directly (they could rotate the header past the login limit). The
   IdP remains responsible for credential brute-force protection and lockout.
 - Data Protection (L2): `DataProtection:KeyDirectory` (absolute path) persists one key ring under application name
   `Poseidon` for all instances. Enabling invitation e-mail outside Development/Test without it stops startup. The
