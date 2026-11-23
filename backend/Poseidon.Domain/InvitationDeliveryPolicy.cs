@@ -89,6 +89,13 @@ public static class InvitationDeliveryPolicy
         return labels.Length >= 2 && labels.All(l => l.Length is >= 1 and <= 63 && !l.StartsWith('-') && !l.EndsWith('-') &&
             l.All(c => char.IsAsciiLetterOrDigit(c) || c == '-')) && !labels[^1].All(char.IsAsciiDigit);
     }
+
+    // INVITE-RATELIMIT-FOLLOWUPS N4: the comparison form of a valid address for idempotency fingerprints. ValidEmail admits
+    // ASCII only, so invariant lower-casing is exact. The whole address is folded: domains are case-insensitive (RFC 5321
+    // 2.4) and, although a local part may be case-sensitive, mail systems treat it case-insensitively in practice, so two
+    // spellings of one mailbox are the same request (replay) while any other address is a different one (409). An invalid
+    // address has no comparison form (the request is refused with 400 before a fingerprint is used).
+    public static string? NormalizedEmail(string? value) => ValidEmail(value) ? value!.ToLowerInvariant() : null;
 }
 
 // 54.01 Rev4 paragraph:10025 `account.invite_hours`: Tenant scope, integer, default 24, range 1-168 (7 days). The tenant

@@ -27,6 +27,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** @description Starts the OIDC sign-in (302 to the identity provider). Repeated starts from one client network return 429 request_limit with Retry-After (a browser navigation receives a page that returns to /app?auth=request_limit). */
         get: operations["Login"];
         put?: never;
         post?: never;
@@ -855,7 +856,7 @@ export interface paths {
         put?: never;
         /**
          * CreateMembership
-         * @description Invites an IdP identity to a database membership (USER-ADMIN-02). The membership starts Invited and grants nothing; it binds an identity only when the identity holder, signed in through the trusted issuer, accepts the single-use invitation token returned once in this response (expiry: the tenant's 54.01 account.invite_hours value, 1-168 hours, default 24). deliveryEmail is optional and queues the invitation e-mail in the same transaction (delivery state QUEUED, or NOT_CONFIGURED without a mail transport); the address is never returned, logged or audited. subject is optional and, when given, is the only identity allowed to accept; it reserves nothing. Role bundles and individual permissions are limited to the trusted allow-list and to the caller's own permissions (400 exceeds_grantor_authority). A subject present in the operator configuration, already bound in this tenant or with a pending invitation here returns 409 identity_unavailable.
+         * @description Invites an IdP identity to a database membership (USER-ADMIN-02). The membership starts Invited and grants nothing; it binds an identity only when the identity holder, signed in through the trusted issuer, accepts the single-use invitation token returned once in this response (expiry: the tenant's 54.01 account.invite_hours value, 1-168 hours, default 24). deliveryEmail is optional and queues the invitation e-mail in the same transaction (delivery state QUEUED, or NOT_CONFIGURED without a mail transport); the address is never returned, logged or audited. Invitation create and reissue share a technical limit per administrator (60 per 15 minutes); beyond it 429 request_limit with Retry-After. subject is optional and, when given, is the only identity allowed to accept; it reserves nothing. Role bundles and individual permissions are limited to the trusted allow-list and to the caller's own permissions (400 exceeds_grantor_authority). A subject present in the operator configuration, already bound in this tenant or with a pending invitation here returns 409 identity_unavailable.
          */
         post: operations["CreateMembership"];
         delete?: never;
@@ -1103,7 +1104,7 @@ export interface paths {
         put?: never;
         /**
          * ReissueMembershipInvitation
-         * @description Issues a new single-use invitation link for an Invited membership (the previous pending link stops working). The token is returned only in this response. expectedVersion is the membership version; a membership that is no longer Invited returns 409 invalid_transition.
+         * @description Issues a new single-use invitation link for an Invited membership (the previous pending link stops working). The token is returned only in this response. expectedVersion is the membership version; a membership that is no longer Invited returns 409 invalid_transition. Shares the invitation create limit per administrator (60 per 15 minutes): 429 request_limit with Retry-After.
          */
         post: operations["ReissueMembershipInvitation"];
         delete?: never;
@@ -20890,6 +20891,15 @@ export interface operations {
                 };
                 content?: never;
             };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
             /** @description Service Unavailable */
             503: {
                 headers: {
@@ -23020,6 +23030,15 @@ export interface operations {
                     "application/problem+json": components["schemas"]["ProblemDetails"];
                 };
             };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
             /** @description Service Unavailable */
             503: {
                 headers: {
@@ -23985,6 +24004,15 @@ export interface operations {
             };
             /** @description Conflict */
             409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["ProblemDetails"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
                 headers: {
                     [name: string]: unknown;
                 };

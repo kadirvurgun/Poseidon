@@ -63,7 +63,7 @@ regression traits. Not run: full frontend suite, Playwright/axe, a real SMTP ser
 - L3 client `plausibleEmail` mirrors server `ValidEmail` (vitest cases). L4 tenant name put on one line, bounded
   (unit test). L5 round-robin tenant cursor (64 per run). L6 reissue racing a send: the reissue's cancellation wins
   (xmin), the late SENT write is discarded, the old token is unusable (test `A_reissue_racing_a_send_…`).
-- L2 **production precondition (not built):** `AddDataProtection()` has no persisted or shared key ring (no
+- L2 (resolved by INVITE-RATELIMIT-FOLLOWUPS-20261123: `DataProtection:KeyDirectory` + fail-fast; N3: sweep only under `InvitationDelivery:Mode=Disabled`) **production precondition:** `AddDataProtection()` has no persisted or shared key ring (no
   `PersistKeysTo*` pattern exists in the repo). Before invitation e-mail is enabled in a multi-instance or container
   deployment, the operator must configure a persisted, shared, protected Data Protection key ring; otherwise queued rows
   fail closed as `FAILED/payload_unavailable` after a restart or on another node.

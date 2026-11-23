@@ -214,6 +214,21 @@ it('reissues an expired invitation with the membership version and hides the old
   expect(((await screen.findByRole('textbox', { name: 'Invitation link' })) as HTMLInputElement).value).toContain(encodeURIComponent(token))
 })
 
+// INVITE-RATELIMIT-FOLLOWUPS: a 429 is a definite refusal (nothing was changed), never an uncertain outcome.
+it('shows a rate-limited reissue as refused with the request_limit message and no link', async () => {
+  const user = userEvent.setup()
+  history.replaceState(null, '', `/app/user-admin/${memberId}`)
+  detail = access({}, invited({ invitationState: 'Expired' }))
+  postReply = () => new Response(JSON.stringify({ code: 'request_limit' }), { status: 429, headers: { 'Content-Type': 'application/problem+json', 'Retry-After': '120' } })
+  render(<UserAdminWorkspace/>)
+  await user.click(await screen.findByRole('button', { name: 'Create a new invitation link' }))
+  await waitFor(() => expect(document.querySelector('[data-notice=refused]')).not.toBeNull())
+  expect(document.querySelector('[data-code]')?.getAttribute('data-code')).toBe('request_limit')
+  expect(screen.getByText('Too many requests in a short time. Wait a few minutes and try again.')).toBeTruthy()
+  expect(document.querySelector('[data-notice=uncertain]')).toBeNull()
+  expect(screen.queryByRole('textbox', { name: 'Invitation link' })).toBeNull()
+})
+
 // USER-ADMIN-03: e-mail delivery status (outbox) and the tenant invitation lifetime. Synthetic .invalid address only.
 it('decodes delivery states and invitation settings strictly', () => {
   expect(decodeSummary(invited({ invitationDeliveryState: 'SENT' })).invitationDeliveryState).toBe('SENT')

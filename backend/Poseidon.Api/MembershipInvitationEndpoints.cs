@@ -67,6 +67,38 @@ public sealed class InvitationIdentityReference
         $"idref:{version}:" + Convert.ToHexString(HMACSHA256.HashData(key, Encoding.UTF8.GetBytes(issuer + "\n" + subject)).AsSpan(0, 16)).ToLowerInvariant();
 }
 
+// INVITE-RATELIMIT-FOLLOWUPS N4: what the idempotency fingerprint records about the e-mail recipient. A keyed
+// HMAC-SHA256 of the normalized address (InvitationDeliveryPolicy.NormalizedEmail), so the same key with another address
+// is a different request (409 idempotency_key_reused) while a retry for the same mailbox replays. The key is an HKDF of
+// the operator-resolved OIDC client secret ("a1": stable across restarts and instances while the secret is unchanged);
+// a public client without a secret uses a random per-process key ("p1"), so a retry after a restart or on another
+// instance is refused 409 rather than replayed (fail closed: never a second invitation). The address itself is never
+// stored, logged or audited; an unkeyed hash is not used because a mailbox is guessable from a dictionary.
+public sealed class InvitationAddressFingerprint
+{
+    private readonly byte[] key;
+    private readonly string version;
+
+    public InvitationAddressFingerprint(string? serverSecret)
+    {
+        if (!string.IsNullOrEmpty(serverSecret))
+        {
+            key = HKDF.DeriveKey(HashAlgorithmName.SHA256, Encoding.UTF8.GetBytes(serverSecret), 32,
+                info: Encoding.ASCII.GetBytes("poseidon.invitation.address-fingerprint.v1"));
+            version = "a1";
+        }
+        else { key = RandomNumberGenerator.GetBytes(32); version = "p1"; }
+    }
+
+    public bool Persistent => version == "a1";
+
+    // null = no e-mail requested. An invalid address is refused with 400 before a fingerprint is used; it gets a fixed
+    // placeholder form here so nothing derived from it is ever comparable to a valid address.
+    public string? For(string? address) => address == null ? null
+        : version + ":" + Convert.ToHexString(HMACSHA256.HashData(key,
+            Encoding.UTF8.GetBytes(InvitationDeliveryPolicy.NormalizedEmail(address) ?? "\ninvalid"))).ToLowerInvariant();
+}
+
 public static partial class MembershipEndpoints
 {
     private const string InvitationAction = "MembershipInvitation";
@@ -77,8 +109,8 @@ public static partial class MembershipEndpoints
     private static void MapMembershipInvitations(IEndpointRouteBuilder app)
     {
         Command(app.MapPost("/api/v1/memberships/{id:guid}/invitation", (Guid id, HttpContext h, [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey, [FromHeader(Name = "X-CSRF-TOKEN")] string? csrfToken) =>
-            ReissueInvitation(h, id)), "ReissueMembershipInvitation", "Issues a new single-use invitation link for an Invited membership (the previous pending link stops working). The token is returned only in this response. expectedVersion is the membership version; a membership that is no longer Invited returns 409 invalid_transition.")
-            .Accepts<InvitationReissueCommand>("application/json").Produces<MembershipInvitationIssueDto>();
+            ReissueInvitation(h, id)), "ReissueMembershipInvitation", "Issues a new single-use invitation link for an Invited membership (the previous pending link stops working). The token is returned only in this response. expectedVersion is the membership version; a membership that is no longer Invited returns 409 invalid_transition. Shares the invitation create limit per administrator (60 per 15 minutes): 429 request_limit with Retry-After.")
+            .Accepts<InvitationReissueCommand>("application/json").Produces<MembershipInvitationIssueDto>().ProducesProblem(429);
         app.MapGet("/api/v1/memberships/invitation-settings", InvitationSettings).RequireAuthorization("DirectoryRead").WithName("GetInvitationSettings")
             .WithSummary("The tenant's invitation lifetime (54.01 account.invite_hours, 1-168 h, default 24) and whether invitation e-mail delivery is configured. Requires membership.read or membership.manage with tenant-wide scope.")
             .Produces<InvitationSettingsDto>().Produces(401).ProducesProblem(403).Produces(503);
@@ -189,7 +221,7 @@ public static partial class MembershipEndpoints
 
     private static async Task<IResult> ReissueInvitation(HttpContext h, Guid id)
     {
-        var (prelude, failure) = await Begin(h, id, CanManageMemberships);
+        var (prelude, failure) = await Begin(h, id, CanManageMemberships, issuesInvitation: true);
         if (prelude == null) return failure!;
         var audit = h.RequestServices.GetRequiredService<SecurityAudit>();
         var command = Parse<InvitationReissueCommand>(prelude.Body);
@@ -202,7 +234,9 @@ public static partial class MembershipEndpoints
         var actor = prelude.Actor;
         var settings = h.RequestServices.GetRequiredService<FederationSettings>();
         var now = h.RequestServices.GetRequiredService<TimeProvider>().GetUtcNow();
-        var fingerprint = Fingerprint(new { action = ReissueAction, id, command.ExpectedVersion, email = command.DeliveryEmail != null });
+        // N4: a keyed digest of the normalized recipient (never the address), so another address under the same key is a 409.
+        var fingerprint = Fingerprint(new { action = ReissueAction, id, command.ExpectedVersion,
+            email = h.RequestServices.GetRequiredService<InvitationAddressFingerprint>().For(command.DeliveryEmail) });
         return await Run(h, id, async db =>
         {
             // Fresh object authorization precedes receipt reads (tenant filter ⇒ cross-tenant 404).

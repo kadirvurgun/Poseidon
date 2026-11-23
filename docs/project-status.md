@@ -22,6 +22,10 @@
 - İsteğe bağlı davet e-postası: aynı denetimli işlemde outbox satırı, şifreli alıcı+token (terminalde silinir), sistem aktörü dağıtıcı, SMTP STARTTLS, 5 deneme/geri çekilme, `NOT_CONFIGURED` dürüst durum; kiracı davet süresi 1–168 sa (varsayılan 24). Ayrıntı: `docs/phases/USER-ADMIN-03.md`.
 - Yerel: build 0/0, domain 1673/1673, persistence birim 182/182, API birim 502/502, frontend hedefli 959/959, typecheck/lint 0. DEFERRED: API PG testleri (CI), gerçek SMTP, bağımsız QA.
 
+## INVITE-RATELIMIT-FOLLOWUPS — davet/oturum açma hız sınırı, outbox süpürme kararı, Data Protection anahtar halkası; YAZILDI, PG testleri CI'da (23.11.2026)
+- `fix/invite-ratelimit-followups-20261123` (main 494045ee). Canonical sayım değişmez. USER-ADMIN-03 QA N3/N4/L2 ve RATE-LIMIT-01 açık maddesi (davet oluşturma/yeniden gönderme + `/login` sınırı, sözleşme değişikliği).
+- N4 anahtarlı adres özeti idempotency parmak izinde; N3 yalnız `InvitationDelivery:Mode=Disabled` süpürür; 429 `request_limit` + Retry-After (OpenAPI + api.d.ts + 17 dil); `DataProtection:KeyDirectory` + üretimde fail-fast. Ayrıntı: `docs/phases/INVITE-RATELIMIT-FOLLOWUPS-20261123.md`. DEFERRED: PG testleri (CI), bağımsız QA.
+
 ## RATE-LIMIT-01 — paylaşımlı (PostgreSQL) hız sınırlama; YAZILDI, birim testleri yerelde geçti, PG testleri CI'da (22.11.2026)
 - `feature/rate-limit-20261122` (main 36d5d183). Canonical sayım değişmez. USER-ADMIN-02 açık maddesi "process-local limiter" kapatıldı (opt-in `RateLimiting:Store=Postgres`).
 - HMAC anahtarlı bölüm özeti (ham kimlik/IP/token saklanmaz), tek ifadeli atomik sayaç, sınırlı arka plan temizliği, mağaza yoksa yerel sınırlayıcıya loglu/metrikli geri dönüş, 429 + Retry-After. Ayrıntı: `docs/phases/RATE-LIMIT-01.md`.

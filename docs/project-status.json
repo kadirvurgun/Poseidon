@@ -18689,6 +18689,19 @@
     "accepted_tasks_added": 0,
     "accepted_story_points_added": 0
   },
+  "invite_ratelimit_followups_20261123": {
+    "state": "AUTHORED_LOCAL_UNIT_VERIFIED_PG_CI_PENDING_NOT_ACCEPTED",
+    "branch": "fix/invite-ratelimit-followups-20261123",
+    "base": "494045ee",
+    "report": "docs/phases/INVITE-RATELIMIT-FOLLOWUPS-20261123.md",
+    "closes": "USER-ADMIN-03 QA N3/N4/L2; RATE-LIMIT-01 open item invitation create/reissue and /login limits",
+    "verification": {
+      "postgres_integration": "DEFERRED_CI",
+      "independent_qa": "PENDING"
+    },
+    "accepted_tasks_added": 0,
+    "accepted_story_points_added": 0
+  },
   "admin_polish_bundle_20261122": {
     "state": "INTEGRATED_LOCAL_VERIFIED_PG_CI_PENDING_NOT_ACCEPTED",
     "branch": "integration/admin-polish-20261122",

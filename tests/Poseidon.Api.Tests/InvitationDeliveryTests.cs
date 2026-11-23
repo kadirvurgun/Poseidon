@@ -304,10 +304,12 @@ public sealed partial class DirectoryWorkspaceTests
         Assert.Single(mailer.Sent);
     }
 
-    // QA M2: rows queued while a transport existed are swept to NOT_CONFIGURED (payload erased) once it is gone.
+    // QA M2 + INVITE-RATELIMIT-FOLLOWUPS N3: a missing transport alone never finalizes queued rows (a configured peer could
+    // still send them); only the deliberate Mode=Disabled sweeps them to NOT_CONFIGURED (payload erased).
     [Fact]
     [Trait("Requirement", "USER-ADMIN-03")]
-    public async Task Rows_queued_before_the_transport_was_disabled_end_not_configured_with_the_payload_erased()
+    [Trait("Requirement", "INVITE-RATELIMIT-FOLLOWUPS")]
+    public async Task Rows_queued_before_the_transport_was_disabled_end_not_configured_only_by_the_explicit_disabled_mode()
     {
         var mailer = new RecordingMailer();
         await ResetQueuedDeliveries();
@@ -316,6 +318,14 @@ public sealed partial class DirectoryWorkspaceTests
         var issued = await Invited(admin, InviteByEmail(InviteeEmail));
         Assert.Equal("QUEUED", issued.Membership.Membership.InvitationDeliveryState);
         mailer.Configured = false;
+        await Dispatch(host);
+        var kept = Assert.Single(await Deliveries(issued.Membership.Membership.Id));
+        Assert.Equal(("QUEUED", 0), (kept.State, kept.Attempts));
+        Assert.NotNull(kept.ProtectedPayload);
+        // The operator's fleet-wide decision (the singleton is the bound operator configuration of this host).
+        var settings = host.Services.GetRequiredService<InvitationDeliverySettings>();
+        settings.Enabled = false; settings.Mode = InvitationDeliverySettings.ModeDisabled;
+        Assert.True(settings.SweepsUnsent);
         await Dispatch(host);
         var row = Assert.Single(await Deliveries(issued.Membership.Membership.Id));
         Assert.Equal(("NOT_CONFIGURED", "not_configured", (string?)null), (row.State, row.LastErrorCode, row.ProtectedPayload));

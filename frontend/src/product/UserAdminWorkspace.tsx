@@ -66,11 +66,12 @@ function useAdminCommand(user: Session | null, offline: boolean, onDone: (body: 
       setRetained(null); setNotice('done'); onDone(body)
     } catch (e) {
       if (!mounted.current) return
-      const definite = e instanceof ApiError && [400, 401, 403, 404, 409, 422].includes(e.status)
+      // 429 request_limit: refused before any change (INVITE-RATELIMIT-FOLLOWUPS), so the outcome is definite.
+      const definite = e instanceof ApiError && [400, 401, 403, 404, 409, 422, 429].includes(e.status)
       if (!sent || definite) setRetained(null)
       setCode(e instanceof ApiError ? e.code : ''); setErrors(e instanceof ApiError ? e.errors : {})
       setNotice(sent && !definite ? 'uncertain' : e instanceof ApiError && e.status === 409 && ['version_conflict', 'conflict_changed', 'lineage_conflict'].includes(e.code) ? 'conflict'
-        : e instanceof ApiError && [400, 409, 422].includes(e.status) ? 'refused' : e instanceof ApiError && [401, 403, 404].includes(e.status) ? 'denied' : 'failed')
+        : e instanceof ApiError && [400, 409, 422, 429].includes(e.status) ? 'refused' : e instanceof ApiError && [401, 403, 404].includes(e.status) ? 'denied' : 'failed')
     } finally { clearTimeout(timeout); lock.current = false; if (mounted.current) setBusy(false) }
   }, [offline, user, onDone])
   return { run, busy, notice, code, errors, retained, clear: useCallback(() => { setNotice(''); setCode(''); setErrors({}) }, []) }
