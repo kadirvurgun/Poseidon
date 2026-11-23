@@ -38,7 +38,7 @@ A página Eventos de segurança e quase acidentes permite relatar rapidamente um
 - **A necessidade de investigação é UNKNOWN:** nenhuma decisão foi tomada; isso não significa "não" e bloqueia o encerramento.
 - **Ação — Aberta / Concluída / Verificada:** Concluída não é Verificada, e Verificada não é Eficaz.
 - **Eficácia — Pendente / Eficaz / Não eficaz / Inconclusiva / Sem ações / Não visível:** a eficácia é uma revisão humana por ação e é separada do encerramento. **Sem ações** não significa eficaz.
-- Resumo **Eventos de segurança em aberto**: **Eventos de alta gravidade em aberto**, **Revisão necessária** ou **Nenhum evento de alta gravidade em aberto**. É apenas um aviso; não fornece nenhuma decisão de prontidão.
+- Resumo **Eventos de segurança em aberto**: **Eventos de alta gravidade em aberto**, **Revisão necessária** ou **Nenhum evento de alta gravidade em aberto**. Enquanto nenhuma política de severidade estiver configurada, **Política de severidade não configurada – revisão necessária** é exibido em vez desse estado sem pendências, porque eventos de alta gravidade não podem ser descartados. É apenas um aviso; não fornece nenhuma decisão de prontidão.
 - **Confidencial (protegido):** a identidade do relator fica em um cofre restrito e não é exibida aos leitores.
 - **Capturado offline / Aguardando sincronização / Salvo neste dispositivo. Ainda não enviado.** Enfileirado não é enviado.
 

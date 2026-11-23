@@ -2285,6 +2285,8 @@
       "b_BLOCKERS_PRESENT": "Eventos de gravedad alta abiertos",
       "b_REVIEW_REQUIRED": "Revisión requerida",
       "b_NO_OPEN_HIGH_SEVERITY_EVENT": "Ningún evento de gravedad alta abierto",
+      "b_POLICY_UNCONFIGURED": "Política de severidad no configurada – revisión requerida",
+      "policyUnconfigured": "No hay una política de severidad configurada, por lo que no se pueden descartar eventos de severidad alta. Revise manualmente los eventos abiertos; esto no es un estado listo ni de todo correcto.",
       "r_HIGH_SEVERITY_OPEN": "Gravedad alta, abierto",
       "r_UNTRIAGED_EVENT": "Aún sin clasificar",
       "r_SEVERITY_UNASSESSED": "Gravedad sin evaluar",

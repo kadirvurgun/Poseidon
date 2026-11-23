@@ -2285,6 +2285,8 @@
       "b_BLOCKERS_PRESENT": "Ereignisse mit hohem Schweregrad offen",
       "b_REVIEW_REQUIRED": "Prüfung erforderlich",
       "b_NO_OPEN_HIGH_SEVERITY_EVENT": "Kein offenes Ereignis mit hohem Schweregrad",
+      "b_POLICY_UNCONFIGURED": "Schweregrad-Richtlinie nicht konfiguriert – Prüfung erforderlich",
+      "policyUnconfigured": "Es ist keine Schweregrad-Richtlinie konfiguriert, daher können Ereignisse mit hohem Schweregrad nicht ausgeschlossen werden. Offene Ereignisse manuell prüfen; dies ist kein Bereit- oder Entwarnungszustand.",
       "r_HIGH_SEVERITY_OPEN": "Hoher Schweregrad, offen",
       "r_UNTRIAGED_EVENT": "Noch nicht triagiert",
       "r_SEVERITY_UNASSESSED": "Schweregrad nicht bewertet",

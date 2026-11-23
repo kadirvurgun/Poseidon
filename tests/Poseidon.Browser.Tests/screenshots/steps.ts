@@ -146,3 +146,13 @@ export function validateMapping(value: unknown): ScreenshotMapping {
 
 /** Committed output path relative to frontend/src/help/screenshots. */
 export const shotName = (locale: ScreenshotLocale, key: string, step: number, viewport: ViewportName) => `${locale}/${key}/${step}-${viewport}`
+
+/**
+ * N6: the commit stamp drawn under every screenshot. The 390 px mobile viewport gets a compact form so the stamp
+ * stays on one line; both forms keep the 12-character commit and the synthetic-data marker.
+ */
+export function commitStamp(commit: string, viewportWidth: number): string {
+  if (!/^[0-9a-f]{12,40}$/.test(commit)) throw new Error('screenshot_commit_invalid')
+  return viewportWidth < 480 ? `POSEIDON · ${commit.slice(0, 12)} · synthetic · UG-2`
+    : `POSEIDON · ${commit.slice(0, 12)} · synthetic data · USER-GUIDE-01 UG-2`
+}

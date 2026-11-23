@@ -2285,6 +2285,8 @@
       "b_BLOCKERS_PRESENT": "High-severity events open",
       "b_REVIEW_REQUIRED": "Review required",
       "b_NO_OPEN_HIGH_SEVERITY_EVENT": "No open high-severity event",
+      "b_POLICY_UNCONFIGURED": "Severity policy not configured – review required",
+      "policyUnconfigured": "No severity policy is configured, so high-severity events cannot be ruled out. Review open events manually; this is not a ready or all-clear state.",
       "r_HIGH_SEVERITY_OPEN": "High severity, open",
       "r_UNTRIAGED_EVENT": "Not yet triaged",
       "r_SEVERITY_UNASSESSED": "Severity unassessed",

@@ -38,7 +38,7 @@ Stránka Bezpečnostní události a skoronehody umožňuje rychle nahlásit bezp
 - **Potřeba šetření je UNKNOWN:** nebylo učiněno žádné rozhodnutí; neznamená to „ne“ a blokuje to uzavření.
 - **Action — Open / Completed / Verified:** Dokončeno není Ověřeno a Ověřeno není Účinné.
 - **Effectiveness — Pending / Effective / Not effective / Inconclusive / No actions / Not visible:** účinnost je lidské posouzení pro každé opatření a je oddělená od uzavření. **Žádná opatření** neznamená účinné.
-- Souhrn **Otevřené bezpečnostní události**: **Otevřené události s vysokou závažností**, **Vyžaduje posouzení** nebo **Žádná otevřená událost s vysokou závažností**. Je to pouze upozornění; nedává žádné rozhodnutí o připravenosti.
+- Souhrn **Otevřené bezpečnostní události**: **Otevřené události s vysokou závažností**, **Vyžaduje posouzení** nebo **Žádná otevřená událost s vysokou závažností**. Dokud nejsou nakonfigurovány zásady závažnosti, zobrazuje se místo tohoto stavu „vše v pořádku“ **Zásady závažnosti nejsou nakonfigurovány – vyžadováno posouzení**, protože události s vysokou závažností nelze vyloučit. Je to pouze upozornění; nedává žádné rozhodnutí o připravenosti.
 - **Důvěrné (chráněno):** identita oznamovatele je v omezeném trezoru a čtenářům se nezobrazuje.
 - **Captured offline / Waiting to sync / Saved on this device. Not yet sent.** Zařazeno do fronty neznamená odesláno.
 

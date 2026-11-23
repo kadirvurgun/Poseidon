@@ -176,7 +176,7 @@ function ReadinessPanel({ data, vessel, t, stale, disabled, run }: { data: Depar
     <h2>{t.why}</h2>
     {data.why.length === 0 ? <p>{t.whyEmpty}</p> :
       <ol className="departure-why" aria-label={t.why}>{data.why.map((w, i) => <li key={`${w.category}-${w.reason}-${w.sourceId ?? ''}-${i}`} data-result={w.result}>
-        <ResultBadge result={w.result} t={t}/> {word(t, 'cat_' + w.category)} · <code>{w.reason}</code>
+        <ResultBadge result={w.result} t={t}/> {word(t, 'cat_' + w.category)} · <code className="departure-reason-code" title={w.reason}>{w.reason}</code>
         {w.sourceKind && <> · <span>{w.sourceKind}{w.sourceRevision !== null ? ` r${w.sourceRevision}` : ''}</span></>}</li>)}</ol>}
     <ReleaseExplanation data={data} t={t}/>
     <h2>{t.decisions}</h2>

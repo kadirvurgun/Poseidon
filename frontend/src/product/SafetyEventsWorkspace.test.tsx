@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { SafetyEventsWorkspace, safetyRoute } from './SafetyEventsWorkspace'
+import { blockerDisplayState, SafetyEventsWorkspace, safetyRoute } from './SafetyEventsWorkspace'
 import { decodeEvent, emptyDraft, missingFields } from './safety-events-api'
 import { changeAppLanguage } from '../i18n'
 
@@ -70,6 +70,50 @@ it('lists events with the blocker summary and never shows a confidential reporte
   expect(screen.getByText('FICTIONAL line parted')).toBeTruthy()
   expect(screen.getAllByText('Confidential').length).toBeGreaterThan(0)
   expect(screen.getByTestId('offline-unavailable')).toBeTruthy()
+})
+
+// N6 honesty: with SeverityPolicyUnconfigured the server's "no open high-severity event" is not an all-clear.
+const emptyBlockers = (coverage: string[]) => ({ vesselId: vessel, state: 'NO_OPEN_HIGH_SEVERITY_EVENT', items: [], coverage, evaluatedAt: '2026-11-20T08:00:00+00:00' })
+const withBlockers = (blockers: unknown) => {
+  const base = fetcher.getMockImplementation()!
+  fetcher.mockImplementation(async (url: string, init?: RequestInit) => url.includes('safety-events?') && !init?.method ? json(page({ items: [], blockers })) : base(url, init))
+}
+
+it('never shows an all-clear while the severity policy is unconfigured', async () => {
+  expect(blockerDisplayState(emptyBlockers(['SeverityPolicyUnconfigured']) as never)).toEqual({ state: 'POLICY_UNCONFIGURED', unconfigured: true })
+  expect(blockerDisplayState(emptyBlockers([]) as never)).toEqual({ state: 'NO_OPEN_HIGH_SEVERITY_EVENT', unconfigured: false })
+  withBlockers(emptyBlockers(['SeverityPolicyUnconfigured']))
+  history.replaceState(null, '', `/app/safety-events?vessel=${vessel}`)
+  render(<SafetyEventsWorkspace/>)
+  const blockers = await screen.findByRole('region', { name: 'Open safety events' })
+  expect(within(blockers).queryByText('No open high-severity event')).toBeNull()
+  const badge = within(blockers).getByText('Severity policy not configured – review required')
+  expect(badge.getAttribute('data-state')).toBe('POLICY_UNCONFIGURED')
+  expect(badge.getAttribute('data-tone')).toBe('warning')
+  expect(within(blockers).getByTestId('severity-policy-unconfigured').textContent).toMatch(/cannot be ruled out/)
+})
+
+it('shows the Turkish honest unconfigured-policy message', async () => {
+  await changeAppLanguage('tr', false)
+  withBlockers(emptyBlockers(['SeverityPolicyUnconfigured']))
+  history.replaceState(null, '', `/app/safety-events?vessel=${vessel}`)
+  render(<SafetyEventsWorkspace/>)
+  expect(await screen.findByText('Şiddet politikası yapılandırılmadı – inceleme gerekli')).toBeTruthy()
+  expect(screen.queryByText('Açık yüksek şiddetli olay yok')).toBeNull()
+})
+
+it('keeps the server state and note when blockers are present under an unconfigured policy, and the plain state once configured', async () => {
+  history.replaceState(null, '', `/app/safety-events?vessel=${vessel}`)
+  const { unmount } = render(<SafetyEventsWorkspace/>)
+  const blockers = await screen.findByRole('region', { name: 'Open safety events' })
+  expect(within(blockers).getByText('High-severity events open')).toBeTruthy()
+  expect(within(blockers).getByTestId('severity-policy-unconfigured')).toBeTruthy()
+  unmount()
+  withBlockers(emptyBlockers([]))
+  render(<SafetyEventsWorkspace/>)
+  const configured = await screen.findByRole('region', { name: 'Open safety events' })
+  expect(within(configured).getByText('No open high-severity event')).toBeTruthy()
+  expect(within(configured).queryByTestId('severity-policy-unconfigured')).toBeNull()
 })
 
 it('captures a confidential draft with an explicit follow-up preference and keeps the receipt id in the URL', async () => {

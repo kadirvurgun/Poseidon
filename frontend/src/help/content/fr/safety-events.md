@@ -38,7 +38,7 @@ La page Événements de sécurité et presque-accidents vous permet de signaler 
 - **Besoin d’enquête UNKNOWN :** aucune décision n’a été prise ; cela ne signifie pas « non » et bloque la clôture.
 - **Action — Open / Completed / Verified :** Réalisé n’est pas Vérifié, et Vérifié n’est pas Efficace.
 - **Effectiveness — Pending / Effective / Not effective / Inconclusive / Aucune action / Not visible :** l’efficacité est une revue humaine par action et est distincte de la clôture. **Aucune action** ne signifie pas efficace.
-- Synthèse **Événements de sécurité ouverts** : **Événements de gravité élevée ouverts**, **Revue requise** ou **Aucun événement de gravité élevée ouvert**. C’est uniquement un avertissement ; elle ne donne aucune décision de disponibilité.
+- Synthèse **Événements de sécurité ouverts** : **Événements de gravité élevée ouverts**, **Revue requise** ou **Aucun événement de gravité élevée ouvert**. Tant qu’aucune politique de gravité n’est configurée, **Politique de gravité non configurée – revue requise** s’affiche à la place de cet état sans alerte, car des événements de gravité élevée ne peuvent pas être exclus. C’est uniquement un avertissement ; elle ne donne aucune décision de disponibilité.
 - **Confidentiel (protégé) :** l’identité du déclarant se trouve dans un coffre restreint et n’est pas affichée aux lecteurs.
 - **Captured offline / Waiting to sync / Saved on this device. Not yet sent.** En file d’attente n’est pas envoyé.
 

@@ -1,9 +1,12 @@
 .language-selector { display: flex; flex-wrap: wrap; align-items: center; gap: .375rem; min-inline-size: 0; max-inline-size: 100%; }
 .language-selector-control { position: relative; display: flex; align-items: center; gap: .5rem; min-inline-size: 0; max-inline-size: 100%; }
 .language-selector-control > svg { position: absolute; inset-inline-start: .625rem; inline-size: 1rem; block-size: 1rem; pointer-events: none; color: var(--muted-foreground); }
-.language-selector-control select { min-block-size: max(40px, 2.5rem); min-inline-size: 8rem; max-inline-size: min(15rem, 100%); padding-block: .375rem; padding-inline: 2rem .75rem; border: 1px solid var(--border); border-radius: .5rem; background: var(--background); color: var(--foreground); font: inherit; font-size: .8125rem; cursor: pointer; }
-.language-selector-control select:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
-.language-selector-control select:disabled { cursor: default; opacity: .6; }
+/* N6: shell rules such as `.enterprise-shell select` / `.tug-workspace select` (same 0,1,1 specificity, loaded later) reset the
+   inline-start padding, so the globe icon overlapped the language name. The `.language-selector > .language-selector-control > select`
+   chain (0,2,1) keeps room for the icon in every shell. */
+.language-selector > .language-selector-control > select { min-block-size: max(40px, 2.5rem); min-inline-size: 8rem; max-inline-size: min(15rem, 100%); padding-block: .375rem; inline-size: auto; padding-inline: 2rem .75rem; border: 1px solid var(--border); border-radius: .5rem; background: var(--background); color: var(--foreground); font: inherit; font-size: .8125rem; cursor: pointer; }
+.language-selector > .language-selector-control > select:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+.language-selector > .language-selector-control > select:disabled { cursor: default; opacity: .6; }
 .language-selector-label { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .language-selector-message { flex-basis: 100%; max-inline-size: 22rem; font-size: .75rem; line-height: 1.4; color: var(--muted-foreground); overflow-wrap: anywhere; }
-@media (max-width: 640px), (pointer: coarse) { .language-selector-control select { min-block-size: max(44px, 2.75rem); } }
+@media (max-width: 640px), (pointer: coarse) { .language-selector > .language-selector-control > select { min-block-size: max(44px, 2.75rem); } }

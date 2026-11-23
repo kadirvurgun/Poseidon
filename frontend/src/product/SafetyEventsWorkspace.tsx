@@ -45,7 +45,7 @@ async function sendCommand(command: Command, csrf: string, signal: AbortSignal):
 
 function Tone({ value, t, prefix }: { value: string; t: Copy; prefix: string }) {
   const tone = ['CRITICAL', 'HIGH', 'NOT_EFFECTIVE', 'BLOCKERS_PRESENT'].includes(value) ? 'danger'
-    : ['UNASSESSED', 'UNKNOWN', 'PENDING', 'INCONCLUSIVE', 'REVIEW_REQUIRED', 'SUBMITTED', 'RETURNED'].includes(value) ? 'warning'
+    : ['UNASSESSED', 'UNKNOWN', 'PENDING', 'INCONCLUSIVE', 'REVIEW_REQUIRED', 'POLICY_UNCONFIGURED', 'SUBMITTED', 'RETURNED'].includes(value) ? 'warning'
       : ['EFFECTIVE'].includes(value) ? 'info' : 'neutral';
   return <Badge tone={tone} data-state={value}>{label(t, prefix + value)}</Badge>;
 }
@@ -143,10 +143,18 @@ export function SafetyEventsWorkspace() {
     </main></div>;
 }
 
+// N6 honesty: while the severity policy is unconfigured, "no open high-severity event" is not established (severity is
+// never derived automatically), so that state is shown as review-required, never as an all-clear.
+export function blockerDisplayState(b: Page['blockers']) {
+  const unconfigured = b.coverage.includes('SeverityPolicyUnconfigured');
+  return { state: unconfigured && b.state === 'NO_OPEN_HIGH_SEVERITY_EVENT' ? 'POLICY_UNCONFIGURED' : b.state, unconfigured };
+}
+
 function BlockerSummary({ page, t }: { page: Page; t: Copy }) {
-  const b = page.blockers;
+  const b = page.blockers, shown = blockerDisplayState(b);
   return <section aria-label={t.blockersHeading} className="safety-blockers">
-    <h2>{t.blockersHeading} <Tone value={b.state} t={t} prefix="b_"/></h2>
+    <h2>{t.blockersHeading} <Tone value={shown.state} t={t} prefix="b_"/></h2>
+    {shown.unconfigured && <p role="note" data-testid="severity-policy-unconfigured">{t.policyUnconfigured}</p>}
     {b.items.length > 0 && <ul>{b.items.map(i => <li key={i.eventId} data-blocking={i.blocking}>{i.eventNo} · {label(t, 'r_' + i.reason)}{i.severity && <> · <Tone value={i.severity} t={t} prefix="sev_"/></>}</li>)}</ul>}
     <p><small>{t.coverage}: {b.coverage.map(c => <code key={c}>{c} </code>)}</small></p>
   </section>;

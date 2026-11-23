@@ -2285,6 +2285,8 @@
       "b_BLOCKERS_PRESENT": "Nyitott, nagy súlyosságú események",
       "b_REVIEW_REQUIRED": "Felülvizsgálat szükséges",
       "b_NO_OPEN_HIGH_SEVERITY_EVENT": "Nincs nyitott, nagy súlyosságú esemény",
+      "b_POLICY_UNCONFIGURED": "Nincs beállítva súlyossági szabályzat – felülvizsgálat szükséges",
+      "policyUnconfigured": "Nincs beállítva súlyossági szabályzat, ezért a nagy súlyosságú események nem zárhatók ki. A nyitott eseményeket kézzel vizsgálja felül; ez nem kész vagy minden rendben állapot.",
       "r_HIGH_SEVERITY_OPEN": "Nagy súlyosság, nyitott",
       "r_UNTRIAGED_EVENT": "Még nincs osztályozva",
       "r_SEVERITY_UNASSESSED": "Súlyosság nincs értékelve",

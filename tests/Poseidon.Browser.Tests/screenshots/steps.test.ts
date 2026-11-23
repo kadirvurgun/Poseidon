@@ -2,7 +2,7 @@ import { test } from 'node:test'
 import assert from 'node:assert/strict'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { allowedClicks, shotName, unavailableReasons, validateClick, validateMapping, validateTarget } from './steps.ts'
+import { allowedClicks, commitStamp, shotName, unavailableReasons, validateClick, validateMapping, validateTarget, viewports } from './steps.ts'
 
 // USER-GUIDE-01 UG-2: closed step-mapping schema; a screenshot run can only perform allow-listed clicks.
 const committed = JSON.parse(readFileSync(resolve(import.meta.dirname, '../../../frontend/src/help/screenshots/steps.json'), 'utf8'))
@@ -102,4 +102,14 @@ test('unnamed, nth-only, pattern, wrong-role and other action kinds are refused 
 
 test('output names are locale/key/step-viewport', () => {
   assert.equal(shotName('tr', 'today', 4, 'desktop'), 'tr/today/4-desktop')
+})
+
+test('N6: the commit stamp keeps the commit and synthetic marker and is compact on the 390 px viewport', () => {
+  const commit = '5e7e2e0ebac2' + '0'.repeat(28)
+  assert.equal(commitStamp(commit, viewports.desktop.width), 'POSEIDON · 5e7e2e0ebac2 · synthetic data · USER-GUIDE-01 UG-2')
+  const mobile = commitStamp(commit, viewports.mobile.width)
+  assert.equal(mobile, 'POSEIDON · 5e7e2e0ebac2 · synthetic · UG-2')
+  // 12 px system-ui averages well under 7.5 px per character; 10 px padding on each side.
+  assert.ok(mobile.length * 7.5 + 20 < viewports.mobile.width)
+  assert.throws(() => commitStamp('not-a-commit', 390), /screenshot_commit_invalid/)
 })

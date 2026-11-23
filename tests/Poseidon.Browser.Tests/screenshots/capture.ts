@@ -14,7 +14,7 @@ import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
-import { clickKind, clickName, screenshotLocales, shotName, validateClick, validateMapping, viewports, type ClickTarget, type Localized, type ScreenshotLocale, type Target, type ViewportName } from './steps.ts'
+import { clickKind, clickName, commitStamp, screenshotLocales, shotName, validateClick, validateMapping, viewports, type ClickTarget, type Localized, type ScreenshotLocale, type Target, type ViewportName } from './steps.ts'
 import { paletteScreenshot } from './png-palette.ts'
 import { allowedDatasets, generator, generatorFiles, gitBlobSha1, provenanceSchema, scanDomText, visibleTenant, type Provenance } from './provenance.ts'
 
@@ -157,11 +157,13 @@ async function overlay(page: Page, boxes: { x: number; y: number; width: number;
     }
     const footer = document.createElement('div')
     footer.textContent = stamp
-    footer.style.cssText = `position:absolute;left:0;right:0;bottom:0;height:${footerHeight}px;display:flex;align-items:center;padding:0 10px;` +
-      'background:var(--muted);color:var(--muted-foreground);font:12px/1 system-ui,sans-serif;border-top:1px solid var(--border)'
+    footer.style.cssText = `position:absolute;left:0;right:0;bottom:0;height:${footerHeight}px;display:block;padding:0 10px;box-sizing:border-box;` +
+      'background:var(--muted);color:var(--muted-foreground);font:12px/1 system-ui,sans-serif;border-top:1px solid var(--border);' +
+      // N6: one line on every viewport (the compact mobile text fits; ellipsis is only a guard).
+      `line-height:${footerHeight - 1}px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis`
     host.append(footer)
     document.body.append(host)
-  }, { boxes, step, footerHeight, stamp: `POSEIDON · ${commit.slice(0, 12)} · synthetic data · USER-GUIDE-01 UG-2` })
+  }, { boxes, step, footerHeight, stamp: commitStamp(commit, page.viewportSize()?.width ?? viewports.desktop.width) })
 }
 
 /**

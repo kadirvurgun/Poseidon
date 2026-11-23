@@ -38,7 +38,7 @@ Auf der Seite Sicherheitsereignisse und Beinaheunfälle melden Sie ein Sicherhei
 - **Untersuchungsbedarf ist UNKNOWN:** Es wurde keine Entscheidung getroffen; das bedeutet nicht „nein“ und blockiert den Abschluss.
 - **Maßnahme — Offen / Abgeschlossen / Verifiziert:** Abgeschlossen ist nicht Verifiziert, und Verifiziert ist nicht Wirksam.
 - **Wirksamkeit — Ausstehend / Wirksam / Nicht wirksam / Nicht eindeutig / Keine Maßnahmen / Nicht sichtbar:** Die Wirksamkeit ist eine menschliche Bewertung je Maßnahme und vom Abschluss getrennt. **Keine Maßnahmen** bedeutet nicht „Wirksam“.
-- Übersicht **Offene Sicherheitsereignisse**: **Ereignisse mit hohem Schweregrad offen**, **Prüfung erforderlich** oder **Kein offenes Ereignis mit hohem Schweregrad**. Sie ist nur eine Warnung; sie trifft keine Bereitschaftsentscheidung.
+- Übersicht **Offene Sicherheitsereignisse**: **Ereignisse mit hohem Schweregrad offen**, **Prüfung erforderlich** oder **Kein offenes Ereignis mit hohem Schweregrad**. Solange keine Schweregrad-Richtlinie konfiguriert ist, wird statt dieser Entwarnung **Schweregrad-Richtlinie nicht konfiguriert – Prüfung erforderlich** angezeigt, weil Ereignisse mit hohem Schweregrad nicht ausgeschlossen werden können. Sie ist nur eine Warnung; sie trifft keine Bereitschaftsentscheidung.
 - **Vertraulich (geschützt):** Die Identität des Meldenden liegt in einem geschützten Tresor und wird Lesenden nicht angezeigt.
 - **Offline erfasst / Wartet auf Synchronisierung / Auf diesem Gerät gespeichert. Noch nicht gesendet.** In der Warteschlange ist nicht gesendet.
 

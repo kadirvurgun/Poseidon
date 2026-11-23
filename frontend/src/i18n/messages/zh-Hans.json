@@ -2285,6 +2285,8 @@
       "b_BLOCKERS_PRESENT": "存在未关闭的高严重程度事件",
       "b_REVIEW_REQUIRED": "需要审查",
       "b_NO_OPEN_HIGH_SEVERITY_EVENT": "无未关闭的高严重程度事件",
+      "b_POLICY_UNCONFIGURED": "严重性策略未配置 – 需要审查",
+      "policyUnconfigured": "尚未配置严重性策略，因此无法排除高严重性事件。请人工审查未结事件；这不是就绪或一切正常的状态。",
       "r_HIGH_SEVERITY_OPEN": "高严重程度，未关闭",
       "r_UNTRIAGED_EVENT": "尚未分类评估",
       "r_SEVERITY_UNASSESSED": "严重程度未评估",
