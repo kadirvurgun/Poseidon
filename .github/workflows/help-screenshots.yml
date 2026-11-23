@@ -83,16 +83,10 @@ jobs:
           ca = subprocess.run([sys.executable, 'scripts/lab_profile_ca.py', str(profile), sys.argv[1], owner]).returncode if acl == 0 else -1
           print(f'profile_acl={acl} profile_ca={ca}')
           if ca != 0 and acl == 0:
-              # Diagnostics of the public synthetic CA import only (no credential is read here).
+              # Diagnostics stay fixed codes: lab_profile_ca.py already wrote 'lab_profile_ca: <code>' to
+              # stderr above; only bundle library file names are added (no exception text or traceback).
               for entry in sorted(Path(sys.argv[1]).parent.glob('lib*.so')):
                   print('bundle', entry.name)
-              sys.path.insert(0, 'scripts')
-              import lab_profile_ca, traceback, shutil
-              shutil.rmtree(profile); profile.mkdir(mode=0o700)
-              try:
-                  lab_profile_ca.install(str(profile), sys.argv[1], owner)
-              except Exception:
-                  traceback.print_exc()
           import shutil; shutil.rmtree(directory)
           sys.exit(0 if acl == 0 and ca == 0 else 1)
           PY
