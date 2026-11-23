@@ -2395,6 +2395,7 @@
       "releaseNotReady": "Freigeben erfordert eine aktuelle Bewertung BEREIT, daher muss jede Kategorie bestehen. Diese Kategorien bestehen noch nicht:",
       "gap_EMERGENCY_SOURCE_UNAVAILABLE": "Notfall: Es ist noch keine Quelle zur Notfallvorsorge angebunden, daher bleibt diese Kategorie Unbekannt. Aktuelle, von Menschen verifizierte Musterungs- und Übungsnachweise (SOLAS III/19) mit Einsatzbereitschaft der Rettungs- und Brandschutzmittel würden sie erfüllen, sobald das Modul Notfallvorsorge (61.02) geliefert ist.",
       "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "Gesetzlich: Keine Quelle legt den erforderlichen Zertifikatssatz für dieses Schiff fest, daher bleibt die Vollständigkeit Unbekannt, auch wenn jedes erfasste Zertifikat gültig und verifiziert ist. Eine kontrollierte Basis der erforderlichen Zertifikate für das Schiff würde sie erfüllen.",
+      "gap_SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED": "Sicherheitsereignisse: Keine genehmigte Schweregradrichtlinie legt fest, welche offenen Ereignisse das Auslaufen blockieren. \"Kein offenes Ereignis mit hohem Schweregrad\" schließt daher kein blockierendes Ereignis aus, und diese Kategorie bleibt Unbekannt. Eine genehmigte Schweregradrichtlinie für Sicherheitsereignisse würde sie erfüllen; prüfen Sie bis dahin die offenen Ereignisse auf der Seite Sicherheitsereignisse.",
       "releaseHoldDeny": "Anhalten und Ablehnen können jederzeit mit Begründung erfasst werden."
     },
     "S9Wpc_tsx_copy": {

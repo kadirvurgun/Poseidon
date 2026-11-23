@@ -68,13 +68,23 @@ public static class DepartureReadinessEngine
 
     // S9 integration (DEV-058 x DEV-060): maps the safety event blocker snapshot into this gate. BLOCKERS_PRESENT ->
     // FAIL per blocking event (an open HIGH/CRITICAL event is never averaged away); REVIEW_REQUIRED / UNAVAILABLE / any
-    // unrecognised state -> UNKNOWN; only NO_OPEN_HIGH_SEVERITY_EVENT is PASS for this input. Non-blocking items are
-    // always UNKNOWN (review), never PASS. Reasons are closed codes; no narrative or reporter identity is copied.
+    // unrecognised state -> UNKNOWN; only NO_OPEN_HIGH_SEVERITY_EVENT with complete coverage is PASS for this input.
+    // Non-blocking items are always UNKNOWN (review), never PASS. Reasons are closed codes; no narrative or reporter
+    // identity is copied. Coverage gaps (DEPARTURE-SEVERITY-UNKNOWN-20261123, S9 gate finding N3): while the source
+    // reports SeverityPolicyUnconfigured no approved policy says which severities block departure, so "no open
+    // high-severity event" cannot rule out a blocking event; it is UNKNOWN SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED,
+    // never PASS. Any other unrecognised coverage code fails closed as SAFETY_EVENT_COVERAGE_INCOMPLETE.
+    public const string SeverityPolicyUnconfiguredCoverage = "SeverityPolicyUnconfigured";
+    public const string SourceLimitExceededCoverage = "SafetyEventSourceLimitExceeded";
+    public const string ReadRequiredCoverage = "SafetyEventReadRequired";
+    public const string SeverityPolicyUnconfiguredReason = "SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED";
+    public const string CoverageIncompleteReason = "SAFETY_EVENT_COVERAGE_INCOMPLETE";
     public const string SafetySourceKind = "SafetyEvent";
     public const int SafetyItemMax = 256;
     public static DepartureCheck[] SafetyChecks(string? state, IEnumerable<DepartureSafetyItem>? items, IEnumerable<string>? coverage = null)
     {
         var list = (items ?? []).Where(i => i != null).Take(SafetyItemMax + 1).ToArray();
+        var gaps = (coverage ?? []).Where(c => !string.IsNullOrWhiteSpace(c)).Distinct(StringComparer.Ordinal).ToArray();
         var result = new List<DepartureCheck>();
         DepartureCheck Item(DepartureSafetyItem i, string r) => new("safety", r, "SAFETY_EVENT:" + Code(i.Reason), SafetySourceKind, i.EventId);
         switch (state)
@@ -87,9 +97,11 @@ public static class DepartureReadinessEngine
                 result.AddRange(list.Take(SafetyItemMax).Select(i => Item(i, Unknown)));
                 result.Add(new("safety", Unknown, "SAFETY_EVENT_REVIEW_REQUIRED", SafetySourceKind));
                 break;
-            case "NO_OPEN_HIGH_SEVERITY_EVENT" when list.Length == 0:
+            case "NO_OPEN_HIGH_SEVERITY_EVENT" when list.Length == 0 && gaps.Length == 0:
                 result.Add(new("safety", Pass, "NO_OPEN_HIGH_SEVERITY_EVENT", SafetySourceKind));
                 break;
+            case "NO_OPEN_HIGH_SEVERITY_EVENT" when list.Length == 0:
+                break; // every coverage gap is reported below as UNKNOWN; no PASS observation exists.
             case "UNAVAILABLE":
                 result.Add(new("safety", Unknown, "SAFETY_EVENT_SOURCE_UNAVAILABLE", SafetySourceKind));
                 break;
@@ -97,8 +109,13 @@ public static class DepartureReadinessEngine
                 result.Add(new("safety", Unknown, "SAFETY_EVENT_STATE_UNRECOGNIZED", SafetySourceKind));
                 break;
         }
-        if (list.Length > SafetyItemMax || (coverage ?? []).Contains("SafetyEventSourceLimitExceeded", StringComparer.Ordinal))
+        if (list.Length > SafetyItemMax || gaps.Contains(SourceLimitExceededCoverage, StringComparer.Ordinal))
             result.Add(new("safety", Unknown, "SAFETY_EVENT_SOURCE_LIMIT_EXCEEDED", SafetySourceKind));
+        if (gaps.Contains(SeverityPolicyUnconfiguredCoverage, StringComparer.Ordinal))
+            result.Add(new("safety", Unknown, SeverityPolicyUnconfiguredReason, SafetySourceKind));
+        // An UNAVAILABLE source explains itself with ReadRequired; anything else unrecognised is an unknown gap.
+        if (gaps.Any(g => g is not (SeverityPolicyUnconfiguredCoverage or SourceLimitExceededCoverage) && !(state == "UNAVAILABLE" && g == ReadRequiredCoverage)))
+            result.Add(new("safety", Unknown, CoverageIncompleteReason, SafetySourceKind));
         return result.ToArray();
     }
 

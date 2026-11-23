@@ -2395,6 +2395,7 @@
       "releaseNotReady": "Autorizar requiere una evaluación actual LISTO, por lo que todas las categorías deben superarse. Estas categorías aún no se superan:",
       "gap_EMERGENCY_SOURCE_UNAVAILABLE": "Emergencia: aún no hay conectada ninguna fuente de preparación para emergencias, por lo que esta categoría sigue Desconocida. La satisfarían registros actuales de reunión y ejercicios verificados por personas (SOLAS III/19), con la disponibilidad de los dispositivos de salvamento y contra incendios, una vez entregado el módulo de preparación para emergencias (61.02).",
       "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "Reglamentario: ninguna fuente define el conjunto de certificados exigidos para este buque, por lo que la integridad sigue Desconocida aunque todos los certificados registrados sean válidos y estén verificados. La satisfaría una línea base controlada de certificados exigidos para el buque.",
+      "gap_SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED": "Eventos de seguridad: ninguna política de gravedad aprobada define qué eventos abiertos bloquean la salida, por lo que «ningún evento de gravedad alta abierto» no puede descartar un evento bloqueante y esta categoría sigue Desconocida. Una política de gravedad aprobada para eventos de seguridad la satisfaría; hasta entonces, revise los eventos abiertos en la página Eventos de seguridad.",
       "releaseHoldDeny": "Retener y Denegar siempre pueden registrarse con un motivo."
     },
     "S9Wpc_tsx_copy": {

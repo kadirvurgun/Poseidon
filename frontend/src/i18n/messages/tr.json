@@ -2395,6 +2395,7 @@
       "releaseNotReady": "Serbest bırakma güncel bir HAZIR değerlendirme gerektirir; bu nedenle her kategori geçmelidir. Henüz geçmeyen kategoriler:",
       "gap_EMERGENCY_SOURCE_UNAVAILABLE": "Acil durum: henüz bağlı bir acil durum hazırlık kaynağı yok, bu nedenle bu kategori Bilinmiyor olarak kalır. Acil durum hazırlık modülü (61.02) teslim edildiğinde, can kurtarma ve yangınla mücadele donanımı hazırlığıyla birlikte güncel, insan tarafından doğrulanmış toplanma ve tatbikat kayıtları (SOLAS III/19) bu kategoriyi karşılar.",
       "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "Yasal: bu gemi için gerekli sertifika setini tanımlayan bir kaynak yok, bu nedenle kayıtlı her sertifika geçerli ve doğrulanmış olsa bile bütünlük Bilinmiyor olarak kalır. Gemi için kontrollü bir gerekli sertifika temel çizgisi bunu karşılar.",
+      "gap_SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED": "Emniyet olayları: hangi açık olayların kalkışı engellediğini tanımlayan onaylı bir şiddet politikası yok; bu nedenle \"açık yüksek şiddetli olay yok\" engelleyici bir olayı dışlayamaz ve bu kategori Bilinmiyor kalır. Onaylı bir emniyet olayı şiddet politikası bunu karşılar; o zamana kadar açık olayları Olaylar ve ramak kala sayfasında inceleyin.",
       "releaseHoldDeny": "Beklet ve Reddet her zaman bir gerekçeyle kaydedilebilir."
     },
     "S9Wpc_tsx_copy": {

@@ -2395,6 +2395,7 @@
       "releaseNotReady": "Autoriser exige une évaluation actuelle PRÊT ; chaque catégorie doit donc être conforme. Ces catégories ne le sont pas encore :",
       "gap_EMERGENCY_SOURCE_UNAVAILABLE": "Urgence : aucune source de préparation aux situations d’urgence n’est encore connectée ; cette catégorie reste donc Inconnue. Des registres actuels de rassemblement et d’exercices vérifiés par une personne (SOLAS III/19), avec l’état de préparation des engins de sauvetage et de lutte contre l’incendie, la satisferaient une fois le module de préparation aux urgences (61.02) livré.",
       "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "Réglementaire : aucune source ne définit l’ensemble des certificats requis pour ce navire ; l’exhaustivité reste donc Inconnue même si chaque certificat enregistré est valide et vérifié. Une base contrôlée des certificats requis pour le navire la satisferait.",
+      "gap_SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED": "Événements de sécurité : aucune politique de gravité approuvée ne définit quels événements ouverts bloquent l’appareillage ; « aucun événement de gravité élevée ouvert » ne peut donc exclure un événement bloquant et cette catégorie reste Inconnue. Une politique de gravité approuvée pour les événements de sécurité la satisferait ; d’ici là, examinez les événements ouverts sur la page Événements de sécurité.",
       "releaseHoldDeny": "Suspendre et Refuser peuvent toujours être enregistrés avec un motif."
     },
     "S9Wpc_tsx_copy": {

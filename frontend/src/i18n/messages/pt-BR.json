@@ -2395,6 +2395,7 @@
       "releaseNotReady": "Liberar exige uma avaliação atual PRONTO, portanto todas as categorias devem ser aprovadas. Estas categorias ainda não foram aprovadas:",
       "gap_EMERGENCY_SOURCE_UNAVAILABLE": "Emergência: ainda não há fonte de preparação para emergências conectada, portanto esta categoria permanece Desconhecida. Registros atuais de reunião e exercícios verificados por pessoas (SOLAS III/19), com a prontidão dos equipamentos de salvatagem e de combate a incêndio, a atenderiam assim que o módulo de preparação para emergências (61.02) for entregue.",
       "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "Estatutário: nenhuma fonte define o conjunto de certificados exigidos para este navio, portanto a completude permanece Desconhecida mesmo que todos os certificados registrados sejam válidos e verificados. Uma linha de base controlada de certificados exigidos para o navio a atenderia.",
+      "gap_SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED": "Eventos de segurança: nenhuma política de gravidade aprovada define quais eventos abertos bloqueiam a partida, portanto “nenhum evento de alta gravidade em aberto” não pode descartar um evento bloqueante e esta categoria permanece Desconhecida. Uma política de gravidade aprovada para eventos de segurança a satisfaria; até lá, revise os eventos abertos na página Eventos de segurança.",
       "releaseHoldDeny": "Reter e Negar sempre podem ser registrados com um motivo."
     },
     "S9Wpc_tsx_copy": {

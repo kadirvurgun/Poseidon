@@ -20,7 +20,7 @@ public sealed partial class DirectoryWorkspaceTests
     private static readonly Guid DepartureMasterGrant = Guid.Parse("5a7b0000-0000-4000-8000-0000000000d1");
     private Vessel DepartureShip => seed.Vessels.First(v => v.TenantId == SeedVessel.TenantId && v.Kind == VesselKind.Ship);
 
-    private WebApplicationFactory<Program> DepartureHost(bool appointed) {
+    private WebApplicationFactory<Program> DepartureHost(bool appointed, bool safetyRead = false) {
         var config = new Dictionary<string, string?> {
             ["Authentication:Oidc:Memberships:0:Permissions:60"] = "departure.readiness.read",
             ["Authentication:Oidc:Memberships:0:Permissions:61"] = "departure.decide",
@@ -28,6 +28,7 @@ public sealed partial class DirectoryWorkspaceTests
             ["Authentication:Oidc:Memberships:0:Permissions:63"] = "certificate.read",
             ["Authentication:Oidc:Memberships:0:ActorKind"] = "Human",
         };
+        if (safetyRead) config["Authentication:Oidc:Memberships:0:Permissions:64"] = SafetyEventPolicy.ReadPermission;
         if (appointed) {
             const string prefix = "Authentication:Oidc:Memberships:0:DepartureAuthorities:0:";
             config[prefix + "Id"] = DepartureMasterGrant.ToString(); config[prefix + "VesselId"] = DepartureShip.Id.ToString(); config[prefix + "RoleId"] = SyntheticRole;
@@ -35,6 +36,26 @@ public sealed partial class DirectoryWorkspaceTests
             config[prefix + "ValidFrom"] = "2026-01-01T00:00:00Z"; config[prefix + "ValidUntil"] = "2099-01-01T00:00:00Z";
         }
         return Host(crewRead: true, technicalRead: true).WithWebHostBuilder(b => b.ConfigureAppConfiguration((_, c) => c.AddInMemoryCollection(config)));
+    }
+
+    // DEPARTURE-SEVERITY-UNKNOWN-20261123 (S9 gate N3): with hse.safety_event.read the safety source is available, but
+    // the shipped read model reports SeverityPolicyUnconfigured, so the departure safety category is UNKNOWN with an
+    // explicit reason through the real endpoint, never PASS, whatever synthetic events are open on the ship.
+    [Fact]
+    [Trait("Requirement", "DEV-058")]
+    [Trait("Requirement", "DEV-060")]
+    public async Task Departure_safety_is_unknown_with_severity_policy_unconfigured_never_pass_through_the_endpoint() {
+        using var host = DepartureHost(false, safetyRead: true); using var c = Client(host); await Token(c);
+        var from = DateOnly.FromDateTime(DateTime.UtcNow);
+        var url = $"/api/v1/departure-readiness?vessel={DepartureShip.Id}&from={Day(from)}&to={Day(from.AddDays(1))}";
+        var view = (await c.GetFromJsonAsync<DepartureReadinessView>(url, Ct))!;
+        var safety = view.Categories.Single(x => x.Category == "safety");
+        Assert.DoesNotContain("safety:SAFETY_EVENT_SOURCE_UNAVAILABLE", view.ReviewReasons);
+        Assert.Contains("safety:SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED", view.ReviewReasons);
+        Assert.NotEqual(DepartureReadinessEngine.Pass, safety.Result);
+        Assert.Contains("SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED", safety.Reasons);
+        Assert.DoesNotContain(view.Why, w => w.Category == "safety" && w.Result == DepartureReadinessEngine.Pass);
+        Assert.NotEqual(DepartureReadinessEngine.Ready, view.State);
     }
 
     private static string Day(DateOnly d) => d.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture);

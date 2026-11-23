@@ -2395,6 +2395,7 @@
       "releaseNotReady": "放行需要当前评估为就绪，因此每个类别都必须通过。以下类别尚未通过：",
       "gap_EMERGENCY_SOURCE_UNAVAILABLE": "应急：尚未接入任何应急准备数据源，因此该类别保持未知。应急准备模块（61.02）交付后，经人工核验的当前集合与演习记录（SOLAS III/19）以及救生和消防设备的就绪状态即可满足该类别。",
       "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "法定：没有任何数据源定义该船所需的证书集合，因此即使每份已记录证书均有效且已核验，完整性仍为未知。受控的该船所需证书基线即可满足该项。",
+      "gap_SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED": "安全事件：没有经批准的严重程度策略规定哪些未关闭事件会阻止离港，因此“无未关闭的高严重程度事件”无法排除阻止性事件，该类别保持未知。经批准的安全事件严重程度策略可以满足此要求；在此之前，请在安全事件页面审查未关闭的事件。",
       "releaseHoldDeny": "暂缓和拒绝始终可以附理由记录。"
     },
     "S9Wpc_tsx_copy": {

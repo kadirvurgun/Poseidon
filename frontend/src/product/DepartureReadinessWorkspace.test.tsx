@@ -125,6 +125,22 @@ it('explains why Release is unavailable: open categories, the emergency and cert
   expect(screen.getByRole('radio', { name: 'Release' })).toBeDisabled()
 })
 
+it('explains that an unconfigured safety event severity policy keeps the safety category Unknown, never Pass', async () => {
+  // DEPARTURE-SEVERITY-UNKNOWN-20261123 (S9 gate N3): the server reports UNKNOWN with an explicit reason code.
+  const categories = readiness().categories.map(c => c.category === 'safety' ? { ...c, result: 'UNKNOWN', reasons: ['SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED'] } : c)
+  body = readiness({ categories, reviewReasons: [...readiness().reviewReasons, 'safety:SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED'],
+    why: [...readiness().why, { category: 'safety', result: 'UNKNOWN', reason: 'SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED', sourceKind: 'SafetyEvent', sourceId: null, sourceRevision: null }] })
+  open()
+  render(<DepartureReadinessWorkspace/>)
+  const section = await screen.findByRole('region', { name: 'Why Release is unavailable' })
+  expect(section.querySelector('[data-category="safety"] [data-result="UNKNOWN"]')).not.toBeNull()
+  expect(section.querySelector('[data-gap="SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED"]')?.textContent).toMatch(/no approved severity policy .* stays Unknown/)
+  expect(document.querySelector('.departure-categories [data-category="safety"] [data-result="PASS"]')).toBeNull()
+  await changeAppLanguage('tr', false)
+  expect((await screen.findByRole('region', { name: /Serbest bırakma neden kullanılamıyor/ })).querySelector('[data-gap="SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED"]')?.textContent)
+    .toMatch(/onaylı bir şiddet politikası yok/)
+})
+
 it('explains a forecast window and stays silent only for a current READY assessment', async () => {
   body = readiness({ mode: 'FORECAST', state: 'REVIEW_REQUIRED' })
   open()

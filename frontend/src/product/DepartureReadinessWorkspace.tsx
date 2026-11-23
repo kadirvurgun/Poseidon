@@ -145,7 +145,8 @@ function WindowForm({ vessel, from, to, t, disabled, onSubmit }: { vessel: strin
 // Guide finding 22.11.2026: RELEASE needs a CURRENT READY assessment (60.01 p952). Explain exactly which categories keep it
 // unavailable and, for structural source gaps that no record in the product can close yet, what record would satisfy them.
 // The gate itself is server-owned and never lowered here; this only explains the server's categories.
-const sourceGaps = ['EMERGENCY_SOURCE_UNAVAILABLE', 'CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED'] as const
+// DEPARTURE-SEVERITY-UNKNOWN-20261123: an unconfigured safety event severity policy keeps the safety category Unknown.
+const sourceGaps = ['EMERGENCY_SOURCE_UNAVAILABLE', 'CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED', 'SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED'] as const
 export function ReleaseExplanation({ data, t }: { data: DepartureReadiness; t: Copy }) {
   if (data.mode === 'CURRENT' && data.state === 'READY') return null
   const open = data.categories.filter(c => c.result !== 'PASS')

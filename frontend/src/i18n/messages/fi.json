@@ -2395,6 +2395,7 @@
       "releaseNotReady": "Vapautus edellyttää nykyistä VALMIS-arviota, joten jokaisen luokan on läpäistävä. Nämä luokat eivät vielä läpäise:",
       "gap_EMERGENCY_SOURCE_UNAVAILABLE": "Hätävalmius: hätävalmiuden lähdettä ei ole vielä liitetty, joten tämä luokka pysyy Tuntemattomana. Ajantasaiset, ihmisen todentamat kokoontumis- ja harjoituskirjaukset (SOLAS III/19) pelastus- ja palontorjuntavälineiden valmiuden kanssa täyttäisivät sen, kun hätävalmiusmoduuli (61.02) on toimitettu.",
       "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "Lakisääteinen: mikään lähde ei määritä tälle alukselle vaadittavia todistuksia, joten kattavuus pysyy Tuntemattomana, vaikka jokainen kirjattu todistus olisi voimassa ja todennettu. Aluksen vaadittujen todistusten hallittu perustaso täyttäisi sen.",
+      "gap_SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED": "Turvallisuustapahtumat: mikään hyväksytty vakavuuskäytäntö ei määritä, mitkä avoimet tapahtumat estävät lähdön, joten \"ei avoimia vakavia tapahtumia\" ei voi sulkea pois estävää tapahtumaa ja tämä luokka pysyy tuntemattomana. Hyväksytty turvallisuustapahtumien vakavuuskäytäntö täyttäisi sen; tarkista siihen asti avoimet tapahtumat Turvallisuustapahtumat-sivulla.",
       "releaseHoldDeny": "Pidätä ja Hylkää voidaan aina kirjata perusteluineen."
     },
     "S9Wpc_tsx_copy": {

@@ -2395,6 +2395,7 @@
       "releaseNotReady": "Autorizza richiede una valutazione attuale PRONTA, quindi ogni categoria deve essere superata. Queste categorie non sono ancora superate:",
       "gap_EMERGENCY_SOURCE_UNAVAILABLE": "Emergenza: non è ancora collegata alcuna fonte di preparazione alle emergenze, quindi questa categoria resta Sconosciuta. La soddisferebbero registrazioni attuali di appello ed esercitazioni verificate da persone (SOLAS III/19), con la prontezza dei mezzi di salvataggio e antincendio, una volta consegnato il modulo di preparazione alle emergenze (61.02).",
       "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "Normativo: nessuna fonte definisce l’insieme dei certificati richiesti per questa nave, quindi la completezza resta Sconosciuta anche se ogni certificato registrato è valido e verificato. La soddisferebbe una base controllata dei certificati richiesti per la nave.",
+      "gap_SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED": "Eventi di sicurezza: nessuna politica di gravità approvata definisce quali eventi aperti bloccano la partenza, quindi «nessun evento di gravità alta aperto» non può escludere un evento bloccante e questa categoria resta Sconosciuta. Una politica di gravità approvata per gli eventi di sicurezza la soddisferebbe; fino ad allora esaminare gli eventi aperti nella pagina Eventi di sicurezza.",
       "releaseHoldDeny": "Sospendi e Nega possono sempre essere registrati con una motivazione."
     },
     "S9Wpc_tsx_copy": {

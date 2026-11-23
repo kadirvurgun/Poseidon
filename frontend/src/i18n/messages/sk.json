@@ -2395,6 +2395,7 @@
       "releaseNotReady": "Uvoľnenie vyžaduje aktuálne hodnotenie PRIPRAVENÉ, preto musí vyhovieť každá kategória. Tieto kategórie zatiaľ nevyhovujú:",
       "gap_EMERGENCY_SOURCE_UNAVAILABLE": "Núdzová pripravenosť: zatiaľ nie je pripojený žiadny zdroj núdzovej pripravenosti, preto táto kategória zostáva Neznáma. Splnili by ju aktuálne, človekom overené záznamy o nástupoch a cvičeniach (SOLAS III/19) s pripravenosťou záchranných a protipožiarnych prostriedkov, keď bude dodaný modul núdzovej pripravenosti (61.02).",
       "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "Zákonné: žiadny zdroj nedefinuje požadovanú sadu osvedčení pre túto loď, preto úplnosť zostáva Neznáma, aj keď je každé zaznamenané osvedčenie platné a overené. Splnil by ju riadený základ požadovaných osvedčení lode.",
+      "gap_SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED": "Bezpečnostné udalosti: žiadna schválená politika závažnosti neurčuje, ktoré otvorené udalosti blokujú vyplávanie, takže „žiadna otvorená udalosť s vysokou závažnosťou“ nemôže vylúčiť blokujúcu udalosť a táto kategória zostáva Neznáma. Splnila by ju schválená politika závažnosti bezpečnostných udalostí; dovtedy skontrolujte otvorené udalosti na stránke Bezpečnostné udalosti.",
       "releaseHoldDeny": "Pozdržať a Zamietnuť možno vždy zaznamenať s odôvodnením."
     },
     "S9Wpc_tsx_copy": {

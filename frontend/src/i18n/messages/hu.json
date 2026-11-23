@@ -2395,6 +2395,7 @@
       "releaseNotReady": "Az engedélyezéshez aktuális KÉSZ értékelés szükséges, ezért minden kategóriának meg kell felelnie. Ezek a kategóriák még nem felelnek meg:",
       "gap_EMERGENCY_SOURCE_UNAVAILABLE": "Vészhelyzeti: még nincs csatlakoztatva vészhelyzeti felkészültségi forrás, ezért ez a kategória Ismeretlen marad. Az aktuális, ember által ellenőrzött riadó- és gyakorlati nyilvántartások (SOLAS III/19) az életmentő és tűzoltó eszközök készenlétével teljesítenék, amint a vészhelyzeti felkészültségi modul (61.02) elkészül.",
       "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "Jogszabályi: egyetlen forrás sem határozza meg a hajóhoz szükséges bizonyítványok körét, ezért a teljesség Ismeretlen marad akkor is, ha minden rögzített bizonyítvány érvényes és ellenőrzött. A hajó szükséges bizonyítványainak ellenőrzött alapkészlete teljesítené.",
+      "gap_SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED": "Biztonsági események: nincs jóváhagyott súlyossági szabályzat, amely meghatározná, mely nyitott események akadályozzák az indulást, ezért a „nincs nyitott, nagy súlyosságú esemény” nem zárja ki az akadályozó eseményt, és ez a kategória Ismeretlen marad. Egy jóváhagyott biztonsági esemény súlyossági szabályzat teljesítené; addig tekintse át a nyitott eseményeket a Biztonsági események oldalon.",
       "releaseHoldDeny": "A Visszatart és az Elutasít indoklással mindig rögzíthető."
     },
     "S9Wpc_tsx_copy": {
