@@ -1,9 +1,9 @@
 {
  "schemaVersion": "poseidon.help.screenshot-provenance.v2",
  "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
- "commit": "5e7e2e0ebac2dd5d406524a06229f6276324dc1d",
+ "commit": "d0aac6f6e6815fca0ab7c849c8fb5b0719fe11cf",
  "generatorBlobs": {
-  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "a473e17d44c9ed72ab530d9b343f72129e08968c",
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "13161f5d298c7f210607aa34ae5a5b3d79d73e21",
   "tests/Poseidon.Browser.Tests/screenshots/png-palette.ts": "3a0f780074c6da126fc96cee0869800475e2709d",
   "frontend/src/help/screenshots/steps.json": "5239b1cd352b1a5882e079f96e408f981587e66f"
  },
@@ -17,11 +17,11 @@
   "DemoFixtureCommand"
  ],
  "tenant": "Synthetic Fleet A",
- "fixedClock": "2026-11-22T00:00:00.000Z",
+ "fixedClock": "2026-11-23T00:00:00.000Z",
  "png": {
-  "sha256": "81ec557b2c03d6f8fca161b309826c245a5a6352a8ce9bdab73b082365ca3842",
+  "sha256": "4b35eda42e73c2e4e781fd0f8aabfaf03b48c3bd30d65a310fec91f875bcebf3",
   "width": 390,
   "height": 844
  },
- "domText": "Skip to main content\nTug operations\nAppearance\nChoose language\nDEMO-TUG\nSynthetic Fleet A\nCompany context:\nUnavailable\nDEMO-TUG · Synthetic Tug A\nVessel mode: Tug\nRole context: Not assigned\nChange vessel context\nOnline\n\nTUG OPERATIONS\n\nTug operations\n\nRequests, draft plans and current source context.\n\nDraft declarations only. Draft planning is separate from operational assignment, availability, permits and safety approval.\n\nTug context: DEMO-TUG · Synthetic Tug A · Tug\n\nTug context\nJob board\nTug context\nSource declarations · operational readiness unknown\nRole (server assignment)\nUnknown — no role assignment\nTug-mode menu lens\nUnknown — no role assignment\nRole references\nUnknown\nMode visibility\nCross-mode permission declared; each destination still requires server authorization.\nTug type\nUnavailable\nType source / revision\nUnavailable\nType source observation / policy\nUnknown / Unavailable\nProfile BP (unverified)\n65.00 · tonnes\nBP source / version / provenance\nTugProfile / 852 / Legacy profile measurement, unverified\nBP freshness / observation\nUnknown / Unknown\nEquipment context\n\nDraft declarations only\n\nUnknown · Equipment · r1 · Synthetic, unverified\n30000000-0000-0000-0000-000000000002\nShip Mode screens\nNoon report\n\nVerified measurement, certificate, crew and operational assignment inputs unavailable"
+ "domText": "Skip to main content\nTug operations\nAppearance\nChoose language\nDEMO-TUG\nSynthetic Fleet A\nCompany context:\nUnavailable\nDEMO-TUG · Synthetic Tug A\nVessel mode: Tug\nRole context: Not assigned\nChange vessel context\nOnline\n\nTUG OPERATIONS\n\nTug operations\n\nRequests, draft plans and current source context.\n\nDraft declarations only. Draft planning is separate from operational assignment, availability, permits and safety approval.\n\nTug context: DEMO-TUG · Synthetic Tug A · Tug\n\nTug context\nJob board\nTug context\nSource declarations · operational readiness unknown\nRole (server assignment)\nUnknown — no role assignment\nTug-mode menu lens\nUnknown — no role assignment\nRole references\nUnknown\nMode visibility\nCross-mode permission declared; each destination still requires server authorization.\nTug type\nUnavailable\nType source / revision\nUnavailable\nType source observation / policy\nUnknown / Unavailable\nProfile BP (unverified)\n65.00 · tonnes\nBP source / version / provenance\nTugProfile / 863 / Legacy profile measurement, unverified\nBP freshness / observation\nUnknown / Unknown\nEquipment context\n\nDraft declarations only\n\nUnknown · Equipment · r1 · Synthetic, unverified\n30000000-0000-0000-0000-000000000002\nShip Mode screens\nNoon report\n\nVerified measurement, certificate, crew and operational assignment inputs unavailable"
 }
