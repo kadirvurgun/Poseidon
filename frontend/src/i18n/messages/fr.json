@@ -238,6 +238,7 @@
       "details": "Détails",
       "skip": "Aller au contenu principal",
       "failed": "La connexion n’a pas pu aboutir. Veuillez réessayer.",
+      "signinLimited": "Trop de tentatives de connexion depuis ce réseau. Patientez quelques minutes puis réessayez.",
       "intro": "Consultez les enregistrements disponibles dans votre espace de travail.",
       "language": "Langue",
       "filter": "Type de navire",
@@ -2285,6 +2286,8 @@
       "b_BLOCKERS_PRESENT": "Événements de gravité élevée ouverts",
       "b_REVIEW_REQUIRED": "Revue requise",
       "b_NO_OPEN_HIGH_SEVERITY_EVENT": "Aucun événement de gravité élevée ouvert",
+      "b_POLICY_UNCONFIGURED": "Politique de gravité non configurée – revue requise",
+      "policyUnconfigured": "Aucune politique de gravité n’est configurée ; les événements de gravité élevée ne peuvent donc pas être exclus. Examinez manuellement les événements ouverts ; ce n’est pas un état prêt ni un feu vert.",
       "r_HIGH_SEVERITY_OPEN": "Gravité élevée, ouvert",
       "r_UNTRIAGED_EVENT": "Pas encore trié",
       "r_SEVERITY_UNASSESSED": "Gravité non évaluée",
@@ -2395,6 +2398,7 @@
       "releaseNotReady": "Autoriser exige une évaluation actuelle PRÊT ; chaque catégorie doit donc être conforme. Ces catégories ne le sont pas encore :",
       "gap_EMERGENCY_SOURCE_UNAVAILABLE": "Urgence : aucune source de préparation aux situations d’urgence n’est encore connectée ; cette catégorie reste donc Inconnue. Des registres actuels de rassemblement et d’exercices vérifiés par une personne (SOLAS III/19), avec l’état de préparation des engins de sauvetage et de lutte contre l’incendie, la satisferaient une fois le module de préparation aux urgences (61.02) livré.",
       "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "Réglementaire : aucune source ne définit l’ensemble des certificats requis pour ce navire ; l’exhaustivité reste donc Inconnue même si chaque certificat enregistré est valide et vérifié. Une base contrôlée des certificats requis pour le navire la satisferait.",
+      "gap_SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED": "Événements de sécurité : aucune politique de gravité approuvée ne définit quels événements ouverts bloquent l’appareillage ; « aucun événement de gravité élevée ouvert » ne peut donc exclure un événement bloquant et cette catégorie reste Inconnue. Une politique de gravité approuvée pour les événements de sécurité la satisferait ; d’ici là, examinez les événements ouverts sur la page Événements de sécurité.",
       "releaseHoldDeny": "Suspendre et Refuser peuvent toujours être enregistrés avec un motif."
     },
     "S9Wpc_tsx_copy": {
@@ -3769,6 +3773,7 @@
       "code_self_modification": "Vous ne pouvez pas modifier votre propre adhésion.",
       "code_configuration_managed": "Les attributions gérées par configuration ne peuvent pas être modifiées ici.",
       "code_last_admin": "Le dernier administrateur actif ne peut pas être retiré.",
+      "code_request_limit": "Trop de demandes en peu de temps. Patientez quelques minutes, puis réessayez.",
       "code_version_conflict": "L’enregistrement a été modifié entre-temps.",
       "code_conflict_changed": "L’enregistrement ou votre session a été modifié entre-temps.",
       "code_permission_denied": "Autorisation refusée.",

@@ -67,6 +67,10 @@ it('shows categories and the Why list, never a ready tone, disables RELEASE and 
   const badge = document.querySelector('[data-readiness]')!
   expect(badge.getAttribute('data-tone')).toBe('warning')
   expect(screen.getByText('EMERGENCY_SOURCE_UNAVAILABLE')).toBeInTheDocument()
+  // N6 mobile: long reason codes wrap (enterprise.css) and keep the full closed code in the title.
+  const code = screen.getByText('CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED', { selector: 'code' })
+  expect(code).toHaveClass('departure-reason-code')
+  expect(code).toHaveAttribute('title', 'CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED')
   expect(document.querySelector('[data-category="emergency"] [data-result="UNKNOWN"]')).not.toBeNull()
   expect(document.querySelector('[data-validity="STALE"]')).not.toBeNull()
   expect(screen.getByRole('radio', { name: 'Release' })).toBeDisabled()
@@ -123,6 +127,22 @@ it('explains why Release is unavailable: open categories, the emergency and cert
   expect(section.querySelector('[data-gap="CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED"]')?.textContent).toMatch(/required-certificate baseline/)
   expect(section.textContent).toContain('Hold and Deny can always be recorded with a reason.')
   expect(screen.getByRole('radio', { name: 'Release' })).toBeDisabled()
+})
+
+it('explains that an unconfigured safety event severity policy keeps the safety category Unknown, never Pass', async () => {
+  // DEPARTURE-SEVERITY-UNKNOWN-20261123 (S9 gate N3): the server reports UNKNOWN with an explicit reason code.
+  const categories = readiness().categories.map(c => c.category === 'safety' ? { ...c, result: 'UNKNOWN', reasons: ['SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED'] } : c)
+  body = readiness({ categories, reviewReasons: [...readiness().reviewReasons, 'safety:SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED'],
+    why: [...readiness().why, { category: 'safety', result: 'UNKNOWN', reason: 'SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED', sourceKind: 'SafetyEvent', sourceId: null, sourceRevision: null }] })
+  open()
+  render(<DepartureReadinessWorkspace/>)
+  const section = await screen.findByRole('region', { name: 'Why Release is unavailable' })
+  expect(section.querySelector('[data-category="safety"] [data-result="UNKNOWN"]')).not.toBeNull()
+  expect(section.querySelector('[data-gap="SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED"]')?.textContent).toMatch(/no approved severity policy .* stays Unknown/)
+  expect(document.querySelector('.departure-categories [data-category="safety"] [data-result="PASS"]')).toBeNull()
+  await changeAppLanguage('tr', false)
+  expect((await screen.findByRole('region', { name: /Serbest bırakma neden kullanılamıyor/ })).querySelector('[data-gap="SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED"]')?.textContent)
+    .toMatch(/onaylı bir şiddet politikası yok/)
 })
 
 it('explains a forecast window and stays silent only for a current READY assessment', async () => {

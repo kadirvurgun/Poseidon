@@ -64,8 +64,8 @@ public static partial class MembershipEndpoints
             .WithSummary("Effective grant, scope and immutable grant revision history of one membership.")
             .Produces<MembershipAccessDto>().Produces(401).ProducesProblem(403).ProducesProblem(404).Produces(503);
         Command(app.MapPost("/api/v1/memberships", (HttpContext h, [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey, [FromHeader(Name = "X-CSRF-TOKEN")] string? csrfToken) =>
-            CreateMembership(h)), "CreateMembership", "Invites an IdP identity to a database membership (USER-ADMIN-02). The membership starts Invited and grants nothing; it binds an identity only when the identity holder, signed in through the trusted issuer, accepts the single-use invitation token returned once in this response (expiry: the tenant's 54.01 account.invite_hours value, 1-168 hours, default 24). deliveryEmail is optional and queues the invitation e-mail in the same transaction (delivery state QUEUED, or NOT_CONFIGURED without a mail transport); the address is never returned, logged or audited. subject is optional and, when given, is the only identity allowed to accept; it reserves nothing. Role bundles and individual permissions are limited to the trusted allow-list and to the caller's own permissions (400 exceeds_grantor_authority). A subject present in the operator configuration, already bound in this tenant or with a pending invitation here returns 409 identity_unavailable.")
-            .Accepts<MembershipCreateCommand>("application/json").Produces<MembershipInvitationIssueDto>();
+            CreateMembership(h)), "CreateMembership", "Invites an IdP identity to a database membership (USER-ADMIN-02). The membership starts Invited and grants nothing; it binds an identity only when the identity holder, signed in through the trusted issuer, accepts the single-use invitation token returned once in this response (expiry: the tenant's 54.01 account.invite_hours value, 1-168 hours, default 24). deliveryEmail is optional and queues the invitation e-mail in the same transaction (delivery state QUEUED, or NOT_CONFIGURED without a mail transport); the address is never returned, logged or audited. Invitation create and reissue share a technical limit per administrator (60 per 15 minutes); beyond it 429 request_limit with Retry-After. subject is optional and, when given, is the only identity allowed to accept; it reserves nothing. Role bundles and individual permissions are limited to the trusted allow-list and to the caller's own permissions (400 exceeds_grantor_authority). A subject present in the operator configuration, already bound in this tenant or with a pending invitation here returns 409 identity_unavailable.")
+            .Accepts<MembershipCreateCommand>("application/json").Produces<MembershipInvitationIssueDto>().ProducesProblem(429);
         Command(app.MapPost("/api/v1/memberships/{id:guid}/grant", (Guid id, HttpContext h, [FromHeader(Name = "Idempotency-Key")] string? idempotencyKey, [FromHeader(Name = "X-CSRF-TOKEN")] string? csrfToken) =>
             UpdateGrant(h, id)), "UpdateMembershipGrant", "Appends a new immutable grant revision to an admin-provisioned membership. expectedVersion is the current grant revision (stale ⇒ 409 version_conflict). Own membership ⇒ 403 self_modification; configuration-managed ⇒ 409 configuration_managed; removing the last active administrator ⇒ 409 last_admin. Takes effect on the member's next request.")
             .Accepts<MembershipGrantCommand>("application/json").Produces<MembershipAccessDto>();
@@ -283,7 +283,7 @@ public static partial class MembershipEndpoints
 
     private static async Task<IResult> CreateMembership(HttpContext h)
     {
-        var (prelude, failure) = await Begin(h, null, CanManageMemberships, GrantBodyLimit);
+        var (prelude, failure) = await Begin(h, null, CanManageMemberships, GrantBodyLimit, issuesInvitation: true);
         if (prelude == null) return failure!;
         var audit = h.RequestServices.GetRequiredService<SecurityAudit>();
         var command = Parse<MembershipCreateCommand>(prelude.Body);
@@ -293,8 +293,10 @@ public static partial class MembershipEndpoints
         var now = h.RequestServices.GetRequiredService<TimeProvider>().GetUtcNow();
         const string action = "MembershipCreate";
         bool read = command.TenantWideRead ?? false, manage = command.TenantWideManage ?? false;
-        // USER-ADMIN-03: only whether an e-mail was requested enters the fingerprint (no hash of the address is stored).
-        var fingerprint = Fingerprint(new { action, command.Issuer, command.Subject, email = command.DeliveryEmail != null, bundles = MembershipGrantPolicy.Canonical(command.Bundles ?? []),
+        // N4 (INVITE-RATELIMIT-FOLLOWUPS): a keyed digest of the normalized recipient enters the fingerprint (never the
+        // address), so the same key with another address is 409 idempotency_key_reused instead of a replay.
+        var email = h.RequestServices.GetRequiredService<InvitationAddressFingerprint>().For(command.DeliveryEmail);
+        var fingerprint = Fingerprint(new { action, command.Issuer, command.Subject, email, bundles = MembershipGrantPolicy.Canonical(command.Bundles ?? []),
             permissions = MembershipGrantPolicy.Canonical(command.Permissions ?? []), read, manage, command.ActiveCompanyId, scope = Scope(command.VesselGrants) });
         return await Run(h, null, async db =>
         {

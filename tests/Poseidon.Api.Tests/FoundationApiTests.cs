@@ -117,6 +117,46 @@ public sealed class FoundationApiTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Forbidden, write.StatusCode);
     }
 
+    // INVITE-RATELIMIT-FOLLOWUPS: sign-in starts are bounded per client network before any audit write; the first refusal
+    // of a window is audited once, every refusal carries Retry-After within the 5-minute window.
+    [Fact]
+    [Trait("Requirement", "INVITE-RATELIMIT-FOLLOWUPS")]
+    public async Task Sign_in_starts_are_rate_limited_per_client_network_with_retry_after_and_one_audited_refusal()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await using var host = Host().WithWebHostBuilder(b => b.ConfigureAppConfiguration((_, c) =>
+            c.AddInMemoryCollection(new Dictionary<string, string?> { ["RateLimiting:LoginPermitLimit"] = "10" })));
+        using var client = Client(host);
+        Assert.Equal(10, host.Services.GetRequiredService<LoginRateLimiter>().Policy.PermitLimit);
+        for (var i = 0; i < 10; i++)
+        {
+            using var allowed = await client.GetAsync("/api/v1/auth/login", ct);
+            Assert.Equal(HttpStatusCode.ServiceUnavailable, allowed.StatusCode); // identity setup required: not limited yet
+        }
+        for (var i = 0; i < 2; i++)
+        {
+            using var limited = await client.GetAsync("/api/v1/auth/login", ct);
+            Assert.Equal((HttpStatusCode)429, limited.StatusCode);
+            Assert.InRange(limited.Headers.RetryAfter?.Delta?.TotalSeconds ?? 0, 1, 300);
+            var body = await limited.Content.ReadFromJsonAsync<System.Text.Json.JsonElement>(ct);
+            Assert.Equal("request_limit", body.GetProperty("code").GetString());
+        }
+        // A browser navigation gets the same 429 with a fixed page that returns to the app's localized notice.
+        using (var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/auth/login?returnUrl=%2Fapp"))
+        {
+            request.Headers.Accept.ParseAdd("text/html,application/xhtml+xml");
+            using var page = await client.SendAsync(request, ct);
+            Assert.Equal((HttpStatusCode)429, page.StatusCode);
+            Assert.NotNull(page.Headers.RetryAfter);
+            Assert.Equal("text/html", page.Content.Headers.ContentType?.MediaType);
+            Assert.Equal(FoundationEndpoints.LoginLimitedPage, await page.Content.ReadAsStringAsync(ct));
+        }
+        await using var connection = new Npgsql.NpgsqlConnection(postgres.GetConnectionString());
+        await connection.OpenAsync(ct);
+        await using var command = new Npgsql.NpgsqlCommand("SELECT count(*) FROM audit.\"SecurityEvents\" WHERE \"Action\"='Login' AND \"Result\"='request_limit'", connection);
+        Assert.Equal(1L, (long)(await command.ExecuteScalarAsync(ct))!);
+    }
+
     private PoseidonDbContext TenantDb() => new(SeedImporter.Options(postgres.GetConnectionString()), seed.Tenants[0].Id, new("test", "User", "test"));
 
     [Fact]

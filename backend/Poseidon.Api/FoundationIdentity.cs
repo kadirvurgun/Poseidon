@@ -283,6 +283,7 @@ public static class FoundationIdentity
         services.AddSingleton<MembershipStateReader>();
         services.AddSingleton<ProvisionedIdentityLocator>();
         services.AddSingleton(new InvitationIdentityReference(settings.ClientSecret));
+        services.AddSingleton(new InvitationAddressFingerprint(settings.ClientSecret));
         services.AddScoped<ICurrentMembershipResolver, CurrentMembershipResolver>();
         services.AddAntiforgery(o =>
         {

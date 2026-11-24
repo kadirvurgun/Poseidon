@@ -238,6 +238,7 @@
       "details": "Detalhes",
       "skip": "Pular para o conteúdo principal",
       "failed": "Não foi possível entrar. Tente novamente.",
+      "signinLimited": "Muitas tentativas de entrada a partir desta rede. Aguarde alguns minutos e tente novamente.",
       "intro": "Consulte os registros disponíveis em seu espaço de trabalho.",
       "language": "Idioma",
       "filter": "Tipo de navio",
@@ -2285,6 +2286,8 @@
       "b_BLOCKERS_PRESENT": "Eventos de alta gravidade em aberto",
       "b_REVIEW_REQUIRED": "Revisão necessária",
       "b_NO_OPEN_HIGH_SEVERITY_EVENT": "Nenhum evento de alta gravidade em aberto",
+      "b_POLICY_UNCONFIGURED": "Política de severidade não configurada – revisão necessária",
+      "policyUnconfigured": "Nenhuma política de severidade está configurada, portanto eventos de alta severidade não podem ser descartados. Revise manualmente os eventos abertos; este não é um estado pronto nem de tudo certo.",
       "r_HIGH_SEVERITY_OPEN": "Alta gravidade, em aberto",
       "r_UNTRIAGED_EVENT": "Ainda não triado",
       "r_SEVERITY_UNASSESSED": "Gravidade não avaliada",
@@ -2395,6 +2398,7 @@
       "releaseNotReady": "Liberar exige uma avaliação atual PRONTO, portanto todas as categorias devem ser aprovadas. Estas categorias ainda não foram aprovadas:",
       "gap_EMERGENCY_SOURCE_UNAVAILABLE": "Emergência: ainda não há fonte de preparação para emergências conectada, portanto esta categoria permanece Desconhecida. Registros atuais de reunião e exercícios verificados por pessoas (SOLAS III/19), com a prontidão dos equipamentos de salvatagem e de combate a incêndio, a atenderiam assim que o módulo de preparação para emergências (61.02) for entregue.",
       "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "Estatutário: nenhuma fonte define o conjunto de certificados exigidos para este navio, portanto a completude permanece Desconhecida mesmo que todos os certificados registrados sejam válidos e verificados. Uma linha de base controlada de certificados exigidos para o navio a atenderia.",
+      "gap_SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED": "Eventos de segurança: nenhuma política de gravidade aprovada define quais eventos abertos bloqueiam a partida, portanto “nenhum evento de alta gravidade em aberto” não pode descartar um evento bloqueante e esta categoria permanece Desconhecida. Uma política de gravidade aprovada para eventos de segurança a satisfaria; até lá, revise os eventos abertos na página Eventos de segurança.",
       "releaseHoldDeny": "Reter e Negar sempre podem ser registrados com um motivo."
     },
     "S9Wpc_tsx_copy": {
@@ -3769,6 +3773,7 @@
       "code_self_modification": "Você não pode alterar sua própria associação.",
       "code_configuration_managed": "Concessões gerenciadas por configuração não podem ser editadas aqui.",
       "code_last_admin": "O último administrador ativo não pode ser removido.",
+      "code_request_limit": "Muitas solicitações em pouco tempo. Aguarde alguns minutos e tente novamente.",
       "code_version_conflict": "O registro foi alterado nesse meio-tempo.",
       "code_conflict_changed": "O registro ou a sua sessão foi alterado nesse meio-tempo.",
       "code_permission_denied": "Permissão negada.",

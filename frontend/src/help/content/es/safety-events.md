@@ -38,7 +38,7 @@ La página de eventos de seguridad y casi accidentes le permite notificar rápid
 - **La necesidad de investigación es UNKNOWN:** no se ha tomado ninguna decisión; no significa "no" y bloquea el cierre.
 - **Acción — Abierta / Completada / Verificada:** Completada no es Verificada, y Verificada no es Eficaz.
 - **Eficacia — Pendiente / Eficaz / No eficaz / No concluyente / Sin acciones / No visible:** la eficacia es una revisión humana por acción y es independiente del cierre. **Sin acciones** no significa eficaz.
-- Resumen **Eventos de seguridad abiertos**: **Eventos de gravedad alta abiertos**, **Revisión requerida** o **Ningún evento de gravedad alta abierto**. Es solo una advertencia; no da ninguna decisión de preparación.
+- Resumen **Eventos de seguridad abiertos**: **Eventos de gravedad alta abiertos**, **Revisión requerida** o **Ningún evento de gravedad alta abierto**. Mientras no haya una política de severidad configurada, se muestra **Política de severidad no configurada – revisión requerida** en lugar de ese estado sin incidencias, porque no se pueden descartar eventos de gravedad alta. Es solo una advertencia; no da ninguna decisión de preparación.
 - **Confidencial (protegido):** la identidad del notificante está en un almacén restringido y no se muestra a los lectores.
 - **Registrado sin conexión / Pendiente de sincronizar / Guardado en este dispositivo. Aún no enviado.** En cola no significa enviado.
 

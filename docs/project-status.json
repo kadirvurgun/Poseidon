@@ -5941,7 +5941,8 @@
     "docs/phases/PILOT-KIT-20261121.md",
     "docs/phases/POLISH-BUNDLE-20261121.md",
     "docs/phases/USER-ADMIN-01.md",
-    "docs/phases/USER-GUIDE-01-UG1.md"
+    "docs/phases/USER-GUIDE-01-UG1.md",
+    "docs/phases/LAB-FOLLOWUPS-20261123.md"
   ],
   "active_source": "docs/sources/active.json",
   "current_package": {
@@ -18688,6 +18689,19 @@
     "accepted_tasks_added": 0,
     "accepted_story_points_added": 0
   },
+  "invite_ratelimit_followups_20261123": {
+    "state": "AUTHORED_LOCAL_UNIT_VERIFIED_PG_CI_PENDING_NOT_ACCEPTED",
+    "branch": "fix/invite-ratelimit-followups-20261123",
+    "base": "494045ee",
+    "report": "docs/phases/INVITE-RATELIMIT-FOLLOWUPS-20261123.md",
+    "closes": "USER-ADMIN-03 QA N3/N4/L2; RATE-LIMIT-01 open item invitation create/reissue and /login limits",
+    "verification": {
+      "postgres_integration": "DEFERRED_CI",
+      "independent_qa": "PENDING"
+    },
+    "accepted_tasks_added": 0,
+    "accepted_story_points_added": 0
+  },
   "admin_polish_bundle_20261122": {
     "state": "INTEGRATED_LOCAL_VERIFIED_PG_CI_PENDING_NOT_ACCEPTED",
     "branch": "integration/admin-polish-20261122",
@@ -18741,5 +18755,22 @@
       "language selector globe icon overlaps text (pre-existing, visible in screenshots)"
     ],
     "report": "docs/phases/HELP-MANUAL-DOWNLOAD-01.md"
+  },
+  "lab_followups_20261123": {
+    "status": "AUTHORED_CI_PENDING",
+    "branch": "fix/lab-followups-20261123",
+    "base": "494045ee",
+    "scope": "Synthetic DEV-OIDC lab tooling only (no product behaviour): QA notes on lab_profile_ca.py NSS loading. Pinned-bundle fail-closed set (Linux 9 libraries; Windows nss3/mozglue/softokn3/freebl3), LD_PRELOAD/LD_AUDIT refused (nss_preload_refused), post-NSS_InitReadWrite /proc/self/maps check that every NSS-family object is mapped from the bundle (nss_foreign_library), fixed-code-only screenshot preflight diagnostic, Linux no-skip gate with minimum 41 tests",
+    "canonical_effect": "none; 114/121 tasks, 932/970 SP unchanged",
+    "evidence": {
+      "local_windows": "py -m unittest discover -s scripts -p test_lab_profile*.py: 41 run, OK, 4 skipped (POSIX-only)",
+      "prior_ci_run_a5c98435": "45108380252 success, lab_profile_posix ran=29 skipped=0",
+      "independent_qa_a5c98435": "ACCEPT-WITH-NOTES (notes 1-3 and 5 addressed in this commit)"
+    },
+    "open": [
+      "Application foundation CI and help-screenshots end-to-end run on this commit (see phase report)",
+      "pull_request-event CI before merge"
+    ],
+    "report": "docs/phases/LAB-FOLLOWUPS-20261123.md"
   }
 }

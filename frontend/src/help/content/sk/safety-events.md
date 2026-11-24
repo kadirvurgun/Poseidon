@@ -38,7 +38,7 @@ Stránka Bezpečnostné udalosti a skoronehody vám umožňuje rýchlo nahlási�
 - **Potreba vyšetrovania je UNKNOWN:** nebolo prijaté žiadne rozhodnutie; neznamená to „nie“ a blokuje to uzavretie.
 - **Opatrenie — Otvorené / Dokončené / Overené:** Dokončené nie je Overené a Overené nie je Účinné.
 - **Účinnosť — Čaká / Účinné / Neúčinné / Nepreukázateľné / Žiadne opatrenia / Nezobrazené:** účinnosť je ľudské posúdenie pre každé opatrenie a je oddelená od uzavretia. **Žiadne opatrenia** neznamená účinné.
-- Súhrn **Otvorené bezpečnostné udalosti**: **Otvorené udalosti s vysokou závažnosťou**, **Vyžaduje posúdenie** alebo **Žiadna otvorená udalosť s vysokou závažnosťou**. Je to iba varovanie; neposkytuje žiadne rozhodnutie o pripravenosti.
+- Súhrn **Otvorené bezpečnostné udalosti**: **Otvorené udalosti s vysokou závažnosťou**, **Vyžaduje posúdenie** alebo **Žiadna otvorená udalosť s vysokou závažnosťou**. Kým nie sú nakonfigurované zásady závažnosti, namiesto tohto stavu „všetko v poriadku“ sa zobrazuje **Zásady závažnosti nie sú nakonfigurované – vyžaduje sa posúdenie**, pretože udalosti s vysokou závažnosťou nemožno vylúčiť. Je to iba varovanie; neposkytuje žiadne rozhodnutie o pripravenosti.
 - **Dôverné (chránené):** identita oznamovateľa je v obmedzenom trezore a čitateľom sa nezobrazuje.
 - **Zaznamenané offline / Čaká na synchronizáciu / Uložené v tomto zariadení. Zatiaľ neodoslané.** Zaradené do frontu neznamená odoslané.
 

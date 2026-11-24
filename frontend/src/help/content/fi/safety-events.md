@@ -38,7 +38,7 @@ Turvallisuustapahtumat ja läheltä piti -tilanteet -sivulla voit ilmoittaa aluk
 - **Tutkinnan tarve on UNKNOWN:** päätöstä ei ole tehty; se ei tarkoita ”ei”, ja se estää sulkemisen.
 - **Toimenpide — Avoin / Päätetty / Varmennettu:** päätetty ei ole varmennettu, eikä varmennettu ole vaikuttava.
 - **Vaikuttavuus — Odottaa / Vaikuttava / Ei vaikuttava / Epäselvä / Ei toimenpiteitä / Ei näkyvissä:** vaikuttavuus on ihmisen toimenpidekohtainen arvio ja erillinen sulkemisesta. **Ei toimenpiteitä** ei tarkoita vaikuttavaa.
-- **Avoimet turvallisuustapahtumat** -yhteenveto: **Avoimia vakavia tapahtumia**, **Tarkastus vaaditaan** tai **Ei avoimia vakavia tapahtumia**. Se on vain varoitus; se ei anna valmiuspäätöstä.
+- **Avoimet turvallisuustapahtumat** -yhteenveto: **Avoimia vakavia tapahtumia**, **Tarkastus vaaditaan** tai **Ei avoimia vakavia tapahtumia**. Niin kauan kuin vakavuuskäytäntöä ei ole määritetty, tämän kaikki kunnossa -tilan sijaan näytetään **Vakavuuskäytäntöä ei ole määritetty – katselmointi vaaditaan**, koska vakavia tapahtumia ei voida sulkea pois. Se on vain varoitus; se ei anna valmiuspäätöstä.
 - **Luottamuksellinen (suojattu):** ilmoittajan henkilöllisyys on rajatussa holvissa eikä sitä näytetä lukijoille.
 - **Kirjattu offline-tilassa / Odottaa synkronointia / Tallennettu tälle laitteelle. Ei vielä lähetetty.** Jonossa oleva ei ole lähetetty.
 

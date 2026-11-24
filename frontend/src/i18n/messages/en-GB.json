@@ -238,6 +238,7 @@
       "details": "Details",
       "skip": "Skip to main content",
       "failed": "Sign-in could not be completed. Please try again.",
+      "signinLimited": "Too many sign-in attempts from this network. Wait a few minutes and try again.",
       "intro": "Browse the records available in your workspace.",
       "language": "Language",
       "filter": "Vessel type",
@@ -2285,6 +2286,8 @@
       "b_BLOCKERS_PRESENT": "High-severity events open",
       "b_REVIEW_REQUIRED": "Review required",
       "b_NO_OPEN_HIGH_SEVERITY_EVENT": "No open high-severity event",
+      "b_POLICY_UNCONFIGURED": "Severity policy not configured – review required",
+      "policyUnconfigured": "No severity policy is configured, so high-severity events cannot be ruled out. Review open events manually; this is not a ready or all-clear state.",
       "r_HIGH_SEVERITY_OPEN": "High severity, open",
       "r_UNTRIAGED_EVENT": "Not yet triaged",
       "r_SEVERITY_UNASSESSED": "Severity unassessed",
@@ -2395,6 +2398,7 @@
       "releaseNotReady": "Release needs a current READY assessment, so every category must pass. These categories do not pass yet:",
       "gap_EMERGENCY_SOURCE_UNAVAILABLE": "Emergency: no emergency preparedness source is connected yet, so this category stays Unknown. Current, human-verified muster and drill records (SOLAS III/19) with life-saving and fire-fighting appliance readiness would satisfy it once the emergency preparedness module (61.02) is delivered.",
       "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "Statutory: no source defines the required-certificate set for this ship, so completeness stays Unknown even when every recorded certificate is valid and verified. A controlled required-certificate baseline for the ship would satisfy it.",
+      "gap_SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED": "Safety events: no approved severity policy defines which open events block departure, so \"no open high-severity event\" cannot rule out a blocking event and this category stays Unknown. An approved safety event severity policy would satisfy it; until then review the open events on the Safety events page.",
       "releaseHoldDeny": "Hold and Deny can always be recorded with a reason."
     },
     "S9Wpc_tsx_copy": {
@@ -3769,6 +3773,7 @@
       "code_self_modification": "You cannot change your own membership.",
       "code_configuration_managed": "Configuration-managed grants cannot be edited here.",
       "code_last_admin": "The last active administrator cannot be removed.",
+      "code_request_limit": "Too many requests in a short time. Wait a few minutes and try again.",
       "code_version_conflict": "The record changed meanwhile.",
       "code_conflict_changed": "The record or your session changed meanwhile.",
       "code_permission_denied": "Permission denied.",

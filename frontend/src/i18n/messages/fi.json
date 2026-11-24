@@ -238,6 +238,7 @@
       "details": "Tiedot",
       "skip": "Siirry pääsisältöön",
       "failed": "Kirjautuminen ei onnistunut. Yritä uudelleen.",
+      "signinLimited": "Liian monta kirjautumisyritystä tästä verkosta. Odota muutama minuutti ja yritä uudelleen.",
       "intro": "Selaa työtilasi käytettävissä olevia tietueita.",
       "language": "Kieli",
       "filter": "Alustyyppi",
@@ -2285,6 +2286,8 @@
       "b_BLOCKERS_PRESENT": "Avoimia vakavia tapahtumia",
       "b_REVIEW_REQUIRED": "Katselmointi vaaditaan",
       "b_NO_OPEN_HIGH_SEVERITY_EVENT": "Ei avoimia vakavia tapahtumia",
+      "b_POLICY_UNCONFIGURED": "Vakavuuskäytäntöä ei ole määritetty – katselmointi vaaditaan",
+      "policyUnconfigured": "Vakavuuskäytäntöä ei ole määritetty, joten vakavia tapahtumia ei voida sulkea pois. Käy avoimet tapahtumat läpi manuaalisesti; tämä ei ole valmis- eikä kaikki kunnossa -tila.",
       "r_HIGH_SEVERITY_OPEN": "Korkea vakavuus, avoin",
       "r_UNTRIAGED_EVENT": "Ei vielä luokiteltu",
       "r_SEVERITY_UNASSESSED": "Vakavuus arvioimatta",
@@ -2395,6 +2398,7 @@
       "releaseNotReady": "Vapautus edellyttää nykyistä VALMIS-arviota, joten jokaisen luokan on läpäistävä. Nämä luokat eivät vielä läpäise:",
       "gap_EMERGENCY_SOURCE_UNAVAILABLE": "Hätävalmius: hätävalmiuden lähdettä ei ole vielä liitetty, joten tämä luokka pysyy Tuntemattomana. Ajantasaiset, ihmisen todentamat kokoontumis- ja harjoituskirjaukset (SOLAS III/19) pelastus- ja palontorjuntavälineiden valmiuden kanssa täyttäisivät sen, kun hätävalmiusmoduuli (61.02) on toimitettu.",
       "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "Lakisääteinen: mikään lähde ei määritä tälle alukselle vaadittavia todistuksia, joten kattavuus pysyy Tuntemattomana, vaikka jokainen kirjattu todistus olisi voimassa ja todennettu. Aluksen vaadittujen todistusten hallittu perustaso täyttäisi sen.",
+      "gap_SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED": "Turvallisuustapahtumat: mikään hyväksytty vakavuuskäytäntö ei määritä, mitkä avoimet tapahtumat estävät lähdön, joten \"ei avoimia vakavia tapahtumia\" ei voi sulkea pois estävää tapahtumaa ja tämä luokka pysyy tuntemattomana. Hyväksytty turvallisuustapahtumien vakavuuskäytäntö täyttäisi sen; tarkista siihen asti avoimet tapahtumat Turvallisuustapahtumat-sivulla.",
       "releaseHoldDeny": "Pidätä ja Hylkää voidaan aina kirjata perusteluineen."
     },
     "S9Wpc_tsx_copy": {
@@ -3769,6 +3773,7 @@
       "code_self_modification": "Et voi muuttaa omaa jäsenyyttäsi.",
       "code_configuration_managed": "Konfiguraatiolla hallittuja myöntöjä ei voi muokata täällä.",
       "code_last_admin": "Viimeistä aktiivista pääkäyttäjää ei voi poistaa.",
+      "code_request_limit": "Liian monta pyyntöä lyhyessä ajassa. Odota muutama minuutti ja yritä uudelleen.",
       "code_version_conflict": "Tietue muuttui sillä välin.",
       "code_conflict_changed": "Tietue tai istuntosi muuttui sillä välin.",
       "code_permission_denied": "Oikeus evätty.",

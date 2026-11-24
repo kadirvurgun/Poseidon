@@ -238,6 +238,7 @@
       "details": "Details",
       "skip": "Zum Hauptinhalt springen",
       "failed": "Die Anmeldung konnte nicht abgeschlossen werden. Versuchen Sie es erneut.",
+      "signinLimited": "Zu viele Anmeldeversuche aus diesem Netzwerk. Warten Sie einige Minuten und versuchen Sie es erneut.",
       "intro": "Durchsuchen Sie die in Ihrem Arbeitsbereich verfügbaren Datensätze.",
       "language": "Sprache",
       "filter": "Schiffstyp",
@@ -2285,6 +2286,8 @@
       "b_BLOCKERS_PRESENT": "Ereignisse mit hohem Schweregrad offen",
       "b_REVIEW_REQUIRED": "Prüfung erforderlich",
       "b_NO_OPEN_HIGH_SEVERITY_EVENT": "Kein offenes Ereignis mit hohem Schweregrad",
+      "b_POLICY_UNCONFIGURED": "Schweregrad-Richtlinie nicht konfiguriert – Prüfung erforderlich",
+      "policyUnconfigured": "Es ist keine Schweregrad-Richtlinie konfiguriert, daher können Ereignisse mit hohem Schweregrad nicht ausgeschlossen werden. Offene Ereignisse manuell prüfen; dies ist kein Bereit- oder Entwarnungszustand.",
       "r_HIGH_SEVERITY_OPEN": "Hoher Schweregrad, offen",
       "r_UNTRIAGED_EVENT": "Noch nicht triagiert",
       "r_SEVERITY_UNASSESSED": "Schweregrad nicht bewertet",
@@ -2395,6 +2398,7 @@
       "releaseNotReady": "Freigeben erfordert eine aktuelle Bewertung BEREIT, daher muss jede Kategorie bestehen. Diese Kategorien bestehen noch nicht:",
       "gap_EMERGENCY_SOURCE_UNAVAILABLE": "Notfall: Es ist noch keine Quelle zur Notfallvorsorge angebunden, daher bleibt diese Kategorie Unbekannt. Aktuelle, von Menschen verifizierte Musterungs- und Übungsnachweise (SOLAS III/19) mit Einsatzbereitschaft der Rettungs- und Brandschutzmittel würden sie erfüllen, sobald das Modul Notfallvorsorge (61.02) geliefert ist.",
       "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "Gesetzlich: Keine Quelle legt den erforderlichen Zertifikatssatz für dieses Schiff fest, daher bleibt die Vollständigkeit Unbekannt, auch wenn jedes erfasste Zertifikat gültig und verifiziert ist. Eine kontrollierte Basis der erforderlichen Zertifikate für das Schiff würde sie erfüllen.",
+      "gap_SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED": "Sicherheitsereignisse: Keine genehmigte Schweregradrichtlinie legt fest, welche offenen Ereignisse das Auslaufen blockieren. \"Kein offenes Ereignis mit hohem Schweregrad\" schließt daher kein blockierendes Ereignis aus, und diese Kategorie bleibt Unbekannt. Eine genehmigte Schweregradrichtlinie für Sicherheitsereignisse würde sie erfüllen; prüfen Sie bis dahin die offenen Ereignisse auf der Seite Sicherheitsereignisse.",
       "releaseHoldDeny": "Anhalten und Ablehnen können jederzeit mit Begründung erfasst werden."
     },
     "S9Wpc_tsx_copy": {
@@ -3769,6 +3773,7 @@
       "code_self_modification": "Sie können Ihre eigene Mitgliedschaft nicht ändern.",
       "code_configuration_managed": "Konfigurationsverwaltete Berechtigungen können hier nicht bearbeitet werden.",
       "code_last_admin": "Der letzte aktive Administrator kann nicht entfernt werden.",
+      "code_request_limit": "Zu viele Anfragen in kurzer Zeit. Warten Sie einige Minuten und versuchen Sie es erneut.",
       "code_version_conflict": "Der Datensatz wurde zwischenzeitlich geändert.",
       "code_conflict_changed": "Der Datensatz oder Ihre Sitzung wurde zwischenzeitlich geändert.",
       "code_permission_denied": "Berechtigung verweigert.",

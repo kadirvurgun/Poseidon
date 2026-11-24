@@ -15,7 +15,10 @@
 .tug-board-job[data-readiness="Blocked"] { border-inline-start: 3px solid var(--destructive); }
 .tug-board-row-grid { display: grid; grid-template-columns: minmax(150px, 1.1fr) minmax(165px, 1.35fr) minmax(120px, 1fr) minmax(125px, 1fr) minmax(135px, 1fr); gap: 22px; padding: 22px; align-items: start; }
 .tug-board-identity > div { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin-bottom: 10px; }
-.enterprise-shell .tug-board-identity h3 { margin-bottom: 6px; font-size: 14px; }
+/* N6: synthetic job numbers (e.g. TUG-SYN-3000…0002) have no break opportunity and were clipped by the card on mobile; they
+   wrap inside the identity column (min-inline-size: 0 lets the grid track shrink) and the link title keeps the full value. */
+.tug-board-identity { min-inline-size: 0; }
+.enterprise-shell .tug-board-identity h3 { margin-bottom: 6px; font-size: 14px; overflow-wrap: anywhere; }
 .tug-board-identity h3 a { text-decoration: none; }
 .tug-board-identity h3 a:hover { text-decoration: underline; }
 .tug-board-identity p { color: var(--foreground); font-size: 12px; margin-bottom: 3px; overflow-wrap: anywhere; }

@@ -38,7 +38,7 @@ Olaylar ve ramak kala sayfası, bir gemide yaşanan emniyet olayını hızlıca 
 - **İnceleme ihtiyacı BİLİNMİYOR:** karar verilmemiştir; "hayır" anlamına gelmez ve kapanışı engeller.
 - **Aksiyon — Açık / Tamamlandı / Doğrulandı:** Tamamlandı, doğrulandı demek değildir; Doğrulandı da etkili demek değildir.
 - **Etkinlik — Bekliyor / Etkili / Etkili değil / Sonuçsuz / Aksiyon yok / Görünmüyor:** etkinlik, aksiyon başına insan değerlendirmesidir ve kapanıştan ayrıdır. **Aksiyon yok** etkili anlamına gelmez.
-- **Açık emniyet olayları** özeti: **Açık yüksek şiddetli olay var**, **İnceleme gerekli** veya **Açık yüksek şiddetli olay yok**. Bu özet bir uyarıdır; hazır olma kararı vermez.
+- **Açık emniyet olayları** özeti: **Açık yüksek şiddetli olay var**, **İnceleme gerekli** veya **Açık yüksek şiddetli olay yok**. Şiddet politikası yapılandırılmadığı sürece bu "sorun yok" durumu yerine **Şiddet politikası yapılandırılmadı – inceleme gerekli** gösterilir; çünkü yüksek şiddetli olay olmadığı doğrulanamaz. Bu özet bir uyarıdır; hazır olma kararı vermez.
 - **Gizli (korunuyor):** bildirenin kimliği kısıtlı kasadadır ve okuyucuya gösterilmez.
 - **Çevrimdışı kaydedildi / Senkronizasyon bekliyor / Bu cihaza kaydedildi. Henüz gönderilmedi.** Kuyrukta olmak gönderildi demek değildir.
 

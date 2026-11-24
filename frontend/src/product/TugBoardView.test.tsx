@@ -91,3 +91,11 @@ it('filters by lifecycle state and server window, shows the state badge and life
   expect(onFilter).toHaveBeenLastCalledWith({ q: '', priority: '', offset: 0, state: 'Draft', window: 'next24h' })
   expect(tugBoardHref(vessel, { q: '', priority: '', offset: 0, state: 'Cancelled', window: 'next72h' })).toBe(`/app/tug-job-board?vessel=${vessel}&state=Cancelled&window=next72h`)
 })
+
+it('keeps a long job number whole in the link title so a wrapped mobile card never hides the identifier', () => {
+  const jobNumber = 'TUG-SYN-30000000000000000000000000000002'
+  render(<TugBoardView {...defaults} board={{ items: [{ ...row, request: { ...row.request, jobNumber } }], hasMore: false }} />)
+  const link = within(screen.getByRole('article', { name: jobNumber })).getByRole('link', { name: jobNumber })
+  expect(link).toHaveAttribute('title', jobNumber)
+  expect(link.closest('.tug-board-identity')).not.toBeNull()
+})

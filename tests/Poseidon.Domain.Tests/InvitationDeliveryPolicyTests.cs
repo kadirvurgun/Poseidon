@@ -96,6 +96,20 @@ public sealed class InvitationDeliveryPolicyTests
         Assert.False(InvitationDeliveryPolicy.ValidEmail(null));
     }
 
+    // INVITE-RATELIMIT-FOLLOWUPS N4: one mailbox spelled differently compares equal; another mailbox never does.
+    [Fact]
+    public void Normalized_addresses_fold_case_only_and_invalid_addresses_have_no_comparison_form()
+    {
+        Assert.Equal("invitee.one@example.invalid", InvitationDeliveryPolicy.NormalizedEmail("Invitee.One@EXAMPLE.invalid"));
+        Assert.Equal(InvitationDeliveryPolicy.NormalizedEmail("invitee@example.invalid"), InvitationDeliveryPolicy.NormalizedEmail("INVITEE@Example.Invalid"));
+        Assert.NotEqual(InvitationDeliveryPolicy.NormalizedEmail("invitee@example.invalid"), InvitationDeliveryPolicy.NormalizedEmail("invitee2@example.invalid"));
+        Assert.NotEqual(InvitationDeliveryPolicy.NormalizedEmail("invitee@example.invalid"), InvitationDeliveryPolicy.NormalizedEmail("invitee@example2.invalid"));
+        Assert.NotEqual(InvitationDeliveryPolicy.NormalizedEmail("in.vitee@example.invalid"), InvitationDeliveryPolicy.NormalizedEmail("invitee@example.invalid"));
+        Assert.Null(InvitationDeliveryPolicy.NormalizedEmail(null));
+        Assert.Null(InvitationDeliveryPolicy.NormalizedEmail(" invitee@example.invalid"));
+        Assert.Null(InvitationDeliveryPolicy.NormalizedEmail("Name <invitee@example.invalid>"));
+    }
+
     [Fact]
     public void Lifetime_is_bounded_to_54_01_account_invite_hours_and_defaults_to_24_hours()
     {

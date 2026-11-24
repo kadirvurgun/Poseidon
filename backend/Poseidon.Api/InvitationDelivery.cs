@@ -14,7 +14,12 @@ namespace Poseidon.Api;
 // no HTTP input selects the transport, the sender, the link origin or the dispatcher identity.
 public sealed class InvitationDeliverySettings
 {
+    public const string ModeDisabled = "Disabled";
     public bool Enabled { get; set; }
+    // INVITE-RATELIMIT-FOLLOWUPS N3: null (default) or "Disabled". "Disabled" is the operator's deliberate, fleet-wide
+    // decision that no instance sends invitation e-mail: only then does the dispatcher finalize queued rows (of any
+    // instance) as NOT_CONFIGURED. A merely missing or incomplete transport never finalizes rows another instance could send.
+    public string? Mode { get; set; }
     // Origin of the link in the e-mail (https). Never taken from the request Host header, which a caller controls.
     public string? PublicBaseUrl { get; set; }
     public string? SmtpHost { get; set; }
@@ -30,18 +35,69 @@ public sealed class InvitationDeliverySettings
     public int LeaseSeconds { get; set; } = 120;
     public int SendTimeoutSeconds { get; set; } = 30;
 
-    public bool Valid()
+    public bool Valid() => Enabled && Problems().Count == 0;
+
+    // INVITE-RATELIMIT-FOLLOWUPS N3: closed reason codes (never values) for an incomplete or unsafe transport configuration.
+    public IReadOnlyList<string> Problems()
     {
-        if (!Enabled || string.IsNullOrWhiteSpace(SmtpHost) || SmtpHost.Any(c => char.IsWhiteSpace(c) || char.IsControl(c)) || SmtpPort is < 1 or > 65535 ||
-            !InvitationDeliveryPolicy.ValidEmail(From) || PollSeconds is < 1 or > 3600 || BatchSize is < 1 or > 100 ||
-            SendTimeoutSeconds is < 1 or > 120 || LeaseSeconds <= SendTimeoutSeconds + 5 || LeaseSeconds > 900) return false;
+        var problems = new List<string>();
+        if (string.IsNullOrWhiteSpace(SmtpHost) || SmtpHost.Any(c => char.IsWhiteSpace(c) || char.IsControl(c))) problems.Add("smtp_host");
+        if (SmtpPort is < 1 or > 65535) problems.Add("smtp_port");
+        if (!InvitationDeliveryPolicy.ValidEmail(From)) problems.Add("from");
+        if (PollSeconds is < 1 or > 3600) problems.Add("poll_seconds");
+        if (BatchSize is < 1 or > 100) problems.Add("batch_size");
+        if (SendTimeoutSeconds is < 1 or > 120) problems.Add("send_timeout_seconds");
+        if (LeaseSeconds <= SendTimeoutSeconds + 5 || LeaseSeconds > 900) problems.Add("lease_seconds");
         if (!Uri.TryCreate(PublicBaseUrl, UriKind.Absolute, out var origin) || origin.Scheme != Uri.UriSchemeHttps || origin.Query.Length > 0 ||
-            origin.Fragment.Length > 0 || !string.IsNullOrEmpty(origin.UserInfo)) return false;
-        if (Security == "None" ? !Loopback(SmtpHost) : Security != "StartTls") return false;
-        return (UserName == null) == (PasswordReference == null) && (UserName == null || UserName is { Length: > 0 and <= 256 } && !UserName.Any(char.IsControl));
+            origin.Fragment.Length > 0 || !string.IsNullOrEmpty(origin.UserInfo)) problems.Add("public_base_url");
+        if (Security == "None" ? !Loopback(SmtpHost) : Security != "StartTls") problems.Add("security");
+        if ((UserName == null) != (PasswordReference == null) || UserName != null && (UserName is not { Length: > 0 and <= 256 } || UserName.Any(char.IsControl)))
+            problems.Add("credential");
+        return problems;
     }
 
-    private static bool Loopback(string host) => host == "localhost" || IPAddress.TryParse(host, out var ip) && IPAddress.IsLoopback(ip);
+    // N3: true only when the operator set Mode=Disabled (and did not enable a transport). Only such an instance sweeps
+    // due QUEUED rows to NOT_CONFIGURED (USER-ADMIN-03 M2 retention); every other instance without a valid transport
+    // leaves them for an instance that can send (closed/expired invitations are still cancelled by any instance).
+    public bool SweepsUnsent => Mode == ModeDisabled && !Enabled;
+
+    // N3 startup validation. Enabled with an incomplete/unsafe configuration, or with a credential reference that does not
+    // resolve, stops startup (fail fast, reason codes only): an instance meant to send never silently falls back. An
+    // unknown Mode, or Mode=Disabled together with Enabled, is contradictory and stops startup too.
+    internal void Validate(Func<string, string?> secrets)
+    {
+        if (Mode != null && Mode != ModeDisabled)
+            throw new InvalidOperationException("Invitation e-mail delivery mode is invalid: mode.");
+        if (Mode == ModeDisabled && Enabled)
+            throw new InvalidOperationException("Invitation e-mail delivery is both enabled and disabled: mode.");
+        if (!Enabled) return;
+        var problems = Problems();
+        if (problems.Count > 0)
+            throw new InvalidOperationException("Invitation e-mail delivery is enabled but its configuration is invalid: " + string.Join(", ", problems) + ".");
+        if (PasswordReference != null)
+        {
+            string? value;
+            try { value = OperatorSecretReferences.Resolve(PasswordReference, secrets); }
+            catch (InvalidOperationException) { value = null; }
+            if (value == null) throw new InvalidOperationException("Invitation e-mail delivery is enabled but its credential reference is unavailable.");
+        }
+    }
+
+    // Transport fields set while delivery is not enabled (a disabled instance among enabled peers, see Validate).
+    internal bool HasTransportSettings => !Enabled && (SmtpHost != null || PublicBaseUrl != null || From != null || UserName != null || PasswordReference != null);
+
+    // N3: a short digest of the non-secret transport configuration, logged once at startup so operators can verify that
+    // every API instance runs the same configuration. The password is never read for it (only the reference name), and
+    // the digest is not reversible to the host, sender or user name.
+    public string ConfigurationDigest()
+    {
+        var canonical = string.Join('\n', Enabled ? "1" : "0", Mode ?? "", PublicBaseUrl ?? "", SmtpHost ?? "", SmtpPort.ToString(CultureInfo.InvariantCulture), Security,
+            From ?? "", UserName ?? "", PasswordReference ?? "", PollSeconds.ToString(CultureInfo.InvariantCulture), BatchSize.ToString(CultureInfo.InvariantCulture),
+            LeaseSeconds.ToString(CultureInfo.InvariantCulture), SendTimeoutSeconds.ToString(CultureInfo.InvariantCulture));
+        return Convert.ToHexString(SHA256.HashData(System.Text.Encoding.UTF8.GetBytes("poseidon.invitation-delivery.config.v1\n" + canonical))).ToLowerInvariant()[..16];
+    }
+
+    private static bool Loopback(string? host) => host == "localhost" || IPAddress.TryParse(host, out var ip) && IPAddress.IsLoopback(ip);
 
     public string Link(string token) => PublicBaseUrl!.TrimEnd('/') + "/app/accept-invitation#token=" + Uri.EscapeDataString(token);
 }
@@ -181,7 +237,8 @@ public sealed class InvitationDeliveryDispatcher(IConfiguration configuration, I
     public const string ActorId = "system:invitation-delivery";
     // Tenants with due rows handled per run; the cursor rotates so no tenant starves behind lower tenant ids (QA L5).
     internal const int TenantsPerRun = 64;
-    // Without a valid transport the dispatcher still sweeps due rows to NOT_CONFIGURED (QA M2), at a slower cadence.
+    // Without a valid transport the dispatcher runs at a slower cadence: it cancels rows of closed/expired invitations and,
+    // only under Mode=Disabled (N3), sweeps the other due rows to NOT_CONFIGURED (QA M2).
     internal static readonly TimeSpan UnconfiguredSweep = TimeSpan.FromMinutes(5);
     private readonly SemaphoreSlim gate = new(1, 1);
     private Guid cursor = Guid.Empty;
@@ -273,8 +330,12 @@ public sealed class InvitationDeliveryDispatcher(IConfiguration configuration, I
             return await Finish(db, row, new(InvitationDeliveryState.Cancelled, null, InvitationDeliveryPolicy.ErrorInvitationClosed), now, ct);
         if (now >= invitation.ExpiresAt)
             return await Finish(db, row, new(InvitationDeliveryState.Cancelled, null, InvitationDeliveryPolicy.ErrorInvitationExpired), now, ct);
+        // N3: without a transport the row is finalized only under the deliberate fleet-wide Mode=Disabled; otherwise it
+        // stays QUEUED (untouched, payload kept encrypted) for an instance that can send it.
         if (!mailer.Configured)
-            return await Finish(db, row, new(InvitationDeliveryState.NotConfigured, null, InvitationDeliveryPolicy.ErrorNotConfigured), now, ct);
+            return settings.SweepsUnsent
+                ? await Finish(db, row, new(InvitationDeliveryState.NotConfigured, null, InvitationDeliveryPolicy.ErrorNotConfigured), now, ct)
+                : null;
         if (protection.Unprotect(row.TenantId, row.Id, row.ProtectedPayload!) is not { } payload || !InvitationDeliveryPolicy.ValidEmail(payload.To) ||
             !MembershipInvitationPolicy.TryParse(payload.Token, out var tokenTenant, out var secret) || tokenTenant != row.TenantId ||
             MembershipInvitationPolicy.Hash(secret) != invitation.TokenHash)
@@ -326,9 +387,10 @@ public sealed class InvitationDeliveryDispatcher(IConfiguration configuration, I
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        // QA M2: the dispatcher always runs. With a valid transport it sends every PollSeconds; without one (never configured,
-        // disabled or misconfigured after rows were queued) it sweeps due rows every 5 minutes to NOT_CONFIGURED (or
-        // CANCELLED for closed/expired invitations), erasing their payload, so nothing waits for a transport that is gone.
+        // QA M2 / N3: the dispatcher always runs. With a valid transport it sends every PollSeconds. Without one it runs
+        // every 5 minutes: rows of closed/expired invitations end CANCELLED (payload erased) on any instance; the other due
+        // rows end NOT_CONFIGURED only when the operator set InvitationDelivery:Mode=Disabled (a deliberate fleet-wide
+        // decision). A missing or incomplete configuration never finalizes rows a correctly configured peer could send.
         // Without a database connection it does nothing. No exception except shutdown leaves this loop (QA L1).
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -346,4 +408,51 @@ public sealed class InvitationDeliveryDispatcher(IConfiguration configuration, I
             catch (OperationCanceledException) { break; }
         }
     }
+}
+
+// INVITE-RATELIMIT-FOLLOWUPS N3: operator configuration registration with fail-fast validation and a startup notice that
+// names the transport state and the non-secret configuration digest, so operators can compare all API instances.
+public static partial class InvitationDeliveryRuntime
+{
+    public static InvitationDeliverySettings AddInvitationDeliverySettings(this IServiceCollection services, IConfiguration configuration) =>
+        services.AddInvitationDeliverySettings(configuration, Environment.GetEnvironmentVariable);
+
+    internal static InvitationDeliverySettings AddInvitationDeliverySettings(this IServiceCollection services, IConfiguration configuration, Func<string, string?> secrets)
+    {
+        var settings = configuration.GetSection("InvitationDelivery").Get<InvitationDeliverySettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new();
+        settings.Validate(secrets);
+        services.AddSingleton(settings);
+        services.AddHostedService<InvitationDeliveryConfigurationNotice>();
+        return settings;
+    }
+
+    [LoggerMessage(EventId = 4301, Level = LogLevel.Information,
+        Message = "Invitation e-mail transport {State}; configuration digest {Digest}. Every API instance must report the same digest.")]
+    internal static partial void Transport(ILogger logger, string state, string digest);
+
+    [LoggerMessage(EventId = 4302, Level = LogLevel.Warning,
+        Message = "Invitation e-mail transport settings are present but delivery is not enabled; this instance records new invitation e-mail as NOT_CONFIGURED.")]
+    internal static partial void DisabledWithSettings(ILogger logger);
+
+    [LoggerMessage(EventId = 4303, Level = LogLevel.Warning,
+        Message = "Invitation e-mail transport is not configured on this instance and InvitationDelivery:Mode is not Disabled; queued invitation e-mail is left queued, not finalized. Set InvitationDelivery:Mode=Disabled on every instance to finalize it as NOT_CONFIGURED.")]
+    internal static partial void UnconfiguredWithoutDecision(ILogger logger);
+
+    [LoggerMessage(EventId = 4304, Level = LogLevel.Information,
+        Message = "Invitation e-mail delivery is disabled by operator decision (Mode=Disabled); this instance finalizes queued invitation e-mail as NOT_CONFIGURED.")]
+    internal static partial void DisabledByDecision(ILogger logger);
+}
+
+internal sealed class InvitationDeliveryConfigurationNotice(InvitationDeliverySettings settings, ILogger<InvitationDeliveryConfigurationNotice> logger) : IHostedService
+{
+    public Task StartAsync(CancellationToken cancellationToken)
+    {
+        InvitationDeliveryRuntime.Transport(logger, settings.Valid() ? "enabled" : settings.SweepsUnsent ? "disabled" : "not configured", settings.ConfigurationDigest());
+        if (settings.HasTransportSettings) InvitationDeliveryRuntime.DisabledWithSettings(logger);
+        if (settings.SweepsUnsent) InvitationDeliveryRuntime.DisabledByDecision(logger);
+        else if (!settings.Valid()) InvitationDeliveryRuntime.UnconfiguredWithoutDecision(logger);
+        return Task.CompletedTask;
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }

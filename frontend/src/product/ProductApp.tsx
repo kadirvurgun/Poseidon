@@ -289,7 +289,7 @@ export function ProductApp() {
         {user.setupRequired ? <p role="status">{t.setup}</p> : !user.authenticated ? <><p>{t.expired}</p><a className="primary-button" href={loginHref()}>{t.signin}</a></> : <><p>{t.tenant}: <strong>{user.tenantName ?? user.tenantId ?? '—'}</strong></p><Button variant="ghost" onClick={() => guard(() => void signout())}>{t.signout}</Button></>}
         {user.authenticated && !user.canRead && <p role="alert">{t.forbidden}</p>}
         {logoutError && <p role="alert">{t.unavailable}</p>}
-        {new URLSearchParams(window.location.search).has('auth') && <p role="alert">{t.failed}</p>}
+        {new URLSearchParams(window.location.search).has('auth') && <p role="alert" data-auth={new URLSearchParams(window.location.search).get('auth') === 'request_limit' ? 'request_limit' : 'failed'}>{new URLSearchParams(window.location.search).get('auth') === 'request_limit' ? t.signinLimited : t.failed}</p>}
       </section>}
       {pendingNavigation && <DraftConfirmation language={language} onStay={() => { navigationLive.current.pending = null; setPendingNavigation(null); }} onDiscard={() => void discardPendingNavigation()}/>}
       {canRead && !route.invalid && tab === 'audit' && <AuditWorkspace key={`${user?.tenantId}:${user?.actorId}:${selected}:${route.query ?? ''}`} language={language} selected={selected} query={route.query} allowed={auditAllowed} onNavigate={follow}/>}

@@ -238,6 +238,7 @@
       "details": "詳細資訊",
       "skip": "跳至主要內容",
       "failed": "無法完成登入。請重試。",
+      "signinLimited": "來自此網路的登入嘗試過多。請等待幾分鐘後再試。",
       "intro": "瀏覽您工作區內可用的記錄。",
       "language": "語言",
       "filter": "船舶類型",
@@ -2285,6 +2286,8 @@
       "b_BLOCKERS_PRESENT": "存在未結案的高嚴重程度事件",
       "b_REVIEW_REQUIRED": "需要審查",
       "b_NO_OPEN_HIGH_SEVERITY_EVENT": "無未結案的高嚴重程度事件",
+      "b_POLICY_UNCONFIGURED": "嚴重性政策未設定 – 需要審查",
+      "policyUnconfigured": "尚未設定嚴重性政策，因此無法排除高嚴重性事件。請人工審查未結事件；這不是就緒或一切正常的狀態。",
       "r_HIGH_SEVERITY_OPEN": "高嚴重程度，未結案",
       "r_UNTRIAGED_EVENT": "尚未分類評估",
       "r_SEVERITY_UNASSESSED": "嚴重程度未評估",
@@ -2395,6 +2398,7 @@
       "releaseNotReady": "放行需要目前評估為就緒，因此每個類別都必須通過。以下類別尚未通過：",
       "gap_EMERGENCY_SOURCE_UNAVAILABLE": "應急：尚未接入任何應急準備資料來源，因此該類別保持未知。應急準備模組（61.02）交付後，經人工查證的目前集合與演習記錄（SOLAS III/19）以及救生和消防設備的就緒狀態即可滿足該類別。",
       "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "法定：沒有任何資料來源定義該船所需的證書集合，因此即使每份已記錄證書均有效且已查證，完整性仍為未知。受控的該船所需證書基線即可滿足該項。",
+      "gap_SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED": "安全事件：沒有經核准的嚴重程度政策規定哪些未結案事件會阻止離港，因此「無未結案的高嚴重程度事件」無法排除阻止性事件，此類別維持未知。經核准的安全事件嚴重程度政策可滿足此要求；在此之前，請在安全事件頁面審查未結案的事件。",
       "releaseHoldDeny": "暫緩和拒絕始終可以附理由記錄。"
     },
     "S9Wpc_tsx_copy": {
@@ -3769,6 +3773,7 @@
       "code_self_modification": "您不能變更自己的成員資格。",
       "code_configuration_managed": "由設定管理的授權無法在此編輯。",
       "code_last_admin": "最後一位有效管理員不能被移除。",
+      "code_request_limit": "短時間內請求過多。請等待幾分鐘後重試。",
       "code_version_conflict": "紀錄在此期間已被變更。",
       "code_conflict_changed": "紀錄或您的工作階段在此期間已被變更。",
       "code_permission_denied": "權限遭拒。",

@@ -50,11 +50,13 @@ type Notice = '' | 'done' | 'conflict' | 'refused' | 'denied' | 'failed' | 'unce
 function useAdminCommand(user: Session | null, offline: boolean, onDone: (body: unknown) => void) {
   const [busy, setBusy] = useState(false), [notice, setNotice] = useState<Notice>(''), [code, setCode] = useState('')
   const [errors, setErrors] = useState<Record<string, string[]>>({}), [retained, setRetained] = useState<AdminCommand | null>(null)
-  const lock = useRef(false), mounted = useRef(true)
+  const lock = useRef(false), mounted = useRef(true), lastRetained = useRef<AdminCommand | null>(null)
   useEffect(() => { mounted.current = true; return () => { mounted.current = false } }, [])
   const run = useCallback(async (command: AdminCommand) => {
     if (lock.current || offline || !navigator.onLine) return
-    lock.current = true; setBusy(true); setNotice(''); setCode(''); setErrors({}); setRetained(command)
+    // Retry of a command whose earlier outcome was uncertain (same object, same Idempotency-Key).
+    const replay = lastRetained.current === command
+    lock.current = true; setBusy(true); setNotice(''); setCode(''); setErrors({}); setRetained(command); lastRetained.current = command
     const c = new AbortController(), timeout = setTimeout(() => c.abort(), 15000)
     let sent = false
     try {
@@ -63,14 +65,17 @@ function useAdminCommand(user: Session | null, offline: boolean, onDone: (body: 
       sent = true
       const body = await sendAdmin(command, s.csrfToken, c.signal)
       if (!mounted.current) return
-      setRetained(null); setNotice('done'); onDone(body)
+      setRetained(null); lastRetained.current = null; setNotice('done'); onDone(body)
     } catch (e) {
       if (!mounted.current) return
-      const definite = e instanceof ApiError && [400, 401, 403, 404, 409, 422].includes(e.status)
-      if (!sent || definite) setRetained(null)
+      // 429 request_limit: refused before any change (INVITE-RATELIMIT-FOLLOWUPS), so the outcome is definite.
+      // Invite QA N2 (followups-20261123): a 429 on the retry of an uncertain command does not settle the first attempt,
+      // so the command and its idempotency key stay retained and the outcome stays uncertain (no second invitation).
+      const definite = e instanceof ApiError && [400, 401, 403, 404, 409, 422, 429].includes(e.status) && !(replay && e.status === 429)
+      if (!sent || definite) { setRetained(null); lastRetained.current = null }
       setCode(e instanceof ApiError ? e.code : ''); setErrors(e instanceof ApiError ? e.errors : {})
       setNotice(sent && !definite ? 'uncertain' : e instanceof ApiError && e.status === 409 && ['version_conflict', 'conflict_changed', 'lineage_conflict'].includes(e.code) ? 'conflict'
-        : e instanceof ApiError && [400, 409, 422].includes(e.status) ? 'refused' : e instanceof ApiError && [401, 403, 404].includes(e.status) ? 'denied' : 'failed')
+        : e instanceof ApiError && [400, 409, 422, 429].includes(e.status) ? 'refused' : e instanceof ApiError && [401, 403, 404].includes(e.status) ? 'denied' : 'failed')
     } finally { clearTimeout(timeout); lock.current = false; if (mounted.current) setBusy(false) }
   }, [offline, user, onDone])
   return { run, busy, notice, code, errors, retained, clear: useCallback(() => { setNotice(''); setCode(''); setErrors({}) }, []) }

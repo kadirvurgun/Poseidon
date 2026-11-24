@@ -217,15 +217,32 @@ public static partial class MembershipEndpoints
 
     // Shared command prelude: attempt audit, authority, antiforgery, bounded body and key.
     private sealed record Prelude(TrustedActor Actor, string Key, byte[] Body);
-    private static async Task<(Prelude? Value, IResult? Failure)> Begin(HttpContext h, Guid? resource, Func<TrustedActor, bool> authorized, int limit = 4096)
+    // issuesInvitation (INVITE-RATELIMIT-FOLLOWUPS): invitation create/reissue draw on InvitationIssueRateLimiter before
+    // any SecurityEvent write; only the first refused attempt of a window is audited, every refusal carries Retry-After.
+    private static async Task<(Prelude? Value, IResult? Failure)> Begin(HttpContext h, Guid? resource, Func<TrustedActor, bool> authorized, int limit = 4096,
+        bool issuesInvitation = false)
     {
         var audit = h.RequestServices.GetRequiredService<SecurityAudit>();
         async Task<(Prelude?, IResult?)> Fail(int status, string code) { await audit.WriteAsync(h, "MembershipCommand", code, resourceId: resource); return (null, Problem(h, status, code)); }
         var actor = Actor(h);
+        // Invitation QA N1 (followups-20261123): a cross-site request (invalid antiforgery token) must not consume the
+        // administrator's invitation budget, so only a request with a valid token draws on the limiter; an invalid one
+        // falls through to the audited csrf_invalid refusal below.
+        var csrfValid = true;
+        try { await h.RequestServices.GetRequiredService<IAntiforgery>().ValidateRequestAsync(h); }
+        catch (AntiforgeryValidationException) { csrfValid = false; }
+        if (issuesInvitation && csrfValid)
+        {
+            var decision = await h.RequestServices.GetRequiredService<InvitationIssueRateLimiter>().AcquireAsync(actor.TenantId, actor.Id, h.RequestAborted);
+            if (!decision.Allowed)
+            {
+                RateLimitingRuntime.RetryAfter(h, decision);
+                return decision.Outcome == RateLimitOutcome.Limited ? await Fail(429, "request_limit") : (null, Problem(h, 429, "request_limit"));
+            }
+        }
         await audit.WriteAsync(h, "MembershipCommand", "Attempted", resourceId: resource);
         if (!authorized(actor)) return await Fail(403, "permission_denied");
-        try { await h.RequestServices.GetRequiredService<IAntiforgery>().ValidateRequestAsync(h); }
-        catch (AntiforgeryValidationException) { return await Fail(403, "csrf_invalid"); }
+        if (!csrfValid) return await Fail(403, "csrf_invalid");
         if (!h.Request.HasJsonContentType() || h.Request.ContentLength > limit) return await Fail(400, "invalid_request");
         using var buffer = new MemoryStream();
         var bytes = new byte[1024]; int read;

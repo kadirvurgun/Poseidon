@@ -238,6 +238,7 @@
       "details": "Podrobnosti",
       "skip": "Přejít na hlavní obsah",
       "failed": "Přihlášení se nepodařilo dokončit. Zkuste to znovu.",
+      "signinLimited": "Příliš mnoho pokusů o přihlášení z této sítě. Počkejte několik minut a zkuste to znovu.",
       "intro": "Procházejte záznamy dostupné ve vašem pracovním prostoru.",
       "language": "Jazyk",
       "filter": "Typ plavidla",
@@ -2285,6 +2286,8 @@
       "b_BLOCKERS_PRESENT": "Otevřené události s vysokou závažností",
       "b_REVIEW_REQUIRED": "Vyžadováno posouzení",
       "b_NO_OPEN_HIGH_SEVERITY_EVENT": "Žádná otevřená událost s vysokou závažností",
+      "b_POLICY_UNCONFIGURED": "Zásady závažnosti nejsou nakonfigurovány – vyžadováno posouzení",
+      "policyUnconfigured": "Nejsou nakonfigurovány žádné zásady závažnosti, proto nelze vyloučit události vysoké závažnosti. Otevřené události posuďte ručně; nejde o stav připravenosti ani o stav bez nálezů.",
       "r_HIGH_SEVERITY_OPEN": "Vysoká závažnost, otevřeno",
       "r_UNTRIAGED_EVENT": "Dosud netříděno",
       "r_SEVERITY_UNASSESSED": "Závažnost neposouzena",
@@ -2395,6 +2398,7 @@
       "releaseNotReady": "Uvolnění vyžaduje aktuální hodnocení PŘIPRAVENO, takže musí vyhovět každá kategorie. Tyto kategorie zatím nevyhovují:",
       "gap_EMERGENCY_SOURCE_UNAVAILABLE": "Nouzová připravenost: zatím není připojen žádný zdroj nouzové připravenosti, proto tato kategorie zůstává Neznámá. Splnily by ji aktuální, člověkem ověřené záznamy o nástupech a cvičeních (SOLAS III/19) s připraveností záchranných a protipožárních prostředků, jakmile bude dodán modul nouzové připravenosti (61.02).",
       "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "Zákonné: žádný zdroj nedefinuje požadovanou sadu osvědčení pro tuto loď, proto úplnost zůstává Neznámá, i když je každé zaznamenané osvědčení platné a ověřené. Splnil by ji řízený základ požadovaných osvědčení lodi.",
+      "gap_SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED": "Bezpečnostní události: žádná schválená politika závažnosti neurčuje, které otevřené události blokují vyplutí, takže „žádná otevřená událost s vysokou závažností“ nemůže vyloučit blokující událost a tato kategorie zůstává Neznámá. Splnila by ji schválená politika závažnosti bezpečnostních událostí; do té doby zkontrolujte otevřené události na stránce Bezpečnostní události.",
       "releaseHoldDeny": "Pozdržet a Zamítnout lze vždy zaznamenat s odůvodněním."
     },
     "S9Wpc_tsx_copy": {
@@ -3769,6 +3773,7 @@
       "code_self_modification": "Nemůžete měnit své vlastní členství.",
       "code_configuration_managed": "Oprávnění spravovaná konfigurací zde nelze upravit.",
       "code_last_admin": "Posledního aktivního administrátora nelze odebrat.",
+      "code_request_limit": "Příliš mnoho požadavků v krátké době. Počkejte několik minut a zkuste to znovu.",
       "code_version_conflict": "Záznam se mezitím změnil.",
       "code_conflict_changed": "Záznam nebo vaše relace se mezitím změnily.",
       "code_permission_denied": "Přístup odepřen.",

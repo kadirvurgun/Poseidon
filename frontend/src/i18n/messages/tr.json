@@ -238,6 +238,7 @@
       "details": "Ayrıntılar",
       "skip": "Ana içeriğe geç",
       "failed": "Oturum açma tamamlanamadı. Lütfen tekrar deneyin.",
+      "signinLimited": "Bu ağdan çok fazla oturum açma denemesi yapıldı. Birkaç dakika bekleyip yeniden deneyin.",
       "intro": "Yetkili olduğunuz kayıtları görüntüleyin.",
       "language": "Dil",
       "filter": "Araç türü",
@@ -2285,6 +2286,8 @@
       "b_BLOCKERS_PRESENT": "Açık yüksek şiddetli olay var",
       "b_REVIEW_REQUIRED": "İnceleme gerekli",
       "b_NO_OPEN_HIGH_SEVERITY_EVENT": "Açık yüksek şiddetli olay yok",
+      "b_POLICY_UNCONFIGURED": "Şiddet politikası yapılandırılmadı – inceleme gerekli",
+      "policyUnconfigured": "Şiddet politikası yapılandırılmadığı için yüksek şiddetli olay olmadığı doğrulanamaz. Açık olayları elle gözden geçirin; bu bir hazır veya sorun yok durumu değildir.",
       "r_HIGH_SEVERITY_OPEN": "Yüksek şiddet, açık",
       "r_UNTRIAGED_EVENT": "Henüz değerlendirilmedi",
       "r_SEVERITY_UNASSESSED": "Şiddet değerlendirilmedi",
@@ -2395,6 +2398,7 @@
       "releaseNotReady": "Serbest bırakma güncel bir HAZIR değerlendirme gerektirir; bu nedenle her kategori geçmelidir. Henüz geçmeyen kategoriler:",
       "gap_EMERGENCY_SOURCE_UNAVAILABLE": "Acil durum: henüz bağlı bir acil durum hazırlık kaynağı yok, bu nedenle bu kategori Bilinmiyor olarak kalır. Acil durum hazırlık modülü (61.02) teslim edildiğinde, can kurtarma ve yangınla mücadele donanımı hazırlığıyla birlikte güncel, insan tarafından doğrulanmış toplanma ve tatbikat kayıtları (SOLAS III/19) bu kategoriyi karşılar.",
       "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "Yasal: bu gemi için gerekli sertifika setini tanımlayan bir kaynak yok, bu nedenle kayıtlı her sertifika geçerli ve doğrulanmış olsa bile bütünlük Bilinmiyor olarak kalır. Gemi için kontrollü bir gerekli sertifika temel çizgisi bunu karşılar.",
+      "gap_SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED": "Emniyet olayları: hangi açık olayların kalkışı engellediğini tanımlayan onaylı bir şiddet politikası yok; bu nedenle \"açık yüksek şiddetli olay yok\" engelleyici bir olayı dışlayamaz ve bu kategori Bilinmiyor kalır. Onaylı bir emniyet olayı şiddet politikası bunu karşılar; o zamana kadar açık olayları Olaylar ve ramak kala sayfasında inceleyin.",
       "releaseHoldDeny": "Beklet ve Reddet her zaman bir gerekçeyle kaydedilebilir."
     },
     "S9Wpc_tsx_copy": {
@@ -3769,6 +3773,7 @@
       "code_self_modification": "Kendi üyeliğinizi değiştiremezsiniz.",
       "code_configuration_managed": "Yapılandırmadan yönetilen yetkiler burada düzenlenemez.",
       "code_last_admin": "Son aktif yönetici kaldırılamaz.",
+      "code_request_limit": "Kısa sürede çok fazla istek gönderildi. Birkaç dakika bekleyip yeniden deneyin.",
       "code_version_conflict": "Kayıt bu arada değişti.",
       "code_conflict_changed": "Kayıt veya oturumunuz bu arada değişti.",
       "code_permission_denied": "Yetki reddedildi.",

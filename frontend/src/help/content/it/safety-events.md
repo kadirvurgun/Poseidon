@@ -38,7 +38,7 @@ La pagina Eventi di sicurezza e near miss vi permette di segnalare rapidamente u
 - **La necessità di indagine è UNKNOWN:** non è stata presa alcuna decisione; non significa "no" e blocca la chiusura.
 - **Azione — Aperta / Completata / Verificata:** Completato non significa Verificato, e Verificato non significa Efficace.
 - **Efficacia — In attesa / Efficace / Non efficace / Non conclusivo / Nessuna azione / Non visibile:** l'efficacia è una revisione umana per ogni azione ed è separata dalla chiusura. **Nessuna azione** non significa efficace.
-- Riepilogo **Eventi di sicurezza aperti**: **Eventi di gravità alta aperti**, **Revisione richiesta** o **Nessun evento di gravità alta aperto**. È solo un avviso; non fornisce alcuna decisione di prontezza.
+- Riepilogo **Eventi di sicurezza aperti**: **Eventi di gravità alta aperti**, **Revisione richiesta** o **Nessun evento di gravità alta aperto**. Finché non è configurata una politica di gravità, al posto di questo stato senza criticità viene mostrato **Politica di gravità non configurata – revisione richiesta**, perché non è possibile escludere eventi di gravità alta. È solo un avviso; non fornisce alcuna decisione di prontezza.
 - **Riservato (protetto):** l'identità del segnalante è in un archivio protetto e non viene mostrata ai lettori.
 - **Acquisito offline / In attesa di sincronizzazione / Salvata su questo dispositivo. Non ancora inviata.** In coda non significa inviato.
 

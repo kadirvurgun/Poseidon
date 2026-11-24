@@ -34,9 +34,10 @@ public sealed class DepartureSafetyInputTests
         var source = new FixedSource(new(Vessel, "BLOCKERS_PRESENT",
             [new(blocking, "SE-FICTIONAL-1", "NEAR_MISS", "HIGH", "TRIAGED", "HIGH_SEVERITY_OPEN", true)], ["SeverityPolicyUnconfigured"], Now));
         var checks = await DepartureReadinessAssessor.Safety(Context(source), null!, Actor(SafetyEventPolicy.ReadPermission), Vessel, Now, CancellationToken.None);
-        var check = Assert.Single(checks);
+        var check = Assert.Single(checks, c => c.Result == DepartureReadinessEngine.Fail);
         Assert.Equal(("safety", DepartureReadinessEngine.Fail, "SAFETY_EVENT:HIGH_SEVERITY_OPEN", "SafetyEvent", (Guid?)blocking),
             (check.Category, check.Result, check.Reason, check.SourceKind, check.SourceId));
+        Assert.Contains(checks, c => c.Result == DepartureReadinessEngine.Unknown && c.Reason == "SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED");
         Assert.Equal(1, source.Calls);
     }
 
@@ -45,12 +46,24 @@ public sealed class DepartureSafetyInputTests
     [Trait("Requirement", "DEV-060")]
     [InlineData("REVIEW_REQUIRED", "UNKNOWN", "SAFETY_EVENT_REVIEW_REQUIRED")]
     [InlineData("UNAVAILABLE", "UNKNOWN", "SAFETY_EVENT_SOURCE_UNAVAILABLE")]
-    [InlineData("NO_OPEN_HIGH_SEVERITY_EVENT", "PASS", "NO_OPEN_HIGH_SEVERITY_EVENT")]
+    [InlineData("NO_OPEN_HIGH_SEVERITY_EVENT", "UNKNOWN", "SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED")]
     public async Task Safety_source_states_map_to_the_gate_results(string state, string result, string reason) {
         var source = new FixedSource(new(Vessel, state, [], ["SeverityPolicyUnconfigured"], Now));
         var checks = await DepartureReadinessAssessor.Safety(Context(source), null!, Actor(SafetyEventPolicy.ReadPermission), Vessel, Now, CancellationToken.None);
         Assert.Contains(checks, c => c.Category == "safety" && c.Result == result && c.Reason == reason);
         Assert.All(checks, c => Assert.Equal("safety", c.Category));
+        // DEPARTURE-SEVERITY-UNKNOWN-20261123: with the severity policy unconfigured no state is ever PASS.
+        Assert.DoesNotContain(checks, c => c.Result == DepartureReadinessEngine.Pass);
+    }
+
+    [Fact]
+    [Trait("Requirement", "DEV-058")]
+    [Trait("Requirement", "DEV-060")]
+    public async Task No_open_high_severity_event_passes_only_when_the_source_reports_complete_coverage() {
+        var source = new FixedSource(new(Vessel, "NO_OPEN_HIGH_SEVERITY_EVENT", [], [], Now));
+        var checks = await DepartureReadinessAssessor.Safety(Context(source), null!, Actor(SafetyEventPolicy.ReadPermission), Vessel, Now, CancellationToken.None);
+        var check = Assert.Single(checks);
+        Assert.Equal((DepartureReadinessEngine.Pass, "NO_OPEN_HIGH_SEVERITY_EVENT"), (check.Result, check.Reason));
     }
 
     [Fact]

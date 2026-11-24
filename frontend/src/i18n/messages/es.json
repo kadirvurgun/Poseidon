@@ -238,6 +238,7 @@
       "details": "Detalles",
       "skip": "Saltar al contenido principal",
       "failed": "No se pudo iniciar sesión. Inténtelo de nuevo.",
+      "signinLimited": "Demasiados intentos de inicio de sesión desde esta red. Espere unos minutos e inténtelo de nuevo.",
       "intro": "Consulte los registros disponibles en su espacio de trabajo.",
       "language": "Idioma",
       "filter": "Tipo de buque",
@@ -2285,6 +2286,8 @@
       "b_BLOCKERS_PRESENT": "Eventos de gravedad alta abiertos",
       "b_REVIEW_REQUIRED": "Revisión requerida",
       "b_NO_OPEN_HIGH_SEVERITY_EVENT": "Ningún evento de gravedad alta abierto",
+      "b_POLICY_UNCONFIGURED": "Política de severidad no configurada – revisión requerida",
+      "policyUnconfigured": "No hay una política de severidad configurada, por lo que no se pueden descartar eventos de severidad alta. Revise manualmente los eventos abiertos; esto no es un estado listo ni de todo correcto.",
       "r_HIGH_SEVERITY_OPEN": "Gravedad alta, abierto",
       "r_UNTRIAGED_EVENT": "Aún sin clasificar",
       "r_SEVERITY_UNASSESSED": "Gravedad sin evaluar",
@@ -2395,6 +2398,7 @@
       "releaseNotReady": "Autorizar requiere una evaluación actual LISTO, por lo que todas las categorías deben superarse. Estas categorías aún no se superan:",
       "gap_EMERGENCY_SOURCE_UNAVAILABLE": "Emergencia: aún no hay conectada ninguna fuente de preparación para emergencias, por lo que esta categoría sigue Desconocida. La satisfarían registros actuales de reunión y ejercicios verificados por personas (SOLAS III/19), con la disponibilidad de los dispositivos de salvamento y contra incendios, una vez entregado el módulo de preparación para emergencias (61.02).",
       "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "Reglamentario: ninguna fuente define el conjunto de certificados exigidos para este buque, por lo que la integridad sigue Desconocida aunque todos los certificados registrados sean válidos y estén verificados. La satisfaría una línea base controlada de certificados exigidos para el buque.",
+      "gap_SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED": "Eventos de seguridad: ninguna política de gravedad aprobada define qué eventos abiertos bloquean la salida, por lo que «ningún evento de gravedad alta abierto» no puede descartar un evento bloqueante y esta categoría sigue Desconocida. Una política de gravedad aprobada para eventos de seguridad la satisfaría; hasta entonces, revise los eventos abiertos en la página Eventos de seguridad.",
       "releaseHoldDeny": "Retener y Denegar siempre pueden registrarse con un motivo."
     },
     "S9Wpc_tsx_copy": {
@@ -3769,6 +3773,7 @@
       "code_self_modification": "No puede modificar su propia membresía.",
       "code_configuration_managed": "Las concesiones gestionadas por configuración no se pueden editar aquí.",
       "code_last_admin": "El último administrador activo no puede eliminarse.",
+      "code_request_limit": "Demasiadas solicitudes en poco tiempo. Espere unos minutos e inténtelo de nuevo.",
       "code_version_conflict": "El registro cambió mientras tanto.",
       "code_conflict_changed": "El registro o su sesión cambiaron mientras tanto.",
       "code_permission_denied": "Permiso denegado.",

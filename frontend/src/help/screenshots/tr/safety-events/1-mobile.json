@@ -1,9 +1,9 @@
 {
  "schemaVersion": "poseidon.help.screenshot-provenance.v2",
  "generator": "tests/Poseidon.Browser.Tests/screenshots/capture.ts",
- "commit": "5e7e2e0ebac2dd5d406524a06229f6276324dc1d",
+ "commit": "d0aac6f6e6815fca0ab7c849c8fb5b0719fe11cf",
  "generatorBlobs": {
-  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "a473e17d44c9ed72ab530d9b343f72129e08968c",
+  "tests/Poseidon.Browser.Tests/screenshots/capture.ts": "13161f5d298c7f210607aa34ae5a5b3d79d73e21",
   "tests/Poseidon.Browser.Tests/screenshots/png-palette.ts": "3a0f780074c6da126fc96cee0869800475e2709d",
   "frontend/src/help/screenshots/steps.json": "5239b1cd352b1a5882e079f96e408f981587e66f"
  },
@@ -17,11 +17,11 @@
   "DemoFixtureCommand"
  ],
  "tenant": "Synthetic Fleet A",
- "fixedClock": "2026-11-22T00:00:00.000Z",
+ "fixedClock": "2026-11-23T00:00:00.000Z",
  "png": {
-  "sha256": "3a49135fbde881e542affb461f2bc8c68d1187bb620003267b0d4579e63b92a9",
+  "sha256": "3795927088437a238c640cf27fef07cd6fb0d7573f4dabe6bdd8c7f0d276169b",
   "width": 390,
   "height": 844
  },
- "domText": "Ana içeriğe geç\nOlaylar ve ramak kala\nGörünüm\nDil seçin\nDEMO-SHIP\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nDEMO-SHIP · Synthetic Ship A\nGemi modu: Gemi\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\nOlaylar ve ramak kala\n\nNe olduğunu hızlıca bildirin. Ön değerlendirme, inceleme onayı, doğrulama, etkinlik ve kapanış ayrı insan kayıtlarıdır; burada şiddet, kök neden veya kapanış otomatik belirlenmez. Kapalı, etkili demek değildir.\n\nAçık emniyet olayları Açık yüksek şiddetli olay yok\n\nKaynak kapsamı: SeverityPolicyUnconfigured\n\nOlaylar\nYalnızca benim bildirimlerim\n\nGösterilecek olay yok."
+ "domText": "Ana içeriğe geç\nOlaylar ve ramak kala\nGörünüm\nDil seçin\nDEMO-SHIP\nSynthetic Fleet A\nŞirket bağlamı:\nKullanılamıyor\nDEMO-SHIP · Synthetic Ship A\nGemi modu: Gemi\nRol bağlamı: Atanmamış\nAraç bağlamını değiştir\nÇevrimiçi\nOlaylar ve ramak kala\n\nNe olduğunu hızlıca bildirin. Ön değerlendirme, inceleme onayı, doğrulama, etkinlik ve kapanış ayrı insan kayıtlarıdır; burada şiddet, kök neden veya kapanış otomatik belirlenmez. Kapalı, etkili demek değildir.\n\nAçık emniyet olayları Şiddet politikası yapılandırılmadı – inceleme gerekli\n\nŞiddet politikası yapılandırılmadığı için yüksek şiddetli olay olmadığı doğrulanamaz. Açık olayları elle gözden geçirin; bu bir hazır veya sorun yok durumu değildir.\n\nKaynak kapsamı: SeverityPolicyUnconfigured\n\nOlaylar\nYalnızca benim bildirimlerim\n\nGösterilecek olay yok."
 }

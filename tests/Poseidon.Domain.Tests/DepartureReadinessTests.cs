@@ -176,8 +176,8 @@ public sealed class DepartureReadinessTests
     [Fact]
     [Trait("Requirement", "DEV-058")]
     [Trait("Requirement", "DEV-060")]
-    public void Only_no_open_high_severity_event_passes_the_safety_input_and_a_source_limit_stays_unknown() {
-        var pass = Assert.Single(DepartureReadinessEngine.SafetyChecks("NO_OPEN_HIGH_SEVERITY_EVENT", [], ["SeverityPolicyUnconfigured"]));
+    public void Only_no_open_high_severity_event_with_complete_coverage_passes_the_safety_input_and_a_source_limit_stays_unknown() {
+        var pass = Assert.Single(DepartureReadinessEngine.SafetyChecks("NO_OPEN_HIGH_SEVERITY_EVENT", [], []));
         Assert.Equal(("safety", DepartureReadinessEngine.Pass, "NO_OPEN_HIGH_SEVERITY_EVENT"), (pass.Category, pass.Result, pass.Reason));
         Assert.Equal(DepartureReadinessEngine.Ready, DepartureReadinessEngine.Evaluate(WithSafety([pass]), From, To, E).State);
         // An inconsistent snapshot (items under a "no event" state) or a truncated source is never PASS.
@@ -190,5 +190,52 @@ public sealed class DepartureReadinessTests
         var after = DepartureReadinessEngine.Evaluate(WithSafety(DepartureReadinessEngine.SafetyChecks("BLOCKERS_PRESENT",
             [new DepartureSafetyItem(Guid.NewGuid(), "HIGH_SEVERITY_OPEN", true)])), From, To, E).Hash;
         Assert.NotEqual(before, after);
+    }
+
+    // DEPARTURE-SEVERITY-UNKNOWN-20261123 (S9 gate finding N3): without an approved severity policy "no open
+    // high-severity event" cannot rule out a blocking event, so the safety category is UNKNOWN with an explicit reason.
+    [Fact]
+    [Trait("Requirement", "DEV-058")]
+    [Trait("Requirement", "DEV-060")]
+    public void An_unconfigured_severity_policy_keeps_no_open_high_severity_event_unknown_never_pass() {
+        var safety = DepartureReadinessEngine.SafetyChecks("NO_OPEN_HIGH_SEVERITY_EVENT", [], ["SeverityPolicyUnconfigured"]);
+        var check = Assert.Single(safety);
+        Assert.Equal(("safety", DepartureReadinessEngine.Unknown, "SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED", "SafetyEvent"),
+            (check.Category, check.Result, check.Reason, check.SourceKind));
+        var o = DepartureReadinessEngine.Evaluate(WithSafety(safety), From, To, E);
+        Assert.Equal(DepartureReadinessEngine.ReviewRequired, o.State);
+        Assert.Equal(new[] { "safety:SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED" }, o.ReviewReasons);
+        Assert.Equal(DepartureReadinessEngine.Unknown, o.Categories.Single(c => c.Category == "safety").Result);
+        Assert.Contains(o.Why, w => w.Category == "safety" && w.Result == DepartureReadinessEngine.Unknown && w.Reason == "SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED");
+        Assert.Equal("departure_release_not_permitted", DepartureDecisionPolicy.Refusal("RELEASE", o.State, E, "FICTIONAL reason text"));
+        // Bound into the hash: configuring the policy later (a material input change) makes a prior decision STALE.
+        Assert.NotEqual(o.Hash, DepartureReadinessEngine.Evaluate(WithSafety(DepartureReadinessEngine.SafetyChecks("NO_OPEN_HIGH_SEVERITY_EVENT", [], [])), From, To, E).Hash);
+    }
+
+    [Fact]
+    [Trait("Requirement", "DEV-058")]
+    [Trait("Requirement", "DEV-060")]
+    public void An_unconfigured_severity_policy_never_masks_an_open_high_severity_blocker_and_unknown_coverage_fails_closed() {
+        var blocking = Guid.NewGuid();
+        var safety = DepartureReadinessEngine.SafetyChecks("BLOCKERS_PRESENT", [new DepartureSafetyItem(blocking, "HIGH_SEVERITY_OPEN", true)], ["SeverityPolicyUnconfigured"]);
+        Assert.Contains(safety, c => c.Result == DepartureReadinessEngine.Fail && c.SourceId == blocking);
+        Assert.Contains(safety, c => c.Result == DepartureReadinessEngine.Unknown && c.Reason == "SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED");
+        var o = DepartureReadinessEngine.Evaluate(WithSafety(safety), From, To, E);
+        Assert.Equal(DepartureReadinessEngine.NotReady, o.State);
+        Assert.Equal(DepartureReadinessEngine.Fail, o.Categories.Single(c => c.Category == "safety").Result);
+        Assert.Equal(new[] { "safety:SAFETY_EVENT:HIGH_SEVERITY_OPEN" }, o.CriticalBlockers);
+        // A coverage code this gate does not recognise is an unknown gap, never silently ignored into PASS.
+        var unknownGap = Assert.Single(DepartureReadinessEngine.SafetyChecks("NO_OPEN_HIGH_SEVERITY_EVENT", [], ["FictionalFutureCoverageGap"]));
+        Assert.Equal((DepartureReadinessEngine.Unknown, "SAFETY_EVENT_COVERAGE_INCOMPLETE"), (unknownGap.Result, unknownGap.Reason));
+        // A blank coverage code is malformed input, not an empty gap list: it fails closed too.
+        var blankGap = Assert.Single(DepartureReadinessEngine.SafetyChecks("NO_OPEN_HIGH_SEVERITY_EVENT", [], [" "]));
+        Assert.Equal((DepartureReadinessEngine.Unknown, "SAFETY_EVENT_COVERAGE_INCOMPLETE"), (blankGap.Result, blankGap.Reason));
+        // An UNAVAILABLE source reports its own reason; its ReadRequired coverage is not double-counted.
+        var unavailable = Assert.Single(DepartureReadinessEngine.SafetyChecks("UNAVAILABLE", [], ["SafetyEventReadRequired"]));
+        Assert.Equal((DepartureReadinessEngine.Unknown, "SAFETY_EVENT_SOURCE_UNAVAILABLE"), (unavailable.Result, unavailable.Reason));
+        // Both gaps together report both reasons.
+        var both = DepartureReadinessEngine.SafetyChecks("NO_OPEN_HIGH_SEVERITY_EVENT", [], ["SeverityPolicyUnconfigured", "SafetyEventSourceLimitExceeded"]);
+        Assert.Equal(new[] { "SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED", "SAFETY_EVENT_SOURCE_LIMIT_EXCEEDED" }, both.Select(c => c.Reason).Order(StringComparer.Ordinal));
+        Assert.All(both, c => Assert.Equal(DepartureReadinessEngine.Unknown, c.Result));
     }
 }

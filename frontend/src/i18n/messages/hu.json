@@ -238,6 +238,7 @@
       "details": "Részletek",
       "skip": "Ugrás a fő tartalomra",
       "failed": "A bejelentkezés nem fejeződött be. Próbálja újra.",
+      "signinLimited": "Túl sok bejelentkezési kísérlet érkezett erről a hálózatról. Várjon néhány percet, majd próbálja újra.",
       "intro": "Böngéssze a munkaterületén elérhető rekordokat.",
       "language": "Nyelv",
       "filter": "Hajótípus",
@@ -2285,6 +2286,8 @@
       "b_BLOCKERS_PRESENT": "Nyitott, nagy súlyosságú események",
       "b_REVIEW_REQUIRED": "Felülvizsgálat szükséges",
       "b_NO_OPEN_HIGH_SEVERITY_EVENT": "Nincs nyitott, nagy súlyosságú esemény",
+      "b_POLICY_UNCONFIGURED": "Nincs beállítva súlyossági szabályzat – felülvizsgálat szükséges",
+      "policyUnconfigured": "Nincs beállítva súlyossági szabályzat, ezért a nagy súlyosságú események nem zárhatók ki. A nyitott eseményeket kézzel vizsgálja felül; ez nem kész vagy minden rendben állapot.",
       "r_HIGH_SEVERITY_OPEN": "Nagy súlyosság, nyitott",
       "r_UNTRIAGED_EVENT": "Még nincs osztályozva",
       "r_SEVERITY_UNASSESSED": "Súlyosság nincs értékelve",
@@ -2395,6 +2398,7 @@
       "releaseNotReady": "Az engedélyezéshez aktuális KÉSZ értékelés szükséges, ezért minden kategóriának meg kell felelnie. Ezek a kategóriák még nem felelnek meg:",
       "gap_EMERGENCY_SOURCE_UNAVAILABLE": "Vészhelyzeti: még nincs csatlakoztatva vészhelyzeti felkészültségi forrás, ezért ez a kategória Ismeretlen marad. Az aktuális, ember által ellenőrzött riadó- és gyakorlati nyilvántartások (SOLAS III/19) az életmentő és tűzoltó eszközök készenlétével teljesítenék, amint a vészhelyzeti felkészültségi modul (61.02) elkészül.",
       "gap_CERTIFICATE_INVENTORY_COMPLETENESS_UNESTABLISHED": "Jogszabályi: egyetlen forrás sem határozza meg a hajóhoz szükséges bizonyítványok körét, ezért a teljesség Ismeretlen marad akkor is, ha minden rögzített bizonyítvány érvényes és ellenőrzött. A hajó szükséges bizonyítványainak ellenőrzött alapkészlete teljesítené.",
+      "gap_SAFETY_EVENT_SEVERITY_POLICY_UNCONFIGURED": "Biztonsági események: nincs jóváhagyott súlyossági szabályzat, amely meghatározná, mely nyitott események akadályozzák az indulást, ezért a „nincs nyitott, nagy súlyosságú esemény” nem zárja ki az akadályozó eseményt, és ez a kategória Ismeretlen marad. Egy jóváhagyott biztonsági esemény súlyossági szabályzat teljesítené; addig tekintse át a nyitott eseményeket a Biztonsági események oldalon.",
       "releaseHoldDeny": "A Visszatart és az Elutasít indoklással mindig rögzíthető."
     },
     "S9Wpc_tsx_copy": {
@@ -3769,6 +3773,7 @@
       "code_self_modification": "Saját tagságát nem módosíthatja.",
       "code_configuration_managed": "A konfiguráció által kezelt jogosultságok itt nem szerkeszthetők.",
       "code_last_admin": "Az utolsó aktív adminisztrátor nem távolítható el.",
+      "code_request_limit": "Túl sok kérés rövid idő alatt. Várjon néhány percet, majd próbálja újra.",
       "code_version_conflict": "A rekord időközben megváltozott.",
       "code_conflict_changed": "A rekord vagy a munkamenete időközben megváltozott.",
       "code_permission_denied": "Hozzáférés megtagadva.",

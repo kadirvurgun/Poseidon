@@ -16,7 +16,8 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         // Numeric wire values remain numbers; do not advertise implicit string coercion.
         services.ConfigureHttpJsonOptions(options => options.SerializerOptions.NumberHandling =
             System.Text.Json.Serialization.JsonNumberHandling.Strict);
-        services.AddDataProtection();
+        // INVITE-RATELIMIT-FOLLOWUPS L2: DataProtection:KeyDirectory persists one shared key ring (operator configuration).
+        var dataProtection = services.AddPoseidonDataProtection(configuration);
         services.AddCertificateExtraction(configuration);
         services.AddSingleton(configuration.GetSection("TugPlanning").Get<TugPlanningPolicy>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
         services.AddSingleton<TimeProvider>(TimeProvider.System);
@@ -62,7 +63,9 @@ public sealed class Startup(IConfiguration configuration, IWebHostEnvironment ho
         services.AddSingleton<NotificationScheduler>();
         services.AddHostedService(sp => sp.GetRequiredService<NotificationScheduler>());
         // USER-ADMIN-03: invitation e-mail outbox. Absent/invalid operator configuration = NOT_CONFIGURED (copy link only).
-        services.AddSingleton(configuration.GetSection("InvitationDelivery").Get<InvitationDeliverySettings>(o => o.ErrorOnUnknownConfiguration = true) ?? new());
+        // INVITE-RATELIMIT-FOLLOWUPS N3: Enabled with an invalid configuration or an unresolvable credential stops startup.
+        // L2: enabled outside Development/Test it also requires the persisted Data Protection key ring.
+        DataProtectionRuntime.RequirePersistedKeysForInvitationEmail(services.AddInvitationDeliverySettings(configuration), dataProtection, hostEnvironment);
         Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddSingleton<IInvitationMailer>(services,
             sp => new SmtpInvitationMailer(sp.GetRequiredService<InvitationDeliverySettings>(), sp.GetRequiredService<ILogger<SmtpInvitationMailer>>()));
         services.AddSingleton<InvitationPayloadProtection>();

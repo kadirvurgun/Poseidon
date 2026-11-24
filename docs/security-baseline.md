@@ -96,7 +96,8 @@ governance or GDPR/KVKK acceptance. [Decisions](tasks/USER-ADMIN-02.md).
 
 An optional invitation e-mail is an outbox row written in the invitation's audited transaction. Recipient and token are
 held only as Data Protection ciphertext bound to tenant + row and erased at the terminal state; the address is never
-returned, audited or logged and the idempotency fingerprint records only that an address was given. The link origin is
+returned, audited or logged and the idempotency fingerprint records only a keyed HMAC of the normalized address
+(INVITE-RATELIMIT-FOLLOWUPS N4). The link origin is
 operator configuration (https), never the request Host header. The dispatcher writes only as the explicit system actor
 `system:invitation-delivery` through tenant-scoped contexts (one read-only due scan of tenant ids); logs carry closed
 outcome codes and exception type names only. SMTP uses STARTTLS (plaintext only to loopback) and a secret reference for
@@ -104,3 +105,29 @@ the password. Without a transport the state is `NOT_CONFIGURED`, never delivered
 only. The 54.01 `account.invite_hours` tenant value (1-168 h) is a permission-gated, version-checked, audited command.
 Not production mail operations, bounce handling, Data Protection key management or GDPR/KVKK acceptance.
 [Decisions](tasks/USER-ADMIN-03.md).
+
+## INVITE-RATELIMIT-FOLLOWUPS — invitation/sign-in limits, outbox sweep decision, Data Protection key ring (authored; PG tests deferred to CI)
+
+- Idempotency (N4): invitation create/reissue fingerprints include `HMAC-SHA256(HKDF(OIDC client secret), normalized
+  address)` (`a1:`), or a per-process key (`p1:`, fails closed with 409 after a restart) for a public client. Same key +
+  other address = `409 idempotency_key_reused`. The address is never stored, logged or audited.
+- Sweep (N3): only `InvitationDelivery:Mode=Disabled` (a deliberate fleet-wide decision; contradictory with
+  `Enabled=true`, which stops startup) finalizes queued rows as `NOT_CONFIGURED`. An instance with a missing transport logs
+  a startup warning (event 4303) and leaves queued rows for a configured peer; any instance still cancels rows of
+  closed/expired invitations. `Enabled=true` with an incomplete/unsafe configuration or unresolvable credential reference
+  stops startup with reason codes only. Each instance logs a non-reversible configuration digest (event 4301).
+- Rate limits (RATE-LIMIT-01 limiter, keyed-HMAC partitions, no raw identifiers stored or logged): invitation create +
+  reissue share 60 per 15 minutes per (tenant, administrator); `GET /api/v1/auth/login` 60 per 5 minutes per client
+  network (IPv4 address / IPv6 /64; `RateLimiting:LoginPermitLimit` 10-100000). Refusal = `429 request_limit` with
+  `Retry-After`; the first refusal of a window is a SecurityEvent, repeats are not (no amplification). A browser
+  navigation to the login gets the 429 with a minimal page that returns to `/app?auth=request_limit` (localized
+  notice). Behind a reverse proxy, forwarded-header processing must be configured and restricted to the known proxies (KnownProxies/KnownNetworks), or
+  all callers share one partition; `ASPNETCORE_FORWARDEDHEADERS_ENABLED` trusts `X-Forwarded-For` from any source and
+  must not be used where clients can reach the API directly (they could rotate the header past the login limit). The
+  IdP remains responsible for credential brute-force protection and lockout.
+- Data Protection (L2): `DataProtection:KeyDirectory` (absolute path) persists one key ring under application name
+  `Poseidon` for all instances. Enabling invitation e-mail outside Development/Test without it stops startup. The
+  directory is operator infrastructure (shared volume, service-account-only access, backup, volume encryption); key
+  protection at rest beyond that and key rotation operations are not built.
+Not production mail operations, an approved quota, DDoS protection or GDPR/KVKK acceptance.
+[Phase report](phases/INVITE-RATELIMIT-FOLLOWUPS-20261123.md).

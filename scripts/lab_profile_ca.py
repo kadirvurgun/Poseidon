@@ -4,7 +4,9 @@ Uses public NSS APIs from Playwright's pinned Firefox distribution, not an
 unverified certutil download or Windows certificate stores. Called privately by
 strict-browser.ts. All diagnostics are fixed codes; no exception text escapes.
 On Linux (the help-screenshot workflow) the same NSS API is loaded from the same
-pinned Playwright Firefox directory (libnss3.so and its bundled dependencies).
+pinned Playwright Firefox directory (libnss3.so and its bundled dependencies); LD_PRELOAD/LD_AUDIT
+are refused and, after NSS_InitReadWrite, /proc/self/maps must show every NSS-family object mapped
+from that directory (nss_foreign_library otherwise).
 """
 import contextlib
 import ctypes as c
@@ -17,21 +19,99 @@ class Trust(c.Structure):
     _fields_ = [('sslFlags', c.c_uint), ('emailFlags', c.c_uint), ('objectSigningFlags', c.c_uint)]
 
 
-# Firefox's own dependency order; only libraries present in the pinned bundle are preloaded.
+# Firefox's own dependency order. Every library is required in the pinned bundle: a missing one would
+# otherwise let the dynamic loader satisfy it from a system NSS/NSPR install, so the import fails closed.
 POSIX_DEPENDENCIES = ('libnspr4.so', 'libplc4.so', 'libplds4.so', 'libmozsqlite3.so', 'libnssutil3.so')
+# Libraries exporting the NSS API (Linux Firefox does not fold NSS: CERT_DecodeCertFromPackage is in smime).
+POSIX_NSS = ('libnss3.so', 'libsmime3.so')
+# Loaded by NSS_InitReadWrite itself from libnss3's directory; required so no system softoken is used.
+POSIX_SOFTOKEN = ('libsoftokn3.so', 'libfreeblpriv3.so')
+WINDOWS_NSS = ('nss3.dll',)
+# nss3.dll's own imports and the softoken NSS_Init opens: required in the bundle like the Linux set.
+WINDOWS_REQUIRED = WINDOWS_NSS + ('mozglue.dll', 'softokn3.dll', 'freebl3.dll')
+# Basename prefixes of every NSS/NSPR/softoken/freebl/sqlite object. After NSS_InitReadWrite each mapped
+# object with one of these prefixes must resolve inside the pinned bundle. glibc's name-service modules
+# (libnss_files.so.2, libnss_dns.so.2, ...) are unrelated to Mozilla NSS and are excluded by 'libnss_'.
+MAPPED_PREFIXES = ('libnss', 'libsmime', 'libnspr', 'libplc', 'libplds', 'libsoftokn', 'libfreebl', 'libmozsqlite')
+# Must be mapped after init, otherwise the check proves nothing (NSS not loaded or maps unreadable).
+MAPPED_REQUIRED = ('libnss3.so', 'libsoftokn3.so')
+# Loader-injection variables are refused rather than dropped: they are applied at process start, before
+# this script runs, so only refusing guarantees no injected object shares the NSS process.
+REFUSED_ENVIRONMENT = ('LD_PRELOAD', 'LD_AUDIT')
 
 
-def load_nss(bundle):
+def require_bundle(bundle, names):
+    """Fail closed unless every library is a regular file located directly in the pinned bundle."""
+    root = Path(bundle).resolve(strict=True)
+    paths = []
+    for name in names:
+        path = root / name
+        try:
+            located = path.resolve(strict=True)
+        except OSError:
+            raise RuntimeError('nss_bundle_incomplete') from None
+        if located.parent != root or not located.is_file():
+            raise RuntimeError('nss_bundle_incomplete')
+        paths.append(located)
+    return paths
+
+
+def refuse_preload(environment):
+    """Fail closed when the dynamic loader was told to inject objects into this process."""
+    if any(environment.get(name) for name in REFUSED_ENVIRONMENT):
+        raise RuntimeError('nss_preload_refused')
+
+
+def verify_mapped(bundle, maps_text):
+    """Fail closed unless every mapped NSS-family object (per /proc/self/maps) lies in the bundle.
+
+    Catches NSS's own plain-name softoken fallback and any transitive dependency the dynamic loader
+    satisfied from a system NSS/NSPR install.
+    """
+    root = os.path.realpath(bundle)
+    seen = set()
+    for line in maps_text.splitlines():
+        fields = line.split(maxsplit=5)
+        if len(fields) < 6:
+            continue
+        path = fields[5]
+        mapped = path.removesuffix(' (deleted)')
+        real = os.path.realpath(mapped)
+        # Classify by both the mapped name and the resolved target name, so an alias with an
+        # innocuous name that resolves to an NSS-family object is still checked.
+        names = [n for n in (os.path.basename(mapped), os.path.basename(real))
+                 if n.startswith(MAPPED_PREFIXES) and not n.startswith('libnss_')]
+        if not names:
+            continue
+        # A replaced/deleted mapping cannot be attributed to the bundle.
+        if path.endswith(' (deleted)') or os.path.dirname(real) != root:
+            raise RuntimeError('nss_foreign_library')
+        seen.update(names)
+    if not all(name in seen for name in MAPPED_REQUIRED):
+        raise RuntimeError('nss_foreign_library')
+
+
+def read_maps():
+    try:
+        return Path('/proc/self/maps').read_text(encoding='utf-8', errors='replace')
+    except OSError:
+        raise RuntimeError('nss_foreign_library') from None
+
+
+def load_nss(bundle, platform=None):
     """Libraries exporting the NSS API: folded nss3.dll on Windows; libnss3.so + libsmime3.so on Linux."""
-    if os.name == 'nt':
-        return (c.CDLL(str(bundle / 'nss3.dll')),)
-    # The bundle has no system install path; preload its own NSPR/NSS dependencies globally so
-    # libnss3.so resolves them from this directory only (never a system NSS or certutil).
-    for name in POSIX_DEPENDENCIES:
-        if (bundle / name).is_file():
-            c.CDLL(str(bundle / name), mode=c.RTLD_GLOBAL)
-    # Linux Firefox does not fold NSS: CERT_DecodeCertFromPackage lives in libsmime3.so.
-    return tuple(c.CDLL(str(bundle / name), mode=c.RTLD_GLOBAL) for name in ('libnss3.so', 'libsmime3.so'))
+    if (platform or os.name) == 'nt':
+        paths = require_bundle(bundle, WINDOWS_REQUIRED)
+        return tuple(c.CDLL(str(path)) for path in paths[:len(WINDOWS_NSS)])
+    refuse_preload(os.environ)
+    # Check the complete set before loading anything: a partial bundle never reaches the loader.
+    paths = require_bundle(bundle, POSIX_DEPENDENCIES + POSIX_NSS + POSIX_SOFTOKEN)
+    dependencies, nss = paths[:len(POSIX_DEPENDENCIES)], paths[len(POSIX_DEPENDENCIES):][:len(POSIX_NSS)]
+    # Preload the bundle's own NSPR/NSS dependencies globally so libnss3.so resolves them from this
+    # directory only (never a system NSS or certutil).
+    for path in dependencies:
+        c.CDLL(str(path), mode=c.RTLD_GLOBAL)
+    return tuple(c.CDLL(str(path), mode=c.RTLD_GLOBAL) for path in nss)
 
 
 def install(profile, executable, owner):
@@ -71,6 +151,9 @@ def install(profile, executable, owner):
             raise RuntimeError('nss_init')
         cert = slot = None
         try:
+            if os.name != 'nt':
+                # Proves which files were actually mapped, including softoken loaded by NSS itself.
+                verify_mapped(bundle, read_maps())
             cert = decode(pem, len(pem))
             slot = slot_get()
             if slot and needs_pin(slot) and init_pin(slot, None, b'') != 0:
@@ -89,8 +172,17 @@ def install(profile, executable, owner):
                 raise RuntimeError('nss_shutdown')
 
 
-if __name__ == '__main__':
+def main(argv):
+    """Exit 0 on success; otherwise exit 1 with only a fixed diagnostic code (never exception text)."""
     try:
-        install(*sys.argv[1:])
-    except Exception:
-        sys.exit(1)
+        install(*argv)
+    except Exception as error:
+        code = error.args[0] if isinstance(error, RuntimeError) and len(error.args) == 1 else None
+        fixed = isinstance(code, str) and code.isascii() and code.replace('_', '').isalpha() and code.islower()
+        print(f'lab_profile_ca: {code if fixed else "failed"}', file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv[1:]))
