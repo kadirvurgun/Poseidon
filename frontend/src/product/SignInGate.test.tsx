@@ -7,7 +7,7 @@ const signedOut = { authenticated: false, setupRequired: false, invitationSessio
 const go = (path: string) => window.history.replaceState(null, '', path);
 
 describe('UAT-DEPLOY-01 full-page sign-in gate', () => {
-  afterEach(() => { vi.unstubAllGlobals(); go('/'); });
+  afterEach(() => { vi.unstubAllGlobals(); sessionStorage.clear(); go('/'); });
 
   it('shows the branded sign-in screen, not the workspace, for an explicit signed-out session', async () => {
     go('/app/work-order-center');
@@ -19,6 +19,30 @@ describe('UAT-DEPLOY-01 full-page sign-in gate', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'Hoş geldiniz' })).toBeVisible();
     expect(screen.queryByText('workspace')).toBeNull();
     expect(fetchMock).toHaveBeenCalledWith('/api/v1/auth/session', expect.objectContaining({ credentials: 'same-origin' }));
+  });
+
+  it('renders a page at once when this tab already saw a signed-in session, then still verifies it', async () => {
+    go('/app/work-order-center');
+    sessionStorage.setItem('poseidon.signin-gate.session', '1');
+    let answer: (value: Response) => void = () => { };
+    const fetchMock = vi.fn(() => new Promise<Response>(resolve => { answer = resolve; }));
+    vi.stubGlobal('fetch', fetchMock);
+    render(<SignInGate><p>workspace</p></SignInGate>);
+    expect(screen.getByText('workspace')).toBeVisible();
+    expect(screen.queryByRole('status')).toBeNull();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    answer(json(signedOut));
+    expect(await screen.findByRole('link', { name: /Oturum aç/ })).toBeVisible();
+    expect(screen.queryByText('workspace')).toBeNull();
+    expect(sessionStorage.getItem('poseidon.signin-gate.session')).toBeNull();
+  });
+
+  it('remembers a verified signed-in session for the next page load in this tab', async () => {
+    go('/app');
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(json({ ...signedOut, authenticated: true })));
+    render(<SignInGate><p>workspace</p></SignInGate>);
+    expect(await screen.findByText('workspace')).toBeVisible();
+    expect(sessionStorage.getItem('poseidon.signin-gate.session')).toBe('1');
   });
 
   it('never flashes the sign-in button while the session is being checked', () => {

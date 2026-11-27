@@ -1,4 +1,5 @@
 import { purgeQualificationRecovery } from './use-qualification-recovery';
+import { rememberSessionHint } from './SignInGate';
 
 // Ends the BFF session: a normal form POST (CSRF token in the body) so the browser follows the
 // API's redirect to the identity provider's end-session endpoint and back to /app.
@@ -6,6 +7,8 @@ import { purgeQualificationRecovery } from './use-qualification-recovery';
 export function submitSignOut(csrfToken: string): boolean {
     // Sign-out ends the owner's session, so no per-tab private command envelope survives it.
     purgeQualificationRecovery(null);
+    // The next page load must check the session again before rendering anything.
+    rememberSessionHint(false);
     const form = document.createElement('form');
     form.method = 'POST';
     form.action = '/api/v1/auth/logout';
