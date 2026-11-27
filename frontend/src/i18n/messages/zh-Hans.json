@@ -3964,6 +3964,24 @@
       "bundle_regulatory-assurance": "法规 / 保证",
       "bundle_tenant-admin": "租户管理员",
       "bundle_read-only": "只读"
+    },
+    "SignIn_tsx_copy": {
+      "eyebrow": "海事运营",
+      "headline": "船队、拖轮与合规运营集中于一个工作区。",
+      "pointOps": "船舶与拖轮运营",
+      "pointCompliance": "证书、维护与合规跟踪",
+      "pointAccess": "基于角色和租户的安全访问",
+      "welcome": "欢迎",
+      "lead": "请使用您的组织账户登录以继续。",
+      "signin": "登录",
+      "secure": "您的身份由 POSEIDON 身份提供方验证；您的密码绝不会发送给本应用。",
+      "failed": "登录失败，请重试。",
+      "limited": "登录尝试次数过多，请稍后重试。",
+      "checking": "正在检查会话…",
+      "help": "帮助中心",
+      "signout": "退出登录",
+      "signoutFailed": "退出登录失败。请检查网络连接后重试。",
+      "footer": "仅限授权用户使用。"
     }
   },
   "pairs": {

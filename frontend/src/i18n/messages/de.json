@@ -3964,6 +3964,24 @@
       "bundle_regulatory-assurance": "Regulatorik / Qualitätssicherung",
       "bundle_tenant-admin": "Mandantenadministrator",
       "bundle_read-only": "Nur Lesen"
+    },
+    "SignIn_tsx_copy": {
+      "eyebrow": "Maritime Betriebsabläufe",
+      "headline": "Flotten-, Schlepper- und Compliance-Betrieb in einem Arbeitsbereich.",
+      "pointOps": "Schiffs- und Schlepperbetrieb",
+      "pointCompliance": "Zertifikats-, Wartungs- und Compliance-Verfolgung",
+      "pointAccess": "Sicherer rollen- und mandantenbezogener Zugriff",
+      "welcome": "Willkommen",
+      "lead": "Melden Sie sich mit Ihrem Organisationskonto an, um fortzufahren.",
+      "signin": "Anmelden",
+      "secure": "Ihre Identität wird vom POSEIDON-Identitätsanbieter geprüft; Ihr Passwort wird nie an diese Anwendung übermittelt.",
+      "failed": "Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "limited": "Zu viele Anmeldeversuche. Bitte versuchen Sie es in Kürze erneut.",
+      "checking": "Sitzung wird geprüft…",
+      "help": "Hilfecenter",
+      "signout": "Abmelden",
+      "signoutFailed": "Abmeldung fehlgeschlagen. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+      "footer": "Nur für autorisierte Benutzer."
     }
   },
   "pairs": {

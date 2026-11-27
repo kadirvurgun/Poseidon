@@ -4,7 +4,7 @@ import { localizedLabel, localizedText, sourceText } from "../i18n/messages";
 import { type Locale as AppLocale } from "../i18n";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Anchor, ArrowLeft, BookOpen, ArrowUpRight, Building2, ChevronRight, CircleHelp, ClipboardList, FileCheck2, FolderCheck, Gauge, LayoutDashboard, Menu, Search, ShieldCheck, Ship, UserCog, Users, Wrench, Upload, Waves, X } from 'lucide-react';
+import { Anchor, ArrowLeft, BookOpen, ArrowUpRight, Building2, ChevronRight, CircleHelp, ClipboardList, FileCheck2, FolderCheck, Gauge, LayoutDashboard, LogOut, Menu, Search, ShieldCheck, Ship, UserCog, Users, Wrench, Upload, Waves, X } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import type { Session } from './directory-contract';
@@ -16,6 +16,8 @@ import { useEnterpriseNavigation } from './enterprise-navigation';
 import { enterpriseFocusTargets } from './enterprise-focus';
 import { EnterpriseSidebarNav } from './EnterpriseSidebarNav';
 import { AppearanceControls } from '../theme/AppearanceControls';
+import { submitSignOut } from './sign-out';
+import './sign-in.css';
 import { HelpPanel } from '../help/HelpPanel';
 import { preloadHelp } from '../help/help-content';
 import { localizedCopy } from '../i18n/messages';
@@ -100,6 +102,7 @@ function isHelpShortcut(event: KeyboardEvent): boolean {
         return false;
     return !document.querySelector('[aria-modal="true"], dialog[open]');
 }
+const signOutCopy = localizedCopy('SignIn_tsx_copy');
 type Props = {
     session: Session | null;
     vessel?: string | null;
@@ -113,6 +116,7 @@ type Props = {
     parentManagesFocus?: boolean;
 };
 export function EnterpriseChrome({ session, vessel = null, language, onLanguageChange, onNavigate, title, mainId, drawer: controlledDrawer, onDrawerChange, parentManagesFocus = false }: Props) {
+    const [signOutFailed, setSignOutFailed] = useState(false);
     const en = language === 'en';
     const navigation = useEnterpriseNavigation(session);
     const [localDrawer, setLocalDrawer] = useState(false);
@@ -243,6 +247,8 @@ export function EnterpriseChrome({ session, vessel = null, language, onLanguageC
         {navigation.canSearch && <Button variant="outline" className="enterprise-search-trigger" aria-keyshortcuts="Control+K Meta+K" aria-label={localizedText(en, "pairs.m_a959c1a640f4b9b6")} onClick={() => { if (session)
         setSearchOwner({ owner: session }); }}><Search /><span>{localizedText(en, "pairs.m_a959c1a640f4b9b6")}</span><kbd aria-hidden="true" data-shortcut="⌘ / Ctrl K" /></Button>}
         <LanguageSelector locale={language} onChange={onLanguageChange} />
+        {session?.authenticated && <Button variant="ghost" className="enterprise-signout" title={signOutCopy[language].signout} onClick={() => { if (!submitSignOut(session.csrfToken)) setSignOutFailed(true); }}><LogOut aria-hidden="true"/><span>{signOutCopy[language].signout}</span></Button>}
+        {signOutFailed && <span role="alert" className="sr-only">{signOutCopy[language].signoutFailed}</span>}
       </div>
       <WorkspaceContextBar session={session} vessel={vessel} language={language} onNavigate={move}/>
     </header>

@@ -3964,6 +3964,24 @@
       "bundle_regulatory-assurance": "法規 / 保證",
       "bundle_tenant-admin": "租戶管理員",
       "bundle_read-only": "唯讀"
+    },
+    "SignIn_tsx_copy": {
+      "eyebrow": "海事營運",
+      "headline": "船隊、拖船與合規營運集中於單一工作區。",
+      "pointOps": "船舶與拖船營運",
+      "pointCompliance": "證書、維護與合規追蹤",
+      "pointAccess": "依角色與租用戶的安全存取",
+      "welcome": "歡迎",
+      "lead": "請使用您的組織帳戶登入以繼續。",
+      "signin": "登入",
+      "secure": "您的身分由 POSEIDON 身分提供者驗證；您的密碼絕不會傳送給本應用程式。",
+      "failed": "登入失敗，請重試。",
+      "limited": "登入嘗試次數過多，請稍後重試。",
+      "checking": "正在檢查工作階段…",
+      "help": "說明中心",
+      "signout": "登出",
+      "signoutFailed": "登出失敗。請檢查網路連線後重試。",
+      "footer": "僅限授權使用者使用。"
     }
   },
   "pairs": {

@@ -21,6 +21,7 @@ import { useEffect, useState } from 'react';
 import { getSystemStatus } from './api';
 import { AgentsDashboard } from './agents/AgentsDashboard';
 import { ProductApp } from './product/ProductApp';
+import { SignInGate } from './product/SignInGate';
 import { SystemHealthWorkspace } from './product/SystemHealthWorkspace';
 import { NotificationWorkspace } from './product/NotificationWorkspace';
 import { ConflictCenterWorkspace } from './product/ConflictCenterWorkspace';
@@ -52,6 +53,13 @@ import { HelpCenterWorkspace } from './help/HelpCenterWorkspace';
 type Connection = 'loading' | 'available' | 'error';
 const content = localizedCopy("App_tsx_content");
 export function App() {
+    // UAT-DEPLOY-01: a signed-out visitor gets one full-page sign-in screen on every /app page.
+    const path = window.location.pathname;
+    if (path === '/app' || path.startsWith('/app/'))
+        return <SignInGate><AppRoutes /></SignInGate>;
+    return <AppRoutes />;
+}
+function AppRoutes() {
     // S10 WP-C DEV-120 ship buyer demo journey (read-only guide over existing screens).
     if (/^\/app\/ship-demo(?:\/|$)/.test(window.location.pathname))
         return <ShipDemoJourney />;

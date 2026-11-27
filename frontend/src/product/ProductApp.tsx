@@ -15,6 +15,7 @@ import { CompliancePassport } from './CompliancePassport';
 import { RegulatoryProfile, type ProfileDiscardHandle } from './RegulatoryProfile';
 import { editorCopy } from './editor-copy';
 import { loginHref, readLocation, useWorkspaceLocation } from './workspace-location';
+import { submitSignOut } from './sign-out';
 import { TodayWorkspace } from './TodayWorkspace';
 import { isSeparateWorkspaceDestination } from './workspace-search-api';
 import { AuditWorkspace } from './AuditWorkspace';
@@ -241,25 +242,9 @@ export function ProductApp() {
     const signout = async () => {
         if (!user)
             return;
-        // A normal form navigation follows the IdP logout redirect; the CSRF token stays in memory/DOM.
-        // Sign-out ends the owner's session, so no per-tab private command envelope survives it.
-        purgeQualificationRecovery(null);
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = '/api/v1/auth/logout';
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = '__RequestVerificationToken';
-        input.value = user.csrfToken;
-        form.append(input);
-        document.body.append(form);
-        try {
-            form.submit();
-        }
-        catch {
-            form.remove();
+        // Shared with the header sign-out (sign-out.ts): form POST so the IdP logout redirect is followed.
+        if (!submitSignOut(user.csrfToken))
             setLogoutError(true);
-        }
     };
     return <div className="product-shell enterprise-shell" onClickCapture={event => {
             const anchor = (event.target as HTMLElement).closest('a');

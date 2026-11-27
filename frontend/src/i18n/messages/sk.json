@@ -3964,6 +3964,24 @@
       "bundle_regulatory-assurance": "Regulácia / zabezpečenie súladu",
       "bundle_tenant-admin": "Administrátor tenanta",
       "bundle_read-only": "Iba na čítanie"
+    },
+    "SignIn_tsx_copy": {
+      "eyebrow": "Námorná prevádzka",
+      "headline": "Prevádzka flotily, remorkérov a súladu s predpismi v jednom pracovnom priestore.",
+      "pointOps": "Prevádzka lodí a remorkérov",
+      "pointCompliance": "Sledovanie certifikátov, údržby a súladu",
+      "pointAccess": "Bezpečný prístup podľa roly a tenanta",
+      "welcome": "Vitajte",
+      "lead": "Pokračujte prihlásením pomocou účtu vašej organizácie.",
+      "signin": "Prihlásiť sa",
+      "secure": "Vašu identitu overuje poskytovateľ identity POSEIDON; heslo sa tejto aplikácii nikdy neodosiela.",
+      "failed": "Prihlásenie zlyhalo. Skúste to znova.",
+      "limited": "Príliš veľa pokusov o prihlásenie. Skúste to o chvíľu znova.",
+      "checking": "Overuje sa relácia…",
+      "help": "Centrum pomoci",
+      "signout": "Odhlásiť sa",
+      "signoutFailed": "Odhlásenie zlyhalo. Skontrolujte pripojenie a skúste to znova.",
+      "footer": "Len pre oprávnených používateľov."
     }
   },
   "pairs": {

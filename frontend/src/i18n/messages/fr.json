@@ -3964,6 +3964,24 @@
       "bundle_regulatory-assurance": "Réglementation / Assurance qualité",
       "bundle_tenant-admin": "Administrateur du locataire",
       "bundle_read-only": "Lecture seule"
+    },
+    "SignIn_tsx_copy": {
+      "eyebrow": "Opérations maritimes",
+      "headline": "Opérations de flotte, de remorquage et de conformité dans un seul espace de travail.",
+      "pointOps": "Opérations navires et remorqueurs",
+      "pointCompliance": "Suivi des certificats, de la maintenance et de la conformité",
+      "pointAccess": "Accès sécurisé par rôle et par locataire",
+      "welcome": "Bienvenue",
+      "lead": "Connectez-vous avec le compte de votre organisation pour continuer.",
+      "signin": "Se connecter",
+      "secure": "Votre identité est vérifiée par le fournisseur d’identité POSEIDON ; votre mot de passe n’est jamais transmis à cette application.",
+      "failed": "Échec de la connexion. Veuillez réessayer.",
+      "limited": "Trop de tentatives de connexion. Veuillez réessayer dans un instant.",
+      "checking": "Vérification de la session…",
+      "help": "Centre d’aide",
+      "signout": "Se déconnecter",
+      "signoutFailed": "Échec de la déconnexion. Vérifiez votre connexion et réessayez.",
+      "footer": "Réservé aux utilisateurs autorisés."
     }
   },
   "pairs": {

@@ -3964,6 +3964,24 @@
       "bundle_regulatory-assurance": "Normativa / Aseguramiento",
       "bundle_tenant-admin": "Administrador del inquilino",
       "bundle_read-only": "Solo lectura"
+    },
+    "SignIn_tsx_copy": {
+      "eyebrow": "Operaciones marítimas",
+      "headline": "Operaciones de flota, remolque y cumplimiento en un solo espacio de trabajo.",
+      "pointOps": "Operaciones de buques y remolcadores",
+      "pointCompliance": "Seguimiento de certificados, mantenimiento y cumplimiento",
+      "pointAccess": "Acceso seguro por rol y por inquilino",
+      "welcome": "Bienvenido",
+      "lead": "Inicie sesión con la cuenta de su organización para continuar.",
+      "signin": "Iniciar sesión",
+      "secure": "Su identidad la verifica el proveedor de identidad de POSEIDON; su contraseña nunca se envía a esta aplicación.",
+      "failed": "No se pudo iniciar sesión. Inténtelo de nuevo.",
+      "limited": "Demasiados intentos de inicio de sesión. Inténtelo de nuevo en breve.",
+      "checking": "Comprobando la sesión…",
+      "help": "Centro de ayuda",
+      "signout": "Cerrar sesión",
+      "signoutFailed": "No se pudo cerrar la sesión. Compruebe su conexión e inténtelo de nuevo.",
+      "footer": "Solo para usuarios autorizados."
     }
   },
   "pairs": {

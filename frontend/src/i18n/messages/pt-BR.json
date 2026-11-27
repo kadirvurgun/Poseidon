@@ -3964,6 +3964,24 @@
       "bundle_regulatory-assurance": "Regulatório / Garantia",
       "bundle_tenant-admin": "Administrador do tenant",
       "bundle_read-only": "Somente leitura"
+    },
+    "SignIn_tsx_copy": {
+      "eyebrow": "Operações marítimas",
+      "headline": "Operações de frota, rebocadores e conformidade em um único espaço de trabalho.",
+      "pointOps": "Operações de navios e rebocadores",
+      "pointCompliance": "Acompanhamento de certificados, manutenção e conformidade",
+      "pointAccess": "Acesso seguro por função e por locatário",
+      "welcome": "Bem-vindo",
+      "lead": "Entre com a conta da sua organização para continuar.",
+      "signin": "Entrar",
+      "secure": "Sua identidade é verificada pelo provedor de identidade POSEIDON; sua senha nunca é enviada a este aplicativo.",
+      "failed": "Não foi possível entrar. Tente novamente.",
+      "limited": "Muitas tentativas de entrada. Tente novamente em instantes.",
+      "checking": "Verificando a sessão…",
+      "help": "Central de ajuda",
+      "signout": "Sair",
+      "signoutFailed": "Não foi possível sair. Verifique sua conexão e tente novamente.",
+      "footer": "Somente para usuários autorizados."
     }
   },
   "pairs": {

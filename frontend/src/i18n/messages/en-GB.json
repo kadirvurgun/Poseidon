@@ -3964,6 +3964,24 @@
       "bundle_regulatory-assurance": "Regulatory / Assurance",
       "bundle_tenant-admin": "Tenant administrator",
       "bundle_read-only": "Read-only"
+    },
+    "SignIn_tsx_copy": {
+      "eyebrow": "Maritime operations",
+      "headline": "Fleet, tug and compliance operations in one workspace.",
+      "pointOps": "Ship and tug operations",
+      "pointCompliance": "Certificate, maintenance and compliance tracking",
+      "pointAccess": "Secure role- and tenant-scoped access",
+      "welcome": "Welcome",
+      "lead": "Sign in with your organisation account to continue.",
+      "signin": "Sign in",
+      "secure": "Your identity is verified by the POSEIDON identity provider; your password is never sent to this application.",
+      "failed": "Sign-in failed. Please try again.",
+      "limited": "Too many sign-in attempts. Please try again shortly.",
+      "checking": "Checking session…",
+      "help": "Help centre",
+      "signout": "Sign out",
+      "signoutFailed": "Sign-out failed. Check your connection and try again.",
+      "footer": "For authorised users only."
     }
   },
   "pairs": {
