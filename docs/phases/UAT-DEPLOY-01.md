@@ -37,6 +37,13 @@ Dal: `feature/uat-deploy-20261127` (taban `main` ea52ed3f).
 
 İlk gerçek kurulumda bulunup düzeltilenler: Docker resmi deposu Ubuntu 26.04'ü desteklemiyor (Ubuntu paketleri), sağlık sondası `AllowedHosts` nedeniyle 400, cron kurulumunun `set -e` ile düşmesi, Caddy'de üst düzey `respond`'un `handle`'dan sonra sıralanması nedeniyle yönetim konsolunun açık kalması.
 
+## Ürün düzeltmeleri ve UI (PO geri bildirimi, 27.11.2026)
+- **Menü hatası (ürün kusuru):** sunucu `data-trust-center`, `industry-assurance`, `regulatory-review` öğelerini `review` grubunda gönderiyor, istemci `daily` bekliyordu; rol menüsü yanıtının tamamı reddedilip "Menü kullanılamıyor" gösteriliyordu. İstemci kümesi dışa açık sabit; test sunucu kuralıyla eşitliği denetler.
+- **Tam sayfa giriş ekranı:** oturumsuz her `/app` sayfasında `SignInGate`; yalnız açık `authenticated:false` yanıtında gösterilir (kurulum/davet/çevrimdışı/hata/beklenmeyen yanıt sayfayı açar; `/app/help`, `/app/accept-invitation` herkese açık). Sekme başına oturum ipucu sayfa geçişlerindeki giriş ekranı yanıp sönmesini önler; arka plan doğrulaması sürer. Yalnız sunum katmanı: API kimlik doğrulamasını aynen uygular.
+- **Çıkış:** başlıkta "Çıkış yap"; iki giriş noktası ortak `submitSignOut` (CSRF form POST) kullanır.
+- **Keycloak teması:** `keycloak.v2` üzerine yalnız CSS'ten oluşan `poseidon` teması (TR/EN, mobil).
+- Doğrulama (Node 26.13.0 konteyner): typecheck PASS, lint PASS, vitest **236/236 dosya** PASS; akış düzeltmesi sonrası hedefli 12/12 dosya PASS. Giriş ekranı ve Keycloak teması UAT host'ta headless Chromium ile 1400px/504px, TR/EN ekran görüntüsüyle kontrol edildi. CI (`cc3c2d6`): 4/4 iş PASS.
+
 ## Bilinen sınırlar / açık
 Dosya özellikleri (S3+ClamAV yok), içe aktarma commit'i (Development dışında 503), `CrewProfilePolicy` anahtarı, Tug gemisinin 2. kiracıda olması, davet e-postası. Gizli repo için self-hosted runner geçişi ayrı PR.
 
