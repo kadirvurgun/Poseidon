@@ -1,0 +1,59 @@
+# POSEIDON UAT edge. UAT_DOMAIN comes from the compose environment.
+# No ACME contact email: no personal address is sent to the certificate authority.
+{
+	servers {
+		# Only Caddy may set X-Forwarded-*; the API trusts them (ASPNETCORE_FORWARDEDHEADERS_ENABLED)
+		# and is not published on any host port.
+		trusted_proxies static private_ranges
+	}
+}
+
+{$UAT_DOMAIN} {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "no-referrer"
+		Permissions-Policy "camera=(self), microphone=(self), geolocation=()"
+		-Server
+	}
+
+	# Keycloak (realm login, account console, OIDC endpoints) under /auth.
+	# The admin console is never public (use manage.py on the VPS). The block must live inside this
+	# handle: a top-level `respond` sorts after `handle` and would never run for /auth/* paths.
+	handle /auth/* {
+		@kcadmin path /auth/admin /auth/admin/* /auth/realms/master /auth/realms/master/*
+		respond @kcadmin 404
+		reverse_proxy keycloak:8080
+	}
+
+	# API, OIDC callbacks and liveness.
+	@api path /api/* /signin-oidc /signout-callback-oidc /health/live
+	handle @api {
+		reverse_proxy api:8080
+	}
+
+	# Never proxy the local-only ops dashboard.
+	handle /ops/* {
+		respond 404
+	}
+
+	handle / {
+		# `*` is required: a leading "/app" would be parsed as a path matcher, not the target.
+		redir * /app 302
+	}
+
+	# SPA: offline shell manifest checks exact bytes, so no rewriting of static assets.
+	handle {
+		root * /srv/poseidon
+		@spa path /app /app/* /agents
+		rewrite @spa /index.html
+		@nocache path /index.html /offline-shell.js /appearance-init.js /version.txt
+		header @nocache Cache-Control "no-cache"
+		@hashed path /assets/*
+		header @hashed Cache-Control "public, max-age=31536000, immutable"
+		file_server
+	}
+}

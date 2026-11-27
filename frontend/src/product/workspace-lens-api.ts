@@ -84,6 +84,12 @@ const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v ===
 const text = (v: unknown, max: number): v is string => typeof v === 'string' && v.length > 0 && v.length <= max && v.trim() === v && !/\p{Cc}/u.test(v);
 function invalid(): never { throw new ApiError(502, 'invalid_navigation'); }
 const lensesKeys = ['tenantId', 'actorId', 'vesselId', 'mode', 'state', 'version', 'lenses', 'canSearch'];
+// Must equal the server's "review" set (WorkspaceLensPolicy.Available plus the vessel-scoped review
+// items). A key missing here made every lens response invalid ("Menü kullanılamıyor") once a role
+// mapped data-trust-center, industry-assurance or regulatory-review.
+export const reviewKeys: readonly string[] = ['audit', 'audit-ready', 'sources', 'requirements', 'import', 'data-reconciliation', 'certificate-command-center',
+    'renewal-workflow', 'risk-template-library', 'high-risk-work', 'crew-certificates', 'pre-survey-checklist', 'crew-competence', 'survey-planner',
+    'safe-manning', 'data-trust-center', 'industry-assurance', 'regulatory-review'];
 const closed = (v: Record<string, unknown>, keys: string[]) => Object.keys(v).length === keys.length && keys.every(k => Object.hasOwn(v, k));
 export function decodeLenses(value: unknown, tenant: string, actor: string, vessel: string | null): Lenses {
     // DEV-022: closed shapes at every level; a hidden count or denied-item list is rejected, never ignored.
@@ -103,7 +109,7 @@ export function decodeLenses(value: unknown, tenant: string, actor: string, vess
         for (const item of row.items) {
             if (!object(item) || !closed(item, ['key', 'href', 'group']) || typeof item.key !== 'string' || !Object.hasOwn(lensLabels, item.key) || typeof item.href !== 'string' || items.some(x => x.key === item.key) ||
                 item.href !== lensHref(item.key, vessel) || (item.group !== 'daily' && item.group !== 'review') ||
-                item.group !== (['audit', 'audit-ready', 'sources', 'requirements', 'import', 'data-reconciliation', 'certificate-command-center', 'renewal-workflow', 'risk-template-library', 'high-risk-work', 'crew-certificates', 'pre-survey-checklist', 'crew-competence', 'survey-planner', 'safe-manning'].includes(item.key) ? 'review' : 'daily') ||
+                item.group !== (reviewKeys.includes(item.key) ? 'review' : 'daily') ||
                 (value.mode === 'Ship' && (item.key.startsWith('tug-') || item.key.startsWith('towage-'))) || (value.mode === 'Tug' && ['fuel-bunker-log', 'port-activity-sof', 'operational-downtime'].includes(item.key)))
                 invalid();
             items.push({ key: item.key, href: item.href as string, group: item.group });

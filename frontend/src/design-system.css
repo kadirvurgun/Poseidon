@@ -141,6 +141,19 @@
 :root.dark[data-palette="ocean"] { --primary: #93c5fd; --primary-foreground: #172554; --ring: #60a5fa; --sidebar-primary: #93c5fd; --sidebar-primary-foreground: #172554; }
 :root[data-palette="graphite"] { --primary: #292524; --primary-foreground: #fafaf9; --ring: #78716c; --sidebar-primary: #292524; --sidebar-primary-foreground: #fafaf9; }
 :root.dark[data-palette="graphite"] { --primary: #e7e5e4; --primary-foreground: #1c1917; --ring: #a8a29e; --sidebar-primary: #e7e5e4; --sidebar-primary-foreground: #1c1917; }
+/* UAT-DEPLOY-01 sign-in hero: a deliberately dark maritime surface in every mode and palette
+   (text on it is checked against --signin-hero-start). Used only by product/sign-in.css. */
+:root {
+  --signin-hero-start: #0a1726;
+  --signin-hero-mid: #0d2438;
+  --signin-hero-end: #0f3350;
+  --signin-hero-foreground: #e8f1f8;
+  --signin-hero-chip: rgb(255 255 255 / 0.08);
+  --signin-hero-chip-border: rgb(255 255 255 / 0.14);
+  --signin-wave-1: rgb(255 255 255 / 0.04);
+  --signin-wave-2: rgb(255 255 255 / 0.06);
+  --signin-card-shadow: rgb(10 23 38 / 0.35);
+}
 :root { color: var(--foreground); background: var(--background); }
 body { background: var(--background); color: var(--foreground); font-family: var(--font-sans); }
 h1, h2, h3 { font-family: var(--font-heading); }

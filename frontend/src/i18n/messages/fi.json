@@ -3964,6 +3964,24 @@
       "bundle_regulatory-assurance": "Säädöstenmukaisuus / Varmennus",
       "bundle_tenant-admin": "Vuokraajan pääkäyttäjä",
       "bundle_read-only": "Vain luku"
+    },
+    "SignIn_tsx_copy": {
+      "eyebrow": "Merenkulun toiminnot",
+      "headline": "Laivasto-, hinaaja- ja vaatimustenmukaisuustoiminnot yhdessä työtilassa.",
+      "pointOps": "Alus- ja hinaajatoiminnot",
+      "pointCompliance": "Todistusten, huollon ja vaatimustenmukaisuuden seuranta",
+      "pointAccess": "Turvallinen rooli- ja vuokralaiskohtainen pääsy",
+      "welcome": "Tervetuloa",
+      "lead": "Jatka kirjautumalla organisaatiosi tilillä.",
+      "signin": "Kirjaudu sisään",
+      "secure": "Henkilöllisyytesi tarkistaa POSEIDON-tunnistuspalvelu; salasanaasi ei koskaan lähetetä tälle sovellukselle.",
+      "failed": "Kirjautuminen epäonnistui. Yritä uudelleen.",
+      "limited": "Liian monta kirjautumisyritystä. Yritä hetken kuluttua uudelleen.",
+      "checking": "Tarkistetaan istuntoa…",
+      "help": "Ohjekeskus",
+      "signout": "Kirjaudu ulos",
+      "signoutFailed": "Uloskirjautuminen epäonnistui. Tarkista yhteys ja yritä uudelleen.",
+      "footer": "Vain valtuutetuille käyttäjille."
     }
   },
   "pairs": {

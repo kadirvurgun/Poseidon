@@ -3964,6 +3964,24 @@
       "bundle_regulatory-assurance": "Conformità normativa / Assurance",
       "bundle_tenant-admin": "Amministratore del tenant",
       "bundle_read-only": "Sola lettura"
+    },
+    "SignIn_tsx_copy": {
+      "eyebrow": "Operazioni marittime",
+      "headline": "Operazioni di flotta, rimorchio e conformità in un unico spazio di lavoro.",
+      "pointOps": "Operazioni di navi e rimorchiatori",
+      "pointCompliance": "Monitoraggio di certificati, manutenzione e conformità",
+      "pointAccess": "Accesso sicuro per ruolo e tenant",
+      "welcome": "Benvenuto",
+      "lead": "Accedi con l’account della tua organizzazione per continuare.",
+      "signin": "Accedi",
+      "secure": "La tua identità è verificata dal provider di identità POSEIDON; la password non viene mai inviata a questa applicazione.",
+      "failed": "Accesso non riuscito. Riprova.",
+      "limited": "Troppi tentativi di accesso. Riprova tra poco.",
+      "checking": "Verifica della sessione…",
+      "help": "Centro assistenza",
+      "signout": "Esci",
+      "signoutFailed": "Uscita non riuscita. Controlla la connessione e riprova.",
+      "footer": "Solo per utenti autorizzati."
     }
   },
   "pairs": {

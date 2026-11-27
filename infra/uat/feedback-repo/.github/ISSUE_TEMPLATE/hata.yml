@@ -1,0 +1,60 @@
+name: Hata bildirimi
+description: UAT ortamında beklendiği gibi çalışmayan bir şey
+title: "[Hata] "
+labels: ["hata", "uat"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        UAT ortamında **yalnız sentetik (uydurma) veri** vardır. Gerçek gemi, mürettebat veya kişi bilgisi, parola ya da ekran görüntüsünde kişisel veri paylaşmayın.
+  - type: input
+    id: surum
+    attributes:
+      label: Sürüm
+      description: Sayfanın alt bilgisinde veya Yardım > Hakkında'da görünen sürüm (biliyorsanız)
+      placeholder: "ör. uat-2026.11.27-ea52ed3"
+  - type: input
+    id: ekran
+    attributes:
+      label: Ekran / adres
+      description: Hatanın olduğu sayfa veya tarayıcı adres çubuğundaki yol
+      placeholder: "ör. /app/fleet/vessels"
+    validations:
+      required: true
+  - type: textarea
+    id: adimlar
+    attributes:
+      label: Yapılan adımlar
+      placeholder: |
+        1. ... sayfasını açtım
+        2. ... butonuna bastım
+    validations:
+      required: true
+  - type: textarea
+    id: beklenen
+    attributes:
+      label: Beklenen sonuç
+    validations:
+      required: true
+  - type: textarea
+    id: gerceklesen
+    attributes:
+      label: Gerçekleşen sonuç
+      description: Hata mesajı varsa aynen yazın; ekran görüntüsü sürükleyip bırakabilirsiniz
+    validations:
+      required: true
+  - type: dropdown
+    id: onem
+    attributes:
+      label: Önem
+      options:
+        - "Engelleyici: işi yapamıyorum"
+        - "Önemli: yanlış sonuç / yanıltıcı durum"
+        - "Küçük: görünüm, yazım, rahatsız edici"
+    validations:
+      required: true
+  - type: input
+    id: tarayici
+    attributes:
+      label: Tarayıcı ve cihaz
+      placeholder: "ör. Chrome 142 / Windows, Safari / iPhone"

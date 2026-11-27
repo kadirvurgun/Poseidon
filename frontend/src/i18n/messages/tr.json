@@ -3964,6 +3964,24 @@
       "bundle_regulatory-assurance": "Regülasyon / Güvence",
       "bundle_tenant-admin": "Tenant yöneticisi",
       "bundle_read-only": "Salt okunur"
+    },
+    "SignIn_tsx_copy": {
+      "eyebrow": "Denizcilik operasyonları",
+      "headline": "Filo, römorkör ve uyum operasyonları tek çalışma alanında.",
+      "pointOps": "Gemi ve römorkör operasyonları",
+      "pointCompliance": "Sertifika, bakım ve uyum takibi",
+      "pointAccess": "Rol ve kiracı bazlı güvenli erişim",
+      "welcome": "Hoş geldiniz",
+      "lead": "Devam etmek için kurumsal hesabınızla oturum açın.",
+      "signin": "Oturum aç",
+      "secure": "Kimliğiniz POSEIDON kimlik sağlayıcısında doğrulanır; parolanız bu uygulamaya iletilmez.",
+      "failed": "Oturum açılamadı. Lütfen tekrar deneyin.",
+      "limited": "Çok fazla oturum açma denemesi. Lütfen biraz sonra tekrar deneyin.",
+      "checking": "Oturum denetleniyor…",
+      "help": "Yardım merkezi",
+      "signout": "Çıkış yap",
+      "signoutFailed": "Çıkış yapılamadı. Bağlantınızı kontrol edip tekrar deneyin.",
+      "footer": "Yalnızca yetkili kullanıcılar içindir."
     }
   },
   "pairs": {

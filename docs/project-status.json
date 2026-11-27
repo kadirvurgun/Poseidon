@@ -18772,5 +18772,33 @@
       "pull_request-event CI before merge"
     ],
     "report": "docs/phases/LAB-FOLLOWUPS-20261123.md"
+  },
+  "uat_deploy_01": {
+    "state": "DEPLOYED_TO_UAT_HOST_HUMAN_LOGIN_AND_QA_PENDING",
+    "branch": "feature/uat-deploy-20261127",
+    "base": "ea52ed3f",
+    "phase_report": "docs/phases/UAT-DEPLOY-01.md",
+    "runbook": "docs/operations/uat-deployment.md",
+    "accepted_tasks_added": 0,
+    "accepted_story_points_added": 0,
+    "verification": {
+      "scripts_test_uat_deploy": "10/10 PASS local",
+      "bash_syntax": "4/4 PASS",
+      "compose_config": "PASS",
+      "image_build": "PASS on UAT host (274701c)",
+      "vps_deploy": "PASS deploy.sh exit 0, tag uat-20261127-274701c",
+      "oidc_login": "PENDING human browser login",
+      "independent_qa": "PENDING",
+      "pr_ci": "b43d30f secret-scan 3 false positives fixed in 7a3d15c7; rerun PENDING",
+      "public_https": "PASS health/app 200, OIDC issuer match, login 302",
+      "keycloak_admin_public": "BLOCKED 404",
+      "backup": "PASS"
+    },
+    "signoffs_claimed": false,
+    "host": {
+      "provider": "AWS EC2 m7i-flex.large eu-north-1 (free-plan credits)",
+      "os": "Ubuntu 26.04",
+      "url": "https://poseidon.13-49-27-245.sslip.io"
+    }
   }
 }

@@ -1,0 +1,123 @@
+/* Full-page sign-in (SignInGate). Uses the shared theme tokens so light/dark and colour themes apply. */
+.signin-page {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(360px, 0.9fr);
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+.signin-hero {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2.5rem;
+  padding: clamp(2rem, 5vw, 4rem);
+  color: var(--signin-hero-foreground);
+  background:
+    radial-gradient(1200px 600px at 15% 0%, color-mix(in oklab, var(--primary) 45%, transparent), transparent 60%),
+    linear-gradient(160deg, var(--signin-hero-start) 0%, var(--signin-hero-mid) 55%, var(--signin-hero-end) 100%);
+}
+
+.signin-brand { display: flex; align-items: center; gap: 0.875rem; position: relative; z-index: 1; }
+.signin-brand strong { display: block; font-family: var(--font-heading); font-size: 1.5rem; letter-spacing: 0.14em; }
+.signin-brand small { display: block; font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.75; }
+.signin-mark {
+  display: inline-grid; place-items: center; width: 3rem; height: 3rem; border-radius: 0.875rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: 0 10px 30px -10px color-mix(in oklab, var(--primary) 80%, transparent);
+}
+.signin-mark svg { width: 1.6rem; height: 1.6rem; }
+
+.signin-hero-body { position: relative; z-index: 1; max-width: 34rem; }
+.signin-headline {
+  font-family: var(--font-heading);
+  font-size: clamp(1.75rem, 3.2vw, 2.75rem);
+  line-height: 1.15;
+  font-weight: 650;
+  margin: 0 0 2rem;
+  text-wrap: balance;
+}
+.signin-hero-body ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.9rem; }
+.signin-hero-body li { display: flex; align-items: center; gap: 0.75rem; font-size: 1rem; opacity: 0.92; }
+.signin-hero-body li span {
+  display: inline-grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 0.625rem;
+  background: var(--signin-hero-chip); border: 1px solid var(--signin-hero-chip-border);
+}
+.signin-hero-body li svg { width: 1.1rem; height: 1.1rem; }
+
+.signin-sea { position: absolute; left: 0; right: 0; bottom: 0; width: 100%; height: 34%; pointer-events: none; }
+.signin-sea path:nth-child(1) { fill: var(--signin-wave-1); }
+.signin-sea path:nth-child(2) { fill: var(--signin-wave-2); }
+.signin-sea path:nth-child(3) { fill: color-mix(in oklab, var(--primary) 30%, transparent); }
+
+.signin-panel {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 1.5rem clamp(1rem, 4vw, 3rem); position: relative; outline: none;
+}
+.signin-tools { position: absolute; top: 1rem; right: 1rem; display: flex; gap: 0.5rem; align-items: center; }
+
+.signin-card {
+  width: 100%; max-width: 26rem;
+  background: var(--card); color: var(--card-foreground);
+  border: 1px solid var(--border); border-radius: calc(var(--radius) + 0.5rem);
+  padding: 2.25rem 2rem;
+  box-shadow: 0 24px 60px -30px var(--signin-card-shadow);
+}
+.signin-card-mark {
+  display: inline-grid; place-items: center; width: 2.75rem; height: 2.75rem; border-radius: 0.75rem;
+  background: color-mix(in oklab, var(--primary) 12%, transparent); color: var(--primary); margin-bottom: 1.25rem;
+}
+.signin-card-mark svg { width: 1.4rem; height: 1.4rem; }
+.signin-card h1 { font-family: var(--font-heading); font-size: 1.75rem; margin: 0 0 0.5rem; }
+.signin-lead { color: var(--muted-foreground); margin: 0 0 1.75rem; }
+
+.signin-button { width: 100%; height: 3rem; font-size: 1rem; }
+.signin-button svg { width: 1.1rem !important; height: 1.1rem !important; }
+
+.signin-alert {
+  margin: 0 0 1rem; padding: 0.75rem 0.875rem; border-radius: var(--radius);
+  background: var(--danger-surface); color: var(--danger-text); border: 1px solid var(--danger-border); font-size: 0.875rem;
+}
+/* First-load session check: neutral page background, small centred spinner. */
+.signin-wait { min-height: 100dvh; display: grid; place-items: center; background: var(--background); }
+.signin-spinner {
+  width: 1.1rem; height: 1.1rem; border-radius: 50%;
+  border: 2px solid var(--border); border-top-color: var(--primary);
+  animation: signin-spin 0.8s linear infinite;
+}
+@keyframes signin-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .signin-spinner { animation: none; } }
+
+.signin-secure { display: flex; gap: 0.5rem; align-items: flex-start; margin: 1.5rem 0 0; font-size: 0.8rem; color: var(--muted-foreground); }
+.signin-secure svg { flex: none; width: 1rem; height: 1rem; margin-top: 0.1rem; color: var(--primary); }
+
+.signin-footer {
+  margin-top: 2rem; display: flex; gap: 1.25rem; align-items: center; justify-content: center;
+  font-size: 0.8rem; color: var(--muted-foreground);
+}
+.signin-footer a { display: inline-flex; align-items: center; gap: 0.35rem; color: inherit; }
+.signin-footer a:hover { color: var(--foreground); }
+.signin-footer svg { width: 0.9rem; height: 0.9rem; }
+
+/* Tablet/phone: the hero becomes a compact band above the card. */
+@media (max-width: 900px) {
+  .signin-page { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .signin-hero { gap: 1.25rem; padding: 1.5rem 1.25rem 3.5rem; }
+  .signin-hero-body ul { display: none; }
+  .signin-headline { font-size: 1.35rem; margin: 0; }
+  .signin-sea { height: 45%; }
+  .signin-panel { justify-content: flex-start; padding-top: 4.5rem; }
+}
+@media (max-width: 480px) {
+  .signin-card { padding: 1.75rem 1.25rem; }
+  .signin-tools { left: 1rem; justify-content: flex-end; }
+}
+
+/* Header sign-out (EnterpriseChrome). */
+.enterprise-signout svg { width: 1rem; height: 1rem; }
+@media (max-width: 640px) { .enterprise-signout span { display: none; } }

@@ -1,0 +1,38 @@
+name: Öneri / değişiklik isteği
+description: Çalışıyor ama farklı olmalı, eksik veya yeni bir ihtiyaç
+title: "[Öneri] "
+labels: ["oneri", "uat"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gerçek kişi/gemi verisi paylaşmayın. Emniyet, mevzuat veya izin kuralı ile ilgili bir isteği belirtin: bu tür değişiklikler uzman onayı gerektirebilir.
+  - type: input
+    id: ekran
+    attributes:
+      label: İlgili ekran / modül
+      placeholder: "ör. Römorkör planlama"
+    validations:
+      required: true
+  - type: textarea
+    id: mevcut
+    attributes:
+      label: Şu an nasıl?
+    validations:
+      required: true
+  - type: textarea
+    id: istenen
+    attributes:
+      label: Nasıl olmalı?
+    validations:
+      required: true
+  - type: textarea
+    id: neden
+    attributes:
+      label: Neden? (iş ihtiyacı, kim kullanacak)
+  - type: checkboxes
+    id: emniyet
+    attributes:
+      label: Kapsam
+      options:
+        - label: Bu istek emniyet, mevzuat, sertifika veya izin kararlarını etkiliyor

@@ -3964,6 +3964,24 @@
       "bundle_regulatory-assurance": "Szabályozás / megfelelőségbiztosítás",
       "bundle_tenant-admin": "Bérlőadminisztrátor",
       "bundle_read-only": "Csak olvasás"
+    },
+    "SignIn_tsx_copy": {
+      "eyebrow": "Tengerészeti műveletek",
+      "headline": "Flotta-, vontató- és megfelelőségi műveletek egyetlen munkaterületen.",
+      "pointOps": "Hajó- és vontatóműveletek",
+      "pointCompliance": "Tanúsítványok, karbantartás és megfelelőség követése",
+      "pointAccess": "Biztonságos, szerepkör- és bérlőalapú hozzáférés",
+      "welcome": "Üdvözöljük",
+      "lead": "A folytatáshoz jelentkezzen be szervezeti fiókjával.",
+      "signin": "Bejelentkezés",
+      "secure": "Személyazonosságát a POSEIDON identitásszolgáltató ellenőrzi; jelszavát soha nem kapja meg ez az alkalmazás.",
+      "failed": "A bejelentkezés sikertelen. Próbálja újra.",
+      "limited": "Túl sok bejelentkezési kísérlet. Próbálja újra hamarosan.",
+      "checking": "Munkamenet ellenőrzése…",
+      "help": "Súgóközpont",
+      "signout": "Kijelentkezés",
+      "signoutFailed": "A kijelentkezés sikertelen. Ellenőrizze a kapcsolatot, és próbálja újra.",
+      "footer": "Csak jogosult felhasználók számára."
     }
   },
   "pairs": {
