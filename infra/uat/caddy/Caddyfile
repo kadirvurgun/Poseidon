@@ -20,12 +20,12 @@
 		-Server
 	}
 
-	# Keycloak admin console is never public. Use scripts on the VPS (manage.py) instead.
-	@kcadmin path /auth/admin /auth/admin/*
-	respond @kcadmin 404
-
 	# Keycloak (realm login, account console, OIDC endpoints) under /auth.
+	# The admin console is never public (use manage.py on the VPS). The block must live inside this
+	# handle: a top-level `respond` sorts after `handle` and would never run for /auth/* paths.
 	handle /auth/* {
+		@kcadmin path /auth/admin /auth/admin/* /auth/realms/master /auth/realms/master/*
+		respond @kcadmin 404
 		reverse_proxy keycloak:8080
 	}
 

@@ -39,7 +39,8 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Staging
       ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
-      AllowedHosts: ${UAT_DOMAIN}
+      # localhost: the in-container health probe only (the API publishes no host port).
+      AllowedHosts: ${UAT_DOMAIN};localhost
     volumes:
       - ./config/appsettings.Staging.json:/app/appsettings.Staging.json:ro
       - dataprotection-keys:/var/lib/poseidon/keys

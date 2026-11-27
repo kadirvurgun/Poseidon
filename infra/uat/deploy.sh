@@ -60,7 +60,9 @@ if healthy; then
   log "deploy ok tag=$TAG"
   docker image prune -af --filter "until=168h" >/dev/null || true
   # Nightly backup at 02:30 UTC (idempotent).
-  ( crontab -l 2>/dev/null | grep -v 'poseidon-uat/backup.sh' ; echo '30 2 * * * bash /opt/poseidon-uat/backup.sh nightly >/dev/null 2>&1' ) | crontab -
+  # (crontab -l fails when no crontab exists yet; grep -v fails on empty input.)
+  { crontab -l 2>/dev/null | grep -v 'poseidon-uat/backup.sh' || true
+    echo '30 2 * * * bash /opt/poseidon-uat/backup.sh nightly >/dev/null 2>&1'; } | crontab -
   exit 0
 fi
 

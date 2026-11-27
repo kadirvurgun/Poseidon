@@ -127,6 +127,8 @@ def render() -> None:
                                     'ClientSecretReference': 'POSEIDON_OIDC_CLIENT_SECRET', 'Memberships': memberships}},
         'DataProtection': {'KeyDirectory': '/var/lib/poseidon/keys'},
         'RateLimiting': {'Store': 'Postgres', 'PartitionKeyReference': 'POSEIDON_RATE_LIMIT_KEY'},
+        # No SMTP in UAT: queued invitation e-mail is finalized as NOT_CONFIGURED; admins share links by hand.
+        'InvitationDelivery': {'Mode': 'Disabled'},
         'WorkspaceContext': {'RoleCatalog': role_catalog},
         'WorkspaceNavigation': nav,
     }
