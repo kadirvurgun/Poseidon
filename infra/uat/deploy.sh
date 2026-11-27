@@ -30,7 +30,10 @@ healthy() {
 }
 
 log "deploy start tag=$TAG sha=$SHA prev=${PREV:-none}"
-dc "$TAG" --profile ops pull web api migrator
+# SKIP_PULL=1: images were built locally on this host (first bring-up before the workflow is on main).
+if [[ "${SKIP_PULL:-0}" != 1 ]]; then
+  dc "$TAG" --profile ops pull web api migrator
+fi
 python3 manage.py render
 
 dc "$TAG" up -d postgres
