@@ -41,7 +41,8 @@
 	}
 
 	handle / {
-		redir /app 302
+		# `*` is required: a leading "/app" would be parsed as a path matcher, not the target.
+		redir * /app 302
 	}
 
 	# SPA: offline shell manifest checks exact bytes, so no rewriting of static assets.
