@@ -54,9 +54,18 @@ if [[ ! -f state/seeded ]]; then
 fi
 
 dc "$TAG" up -d --remove-orphans web api keycloak postgres
+# Keycloak serves theme resources from a gzip cache inside the container (data/tmp) that survives a
+# restart: recreate the container only when the mounted theme files changed.
+THEME_HASH="$(find keycloak/themes -type f -print0 2>/dev/null | sort -z | xargs -0 sha256sum 2>/dev/null | sha256sum | cut -c1-16)"
+if [[ "$THEME_HASH" != "$(cat state/theme-hash 2>/dev/null || true)" ]]; then
+  log "login theme changed: recreating keycloak"
+  dc "$TAG" up -d --force-recreate --no-deps keycloak
+fi
 if healthy; then
+  echo "$THEME_HASH" > state/theme-hash
   echo "$TAG" > deployed-tag
   echo "$SHA" > deployed-sha
+  python3 manage.py branding >/dev/null 2>&1 || log "WARN realm branding not applied"
   log "deploy ok tag=$TAG"
   docker image prune -af --filter "until=168h" >/dev/null || true
   # Nightly backup at 02:30 UTC (idempotent).

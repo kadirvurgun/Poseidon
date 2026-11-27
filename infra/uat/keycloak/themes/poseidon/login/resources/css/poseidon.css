@@ -1,0 +1,98 @@
+/* POSEIDON skin for the Keycloak v2 (PatternFly 5) login pages. Colours follow the app's emerald theme. */
+:root {
+  --poseidon-navy: #0a1726;
+  --poseidon-navy-2: #0f3350;
+  --poseidon-primary: oklch(0.508 0.118 165.612);
+  --poseidon-primary-hover: oklch(0.45 0.11 165.6);
+  --pf-v5-global--primary-color--100: var(--poseidon-primary);
+  --pf-v5-global--primary-color--200: var(--poseidon-primary-hover);
+  --pf-v5-global--link--Color: var(--poseidon-primary);
+  --pf-v5-global--link--Color--hover: var(--poseidon-primary-hover);
+  --pf-v5-global--FontFamily--text: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --pf-v5-global--FontFamily--heading: var(--pf-v5-global--FontFamily--text);
+  /* keycloak.v2 styles.css draws the card's top bar with this variable. */
+  --keycloak-card-top-color: var(--poseidon-primary);
+}
+
+html.login-pf, body#keycloak-bg {
+  min-height: 100%;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 240' preserveAspectRatio='none'%3E%3Cpath fill='%23ffffff' fill-opacity='0.04' d='M0 120 C 200 60 400 180 600 120 S 1000 60 1200 120 V240 H0 Z'/%3E%3Cpath fill='%23ffffff' fill-opacity='0.06' d='M0 160 C 220 110 420 210 640 160 S 1020 110 1200 160 V240 H0 Z'/%3E%3Cpath fill='%2334d399' fill-opacity='0.16' d='M0 200 C 240 160 460 240 680 200 S 1040 170 1200 200 V240 H0 Z'/%3E%3C/svg%3E") bottom / 100% 32% no-repeat,
+    radial-gradient(1100px 600px at 12% 0%, rgba(16, 185, 129, 0.28), transparent 60%),
+    linear-gradient(160deg, var(--poseidon-navy) 0%, #0d2438 55%, var(--poseidon-navy-2) 100%) fixed;
+}
+
+.pf-v5-c-login { background: transparent; min-height: 100vh; }
+.pf-v5-c-login__container { max-width: 30rem; padding-inline: 1rem; }
+
+/* Brand header */
+#kc-header { color: #e8f1f8; padding-block: 2.5rem 1.5rem; text-align: center; }
+#kc-header-wrapper {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: #ffffff;
+  text-transform: uppercase;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+#kc-header-wrapper::before {
+  content: "";
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 0.9rem;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1'/%3E%3Cpath d='M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1'/%3E%3Cpath d='M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1'/%3E%3C/svg%3E") center / 1.7rem no-repeat,
+    var(--poseidon-primary);
+  box-shadow: 0 12px 30px -10px rgba(16, 185, 129, 0.7);
+}
+#kc-header-wrapper::after {
+  content: "Denizcilik operasyonları · Maritime operations";
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  color: rgba(232, 241, 248, 0.72);
+}
+
+/* Card */
+.pf-v5-c-login__main {
+  border-radius: 1rem;
+  box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+.pf-v5-c-login__main-header { padding-top: 2rem; border-top-color: var(--poseidon-primary); }
+#kc-page-title { font-size: 1.5rem; font-weight: 650; }
+.pf-v5-c-login__main-body { padding-bottom: 2rem; }
+
+.pf-v5-c-form-control { border-radius: 0.6rem; }
+.pf-v5-c-form-control:focus-within { --pf-v5-c-form-control--after--BorderBottomColor: var(--poseidon-primary); }
+
+.pf-v5-c-button.pf-m-primary {
+  --pf-v5-c-button--m-primary--BackgroundColor: var(--poseidon-primary);
+  --pf-v5-c-button--m-primary--hover--BackgroundColor: var(--poseidon-primary-hover);
+  --pf-v5-c-button--m-primary--focus--BackgroundColor: var(--poseidon-primary-hover);
+  --pf-v5-c-button--m-primary--active--BackgroundColor: var(--poseidon-primary-hover);
+  border-radius: 0.6rem;
+  min-height: 2.75rem;
+  font-weight: 600;
+}
+
+.pf-v5-c-login__main-footer-band { background: #f6f8fa; }
+
+/* Language picker in the card header */
+.pf-v5-c-login__main-header-utilities .pf-v5-c-form-control { min-width: 8rem; }
+
+/* Never let the brand line or the card force a horizontal scroll on phones. */
+html.login-pf, body#keycloak-bg { overflow-x: hidden; }
+#kc-header-wrapper::after { max-width: 100%; white-space: normal; text-align: center; line-height: 1.6; }
+.pf-v5-c-login__container { width: 100%; box-sizing: border-box; }
+.pf-v5-c-login__main { width: 100%; box-sizing: border-box; }
+
+@media (max-width: 480px) {
+  #kc-header { padding-block: 1.5rem 1rem; }
+  #kc-header-wrapper { font-size: 1.4rem; }
+  #kc-header-wrapper::after { content: "Denizcilik operasyonları"; letter-spacing: 0.16em; }
+  .pf-v5-c-login__container { padding-inline: 0.75rem; }
+}

@@ -68,6 +68,7 @@ services:
       JAVA_OPTS_KC_HEAP: "-XX:MaxRAMPercentage=70"
     volumes:
       - ./keycloak/realm:/opt/keycloak/data/import:ro
+      - ./keycloak/themes/poseidon:/opt/keycloak/themes/poseidon:ro
     networks: [edge, data]
     depends_on:
       postgres:

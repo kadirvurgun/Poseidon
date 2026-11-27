@@ -100,6 +100,8 @@ jobs:
           scp -i ~/.ssh/uat -o BatchMode=yes -r \
             infra/uat/compose.uat.yaml infra/uat/deploy.sh infra/uat/backup.sh infra/uat/manage.py \
             infra/uat/postgres-init capabilities.json "deploy@$HOST:/opt/poseidon-uat/"
+          ssh -i ~/.ssh/uat -o BatchMode=yes "deploy@$HOST" 'mkdir -p /opt/poseidon-uat/keycloak/themes'
+          scp -i ~/.ssh/uat -o BatchMode=yes -r infra/uat/keycloak/themes/poseidon "deploy@$HOST:/opt/poseidon-uat/keycloak/themes/"
       - name: Deploy
         id: deploy
         env:

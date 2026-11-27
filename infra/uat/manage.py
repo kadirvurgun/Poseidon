@@ -141,6 +141,7 @@ def realm(client_secret: str) -> dict:
     app = f'https://{domain()}'
     return {
         'realm': REALM_NAME, 'enabled': True, 'sslRequired': 'external',
+        'displayName': 'POSEIDON', 'displayNameHtml': 'POSEIDON', 'loginTheme': 'poseidon',
         'registrationAllowed': False, 'resetPasswordAllowed': False, 'rememberMe': False,
         'bruteForceProtected': True, 'failureFactor': 10, 'passwordPolicy': 'length(12) and notUsername',
         'accessTokenLifespan': 300, 'ssoSessionIdleTimeout': 1800,
@@ -214,6 +215,14 @@ def add_user(args) -> None:
     print(f'user {args.username} ({args.profile}) created. One-time temporary password (change on first login): {one_time}')
 
 
+def branding(_args=None) -> None:
+    # Idempotent: applies the POSEIDON login theme and Turkish/English locales to an existing realm.
+    kcadm(f"/opt/keycloak/bin/kcadm.sh update realms/{REALM_NAME} -s loginTheme=poseidon -s displayName=POSEIDON "
+          "-s displayNameHtml=POSEIDON -s internationalizationEnabled=true -s defaultLocale=tr "
+          "-s 'supportedLocales=[\"tr\",\"en\"]'")
+    print('branding applied')
+
+
 def list_users(_args) -> None:
     for u in load_users():
         print(f"{u['username']:<24} {u['profile']}")
@@ -233,6 +242,7 @@ def main() -> None:
     p.set_defaults(fn=add_user)
     sub.add_parser('render').set_defaults(fn=lambda _a: render())
     sub.add_parser('list-users').set_defaults(fn=list_users)
+    sub.add_parser('branding').set_defaults(fn=branding)
     args = parser.parse_args()
     args.fn(args)
 
