@@ -197,7 +197,7 @@ def add_user(args) -> None:
     users = load_users()
     if any(u['username'] == args.username for u in users):
         fail('user_exists')
-    password = secrets.token_urlsafe(12)
+    one_time = secrets.token_urlsafe(12)  # temporary sign-in credential, shown once
     body = json.dumps({'username': args.username, 'enabled': True, 'firstName': args.first_name or args.username,
                        'lastName': args.last_name or 'UAT', 'email': f'{args.username}@example.invalid',
                        'emailVerified': True})
@@ -206,12 +206,12 @@ def add_user(args) -> None:
     if len(found) != 1:
         fail('keycloak_user_lookup_failed')
     # token_urlsafe output is [A-Za-z0-9_-] only, so single quoting is safe.
-    kcadm(f"/opt/keycloak/bin/kcadm.sh set-password -r {REALM_NAME} --username {args.username} --temporary --new-password '{password}'")
+    kcadm(f"/opt/keycloak/bin/kcadm.sh set-password -r {REALM_NAME} --username {args.username} --temporary --new-password '{one_time}'")
     users.append({'username': args.username, 'profile': args.profile, 'subject': found[0]['id'], 'actorId': str(uuid.uuid4())})
     write_private(STATE / 'users.json', json.dumps(users, indent=1), overwrite=True)
     render()
     compose('up', '-d', '--force-recreate', '--no-deps', 'api')
-    print(f'user {args.username} ({args.profile}) created. One-time temporary password (change on first login): {password}')
+    print(f'user {args.username} ({args.profile}) created. One-time temporary password (change on first login): {one_time}')
 
 
 def list_users(_args) -> None:
