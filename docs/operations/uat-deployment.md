@@ -36,6 +36,8 @@ ssh-keygen -t ed25519 -N '""' -C poseidon-uat-deploy -f $HOME\.ssh\poseidon_uat_
 ```
 
 ### 1.3 Sunucuyu hazırla (root ile, bir kez)
+AWS EC2'de root ile giriş yoktur: aşağıdaki komutlarda `root@VPS_IP` yerine `ubuntu@VPS_IP` kullanın, `-i <indirilen .pem>` ekleyin ve betikleri `sudo` ile çalıştırın. Güvenlik grubunda SSH kaynağı GitHub Actions için `0.0.0.0/0` olmalıdır (giriş yalnız anahtarla). Alan adı yoksa `poseidon.<ip-tireli>.sslip.io` (ör. `poseidon.13-49-27-245.sslip.io`) kullanılabilir.
+
 ```powershell
 scp infra/uat/bootstrap-vps.sh infra/uat/manage.py root@VPS_IP:/root/
 ssh root@VPS_IP "bash /root/bootstrap-vps.sh '$(Get-Content $HOME\.ssh\poseidon_uat_deploy.pub)'"

@@ -24,8 +24,18 @@ Dal: `feature/uat-deploy-20261127` (taban `main` ea52ed3f).
 | `py -m unittest scripts/test_uat_deploy.py` | 10/10 PASS (Windows, yerel) |
 | `bash -n` (4 kabuk betiği) | PASS |
 | `docker compose config --quiet` (sahte sırlarla) | PASS |
-| İmaj build (api/migrator/web), Caddyfile doğrulama, gerçek VPS deploy, OIDC girişi | **NOT RUN** (yerelde Docker motoru çalışmıyor; VPS henüz yok) |
-| Bağımsız QA, PR CI | PENDING |
+| Gerçek host (AWS EC2 m7i-flex.large, eu-north-1, Ubuntu 26.04, Docker 29.1.3/Compose 2.40.3): bootstrap | PASS (UFW 22/80/443, parola SSH kapalı, swap 4G, deploy kullanıcısı) |
+| İmaj build (api/migrator/web) host üzerinde, `274701c` | PASS (`uat-20261127-274701c`) |
+| Deploy: migration + ilk sentetik seed + demo taslakları + sağlık | PASS (deploy.sh exit 0) |
+| Genel HTTPS (Let's Encrypt, `poseidon.13-49-27-245.sslip.io`) | `/health/live` 200, `/app` 200, OIDC discovery issuer eşleşiyor, `/api/v1/auth/login` → Keycloak 302 (PKCE/PAR) |
+| Keycloak yönetim konsolu / master realm dışarıdan | 404 / 404 |
+| Yedek (`backup.sh`) + gece cron | PASS (poseidon + keycloak dump) |
+| Keycloak DB init betiği (yeniden yazım) postgres:18.6 geçici konteyner | PASS (rol kendi DB'sine giriş yaptı) |
+| Tarayıcıda insan girişi ve ekran gezintisi | PENDING (kullanıcı) |
+| CI repo secret taraması | `b43d30f`: 3 yanlış pozitif (değişken adları) → `7a3d15c7` ile düzeltildi; CI tekrar PENDING |
+| Bağımsız QA | PENDING |
+
+İlk gerçek kurulumda bulunup düzeltilenler: Docker resmi deposu Ubuntu 26.04'ü desteklemiyor (Ubuntu paketleri), sağlık sondası `AllowedHosts` nedeniyle 400, cron kurulumunun `set -e` ile düşmesi, Caddy'de üst düzey `respond`'un `handle`'dan sonra sıralanması nedeniyle yönetim konsolunun açık kalması.
 
 ## Bilinen sınırlar / açık
 Dosya özellikleri (S3+ClamAV yok), içe aktarma commit'i (Development dışında 503), `CrewProfilePolicy` anahtarı, Tug gemisinin 2. kiracıda olması, davet e-postası. Gizli repo için self-hosted runner geçişi ayrı PR.
