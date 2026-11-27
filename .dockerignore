@@ -1,0 +1,15 @@
+# Whitelist: UAT image builds (infra/uat/docker/*.Dockerfile) need only these inputs.
+*
+!global.json
+!Directory.Build.props
+!Directory.Packages.props
+!backend/
+!contracts/
+!docs/tasks/import-foundation-01-source-fields.json
+!frontend/
+!infra/uat/caddy/
+**/bin/
+**/obj/
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/

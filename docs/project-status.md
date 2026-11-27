@@ -1,6 +1,11 @@
 # POSEIDON — PR16 ve yerelleştirme durumu
 
 
+## UAT-DEPLOY-01 — PO test ortamı (tek VPS, sentetik veri) + issue geri bildirim döngüsü; yazıldı, ilk deploy bekleniyor (27.11.2026)
+- `feature/uat-deploy-20261127` (main ea52ed3f). Canonical sayım değişmez: 114/121 iş, 932/970 SP; pilot kapılarını kapatmaz.
+- Docker imajları (api/migrator/web), Caddy+Keycloak+PostgreSQL compose, VPS kurulum/deploy/yedek betikleri, `main` yeşilse GHCR→SSH deploy workflow'u, `UAT-Fixes: #N` ile deploy sonrası issue yorumu/kapatma, TR geri bildirim şablonları. Varsayılan profiller karar/onay yetkisi vermez. Ayrıntı: `docs/phases/UAT-DEPLOY-01.md`, rehber `docs/operations/uat-deployment.md`.
+- Yerel: `test_uat_deploy` 10/10, `bash -n` 4/4, compose config PASS. NOT RUN: imaj build, gerçek VPS deploy/OIDC girişi (VPS yok, yerel Docker kapalı). Açık: dosya özellikleri (S3+ClamAV), self-hosted runner geçişi, bağımsız QA.
+
 ## LAB-FOLLOWUPS-20261123 — lab NSS yükleme QA notları; yazıldı, CI ve uçtan uca ekran görüntüsü koşusu bekleniyor (23.11.2026)
 - `fix/lab-followups-20261123` (main 494045ee). Yalnız sentetik DEV-OIDC lab aracı; ürün davranışı ve canonical sayım değişmez (114/121 iş, 932/970 SP).
 - `lab_profile_ca.py`: Windows'ta da tam set (nss3/mozglue/softokn3/freebl3); Linux'ta `LD_PRELOAD`/`LD_AUDIT` reddi (`nss_preload_refused`) ve NSS_InitReadWrite sonrası `/proc/self/maps` ile her NSS ailesi nesnesinin pinned paketten yüklendiği doğrulaması (`nss_foreign_library`). Ekran görüntüsü ön kontrolü artık traceback yazmaz; Linux no-skip kapısı en az 41 test ister. Ayrıntı: `docs/phases/LAB-FOLLOWUPS-20261123.md`.

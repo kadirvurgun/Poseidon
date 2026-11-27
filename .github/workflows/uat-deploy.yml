@@ -1,0 +1,136 @@
+name: UAT deploy
+
+# Deploys main to the single UAT VPS after the required "Application foundation" run is green
+# for that exact commit (push event). Manual runs deploy a chosen ref (e.g. a previous tag's sha).
+# Setup: docs/operations/uat-deployment.md (environment "uat" secrets/vars).
+on:
+  workflow_run:
+    workflows: ["Application foundation"]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Commit SHA or branch to deploy (default: main)'
+        required: false
+        default: main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: uat-deploy
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
+    runs-on: ${{ vars.UAT_BUILD_RUNNER || 'ubuntu-latest' }}
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      sha: ${{ steps.meta.outputs.sha }}
+      tag: ${{ steps.meta.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ github.event.workflow_run.head_sha || inputs.ref || 'main' }}
+          persist-credentials: false
+      - id: meta
+        run: |
+          sha="$(git rev-parse HEAD)"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+          echo "tag=uat-$(date -u +%Y%m%d)-${sha:0:7}" >> "$GITHUB_OUTPUT"
+      - name: Log in to GHCR
+        run: echo "$GH_TOKEN" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push images
+        env:
+          TAG: ${{ steps.meta.outputs.tag }}
+        run: |
+          set -euo pipefail
+          reg=ghcr.io/kadirvurgun
+          docker buildx create --use --name uat >/dev/null 2>&1 || docker buildx use uat
+          for target in api migrator; do
+            docker buildx build -f infra/uat/docker/backend.Dockerfile --target "$target" \
+              --build-arg POSEIDON_VERSION="$TAG" \
+              --cache-from "type=registry,ref=$reg/poseidon-$target:buildcache" \
+              --cache-to "type=registry,ref=$reg/poseidon-$target:buildcache,mode=max" \
+              -t "$reg/poseidon-$target:$TAG" --push .
+          done
+          docker buildx build -f infra/uat/docker/web.Dockerfile \
+            --build-arg POSEIDON_VERSION="$TAG" \
+            --cache-from "type=registry,ref=$reg/poseidon-web:buildcache" \
+            --cache-to "type=registry,ref=$reg/poseidon-web:buildcache,mode=max" \
+            -t "$reg/poseidon-web:$TAG" --push .
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: uat
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          ref: ${{ needs.build.outputs.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Prepare SSH
+        env:
+          KEY: ${{ secrets.UAT_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.UAT_SSH_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$KEY" > ~/.ssh/uat && chmod 600 ~/.ssh/uat
+          printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
+      - name: Upload deploy files
+        env:
+          HOST: ${{ vars.UAT_HOST }}
+        run: |
+          set -euo pipefail
+          python3 infra/uat/extract_capabilities.py > capabilities.json
+          scp -i ~/.ssh/uat -o BatchMode=yes -r \
+            infra/uat/compose.uat.yaml infra/uat/deploy.sh infra/uat/backup.sh infra/uat/manage.py \
+            infra/uat/postgres-init capabilities.json "deploy@$HOST:/opt/poseidon-uat/"
+      - name: Deploy
+        id: deploy
+        env:
+          HOST: ${{ vars.UAT_HOST }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ needs.build.outputs.tag }}
+          SHA: ${{ needs.build.outputs.sha }}
+        run: |
+          set -euo pipefail
+          ssh_uat() { ssh -i ~/.ssh/uat -o BatchMode=yes "deploy@$HOST" "$@"; }
+          prev="$(ssh_uat 'cat /opt/poseidon-uat/deployed-sha 2>/dev/null || true')"
+          echo "prev=$prev" >> "$GITHUB_OUTPUT"
+          echo "$GH_TOKEN" | ssh_uat 'docker login ghcr.io -u "${{ github.actor }}" --password-stdin >/dev/null'
+          ssh_uat "bash /opt/poseidon-uat/deploy.sh '$TAG' '$SHA'"
+          ssh_uat 'docker logout ghcr.io >/dev/null'
+      - name: Announce delivered feedback issues
+        if: success() && vars.UAT_FEEDBACK_REPO != ''
+        env:
+          GH_TOKEN: ${{ secrets.UAT_FEEDBACK_TOKEN }}
+          PREV: ${{ steps.deploy.outputs.prev }}
+          SHA: ${{ needs.build.outputs.sha }}
+          TAG: ${{ needs.build.outputs.tag }}
+          FEEDBACK_REPO: ${{ vars.UAT_FEEDBACK_REPO }}
+          CODE_REPO: ${{ github.repository }}
+        run: >-
+          python3 infra/uat/notify_feedback.py
+          --from "$PREV" --to "$SHA" --tag "$TAG" --repo "$FEEDBACK_REPO" --code-repo "$CODE_REPO"
+      - name: Summary
+        if: always()
+        run: |
+          echo "### UAT deploy" >> "$GITHUB_STEP_SUMMARY"
+          echo "- tag: \`${{ needs.build.outputs.tag }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- commit: \`${{ needs.build.outputs.sha }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- result: ${{ job.status }}" >> "$GITHUB_STEP_SUMMARY"

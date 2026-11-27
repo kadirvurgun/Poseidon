@@ -18772,5 +18772,25 @@
       "pull_request-event CI before merge"
     ],
     "report": "docs/phases/LAB-FOLLOWUPS-20261123.md"
+  },
+  "uat_deploy_01": {
+    "state": "AUTHORED_PARTIALLY_VERIFIED_NOT_DEPLOYED",
+    "branch": "feature/uat-deploy-20261127",
+    "base": "ea52ed3f",
+    "phase_report": "docs/phases/UAT-DEPLOY-01.md",
+    "runbook": "docs/operations/uat-deployment.md",
+    "accepted_tasks_added": 0,
+    "accepted_story_points_added": 0,
+    "verification": {
+      "scripts_test_uat_deploy": "10/10 PASS local",
+      "bash_syntax": "4/4 PASS",
+      "compose_config": "PASS",
+      "image_build": "NOT_RUN",
+      "vps_deploy": "NOT_RUN",
+      "oidc_login": "NOT_RUN",
+      "independent_qa": "PENDING",
+      "pr_ci": "PENDING"
+    },
+    "signoffs_claimed": false
   }
 }
