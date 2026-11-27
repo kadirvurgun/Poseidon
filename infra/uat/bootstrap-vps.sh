@@ -34,6 +34,11 @@ if ! swapon --show | grep -q /swapfile; then
 fi
 
 # Docker Engine (resmi depo)
+if ! command -v docker >/dev/null && \
+   ! curl -fsS -o /dev/null "https://download.docker.com/linux/ubuntu/dists/${VERSION_CODENAME}/stable/Release"; then
+  # Docker's repository has no packages for this (newer) release yet: use Ubuntu's own packages.
+  apt-get -y -q install docker.io docker-compose-v2 docker-buildx
+fi
 if ! command -v docker >/dev/null; then
   install -m 0755 -d /etc/apt/keyrings
   curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
