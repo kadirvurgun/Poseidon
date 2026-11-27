@@ -44,7 +44,7 @@ Betik: güncellemeler, otomatik güvenlik yaması, 4 GB swap, UFW (22/80/443), p
 
 ### 1.4 Ortam sırlarını üret (bir kez)
 ```powershell
-ssh root@VPS_IP "install -o deploy -g deploy -m 750 /root/manage.py /opt/poseidon-uat/manage.py && su - deploy -c 'cd /opt/poseidon-uat && python3 manage.py init --domain uat.ALANADI --acme-email EPOSTA'"
+ssh root@VPS_IP "install -o deploy -g deploy -m 750 /root/manage.py /opt/poseidon-uat/manage.py && su - deploy -c 'cd /opt/poseidon-uat && python3 manage.py init --domain uat.ALANADI'"
 ```
 Rastgele veritabanı, OIDC istemci, rate-limit ve Keycloak bootstrap sırları yalnız sunucuda (`/opt/poseidon-uat/secrets`, 600) oluşur; hiçbiri ekrana yazılmaz, repoya girmez. `init` ikinci kez çalışmaz (sırlar döndürülmez).
 

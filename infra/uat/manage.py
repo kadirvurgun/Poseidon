@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """POSEIDON UAT operator tool. Runs on the VPS as the 'deploy' user in /opt/poseidon-uat.
 
-  python3 manage.py init --domain uat.example.com --acme-email ops@example.com
+  python3 manage.py init --domain uat.example.com
   python3 manage.py add-user ayse.po --profile po        # prints a one-time temporary password
   python3 manage.py render                               # re-render config after capabilities change
   python3 manage.py list-users
@@ -156,7 +156,7 @@ def init(args) -> None:
         fail('domain_invalid')
     if (STATE / 'initialized').exists():
         fail('already_initialized: secrets are never rotated by init')
-    write_private(HOME / '.env', f'UAT_DOMAIN={args.domain}\nACME_EMAIL={args.acme_email}\n')
+    write_private(HOME / '.env', f'UAT_DOMAIN={args.domain}\n')
     pg, kc_db = secrets.token_urlsafe(32), secrets.token_urlsafe(32)
     client = secrets.token_urlsafe(48)
     write_private(SECRETS / 'postgres-password', pg)
@@ -222,7 +222,6 @@ def main() -> None:
     sub = parser.add_subparsers(dest='cmd', required=True)
     p = sub.add_parser('init')
     p.add_argument('--domain', required=True)
-    p.add_argument('--acme-email', required=True)
     p.set_defaults(fn=init)
     p = sub.add_parser('add-user')
     p.add_argument('username')

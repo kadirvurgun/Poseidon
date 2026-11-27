@@ -94,7 +94,7 @@ class RenderTests(unittest.TestCase):
     def test_render_binds_exact_issuer_and_secret_references_only(self):
         with tempfile.TemporaryDirectory() as tmp:
             home = Path(tmp)
-            (home / '.env').write_text('UAT_DOMAIN=uat.example.com\nACME_EMAIL=a@example.invalid\n')
+            (home / '.env').write_text('UAT_DOMAIN=uat.example.com\n')
             (home / 'capabilities.json').write_text(json.dumps(capabilities()))
             (home / 'state').mkdir()
             (home / 'state/users.json').write_text(json.dumps([

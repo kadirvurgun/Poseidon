@@ -14,7 +14,6 @@ services:
       - "443:443/udp"
     environment:
       UAT_DOMAIN: ${UAT_DOMAIN:?set UAT_DOMAIN}
-      ACME_EMAIL: ${ACME_EMAIL:?set ACME_EMAIL}
     volumes:
       - caddy-data:/data
       - caddy-config:/config

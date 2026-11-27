@@ -1,6 +1,6 @@
-# POSEIDON UAT edge. UAT_DOMAIN and ACME_EMAIL come from the compose environment.
+# POSEIDON UAT edge. UAT_DOMAIN comes from the compose environment.
+# No ACME contact email: no personal address is sent to the certificate authority.
 {
-	email {$ACME_EMAIL}
 	servers {
 		# Only Caddy may set X-Forwarded-*; the API trusts them (ASPNETCORE_FORWARDEDHEADERS_ENABLED)
 		# and is not published on any host port.
